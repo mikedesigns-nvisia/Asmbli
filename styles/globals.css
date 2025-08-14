@@ -1,0 +1,498 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 14px;
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Monaco', 'Menlo', monospace;
+  
+  /* Enterprise Dark Theme */
+  --background: #0A0A0B;
+  --foreground: #FAFAFA;
+  --card: #18181B;
+  --card-foreground: #FAFAFA;
+  --popover: #18181B;
+  --popover-foreground: #FAFAFA;
+  --primary: #6366F1;
+  --primary-foreground: #FAFAFA;
+  --secondary: #27272A;
+  --secondary-foreground: #A1A1AA;
+  --muted: #27272A;
+  --muted-foreground: #71717A;
+  --accent: #27272A;
+  --accent-foreground: #A1A1AA;
+  --destructive: #EF4444;
+  --destructive-foreground: #FAFAFA;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --border: #27272A;
+  --input: #18181B;
+  --input-background: #18181B;
+  --ring: #6366F1;
+  --radius: 0.75rem;
+  
+  /* Text sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  
+  /* Font weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    font-size: var(--font-size);
+    font-family: var(--font-inter);
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  /* Code font */
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(39, 39, 42, 0.5);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.5);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.7);
+  }
+}
+
+/**
+ * Enterprise Typography System
+ */
+@layer base {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-size: var(--text-4xl);
+      font-weight: var(--font-weight-bold);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    h3 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.4;
+    }
+
+    h4 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.5;
+    }
+
+    p {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.6;
+    }
+
+    label {
+      font-size: var(--text-sm);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: var(--text-sm);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input, textarea {
+      font-size: var(--text-sm);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+    }
+  }
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes shimmer-wave {
+  0%, 100% {
+    background-position: -200% 0;
+    opacity: 0.3;
+  }
+  50% {
+    background-position: 200% 0;
+    opacity: 0.6;
+  }
+}
+
+@keyframes shimmer-wave-reverse {
+  0%, 100% {
+    background-position: 200% 0;
+    opacity: 0.2;
+  }
+  50% {
+    background-position: -200% 0;
+    opacity: 0.4;
+  }
+}
+
+@layer utilities {
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background-size: 1000px 100%;
+  }
+
+  .animate-shimmer-wave {
+    animation: shimmer-wave 8s ease-in-out infinite;
+  }
+
+  .animate-shimmer-wave-reverse {
+    animation: shimmer-wave-reverse 12s ease-in-out infinite;
+  }
+
+  /* Line clamping utilities */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Layout constraints */
+  .max-width-container {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .content-width {
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
+  /* Selection states */
+  .selection-card {
+    @apply backdrop-blur-2xl rounded-xl p-4 cursor-pointer transition-all duration-300 hover:border-primary/50 hover:-translate-y-1;
+    background: rgba(24, 24, 27, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 
+      0 0 0 1px rgba(255, 255, 255, 0.03),
+      0 4px 16px rgba(0, 0, 0, 0.1),
+      0 8px 32px rgba(0, 0, 0, 0.05);
+  }
+
+  .selection-card.selected {
+    @apply border-primary bg-gradient-to-br from-primary/15 to-transparent;
+    box-shadow: 
+      0 0 0 1px rgba(99, 102, 241, 0.3),
+      0 4px 16px rgba(99, 102, 241, 0.1),
+      0 8px 32px rgba(99, 102, 241, 0.05);
+  }
+
+  .selection-card:hover {
+    background: rgba(24, 24, 27, 0.8);
+    box-shadow: 
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 8px 24px rgba(0, 0, 0, 0.15),
+      0 16px 48px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Text containment utilities */
+  .text-container {
+    @apply max-w-full overflow-hidden;
+  }
+
+  .text-truncate-safe {
+    @apply truncate max-w-full;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  /* Card content constraints */
+  .card-content-constrained {
+    @apply max-w-full overflow-hidden;
+  }
+
+  .card-content-constrained * {
+    @apply max-w-full;
+  }
+
+  /* Extension card specific constraints */
+  .extension-card {
+    @apply w-full max-w-full overflow-hidden;
+  }
+
+  .extension-card * {
+    @apply max-w-full;
+  }
+
+  .extension-card .card-header,
+  .extension-card .card-content {
+    @apply w-full overflow-hidden;
+  }
+
+  /* Flex container text truncation fix */
+  .flex-text-container {
+    @apply min-w-0 flex-1 overflow-hidden;
+  }
+
+  .flex-text-container * {
+    @apply max-w-full;
+  }
+
+  /* Safe text truncation within flex containers */
+  .safe-truncate {
+    @apply truncate max-w-full;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  /* Badge container overflow protection */
+  .badge-container {
+    @apply flex flex-wrap gap-1 overflow-hidden max-w-full;
+  }
+
+  .badge-container .badge {
+    @apply flex-shrink-0 whitespace-nowrap max-w-fit;
+  }
+
+  /* Chip container utilities for tight "hug" styling */
+  .chip-container {
+    @apply inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border border-border/50 bg-muted/20 text-xs font-medium w-fit whitespace-nowrap;
+  }
+
+  .chip-container-tight {
+    @apply inline-flex items-center gap-0.5 px-1 py-0.5 rounded border border-border/50 bg-muted/20 text-xs font-medium w-fit whitespace-nowrap;
+  }
+
+  .chip-hug {
+    @apply px-1.5 py-0.5;
+  }
+
+  .chip-hug-tight {
+    @apply px-1 py-0.5;
+  }
+
+  .chip-hug-minimal {
+    @apply px-1 py-0;
+  }
+
+  /* Better responsive grid for extension cards */
+  .extension-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    max-width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .extension-grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .extension-grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  /* Progress indicators */
+  .progress-dot {
+    @apply w-3 h-3 rounded-full transition-all duration-300;
+  }
+
+  .progress-dot.active {
+    @apply bg-primary animate-pulse scale-110;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  }
+
+  .progress-dot.completed {
+    @apply bg-primary;
+  }
+
+  .progress-dot.upcoming {
+    @apply bg-muted border-2 border-dashed border-muted-foreground/30;
+  }
+
+  /* Responsive grid utilities */
+  .responsive-grid-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6;
+  }
+
+  .responsive-grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6;
+  }
+
+  .responsive-grid-4 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6;
+  }
+
+  /* Hide scrollbars for selection tracker */
+  .scrollbar-none {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  /* Responsive spacing */
+  .responsive-spacing {
+    @apply space-y-6 lg:space-y-8;
+  }
+
+  .responsive-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Mobile-first breakpoints */
+  @screen sm {
+    .mobile-hide {
+      @apply hidden;
+    }
+  }
+
+  @screen md {
+    .tablet-hide {
+      @apply hidden;
+    }
+  }
+
+  @screen lg {
+    .desktop-hide {
+      @apply hidden;
+    }
+  }
+}

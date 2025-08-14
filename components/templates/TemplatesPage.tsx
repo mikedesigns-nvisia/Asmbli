@@ -1,0 +1,630 @@
+import React, { useState, useMemo } from 'react';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Badge } from '../ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { 
+  Search, 
+  Filter, 
+  Plus, 
+  Upload, 
+  Download, 
+  Sparkles,
+  FileText,
+  Grid3X3,
+  List,
+  ArrowLeft,
+  Star,
+  Crown,
+  Zap,
+  TrendingUp,
+  Bell,
+  Library,
+  Users,
+  Clock,
+  Eye,
+  Heart,
+  Award,
+  Gift,
+  Rocket,
+  BookOpen,
+  Share2,
+  GraduationCap
+} from 'lucide-react';
+import { AgentTemplate, TemplateCategory } from '../../types/templates';
+import { WizardData } from '../../types/wizard';
+import { TemplateStorage } from '../../utils/templateStorage';
+import { TemplateCard } from './TemplateCard';
+import { SaveTemplateDialog } from './SaveTemplateDialog';
+
+interface TemplatesPageProps {
+  currentWizardData?: WizardData;
+  onUseTemplate: (template: AgentTemplate) => void;
+  onBackToWizard: () => void;
+  onShowSaveDialog?: () => void;
+}
+
+// Mock data for upcoming templates and featured content
+const upcomingTemplates = [
+  {
+    id: 'up-1',
+    name: 'Advanced Code Review Agent',
+    description: 'Community-contributed template for AI-powered code review with security scanning and best practices.',
+    category: 'Development',
+    estimatedRelease: '2024-02-15',
+    previewImage: '/api/placeholder/300/200',
+    features: ['Security Scanning', 'Performance Analysis', 'Multi-language Support', 'Documentation Generation']
+  },
+  {
+    id: 'up-2', 
+    name: 'Knowledge Base Assistant',
+    description: 'Comprehensive knowledge management template with advanced search and learning capabilities.',
+    category: 'Knowledge Management',
+    estimatedRelease: '2024-02-28',
+    previewImage: '/api/placeholder/300/200',
+    features: ['Advanced Search', 'Learning Algorithms', 'Content Categorization', 'Export Options']
+  },
+  {
+    id: 'up-3',
+    name: 'Content Creation Helper',
+    description: 'Multi-modal content creation template with creative workflows and collaboration features.',
+    category: 'Creative',
+    estimatedRelease: '2024-03-10',
+    previewImage: '/api/placeholder/300/200',
+    features: ['Text Generation', 'Creative Workflows', 'Collaboration Tools', 'Version Control']
+  }
+];
+
+const featuredCollections = [
+  {
+    id: 'community',
+    title: 'Community Favorites',
+    icon: TrendingUp,
+    description: 'Most loved templates by the community',
+    color: '#F59E0B'
+  },
+  {
+    id: 'recent',
+    title: 'Recently Added',
+    icon: Sparkles,
+    description: 'Latest contributions from developers',
+    color: '#10B981'
+  },
+  {
+    id: 'educational',
+    title: 'Learning Resources',
+    icon: GraduationCap,
+    description: 'Great templates for learning and teaching',
+    color: '#6366F1'
+  }
+];
+
+export function TemplatesPage({
+  currentWizardData,
+  onUseTemplate,
+  onBackToWizard,
+  onShowSaveDialog
+}: TemplatesPageProps) {
+  const [templates, setTemplates] = useState<AgentTemplate[]>(() => TemplateStorage.getTemplates());
+  const [categories] = useState<TemplateCategory[]>(() => TemplateStorage.getCategories());
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [watchList, setWatchList] = useState<string[]>([]);
+  const [notifyList, setNotifyList] = useState<string[]>([]);
+
+  // Get all unique tags from templates
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    templates.forEach(template => {
+      template.tags.forEach(tag => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
+  }, [templates]);
+
+  // Filter templates based on search and filters
+  const filteredTemplates = useMemo(() => {
+    return TemplateStorage.filterTemplates(templates, {
+      category: selectedCategory === 'all' ? undefined : selectedCategory,
+      tags: selectedTags.length > 0 ? selectedTags : undefined,
+      searchQuery: searchQuery.trim() || undefined
+    });
+  }, [templates, selectedCategory, selectedTags, searchQuery]);
+
+  // Group templates by category for the category view
+  const templatesByCategory = useMemo(() => {
+    const grouped = new Map<string, AgentTemplate[]>();
+    
+    categories.forEach(category => {
+      grouped.set(category.id, []);
+    });
+    
+    filteredTemplates.forEach(template => {
+      const categoryTemplates = grouped.get(template.category) || [];
+      categoryTemplates.push(template);
+      grouped.set(template.category, categoryTemplates);
+    });
+    
+    return grouped;
+  }, [categories, filteredTemplates]);
+
+  const handleUseTemplate = (template: AgentTemplate) => {
+    TemplateStorage.incrementUsageCount(template.id);
+    setTemplates(TemplateStorage.getTemplates()); // Refresh to show updated usage count
+    onUseTemplate(template);
+  };
+
+  const handleDeleteTemplate = (id: string) => {
+    if (confirm('Are you sure you want to remove this template from the library?')) {
+      TemplateStorage.deleteTemplate(id);
+      setTemplates(TemplateStorage.getTemplates());
+    }
+  };
+
+  const handleExportTemplate = (id: string) => {
+    const exportData = TemplateStorage.exportTemplate(id);
+    if (exportData) {
+      const template = TemplateStorage.getTemplate(id);
+      const blob = new Blob([exportData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${template?.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_template.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  const handleImportTemplate = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result as string;
+        const imported = TemplateStorage.importTemplate(content);
+        if (imported) {
+          setTemplates(TemplateStorage.getTemplates());
+        } else {
+          alert('Failed to import template. Please check the file format.');
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handleSaveCurrentTemplate = (templateInfo: {
+    name: string;
+    description: string;
+    category: string;
+    tags: string[];
+  }) => {
+    if (currentWizardData) {
+      TemplateStorage.saveTemplate(currentWizardData, templateInfo);
+      setTemplates(TemplateStorage.getTemplates());
+      setShowSaveDialog(false);
+    }
+  };
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  const toggleWatchList = (id: string) => {
+    setWatchList(prev => 
+      prev.includes(id) 
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    );
+  };
+
+  const toggleNotifyList = (id: string) => {
+    setNotifyList(prev => 
+      prev.includes(id) 
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    );
+  };
+
+  return (
+    <div className="content-width mx-auto px-4 py-6 space-y-8">
+      {/* Enhanced Header */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" onClick={onBackToWizard} className="flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Wizard
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold flex items-center gap-3">
+                <div className="relative">
+                  <Library className="w-8 h-8 text-primary" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+                </div>
+                Community Template Library
+              </h1>
+              <p className="text-muted-foreground">
+                Open-source AI agent templates created and shared by the community
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              {templates.length} Templates
+            </Badge>
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportTemplate}
+              className="hidden"
+              id="import-template"
+            />
+            <Button
+              variant="outline"
+              onClick={() => document.getElementById('import-template')?.click()}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Import
+            </Button>
+            
+            {currentWizardData && (
+              <Button onClick={() => setShowSaveDialog(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Contribute Template
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Featured Collections */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {featuredCollections.map((collection) => {
+            const Icon = collection.icon;
+            return (
+              <Card key={collection.id} className="selection-card hover:scale-105 transition-transform cursor-pointer">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: collection.color + '20' }}
+                    >
+                      <Icon className="w-5 h-5" style={{ color: collection.color }} />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">{collection.title}</CardTitle>
+                      <CardDescription className="text-sm">{collection.description}</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Enhanced Filters and Search */}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search templates, categories, or features..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-full sm:w-48">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map(category => (
+                <SelectItem key={category.id} value={category.id}>
+                  <span className="flex items-center gap-2">
+                    <span>{category.icon}</span>
+                    {category.name}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <div className="flex items-center gap-2">
+            <Button
+              variant={viewMode === 'grid' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('grid')}
+            >
+              <Grid3X3 className="w-4 h-4" />
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+            >
+              <List className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Enhanced Tag Filter */}
+        {allTags.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-medium">Filter by tags:</span>
+              {selectedTags.length > 0 && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSelectedTags([])}
+                  className="text-xs"
+                >
+                  Clear filters
+                </Button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {allTags.map(tag => (
+                <Badge
+                  key={tag}
+                  variant={selectedTags.includes(tag) ? 'default' : 'outline'}
+                  className="cursor-pointer hover:bg-primary/80 transition-colors chip-hug"
+                  onClick={() => toggleTag(tag)}
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Enhanced Templates Section */}
+      <Tabs defaultValue="all" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">All Templates ({filteredTemplates.length})</TabsTrigger>
+          <TabsTrigger value="upcoming">Coming Soon</TabsTrigger>
+          <TabsTrigger value="categories">By Category</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="space-y-6">
+          {filteredTemplates.length === 0 ? (
+            <div className="text-center py-12">
+              <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-medium mb-2">No templates found</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                {templates.length === 0 
+                  ? "Help us build the community library! Contribute your first template to get started and inspire others to share their work."
+                  : "Try adjusting your search criteria or browse our featured collections above."
+                }
+              </p>
+              {currentWizardData && (
+                <Button onClick={() => setShowSaveDialog(true)} size="lg">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Contribute the First Template
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className={`grid gap-6 ${
+              viewMode === 'grid' 
+                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
+                : 'grid-cols-1'
+            }`}>
+              {filteredTemplates.map(template => {
+                const category = categories.find(c => c.id === template.category);
+                return category ? (
+                  <TemplateCard
+                    key={template.id}
+                    template={template}
+                    category={category}
+                    onUseTemplate={handleUseTemplate}
+                    onDeleteTemplate={handleDeleteTemplate}
+                    onExportTemplate={handleExportTemplate}
+                  />
+                ) : null;
+              })}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="upcoming" className="space-y-6">
+          {/* Coming Soon Header */}
+          <div className="text-center space-y-4 py-8">
+            <div className="flex items-center justify-center gap-3">
+              <Rocket className="w-8 h-8 text-primary" />
+              <h2 className="text-3xl font-bold">Community Contributions Coming Soon</h2>
+            </div>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Amazing templates being developed by community members. 
+              Be the first to know when they're ready!
+            </p>
+          </div>
+
+          {/* Upcoming Templates */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingTemplates.map((template) => (
+              <Card key={template.id} className="selection-card relative overflow-hidden">
+                {/* Coming Soon Badge */}
+                <div className="absolute top-4 right-4 z-10">
+                  <Badge className="bg-primary/90 text-primary-foreground">
+                    <Clock className="w-3 h-3 mr-1" />
+                    Coming Soon
+                  </Badge>
+                </div>
+
+                <CardHeader className="pb-4">
+                  <div className="aspect-video bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-lg mb-4 flex items-center justify-center relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-lg"></div>
+                    <BookOpen className="w-12 h-12 text-primary/60" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <CardTitle className="text-lg">{template.name}</CardTitle>
+                    <CardDescription className="line-clamp-2">
+                      {template.description}
+                    </CardDescription>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-3">
+                    <Badge variant="outline" className="chip-hug">
+                      {template.category}
+                    </Badge>
+                    <Badge variant="outline" className="chip-hug bg-green-500/20 text-green-400 border-green-400/30">
+                      Open Source
+                    </Badge>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {/* Features List */}
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Planned Features:</h4>
+                    <div className="space-y-1">
+                      {template.features.slice(0, 3).map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                          {feature}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Expected Release */}
+                  <div className="text-sm text-muted-foreground">
+                    <strong>Expected Contribution:</strong> {new Date(template.estimatedRelease).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric', 
+                      year: 'numeric'
+                    })}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => toggleWatchList(template.id)}
+                      className="flex-1"
+                    >
+                      <Heart className={`w-4 h-4 mr-2 ${watchList.includes(template.id) ? 'fill-current text-red-400' : ''}`} />
+                      {watchList.includes(template.id) ? 'Watching' : 'Watch'}
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      onClick={() => toggleNotifyList(template.id)}
+                      className="flex-1"
+                    >
+                      <Bell className="w-4 h-4 mr-2" />
+                      {notifyList.includes(template.id) ? 'Subscribed' : 'Notify Me'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Community Newsletter */}
+          <Card className="selection-card bg-gradient-to-br from-primary/10 to-purple-500/10">
+            <CardHeader className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Share2 className="w-6 h-6 text-primary" />
+                <CardTitle>Stay Connected</CardTitle>
+              </div>
+              <CardDescription>
+                Get notified about new community contributions, template releases, and collaboration opportunities.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2 max-w-md mx-auto">
+                <Input placeholder="Enter your email..." className="flex-1" />
+                <Button>
+                  <Bell className="w-4 h-4 mr-2" />
+                  Subscribe
+                </Button>
+              </div>
+              <p className="text-xs text-center text-muted-foreground">
+                Join 1,200+ developers collaborating in our community
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="categories" className="space-y-8">
+          {categories.map(category => {
+            const categoryTemplates = templatesByCategory.get(category.id) || [];
+            
+            return (
+              <div key={category.id} className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: category.color + '20' }}
+                  >
+                    <span style={{ color: category.color }}>{category.icon}</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold">{category.name}</h3>
+                    <p className="text-sm text-muted-foreground">{category.description}</p>
+                  </div>
+                  <Badge variant="outline" className="ml-auto">
+                    {categoryTemplates.length} templates
+                  </Badge>
+                </div>
+                
+                {categoryTemplates.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pl-13">
+                    {categoryTemplates.map(template => (
+                      <TemplateCard
+                        key={template.id}
+                        template={template}
+                        category={category}
+                        onUseTemplate={handleUseTemplate}
+                        onDeleteTemplate={handleDeleteTemplate}
+                        onExportTemplate={handleExportTemplate}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="pl-13 py-8 text-center">
+                    <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground">
+                      No templates in this category yet. Be the first to contribute one!
+                    </p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </TabsContent>
+      </Tabs>
+
+      {/* Save Template Dialog */}
+      {showSaveDialog && currentWizardData && (
+        <SaveTemplateDialog
+          isOpen={showSaveDialog}
+          onClose={() => setShowSaveDialog(false)}
+          onSave={handleSaveCurrentTemplate}
+          categories={categories}
+          existingTags={allTags}
+        />
+      )}
+    </div>
+  );
+}
