@@ -1,7 +1,7 @@
 import { validateComponentTokenUsage, checkHardcodedValues, getDesignTokensByCategory } from './src/utils/design-token-validator.js';
 import fs from 'fs';
 
-console.log('🎯 AgentEngine Design System Testing Demo\n');
+console.log('🎯 asmbli Design System Testing Demo\n');
 
 // Test 1: Validate the test component with violations
 console.log('1. Testing component with hardcoded values:');

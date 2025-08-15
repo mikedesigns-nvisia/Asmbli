@@ -6,7 +6,7 @@ const meta: Meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Comprehensive overview of the AgentEngine design token system.',
+        component: 'Comprehensive overview of the asmbli design token system.',
       },
     },
   },
