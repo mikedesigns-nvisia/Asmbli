@@ -63,7 +63,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Header */}
       <header className="relative z-50 bg-black/20 backdrop-blur-sm border-b border-white/10">
         <div className="max-width-container section-spacing-x">
@@ -94,9 +94,9 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden">
         {/* Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-blue-500/10"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         <div className="relative max-width-container section-spacing-x text-center">
           <div className="space-y-8">
@@ -110,7 +110,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
 
             {/* Main Headline */}
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white via-slate-200 to-blue-200 bg-clip-text text-transparent leading-tight">
                 Build AI Agents
                 <br />
                 <span className="text-4xl md:text-6xl">Like Never Before</span>
@@ -137,7 +137,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                     <Button 
                       type="submit" 
                       disabled={isLoading}
-                      className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white border-0 px-8"
+                      className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white border-0 px-8"
                     >
                       {isLoading ? (
                         <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -166,7 +166,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                   </div>
                   <Button 
                     onClick={onGetStarted}
-                    className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+                    className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600"
                   >
                     Explore Demo
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -263,8 +263,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section id="early-access" className="py-24">
         <div className="max-width-container section-spacing-x">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-3xl blur-xl"></div>
-            <Card className="relative bg-gradient-to-r from-purple-900/50 to-blue-900/50 border-purple-400/50">
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-500/10 to-blue-500/15 rounded-3xl blur-xl"></div>
+            <Card className="relative bg-gradient-to-r from-slate-800/50 to-blue-900/30 border-slate-600/50">
               <CardContent className="p-12 text-center">
                 <div className="space-y-6">
                   <div className="flex items-center justify-center space-x-2">
@@ -312,7 +312,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                         <Button 
                           type="submit" 
                           disabled={isLoading}
-                          className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 px-8"
+                          className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-8"
                         >
                           {isLoading ? 'Joining...' : 'Get Access'}
                         </Button>
@@ -325,7 +325,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                       </div>
                       <Button 
                         onClick={onGetStarted}
-                        className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
+                        className="bg-gradient-to-r from-green-600 to-blue-500 hover:from-green-700 hover:to-blue-600"
                       >
                         Start Building
                         <ArrowRight className="w-4 h-4 ml-2" />
