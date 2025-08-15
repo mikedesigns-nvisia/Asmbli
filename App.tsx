@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import { LandingPage } from './components/LandingPage';
+import { BetaLandingPage } from './components/BetaLandingPage';
 import { Layout } from './components/Layout';
 import { WizardSidebar } from './components/WizardSidebar';
 import { CodePreviewPanel } from './components/CodePreviewPanel';
@@ -622,7 +623,7 @@ function AuthenticatedApp() {
   // Show landing page initially
   if (showLanding) {
     return (
-      <LandingPage 
+      <BetaLandingPage 
         onGetStarted={handleGetStarted} 
         onViewTemplates={handleViewTemplates}
       />
