@@ -244,8 +244,8 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
         <div className="max-width-container section-spacing-x">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-display text-[20px] not-italic" aria-label="Agent Engine Logo">
-             Agent/Engine  
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-display text-[20px] not-italic" aria-label="asmbli Logo">
+             asmbli  
               </span>
             </div>
             <nav className="hidden md:flex items-center space-x-8" role="navigation" aria-label="Main navigation">

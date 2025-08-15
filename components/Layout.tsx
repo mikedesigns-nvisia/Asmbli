@@ -36,7 +36,7 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
           <div className="flex items-center space-x-2 lg:space-x-8">
             <div className="flex items-center space-x-3">
               <div>
-                <h1 className="text-lg font-normal text-navbar-foreground font-display text-[20px] italic no-underline">Agent/Engine</h1>
+                <h1 className="text-lg font-normal text-navbar-foreground font-display text-[20px] italic no-underline">asmbli</h1>
                 <div className="flex items-center space-x-2">
                 </div>
               </div>

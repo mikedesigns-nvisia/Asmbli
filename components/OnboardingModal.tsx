@@ -107,7 +107,7 @@ export function OnboardingModal({ open, onClose }: OnboardingModalProps) {
 
   const welcomeStep = {
     icon: <Bot className="w-12 h-12" />,
-    title: "Welcome to Agent/Engine",
+    title: "Welcome to asmbli",
     subtitle: "Your AI Agent Creation Journey Starts Here",
     description: "The complete toolkit for designing, building, and deploying AI agents that work seamlessly across any platform.",
     details: "In just 6 simple steps, you'll create a powerful AI agent that understands your needs, connects to your tools, and works exactly how you want it to."
