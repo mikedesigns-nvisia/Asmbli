@@ -297,10 +297,20 @@ body::after {
 
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.15);
+    transform: scale(1);
+  }
+  30% {
+    box-shadow: 0 0 16px rgba(99, 102, 241, 0.22);
+    transform: scale(1.005);
   }
   50% {
-    box-shadow: 0 0 40px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.28);
+    transform: scale(1.008);
+  }
+  70% {
+    box-shadow: 0 0 18px rgba(99, 102, 241, 0.25);
+    transform: scale(1.005);
   }
 }
 
@@ -358,7 +368,7 @@ body::after {
 
   /* New cool animation utilities */
   .animate-pulse-glow {
-    animation: pulseGlow 3s ease-in-out infinite;
+    animation: pulseGlow 6s ease-in-out infinite;
   }
 
   .animate-float-up {
