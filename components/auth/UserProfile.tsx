@@ -5,7 +5,7 @@ import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { User, Settings, LogOut, Crown, Zap, Building, ChevronDown, CheckCircle, X, ArrowUp } from 'lucide-react';
+import { User, Settings, LogOut, Crown, Zap, Building, ChevronDown, CheckCircle, X, ArrowUp, Shield } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserRole, ROLE_CONFIGURATIONS } from '../../types/auth';
 
@@ -18,12 +18,14 @@ export function UserProfile() {
   const currentRoleConfig = ROLE_CONFIGURATIONS[user.role];
   
   const roleIcons = {
+    beta: Shield,
     beginner: User,
     power_user: Zap,
     enterprise: Building
   };
 
   const roleColors = {
+    beta: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
     beginner: 'bg-green-500/10 text-green-600 border-green-500/20',
     power_user: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
     enterprise: 'bg-purple-500/10 text-purple-600 border-purple-500/20'

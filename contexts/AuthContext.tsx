@@ -67,6 +67,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Mock user data - in real app, this would come from your backend
       const mockUsers: Record<string, { password: string; user: Omit<User, 'id'> }> = {
+        'beta@example.com': {
+          password: 'password',
+          user: {
+            email: 'beta@example.com',
+            name: 'Beta Tester',
+            role: 'beta',
+            createdAt: new Date(),
+            lastLoginAt: new Date(),
+            subscription: {
+              plan: 'beta',
+              status: 'active',
+              startDate: new Date(),
+              features: []
+            }
+          }
+        },
         'beginner@example.com': {
           password: 'password',
           user: {

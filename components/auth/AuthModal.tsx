@@ -79,12 +79,14 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
   };
 
   const roleIcons = {
+    beta: Shield,
     beginner: User,
     power_user: Zap,
     enterprise: Building
   };
 
   const roleColors = {
+    beta: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
     beginner: 'bg-green-500/10 text-green-600 border-green-500/20',
     power_user: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
     enterprise: 'bg-purple-500/10 text-purple-600 border-purple-500/20'
@@ -177,7 +179,13 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
                 <div className="mt-6 space-y-2">
                   <p className="text-sm text-muted-foreground">Demo accounts:</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    <div className="p-2 bg-orange-50 rounded border border-orange-200">
+                      <div className="font-medium text-orange-700">Beta Tester</div>
+                      <div className="text-orange-600">beta@example.com</div>
+                      <div className="text-orange-600">password</div>
+                      <div className="text-[10px] text-orange-500 mt-1">MVP Wizard</div>
+                    </div>
                     <div className="p-2 bg-green-50 rounded border">
                       <div className="font-medium">Beginner</div>
                       <div className="text-muted-foreground">beginner@example.com</div>

@@ -1,6 +1,22 @@
 import { WizardData } from '../types/wizard';
+import { generateMVPConfigurations } from './mvpConfigGenerator';
 
-export function generateDeploymentConfigs(wizardData: WizardData, promptOutput?: string): Record<string, string> {
+export function generateDeploymentConfigs(wizardData: WizardData | any, promptOutput?: string): Record<string, string> {
+  // Check if this is MVP wizard data (simpler structure)
+  const isMVPData = wizardData && 
+                   (wizardData.selectedRole || wizardData.role) && 
+                   (wizardData.selectedTools || wizardData.tools) && 
+                   !wizardData.extensions; // MVP data doesn't have extensions property
+  
+  if (isMVPData) {
+    console.log('🎯 DETECTED MVP DATA - Routing to MVP configuration generator');
+    console.log('MVP wizard data:', wizardData);
+    const mvpConfigs = generateMVPConfigurations(wizardData);
+    console.log('Generated MVP configs:', Object.keys(mvpConfigs));
+    return mvpConfigs;
+  }
+  
+  // Continue with enterprise configuration generation
   const configs: Record<string, string> = {};
 
   // Check if this is a design-focused agent
@@ -180,12 +196,7 @@ ${enabledExtensions.map(ext => `- **${ext.name}**: ${ext.description}`).join('\n
 1. **Open LM Studio**
 2. **Go to the Program tab** (right sidebar)
 3. **Click "Install" → "Edit mcp.json"** 
-4. **Copy and paste this configuration:**
-
-\`\`\`json
-${generateLMStudioMCPConfig(wizardData)}
-\`\`\`
-
+4. **Copy and paste the configuration** from the generated \`lm-studio-mcp.json\` file
 5. **Save the file** (Ctrl+S / Cmd+S)
 
 ### Step 2: Install MCP Server Dependencies
@@ -344,12 +355,7 @@ ${enabledExtensions.map(ext => {
 ### Step 3: Update Claude Desktop Configuration
 
 1. **Create or edit** \`claude_desktop_config.json\`
-2. **Replace the contents** with this configuration:
-
-\`\`\`json
-${generateClaudeDesktopConfig(wizardData)}
-\`\`\`
-
+2. **Replace the contents** with the configuration from the generated \`claude_desktop_config.json\` file
 3. **Save the file**
 
 ### Step 4: Configure Environment Variables
@@ -491,25 +497,13 @@ Choose your setup method:
 #### Option A: Workspace-Specific (Recommended)
 
 1. **Create \`.vscode/mcp.json\`** in your project root
-2. **Add this configuration:**
-
-\`\`\`json
-${generateVSCodeMCPConfig(wizardData)}
-\`\`\`
+2. **Add the configuration** from the generated \`mcp.json\` file
 
 #### Option B: Global User Settings
 
 1. **Open VS Code Settings** (Ctrl+, / Cmd+,)  
 2. **Search for "mcp"**
-3. **Edit settings.json** and add:
-
-\`\`\`json
-{
-  "github.copilot.chat.mcp": {
-    "servers": ${generateVSCodeMCPConfig(wizardData)}
-  }
-}
-\`\`\`
+3. **Edit settings.json** and add the MCP servers configuration from the generated \`mcp.json\` file
 
 ### Step 3: Configure Environment Variables
 
@@ -652,11 +646,7 @@ ${enabledExtensions.map(ext => {
 #### Option A: Workspace Configuration (Recommended)
 
 1. **Create \`.cursorrules/mcp.json\`** in your project root
-2. **Add this configuration:**
-
-\`\`\`json
-${generateCursorMCPConfig(wizardData)}
-\`\`\`
+2. **Add the configuration** from the generated \`cursor-mcp.json\` file
 
 #### Option B: Global User Settings  
 

@@ -19,3 +19,43 @@ Object.defineProperty(window, 'getComputedStyle', {
     },
   }),
 });
+
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  constructor(callback: ResizeObserverCallback) {}
+  observe(target: Element) {}
+  unobserve(target: Element) {}
+  disconnect() {}
+};
+
+// Mock IntersectionObserver
+global.IntersectionObserver = class IntersectionObserver {
+  constructor(callback: IntersectionObserverCallback) {}
+  observe(target: Element) {}
+  unobserve(target: Element) {}
+  disconnect() {}
+};
+
+// Mock localStorage
+const localStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+};
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock
+});
+
+// Mock URL methods for file download tests
+Object.defineProperty(global.URL, 'createObjectURL', {
+  value: vi.fn(() => 'mock-blob-url'),
+});
+
+Object.defineProperty(global.URL, 'revokeObjectURL', {
+  value: vi.fn(),
+});
+
+// Import vi globally for mocks
+import { vi } from 'vitest';
+(global as any).vi = vi;

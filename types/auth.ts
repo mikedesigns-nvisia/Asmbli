@@ -8,7 +8,7 @@ export interface User {
   subscription?: Subscription;
 }
 
-export type UserRole = 'beginner' | 'power_user' | 'enterprise';
+export type UserRole = 'beginner' | 'power_user' | 'enterprise' | 'beta';
 
 export interface Subscription {
   plan: UserRole;
@@ -61,6 +61,34 @@ export interface RoleFeatures {
 }
 
 export const ROLE_CONFIGURATIONS: Record<UserRole, RoleFeatures> = {
+  beta: {
+    role: 'beta',
+    displayName: 'Beta Tester',
+    description: 'Try our simplified MVP wizard experience',
+    price: 'Free Beta',
+    features: {
+      maxAgents: 5,
+      securityCustomization: false,
+      advancedExtensions: false,
+      customDeployment: false,
+      prioritySupport: false,
+      analyticsAndLogging: false,
+      teamCollaboration: false,
+      apiAccess: false,
+      customDomains: false,
+      ssoIntegration: false,
+      complianceCertifications: false,
+    },
+    restrictions: {
+      hiddenSteps: ['all-enterprise-steps'],
+      disabledFeatures: ['enterprise-wizard'],
+      preConfiguredSettings: {
+        useMVPWizard: true,
+        deploymentTargets: ['lm-studio', 'ollama', 'vs-code'],
+        targetEnvironment: 'development'
+      }
+    }
+  },
   beginner: {
     role: 'beginner',
     displayName: 'Beginner',

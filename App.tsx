@@ -10,6 +10,7 @@ import { TemplatesPage } from './components/templates/TemplatesPage';
 import { TemplateReviewPage } from './components/templates/TemplateReviewPage';
 import { SaveTemplateDialog } from './components/templates/SaveTemplateDialog';
 import { OnboardingModal } from './components/OnboardingModal';
+import { MVPWizard } from './components/wizard/MVPWizard';
 
 import { WizardHeader } from './components/WizardHeader';
 import { FloatingProgressIndicator } from './components/FloatingProgressIndicator';
@@ -584,6 +585,11 @@ function AuthenticatedApp() {
     );
   }
 
+  // Show MVP wizard for beta users (bypass everything else)
+  if (isAuthenticated && user?.role === 'beta') {
+    return <MVPWizard />;
+  }
+
   // Show landing page initially
   if (showLanding) {
     return (
@@ -705,6 +711,7 @@ function AuthenticatedApp() {
           {renderCurrentStep()}
         </div>
       </Layout>
+
 
       {/* Floating Progress Indicator */}
       <FloatingProgressIndicator
