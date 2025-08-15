@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MVPStep2Tools } from '../../../components/wizard/MVPStep2Tools';
 
@@ -14,7 +14,7 @@ describe('MVPStep2Tools Component', () => {
   };
 
   beforeEach(() => {
-    mockOnToolsChange.mockClear();
+    vi.clearAllMocks();
   });
 
   it('should render tool categories and tools', () => {

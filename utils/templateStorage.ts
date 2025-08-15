@@ -130,7 +130,7 @@ export class TemplateStorage {
       
       // Get pre-configured templates based on user role
       // Only power users and enterprise get pro templates
-      const availableAgentTemplates = userRole === 'beginner' ? [] : getAllTemplates(userRole);
+      const availableAgentTemplates = userRole === 'beginner' ? [] : getAllTemplates(userRole === 'beta' ? 'power_user' : userRole);
       const preConfiguredTemplates = availableAgentTemplates.map(template => ({
         ...template,
         // Convert agent template to regular template format

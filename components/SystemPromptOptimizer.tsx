@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Textarea } from './ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Slider } from './ui/slider';
 import { 
   ArrowLeft,
   Wand2,
@@ -18,23 +15,18 @@ import {
   Download,
   RefreshCw,
   Play,
-  Pause,
   BarChart3,
   Target,
   FileText,
-  Settings,
   Lightbulb,
   TrendingUp,
   Eye,
-  MessageSquare,
   Cpu,
   Timer,
   Globe,
   Star,
-  ThumbsUp,
-  ThumbsDown,
-  Bookmark,
-  Share2
+  Shield,
+  Sparkles
 } from 'lucide-react';
 
 interface SystemPromptOptimizerProps {

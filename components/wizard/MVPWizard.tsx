@@ -36,6 +36,7 @@ const STEPS = [
 
 export function MVPWizard() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [wizardData, setWizardData] = useState<MVPWizardData>({
     role: '',
     tools: [],
@@ -52,7 +53,6 @@ export function MVPWizard() {
     }
   });
 
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const updateWizardData = (updates: Partial<MVPWizardData>) => {
     setWizardData(prev => ({ ...prev, ...updates }));
@@ -107,7 +107,6 @@ export function MVPWizard() {
       case 3:
         return (
           <MVPStep3Upload
-            uploadedFiles={wizardData.uploadedFiles}
             extractedConstraints={wizardData.extractedConstraints}
             selectedRole={wizardData.role}
             onFilesChange={(uploadedFiles, extractedConstraints) => 
@@ -164,7 +163,7 @@ export function MVPWizard() {
             
             {/* Step indicators */}
             <div className="flex justify-between items-center">
-              {STEPS.map((step, index) => {
+              {STEPS.map((step) => {
                 const StepIcon = step.icon;
                 const isActive = currentStep === step.id;
                 const isCompleted = currentStep > step.id;

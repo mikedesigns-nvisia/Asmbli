@@ -126,7 +126,6 @@ function generateLMStudioMVPConfig(data: MVPWizardData): string {
   data.tools.forEach((toolId: string) => {
     const mcpPackage = TOOL_TO_MCP_MAPPING[toolId];
     if (mcpPackage) {
-      const serverName = toolId.replace('-', '_');
       
       switch (toolId) {
         // MVP Tool IDs
@@ -246,7 +245,7 @@ function generateLMStudioMVPConfig(data: MVPWizardData): string {
           
         default:
           // Generic tool mapping
-          mcpServers[serverName] = {
+          mcpServers[toolId.replace('-', '_')] = {
             command: 'npx',
             args: ['-y', mcpPackage],
             description: `${toolId.replace('-', ' ')} functionality`
@@ -294,7 +293,6 @@ function createBaseMCPConfig(data: MVPWizardData): any {
   data.tools.forEach((toolId: string) => {
     const mcpPackage = TOOL_TO_MCP_MAPPING[toolId];
     if (mcpPackage) {
-      const serverName = toolId.replace('-', '_');
       
       switch (toolId) {
         case 'git':

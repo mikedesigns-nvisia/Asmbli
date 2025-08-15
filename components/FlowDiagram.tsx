@@ -9,12 +9,12 @@ export function FlowDiagram({ wizardData }: FlowDiagramProps) {
   const enabledExtensions = wizardData.extensions?.filter(s => s.enabled) || [];
   
   const nodes: FlowNode[] = [
-    { id: 'user', label: 'User Input', status: 'active' },
-    ...(wizardData.security?.authMethod ? [{ id: 'auth', label: 'Authentication', status: 'active' }] : []),
-    { id: 'agent', label: wizardData.agentName || 'AI Agent', status: 'active' },
-    ...(enabledExtensions.length > 0 ? [{ id: 'extensions', label: 'Extensions', status: 'active' }] : []),
-    ...(wizardData.security?.auditLogging ? [{ id: 'audit', label: 'Audit Log', status: 'active' }] : []),
-    { id: 'response', label: 'Response', status: 'active' }
+    { id: 'user', label: 'User Input', status: 'active' as const },
+    ...(wizardData.security?.authMethod ? [{ id: 'auth', label: 'Authentication', status: 'active' as const }] : []),
+    { id: 'agent', label: wizardData.agentName || 'AI Agent', status: 'active' as const },
+    ...(enabledExtensions.length > 0 ? [{ id: 'extensions', label: 'Extensions', status: 'active' as const }] : []),
+    ...(wizardData.security?.auditLogging ? [{ id: 'audit', label: 'Audit Log', status: 'active' as const }] : []),
+    { id: 'response', label: 'Response', status: 'active' as const }
   ];
 
   const getStatusColor = (status: FlowNode['status']) => {

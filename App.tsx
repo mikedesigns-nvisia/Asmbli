@@ -188,11 +188,6 @@ function AuthenticatedApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false);
-    // Start the wizard from step 0
-    setCurrentStep(0);
-  };
 
   const handleViewTemplates = () => {
     setShowLanding(false);
@@ -206,11 +201,6 @@ function AuthenticatedApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleBackToLanding = () => {
-    setShowTemplates(false);
-    setShowLanding(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   const handleUseTemplate = (template: AgentTemplate) => {
     setWizardData(template.wizardData);

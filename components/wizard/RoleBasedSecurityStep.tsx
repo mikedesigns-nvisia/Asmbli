@@ -1,6 +1,5 @@
-import React from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Lock, Shield, CheckCircle, ArrowUp } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -15,7 +14,7 @@ interface RoleBasedSecurityStepProps {
 }
 
 export function RoleBasedSecurityStep({ data, onUpdate, onNext, onPrev }: RoleBasedSecurityStepProps) {
-  const { user, hasFeature, updateUserRole } = useAuth();
+  const { user } = useAuth();
 
   if (!user) return null;
 

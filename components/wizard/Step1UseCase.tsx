@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { MessageSquare, PenTool, BarChart3, Code, ArrowRight, Zap, Globe, Package, Cloud, Settings, CheckCircle, AlertCircle, HelpCircle, User, Briefcase, FileText } from 'lucide-react';
+import { useState } from 'react';
+import { MessageSquare, PenTool, BarChart3, Code, ArrowRight, Zap, Globe, Package, Cloud, Settings, CheckCircle, AlertCircle, HelpCircle, User, Briefcase } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -15,7 +15,7 @@ interface RoleBasedExtensionsStepProps {
 }
 
 export function RoleBasedExtensionsStep({ data, onUpdate, onNext, onPrev }: RoleBasedExtensionsStepProps) {
-  const { user, hasFeature, updateUserRole } = useAuth();
+  const { user } = useAuth();
 
   if (!user) return null;
 

@@ -21,14 +21,11 @@ import {
   BarChart3,
   FolderOpen,
   Palette,
-  ChromeIcon,
   Mail,
   Settings,
   Workflow,
   Github,
-  MessageSquare, // Use for Slack
   Box,
-  Cloud, // Use for Dropbox
   HardDrive,
   Terminal,
   Search,
@@ -36,23 +33,16 @@ import {
   Link,
   Eye,
   Bot,
-  Globe, // Use for Chrome
-  Globe, // Use for Firefox (we'll alias this)
-  Globe, // Use for Safari (we'll alias this)
   MessageCircle,
-  Hash,
   Send,
   Building2,
-  Kanban, // Use for Trello
+  Kanban,
   FileSpreadsheet,
   Presentation,
-  Newspaper,
-  MapPin,
   BarChart,
   Sparkles,
   Cpu,
-  Webhook,
-  Kanban
+  Webhook
 } from 'lucide-react';
 
 export const platformColors = {

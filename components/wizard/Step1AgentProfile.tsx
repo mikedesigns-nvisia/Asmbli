@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -6,7 +6,7 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { Bot, Settings, Target, Zap, ArrowRight, User, Briefcase, CheckCircle, HelpCircle, MessageSquare, PenTool, BarChart3, Code, Package, Cloud, Globe, AlertCircle, Palette, Search } from 'lucide-react';
+import { Settings, Zap, ArrowRight, User, Briefcase, CheckCircle, HelpCircle, MessageSquare, PenTool, BarChart3, Code, Package, Cloud, Globe, AlertCircle, Palette, Search } from 'lucide-react';
 import { SavedTemplatesWidget } from '../templates/SavedTemplatesWidget';
 import { AgentTemplate } from '../../types/templates';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';

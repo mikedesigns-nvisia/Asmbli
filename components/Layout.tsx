@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import { Building2, User, Settings, Download, Play, ChevronDown, Search, Menu, X } from 'lucide-react';
+import { useState } from 'react';
+import { Settings, Download, Search, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Badge } from './ui/badge';
 import { UserProfile } from './auth/UserProfile';
 import { ThemeToggle } from './ui/theme-toggle';
 

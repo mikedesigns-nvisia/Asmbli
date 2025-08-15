@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -18,7 +18,6 @@ interface UploadedFile {
 }
 
 interface MVPStep3UploadProps {
-  uploadedFiles: File[];
   extractedConstraints: string[];
   selectedRole?: string;
   onFilesChange: (files: File[], constraints: string[]) => void;
@@ -28,14 +27,6 @@ const SUPPORTED_FILE_TYPES = ['.pdf', '.md', '.txt', '.docx', '.json', '.js', '.
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_FILES = 5;
 
-const EXAMPLE_CONSTRAINTS = [
-  "Always use double quotes for strings in JavaScript",
-  "Follow APA citation format for all references", 
-  "Maintain accessible color contrast ratios (4.5:1 minimum)",
-  "Use TypeScript interfaces instead of type aliases",
-  "Include alt text for all images in content",
-  "Follow company brand voice: professional but approachable"
-];
 
 // Role-specific requirement types
 const ROLE_REQUIREMENT_TYPES = {
@@ -110,7 +101,7 @@ const ROLE_REQUIREMENT_TYPES = {
   ]
 };
 
-export function MVPStep3Upload({ uploadedFiles, extractedConstraints, selectedRole, onFilesChange }: MVPStep3UploadProps) {
+export function MVPStep3Upload({ extractedConstraints, selectedRole, onFilesChange }: MVPStep3UploadProps) {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const [allExtractedConstraints, setAllExtractedConstraints] = useState<string[]>(extractedConstraints);
@@ -119,13 +110,6 @@ export function MVPStep3Upload({ uploadedFiles, extractedConstraints, selectedRo
   // Get role-specific requirement types
   const roleRequirements = selectedRole ? ROLE_REQUIREMENT_TYPES[selectedRole as keyof typeof ROLE_REQUIREMENT_TYPES] || [] : [];
 
-  const parseSize = (sizeStr: string): number => {
-    const units = { KB: 1024, MB: 1024 * 1024, GB: 1024 * 1024 * 1024 };
-    const match = sizeStr.match(/^(\d+)(KB|MB|GB)$/i);
-    if (!match) return MAX_FILE_SIZE;
-    const [, size, unit] = match;
-    return parseInt(size) * units[unit.toUpperCase() as keyof typeof units];
-  };
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -191,7 +175,7 @@ export function MVPStep3Upload({ uploadedFiles, extractedConstraints, selectedRo
           clearInterval(interval);
           
           // Extract constraints when upload completes
-          const originalFile = new File([], file.name, { type: file.type });
+          const originalFile = new File([''], file.name);
           const constraints = extractConstraintsFromFile(originalFile);
           
           setFiles(prev => prev.map(f => 
@@ -205,7 +189,7 @@ export function MVPStep3Upload({ uploadedFiles, extractedConstraints, selectedRo
           setAllExtractedConstraints(newConstraints);
           
           // Convert UploadedFile back to File for parent component
-          const fileList = files.filter(f => f.status === 'complete').map(f => new File([], f.name, { type: f.type }));
+          const fileList = files.filter(f => f.status === 'complete').map(f => new File([''], f.name));
           onFilesChange(fileList, newConstraints);
           
           resolve();
@@ -234,7 +218,7 @@ export function MVPStep3Upload({ uploadedFiles, extractedConstraints, selectedRo
         type: file.type,
         status: error ? 'error' : 'uploading',
         progress: 0,
-        error
+        error: error || undefined
       };
       
       newFiles.push(uploadedFile);
@@ -301,13 +285,13 @@ export function MVPStep3Upload({ uploadedFiles, extractedConstraints, selectedRo
       setAllExtractedConstraints(remainingConstraints);
       
       // Update parent
-      const fileList = updatedFiles.filter(f => f.status === 'complete').map(f => new File([], f.name, { type: f.type }));
+      const fileList = updatedFiles.filter(f => f.status === 'complete').map(f => new File([''], f.name));
       onFilesChange(fileList, remainingConstraints);
     }
   };
 
   const getFileIcon = (file: UploadedFile) => {
-    const ext = file.name.split('.').pop()?.toLowerCase();
+    const ext = file.name.split('.').pop()?.toLowerCase() || '';
     const codeExts = ['json', 'js', 'ts', 'yml', 'yaml'];
     
     if (codeExts.includes(ext || '') || file.name.includes('eslint')) {

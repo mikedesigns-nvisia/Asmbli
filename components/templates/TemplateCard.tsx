@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -10,12 +10,9 @@ import {
   Calendar, 
   TrendingUp, 
   Star,
-  Clock,
   User,
-  Eye,
   Heart,
   Share2,
-  Award,
   Zap,
   Shield,
   CheckCircle,
@@ -42,7 +39,6 @@ export function TemplateCard({
   onExportTemplate
 }: TemplateCardProps) {
   const [isLiked, setIsLiked] = useState(false);
-  const [viewCount] = useState(Math.floor(Math.random() * 500) + 50);
   const [likes] = useState(Math.floor(Math.random() * 100) + 10);
 
   const formatDate = (dateString: string) => {

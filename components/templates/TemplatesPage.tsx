@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
@@ -12,7 +12,6 @@ import {
   Upload, 
   Download, 
   Sparkles,
-  FileText,
   Grid3X3,
   List,
   ArrowLeft,
@@ -24,16 +23,16 @@ import {
   Library,
   Users,
   Clock,
-  Eye,
   Heart,
   Award,
   Gift,
   Rocket,
   BookOpen,
-  Share2,
   GraduationCap,
   CheckCircle,
-  Shield
+  Shield,
+  Eye,
+  Flame
 } from 'lucide-react';
 import { AgentTemplate, TemplateCategory } from '../../types/templates';
 import { WizardData } from '../../types/wizard';
@@ -113,9 +112,7 @@ export function TemplatesPage({
   currentWizardData,
   onUseTemplate,
   onBackToWizard,
-  onShowSaveDialog,
-  onShowTemplateReview,
-  onDeployTemplate
+  onShowTemplateReview
 }: TemplatesPageProps) {
   const { user } = useAuth();
   const userRole = user?.role || 'beginner';

@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Alert, AlertDescription } from '../ui/alert';
-import { Download, CheckCircle, ExternalLink, Brain, Monitor, Code, Rocket, Clock, Shield, Heart, FileText, Zap } from 'lucide-react';
+import { Download, CheckCircle, ExternalLink, Brain, Monitor, Code, Rocket, Clock, Heart, FileText, Zap } from 'lucide-react';
 import { generateDeploymentConfigs } from '../../utils/deploymentGenerator';
 
 

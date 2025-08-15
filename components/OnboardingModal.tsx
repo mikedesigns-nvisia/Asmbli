@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
@@ -21,8 +21,6 @@ import {
   Target,
   Lightbulb,
   Heart,
-  Zap,
-  CheckCircle
 } from 'lucide-react';
 
 interface OnboardingModalProps {

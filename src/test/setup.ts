@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 
 // Mock CSS custom properties for testing
@@ -22,17 +23,17 @@ Object.defineProperty(window, 'getComputedStyle', {
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
-  constructor(callback: ResizeObserverCallback) {}
-  observe(target: Element) {}
-  unobserve(target: Element) {}
+  constructor(_callback: ResizeObserverCallback) {}
+  observe(_target: Element) {}
+  unobserve(_target: Element) {}
   disconnect() {}
 };
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor(callback: IntersectionObserverCallback) {}
-  observe(target: Element) {}
-  unobserve(target: Element) {}
+(global as any).IntersectionObserver = class IntersectionObserver {
+  constructor(_callback: IntersectionObserverCallback) {}
+  observe(_target: Element) {}
+  unobserve(_target: Element) {}
   disconnect() {}
 };
 
@@ -57,5 +58,4 @@ Object.defineProperty(global.URL, 'revokeObjectURL', {
 });
 
 // Import vi globally for mocks
-import { vi } from 'vitest';
 (global as any).vi = vi;

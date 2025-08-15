@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Sparkles, Copy, Download, Share, RotateCcw, Check } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';

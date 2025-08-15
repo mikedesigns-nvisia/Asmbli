@@ -12,7 +12,7 @@ interface SelectionField {
   label: string;
   value: string | null;
   icon?: React.ComponentType<{ className?: string }>;
-  variant?: 'default' | 'secondary' | 'success' | 'warning';
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'dark' | 'chip';
 }
 
 export function WizardSelectionTracker({ wizardData, currentStep }: WizardSelectionTrackerProps) {
@@ -45,7 +45,7 @@ export function WizardSelectionTracker({ wizardData, currentStep }: WizardSelect
       fields.push({
         label: 'Environment',
         value: wizardData.targetEnvironment.charAt(0).toUpperCase() + wizardData.targetEnvironment.slice(1),
-        variant: wizardData.targetEnvironment === 'production' ? 'success' : 'secondary'
+        variant: wizardData.targetEnvironment === 'production' ? 'default' : 'secondary'
       });
     }
 
@@ -75,7 +75,7 @@ export function WizardSelectionTracker({ wizardData, currentStep }: WizardSelect
         label: 'Security',
         value: authMethod,
         icon: Shield,
-        variant: authMethod === 'OAUTH' || authMethod === 'MTLS' ? 'success' : 'warning'
+        variant: authMethod === 'OAUTH' || authMethod === 'MTLS' ? 'default' : 'destructive'
       });
     }
 
@@ -113,7 +113,7 @@ export function WizardSelectionTracker({ wizardData, currentStep }: WizardSelect
         label: 'Tests',
         value: wizardData.testResults.overallStatus === 'passed' ? 'Passed' : 'Failed',
         icon: TestTube,
-        variant: wizardData.testResults.overallStatus === 'passed' ? 'success' : 'warning'
+        variant: wizardData.testResults.overallStatus === 'passed' ? 'default' : 'destructive'
       });
     }
 
@@ -129,7 +129,7 @@ export function WizardSelectionTracker({ wizardData, currentStep }: WizardSelect
         label: 'Deploy',
         value: formatLabels[wizardData.deploymentFormat as keyof typeof formatLabels] || wizardData.deploymentFormat.toUpperCase(),
         icon: Rocket,
-        variant: 'success'
+        variant: 'default'
       });
     }
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { CheckCircle, Search, Plus, GitBranch, Figma, Database, Globe, FileText, MessageSquare, Calendar, Folder, Code, Palette, GraduationCap } from 'lucide-react';
+import { CheckCircle, Search, Plus, GitBranch, Figma, Database, Globe, FileText, Folder, Code, Palette, GraduationCap } from 'lucide-react';
 
 interface MVPStep2ToolsProps {
   selectedRole: string;

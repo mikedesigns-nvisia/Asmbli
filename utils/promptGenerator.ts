@@ -281,7 +281,7 @@ export function generatePrompt(wizardData: WizardData): string {
   if (wizardData.extensions?.filter(s => s.enabled).length > 0) {
     prompt += `## CAPABILITIES & TOOLS\nYou have access to these integrated capabilities:\n\n`;
     wizardData.extensions.filter(s => s.enabled).forEach(extension => {
-      const platforms = extension.selectedPlatforms?.length > 0 
+      const platforms = (extension.selectedPlatforms && extension.selectedPlatforms.length > 0) 
         ? extension.selectedPlatforms.join('/').toUpperCase()
         : extension.connectionType?.toUpperCase() || 'API';
       

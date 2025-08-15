@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Shield, FileText, Database, User, Clock, Tag, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';

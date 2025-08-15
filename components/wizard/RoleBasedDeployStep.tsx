@@ -1,7 +1,5 @@
-import React from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
 import { Rocket, CheckCircle, ArrowUp, Download, Monitor, Zap } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { WizardData } from '../../types/wizard';
@@ -19,7 +17,7 @@ interface RoleBasedDeployStepProps {
 }
 
 export function RoleBasedDeployStep(props: RoleBasedDeployStepProps) {
-  const { user, hasFeature, updateUserRole } = useAuth();
+  const { user } = useAuth();
 
   if (!user) return null;
 

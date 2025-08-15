@@ -1,12 +1,23 @@
 import { WizardData } from '../types/wizard';
 import { generateMVPConfigurations } from './mvpConfigGenerator';
 
-export function generateDeploymentConfigs(wizardData: WizardData | any, promptOutput?: string): Record<string, string> {
+// Type for MVP wizard data
+interface MVPWizardData {
+  selectedRole?: string;
+  role?: string;
+  selectedTools?: string[];
+  tools?: string[];
+  extractedConstraints?: string[];
+  style?: any;
+  deployment?: any;
+}
+
+export function generateDeploymentConfigs(wizardData: WizardData | MVPWizardData, promptOutput?: string): Record<string, string> {
   // Check if this is MVP wizard data (simpler structure)
   const isMVPData = wizardData && 
-                   (wizardData.selectedRole || wizardData.role) && 
-                   (wizardData.selectedTools || wizardData.tools) && 
-                   !wizardData.extensions; // MVP data doesn't have extensions property
+                   (('selectedRole' in wizardData && wizardData.selectedRole) || ('role' in wizardData && wizardData.role)) && 
+                   (('selectedTools' in wizardData && wizardData.selectedTools) || ('tools' in wizardData && wizardData.tools)) && 
+                   !('extensions' in wizardData); // MVP data doesn't have extensions property
   
   if (isMVPData) {
     console.log('🎯 DETECTED MVP DATA - Routing to MVP configuration generator');

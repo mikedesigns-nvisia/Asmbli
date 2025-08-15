@@ -22,7 +22,7 @@ interface ScrollBarProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: "vertical" | "horizontal";
 }
 
-function ScrollBar({ className, orientation = "vertical", ...props }: ScrollBarProps) {
+function ScrollBar({}: ScrollBarProps) {
   // Simple implementation - the scrollbar styling is handled by CSS classes above
   return null;
 }

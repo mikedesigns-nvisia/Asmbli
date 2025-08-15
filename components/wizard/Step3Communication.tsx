@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Briefcase, Heart, Wrench, Palette, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Slider } from '../ui/slider';

@@ -1,18 +1,18 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MVPStep1Role } from '../../../components/wizard/MVPStep1Role';
 
 describe('MVPStep1Role Component', () => {
   const user = userEvent.setup();
-  const mockOnRoleChange = vi.fn();
+  const mockOnRoleSelect = vi.fn();
 
   beforeEach(() => {
-    mockOnRoleChange.mockClear();
+    vi.clearAllMocks();
   });
 
   it('should render all three role options', () => {
-    render(<MVPStep1Role selectedRole="" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="" onRoleSelect={mockOnRoleSelect} />);
     
     expect(screen.getByText('Developer')).toBeInTheDocument();
     expect(screen.getByText('Creator')).toBeInTheDocument();
@@ -20,24 +20,24 @@ describe('MVPStep1Role Component', () => {
   });
 
   it('should show role descriptions', () => {
-    render(<MVPStep1Role selectedRole="" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="" onRoleSelect={mockOnRoleSelect} />);
     
     expect(screen.getByText('Build apps, manage code, automate workflows')).toBeInTheDocument();
     expect(screen.getByText('Design content, manage projects, create media')).toBeInTheDocument();
     expect(screen.getByText('Analyze data, write papers, manage references')).toBeInTheDocument();
   });
 
-  it('should call onRoleChange when a role is selected', async () => {
-    render(<MVPStep1Role selectedRole="" onRoleChange={mockOnRoleChange} />);
+  it('should call onRoleSelect when a role is selected', async () => {
+    render(<MVPStep1Role selectedRole="" onRoleSelect={mockOnRoleSelect} />);
     
     const developerCard = screen.getByText('Developer').closest('.cursor-pointer');
     await user.click(developerCard!);
     
-    expect(mockOnRoleChange).toHaveBeenCalledWith('developer');
+    expect(mockOnRoleSelect).toHaveBeenCalledWith('developer');
   });
 
   it('should highlight selected role', () => {
-    render(<MVPStep1Role selectedRole="creator" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="creator" onRoleSelect={mockOnRoleSelect} />);
     
     const creatorCard = screen.getByText('Creator').closest('.cursor-pointer');
     expect(creatorCard).toHaveClass('border-primary');
@@ -45,7 +45,7 @@ describe('MVPStep1Role Component', () => {
   });
 
   it('should show checkmark for selected role', () => {
-    render(<MVPStep1Role selectedRole="developer" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="developer" onRoleSelect={mockOnRoleSelect} />);
     
     const developerCard = screen.getByText('Developer').closest('.cursor-pointer');
     const checkmark = developerCard?.querySelector('.text-primary');
@@ -53,7 +53,7 @@ describe('MVPStep1Role Component', () => {
   });
 
   it('should display role-specific tool recommendations', () => {
-    render(<MVPStep1Role selectedRole="developer" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="developer" onRoleSelect={mockOnRoleSelect} />);
     
     expect(screen.getByText('🔧 Code management & Git')).toBeInTheDocument();
     expect(screen.getByText('🚀 API & deployment tools')).toBeInTheDocument();
@@ -61,19 +61,19 @@ describe('MVPStep1Role Component', () => {
   });
 
   it('should show different recommendations for each role', () => {
-    const { rerender } = render(<MVPStep1Role selectedRole="creator" onRoleChange={mockOnRoleChange} />);
+    const { rerender } = render(<MVPStep1Role selectedRole="creator" onRoleSelect={mockOnRoleSelect} />);
     
     expect(screen.getByText('🎨 Design & visual tools')).toBeInTheDocument();
     expect(screen.getByText('📝 Content & writing')).toBeInTheDocument();
     
-    rerender(<MVPStep1Role selectedRole="researcher" onRoleChange={mockOnRoleChange} />);
+    rerender(<MVPStep1Role selectedRole="researcher" onRoleSelect={mockOnRoleSelect} />);
     
     expect(screen.getByText('📚 Research & references')).toBeInTheDocument();
     expect(screen.getByText('📊 Data analysis')).toBeInTheDocument();
   });
 
   it('should show usage statistics for each role', () => {
-    render(<MVPStep1Role selectedRole="" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="" onRoleSelect={mockOnRoleSelect} />);
     
     expect(screen.getByText('45% of users')).toBeInTheDocument(); // Developer
     expect(screen.getByText('30% of users')).toBeInTheDocument(); // Creator  
@@ -81,7 +81,7 @@ describe('MVPStep1Role Component', () => {
   });
 
   it('should handle keyboard navigation', async () => {
-    render(<MVPStep1Role selectedRole="" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="" onRoleSelect={mockOnRoleSelect} />);
     
     const developerCard = screen.getByText('Developer').closest('.cursor-pointer');
     
@@ -89,11 +89,11 @@ describe('MVPStep1Role Component', () => {
     developerCard?.focus();
     await user.keyboard('{Enter}');
     
-    expect(mockOnRoleChange).toHaveBeenCalledWith('developer');
+    expect(mockOnRoleSelect).toHaveBeenCalledWith('developer');
   });
 
   it('should show correct icons for each role', () => {
-    render(<MVPStep1Role selectedRole="" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="" onRoleSelect={mockOnRoleSelect} />);
     
     // Icons are rendered through Lucide components, check for their presence
     const roleCards = screen.getAllByText(/Developer|Creator|Researcher/);
@@ -101,7 +101,7 @@ describe('MVPStep1Role Component', () => {
   });
 
   it('should handle hover effects', async () => {
-    render(<MVPStep1Role selectedRole="" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="" onRoleSelect={mockOnRoleSelect} />);
     
     const developerCard = screen.getByText('Developer').closest('.cursor-pointer');
     
@@ -111,13 +111,13 @@ describe('MVPStep1Role Component', () => {
   });
 
   it('should show role benefits clearly', () => {
-    render(<MVPStep1Role selectedRole="developer" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="developer" onRoleSelect={mockOnRoleSelect} />);
     
     expect(screen.getByText('Perfect for building and maintaining applications')).toBeInTheDocument();
   });
 
   it('should allow changing selected role', async () => {
-    const { rerender } = render(<MVPStep1Role selectedRole="developer" onRoleChange={mockOnRoleChange} />);
+    const { rerender } = render(<MVPStep1Role selectedRole="developer" onRoleSelect={mockOnRoleSelect} />);
     
     // Creator should not be selected initially
     let creatorCard = screen.getByText('Creator').closest('.cursor-pointer');
@@ -125,23 +125,23 @@ describe('MVPStep1Role Component', () => {
     
     // Click creator
     await user.click(creatorCard!);
-    expect(mockOnRoleChange).toHaveBeenCalledWith('creator');
+    expect(mockOnRoleSelect).toHaveBeenCalledWith('creator');
     
     // Re-render with creator selected
-    rerender(<MVPStep1Role selectedRole="creator" onRoleChange={mockOnRoleChange} />);
+    rerender(<MVPStep1Role selectedRole="creator" onRoleSelect={mockOnRoleSelect} />);
     
     creatorCard = screen.getByText('Creator').closest('.cursor-pointer');
     expect(creatorCard).toHaveClass('border-primary');
   });
 
   it('should display helpful role selection tips', () => {
-    render(<MVPStep1Role selectedRole="" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="" onRoleSelect={mockOnRoleSelect} />);
     
     expect(screen.getByText('💡 Choose the role that best matches your primary use case. You can always adjust tool selections in the next step.')).toBeInTheDocument();
   });
 
   it('should show time commitment for each role setup', () => {
-    render(<MVPStep1Role selectedRole="developer" onRoleChange={mockOnRoleChange} />);
+    render(<MVPStep1Role selectedRole="developer" onRoleSelect={mockOnRoleSelect} />);
     
     expect(screen.getByText('~15 min')).toBeInTheDocument();
   });

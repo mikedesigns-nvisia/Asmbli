@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { extensionsLibrary } from '../data/extensions-library';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
@@ -12,41 +12,24 @@ import {
   Shield, 
   Zap, 
   Code2, 
-  Users, 
   Globe, 
   CheckCircle, 
   Star,
   Library,
-  Clock,
-  Download,
-  TrendingUp,
-  Crown,
-  Gift,
   Rocket,
-  Eye,
-  Heart,
-  Plus,
   Building2,
-  Layers,
-  Network,
-  BookOpen,
   Share2,
   Lightbulb,
-  GraduationCap,
   Brain,
   Workflow,
   MessageSquare,
   Database,
   Bot,
-  Cpu,
-  GitBranch,
   Plug,
   Settings,
-  ChevronRight,
   Terminal,
   Cloud,
   FileText,
-  Search,
   Target,
   Cog,
   BookmarkPlus
@@ -58,7 +41,7 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps) {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showTemplatesPreview, setShowTemplatesPreview] = useState(false);
   const features = [

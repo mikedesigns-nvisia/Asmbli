@@ -1,7 +1,6 @@
-import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { CheckCircle, Code, Palette, GraduationCap, Users, FileText, Database } from 'lucide-react';
+import { CheckCircle, Code, Palette, GraduationCap, FileText } from 'lucide-react';
 
 interface MVPStep1RoleProps {
   selectedRole: string;

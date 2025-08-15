@@ -67,7 +67,7 @@ export function DesignUpload({
   };
 
   const simulateUpload = (file: UploadedFile): Promise<void> => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let progress = 0;
       const interval = setInterval(() => {
         progress += Math.random() * 20;
@@ -105,7 +105,7 @@ export function DesignUpload({
         type: file.type,
         status: error ? 'error' : 'uploading',
         progress: 0,
-        error
+        error: error || undefined
       };
       
       newFiles.push(uploadedFile);

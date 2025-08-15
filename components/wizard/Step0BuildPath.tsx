@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { ArrowRight, Settings, HelpCircle, CheckCircle, Zap, Globe, Package, Cloud, AlertCircle, MessageSquare, PenTool, BarChart3, Code, Palette, Search, Sparkles, User, Briefcase, Upload, Star } from 'lucide-react';
+import { ArrowRight, Settings, HelpCircle, CheckCircle, Zap, Globe, Package, Cloud, AlertCircle, MessageSquare, PenTool, BarChart3, Code, Palette, Search, Sparkles, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { AgentTemplate, findMatchingTemplate, BEGINNER_AGENT_TEMPLATES } from '../../types/agent-templates';
 

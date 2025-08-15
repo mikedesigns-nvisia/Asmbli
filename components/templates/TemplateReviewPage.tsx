@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -22,9 +22,9 @@ import {
   Globe,
   Lock,
   Upload,
-  Eye,
   Copy,
-  Check
+  Check,
+  Eye
 } from 'lucide-react';
 import { AgentTemplate } from '../../types/agent-templates';
 import { WizardData } from '../../types/wizard';
@@ -45,11 +45,19 @@ export function TemplateReviewPage({
   onCustomize 
 }: TemplateReviewPageProps) {
   const [wizardData, setWizardData] = useState<WizardData | null>(null);
-  const [promptOutput, setPromptOutput] = useState('');
   const [deploymentConfigs, setDeploymentConfigs] = useState<Record<string, string>>({});
   const [isGenerating, setIsGenerating] = useState(false);
   const [showDeploymentPreview, setShowDeploymentPreview] = useState(false);
   const [copiedConfig, setCopiedConfig] = useState<string | null>(null);
+  const [promptOutput, setPromptOutput] = useState<string>('');
+
+  // Generate and display prompt output when wizardData changes
+  useEffect(() => {
+    if (wizardData) {
+      const prompt = generatePrompt(wizardData);
+      setPromptOutput(prompt);
+    }
+  }, [wizardData]);
 
   // Convert agent template to wizard data
   useEffect(() => {
@@ -486,8 +494,13 @@ export function TemplateReviewPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue={Object.keys(deploymentConfigs)[0]} className="w-full">
-              <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${Math.min(Object.keys(deploymentConfigs).length, 4)}, 1fr)` }}>
+            <Tabs defaultValue={promptOutput ? "prompt" : Object.keys(deploymentConfigs)[0]} className="w-full">
+              <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${Math.min(Object.keys(deploymentConfigs).length + (promptOutput ? 1 : 0), 4)}, 1fr)` }}>
+                {promptOutput && (
+                  <TabsTrigger value="prompt" className="text-xs">
+                    Generated Prompt
+                  </TabsTrigger>
+                )}
                 {Object.keys(deploymentConfigs).map(configKey => {
                   // Extract display name from config key
                   const displayName = configKey.includes('docker') ? 'Docker' :
@@ -508,6 +521,30 @@ export function TemplateReviewPage({
                   );
                 })}
               </TabsList>
+              
+              {promptOutput && (
+                <TabsContent value="prompt" className="mt-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">Generated Agent Prompt</span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigator.clipboard.writeText(promptOutput)}
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy
+                      </Button>
+                    </div>
+                    <pre className="bg-muted p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
+                      {promptOutput}
+                    </pre>
+                  </div>
+                </TabsContent>
+              )}
               
               {Object.entries(deploymentConfigs).map(([configKey, configContent]) => (
                 <TabsContent key={configKey} value={configKey} className="mt-4">

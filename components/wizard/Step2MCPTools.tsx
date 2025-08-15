@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Folder, Globe, Database, Plug, ArrowRight, ArrowLeft, Info } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
