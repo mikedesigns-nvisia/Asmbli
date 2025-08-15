@@ -175,21 +175,6 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               )}
             </div>
 
-            {/* Social Proof */}
-            <div className="flex justify-center items-center space-x-8 text-slate-400">
-              <div className="flex items-center space-x-2">
-                <Users className="w-5 h-5" />
-                <span className="text-sm">2,500+ developers</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Star className="w-5 h-5 text-yellow-400" />
-                <span className="text-sm">4.9/5 rating</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Crown className="w-5 h-5 text-purple-400" />
-                <span className="text-sm">Enterprise ready</span>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -368,7 +353,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             </div>
             
             <div className="text-sm text-slate-400">
-              © 2024 asmbli. All rights reserved.
+              © 2025 asmbli. All rights reserved.
             </div>
           </div>
         </div>
