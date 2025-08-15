@@ -13,6 +13,9 @@ import {
   Clock,
   Mail,
   Github,
+  Palette,
+  Search,
+  FileText,
   Twitter,
   Linkedin
 } from 'lucide-react';
@@ -111,13 +114,13 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white via-slate-200 to-blue-200 bg-clip-text text-transparent leading-tight">
-                Create a Dynamic Agent
+                Create AI Agents That
                 <br />
-                <span className="text-4xl md:text-6xl">for Use on any LLM</span>
+                <span className="text-4xl md:text-6xl">Actually Understand You</span>
               </h1>
               <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Works with ChatGPT, Claude, LM Studio, Ollama, and more. 
-                Drag, drop, deploy. From "I have an idea" to "holy wow, it works!" in minutes 🚀
+                Build personalized AI agents that work exactly how you do. 
+                Works with Claude Desktop, LM Studio, Ollama, and more 🚀
               </p>
             </div>
 
@@ -175,6 +178,50 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               )}
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* Use Cases Section */}
+      <section className="py-16 bg-black/10">
+        <div className="max-width-container section-spacing-x">
+          <div className="text-center space-y-4 mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold">Build Agents For Any Workflow</h2>
+            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+              From creative work to deep research, create specialized agents that understand your unique needs
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
+                <Palette className="w-6 h-6 text-blue-400" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Design Assistant</h3>
+              <p className="text-slate-300 text-sm">
+                Create agents that understand your design system, generate consistent mockups, and provide design feedback
+              </p>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
+                <Search className="w-6 h-6 text-green-400" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Research Agent</h3>
+              <p className="text-slate-300 text-sm">
+                Build agents that dive deep into topics, synthesize information, and deliver comprehensive research reports
+              </p>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+              <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
+                <FileText className="w-6 h-6 text-purple-400" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Content Creator</h3>
+              <p className="text-slate-300 text-sm">
+                Deploy agents that match your voice, understand your audience, and create consistent, on-brand content
+              </p>
+            </div>
           </div>
         </div>
       </section>
