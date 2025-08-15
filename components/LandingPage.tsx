@@ -3,6 +3,7 @@ import { extensionsLibrary } from '../data/extensions-library';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
+import { CoolBackground } from './ui/CoolBackground';
 import { useAuth } from '../contexts/AuthContext';
 import { AuthModal } from './auth/AuthModal';
 import { TemplatesPreviewModal } from './modals/TemplatesPreviewModal';
@@ -193,6 +194,8 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Cool animated background */}
+      <CoolBackground intensity="medium" interactive={true} />
       {/* Background Depth Layers */}
       <div className="fixed inset-0 z-0">
         {/* Main gradient background */}
@@ -254,11 +257,11 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
               <a href="#use-cases" className="text-muted-foreground hover:text-foreground transition-colors accessible-button" aria-label="Navigate to Use Cases section">Use Cases</a>
               <a href="#templates" className="text-muted-foreground hover:text-foreground transition-colors accessible-button" aria-label="Navigate to Templates section">Templates</a>
               {isAuthenticated ? (
-                <Button onClick={onGetStarted} className="bg-primary hover:bg-primary/90 accessible-button" aria-label="Go to Agent Builder">
+                <Button onClick={onGetStarted} className="bg-primary hover:bg-primary/90 accessible-button card-hover-glow animate-pulse-glow" aria-label="Go to Agent Builder">
                   Go to Builder
                 </Button>
               ) : (
-                <Button onClick={() => setShowAuthModal(true)} className="bg-primary hover:bg-primary/90 accessible-button" aria-label="Sign In to Get Started">
+                <Button onClick={() => setShowAuthModal(true)} className="bg-primary hover:bg-primary/90 accessible-button card-hover-glow animate-pulse-glow" aria-label="Sign In to Get Started">
                   Sign In
                 </Button>
               )}
@@ -275,7 +278,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
               <Badge className="bg-primary/10 text-primary border-primary/30 px-4 py-2 text-sm" role="status" aria-label="Product status: Early Access and Enterprise-Ready">
                 Early Access • Enterprise-Ready
               </Badge>
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tight font-display leading-[1.3]">
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tight font-display leading-[1.3] gradient-text">
                 Build Powerful AI Agents
                 <span className="bg-gradient-to-r from-primary via-purple-400 to-pink-400 bg-clip-text text-transparent block mt-4">
                   For Any Platform
@@ -291,7 +294,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
               <Button 
                 onClick={isAuthenticated ? onGetStarted : () => setShowAuthModal(true)}
                 size="lg" 
-                className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 h-auto group accessible-button"
+                className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 h-auto group accessible-button card-hover-glow animate-pulse-glow interactive-bg"
                 aria-label={isAuthenticated ? "Start building your AI agent - Launch the agent builder wizard" : "Sign in to start building AI agents"}
               >
                 <Rocket className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" aria-hidden="true" />

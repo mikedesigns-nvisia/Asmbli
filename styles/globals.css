@@ -44,10 +44,64 @@ html {
 body {
   @apply bg-background text-foreground antialiased;
   font-family: var(--font-sans);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Cool animated background effects */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 60% 40%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(245, 101, 101, 0.08) 0%, transparent 45%);
+  background-size: 100% 100%, 120% 120%, 80% 80%, 150% 150%;
+  animation: backgroundShift 20s ease-in-out infinite;
+}
+
+/* Light mode background */
+.light body::before,
+[data-theme="light"] body::before {
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 60% 40%, rgba(16, 185, 129, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 40% 80%, rgba(245, 101, 101, 0.05) 0%, transparent 40%);
+  background-size: 100% 100%, 120% 120%, 80% 80%, 150% 150%;
+}
+
+/* Moving particles overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
   background-image: 
-    radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-  background-attachment: fixed;
+    radial-gradient(circle at 10% 60%, rgba(99, 102, 241, 0.03) 0%, transparent 30%),
+    radial-gradient(circle at 90% 30%, rgba(139, 92, 246, 0.03) 0%, transparent 30%),
+    radial-gradient(circle at 30% 90%, rgba(16, 185, 129, 0.025) 0%, transparent 25%),
+    radial-gradient(circle at 70% 10%, rgba(245, 101, 101, 0.02) 0%, transparent 25%);
+  background-size: 150% 150%, 180% 180%, 120% 120%, 200% 200%;
+  animation: particlesFloat 25s ease-in-out infinite reverse;
+}
+
+.light body::after,
+[data-theme="light"] body::after {
+  background-image: 
+    radial-gradient(circle at 10% 60%, rgba(99, 102, 241, 0.02) 0%, transparent 25%),
+    radial-gradient(circle at 90% 30%, rgba(139, 92, 246, 0.02) 0%, transparent 25%),
+    radial-gradient(circle at 30% 90%, rgba(16, 185, 129, 0.015) 0%, transparent 20%),
+    radial-gradient(circle at 70% 10%, rgba(245, 101, 101, 0.015) 0%, transparent 20%);
 }
 
 @layer base {
@@ -206,6 +260,79 @@ body {
   }
 }
 
+/* Cool background animations */
+@keyframes backgroundShift {
+  0%, 100% {
+    background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    background-position: 20% 30%, -10% 20%, 30% -20%, 10% 50%;
+    filter: hue-rotate(5deg);
+  }
+  50% {
+    background-position: -20% 50%, 30% -30%, -10% 40%, 50% -10%;
+    filter: hue-rotate(10deg);
+  }
+  75% {
+    background-position: 40% -20%, 60% 40%, 20% 60%, -20% 30%;
+    filter: hue-rotate(5deg);
+  }
+}
+
+@keyframes particlesFloat {
+  0%, 100% {
+    background-position: 0% 0%, 100% 100%, 0% 100%, 100% 0%;
+    transform: scale(1) rotate(0deg);
+  }
+  33% {
+    background-position: 30% 70%, 70% 30%, 80% 20%, 20% 80%;
+    transform: scale(1.1) rotate(1deg);
+  }
+  66% {
+    background-position: 70% 30%, 30% 70%, 20% 80%, 80% 20%;
+    transform: scale(0.9) rotate(-1deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.5);
+  }
+}
+
+@keyframes floatUp {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(180deg);
+  }
+}
+
+@keyframes aurora {
+  0%, 100% {
+    background-position: 0% 50%, 100% 50%;
+    opacity: 0.4;
+  }
+  50% {
+    background-position: 100% 50%, 0% 50%;
+    opacity: 0.7;
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 @layer utilities {
   .animate-fadeIn {
     animation: fadeIn 0.5s ease-out;
@@ -227,6 +354,119 @@ body {
 
   .animate-shimmer-wave-reverse {
     animation: shimmer-wave-reverse 12s ease-in-out infinite;
+  }
+
+  /* New cool animation utilities */
+  .animate-pulse-glow {
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  .animate-float-up {
+    animation: floatUp 6s ease-in-out infinite;
+  }
+
+  .animate-aurora {
+    animation: aurora 8s ease-in-out infinite;
+  }
+
+  /* Enhanced card hover effects */
+  .card-hover-glow {
+    @apply transition-all duration-300 hover:shadow-lg;
+    transition-property: box-shadow, transform, background-color;
+  }
+
+  .card-hover-glow:hover {
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04),
+      0 0 30px rgba(99, 102, 241, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* Interactive background elements */
+  .interactive-bg {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .interactive-bg::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+      radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+    animation: aurora 12s ease-in-out infinite;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: -1;
+  }
+
+  .interactive-bg:hover::before {
+    opacity: 1;
+  }
+
+  /* Gradient text effects */
+  .gradient-text {
+    background: linear-gradient(135deg, 
+      hsl(var(--primary)) 0%, 
+      hsl(var(--primary)) 25%, 
+      rgba(139, 92, 246, 1) 75%, 
+      rgba(16, 185, 129, 1) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradientShift 4s ease-in-out infinite;
+  }
+
+  .gradient-text-static {
+    background: linear-gradient(135deg, 
+      hsl(var(--primary)) 0%, 
+      rgba(139, 92, 246, 1) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Enhanced selection cards with cool effects */
+  .selection-card-enhanced {
+    @apply selection-card relative;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .selection-card-enhanced::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      rgba(99, 102, 241, 0.05) 0%, 
+      transparent 50%, 
+      rgba(139, 92, 246, 0.05) 100%);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .selection-card-enhanced:hover::after {
+    opacity: 1;
+  }
+
+  .selection-card-enhanced.selected::after {
+    opacity: 1;
+    background: linear-gradient(135deg, 
+      rgba(99, 102, 241, 0.15) 0%, 
+      transparent 50%, 
+      rgba(139, 92, 246, 0.15) 100%);
   }
 
   /* Line clamping utilities */
