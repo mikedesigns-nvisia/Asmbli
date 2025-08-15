@@ -247,7 +247,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
         <div className="max-width-container section-spacing-x">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-display text-[20px] not-italic" aria-label="asmbli Logo">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-display text-[20px] italic" aria-label="asmbli Logo">
              asmbli  
               </span>
             </div>
@@ -873,12 +873,12 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
         <div className="container-max-width">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <span className="font-semibold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+              <span className="font-semibold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent italic">
                 asmbli
               </span>
             </div>
             <div className="text-sm text-muted-foreground">
-              © 2025 asmbli. Empowering the future of AI agents.
+              © 2025 <span className="italic">asmbli</span>. Empowering the future of AI agents.
             </div>
           </div>
         </div>
