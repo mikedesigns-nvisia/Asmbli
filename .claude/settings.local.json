@@ -16,7 +16,8 @@
       "Bash(npm run test:components:*)",
       "Bash(npm run build-storybook:*)",
       "Bash(npx:*)",
-      "WebFetch(domain:code.visualstudio.com)"
+      "WebFetch(domain:code.visualstudio.com)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": [],
