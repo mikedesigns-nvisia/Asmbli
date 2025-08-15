@@ -24,7 +24,35 @@ import {
   ChromeIcon,
   Mail,
   Settings,
-  Workflow
+  Workflow,
+  Github,
+  MessageSquare, // Use for Slack
+  Box,
+  Cloud, // Use for Dropbox
+  HardDrive,
+  Terminal,
+  Search,
+  Clock,
+  Link,
+  Eye,
+  Bot,
+  Globe, // Use for Chrome
+  Globe, // Use for Firefox (we'll alias this)
+  Globe, // Use for Safari (we'll alias this)
+  MessageCircle,
+  Hash,
+  Send,
+  Building2,
+  Kanban, // Use for Trello
+  FileSpreadsheet,
+  Presentation,
+  Newspaper,
+  MapPin,
+  BarChart,
+  Sparkles,
+  Cpu,
+  Webhook,
+  Kanban
 } from 'lucide-react';
 
 export const platformColors = {
@@ -68,6 +96,42 @@ export const getIconForCategory = (iconName: string | React.ComponentType<{ clas
     case 'Email & Communication':
       return Mail;
     
+    // Provider-specific branded icons
+    case 'GitHub': return Github;
+    case 'Slack': return MessageSquare; // Updated to valid icon
+    case 'Figma': return Figma;
+    case 'Google': return Globe;
+    case 'Microsoft': return Layers;
+    case 'OpenAI': return Brain;
+    case 'Anthropic': return Bot;
+    case 'Dropbox': return Cloud; // Updated to valid icon
+    case 'Supabase': return Database;
+    case 'Notion': return BookOpen;
+    case 'Linear': return Target;
+    case 'Zapier': return Zap;
+    case 'Discord': return MessageCircle;
+    case 'Telegram': return Send;
+    case 'Brave': return Shield;
+    case 'Chrome': return Globe; // Updated to valid icon
+    case 'Firefox': return Globe; // Updated to valid icon
+    case 'Safari': return Globe; // Updated to valid icon
+    case 'Terminal': return Terminal;
+    case 'Postgres': return Database;
+    case 'Memory': return Brain;
+    case 'Search': return Search;
+    case 'Time': return Clock;
+    case 'HTTP': return Link;
+    case 'Webhook': return Webhook;
+    case 'Make': return Workflow;
+    case 'IFTTT': return Zap;
+    case 'Gmail': return Mail;
+    case 'Mixpanel': return BarChart;
+    case 'Storybook': return BookOpen;
+    case 'Sketch': return PenTool;
+    case 'Zeplin': return Eye;
+    case 'HardDrive': return HardDrive;
+    case 'Trello': return Kanban;
+    
     // Handle icon names
     case 'Server': return Server;
     case 'Brain': return Brain;
@@ -83,7 +147,6 @@ export const getIconForCategory = (iconName: string | React.ComponentType<{ clas
     case 'Zap': return Zap;
     case 'Monitor': return Monitor;
     case 'Shield': return Shield;
-    case 'Figma': return Figma;
     case 'PenTool': return PenTool;
     case 'Code2': return Code2;
     case 'BookOpen': return BookOpen;
@@ -94,6 +157,12 @@ export const getIconForCategory = (iconName: string | React.ComponentType<{ clas
     case 'Mail': return Mail;
     case 'Settings': return Settings;
     case 'Workflow': return Workflow;
+    case 'Bot': return Bot;
+    case 'Sparkles': return Sparkles;
+    case 'Cpu': return Cpu;
+    case 'Building2': return Building2;
+    case 'FileSpreadsheet': return FileSpreadsheet;
+    case 'Presentation': return Presentation;
     default: return Server;
   }
 };

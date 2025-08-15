@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { extensionsLibrary } from '../data/extensions-library';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
+import { useAuth } from '../contexts/AuthContext';
+import { AuthModal } from './auth/AuthModal';
 import { 
   ArrowRight, 
   Sparkles, 
@@ -54,6 +57,8 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps) {
+  const { user, isAuthenticated } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const features = [
     {
       icon: Code2,
@@ -89,7 +94,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
 
   const stats = [
     { number: "500+", label: "Agentic Combinations" },
-    { number: "Alpha", label: "Version" },
+    { number: `${extensionsLibrary.length}+`, label: "MCP Extensions" },
     { number: "13+", label: "Platform Integrations" }
   ];
 
@@ -250,38 +255,44 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 backdrop-blur-2xl bg-background/40 border-b border-border/30 shadow-lg shadow-black/5">
-        <div className="max-width-container responsive-padding">
+      <header className="fixed top-0 w-full z-50 backdrop-blur-2xl bg-background/40 border-b border-border/30 shadow-lg shadow-black/5" role="banner">
+        <div className="max-width-container section-spacing-x">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-[Noto_Sans_JP] text-[20px] not-italic">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-display text-[20px] not-italic" aria-label="Agent Engine Logo">
              Agent/Engine  
               </span>
             </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
-              <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
-              <a href="#use-cases" className="text-muted-foreground hover:text-foreground transition-colors">Use Cases</a>
-              <a href="#templates" className="text-muted-foreground hover:text-foreground transition-colors">Templates</a>
-              <Button onClick={onGetStarted} className="bg-primary hover:bg-primary/90">
-                Try Early Access
-              </Button>
-            </div>
+            <nav className="hidden md:flex items-center space-x-8" role="navigation" aria-label="Main navigation">
+              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors accessible-button" aria-label="Navigate to Features section">Features</a>
+              <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors accessible-button" aria-label="Navigate to How It Works section">How It Works</a>
+              <a href="#use-cases" className="text-muted-foreground hover:text-foreground transition-colors accessible-button" aria-label="Navigate to Use Cases section">Use Cases</a>
+              <a href="#templates" className="text-muted-foreground hover:text-foreground transition-colors accessible-button" aria-label="Navigate to Templates section">Templates</a>
+              {isAuthenticated ? (
+                <Button onClick={onGetStarted} className="bg-primary hover:bg-primary/90 accessible-button" aria-label="Go to Agent Builder">
+                  Go to Builder
+                </Button>
+              ) : (
+                <Button onClick={() => setShowAuthModal(true)} className="bg-primary hover:bg-primary/90 accessible-button" aria-label="Sign In to Get Started">
+                  Sign In
+                </Button>
+              )}
+            </nav>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 responsive-padding relative z-10">
-        <div className="max-width-container">
-          <div className="text-center space-y-8 max-w-4xl mx-auto">
-            <div className="space-y-4">
-              <Badge className="bg-primary/10 text-primary border-primary/30 px-4 py-2 text-sm">
+      <section className="section-spacing relative z-10" aria-label="Hero section">
+        <div className="container-max-width">
+          <div className="text-center golden-content-gap flex flex-col items-center max-w-4xl mx-auto">
+            <div className="golden-element-gap flex flex-col items-center">
+              <Badge className="bg-primary/10 text-primary border-primary/30 px-4 py-2 text-sm" role="status" aria-label="Product status: Early Access and Enterprise-Ready">
                 Early Access • Enterprise-Ready
               </Badge>
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tight font-[Noto_Sans_JP]">
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tight font-display leading-[1.3]">
                 Build Powerful AI Agents
-                <span className="bg-gradient-to-r from-primary via-purple-400 to-pink-400 bg-clip-text text-transparent block m-[0px] px-[0px] py-[16px]">
+                <span className="bg-gradient-to-r from-primary via-purple-400 to-pink-400 bg-clip-text text-transparent block mt-4">
                   For Any Platform
                 </span>
               </h1>
@@ -291,39 +302,41 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-phi-md pt-phi-lg">
               <Button 
-                onClick={onGetStarted}
+                onClick={isAuthenticated ? onGetStarted : () => setShowAuthModal(true)}
                 size="lg" 
-                className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 h-auto group"
+                className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 h-auto group accessible-button"
+                aria-label={isAuthenticated ? "Start building your AI agent - Launch the agent builder wizard" : "Sign in to start building AI agents"}
               >
-                <Rocket className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                <Rocket className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" aria-hidden="true" />
                 Start Building Your Agent
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Button>
               <Button 
                 onClick={onViewTemplates}
                 variant="outline" 
                 size="lg"
-                className="text-lg px-8 py-6 h-auto border-primary/30 hover:bg-primary/5 group"
+                className="text-lg px-8 py-6 h-auto border-primary/30 hover:bg-primary/5 group accessible-button"
+                aria-label="Browse agent templates - View pre-built configurations"
               >
-                <Library className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                <Library className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" aria-hidden="true" />
                 Browse Templates
               </Button>
             </div>
 
-            <div className="flex items-center justify-center gap-8 pt-12 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-success" />
-                Enterprise Security
+            <div className="flex items-center justify-center gap-phi-lg pt-phi-xl text-sm text-muted-foreground" role="list" aria-label="Key features">
+              <div className="flex items-center gap-phi-sm" role="listitem">
+                <CheckCircle className="w-4 h-4 text-success" aria-hidden="true" />
+                <span>Enterprise Security</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-success" />
-                Multi-Platform Deploy
+              <div className="flex items-center gap-phi-sm" role="listitem">
+                <CheckCircle className="w-4 h-4 text-success" aria-hidden="true" />
+                <span>Multi-Platform Deploy</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-success" />
-                Zero Configuration
+              <div className="flex items-center gap-phi-sm" role="listitem">
+                <CheckCircle className="w-4 h-4 text-success" aria-hidden="true" />
+                <span>Zero Configuration</span>
               </div>
             </div>
           </div>
@@ -331,15 +344,15 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 border-y border-border/30 backdrop-blur-sm bg-background/20 relative z-10">
-        <div className="max-width-container responsive-padding">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 text-center">
+      <section className="section-spacing-y border-y border-border/30 backdrop-blur-sm bg-background/20 relative z-10" aria-label="Platform statistics">
+        <div className="max-width-container section-spacing-x">
+          <div className="grid grid-cols-2 md:grid-cols-3 golden-content-gap text-center">
             {stats.map((stat, index) => (
-              <div key={index} className="space-y-2">
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+              <div key={index} className="golden-tight-gap flex flex-col items-center" role="group" aria-label={`${stat.number} ${stat.label}`}>
+                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent" aria-label={`${stat.number} ${stat.label}`}>
                   {stat.number}
                 </div>
-                <div className="text-muted-foreground">{stat.label}</div>
+                <div className="text-muted-foreground" aria-hidden="true">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -347,19 +360,19 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 responsive-padding relative z-10">
-        <div className="max-width-container">
-          <div className="text-center space-y-8 mb-16">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Badge className="bg-gradient-to-r from-green-500/20 to-blue-500/20 text-primary border-primary/30 px-4 py-2">
-                <Brain className="w-4 h-4 mr-2" />
+      <section id="how-it-works" className="section-spacing relative z-10">
+        <div className="container-max-width">
+          <div className="text-center content-spacing-lg mb-16">
+            <div className="flex items-center justify-center gap-phi-sm mb-phi-md">
+              <Badge className="bg-primary/10 text-primary border-primary/30 px-4 py-2" role="region" aria-label="Section topic: How AI Agents Work">
+                <Brain className="w-4 h-4 mr-2" aria-hidden="true" />
                 How AI Agents Work
               </Badge>
             </div>
             
-            <h2 className="text-4xl md:text-6xl font-bold font-[Noto_Sans_JP] mt-[0px] mr-[0px] mb-[37px] ml-[0px]">
+            <h2 className="text-4xl md:text-6xl font-bold font-display leading-[1.3] mt-[0px] mr-[0px] mb-[37px] ml-[0px]">
               Understanding AI Agents:
-              <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent block italic font-bold mx-[0px] my-[10px]">
+              <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent block italic font-bold mt-4">
                 From Chat to Action
               </span>
             </h2>
@@ -371,9 +384,9 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
           </div>
 
           {/* Workflow Steps */}
-          <div className="space-y-12 mb-16">
+          <div className="content-spacing-xl mb-16">
             <div className="text-center">
-              <h3 className="text-2xl font-bold mb-4">The AI Agent Workflow</h3>
+              <h3 className="text-2xl font-bold mb-4 leading-relaxed">The AI Agent Workflow</h3>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Every time you interact with an AI assistant, this process happens behind the scenes
               </p>
@@ -383,7 +396,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
               {/* Connecting lines for larger screens */}
               <div className="hidden lg:block absolute top-16 left-0 right-0 h-0.5 bg-gradient-to-r from-green-500 via-primary via-yellow-500 to-red-500 opacity-30"></div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gacomponent-padding-lg">
                 {workflowSteps.map((step, index) => {
                   const Icon = step.icon;
                   return (
@@ -394,7 +407,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
                       )}
                       
                       <Card className="selection-card h-full text-center">
-                        <CardContent className="p-6 space-y-4">
+                        <CardContent className="component-padding-md content-spacing-md">
                           {/* Step number and icon */}
                           <div className="flex items-center justify-center gap-3">
                             <div 
@@ -433,13 +446,13 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
           </div>
 
           {/* What Are Tools? Section */}
-          <div className="space-y-12">
-            <div className="text-center space-y-4">
-              <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-400/30">
-                <Plug className="w-4 h-4 mr-2" />
+          <div className="content-spacing-xl">
+            <div className="text-center content-spacing-md">
+              <Badge className="bg-primary/10 text-primary border-primary/30 px-4 py-2" role="region" aria-label="Section topic: Tools and APIs">
+                <Plug className="w-4 h-4 mr-2" aria-hidden="true" />
                 Tools & APIs
               </Badge>
-              <h3 className="text-3xl font-bold">What Are "Tools" Exactly?</h3>
+              <h3 className="text-3xl font-bold leading-relaxed">What Are "Tools" Exactly?</h3>
               <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
                 Tools are the secret sauce that make AI agents actually useful. They're connections to real services 
                 and applications that let agents do more than just chat—they can take action.
@@ -452,7 +465,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
                 const Icon = toolType.icon;
                 return (
                   <Card key={index} className="selection-card">
-                    <CardContent className="p-6 space-y-4">
+                    <CardContent className="component-padding-md content-spacing-md">
                       <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                         <Icon className="w-6 h-6 text-primary" />
                       </div>
@@ -484,17 +497,17 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
           {/* MCP Explanation */}
           <div className="mt-16 space-y-8">
             <Card className="selection-card bg-gradient-to-br from-blue-500/10 to-purple-500/10">
-              <CardContent className="p-8 space-y-6">
-                <div className="text-center space-y-4">
-                  <Badge className="bg-blue-500/20 text-blue-400 border-blue-400/30">
-                    <Settings className="w-4 h-4 mr-2" />
+              <CardContent className="component-padding-lg content-spacing-lg">
+                <div className="text-center content-spacing-md">
+                  <Badge className="bg-primary/10 text-primary border-primary/30 px-4 py-2" role="region" aria-label="Section topic: Model Context Protocol (MCP)">
+                    <Settings className="w-4 h-4 mr-2" aria-hidden="true" />
                     Model Context Protocol (MCP)
                   </Badge>
-                  <h3 className="text-2xl font-bold">The Future of AI Agent Tools</h3>
+                  <h3 className="text-2xl font-bold leading-relaxed">The Future of AI Agent Tools</h3>
                 </div>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                  <div className="space-y-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gacomponent-padding-lg items-center">
+                  <div className="content-spacing-md">
                     <p className="text-muted-foreground leading-relaxed">
                       <strong className="text-foreground">MCP</strong> is a new standard that makes it incredibly easy for AI agents 
                       to connect to any service or tool. Think of it as a universal translator that lets agents understand 
@@ -526,26 +539,26 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
                     </div>
                   </div>
                   
-                  <div className="bg-background/50 rounded-xl p-6">
+                  <div className="bg-background/50 rounded-xl component-padding-md">
                     <h4 className="font-semibold mb-4">Real-World Example</h4>
                     <div className="space-y-3 text-sm">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-phi-sm">
                         <MessageSquare className="w-4 h-4 text-blue-400" />
                         <span className="text-muted-foreground">You: "Create a project plan for our mobile app"</span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-phi-sm">
                         <ArrowRight className="w-4 h-4 text-primary" />
                         <span className="text-muted-foreground">Agent connects to Notion (via MCP)</span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-phi-sm">
                         <ArrowRight className="w-4 h-4 text-primary" />
                         <span className="text-muted-foreground">Agent connects to GitHub (via MCP)</span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-phi-sm">
                         <ArrowRight className="w-4 h-4 text-primary" />
                         <span className="text-muted-foreground">Agent connects to Calendar (via MCP)</span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-phi-sm">
                         <CheckCircle className="w-4 h-4 text-success" />
                         <span className="text-success">Complete project plan created across all tools!</span>
                       </div>
@@ -558,16 +571,16 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
 
           {/* Why This Matters */}
           <div className="mt-16 text-center space-y-8">
-            <div className="space-y-4">
-              <h3 className="text-3xl font-bold">Why AgentEngine?</h3>
+            <div className="content-spacing-md">
+              <h3 className="text-3xl font-bold leading-relaxed">Why AgentEngine?</h3>
               <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
                 Building AI agents from scratch is complex. AgentEngine simplifies the entire process, 
                 from design to deployment, so you can focus on solving problems instead of managing infrastructure.
               </p>
             </div>
 
-            <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-xl p-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-xl component-padding-lg">
+              <div className="grid grid-cols-1 md:grid-cols-3 gacomponent-padding-md text-center">
                 <div className="space-y-2">
                   <Rocket className="w-8 h-8 text-primary mx-auto" />
                   <h4 className="font-semibold">Build Once, Deploy Everywhere</h4>
@@ -589,30 +602,31 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
             <Button 
               onClick={onGetStarted}
               size="lg" 
-              className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-lg px-8 py-6 h-auto group shadow-lg shadow-primary/20"
+              className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-lg px-8 py-6 h-auto group shadow-lg shadow-primary/20 accessible-button"
+              aria-label="Start building your AI agent - Launch the agent builder"
             >
-              <Lightbulb className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+              <Lightbulb className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" aria-hidden="true" />
               Start Building Your Agent
-              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Button>
           </div>
         </div>
       </section>
 
       {/* Use Cases Section */}
-      <section id="use-cases" className="py-20 responsive-padding relative z-10 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5">
-        <div className="max-width-container">
-          <div className="text-center space-y-8 mb-16">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Badge className="bg-gradient-to-r from-purple-500/20 to-primary/20 text-primary border-primary/30 px-4 py-2">
-                <Target className="w-4 h-4 mr-2" />
+      <section id="use-cases" className="section-spacing relative z-10 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5">
+        <div className="container-max-width">
+          <div className="text-center content-spacing-lg mb-16">
+            <div className="flex items-center justify-center gap-phi-sm mb-phi-md">
+              <Badge className="bg-primary/10 text-primary border-primary/30 px-4 py-2" role="region" aria-label="Section topic: Use Cases">
+                <Target className="w-4 h-4 mr-2" aria-hidden="true" />
                 Use Cases
               </Badge>
             </div>
             
-            <h2 className="text-4xl md:text-6xl font-bold font-[Noto_Sans_JP]">
+            <h2 className="text-4xl md:text-6xl font-bold font-display leading-[1.3]">
               Built for real-world problems.
-              <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent block italic font-bold">
+              <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent block italic font-bold mt-4">
                 Designed for your needs.
               </span>
             </h2>
@@ -627,26 +641,26 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
             {useCases.map((useCase) => {
               const Icon = useCase.icon;
               return (
-                <Card key={useCase.id} className="selection-card border-border/40 hover:border-primary/40 group backdrop-blur-xl bg-background/80 hover:bg-background/90 shadow-lg shadow-black/5 relative overflow-hidden">
-                  <CardContent className="p-6 space-y-4">
+                <Card key={useCase.id} className="selection-card border-border/40 hover:border-primary/40 group backdrop-blur-xl bg-background/95 hover:bg-background shadow-lg shadow-black/5 relative overflow-hidden">
+                  <CardContent className="component-padding-md content-spacing-md">
                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                       <Icon className="w-6 h-6 text-primary" />
                     </div>
                     
                     <div className="space-y-2">
-                      <h4 className="text-xl font-semibold group-hover:text-primary transition-colors">
+                      <h4 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
                         {useCase.title}
                       </h4>
-                      <p className="text-muted-foreground leading-relaxed">
+                      <p className="text-foreground/80 leading-relaxed">
                         {useCase.description}
                       </p>
                     </div>
 
                     <div className="space-y-2 pt-2">
-                      <p className="text-sm font-medium text-muted-foreground">Example Applications:</p>
+                      <p className="text-sm font-medium text-foreground/70">Example Applications:</p>
                       <div className="space-y-1">
                         {useCase.examples.map((example, idx) => (
-                          <div key={idx} className="text-sm text-muted-foreground flex items-center gap-2">
+                          <div key={idx} className="text-sm text-foreground/70 flex items-center gap-phi-sm">
                             <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                             {example}
                           </div>
@@ -665,11 +679,11 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 responsive-padding relative z-10">
-        <div className="max-width-container">
-          <div className="text-center space-y-4 mb-16">
-            <Badge className="bg-primary/10 text-primary border-primary/30">Platform Features</Badge>
-            <h2 className="text-4xl md:text-5xl font-bold">
+      <section id="features" className="section-spacing relative z-10">
+        <div className="container-max-width">
+          <div className="text-center content-spacing-md mb-16">
+            <Badge className="bg-primary/10 text-primary border-primary/30" role="region" aria-label="Section topic: Platform Features">Platform Features</Badge>
+            <h2 className="text-4xl md:text-5xl font-bold leading-relaxed">
               Everything you need to build AI agents
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -683,7 +697,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
               const Icon = feature.icon;
               return (
                 <Card key={index} className="selection-card border-border/40 hover:border-primary/40 group backdrop-blur-xl bg-background/60 hover:bg-background/80 shadow-lg shadow-black/5">
-                  <CardContent className="p-6 space-y-4">
+                  <CardContent className="component-padding-md content-spacing-md">
                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                       <Icon className="w-6 h-6 text-primary" />
                     </div>
@@ -700,19 +714,19 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
       </section>
 
       {/* Templates Section */}
-      <section id="templates" className="py-20 responsive-padding relative z-10 bg-muted/10 backdrop-blur-sm">
-        <div className="max-width-container">
-          <div className="text-center space-y-8 mb-16">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Badge className="bg-gradient-to-r from-orange-500/20 to-red-500/20 text-primary border-primary/30 px-4 py-2">
-                <Library className="w-4 h-4 mr-2" />
+      <section id="templates" className="section-spacing relative z-10 bg-muted/10 backdrop-blur-sm">
+        <div className="container-max-width">
+          <div className="text-center content-spacing-lg mb-16">
+            <div className="flex items-center justify-center gap-phi-sm mb-phi-md">
+              <Badge className="bg-primary/10 text-primary border-primary/30 px-4 py-2" role="region" aria-label="Section topic: Template System">
+                <Library className="w-4 h-4 mr-2" aria-hidden="true" />
                 Template System
               </Badge>
             </div>
             
-            <h2 className="text-4xl md:text-6xl font-bold font-[Noto_Sans_JP]">
+            <h2 className="text-4xl md:text-6xl font-bold font-display leading-[1.3]">
               Start faster with templates.
-              <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent block italic font-bold">
+              <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent block italic font-bold mt-4">
                 Save time, share knowledge.
               </span>
             </h2>
@@ -723,8 +737,8 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
             </p>
           </div>
 
-          <div className="text-center space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center max-w-4xl mx-auto">
+          <div className="text-center content-spacing-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gacomponent-padding-md text-center max-w-4xl mx-auto">
               <div className="space-y-2">
                 <Library className="w-8 h-8 text-primary mx-auto" />
                 <h4 className="font-semibold">Pre-built Templates</h4>
@@ -745,22 +759,23 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
             <Button 
               onClick={onViewTemplates}
               size="lg" 
-              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-500/90 hover:to-red-500/90 text-lg px-8 py-6 h-auto group shadow-lg shadow-orange-500/20"
+              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-500/90 hover:to-red-500/90 text-lg px-8 py-6 h-auto group shadow-lg shadow-orange-500/20 accessible-button"
+              aria-label="Browse agent templates - View pre-built configurations"
             >
-              <Library className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+              <Library className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" aria-hidden="true" />
               Browse Templates
-              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Button>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-muted/10 backdrop-blur-sm responsive-padding relative z-10">
-        <div className="max-width-container">
-          <div className="text-center space-y-4 mb-16">
-            <Badge className="bg-primary/10 text-primary border-primary/30">Early Feedback</Badge>
-            <h2 className="text-4xl md:text-5xl font-bold">
+      <section className="section-spacing bg-muted/10 backdrop-blur-sm relative z-10" aria-label="Customer testimonials">
+        <div className="container-max-width">
+          <div className="text-center content-spacing-md mb-16">
+            <Badge className="bg-primary/10 text-primary border-primary/30" role="region" aria-label="Section topic: Early Feedback">Early Feedback</Badge>
+            <h2 className="text-4xl md:text-5xl font-bold leading-relaxed">
               Industry leaders see the potential
             </h2>
           </div>
@@ -768,7 +783,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
           <div className="responsive-grid-3">
             {testimonials.map((testimonial, index) => (
               <Card key={index} className="selection-card border-border/40 backdrop-blur-xl bg-background/60 shadow-lg shadow-black/5">
-                <CardContent className="p-6 space-y-4">
+                <CardContent className="component-padding-md content-spacing-md">
                   <div className="flex gap-1 mb-4">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
@@ -791,12 +806,12 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 responsive-padding relative z-10">
-        <div className="max-width-container">
+      <section className="section-spacing relative z-10" aria-label="Call to action">
+        <div className="container-max-width">
           <Card className="selection-card border-primary/40 bg-gradient-to-br from-primary/8 to-purple-500/8 backdrop-blur-xl shadow-xl shadow-primary/5">
-            <CardContent className="p-12 text-center space-y-8">
-              <div className="space-y-4">
-                <h2 className="text-4xl md:text-5xl font-bold">
+            <CardContent className="component-padding-xl text-center space-y-8">
+              <div className="content-spacing-md">
+                <h2 className="text-4xl md:text-5xl font-bold leading-relaxed">
                   Ready to build your AI agent?
                 </h2>
                 <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -809,35 +824,37 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
                 <Button 
                   onClick={onGetStarted}
                   size="lg" 
-                  className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 h-auto group"
+                  className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 h-auto group accessible-button"
+                  aria-label="Start building your AI agent - Launch the agent builder"
                 >
-                  <Rocket className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                  <Rocket className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" aria-hidden="true" />
                   Start Building
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                 </Button>
                 <Button 
                   onClick={onViewTemplates}
                   variant="outline" 
                   size="lg"
-                  className="text-lg px-8 py-6 h-auto border-primary/30 hover:bg-primary/5"
+                  className="text-lg px-8 py-6 h-auto border-primary/30 hover:bg-primary/5 accessible-button"
+                  aria-label="Explore agent templates - Browse pre-built configurations"
                 >
-                  <Library className="w-5 h-5 mr-2" />
+                  <Library className="w-5 h-5 mr-2" aria-hidden="true" />
                   Explore Templates
                 </Button>
               </div>
 
-              <div className="flex items-center justify-center gap-8 pt-8 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-success" />
-                  Enterprise Security
+              <div className="flex items-center justify-center gacomponent-padding-lg pt-8 text-sm text-muted-foreground" role="list" aria-label="Key benefits">
+                <div className="flex items-center gap-phi-sm" role="listitem">
+                  <Shield className="w-4 h-4 text-success" aria-hidden="true" />
+                  <span>Enterprise Security</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-success" />
-                  Zero Configuration
+                <div className="flex items-center gap-phi-sm" role="listitem">
+                  <Zap className="w-4 h-4 text-success" aria-hidden="true" />
+                  <span>Zero Configuration</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-success" />
-                  Multi-Platform
+                <div className="flex items-center gap-phi-sm" role="listitem">
+                  <Globe className="w-4 h-4 text-success" aria-hidden="true" />
+                  <span>Multi-Platform</span>
                 </div>
               </div>
             </CardContent>
@@ -846,8 +863,8 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-border/30 backdrop-blur-sm bg-background/20 responsive-padding relative z-10">
-        <div className="max-width-container">
+      <footer className="section-spacing-y border-t border-border/30 backdrop-blur-sm bg-background/20 section-spacing-x relative z-10">
+        <div className="container-max-width">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <span className="font-semibold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
@@ -860,6 +877,13 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
           </div>
         </div>
       </footer>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        defaultTab="signup"
+      />
     </div>
   );
 }

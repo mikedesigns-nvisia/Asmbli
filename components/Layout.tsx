@@ -3,6 +3,7 @@ import { Building2, User, Settings, Download, Play, ChevronDown, Search, Menu, X
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
+import { UserProfile } from './auth/UserProfile';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -37,7 +38,7 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
           <div className="flex items-center space-x-2 lg:space-x-8">
             <div className="flex items-center space-x-3">
               <div>
-                <h1 className="text-lg font-normal text-[rgba(203,203,211,1)] font-[Noto_Sans_JP] text-[20px] italic no-underline">Agent/Engine</h1>
+                <h1 className="text-lg font-normal text-[rgba(203,203,211,1)] font-display text-[20px] italic no-underline">Agent/Engine</h1>
                 <div className="flex items-center space-x-2">
                 </div>
               </div>
@@ -88,18 +89,7 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
 
             <div className="hidden lg:block w-px h-6 bg-border"></div>
 
-            <div className="flex items-center space-x-3">
-              <Avatar className="w-8 h-8">
-                <AvatarImage src="/api/placeholder/32/32" />
-                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                  MD
-                </AvatarFallback>
-              </Avatar>
-              <div className="hidden lg:block text-right">
-                <div className="text-sm font-medium font-[Noto_Serif_JP]">Mike Designs</div>
-                <div className="text-xs text-muted-foreground">heyhey@mike.com</div>
-              </div>
-            </div>
+            <UserProfile />
           </div>
         </div>
       </header>

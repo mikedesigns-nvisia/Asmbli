@@ -37,7 +37,10 @@ export function ExtensionCard({
   onToggleExtension,
   onToggleFavorite
 }: ExtensionCardProps) {
-  const IconComponent = getIconForCategory(extension.category);
+  // Use provider-specific icon if available, otherwise use category icon
+  const IconComponent = extension.icon 
+    ? getIconForCategory(extension.icon)
+    : getIconForCategory(extension.category);
 
   // Map complexity to security level colors
   const getComplexityColor = (complexity: string) => {

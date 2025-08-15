@@ -8,6 +8,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Access and manage local files and directories through Model Context Protocol',
     category: 'Development & Code',
     provider: 'MCP Core',
+    icon: 'HardDrive',
     complexity: 'low',
     enabled: false,
     connectionType: 'mcp',
@@ -50,13 +51,14 @@ export const extensionsLibrary: Extension[] = [
   {
     id: 'git-mcp',
     name: 'Git MCP Server',
-    description: 'Git repository operations and version control through Model Context Protocol',
+    description: 'Git repository operations and version control through Model Context Protocol (Early Development)',
     category: 'Development & Code',
     provider: 'MCP Core',
+    icon: 'GitBranch',
     complexity: 'medium',
     enabled: false,
     connectionType: 'mcp',
-    authMethod: 'ssh-key',
+    authMethod: 'none',
     pricing: 'free',
     features: [
       'Repository cloning and initialization',
@@ -81,62 +83,63 @@ export const extensionsLibrary: Extension[] = [
     requirements: [
       'Git installed locally',
       'Repository access permissions',
-      'SSH keys or authentication setup'
+      'MCP client configuration'
     ],
     documentation: 'https://github.com/modelcontextprotocol/servers/tree/main/src/git',
     setupComplexity: 2,
     configuration: {
+      repository: '/path/to/git/repo',
       defaultBranch: 'main',
-      remoteUrl: '',
-      sshKey: '',
+      readOnly: false,
       author: { name: '', email: '' }
     }
   },
   {
     id: 'postgres-mcp',
     name: 'PostgreSQL MCP Server',
-    description: 'PostgreSQL database operations and queries through Model Context Protocol',
+    description: 'PostgreSQL database operations and queries through Model Context Protocol (Official + Community versions available)',
     category: 'Analytics & Data',
     provider: 'MCP Core',
+    icon: 'Database',
     complexity: 'high',
     enabled: false,
     connectionType: 'mcp',
     authMethod: 'database-credentials',
     pricing: 'free',
     features: [
-      'SQL query execution',
+      'SQL query execution (read-only in official version)',
       'Database schema introspection',
       'Table and view operations',
-      'Data insertion and updates',
-      'Transaction management',
-      'Stored procedure execution',
-      'Index and performance analysis',
-      'Connection pooling'
+      'Connection to PostgreSQL databases',
+      'Enhanced features in community versions',
+      'Performance analysis (community versions)',
+      'Read/write access (community versions)',
+      'Multiple database connections'
     ],
     capabilities: [
-      'SQL operations',
-      'Schema management',
-      'Data manipulation',
-      'Transaction control',
-      'Procedure execution',
-      'Performance analysis',
+      'SQL read operations',
+      'Schema inspection',
+      'Database connectivity',
+      'Query execution',
       'Connection management',
+      'Community enhancements',
+      'Performance monitoring',
       'Security controls'
     ],
     requirements: [
       'PostgreSQL database access',
       'Database credentials',
-      'Network connectivity to database'
+      'Network connectivity to database',
+      'MCP client configuration'
     ],
-    documentation: 'https://github.com/modelcontextprotocol/servers/tree/main/src/postgres',
+    documentation: 'https://modelcontextprotocol.io/examples',
     setupComplexity: 4,
     configuration: {
-      host: 'localhost',
-      port: 5432,
-      database: '',
-      username: '',
-      password: '',
-      ssl: true
+      connectionString: 'postgresql://localhost/mydb',
+      readOnly: true,
+      timeout: 30,
+      ssl: true,
+      communityVersion: false
     }
   },
   {
@@ -145,6 +148,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Persistent memory and knowledge base management for AI agents',
     category: 'AI & Machine Learning',
     provider: 'MCP Core',
+    icon: 'Brain',
     complexity: 'medium',
     enabled: false,
     connectionType: 'mcp',
@@ -190,6 +194,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Web search and information retrieval through Model Context Protocol',
     category: 'Browser & Web Tools',
     provider: 'MCP Core',
+    icon: 'Search',
     complexity: 'low',
     enabled: false,
     connectionType: 'mcp',
@@ -235,6 +240,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Execute shell commands and terminal operations through Model Context Protocol',
     category: 'Development & Code',
     provider: 'MCP Core',
+    icon: 'Terminal',
     complexity: 'high',
     enabled: false,
     connectionType: 'mcp',
@@ -280,6 +286,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'HTTP client for API requests and web service integration',
     category: 'Development & Code',
     provider: 'MCP Core',
+    icon: 'Link',
     complexity: 'medium',
     enabled: false,
     connectionType: 'mcp',
@@ -325,6 +332,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Calendar and scheduling operations through Model Context Protocol',
     category: 'Automation & Productivity',
     provider: 'MCP Core',
+    icon: 'Calendar',
     complexity: 'medium',
     enabled: false,
     connectionType: 'mcp',
@@ -364,14 +372,107 @@ export const extensionsLibrary: Extension[] = [
       timeZone: 'UTC'
     }
   },
+  {
+    id: 'sequential-thinking-mcp',
+    name: 'Sequential Thinking MCP Server',
+    description: 'Dynamic problem-solving through thought sequences and structured reasoning for AI agents',
+    category: 'AI & Machine Learning',
+    provider: 'MCP Core',
+    icon: 'Cpu',
+    complexity: 'medium',
+    enabled: false,
+    connectionType: 'mcp',
+    authMethod: 'none',
+    pricing: 'free',
+    features: [
+      'Sequential thought generation',
+      'Problem decomposition',
+      'Multi-step reasoning chains',
+      'Dynamic thinking sequences',
+      'Reasoning pattern recognition',
+      'Logical flow management',
+      'Thought process tracking',
+      'Cognitive workflow optimization'
+    ],
+    capabilities: [
+      'Sequential reasoning',
+      'Problem solving',
+      'Thought chains',
+      'Logic flow',
+      'Pattern recognition',
+      'Workflow optimization',
+      'Process tracking',
+      'Cognitive enhancement'
+    ],
+    requirements: [
+      'MCP server runtime',
+      'Sequential processing capability',
+      'Reasoning model access'
+    ],
+    documentation: 'https://modelcontextprotocol.io/examples',
+    setupComplexity: 2,
+    configuration: {
+      maxSequenceLength: 50,
+      reasoningDepth: 5,
+      thoughtPersistence: true,
+      patternTracking: true
+    }
+  },
+  {
+    id: 'time-mcp',
+    name: 'Time MCP Server',
+    description: 'Time and timezone conversion capabilities with scheduling and temporal operations',
+    category: 'Automation & Productivity',
+    provider: 'MCP Core',
+    icon: 'Clock',
+    complexity: 'low',
+    enabled: false,
+    connectionType: 'mcp',
+    authMethod: 'none',
+    pricing: 'free',
+    features: [
+      'Timezone conversion and management',
+      'Time format standardization',
+      'Schedule calculation',
+      'Date arithmetic operations',
+      'World clock functionality',
+      'Time-based calculations',
+      'Calendar integration support',
+      'Temporal query processing'
+    ],
+    capabilities: [
+      'Timezone handling',
+      'Time conversion',
+      'Date operations',
+      'Schedule management',
+      'World time',
+      'Temporal calculations',
+      'Calendar support',
+      'Time queries'
+    ],
+    requirements: [
+      'MCP server runtime',
+      'Timezone database access',
+      'System time synchronization'
+    ],
+    documentation: 'https://modelcontextprotocol.io/examples',
+    setupComplexity: 1,
+    configuration: {
+      defaultTimezone: 'UTC',
+      timezoneData: 'auto',
+      dateFormat: 'ISO8601',
+      calendarSupport: true
+    }
+  },
 
   // Design & Prototyping Extensions
   {
     id: 'figma-mcp',
     name: 'Figma MCP Server',
-    description: 'Connect to Figma files, components, and design systems through Model Context Protocol',
+    description: 'Connect to Figma files, components, and design systems through Model Context Protocol with current platform features',
     category: 'Design & Prototyping',
     provider: 'Figma',
+    icon: 'Figma',
     complexity: 'medium',
     enabled: false,
     connectionType: 'mcp',
@@ -382,21 +483,32 @@ export const extensionsLibrary: Extension[] = [
       'Read and modify design components',
       'Extract design tokens and styles',
       'Manage design system libraries',
+      'Code Connect integration',
+      'Library Analytics API access',
+      'Dev Mode component inspection',
       'Collaborate on design reviews',
-      'Export assets and specifications'
+      'Export assets and specifications',
+      'Typography and gradient variables',
+      'Component playground access'
     ],
     capabilities: [
       'Design file access',
       'Component management',
       'Style extraction',
       'Asset export',
+      'Code Connect integration',
+      'Library Analytics',
+      'Dev Mode features',
       'Collaboration',
-      'Version control'
+      'Version control',
+      'Variable management'
     ],
     requirements: [
       'Figma account with API access',
       'Team or organization workspace',
-      'Design system or component library setup'
+      'Design system or component library setup',
+      'Dev Mode access (for enhanced features)',
+      'Enterprise license (for Library Analytics)'
     ],
     documentation: 'https://www.figma.com/developers/api',
     setupComplexity: 3,
@@ -405,7 +517,10 @@ export const extensionsLibrary: Extension[] = [
       teamId: '',
       projectIds: [],
       permissions: ['read', 'write', 'comment'],
-      syncInterval: '5m'
+      syncInterval: '5m',
+      codeConnect: true,
+      devMode: true,
+      libraryAnalytics: false
     }
   },
   {
@@ -414,6 +529,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Full-stack database and API platform for storing design data, user feedback, and collaboration',
     category: 'Design & Prototyping',
     provider: 'Supabase',
+    icon: 'Database',
     complexity: 'medium',
     enabled: false,
     connectionType: 'api',
@@ -622,6 +738,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Access GitHub repositories for code analysis, pull requests, issues, and collaborative development via API or MCP',
     category: 'Development & Code',
     provider: 'GitHub',
+    icon: 'Github',
     complexity: 'medium',
     enabled: false,
     connectionType: 'api',
@@ -679,6 +796,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Integrate with Slack for team communication, notifications, and design collaboration workflows via API or MCP',
     category: 'Communication & Collaboration',
     provider: 'Slack',
+    icon: 'Slack',
     complexity: 'medium',
     enabled: false,
     connectionType: 'api',
@@ -736,6 +854,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Connect to Notion for design documentation, project management, and knowledge base creation',
     category: 'Documentation & Knowledge',
     provider: 'Notion',
+    icon: 'BookOpen',
     complexity: 'medium',
     enabled: false,
     connectionType: 'api',
@@ -828,6 +947,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Access OpenAI GPT models for design content generation, code assistance, and creative ideation',
     category: 'AI & Machine Learning',
     provider: 'OpenAI',
+    icon: 'Brain',
     complexity: 'low',
     enabled: false,
     connectionType: 'api',
@@ -873,6 +993,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Integrate Claude for safe AI assistance in design workflows, documentation, and analysis',
     category: 'AI & Machine Learning',
     provider: 'Anthropic',
+    icon: 'Bot',
     complexity: 'low',
     enabled: false,
     connectionType: 'api',
@@ -1104,6 +1225,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Privacy-focused browser extension for web scraping, bookmarks, and tab management with ad-blocking capabilities',
     category: 'Browser & Web Tools',
     provider: 'Brave Software',
+    icon: 'Shield',
     complexity: 'low',
     enabled: false,
     connectionType: 'extension',
@@ -1149,6 +1271,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Comprehensive browser automation and web interaction capabilities through Chrome extensions',
     category: 'Browser & Web Tools',
     provider: 'Google Chrome',
+    icon: 'Chrome',
     complexity: 'low',
     enabled: false,
     connectionType: 'extension',
@@ -1194,6 +1317,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Mozilla Firefox extension for privacy-focused web automation and content management',
     category: 'Browser & Web Tools',
     provider: 'Mozilla',
+    icon: 'Firefox',
     complexity: 'low',
     enabled: false,
     connectionType: 'extension',
@@ -1239,6 +1363,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Native Safari extension for macOS and iOS web automation and content management',
     category: 'Browser & Web Tools',
     provider: 'Apple Safari',
+    icon: 'Safari',
     complexity: 'medium',
     enabled: false,
     connectionType: 'extension',
@@ -1286,6 +1411,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Integrate with Microsoft Teams for team communication, meetings, and collaborative workflows',
     category: 'Communication & Collaboration',
     provider: 'Microsoft',
+    icon: 'MessageSquare',
     complexity: 'medium',
     enabled: false,
     connectionType: 'api',
@@ -1643,7 +1769,7 @@ export const extensionsLibrary: Extension[] = [
   {
     id: 'microsoft-graph',
     name: 'Microsoft Graph API',
-    description: 'Unified API endpoint for accessing Microsoft 365, Windows, and Enterprise Mobility + Security services',
+    description: 'Unified API endpoint for accessing Microsoft 365, Windows, and Enterprise Mobility + Security services with current enhancements',
     category: 'Development & Code',
     provider: 'Microsoft',
     complexity: 'high',
@@ -1656,7 +1782,12 @@ export const extensionsLibrary: Extension[] = [
       'User and group management',
       'Calendar and mail integration',
       'Files and SharePoint access',
-      'Teams and Yammer integration',
+      'Teams approvals API',
+      'SMS notification and reminder APIs',
+      'Teams activity notifications',
+      'SharePoint Pages API',
+      'SharePoint Premium document processing',
+      'Infrastructure as Code support (Bicep, Terraform)',
       'Security and compliance',
       'Analytics and insights',
       'Device and identity management'
@@ -1667,6 +1798,10 @@ export const extensionsLibrary: Extension[] = [
       'Productivity services',
       'File services',
       'Communication platforms',
+      'Approval workflows',
+      'SMS notifications',
+      'SharePoint automation',
+      'Infrastructure as Code',
       'Security services',
       'Analytics',
       'Device management'
@@ -1738,6 +1873,7 @@ export const extensionsLibrary: Extension[] = [
     description: 'Connect to 5000+ apps through Zapier workflows and automation triggers',
     category: 'Automation & Productivity',
     provider: 'Zapier',
+    icon: 'Zap',
     complexity: 'medium',
     enabled: false,
     connectionType: 'webhook',

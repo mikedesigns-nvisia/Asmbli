@@ -1,0 +1,312 @@
+/**
+ * AgentEngine Design Token System
+ * Comprehensive design tokens for consistent spacing, typography, colors, and layout
+ */
+
+:root {
+  /* ===== SPACING TOKENS ===== */
+  
+  /* Base spacing scale (rem units) */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;    /* 2px */
+  --space-1: 0.25rem;       /* 4px */
+  --space-1-5: 0.375rem;    /* 6px */
+  --space-2: 0.5rem;        /* 8px */
+  --space-2-5: 0.625rem;    /* 10px */
+  --space-3: 0.75rem;       /* 12px */
+  --space-3-5: 0.875rem;    /* 14px */
+  --space-4: 1rem;          /* 16px */
+  --space-5: 1.25rem;       /* 20px */
+  --space-6: 1.5rem;        /* 24px */
+  --space-7: 1.75rem;       /* 28px */
+  --space-8: 2rem;          /* 32px */
+  --space-9: 2.25rem;       /* 36px */
+  --space-10: 2.5rem;       /* 40px */
+  --space-11: 2.75rem;      /* 44px */
+  --space-12: 3rem;         /* 48px */
+  --space-14: 3.5rem;       /* 56px */
+  --space-16: 4rem;         /* 64px */
+  --space-20: 5rem;         /* 80px */
+  --space-24: 6rem;         /* 96px */
+  --space-28: 7rem;         /* 112px */
+  --space-32: 8rem;         /* 128px */
+  --space-36: 9rem;         /* 144px */
+  --space-40: 10rem;        /* 160px */
+  --space-44: 11rem;        /* 176px */
+  --space-48: 12rem;        /* 192px */
+  --space-52: 13rem;        /* 208px */
+  --space-56: 14rem;        /* 224px */
+  --space-60: 15rem;        /* 240px */
+  --space-64: 16rem;        /* 256px */
+  --space-72: 18rem;        /* 288px */
+  --space-80: 20rem;        /* 320px */
+  --space-96: 24rem;        /* 384px */
+
+  /* Golden Ratio Spacing (φ = 1.618) */
+  --space-phi-xs: 0.382rem;     /* φ⁻² = 0.382 */
+  --space-phi-sm: 0.618rem;     /* φ⁻¹ = 0.618 */
+  --space-phi-base: 1rem;       /* base unit */
+  --space-phi-md: 1.618rem;     /* φ = 1.618 */
+  --space-phi-lg: 2.618rem;     /* φ² = 2.618 */
+  --space-phi-xl: 4.236rem;     /* φ³ = 4.236 */
+  --space-phi-2xl: 6.854rem;    /* φ⁴ = 6.854 */
+  --space-phi-3xl: 11.09rem;    /* φ⁵ = 11.09 */
+  --space-phi-4xl: 17.944rem;   /* φ⁶ = 17.944 */
+
+  /* ===== SEMANTIC SPACING TOKENS ===== */
+  
+  /* Section spacing */
+  --section-padding-y: var(--space-phi-2xl);      /* ~110px */
+  --section-padding-x: var(--space-phi-xl);       /* ~68px */
+  --section-gap: var(--space-phi-lg);             /* ~42px between sections */
+  
+  /* Content spacing */
+  --content-gap-xl: var(--space-phi-lg);          /* ~42px - Large content gaps */
+  --content-gap-lg: var(--space-phi-md);          /* ~26px - Medium content gaps */
+  --content-gap-md: var(--space-phi-sm);          /* ~10px - Small content gaps */
+  --content-gap-sm: var(--space-phi-xs);          /* ~6px - Tight content gaps */
+  
+  /* Component spacing */
+  --component-padding-xl: var(--space-12);        /* 48px */
+  --component-padding-lg: var(--space-8);         /* 32px */
+  --component-padding-md: var(--space-6);         /* 24px */
+  --component-padding-sm: var(--space-4);         /* 16px */
+  --component-padding-xs: var(--space-3);         /* 12px */
+  
+  /* Element spacing */
+  --element-gap-xl: var(--space-8);               /* 32px */
+  --element-gap-lg: var(--space-6);               /* 24px */
+  --element-gap-md: var(--space-4);               /* 16px */
+  --element-gap-sm: var(--space-3);               /* 12px */
+  --element-gap-xs: var(--space-2);               /* 8px */
+  
+  /* Border radius */
+  --radius-none: 0;
+  --radius-sm: 0.125rem;        /* 2px */
+  --radius-base: 0.25rem;       /* 4px */
+  --radius-md: 0.375rem;        /* 6px */
+  --radius-lg: 0.5rem;          /* 8px */
+  --radius-xl: 0.75rem;         /* 12px */
+  --radius-2xl: 1rem;           /* 16px */
+  --radius-3xl: 1.5rem;         /* 24px */
+  --radius-full: 9999px;
+
+  /* ===== TYPOGRAPHY TOKENS ===== */
+  
+  /* Font families */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Noto Sans JP', var(--font-sans);
+  --font-mono: 'JetBrains Mono', 'Monaco', 'Menlo', monospace;
+  
+  /* Font sizes */
+  --text-xs: 0.75rem;           /* 12px */
+  --text-sm: 0.875rem;          /* 14px */
+  --text-base: 1rem;            /* 16px */
+  --text-lg: 1.125rem;          /* 18px */
+  --text-xl: 1.25rem;           /* 20px */
+  --text-2xl: 1.5rem;           /* 24px */
+  --text-3xl: 1.875rem;         /* 30px */
+  --text-4xl: 2.25rem;          /* 36px */
+  --text-5xl: 3rem;             /* 48px */
+  --text-6xl: 3.75rem;          /* 60px */
+  --text-7xl: 4.5rem;           /* 72px */
+  --text-8xl: 6rem;             /* 96px */
+  --text-9xl: 8rem;             /* 128px */
+  
+  /* Line heights */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+  
+  /* Font weights */
+  --font-thin: 100;
+  --font-extralight: 200;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --font-black: 900;
+
+  /* ===== COLOR TOKENS ===== */
+  
+  /* Enterprise Dark Theme - HSL Values for Tailwind */
+  --color-background: 240 10% 4%;
+  --color-foreground: 0 0% 98%;
+  --color-card: 240 10% 10%;
+  --color-card-foreground: 0 0% 98%;
+  --color-popover: 240 10% 10%;
+  --color-popover-foreground: 0 0% 98%;
+  --color-primary: 239 84% 67%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-secondary: 240 6% 16%;
+  --color-secondary-foreground: 240 5% 65%;
+  --color-muted: 240 6% 16%;
+  --color-muted-foreground: 240 4% 46%;
+  --color-accent: 240 6% 16%;
+  --color-accent-foreground: 240 5% 65%;
+  --color-destructive: 0 84% 60%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-success: 158 64% 52%;
+  --color-warning: 43 96% 56%;
+  --color-border: 240 6% 16%;
+  --color-input: 240 10% 10%;
+  --color-ring: 239 84% 67%;
+  
+  /* Semantic color variations */
+  --color-primary-50: 239 84% 95%;
+  --color-primary-100: 239 84% 90%;
+  --color-primary-200: 239 84% 85%;
+  --color-primary-300: 239 84% 80%;
+  --color-primary-400: 239 84% 75%;
+  --color-primary-500: 239 84% 67%;  /* Main primary */
+  --color-primary-600: 239 84% 60%;
+  --color-primary-700: 239 84% 50%;
+  --color-primary-800: 239 84% 40%;
+  --color-primary-900: 239 84% 30%;
+  
+  /* ===== COMPONENT-SPECIFIC TOKENS ===== */
+  
+  /* Buttons */
+  --button-padding-sm: var(--space-2) var(--space-3);
+  --button-padding-md: var(--space-2-5) var(--space-4);
+  --button-padding-lg: var(--space-3) var(--space-6);
+  --button-padding-xl: var(--space-4) var(--space-8);
+  --button-radius: var(--radius-lg);
+  --button-font-size-sm: var(--text-sm);
+  --button-font-size-md: var(--text-base);
+  --button-font-size-lg: var(--text-lg);
+  
+  /* Cards */
+  --card-padding-sm: var(--component-padding-sm);
+  --card-padding-md: var(--component-padding-md);
+  --card-padding-lg: var(--component-padding-lg);
+  --card-radius: var(--radius-xl);
+  --card-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --card-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --card-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  
+  /* Layout containers */
+  --container-max-width: 1440px;
+  --container-padding: var(--space-4);
+  --content-max-width: 1024px;
+  
+  /* Grid gaps */
+  --grid-gap-sm: var(--space-4);
+  --grid-gap-md: var(--space-6);
+  --grid-gap-lg: var(--space-8);
+  
+  /* Z-index scale */
+  --z-behind: -1;
+  --z-default: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+  --z-modal: 100;
+  --z-popover: 200;
+  --z-tooltip: 300;
+  --z-toast: 400;
+  --z-max: 999;
+
+  /* ===== ANIMATION TOKENS ===== */
+  
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 500ms;
+  
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== UTILITY CLASSES FOR DESIGN TOKENS ===== */
+
+/* Spacing utilities */
+.space-phi-xs { gap: var(--space-phi-xs); }
+.space-phi-sm { gap: var(--space-phi-sm); }
+.space-phi-base { gap: var(--space-phi-base); }
+.space-phi-md { gap: var(--space-phi-md); }
+.space-phi-lg { gap: var(--space-phi-lg); }
+.space-phi-xl { gap: var(--space-phi-xl); }
+.space-phi-2xl { gap: var(--space-phi-2xl); }
+
+.space-y-phi-xs > * + * { margin-top: var(--space-phi-xs); }
+.space-y-phi-sm > * + * { margin-top: var(--space-phi-sm); }
+.space-y-phi-base > * + * { margin-top: var(--space-phi-base); }
+.space-y-phi-md > * + * { margin-top: var(--space-phi-md); }
+.space-y-phi-lg > * + * { margin-top: var(--space-phi-lg); }
+.space-y-phi-xl > * + * { margin-top: var(--space-phi-xl); }
+.space-y-phi-2xl > * + * { margin-top: var(--space-phi-2xl); }
+
+/* Section utilities */
+.section-spacing {
+  padding-top: var(--section-padding-y);
+  padding-bottom: var(--section-padding-y);
+  padding-left: var(--section-padding-x);
+  padding-right: var(--section-padding-x);
+}
+
+.section-spacing-y {
+  padding-top: var(--section-padding-y);
+  padding-bottom: var(--section-padding-y);
+}
+
+.section-spacing-x {
+  padding-left: var(--section-padding-x);
+  padding-right: var(--section-padding-x);
+}
+
+/* Content utilities */
+.content-gap-xl { gap: var(--content-gap-xl); }
+.content-gap-lg { gap: var(--content-gap-lg); }
+.content-gap-md { gap: var(--content-gap-md); }
+.content-gap-sm { gap: var(--content-gap-sm); }
+
+.content-spacing-xl > * + * { margin-top: var(--content-gap-xl); }
+.content-spacing-lg > * + * { margin-top: var(--content-gap-lg); }
+.content-spacing-md > * + * { margin-top: var(--content-gap-md); }
+.content-spacing-sm > * + * { margin-top: var(--content-gap-sm); }
+
+/* Component utilities */
+.component-padding-xl { padding: var(--component-padding-xl); }
+.component-padding-lg { padding: var(--component-padding-lg); }
+.component-padding-md { padding: var(--component-padding-md); }
+.component-padding-sm { padding: var(--component-padding-sm); }
+.component-padding-xs { padding: var(--component-padding-xs); }
+
+/* Layout utilities */
+.container-max-width {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+.content-max-width {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+}
+
+/* Typography utilities */
+.font-display { font-family: var(--font-display); }
+.font-sans { font-family: var(--font-sans); }
+.font-mono { font-family: var(--font-mono); }
+
+/* Grid utilities */
+.grid-gap-sm { gap: var(--grid-gap-sm); }
+.grid-gap-md { gap: var(--grid-gap-md); }
+.grid-gap-lg { gap: var(--grid-gap-lg); }
+
+/* Content spacing utilities - for space-y patterns */
+.content-spacing-xl > * + * { margin-top: var(--content-gap-xl); }
+.content-spacing-lg > * + * { margin-top: var(--content-gap-lg); }
+.content-spacing-md > * + * { margin-top: var(--content-gap-md); }
+.content-spacing-sm > * + * { margin-top: var(--content-gap-sm); }

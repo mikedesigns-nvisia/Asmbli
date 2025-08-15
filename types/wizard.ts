@@ -13,6 +13,7 @@ export interface Extension {
   description: string;
   category: string;
   provider: string;
+  icon?: string; // Provider branded icon or Lucide icon name
   complexity: 'low' | 'medium' | 'high';
   enabled: boolean;
   connectionType: 'mcp' | 'api' | 'extension' | 'webhook';

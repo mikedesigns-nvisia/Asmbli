@@ -27,6 +27,8 @@ export function WizardHeader({
 }: WizardHeaderProps) {
   const getNextButtonText = () => {
     switch (currentStep) {
+      case 0:
+        return "Choose Build Path";
       case 1:
         return "Continue to Extensions";
       case 2:
@@ -52,7 +54,7 @@ export function WizardHeader({
     <div className="flex items-center justify-between mb-8 pb-6 border-b border-border/30">
       {/* Back Button */}
       <div className="flex-1">
-        {currentStep > 1 ? (
+        {currentStep > 0 ? (
           <Button
             variant="ghost"
             onClick={onPrev}
@@ -71,7 +73,7 @@ export function WizardHeader({
       <div className="flex-1 flex items-center justify-center gap-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted/20 border border-border/30 whitespace-nowrap">
           <span className="text-sm text-[rgba(236,236,236,1)] whitespace-nowrap">
-            Step {currentStep} of {totalSteps}
+            Step {currentStep + 1} of {totalSteps}
           </span>
         </div>
 

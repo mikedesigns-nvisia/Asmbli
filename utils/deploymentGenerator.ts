@@ -65,10 +65,15 @@ export function generateDeploymentConfigs(wizardData: WizardData, promptOutput: 
   };
   configs.desktop = JSON.stringify(desktopExtension, null, 2);
 
-  // Docker Compose Configuration
-  configs.docker = generateDockerConfig(wizardData, hasDesignExtensions);
+  // Modern Platform Configurations
+  configs.railway = generateRailwayConfig(wizardData, hasDesignExtensions);
+  configs.render = generateRenderConfig(wizardData, hasDesignExtensions);
+  configs.fly = generateFlyConfig(wizardData, hasDesignExtensions);
+  configs.vercel = generateVercelConfig(wizardData, hasDesignExtensions);
+  configs.cloudrun = generateCloudRunConfig(wizardData, hasDesignExtensions);
 
-  // Kubernetes Configuration
+  // Traditional Container Configurations
+  configs.docker = generateDockerConfig(wizardData, hasDesignExtensions);
   configs.kubernetes = generateKubernetesConfig(wizardData, hasDesignExtensions);
 
   // Raw JSON Configuration
@@ -101,7 +106,13 @@ export function generateDeploymentConfigs(wizardData: WizardData, promptOutput: 
       }
     }),
     system_prompt: promptOutput,
-    test_results: wizardData.testResults
+    test_results: wizardData.testResults,
+    observability: {
+      metrics: "prometheus",
+      tracing: "opentelemetry",
+      logging: "structured-json",
+      health_endpoints: ["/health", "/ready", "/metrics"]
+    }
   }, null, 2);
 
   return configs;
@@ -321,7 +332,17 @@ spec:
         - name: AUTH_METHOD
           value: "${wizardData.security.authMethod}"
         - name: VAULT_INTEGRATION
-          value: "${wizardData.security.vaultIntegration}"${hasDesignExtensions ? `
+          value: "${wizardData.security.vaultIntegration}"
+        - name: OTEL_SERVICE_NAME
+          value: "${agentSlug}"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://opentelemetry-collector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=${agentSlug},service.version=1.0.0,environment=${wizardData.targetEnvironment}"
+        - name: PROMETHEUS_METRICS_PORT
+          value: "9090"
+        - name: LOG_LEVEL
+          value: "${wizardData.targetEnvironment === 'production' ? 'info' : 'debug'}"${hasDesignExtensions ? `
         - name: DESIGN_SYSTEM_VALIDATION
           value: "true"
         - name: ACCESSIBILITY_CHECKS
@@ -454,4 +475,308 @@ data:
       tokens:
         auto_sync: true
         validation: strict` : ''}`;
+}
+
+function generateRailwayConfig(wizardData: WizardData, hasDesignExtensions: boolean): string {
+  const agentSlug = wizardData.agentName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  
+  return `# ${wizardData.agentName} - Railway Configuration
+[build]
+  builder = "NIXPACKS"
+  buildCommand = "npm ci && npm run build"
+
+[deploy]
+  startCommand = "npm start"
+  healthcheckPath = "/health"
+  healthcheckTimeout = 300
+  restartPolicyType = "ON_FAILURE"
+  restartPolicyMaxRetries = 10
+
+[environments.production]
+  NODE_ENV = "production"
+  AGENT_NAME = "${wizardData.agentName}"
+  AGENT_TYPE = "${hasDesignExtensions ? 'design_agent' : 'general_agent'}"
+  PORT = { { PORT } }
+  
+  # Security Configuration
+  AUTH_METHOD = "${wizardData.security.authMethod}"
+  VAULT_INTEGRATION = "${wizardData.security.vaultIntegration}"
+  AUDIT_LOGGING = "${wizardData.security.auditLogging}"
+  RATE_LIMITING = "${wizardData.security.rateLimiting}"
+  SESSION_TIMEOUT = "${wizardData.security.sessionTimeout}"
+
+  # Observability
+  OTEL_SERVICE_NAME = "${agentSlug}"
+  OTEL_EXPORTER_OTLP_ENDPOINT = "https://api.railway.app/v1/otel"
+  LOG_LEVEL = "${wizardData.targetEnvironment === 'production' ? 'info' : 'debug'}"${hasDesignExtensions ? `
+  
+  # Design Agent Configuration
+  DESIGN_SYSTEM_VALIDATION = "true"
+  ACCESSIBILITY_CHECKS = "true"
+  FIGMA_SYNC_INTERVAL = "5m"
+  COMPONENT_VALIDATION = "true"` : ''}
+
+[environments.staging]
+  NODE_ENV = "staging"
+  AGENT_NAME = "${wizardData.agentName}-staging"
+  AGENT_TYPE = "${hasDesignExtensions ? 'design_agent' : 'general_agent'}"
+  
+[networking]
+  serviceName = "${agentSlug}"
+  servicePort = 8080`;
+}
+
+function generateRenderConfig(wizardData: WizardData, hasDesignExtensions: boolean): string {
+  const agentSlug = wizardData.agentName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  
+  return `# ${wizardData.agentName} - Render Blueprint
+services:
+  - type: web
+    name: ${agentSlug}
+    runtime: node
+    plan: ${wizardData.targetEnvironment === 'production' ? 'standard' : 'starter'}
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    
+    envVars:
+      - key: NODE_ENV
+        value: ${wizardData.targetEnvironment}
+      - key: AGENT_NAME
+        value: ${wizardData.agentName}
+      - key: AGENT_TYPE
+        value: ${hasDesignExtensions ? 'design_agent' : 'general_agent'}
+      - key: AUTH_METHOD
+        value: ${wizardData.security.authMethod}
+      - key: VAULT_INTEGRATION
+        value: ${wizardData.security.vaultIntegration}
+      - key: AUDIT_LOGGING
+        value: ${wizardData.security.auditLogging}
+      - key: RATE_LIMITING
+        value: ${wizardData.security.rateLimiting}
+      - key: SESSION_TIMEOUT
+        value: ${wizardData.security.sessionTimeout}
+      - key: OTEL_SERVICE_NAME
+        value: ${agentSlug}
+      - key: LOG_LEVEL
+        value: ${wizardData.targetEnvironment === 'production' ? 'info' : 'debug'}${hasDesignExtensions ? `
+      - key: DESIGN_SYSTEM_VALIDATION
+        value: "true"
+      - key: ACCESSIBILITY_CHECKS
+        value: "true"
+      - key: FIGMA_SYNC_INTERVAL
+        value: "5m"
+      - key: COMPONENT_VALIDATION
+        value: "true"` : ''}
+
+${wizardData.extensions?.some(ext => ext.enabled && ext.category === 'database') ? `databases:
+  - name: ${agentSlug}-postgres
+    databaseName: ${agentSlug}
+    user: ${agentSlug}_user
+    plan: starter` : ''}`;
+}
+
+function generateFlyConfig(wizardData: WizardData, hasDesignExtensions: boolean): string {
+  const agentSlug = wizardData.agentName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  
+  return `# ${wizardData.agentName} - Fly.io Configuration
+app = "${agentSlug}"
+primary_region = "sea"
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[experimental]
+  auto_rollback = true
+
+[build]
+
+[deploy]
+  release_command = "npm run db:migrate"
+
+[env]
+  NODE_ENV = "${wizardData.targetEnvironment}"
+  AGENT_NAME = "${wizardData.agentName}"
+  AGENT_TYPE = "${hasDesignExtensions ? 'design_agent' : 'general_agent'}"
+  AUTH_METHOD = "${wizardData.security.authMethod}"
+  VAULT_INTEGRATION = "${wizardData.security.vaultIntegration}"
+  AUDIT_LOGGING = "${wizardData.security.auditLogging}"
+  RATE_LIMITING = "${wizardData.security.rateLimiting}"
+  SESSION_TIMEOUT = "${wizardData.security.sessionTimeout}"
+  OTEL_SERVICE_NAME = "${agentSlug}"
+  LOG_LEVEL = "${wizardData.targetEnvironment === 'production' ? 'info' : 'debug'}"${hasDesignExtensions ? `
+  DESIGN_SYSTEM_VALIDATION = "true"
+  ACCESSIBILITY_CHECKS = "true"
+  FIGMA_SYNC_INTERVAL = "5m"
+  COMPONENT_VALIDATION = "true"` : ''}
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = ${wizardData.targetEnvironment === 'production' ? 1 : 0}
+  processes = ["app"]
+
+  [http_service.checks]
+    [http_service.checks.health]
+      grace_period = "10s"
+      interval = "30s"
+      method = "GET"
+      timeout = "5s"
+      path = "/health"
+
+[[vm]]
+  memory = "${hasDesignExtensions ? '1gb' : '512mb'}"
+  cpu_kind = "shared"
+  cpus = ${hasDesignExtensions ? 2 : 1}
+
+[metrics]
+  port = 9091
+  path = "/metrics"`;
+}
+
+function generateVercelConfig(wizardData: WizardData, hasDesignExtensions: boolean): string {
+  const agentSlug = wizardData.agentName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  
+  return JSON.stringify({
+    name: agentSlug,
+    version: 2,
+    builds: [
+      {
+        src: "package.json",
+        use: "@vercel/node",
+        config: {
+          maxLambdaSize: hasDesignExtensions ? "50mb" : "25mb"
+        }
+      }
+    ],
+    routes: [
+      {
+        src: "/health",
+        dest: "/api/health"
+      },
+      {
+        src: "/metrics",
+        dest: "/api/metrics"
+      },
+      {
+        src: "/(.*)",
+        dest: "/api/agent"
+      }
+    ],
+    env: {
+      NODE_ENV: wizardData.targetEnvironment,
+      AGENT_NAME: wizardData.agentName,
+      AGENT_TYPE: hasDesignExtensions ? 'design_agent' : 'general_agent',
+      AUTH_METHOD: wizardData.security.authMethod,
+      VAULT_INTEGRATION: wizardData.security.vaultIntegration,
+      AUDIT_LOGGING: wizardData.security.auditLogging,
+      RATE_LIMITING: wizardData.security.rateLimiting,
+      SESSION_TIMEOUT: wizardData.security.sessionTimeout,
+      OTEL_SERVICE_NAME: agentSlug,
+      LOG_LEVEL: wizardData.targetEnvironment === 'production' ? 'info' : 'debug',
+      ...(hasDesignExtensions && {
+        DESIGN_SYSTEM_VALIDATION: "true",
+        ACCESSIBILITY_CHECKS: "true",
+        FIGMA_SYNC_INTERVAL: "5m",
+        COMPONENT_VALIDATION: "true"
+      })
+    },
+    functions: {
+      "api/agent.js": {
+        runtime: "nodejs18.x",
+        maxDuration: hasDesignExtensions ? 30 : 10
+      }
+    },
+    regions: ["sea1", "iad1", "fra1"]
+  }, null, 2);
+}
+
+function generateCloudRunConfig(wizardData: WizardData, hasDesignExtensions: boolean): string {
+  const agentSlug = wizardData.agentName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  
+  return `# ${wizardData.agentName} - Google Cloud Run Configuration
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: ${agentSlug}
+  labels:
+    agent-type: ${hasDesignExtensions ? 'design-agent' : 'general-agent'}
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/execution-environment: gen2
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "${wizardData.targetEnvironment === 'production' ? '1' : '0'}"
+        autoscaling.knative.dev/maxScale: "${wizardData.targetEnvironment === 'production' ? '10' : '3'}"
+        run.googleapis.com/cpu-throttling: "false"
+        run.googleapis.com/memory: "${hasDesignExtensions ? '2Gi' : '1Gi'}"
+        run.googleapis.com/cpu: "${hasDesignExtensions ? '2' : '1'}"
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: ${agentSlug}-sa
+      containers:
+      - name: agent
+        image: gcr.io/PROJECT_ID/${agentSlug}:latest
+        ports:
+        - name: http1
+          containerPort: 8080
+        env:
+        - name: NODE_ENV
+          value: "${wizardData.targetEnvironment}"
+        - name: AGENT_NAME
+          value: "${wizardData.agentName}"
+        - name: AGENT_TYPE
+          value: "${hasDesignExtensions ? 'design_agent' : 'general_agent'}"
+        - name: AUTH_METHOD
+          value: "${wizardData.security.authMethod}"
+        - name: VAULT_INTEGRATION
+          value: "${wizardData.security.vaultIntegration}"
+        - name: AUDIT_LOGGING
+          value: "${wizardData.security.auditLogging}"
+        - name: RATE_LIMITING
+          value: "${wizardData.security.rateLimiting}"
+        - name: SESSION_TIMEOUT
+          value: "${wizardData.security.sessionTimeout}"
+        - name: GOOGLE_CLOUD_PROJECT
+          value: "PROJECT_ID"
+        - name: OTEL_SERVICE_NAME
+          value: "${agentSlug}"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "https://cloudtrace.googleapis.com/v1/projects/PROJECT_ID/traces"
+        - name: LOG_LEVEL
+          value: "${wizardData.targetEnvironment === 'production' ? 'info' : 'debug'}"${hasDesignExtensions ? `
+        - name: DESIGN_SYSTEM_VALIDATION
+          value: "true"
+        - name: ACCESSIBILITY_CHECKS
+          value: "true"
+        - name: FIGMA_SYNC_INTERVAL
+          value: "5m"
+        - name: COMPONENT_VALIDATION
+          value: "true"` : ''}
+        resources:
+          limits:
+            cpu: "${hasDesignExtensions ? '2000m' : '1000m'}"
+            memory: "${hasDesignExtensions ? '2Gi' : '1Gi'}"
+          requests:
+            cpu: "${hasDesignExtensions ? '1000m' : '500m'}"
+            memory: "${hasDesignExtensions ? '1Gi' : '512Mi'}"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+  traffic:
+  - percent: 100
+    latestRevision: true`;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, User, Layers, Shield, Palette, TestTube, Rocket } from 'lucide-react';
+import { Check, User, Layers, Shield, Palette, TestTube, Rocket, Route } from 'lucide-react';
 
 interface WizardStep {
   id: number;
@@ -16,6 +16,13 @@ interface WizardSidebarProps {
 
 export function WizardSidebar({ currentStep, totalSteps }: WizardSidebarProps) {
   const steps: WizardStep[] = [
+    {
+      id: 0,
+      title: 'Build Path',
+      subtitle: 'Choose your approach',
+      icon: <Route className="w-5 h-5" />,
+      status: currentStep > 0 ? 'completed' : currentStep === 0 ? 'active' : 'upcoming'
+    },
     {
       id: 1,
       title: 'Agent Profile',
@@ -60,13 +67,13 @@ export function WizardSidebar({ currentStep, totalSteps }: WizardSidebarProps) {
     }
   ];
 
-  const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+  const progressPercentage = (currentStep / (totalSteps - 1)) * 100;
 
   return (
     <div className="p-4 lg:p-6 h-full flex flex-col">
       {/* Header */}
       <div className="mb-6 lg:mb-8">
-        <h2 className="text-base lg:text-lg font-semibold text-foreground mb-2 font-[Noto_Sans_JP]">
+        <h2 className="text-base lg:text-lg font-semibold text-foreground mb-2 font-display">
           Agent Builder
         </h2>
         <p className="text-xs lg:text-sm text-muted-foreground">

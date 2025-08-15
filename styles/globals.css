@@ -1,100 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap');
 
-@custom-variant dark (&:is(.dark *));
+/* Import design tokens */
+@import './design-tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --font-size: 14px;
-  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Monaco', 'Menlo', monospace;
   
-  /* Enterprise Dark Theme */
-  --background: #0A0A0B;
-  --foreground: #FAFAFA;
-  --card: #18181B;
-  --card-foreground: #FAFAFA;
-  --popover: #18181B;
-  --popover-foreground: #FAFAFA;
-  --primary: #6366F1;
-  --primary-foreground: #FAFAFA;
-  --secondary: #27272A;
-  --secondary-foreground: #A1A1AA;
-  --muted: #27272A;
-  --muted-foreground: #71717A;
-  --accent: #27272A;
-  --accent-foreground: #A1A1AA;
-  --destructive: #EF4444;
-  --destructive-foreground: #FAFAFA;
-  --success: #10B981;
-  --warning: #F59E0B;
-  --border: #27272A;
-  --input: #18181B;
-  --input-background: #18181B;
-  --ring: #6366F1;
-  --radius: 0.75rem;
-  
-  /* Text sizes */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
-  
-  /* Font weights */
-  --font-weight-light: 300;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  /* Map design tokens to Tailwind CSS variables for backward compatibility */
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
+  --card: var(--color-card);
+  --card-foreground: var(--color-card-foreground);
+  --popover: var(--color-popover);
+  --popover-foreground: var(--color-popover-foreground);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-primary-foreground);
+  --secondary: var(--color-secondary);
+  --secondary-foreground: var(--color-secondary-foreground);
+  --muted: var(--color-muted);
+  --muted-foreground: var(--color-muted-foreground);
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-accent-foreground);
+  --destructive: var(--color-destructive);
+  --destructive-foreground: var(--color-destructive-foreground);
+  --success: var(--color-success);
+  --warning: var(--color-warning);
+  --border: var(--color-border);
+  --input: var(--color-input);
+  --ring: var(--color-ring);
+  --radius: var(--radius-xl);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-input-background: var(--input-background);
-  --color-ring: var(--ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+/* Add dark class by default */
+html {
+  font-size: var(--font-size);
+  font-family: var(--font-sans);
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  font-family: var(--font-sans);
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+  background-attachment: fixed;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-  }
-
-  html {
-    font-size: var(--font-size);
-    font-family: var(--font-inter);
-  }
-
-  body {
-    @apply bg-background text-foreground antialiased;
-    background-image: 
-      radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-    background-attachment: fixed;
+    font-family: inherit;
   }
 
   /* Code font */
@@ -129,6 +88,7 @@
 @layer base {
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
     h1 {
+      font-family: var(--font-display);
       font-size: var(--text-4xl);
       font-weight: var(--font-weight-bold);
       line-height: 1.2;
@@ -136,6 +96,7 @@
     }
 
     h2 {
+      font-family: var(--font-display);
       font-size: var(--text-2xl);
       font-weight: var(--font-weight-semibold);
       line-height: 1.3;
@@ -143,36 +104,42 @@
     }
 
     h3 {
+      font-family: var(--font-display);
       font-size: var(--text-xl);
       font-weight: var(--font-weight-semibold);
       line-height: 1.4;
     }
 
     h4 {
+      font-family: var(--font-display);
       font-size: var(--text-lg);
       font-weight: var(--font-weight-semibold);
       line-height: 1.5;
     }
 
     p {
+      font-family: var(--font-sans);
       font-size: var(--text-base);
       font-weight: var(--font-weight-normal);
       line-height: 1.6;
     }
 
     label {
+      font-family: var(--font-sans);
       font-size: var(--text-sm);
       font-weight: var(--font-weight-medium);
       line-height: 1.5;
     }
 
     button {
+      font-family: var(--font-sans);
       font-size: var(--text-sm);
       font-weight: var(--font-weight-medium);
       line-height: 1.5;
     }
 
     input, textarea {
+      font-family: var(--font-sans);
       font-size: var(--text-sm);
       font-weight: var(--font-weight-normal);
       line-height: 1.5;
@@ -284,14 +251,16 @@
     overflow: hidden;
   }
 
-  /* Layout constraints */
+  /* Layout constraints using design tokens */
   .max-width-container {
-    max-width: 1440px;
+    max-width: var(--container-max-width);
     margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
   }
 
   .content-width {
-    max-width: 1024px;
+    max-width: var(--content-max-width);
     margin: 0 auto;
   }
 
@@ -494,5 +463,49 @@
     .desktop-hide {
       @apply hidden;
     }
+  }
+
+  /* Design Token Spacing Utilities - Updated */
+  .golden-section-y,
+  .section-spacing-y {
+    padding-top: var(--section-padding-y);
+    padding-bottom: var(--section-padding-y);
+  }
+  
+  .golden-section-x,
+  .section-spacing-x {
+    padding-left: var(--section-padding-x);
+    padding-right: var(--section-padding-x);
+  }
+  
+  .golden-spacing,
+  .section-spacing {
+    padding: var(--section-padding-y) var(--section-padding-x);
+  }
+  
+  .golden-content-gap {
+    gap: var(--content-gap-xl);
+  }
+  
+  .golden-element-gap {
+    gap: var(--content-gap-lg);
+  }
+  
+  .golden-tight-gap {
+    gap: var(--content-gap-md);
+  }
+
+  /* Accessibility Improvements */
+  .sr-only {
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  .accessible-button {
+    @apply focus-visible-ring transition-all duration-200;
   }
 }
