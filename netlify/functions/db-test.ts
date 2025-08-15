@@ -29,15 +29,15 @@ export const handler: Handler = async (event, context) => {
 
   try {
     // Check if database URL is configured
-    if (!process.env.NETLIFY_DATABASE_URL) {
+    if (!process.env.DATABASE_URL && !process.env.NETLIFY_DATABASE_URL) {
       return {
         statusCode: 503,
         headers,
         body: JSON.stringify({
           success: false,
           error: 'Database not configured',
-          message: 'NETLIFY_DATABASE_URL environment variable is missing',
-          setup: 'Enable Neon integration in Netlify dashboard',
+          message: 'DATABASE_URL or NETLIFY_DATABASE_URL environment variable is missing',
+          setup: 'Configure database connection in Netlify environment variables',
           docs: 'https://github.com/WereNext/AgentEngine/blob/main/DEPLOYMENT_GUIDE.md'
         }),
       };

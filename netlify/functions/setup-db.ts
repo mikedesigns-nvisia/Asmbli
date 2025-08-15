@@ -22,14 +22,14 @@ export const handler: Handler = async (event, context) => {
   }
 
   try {
-    // Check if NETLIFY_DATABASE_URL is available
-    if (!process.env.NETLIFY_DATABASE_URL) {
+    // Check if DATABASE_URL is available
+    if (!process.env.DATABASE_URL && !process.env.NETLIFY_DATABASE_URL) {
       return {
         statusCode: 500,
         headers,
         body: JSON.stringify({
           error: 'Database not configured',
-          message: 'NETLIFY_DATABASE_URL environment variable is not set',
+          message: 'DATABASE_URL or NETLIFY_DATABASE_URL environment variable is not set',
         }),
       };
     }

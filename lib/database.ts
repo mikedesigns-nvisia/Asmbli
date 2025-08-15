@@ -1,8 +1,8 @@
 import { neon } from '@netlify/neon';
 
 // Initialize the Neon connection
-// Automatically uses NETLIFY_DATABASE_URL environment variable
-export const sql = neon();
+// Uses DATABASE_URL or NETLIFY_DATABASE_URL environment variable
+export const sql = neon(process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL);
 
 // Database utility functions
 export class Database {
