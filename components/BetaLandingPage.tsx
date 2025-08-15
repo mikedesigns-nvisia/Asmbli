@@ -111,9 +111,9 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white via-slate-200 to-blue-200 bg-clip-text text-transparent leading-tight">
-                Stop Coding AI Agents
+                Create a Dynamic Agent
                 <br />
-                <span className="text-4xl md:text-6xl">Start Building Magic ✨</span>
+                <span className="text-4xl md:text-6xl">for Use on any LLM</span>
               </h1>
               <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
                 The world's most fun AI agent builder. Drag, drop, deploy. 
