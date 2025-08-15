@@ -566,9 +566,9 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
           {/* Why This Matters */}
           <div className="mt-16 text-center space-y-8">
             <div className="content-spacing-md">
-              <h3 className="text-3xl font-bold leading-relaxed">Why asmbli?</h3>
+              <h3 className="text-3xl font-bold leading-relaxed">Why Asmbli?</h3>
               <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
-                Building AI agents from scratch is complex. asmbli simplifies the entire process, 
+                Building AI agents from scratch is complex. Asmbli simplifies the entire process, 
                 from design to deployment, so you can focus on solving problems instead of managing infrastructure.
               </p>
             </div>
@@ -627,7 +627,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
             
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Whether you're automating business processes, enhancing developer productivity, 
-              or building custom AI solutions, asmbli provides the foundation you need.
+              or building custom AI solutions, Asmbli provides the foundation you need.
             </p>
           </div>
 
@@ -681,7 +681,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
               Everything you need to build AI agents
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              From design to deployment, asmbli provides enterprise-grade tools 
+              From design to deployment, Asmbli provides enterprise-grade tools 
               for building sophisticated AI agents at scale.
             </p>
           </div>
@@ -878,7 +878,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
               </span>
             </div>
             <div className="text-sm text-muted-foreground">
-              © 2025 <span className="italic">asmbli</span>. Empowering the future of AI agents.
+              © 2025 <span className="italic">Asmbli</span>. Empowering the future of AI agents.
             </div>
           </div>
         </div>

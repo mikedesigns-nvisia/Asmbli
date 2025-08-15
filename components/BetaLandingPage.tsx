@@ -69,10 +69,10 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         <div className="max-width-container section-spacing-x">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-display text-[20px] italic pl-1 pr-2" aria-label="asmbli Logo">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent font-display text-[20px] italic pl-1 pr-2" aria-label="asmbli Logo">
                 asmbli
               </span>
-              <Badge className="bg-purple-500/20 text-purple-300 border-purple-400/30">
+              <Badge className="bg-primary/20 text-primary-foreground border-primary/30">
                 Beta
               </Badge>
             </div>
@@ -81,7 +81,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <a href="#early-access" className="text-slate-300 hover:text-white transition-colors">Early Access</a>
               <Button 
                 variant="outline" 
-                className="border-purple-400/50 text-purple-300 hover:bg-purple-500/20"
+                className="border-primary/50 text-primary hover:bg-primary/20"
                 onClick={onViewTemplates}
               >
                 View Templates
@@ -94,15 +94,15 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden">
         {/* Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         <div className="relative max-width-container section-spacing-x text-center">
           <div className="space-y-8">
             {/* Beta Badge */}
             <div className="flex justify-center">
-              <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-1 text-sm font-medium">
+              <Badge className="bg-gradient-to-r from-primary to-blue-500 text-primary-foreground px-4 py-1 text-sm font-medium">
                 <Sparkles className="w-4 h-4 mr-2" />
                 Early Access Beta
               </Badge>
@@ -131,7 +131,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                       placeholder="Enter your email for early access"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="flex-1 bg-white/10 border-white/20 text-white placeholder-slate-400 focus:border-purple-400"
+                      className="flex-1 bg-white/10 border-white/20 text-white placeholder-slate-400 focus:border-primary"
                       required
                     />
                     <Button 
@@ -183,7 +183,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section id="features" className="py-24 bg-black/20">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold">Why Choose asmbli Beta?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Why Choose Asmbli Beta?</h2>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
               Get exclusive access to cutting-edge features that will transform how you build AI agents.
             </p>
@@ -207,7 +207,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                 icon: Rocket,
                 title: 'One-Click Deploy',
                 description: 'Deploy to any platform - Claude Desktop, ChatGPT, or your own infrastructure.',
-                color: 'text-purple-400'
+                color: 'text-primary'
               },
               {
                 icon: Gift,
@@ -253,8 +253,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <CardContent className="p-12 text-center">
                 <div className="space-y-6">
                   <div className="flex items-center justify-center space-x-2">
-                    <Clock className="w-6 h-6 text-purple-400" />
-                    <Badge className="bg-purple-500/20 text-purple-300 border-purple-400/30">
+                    <Clock className="w-6 h-6 text-primary" />
+                    <Badge className="bg-primary/20 text-primary-foreground border-primary/30">
                       Limited Time
                     </Badge>
                   </div>
@@ -270,7 +270,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-400">$0</div>
+                      <div className="text-2xl font-bold text-primary">$0</div>
                       <div className="text-sm text-slate-400">Forever free core plan</div>
                     </div>
                     <div className="text-center">
@@ -329,10 +329,10 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         <div className="max-width-container section-spacing-x">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2">
-              <span className="font-semibold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent italic pl-1 pr-1">
+              <span className="font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent italic pl-1 pr-1">
                 asmbli
               </span>
-              <Badge className="bg-purple-500/20 text-purple-300 border-purple-400/30 text-xs">
+              <Badge className="bg-primary/20 text-primary-foreground border-primary/30 text-xs">
                 Beta
               </Badge>
             </div>
@@ -353,7 +353,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             </div>
             
             <div className="text-sm text-slate-400">
-              © 2025 asmbli. All rights reserved.
+              © 2025 Asmbli. All rights reserved.
             </div>
           </div>
         </div>

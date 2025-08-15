@@ -269,8 +269,8 @@
   --color-navbar: var(--bone-300);             /* Darker cream navbar */
   --color-navbar-foreground: 20 5% 8%;         /* Much darker navbar text */
   
-  /* Primary colors using banana pudding */
-  --color-primary: var(--pudding-600);         /* Rich banana primary */
+  /* Primary colors using banana pudding with better contrast */
+  --color-primary: var(--pudding-700);         /* Deeper banana primary for better contrast */
   --color-primary-foreground: var(--bone-50);  /* Light text on primary */
   
   /* Secondary using darker bone tones */

@@ -804,7 +804,7 @@ export function TemplatesPage({
               <div className="text-4xl">🤖</div>
             </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Connect asmbli capabilities to your existing AI tools - no complex deployments needed.
+              Connect Asmbli capabilities to your existing AI tools - no complex deployments needed.
               Works with LM Studio, Ollama, ChatGPT, and Claude Desktop.
             </p>
           </div>

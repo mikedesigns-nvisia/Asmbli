@@ -776,6 +776,23 @@ body::after {
     @apply bg-badge text-badge-foreground px-2 py-0.5 rounded-full text-xs font-semibold;
   }
 
+  /* Theme-adaptive purple-to-primary replacements */
+  .theme-purple-text {
+    @apply text-primary;
+  }
+  
+  .theme-purple-bg {
+    @apply bg-primary/10;
+  }
+  
+  .theme-purple-border {
+    @apply border-primary/30;
+  }
+  
+  .theme-purple-accent {
+    @apply text-primary bg-primary/20 border-primary/30;
+  }
+
   /* Adaptive surface utilities */
   .surface-navbar {
     @apply bg-navbar text-navbar-foreground;

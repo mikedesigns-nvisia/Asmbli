@@ -2,6 +2,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import { LandingPage } from './components/LandingPage';
 import { BetaLandingPage } from './components/BetaLandingPage';
+import { TemplatesPreviewModal } from './components/TemplatesPreviewModal';
 import { Layout } from './components/Layout';
 import { WizardSidebar } from './components/WizardSidebar';
 import { CodePreviewPanel } from './components/CodePreviewPanel';
@@ -71,6 +72,7 @@ function AuthenticatedApp() {
   const [showSaveTemplateDialog, setShowSaveTemplateDialog] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showTemplatesPreview, setShowTemplatesPreview] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
   const [wizardData, setWizardData] = useState<WizardData>(() => {
@@ -213,6 +215,11 @@ function AuthenticatedApp() {
 
 
   const handleViewTemplates = () => {
+    setShowTemplatesPreview(true);
+  };
+
+  const handleViewAllTemplates = () => {
+    setShowTemplatesPreview(false);
     setShowLanding(false);
     setShowTemplates(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -771,6 +778,14 @@ function AuthenticatedApp() {
         isOpen={showAuthModal} 
         onClose={() => setShowAuthModal(false)}
         defaultTab="signup"
+      />
+
+      {/* Templates Preview Modal */}
+      <TemplatesPreviewModal
+        isOpen={showTemplatesPreview}
+        onClose={() => setShowTemplatesPreview(false)}
+        onViewAll={handleViewAllTemplates}
+        onGetStarted={handleGetStarted}
       />
     </div>
   );

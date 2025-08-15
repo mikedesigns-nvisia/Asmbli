@@ -318,7 +318,7 @@ export function TemplatesPreviewModal({ isOpen, onClose, onSignUp }: TemplatesPr
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="font-semibold">Ready to build your AI agent?</h4>
-                <p className="text-sm text-muted-foreground">Join developers using asmbli</p>
+                <p className="text-sm text-muted-foreground">Join developers using Asmbli</p>
               </div>
               <div className="flex items-center gap-3">
                 <Button variant="outline" onClick={onClose}>
