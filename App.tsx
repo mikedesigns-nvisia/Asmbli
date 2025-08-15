@@ -305,7 +305,19 @@ function AuthenticatedApp() {
         ...updates
       }));
     } else {
-      setWizardData(prev => ({ ...prev, ...updates }));
+      // Add default constraints for beginners if none are set and they're updating behavior
+      const updatedData = { ...updates };
+      if (user?.role === 'beginner' && 
+          updates.constraints !== undefined && 
+          updates.constraints.length === 0 && 
+          updates.tone) {
+        updatedData.constraints = ['helpful', 'safe'];
+        updatedData.constraintDocs = {
+          helpful: 'Provide clear, actionable, and useful responses',
+          safe: 'Avoid harmful, inappropriate, or misleading content'
+        };
+      }
+      setWizardData(prev => ({ ...prev, ...updatedData }));
     }
   };
 
@@ -332,9 +344,10 @@ function AuthenticatedApp() {
         // Security step - authentication method should be set (auto-pass for beginners)
         return user?.role === 'beginner' || wizardData.security.authMethod !== null;
       case 4:
-        // Step 4 mandatory validation: Behavior & Style with operational constraints
+        // Step 4 mandatory validation: Behavior & Style - constraints optional for beginners
+        const constraintsRequired = user?.role !== 'beginner';
         return wizardData.tone !== null && 
-               wizardData.constraints.length > 0 &&
+               (constraintsRequired ? wizardData.constraints.length > 0 : true) &&
                wizardData.responseLength > 0;
       case 5:
         // Test & Validate step - can proceed if tests passed or if user skips testing

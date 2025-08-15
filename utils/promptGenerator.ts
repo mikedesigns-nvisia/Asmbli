@@ -188,6 +188,8 @@ const constraintInstructions = {
   branding: '- **Brand Alignment**: Follow organizational brand voice, terminology, and messaging guidelines consistently across all interactions.\n',
   compliance: '- **Regulatory Compliance**: Ensure all responses meet industry-specific regulatory requirements and data handling standards.\n',
   performance: '- **Performance Monitoring**: Track response times, accuracy metrics, and user satisfaction scores for continuous improvement.\n',
+  helpful: '- **Clear & Actionable**: Provide responses that are clear, practical, and immediately useful to the user.\n',
+  safe: '- **Safety First**: Avoid harmful, inappropriate, misleading, or potentially dangerous content in all responses.\n',
   
   // Design-specific constraints
   'design-system': '- **Design System Compliance**: Always reference and follow established design system guidelines, component libraries, and design patterns to ensure consistency.\n',
