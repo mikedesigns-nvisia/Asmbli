@@ -1,18 +1,43 @@
 {
   "root": true,
-  "env": { "browser": true, "es2020": true },
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
   "extends": [
     "eslint:recommended",
     "@typescript-eslint/recommended",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "plugin:storybook/recommended"
   ],
-  "ignorePatterns": ["dist", ".eslintrc.cjs"],
+  "ignorePatterns": [
+    "dist",
+    ".eslintrc.cjs"
+  ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["react-refresh"],
+  "plugins": [
+    "react-refresh"
+  ],
   "rules": {
     "react-refresh/only-export-components": [
       "warn",
-      { "allowConstantExport": true }
-    ]
+      {
+        "allowConstantExport": true
+      }
+    ],
+    "design-tokens/no-hardcoded-values": [
+      "warn",
+      {
+        "checkColors": true,
+        "checkSpacing": true,
+        "allowedValues": ["0", "1px", "100%", "auto", "inherit", "transparent"]
+      }
+    ],
+    "design-tokens/prefer-design-tokens": "warn"
+  },
+  "settings": {
+    "design-tokens": {
+      "configPath": "./eslint-plugin-design-tokens.js"
+    }
   }
 }

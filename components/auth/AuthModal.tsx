@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Badge } from '../ui/badge';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Eye, EyeOff, Mail, Lock, User, Shield, Zap, Building, CheckCircle, X } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Shield, Zap, Building, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserRole, ROLE_CONFIGURATIONS } from '../../types/auth';
 
@@ -98,9 +98,6 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
             <h2 className="text-2xl font-bold">Welcome to AI Agent Builder</h2>
             <p className="text-muted-foreground">Sign in to start building your AI agents</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="w-4 h-4" />
-          </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'login' | 'signup')}>

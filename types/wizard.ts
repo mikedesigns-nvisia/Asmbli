@@ -59,7 +59,7 @@ export interface TestResults {
   connectionTests: Record<string, boolean>;
   latencyTests: Record<string, number>;
   securityValidation: boolean;
-  overallStatus: 'passed' | 'failed' | 'pending';
+  overallStatus: 'passed' | 'failed' | 'pending' | 'skipped';
 }
 
 export interface WizardData {

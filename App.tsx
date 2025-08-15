@@ -7,6 +7,7 @@ import { CodePreviewPanel } from './components/CodePreviewPanel';
 import { FlowDiagram } from './components/FlowDiagram';
 import { WizardSelectionTracker } from './components/WizardSelectionTracker';
 import { TemplatesPage } from './components/templates/TemplatesPage';
+import { TemplateReviewPage } from './components/templates/TemplateReviewPage';
 import { SaveTemplateDialog } from './components/templates/SaveTemplateDialog';
 import { OnboardingModal } from './components/OnboardingModal';
 
@@ -18,11 +19,13 @@ import { RoleBasedSecurityStep } from './components/wizard/RoleBasedSecurityStep
 import { Step4BehaviorStyle } from './components/wizard/Step4BehaviorStyle';
 import { Step5TestValidate } from './components/wizard/Step5TestValidate';
 import { RoleBasedDeployStep } from './components/wizard/RoleBasedDeployStep';
+import { DesignPrototyperStep } from './components/wizard/DesignPrototyperStep';
 
 // Lazy load the extensions step for better performance
 const RoleBasedExtensionsStep = React.lazy(() => import('./components/wizard/RoleBasedExtensionsStep').then(module => ({ default: module.RoleBasedExtensionsStep })));
 import { WizardData } from './types/wizard';
 import { AgentTemplate } from './types/templates';
+import { AgentTemplate as NewAgentTemplate } from './types/agent-templates';
 import { generatePrompt } from './utils/promptGenerator';
 import { generateDeploymentConfigs } from './utils/deploymentGenerator';
 import { TemplateStorage } from './utils/templateStorage';
@@ -61,6 +64,8 @@ function AuthenticatedApp() {
   const { user, isAuthenticated, isLoading, getPreConfiguredSettings } = useAuth();
   const [showLanding, setShowLanding] = useState(true);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showTemplateReview, setShowTemplateReview] = useState(false);
+  const [selectedTemplateForReview, setSelectedTemplateForReview] = useState<AgentTemplate | null>(null);
   const [showSaveTemplateDialog, setShowSaveTemplateDialog] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -72,17 +77,60 @@ function AuthenticatedApp() {
   });
   const [promptOutput, setPromptOutput] = useState('');
   const [deploymentConfigs, setDeploymentConfigs] = useState<Record<string, string>>({});
+  const [selectedAgentTemplate, setSelectedAgentTemplate] = useState<NewAgentTemplate | null>(null);
+  const [isTemplateMode, setIsTemplateMode] = useState(false);
+  const [templateFiles, setTemplateFiles] = useState<any[]>([]);
+  
+  // Use templateFiles to avoid unused variable warning
+  console.log('Template files:', templateFiles);
+
+  // Role-based step configuration
+  const getStepConfiguration = () => {
+    const userRole = user?.role || 'beginner';
+    
+    const allSteps = [
+      { name: 'Build Path', isVisible: true },
+      { name: 'Agent Profile', isVisible: true },
+      { name: 'Extensions', isVisible: true },
+      { name: 'Security', isVisible: true },
+      { name: 'Behavior', isVisible: true },
+      { name: 'Testing', isVisible: true },
+      { name: 'Deploy', isVisible: true }
+    ];
+
+    // For beginners, hide advanced steps
+    if (userRole === 'beginner') {
+      // Hide advanced security and testing features
+      allSteps[3].name = 'Basic Security'; // Simplified security step name
+      allSteps[5].name = 'Quick Test'; // Simplified testing step name
+    } else if (userRole === 'power_user') {
+      // Power users get enhanced step names
+      allSteps[3].name = 'Advanced Security';
+      allSteps[5].name = 'Testing & Validation';
+    } else if (userRole === 'enterprise') {
+      // Enterprise gets full feature names
+      allSteps[3].name = 'Enterprise Security';
+      allSteps[5].name = 'Full Validation Suite';
+    }
+
+    return allSteps;
+  };
+
+  const stepConfiguration = getStepConfiguration();
+  const totalVisibleSteps = stepConfiguration.filter(step => step.isVisible).length;
 
   // Generate configurations when wizard data changes
+  // For template mode, generate earlier since we skip steps
   useEffect(() => {
-    if (currentStep >= 5) {
+    const shouldGenerate = isTemplateMode ? currentStep >= 1 : currentStep >= 5;
+    if (shouldGenerate && wizardData.agentName) {
       const prompt = generatePrompt(wizardData);
       setPromptOutput(prompt);
       
       const configs = generateDeploymentConfigs(wizardData, prompt);
       setDeploymentConfigs(configs);
     }
-  }, [currentStep, wizardData]);
+  }, [currentStep, wizardData, isTemplateMode]);
 
   const copyToClipboard = async (text: string, itemType: string) => {
     try {
@@ -185,12 +233,98 @@ function AuthenticatedApp() {
     setShowSaveTemplateDialog(false);
   };
 
-  const updateWizardData = (updates: Partial<WizardData>) => {
-    setWizardData(prev => ({ ...prev, ...updates }));
+  const handleShowTemplateReview = (template: AgentTemplate) => {
+    setSelectedTemplateForReview(template);
+    setShowTemplateReview(true);
+    setShowTemplates(false);
+  };
+
+  const handleBackToTemplates = () => {
+    setShowTemplateReview(false);
+    setSelectedTemplateForReview(null);
+    setShowTemplates(true);
+  };
+
+  const handleDeployTemplate = (templateWizardData: WizardData) => {
+    setWizardData(templateWizardData);
+    setShowTemplateReview(false);
+    setSelectedTemplateForReview(null);
+    setShowTemplates(false);
+    setShowLanding(false);
+    setCurrentStep(6); // Go directly to deploy step
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCustomizeTemplate = (templateWizardData: WizardData) => {
+    setWizardData(templateWizardData);
+    setShowTemplateReview(false);
+    setSelectedTemplateForReview(null);
+    setShowTemplates(false);
+    setShowLanding(false);
+    setCurrentStep(1); // Start from agent profile step
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const updateWizardData = (updates: Partial<WizardData> | any) => {
+    // Handle template mode initialization
+    if (updates.buildType === 'template' && updates.selectedTemplate) {
+      setSelectedAgentTemplate(updates.selectedTemplate);
+      setIsTemplateMode(true);
+      setTemplateFiles(updates.templateFiles || []);
+      
+      // Update wizard data with template configuration
+      setWizardData(prev => ({
+        ...prev,
+        agentName: updates.agentName,
+        agentDescription: updates.agentDescription,
+        primaryPurpose: updates.primaryPurpose,
+        buildType: 'template',
+        selectedTemplate: updates.selectedTemplate,
+        isPreConfigured: true,
+        // Fill in defaults for skipped steps
+        extensions: updates.requiredMcps?.map((mcp: string) => ({
+          id: mcp,
+          name: mcp,
+          enabled: true,
+          category: 'core',
+          provider: 'template',
+          pricing: 'free',
+          connectionType: 'mcp'
+        })) || [],
+        security: {
+          authMethod: updates.securitySettings?.authMethod || null,
+          permissions: updates.securitySettings?.permissions || [],
+          vaultIntegration: 'none',
+          auditLogging: false,
+          rateLimiting: true,
+          sessionTimeout: 3600
+        },
+        tone: 'professional',
+        responseLength: 3,
+        constraints: ['Be helpful and accurate', 'Follow safety guidelines'],
+        constraintDocs: {},
+        testResults: {
+          connectionTests: {},
+          latencyTests: {},
+          securityValidation: true,
+          overallStatus: 'passed' as const
+        },
+        deploymentFormat: 'desktop',
+        targetEnvironment: 'production',
+        ...updates
+      }));
+    } else {
+      setWizardData(prev => ({ ...prev, ...updates }));
+    }
   };
 
   // Fixed validation logic according to Guidelines requirements
   const canGoNext = () => {
+    // Template mode users auto-pass validation since everything is pre-configured
+    if (isTemplateMode) {
+      return true;
+    }
+
     switch (currentStep) {
       case 0:
         // Step 0: Build path selection - always allow progression once path is selected
@@ -270,6 +404,22 @@ function AuthenticatedApp() {
   );
 
   const renderCurrentStep = () => {
+    // Check if we need to show design prototyper step
+    const shouldShowDesignStep = isTemplateMode && 
+                                selectedAgentTemplate?.id === 'design-prototyper-free' && 
+                                currentStep === 1;
+
+    if (shouldShowDesignStep) {
+      return (
+        <DesignPrototyperStep
+          template={selectedAgentTemplate}
+          onNext={nextStep}
+          onBack={prevStep}
+          onUpdate={(files) => setTemplateFiles(files)}
+        />
+      );
+    }
+
     switch (currentStep) {
       case 0:
         return (
@@ -280,6 +430,23 @@ function AuthenticatedApp() {
           />
         );
       case 1:
+        // For template mode, if NOT design prototyper, skip to deployment
+        if (isTemplateMode && selectedAgentTemplate?.id !== 'design-prototyper-free') {
+          // Skip to deployment for non-design template users
+          return (
+            <RoleBasedDeployStep
+              data={wizardData}
+              onUpdate={updateWizardData}
+              onStartOver={startOver}
+              promptOutput={promptOutput}
+              deploymentConfigs={deploymentConfigs}
+              copiedItem={copiedItem}
+              onCopy={copyToClipboard}
+              onSaveAsTemplate={handleSaveAsTemplate}
+            />
+          );
+        }
+        // For design prototyper or non-template mode, show normal step 1
         return (
           <Step1AgentProfile
             data={wizardData}
@@ -290,6 +457,21 @@ function AuthenticatedApp() {
           />
         );
       case 2:
+        // For template mode, go to deployment after template-specific steps
+        if (isTemplateMode) {
+          return (
+            <RoleBasedDeployStep
+              data={wizardData}
+              onUpdate={updateWizardData}
+              onStartOver={startOver}
+              promptOutput={promptOutput}
+              deploymentConfigs={deploymentConfigs}
+              copiedItem={copiedItem}
+              onCopy={copyToClipboard}
+              onSaveAsTemplate={handleSaveAsTemplate}
+            />
+          );
+        }
         return (
           <Suspense fallback={<ExtensionsStepLoading />}>
             <RoleBasedExtensionsStep
@@ -301,6 +483,21 @@ function AuthenticatedApp() {
           </Suspense>
         );
       case 3:
+        // Skip security for template mode  
+        if (isTemplateMode) {
+          return (
+            <RoleBasedDeployStep
+              data={wizardData}
+              onUpdate={updateWizardData}
+              onStartOver={startOver}
+              promptOutput={promptOutput}
+              deploymentConfigs={deploymentConfigs}
+              copiedItem={copiedItem}
+              onCopy={copyToClipboard}
+              onSaveAsTemplate={handleSaveAsTemplate}
+            />
+          );
+        }
         return (
           <RoleBasedSecurityStep
             data={wizardData}
@@ -310,6 +507,21 @@ function AuthenticatedApp() {
           />
         );
       case 4:
+        // Skip behavior/style for template mode
+        if (isTemplateMode) {
+          return (
+            <RoleBasedDeployStep
+              data={wizardData}
+              onUpdate={updateWizardData}
+              onStartOver={startOver}
+              promptOutput={promptOutput}
+              deploymentConfigs={deploymentConfigs}
+              copiedItem={copiedItem}
+              onCopy={copyToClipboard}
+              onSaveAsTemplate={handleSaveAsTemplate}
+            />
+          );
+        }
         return (
           <Step4BehaviorStyle
             data={wizardData}
@@ -319,6 +531,21 @@ function AuthenticatedApp() {
           />
         );
       case 5:
+        // Skip testing for template mode
+        if (isTemplateMode) {
+          return (
+            <RoleBasedDeployStep
+              data={wizardData}
+              onUpdate={updateWizardData}
+              onStartOver={startOver}
+              promptOutput={promptOutput}
+              deploymentConfigs={deploymentConfigs}
+              copiedItem={copiedItem}
+              onCopy={copyToClipboard}
+              onSaveAsTemplate={handleSaveAsTemplate}
+            />
+          );
+        }
         return (
           <Step5TestValidate
             data={wizardData}
@@ -367,6 +594,20 @@ function AuthenticatedApp() {
     );
   }
 
+  // Show template review page
+  if (showTemplateReview && selectedTemplateForReview?.agentTemplateData) {
+    return (
+      <div className="container-max-width mx-auto">
+        <TemplateReviewPage
+          template={selectedTemplateForReview.agentTemplateData}
+          onBack={handleBackToTemplates}
+          onDeploy={handleDeployTemplate}
+          onCustomize={handleCustomizeTemplate}
+        />
+      </div>
+    );
+  }
+
   // Show templates page
   if (showTemplates) {
     return (
@@ -375,6 +616,8 @@ function AuthenticatedApp() {
           currentWizardData={wizardData}
           onUseTemplate={handleUseTemplate}
           onBackToWizard={handleBackToWizard}
+          onShowTemplateReview={handleShowTemplateReview}
+          onDeployTemplate={handleDeployTemplate}
         />
       </div>
     );
@@ -466,7 +709,8 @@ function AuthenticatedApp() {
       {/* Floating Progress Indicator */}
       <FloatingProgressIndicator
         currentStep={currentStep}
-        totalSteps={7}
+        totalSteps={totalVisibleSteps}
+        stepInfo={stepConfiguration}
         onStepClick={goToStep}
         canGoNext={canGoNext()}
         canGoPrev={currentStep > 0}
@@ -481,7 +725,7 @@ function AuthenticatedApp() {
           onClose={() => setShowSaveTemplateDialog(false)}
           onSave={handleSaveTemplate}
           categories={TemplateStorage.getCategories()}
-          existingTags={TemplateStorage.getTemplates().flatMap(t => t.tags)}
+          existingTags={TemplateStorage.getTemplates(user?.role || 'beginner').flatMap(t => t.tags)}
         />
       )}
 

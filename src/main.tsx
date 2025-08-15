@@ -3,8 +3,16 @@ import ReactDOM from 'react-dom/client';
 import App from '../App';
 import '../styles/globals.css';
 
-// Enable dark mode by default and ensure font inheritance
-document.documentElement.classList.add('dark', 'font-sans');
+// Initialize theme system and ensure font inheritance
+document.documentElement.classList.add('font-sans');
+
+// Check for saved theme preference or default to dark
+const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+const initialTheme = savedTheme || systemTheme || 'dark';
+
+document.documentElement.classList.add(initialTheme);
+document.documentElement.setAttribute('data-theme', initialTheme);
 
 // Disable browser scroll restoration and snap to top on page load
 if ('scrollRestoration' in history) {

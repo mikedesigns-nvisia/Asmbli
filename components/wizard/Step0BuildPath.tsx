@@ -7,7 +7,9 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { ArrowRight, Settings, HelpCircle, CheckCircle, Zap, Globe, Package, Cloud, AlertCircle, MessageSquare, PenTool, BarChart3, Code, Palette, Search, Sparkles, User, Briefcase } from 'lucide-react';
+import { ArrowRight, Settings, HelpCircle, CheckCircle, Zap, Globe, Package, Cloud, AlertCircle, MessageSquare, PenTool, BarChart3, Code, Palette, Search, Sparkles, User, Briefcase, Upload, Star } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { AgentTemplate, findMatchingTemplate, BEGINNER_AGENT_TEMPLATES } from '../../types/agent-templates';
 
 interface Step0BuildPathProps {
   data: any;
@@ -188,147 +190,153 @@ const deploymentNames = {
 };
 
 export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) {
+  const { user, hasFeature } = useAuth();
   const [selectedPath, setSelectedPath] = useState<'guided' | 'custom' | null>(data?.buildType || null);
   const [showGuidedWizard, setShowGuidedWizard] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Partial<QuestionnaireAnswers>>({});
   const [recommendations, setRecommendations] = useState<DeploymentRecommendation[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<AgentTemplate | null>(null);
+  const [showTemplateSelection, setShowTemplateSelection] = useState(false);
+  
+  const isBeginnerUser = user?.role === 'beginner';
+  const canUseCustomBuilder = hasFeature('custom-builder');
 
-  const questions = [
-    // Agent Profile Questions
+  // For free/consumer users, we only ask the essential questions
+  // Technical details are auto-configured based on their tier
+  const questions = isBeginnerUser ? [
+    // Essential Questions Only for Consumers (5 questions)
     {
       id: 'agentName',
-      title: 'What\'s your agent\'s name?',
-      description: 'Give your AI agent a memorable name that reflects its purpose.',
+      title: 'What would you like to call your assistant?',
+      description: 'Give it a friendly name that you\'ll remember.',
       type: 'text',
-      placeholder: 'e.g., Customer Support Bot, Research Assistant, Code Helper'
+      placeholder: 'e.g., Helper, Assistant, Support Bot'
     },
     {
       id: 'agentDescription',
-      title: 'What will your agent do?',
-      description: 'Describe your agent\'s main purpose and capabilities in 2-3 sentences.',
+      title: 'What do you need help with?',
+      description: 'Tell us in your own words what you want your assistant to do.',
       type: 'textarea',
-      placeholder: 'e.g., An intelligent assistant that helps customers with product questions, troubleshooting, and order support. It can access our knowledge base and escalate complex issues to human agents.'
-    },
-    {
-      id: 'agentCompany',
-      title: 'Company or Organization (Optional)',
-      description: 'What company or project is this agent for?',
-      type: 'text',
-      placeholder: 'e.g., Acme Corp, Personal Project'
+      placeholder: 'e.g., I need help answering customer emails, writing blog posts, or analyzing my sales data'
     },
     {
       id: 'primaryPurpose',
-      title: 'What\'s your agent\'s primary use case?',
-      description: 'Choose the category that best matches your agent\'s main function.',
+      title: 'What type of assistant do you need?',
+      description: 'Pick the one that best matches what you\'re looking for.',
+      type: 'select',
+      options: useCases
+    },
+    {
+      id: 'expectedUsers',
+      title: 'Who will interact with your assistant?',
+      description: 'This helps us prepare the right setup for you.',
+      type: 'select',
+      options: [
+        { id: 'personal', title: 'Just Me', description: 'My personal assistant' },
+        { id: 'team', title: 'My Team', description: 'A small group of people' },
+        { id: 'company', title: 'My Whole Company', description: 'All our employees' },
+        { id: 'public', title: 'My Customers', description: 'People outside my company' }
+      ]
+    },
+    {
+      id: 'targetEnvironment',
+      title: 'When do you want to start using it?',
+      description: 'We\'ll set it up accordingly.',
+      type: 'select',
+      options: [
+        { id: 'development', title: 'Just Looking', description: 'I\'m exploring options' },
+        { id: 'staging', title: 'Soon', description: 'Getting ready to use it' },
+        { id: 'production', title: 'Right Now', description: 'I need it working today' }
+      ]
+    }
+  ] : [
+    // Full question set for power/enterprise users
+    {
+      id: 'agentName',
+      title: 'What would you like to call your assistant?',
+      description: 'Give it a friendly name that you\'ll remember.',
+      type: 'text',
+      placeholder: 'e.g., Helper, Assistant, Support Bot'
+    },
+    {
+      id: 'agentDescription',
+      title: 'What do you need help with?',
+      description: 'Tell us in your own words what you want your assistant to do.',
+      type: 'textarea',
+      placeholder: 'e.g., I need help answering customer emails, writing blog posts, or analyzing my sales data'
+    },
+    {
+      id: 'agentCompany',
+      title: 'What\'s your company name? (Optional)',
+      description: 'This helps us customize your assistant.',
+      type: 'text',
+      placeholder: 'e.g., My Business, Personal Use'
+    },
+    {
+      id: 'primaryPurpose',
+      title: 'What type of assistant do you need?',
+      description: 'Pick the one that best matches what you\'re looking for.',
       type: 'select',
       options: useCases
     },
     {
       id: 'targetEnvironment',
-      title: 'What environment will you deploy to?',
-      description: 'Select your target deployment environment.',
+      title: 'How will you use this assistant?',
+      description: 'This helps us set it up correctly.',
       type: 'select',
       options: [
-        { id: 'development', title: 'Development', description: 'For testing and development' },
-        { id: 'staging', title: 'Staging', description: 'For pre-production testing' },
-        { id: 'production', title: 'Production', description: 'For live deployment' }
+        { id: 'development', title: 'Just Testing', description: 'I\'m trying it out' },
+        { id: 'staging', title: 'Getting Ready', description: 'Preparing for real use' },
+        { id: 'production', title: 'Ready to Use', description: 'I need it working now' }
       ]
     },
-    
-    // Deployment Questions
     {
       id: 'technicalLevel',
-      title: 'What\'s your technical expertise level?',
-      description: 'This helps us recommend the right complexity level for your deployment.',
+      title: 'How do you prefer to work with technology?',
+      description: 'This helps us make things as easy as possible for you.',
       type: 'select',
       options: [
-        { id: 'beginner', title: 'Beginner', description: 'I prefer simple, one-click solutions' },
-        { id: 'intermediate', title: 'Intermediate', description: 'I can handle some configuration and CLI tools' },
-        { id: 'advanced', title: 'Advanced', description: 'I\'m comfortable with complex infrastructure and DevOps' }
+        { id: 'beginner', title: 'Keep it Simple', description: 'I want everything done for me' },
+        { id: 'intermediate', title: 'Some Setup OK', description: 'I can handle basic setup' },
+        { id: 'advanced', title: 'I Like Control', description: 'I enjoy customizing things' }
       ]
     },
     {
       id: 'expectedUsers',
-      title: 'Who will be using your AI agent?',
-      description: 'Different scales require different deployment approaches.',
+      title: 'Who will interact with your assistant?',
+      description: 'This helps us prepare the right setup for you.',
       type: 'select',
       options: [
-        { id: 'personal', title: 'Just Me', description: 'Personal use or small experiments' },
-        { id: 'team', title: 'Small Team', description: '5-50 people in my organization' },
-        { id: 'company', title: 'Company', description: '50-1000 employees' },
-        { id: 'public', title: 'Public Users', description: 'Thousands of external users' }
+        { id: 'personal', title: 'Just Me', description: 'My personal assistant' },
+        { id: 'team', title: 'My Team', description: 'A small group of people' },
+        { id: 'company', title: 'My Whole Company', description: 'All our employees' },
+        { id: 'public', title: 'My Customers', description: 'People outside my company' }
       ]
     },
     {
       id: 'budget',
-      title: 'What\'s your budget preference?',
-      description: 'We\'ll recommend options that fit your budget constraints.',
+      title: 'What would you like to spend?',
+      description: 'Don\'t worry - we have great free options!',
       type: 'select',
       options: [
-        { id: 'free', title: 'Free Tier', description: 'I want to start with free options' },
-        { id: 'low', title: 'Low Cost', description: '$5-50/month for basic usage' },
-        { id: 'medium', title: 'Medium Budget', description: '$50-500/month for growing needs' },
-        { id: 'enterprise', title: 'Enterprise', description: '$500+/month with full features' }
+        { id: 'free', title: 'Nothing Yet', description: 'Let me try it free first' },
+        { id: 'low', title: 'Coffee Budget', description: 'A few dollars per month' },
+        { id: 'medium', title: 'Business Tool', description: 'Worth investing in' },
+        { id: 'enterprise', title: 'Whatever It Takes', description: 'This is critical for us' }
       ]
     },
     {
       id: 'performance',
-      title: 'What performance level do you need?',
-      description: 'Higher performance requirements may need more robust solutions.',
+      title: 'When your assistant responds, how fast should it be?',
+      description: 'Think about how you\'ll be using it day-to-day.',
       type: 'select',
       options: [
-        { id: 'basic', title: 'Basic', description: 'Response times under 5 seconds are fine' },
-        { id: 'standard', title: 'Standard', description: 'Response times under 2 seconds' },
-        { id: 'high', title: 'High Performance', description: 'Sub-second response times' },
-        { id: 'critical', title: 'Mission Critical', description: 'Ultra-low latency required' }
-      ]
-    },
-    {
-      id: 'availability',
-      title: 'How critical is uptime?',
-      description: 'Different availability needs require different deployment strategies.',
-      type: 'select',
-      options: [
-        { id: 'development', title: 'Development', description: 'Occasional downtime is acceptable' },
-        { id: 'business', title: 'Business Hours', description: '99.5% uptime during business hours' },
-        { id: 'mission_critical', title: 'Mission Critical', description: '99.9%+ uptime required 24/7' }
-      ]
-    },
-    {
-      id: 'regions',
-      title: 'Where are your users located?',
-      description: 'Geographic distribution affects deployment strategy.',
-      type: 'select',
-      options: [
-        { id: 'single', title: 'Single Region', description: 'Users are primarily in one geographic area' },
-        { id: 'multi', title: 'Multiple Regions', description: 'Users across 2-3 major regions' },
-        { id: 'global', title: 'Global', description: 'Users worldwide need low latency' }
-      ]
-    },
-    {
-      id: 'security',
-      title: 'What are your security requirements?',
-      description: 'Security needs vary by industry and use case.',
-      type: 'select',
-      options: [
-        { id: 'basic', title: 'Basic', description: 'Standard HTTPS and basic auth' },
-        { id: 'standard', title: 'Standard', description: 'Role-based access and audit logs' },
-        { id: 'enterprise', title: 'Enterprise', description: 'Advanced security, compliance, SOC 2' },
-        { id: 'government', title: 'Government', description: 'FISMA, FedRAMP compliance required' }
-      ]
-    },
-    {
-      id: 'maintenance',
-      title: 'How much maintenance do you want to handle?',
-      description: 'Some solutions require more hands-on management than others.',
-      type: 'select',
-      options: [
-        { id: 'none', title: 'Zero Maintenance', description: 'I want a completely managed solution' },
-        { id: 'minimal', title: 'Minimal', description: 'Occasional updates and monitoring' },
-        { id: 'managed', title: 'Some Management', description: 'I can handle basic DevOps tasks' },
-        { id: 'full_support', title: 'Full Control', description: 'I want complete control over infrastructure' }
+        { id: 'basic', title: 'Relaxed', description: 'I can wait a few seconds' },
+        { id: 'standard', title: 'Snappy', description: 'Like chatting with a friend' },
+        { id: 'high', title: 'Instant', description: 'No waiting at all' },
+        { id: 'critical', title: 'Real-time', description: 'For live customer service' }
       ]
     }
   ];
@@ -337,12 +345,28 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
     setSelectedPath(path);
     
     if (path === 'guided') {
-      setShowGuidedWizard(true);
-      setCurrentQuestion(0);
-      setAnswers({});
-      setRecommendations([]);
-      setShowResults(false);
+      if (isBeginnerUser) {
+        // For beginners, start with template selection after questionnaire
+        setShowGuidedWizard(true);
+        setCurrentQuestion(0);
+        setAnswers({});
+        setRecommendations([]);
+        setShowResults(false);
+        setShowTemplateSelection(false);
+      } else {
+        // For power users and enterprise, use original guided flow
+        setShowGuidedWizard(true);
+        setCurrentQuestion(0);
+        setAnswers({});
+        setRecommendations([]);
+        setShowResults(false);
+      }
     } else {
+      if (!canUseCustomBuilder) {
+        // Free users can't access custom builder, redirect to guided
+        alert('Custom builder is available for Power User and Enterprise plans. Please upgrade or use the guided builder.');
+        return;
+      }
       // Custom path - go directly to Step 1 with basic setup
       onUpdate({
         buildType: 'custom'
@@ -360,10 +384,17 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Generate recommendations and complete guided setup
-      const recs = generateDeploymentRecommendations(answers);
-      setRecommendations(recs);
-      setShowResults(true);
+      if (isBeginnerUser) {
+        // For free users, find matching template
+        const template = findMatchingTemplate(answers as Record<string, string>);
+        setSelectedTemplate(template);
+        setShowTemplateSelection(true);
+      } else {
+        // For paid users, show deployment recommendations
+        const recs = generateDeploymentRecommendations(answers);
+        setRecommendations(recs);
+        setShowResults(true);
+      }
     }
   };
 
@@ -374,20 +405,42 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
   };
 
   const handleCompleteGuidedSetup = () => {
-    // Save all answers and proceed to next step
-    onUpdate({
-      buildType: 'guided',
-      agentName: answers.agentName,
-      agentDescription: answers.agentDescription,
-      agentCompany: answers.agentCompany,
-      primaryPurpose: answers.primaryPurpose,
-      targetEnvironment: answers.targetEnvironment,
-      recommendedDeployment: recommendations.length > 0 ? recommendations[0].platform : null,
-      deploymentRecommendations: recommendations,
-      guidedAnswers: answers
-    });
+    if (isBeginnerUser && selectedTemplate) {
+      // Save template-based configuration for free users
+      onUpdate({
+        buildType: 'template',
+        selectedTemplate: selectedTemplate,
+        agentName: selectedTemplate.config.agentName,
+        agentDescription: selectedTemplate.config.agentDescription,
+        primaryPurpose: selectedTemplate.config.primaryPurpose,
+        requiredMcps: selectedTemplate.config.requiredMcps,
+        optionalMcps: selectedTemplate.config.optionalMcps,
+        securitySettings: selectedTemplate.config.securitySettings,
+        recommendedDeployment: selectedTemplate.config.recommendedDeployment[0],
+        specialFeatures: selectedTemplate.config.specialFeatures,
+        guidedAnswers: answers,
+        isPreConfigured: true
+      });
+    } else {
+      // Save all answers and proceed to next step for paid users
+      onUpdate({
+        buildType: 'guided',
+        agentName: answers.agentName,
+        agentDescription: answers.agentDescription,
+        agentCompany: answers.agentCompany,
+        primaryPurpose: answers.primaryPurpose,
+        targetEnvironment: answers.targetEnvironment,
+        recommendedDeployment: recommendations.length > 0 ? recommendations[0].platform : null,
+        deploymentRecommendations: recommendations,
+        guidedAnswers: answers
+      });
+    }
     setShowGuidedWizard(false);
     onNext();
+  };
+
+  const handleTemplateSelection = (template: AgentTemplate) => {
+    setSelectedTemplate(template);
   };
 
   const currentQuestionData = questions[currentQuestion];
@@ -404,10 +457,10 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
             AI Agent Builder
           </div>
           <h1 className="text-4xl font-bold text-foreground mb-4">
-            Choose Your Build Experience
+            Who Are You Building For?
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Get started with AI-powered guidance or dive straight into custom configuration
+            Choose the path that matches your needs - ready-to-use AI assistants or custom development
           </p>
         </div>
 
@@ -424,13 +477,13 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
               <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <HelpCircle className="w-10 h-10 text-blue-500" />
               </div>
-              <CardTitle className="text-2xl mb-2">🚀 Guided Build</CardTitle>
+              <CardTitle className="text-2xl mb-2">👤 I'm an End User</CardTitle>
               <CardDescription className="text-base">
-                AI-powered questionnaire creates your agent automatically
+                Get a ready-to-use AI assistant tailored to your needs
               </CardDescription>
               <div className="mt-3">
                 <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20">
-                  👋 Good for first-time users
+                  ✨ No coding required
                 </Badge>
               </div>
             </CardHeader>
@@ -438,25 +491,25 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Smart questionnaire (5-8 minutes)</span>
+                  <span>Simple 5-minute setup</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>AI-powered deployment recommendations</span>
+                  <span>Pre-built AI assistants</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Pre-configured best practices</span>
+                  <span>Works immediately</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Optimized for your specific needs</span>
+                  <span>Support included</span>
                 </div>
               </div>
               
               <div className="pt-4 border-t">
                 <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30 text-sm px-3 py-1">
-                  ⭐ Recommended for most users
+                  ⭐ Perfect for business users
                 </Badge>
               </div>
             </CardContent>
@@ -464,22 +517,29 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
 
           {/* Custom Build Option */}
           <Card 
-            className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 group ${
+            className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 group relative ${
               selectedPath === 'custom' ? 'ring-2 ring-primary shadow-lg' : 'hover:border-primary/50'
-            }`}
+            } ${!canUseCustomBuilder ? 'opacity-75' : ''}`}
             onClick={() => handlePathSelect('custom')}
           >
+            {!canUseCustomBuilder && (
+              <div className="absolute inset-0 bg-black/5 rounded-lg flex items-center justify-center z-10">
+                <Badge className="bg-orange-500 text-white">
+                  Upgrade Required
+                </Badge>
+              </div>
+            )}
             <CardHeader className="text-center pb-4">
               <div className="w-20 h-20 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <Settings className="w-10 h-10 text-orange-500" />
               </div>
-              <CardTitle className="text-2xl mb-2">⚙️ Custom Build</CardTitle>
+              <CardTitle className="text-2xl mb-2">💻 I'm a Developer</CardTitle>
               <CardDescription className="text-base">
-                Full control over every configuration option
+                Build custom AI agents with full control
               </CardDescription>
               <div className="mt-3">
                 <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
-                  🧠 Good for technical-minded people
+                  🔧 Requires technical skills
                 </Badge>
               </div>
             </CardHeader>
@@ -487,25 +547,25 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Complete configuration control</span>
+                  <span>Full API access</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Access to all deployment options</span>
+                  <span>Custom integrations</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Advanced security settings</span>
+                  <span>Enterprise deployment</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Expert-level customization</span>
+                  <span>Source code access</span>
                 </div>
               </div>
               
               <div className="pt-4 border-t">
                 <Badge variant="outline" className="border-orange-500/30 text-orange-600 text-sm px-3 py-1">
-                  🔧 For experienced developers
+                  🚀 For technical teams
                 </Badge>
               </div>
             </CardContent>
@@ -517,17 +577,151 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-xl">
-                {showResults ? '🎉 Your AI Agent Configuration' : `Guided Setup (${currentQuestion + 1}/${questions.length})`}
+                {showTemplateSelection 
+                  ? '🎯 Your Perfect Assistant Match'
+                  : showResults 
+                    ? '🎉 Your Assistant is Ready!' 
+                    : `Quick Setup (Question ${currentQuestion + 1} of ${questions.length})`}
               </DialogTitle>
               <DialogDescription>
-                {showResults 
-                  ? 'Perfect! Here\'s your customized AI agent setup with deployment recommendations.'
-                  : 'Answer these questions to build your AI agent automatically.'
+                {showTemplateSelection
+                  ? 'Based on your needs, we\'ve found the perfect assistant for you.'
+                  : showResults 
+                    ? 'Great! Your assistant is configured and ready to help.'
+                    : 'Just a few simple questions to get your assistant ready.'
                 }
               </DialogDescription>
             </DialogHeader>
 
-            {!showResults ? (
+            {showTemplateSelection && selectedTemplate ? (
+              <div className="space-y-6">
+                {/* Recommended Template */}
+                <Card className="border-primary dark:border-primary/50 bg-primary/5 dark:bg-primary/10">
+                  <CardHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="text-2xl">{selectedTemplate.icon}</div>
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          {selectedTemplate.name}
+                          <Badge className="bg-green-500 dark:bg-green-600 text-white">
+                            <Star className="w-3 h-3 mr-1" />
+                            Recommended
+                          </Badge>
+                        </CardTitle>
+                        <CardDescription className="text-base">
+                          {selectedTemplate.description}
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <h5 className="font-medium mb-2">✨ Included Features:</h5>
+                        <ul className="text-sm space-y-1">
+                          {selectedTemplate.config.requiredMcps.map((mcp, i) => (
+                            <li key={i} className="flex items-center gap-2">
+                              <CheckCircle className="w-3 h-3 text-green-500" />
+                              {mcp.replace('-mcp', '').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h5 className="font-medium mb-2">🚀 Pre-configured:</h5>
+                        <ul className="text-sm space-y-1">
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-3 h-3 text-green-500" />
+                            Security settings optimized for {selectedTemplate.targetRole}
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-3 h-3 text-green-500" />
+                            Local deployment ready
+                          </li>
+                          {selectedTemplate.config.specialFeatures?.uploadSupport && (
+                            <li className="flex items-center gap-2">
+                              <Upload className="w-3 h-3 text-blue-500" />
+                              File upload support ({selectedTemplate.config.specialFeatures.uploadSupport.maxFileSize})
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    </div>
+
+                    {selectedTemplate.config.specialFeatures?.uploadSupport && (
+                      <div className="bg-blue-50 dark:bg-blue-950/30 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <div className="flex items-center gap-2 text-blue-700 dark:text-blue-300 font-medium mb-1">
+                          <Upload className="w-4 h-4" />
+                          Upload Support Included
+                        </div>
+                        <p className="text-sm text-blue-600 dark:text-blue-400">
+                          {selectedTemplate.config.specialFeatures.uploadSupport.description}
+                        </p>
+                        <div className="flex gap-2 mt-2">
+                          {selectedTemplate.config.specialFeatures.uploadSupport.allowedTypes.slice(0, 4).map((type, i) => (
+                            <Badge key={i} variant="outline" className="text-xs border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-400">
+                              {type}
+                            </Badge>
+                          ))}
+                          {selectedTemplate.config.specialFeatures.uploadSupport.allowedTypes.length > 4 && (
+                            <Badge variant="outline" className="text-xs border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-400">
+                              +{selectedTemplate.config.specialFeatures.uploadSupport.allowedTypes.length - 4} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Alternative Templates */}
+                <div className="space-y-3">
+                  <h4 className="font-medium text-muted-foreground">Or choose a different template:</h4>
+                  <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto">
+                    {BEGINNER_AGENT_TEMPLATES.filter(t => t.id !== selectedTemplate.id).map((template) => (
+                      <Card 
+                        key={template.id}
+                        className="cursor-pointer transition-all hover:shadow-md hover:border-primary/50 p-3"
+                        onClick={() => handleTemplateSelection(template)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="text-lg">{template.icon}</div>
+                          <div className="flex-1">
+                            <div className="font-medium">{template.name}</div>
+                            <div className="text-sm text-muted-foreground line-clamp-1">
+                              {template.description}
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            {template.category}
+                          </Badge>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex justify-between pt-6 border-t">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowTemplateSelection(false);
+                      setCurrentQuestion(questions.length - 1);
+                    }}
+                  >
+                    Back to Questions
+                  </Button>
+                  <Button 
+                    onClick={handleCompleteGuidedSetup}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  >
+                    Start Using This Assistant
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
+              </div>
+            ) : !showResults ? (
               <div className="space-y-6">
                 {/* Progress bar */}
                 <div className="w-full bg-muted rounded-full h-3">
@@ -636,7 +830,7 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
                     disabled={!canProceed}
                     className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
                   >
-                    {currentQuestion === questions.length - 1 ? 'Generate Agent' : 'Next'}
+                    {currentQuestion === questions.length - 1 ? 'Find My Assistant' : 'Next'}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
@@ -669,7 +863,7 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
                   {recommendations.map((rec, index) => {
                     const IconComponent = deploymentIcons[rec.platform as keyof typeof deploymentIcons];
                     return (
-                      <Card key={rec.platform} className={`${index === 0 ? 'border-primary bg-primary/5' : ''}`}>
+                      <Card key={rec.platform} className={`${index === 0 ? 'border-primary dark:border-primary/50 bg-primary/5 dark:bg-primary/10' : ''}`}>
                         <CardHeader className="pb-3">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -742,7 +936,7 @@ export function Step0BuildPath({ data, onUpdate, onNext }: Step0BuildPathProps) 
                     onClick={handleCompleteGuidedSetup}
                     className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
                   >
-                    Continue Building Agent
+                    Get Started
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>

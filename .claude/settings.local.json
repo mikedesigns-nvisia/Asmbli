@@ -9,9 +9,17 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:modelcontextprotocol.io)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)",
+      "Bash(npx storybook:*)",
+      "Bash(npm run test:design-tokens:*)",
+      "Bash(npm run test:components:*)",
+      "Bash(npm run build-storybook:*)",
+      "Bash(npx:*)",
+      "WebFetch(domain:code.visualstudio.com)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "defaultMode": "acceptEdits"
   }
 }

@@ -76,7 +76,7 @@ export function WizardSidebar({ currentStep, totalSteps }: WizardSidebarProps) {
         <h2 className="text-base lg:text-lg font-semibold text-foreground mb-2 font-display">
           Agent Builder
         </h2>
-        <p className="text-xs lg:text-sm text-muted-foreground">
+        <p className="text-xs lg:text-sm text-foreground/70">
           Build universal AI agents across any platform
         </p>
       </div>
@@ -85,7 +85,7 @@ export function WizardSidebar({ currentStep, totalSteps }: WizardSidebarProps) {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-foreground">Progress</span>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-foreground/70">
             {currentStep}/{totalSteps}
           </span>
         </div>
@@ -95,7 +95,7 @@ export function WizardSidebar({ currentStep, totalSteps }: WizardSidebarProps) {
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
-        <div className="text-xs text-muted-foreground mt-1">
+        <div className="text-xs text-foreground/60 mt-1">
           {Math.round(progressPercentage)}% complete
         </div>
       </div>
@@ -141,7 +141,7 @@ export function WizardSidebar({ currentStep, totalSteps }: WizardSidebarProps) {
                 `}>
                   {step.title}
                 </div>
-                <div className="text-sm text-muted-foreground mt-1">
+                <div className="text-sm text-foreground/60 mt-1">
                   {step.subtitle}
                 </div>
                 

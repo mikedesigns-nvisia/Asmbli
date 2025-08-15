@@ -9,9 +9,15 @@ import {
   ArrowUp
 } from 'lucide-react';
 
+interface StepInfo {
+  name: string;
+  isVisible: boolean;
+}
+
 interface FloatingProgressIndicatorProps {
   currentStep: number;
   totalSteps: number;
+  stepInfo?: StepInfo[];
   onStepClick?: (step: number) => void;
   canGoNext: boolean;
   canGoPrev: boolean;
@@ -22,6 +28,7 @@ interface FloatingProgressIndicatorProps {
 export function FloatingProgressIndicator({
   currentStep,
   totalSteps,
+  stepInfo,
   onStepClick,
   canGoNext,
   canGoPrev,
@@ -49,7 +56,7 @@ export function FloatingProgressIndicator({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const stepNames = [
+  const defaultStepNames = [
     'Agent Profile',
     'Extensions',
     'Security',
@@ -57,6 +64,11 @@ export function FloatingProgressIndicator({
     'Testing',
     'Deploy'
   ];
+
+  // Use provided stepInfo or fall back to default names
+  const steps = stepInfo || defaultStepNames.map(name => ({ name, isVisible: true }));
+  const visibleSteps = steps.filter(step => step.isVisible);
+  const visibleStepNames = visibleSteps.map(step => step.name);
 
   const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
   const circumference = 2 * Math.PI * 24; // radius of 24
@@ -148,7 +160,7 @@ export function FloatingProgressIndicator({
                 Step {currentStep} of {totalSteps}
               </div>
               <div className="text-sm font-medium truncate">
-                {stepNames[currentStep - 1]}
+                {visibleStepNames[currentStep - 1] || 'Step'}
               </div>
             </div>
 
@@ -208,7 +220,7 @@ export function FloatingProgressIndicator({
 
             {/* Steps list */}
             <div className="space-y-1">
-              {stepNames.map((name, index) => {
+              {visibleStepNames.map((name, index) => {
                 const stepNum = index + 1;
                 const isCompleted = stepNum < currentStep;
                 const isCurrent = stepNum === currentStep;

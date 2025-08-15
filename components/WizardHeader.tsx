@@ -58,7 +58,7 @@ export function WizardHeader({
           <Button
             variant="ghost"
             onClick={onPrev}
-            className="hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-all duration-200"
+            className="hover:bg-muted/50 text-foreground/70 hover:text-foreground transition-all duration-200"
             disabled={isLoading}
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
@@ -71,8 +71,8 @@ export function WizardHeader({
 
       {/* Step Indicator and Template Actions */}
       <div className="flex-1 flex items-center justify-center gap-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted/20 border border-border/30 whitespace-nowrap">
-          <span className="text-sm text-[rgba(236,236,236,1)] whitespace-nowrap">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-card border border-border whitespace-nowrap shadow-sm">
+          <span className="text-sm text-foreground font-medium whitespace-nowrap">
             Step {currentStep + 1} of {totalSteps}
           </span>
         </div>

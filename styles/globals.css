@@ -264,31 +264,36 @@ body {
     margin: 0 auto;
   }
 
-  /* Selection states */
+  /* Selection states - theme adaptive */
   .selection-card {
-    @apply backdrop-blur-2xl rounded-xl p-4 cursor-pointer transition-all duration-300 hover:border-primary/50 hover:-translate-y-1;
-    background: rgba(24, 24, 27, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 
-      0 0 0 1px rgba(255, 255, 255, 0.03),
-      0 4px 16px rgba(0, 0, 0, 0.1),
-      0 8px 32px rgba(0, 0, 0, 0.05);
+    @apply backdrop-blur-2xl rounded-xl p-4 cursor-pointer transition-all duration-300 hover:border-primary/50 hover:-translate-y-1 bg-card text-card-foreground border border-border;
+    box-shadow: var(--card-shadow-md);
   }
 
   .selection-card.selected {
     @apply border-primary bg-gradient-to-br from-primary/15 to-transparent;
     box-shadow: 
-      0 0 0 1px rgba(99, 102, 241, 0.3),
-      0 4px 16px rgba(99, 102, 241, 0.1),
-      0 8px 32px rgba(99, 102, 241, 0.05);
+      0 0 0 1px hsl(var(--color-primary) / 0.3),
+      var(--card-shadow-lg);
   }
 
   .selection-card:hover {
-    background: rgba(24, 24, 27, 0.8);
-    box-shadow: 
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 8px 24px rgba(0, 0, 0, 0.15),
-      0 16px 48px rgba(0, 0, 0, 0.1);
+    @apply bg-card/80;
+    box-shadow: var(--card-shadow-lg);
+  }
+
+  /* Light mode specific selection cards */
+  [data-theme="light"] .selection-card,
+  .light .selection-card {
+    background: hsl(var(--color-card));
+    border: 1px solid hsl(var(--color-border));
+    box-shadow: var(--card-shadow-md);
+  }
+
+  [data-theme="light"] .selection-card:hover,
+  .light .selection-card:hover {
+    background: hsl(var(--color-card) / 0.9);
+    box-shadow: var(--card-shadow-lg);
   }
 
   /* Text containment utilities */
@@ -414,6 +419,23 @@ body {
     @apply bg-muted border-2 border-dashed border-muted-foreground/30;
   }
 
+  /* Enhanced progress dots for light mode */
+  [data-theme="light"] .progress-dot.upcoming,
+  .light .progress-dot.upcoming {
+    @apply bg-bone-300 border-bone-600;
+  }
+
+  [data-theme="light"] .progress-dot.active,
+  .light .progress-dot.active {
+    @apply bg-pudding-600;
+    box-shadow: 0 0 20px hsl(var(--pudding-600) / 0.5);
+  }
+
+  [data-theme="light"] .progress-dot.completed,
+  .light .progress-dot.completed {
+    @apply bg-pudding-600;
+  }
+
   /* Responsive grid utilities */
   .responsive-grid-2 {
     @apply grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6;
@@ -507,5 +529,36 @@ body {
 
   .accessible-button {
     @apply focus-visible-ring transition-all duration-200;
+  }
+
+  /* Enhanced light mode utilities */
+  .light-chip {
+    @apply bg-chip text-chip-foreground px-2 py-1 rounded-md text-xs font-medium;
+  }
+
+  .light-badge {
+    @apply bg-badge text-badge-foreground px-2 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  /* Adaptive surface utilities */
+  .surface-navbar {
+    @apply bg-navbar text-navbar-foreground;
+    box-shadow: var(--navbar-shadow);
+  }
+
+  .surface-sidebar {
+    @apply bg-sidebar text-sidebar-foreground;
+    box-shadow: var(--sidebar-shadow);
+  }
+
+  /* Better contrast for light mode */
+  [data-theme="light"] .chip-container,
+  .light .chip-container {
+    @apply bg-bone-300/50 border-bone-400;
+  }
+
+  [data-theme="light"] .badge-container .badge,
+  .light .badge-container .badge {
+    @apply bg-bone-800 text-bone-100;
   }
 }

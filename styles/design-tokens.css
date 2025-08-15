@@ -158,6 +158,41 @@
   --color-input: 240 10% 10%;
   --color-ring: 239 84% 67%;
   
+  /* ===== BONE & BANANA PUDDING LIGHT THEME ===== */
+  
+  /* Bone Color Palette (warm creams and off-whites) - Enhanced with darker tones */
+  --bone-50: 54 18% 94%;    /* Warmer off-white */
+  --bone-100: 52 16% 90%;   /* Rich cream */
+  --bone-200: 50 14% 86%;   /* Medium cream */
+  --bone-300: 48 12% 80%;   /* Soft cream */
+  --bone-400: 46 10% 72%;   /* Medium bone */
+  --bone-500: 44 8% 62%;    /* True bone */
+  --bone-600: 42 6% 50%;    /* Darker bone */
+  --bone-700: 40 5% 38%;    /* Deep bone */
+  --bone-800: 38 4% 28%;    /* Rich bone */
+  --bone-900: 36 3% 18%;    /* Darkest bone */
+  --bone-950: 34 2% 12%;    /* Extra dark bone */
+  
+  /* Banana Pudding Palette (warm yellows and golds) - Enhanced */
+  --pudding-50: 50 80% 92%;   /* Vanilla cream */
+  --pudding-100: 48 75% 88%;  /* Light banana cream */
+  --pudding-200: 46 70% 84%;  /* Light banana */
+  --pudding-300: 44 65% 78%;  /* Soft banana */
+  --pudding-400: 42 60% 70%;  /* Medium banana */
+  --pudding-500: 40 55% 62%;  /* True banana pudding */
+  --pudding-600: 38 50% 52%;  /* Rich banana */
+  --pudding-700: 36 45% 42%;  /* Deep banana */
+  --pudding-800: 34 40% 32%;  /* Golden brown */
+  --pudding-900: 32 35% 22%;  /* Dark caramel */
+  --pudding-950: 30 30% 15%;  /* Extra dark caramel */
+  
+  /* Accent Colors for Light Mode */
+  --caramel: 32 72% 45%;      /* Rich caramel accent */
+  --vanilla: 48 35% 88%;      /* Soft vanilla */
+  --cream: 54 25% 94%;        /* Rich cream */
+  --toast: 36 50% 65%;        /* Warm toast */
+  --honey: 44 85% 72%;        /* Golden honey */
+  
   /* Semantic color variations */
   --color-primary-50: 239 84% 95%;
   --color-primary-100: 239 84% 90%;
@@ -214,7 +249,108 @@
   --z-tooltip: 300;
   --z-toast: 400;
   --z-max: 999;
+}
 
+/* ===== LIGHT MODE THEME (Bone & Banana Pudding) ===== */
+[data-theme="light"], 
+.light,
+:root.light {
+  /* Light Mode Color Mappings - Enhanced with richer surfaces */
+  --color-background: var(--bone-200);         /* Medium cream background to match surfaces */
+  --color-foreground: 20 5% 8%;                /* Much darker text for better readability */
+  --color-card: var(--bone-100);               /* Rich cream cards */
+  --color-card-foreground: 20 5% 8%;           /* Much darker card text */
+  --color-popover: var(--bone-100);            /* Rich cream popovers */
+  --color-popover-foreground: 20 5% 8%;        /* Much darker popover text */
+  
+  /* Sidebar and Navbar surfaces - darker bone tones */
+  --color-sidebar: var(--bone-300);            /* Darker cream sidebar */
+  --color-sidebar-foreground: 20 5% 8%;        /* Much darker sidebar text */
+  --color-navbar: var(--bone-300);             /* Darker cream navbar */
+  --color-navbar-foreground: 20 5% 8%;         /* Much darker navbar text */
+  
+  /* Primary colors using banana pudding */
+  --color-primary: var(--pudding-600);         /* Rich banana primary */
+  --color-primary-foreground: var(--bone-50);  /* Light text on primary */
+  
+  /* Secondary using darker bone tones */
+  --color-secondary: var(--bone-300);          /* Soft cream secondary */
+  --color-secondary-foreground: 20 5% 8%;      /* Much darker secondary text */
+  
+  /* Muted using darker bone for contrast with bone-200 background */
+  --color-muted: var(--bone-400);              /* Medium bone muted */
+  --color-muted-foreground: 20 5% 25%;         /* Darker muted text for better readability */
+  
+  /* Accent using darker bone for contrast */
+  --color-accent: var(--bone-400);             /* Medium bone accent */
+  --color-accent-foreground: 20 5% 8%;         /* Much darker accent text */
+  
+  /* UI elements with better contrast */
+  --color-border: var(--bone-500);             /* Darker bone borders */
+  --color-input: var(--bone-100);              /* Rich cream input backgrounds */
+  --color-ring: var(--pudding-600);            /* Rich banana focus rings */
+  
+  /* State colors with warm tones */
+  --color-destructive: 0 70% 55%;              /* Warm red for errors */
+  --color-destructive-foreground: var(--bone-50); /* Light text */
+  --color-success: 120 45% 45%;                /* Warm green for success */
+  --color-warning: var(--caramel);             /* Caramel for warnings */
+  
+  /* Dark elements for light mode (chips, badges) */
+  --color-chip: var(--bone-800);               /* Dark bone chips */
+  --color-chip-foreground: var(--bone-100);    /* Light text on chips */
+  --color-badge: var(--bone-900);              /* Very dark bone badges */
+  --color-badge-foreground: var(--bone-100);   /* Light text on badges */
+  
+  /* Extended palette variations for light mode */
+  --color-primary-50: var(--pudding-50);
+  --color-primary-100: var(--pudding-100);
+  --color-primary-200: var(--pudding-200);
+  --color-primary-300: var(--pudding-300);
+  --color-primary-400: var(--pudding-400);
+  --color-primary-500: var(--pudding-500);
+  --color-primary-600: var(--pudding-600);
+  --color-primary-700: var(--pudding-700);
+  --color-primary-800: var(--pudding-800);
+  --color-primary-900: var(--pudding-900);
+  
+  /* Shadows adjusted for light mode with better definition */
+  --card-shadow-sm: 0 1px 3px 0 rgb(40 35 28 / 0.12), 0 1px 2px 0 rgb(40 35 28 / 0.08);
+  --card-shadow-md: 0 4px 6px -1px rgb(40 35 28 / 0.12), 0 2px 4px -1px rgb(40 35 28 / 0.08);
+  --card-shadow-lg: 0 10px 15px -3px rgb(40 35 28 / 0.12), 0 4px 6px -2px rgb(40 35 28 / 0.07);
+  --sidebar-shadow: 0 4px 12px -2px rgb(40 35 28 / 0.15), 0 2px 6px -1px rgb(40 35 28 / 0.10);
+  --navbar-shadow: 0 2px 6px 0 rgb(40 35 28 / 0.12), 0 1px 3px 0 rgb(40 35 28 / 0.08);
+}
+
+/* Dark mode (default) keeps existing values */
+[data-theme="dark"], 
+.dark,
+:root.dark {
+  /* Keep all existing dark mode values */
+  --color-background: 240 10% 4%;
+  --color-foreground: 0 0% 98%;
+  --color-card: 240 10% 10%;
+  --color-card-foreground: 0 0% 98%;
+  --color-popover: 240 10% 10%;
+  --color-popover-foreground: 0 0% 98%;
+  --color-primary: 239 84% 67%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-secondary: 240 6% 16%;
+  --color-secondary-foreground: 240 5% 65%;
+  --color-muted: 240 6% 16%;
+  --color-muted-foreground: 240 4% 46%;
+  --color-accent: 240 6% 16%;
+  --color-accent-foreground: 240 5% 65%;
+  --color-destructive: 0 84% 60%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-success: 158 64% 52%;
+  --color-warning: 43 96% 56%;
+  --color-border: 240 6% 16%;
+  --color-input: 240 10% 10%;
+  --color-ring: 239 84% 67%;
+}
+
+:root {
   /* ===== ANIMATION TOKENS ===== */
   
   --duration-fast: 150ms;

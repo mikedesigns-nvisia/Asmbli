@@ -107,12 +107,19 @@ export function TemplateCard({
         </div>
       )}
 
-      {/* Open Source Badge */}
+      {/* Premium/Open Source Badge */}
       <div className="absolute top-3 right-3 z-10">
-        <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-400/30">
-          <BookOpen className="w-3 h-3 mr-1" />
-          Open Source
-        </Badge>
+        {template.isPreConfigured ? (
+          <Badge variant="outline" className="bg-purple-500/20 text-purple-400 border-purple-400/30">
+            <Star className="w-3 h-3 mr-1" />
+            Premium
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-400/30">
+            <BookOpen className="w-3 h-3 mr-1" />
+            Open Source
+          </Badge>
+        )}
       </div>
 
       <CardHeader className="pb-4 pt-12">
@@ -315,7 +322,10 @@ export function TemplateCard({
           </Button>
           
           <p className="text-center text-xs text-muted-foreground">
-            Free and open source • Ready to customize
+            {template.isPreConfigured 
+              ? 'Premium template • Pre-optimized workflows' 
+              : 'Free and open source • Ready to customize'
+            }
           </p>
         </div>
       </CardContent>

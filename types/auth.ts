@@ -88,7 +88,8 @@ export const ROLE_CONFIGURATIONS: Record<UserRole, RoleFeatures> = {
         'team-management',
         'api-keys',
         'custom-domains',
-        'compliance-settings'
+        'compliance-settings',
+        'custom-builder'
       ],
       preConfiguredSettings: {
         security: {

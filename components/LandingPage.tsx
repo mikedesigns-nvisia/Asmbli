@@ -5,6 +5,7 @@ import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { useAuth } from '../contexts/AuthContext';
 import { AuthModal } from './auth/AuthModal';
+import { TemplatesPreviewModal } from './modals/TemplatesPreviewModal';
 import { 
   ArrowRight, 
   Sparkles, 
@@ -59,6 +60,7 @@ interface LandingPageProps {
 export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps) {
   const { user, isAuthenticated } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showTemplatesPreview, setShowTemplatesPreview] = useState(false);
   const features = [
     {
       icon: Code2,
@@ -314,7 +316,13 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Button>
               <Button 
-                onClick={onViewTemplates}
+                onClick={() => {
+                  if (isAuthenticated && onViewTemplates) {
+                    onViewTemplates();
+                  } else {
+                    setShowTemplatesPreview(true);
+                  }
+                }}
                 variant="outline" 
                 size="lg"
                 className="text-lg px-8 py-6 h-auto border-primary/30 hover:bg-primary/5 group accessible-button"
@@ -757,7 +765,13 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
             </div>
 
             <Button 
-              onClick={onViewTemplates}
+              onClick={() => {
+                if (isAuthenticated && onViewTemplates) {
+                  onViewTemplates();
+                } else {
+                  setShowTemplatesPreview(true);
+                }
+              }}
               size="lg" 
               className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-500/90 hover:to-red-500/90 text-lg px-8 py-6 h-auto group shadow-lg shadow-orange-500/20 accessible-button"
               aria-label="Browse agent templates - View pre-built configurations"
@@ -832,7 +846,13 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                 </Button>
                 <Button 
-                  onClick={onViewTemplates}
+                  onClick={() => {
+                    if (isAuthenticated && onViewTemplates) {
+                      onViewTemplates();
+                    } else {
+                      setShowTemplatesPreview(true);
+                    }
+                  }}
                   variant="outline" 
                   size="lg"
                   className="text-lg px-8 py-6 h-auto border-primary/30 hover:bg-primary/5 accessible-button"
@@ -883,6 +903,16 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
         isOpen={showAuthModal} 
         onClose={() => setShowAuthModal(false)}
         defaultTab="signup"
+      />
+
+      {/* Templates Preview Modal */}
+      <TemplatesPreviewModal
+        isOpen={showTemplatesPreview}
+        onClose={() => setShowTemplatesPreview(false)}
+        onSignUp={() => {
+          setShowTemplatesPreview(false);
+          setShowAuthModal(true);
+        }}
       />
     </div>
   );

@@ -167,25 +167,91 @@ export function Step6Deploy({
 
   const deploymentFormats = [
     {
-      id: 'desktop',
-      name: 'Desktop Extension',
-      description: 'One-click installation for Claude Desktop with .dxt format',
+      id: 'lm-studio',
+      name: 'LM Studio',
+      description: 'Local AI with MCP server integration - Privacy-focused and powerful',
+      icon: Brain,
+      recommended: true,
+      difficulty: 'Easy',
+      features: [
+        'Complete local privacy control',
+        'MCP server integration',
+        'Works with any local model',
+        'No API costs or limits',
+        'Detailed step-by-step setup'
+      ],
+      instructions: [
+        'Download LM Studio MCP configuration',
+        'Install required Node.js packages',
+        'Configure API keys for your services',
+        'Load the MCP config in LM Studio',
+        'Test with your favorite local model'
+      ]
+    },
+    {
+      id: 'claude-desktop',
+      name: 'Claude Desktop',
+      description: 'Official Claude Desktop app with full MCP server support',
       icon: Zap,
       recommended: true,
       difficulty: 'Easy',
       features: [
-        'One-click installation',
-        'No manual configuration',
-        'Automatic extension management',
-        'Built-in security controls',
-        'Instant deployment'
+        'Official Anthropic integration',
+        'Native MCP server support',
+        'Tool confirmation dialogs',
+        'Secure environment variable handling',
+        'Professional-grade deployment'
       ],
       instructions: [
-        'Download the .dxt configuration file',
-        'Open Claude Desktop application',
-        'Go to Settings → Extensions',
-        'Click "Install from File" and select the .dxt file',
-        'Your agent will be ready to use immediately'
+        'Download Claude Desktop configuration',
+        'Install MCP server dependencies',
+        'Configure environment variables',
+        'Update claude_desktop_config.json',
+        'Restart Claude Desktop and test'
+      ]
+    },
+    {
+      id: 'vs-code',
+      name: 'VS Code + Copilot',
+      description: 'Integrate with GitHub Copilot Chat using MCP servers',
+      icon: Package,
+      recommended: true,
+      difficulty: 'Medium',
+      features: [
+        'Works with GitHub Copilot',
+        'Workspace-specific configuration',
+        'Development environment integration',
+        'Code-aware AI assistance',
+        'Project-scoped MCP servers'
+      ],
+      instructions: [
+        'Install MCP server packages globally',
+        'Create .vscode/mcp.json configuration',
+        'Set up environment variables',
+        'Configure GitHub Copilot Chat',
+        'Test with @mcp commands'
+      ]
+    },
+    {
+      id: 'cursor',
+      name: 'Cursor IDE',
+      description: 'AI-first code editor with native MCP server integration',
+      icon: Terminal,
+      recommended: true,
+      difficulty: 'Medium',
+      features: [
+        'AI-first development experience',
+        'Smart MCP server detection',
+        'Contextual tool usage',
+        'Performance optimizations',
+        'Workspace-aware configuration'
+      ],
+      instructions: [
+        'Install MCP server dependencies',
+        'Configure workspace .cursorrules/mcp.json',
+        'Set up environment variables',
+        'Reload Cursor to load servers',
+        'Test integration in Cursor Chat'
       ]
     },
     {
@@ -561,14 +627,47 @@ Remember: Your goal is to be genuinely helpful while maintaining high standards 
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* Hero Section with Enhanced UX */}
-      <div className="text-center space-y-6">
+      {/* Step Progress Indicator */}
+      <div className="bg-gradient-to-r from-muted/30 to-muted/10 border border-muted rounded-lg p-4 mb-6">
+        <div className="flex items-center justify-between max-w-4xl mx-auto">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-lg font-bold">
+                6
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Deploy & Launch</h3>
+                <p className="text-sm text-muted-foreground">Configure deployment and generate system prompts</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              {[1,2,3,4,5].map(step => (
+                <div key={step} className="w-3 h-3 bg-primary rounded-full"></div>
+              ))}
+              <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+            </div>
+            <div className="text-right">
+              <div className="text-sm font-medium">Step 6 of 6</div>
+              <div className="text-xs text-muted-foreground">Final Step</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero Section - Streamlined */}
+      <div className="text-center space-y-4">
         <div className="space-y-2">
-          <h1 className="bg-gradient-to-r from-primary via-purple-400 to-blue-400 bg-clip-text text-transparent font-bold">
-            🎉 Your AI Agent is Ready!
+          <div className="inline-flex items-center gap-2 bg-success/20 text-success px-4 py-2 rounded-full text-sm font-medium mb-2">
+            <CheckCircle className="w-4 h-4" />
+            Configuration Complete
+          </div>
+          <h1 className="text-3xl font-bold text-foreground">
+            {data.agentName || 'Your AI Agent'} is Ready to Deploy
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            <strong>{data.agentName || 'Your Custom Agent'}</strong> has been configured with <strong>{data.extensions?.filter((s: any) => s.enabled).length || 0} extensions</strong> and is ready to deploy.
+            Review your system prompt, optimize for different LLMs, and choose your deployment platform.
           </p>
         </div>
         
@@ -841,33 +940,40 @@ Remember: Your goal is to be genuinely helpful while maintaining high standards 
         </CardContent>
       </Card>
 
-      {/* Deployment Workflow - Redesigned for Better UX */}
-      <Tabs defaultValue="deploy" className="space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <TabsList className="grid grid-cols-3 w-full sm:w-auto h-12">
-            <TabsTrigger value="deploy" className="px-6 h-full flex items-center justify-center">
-              <Package className="w-4 h-4 mr-2" />
-              <span>Deploy</span>
-            </TabsTrigger>
-            <TabsTrigger value="optimize" className="px-6 h-full flex items-center justify-center">
-              <Wand2 className="w-4 h-4 mr-2" />
-              <span>Optimize</span>
-              {analysisComplete && (
-                <Badge className="ml-2 bg-success/20 text-success border-success/30 text-xs">
-                  ✓
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="test" className="px-6 h-full flex items-center justify-center">
-              <Target className="w-4 h-4 mr-2" />
-              <span>Test & Compare</span>
-            </TabsTrigger>
-          </TabsList>
-          <div className="text-sm text-muted-foreground flex items-center gap-2 bg-success/10 border border-success/20 rounded-full px-3 py-1">
-            <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-            <span className="text-success font-medium">Ready to Deploy</span>
-          </div>
+      {/* Main Workflow Navigation */}
+      <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
+        <div className="text-center mb-6">
+          <h2 className="text-xl font-semibold mb-2">Complete Your Deployment</h2>
+          <p className="text-muted-foreground">Follow these steps to launch your AI agent</p>
         </div>
+        
+        <Tabs defaultValue="deploy" className="space-y-6">
+          <div className="flex flex-col items-center gap-4">
+            <TabsList className="grid grid-cols-3 w-full max-w-2xl h-14 bg-muted/50">
+              <TabsTrigger value="deploy" className="px-6 h-full flex flex-col items-center justify-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Package className="w-5 h-5" />
+                <span className="text-sm font-medium">1. Deploy</span>
+              </TabsTrigger>
+              <TabsTrigger value="optimize" className="px-6 h-full flex flex-col items-center justify-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <div className="flex items-center gap-1">
+                  <Wand2 className="w-5 h-5" />
+                  {analysisComplete && (
+                    <div className="w-2 h-2 bg-success rounded-full"></div>
+                  )}
+                </div>
+                <span className="text-sm font-medium">2. Optimize</span>
+              </TabsTrigger>
+              <TabsTrigger value="test" className="px-6 h-full flex flex-col items-center justify-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Target className="w-5 h-5" />
+                <span className="text-sm font-medium">3. Test</span>
+              </TabsTrigger>
+            </TabsList>
+            
+            <div className="flex items-center gap-2 text-sm">
+              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+              <span className="text-success font-medium">System ready • Prompts generated • Ready for deployment</span>
+            </div>
+          </div>
 
         <TabsContent value="deploy" className="space-y-6">
           {/* Guidance Section */}
@@ -886,15 +992,37 @@ Remember: Your goal is to be genuinely helpful while maintaining high standards 
             </div>
           </div>
 
-          {/* Deployment Format Selection - Enhanced */}
-          <div className="space-y-4">
+          {/* Consumer vs Enterprise Deploy Choice */}
+          <div className="mb-8">
+            <Card className="border-primary/30 bg-gradient-to-r from-primary/10 to-blue-500/10">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <Brain className="w-6 h-6 text-primary" />
+                  Choose Your Deployment Style
+                </CardTitle>
+                <CardDescription>
+                  <strong>🏠 Consumer Deployment</strong> connects your agent to existing AI tools you already use. 
+                  <strong>🏢 Enterprise Deployment</strong> creates standalone cloud infrastructure.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+
+          {/* Consumer MCP Deployment Section */}
+          <div className="space-y-6 mb-8">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Deployment Formats</h3>
-              <div className="text-sm text-muted-foreground">Choose the best option for your needs</div>
+              <div className="space-y-1">
+                <h3 className="text-xl font-semibold text-primary">🏠 Consumer Deployment (Recommended)</h3>
+                <p className="text-sm text-muted-foreground">Connect to LM Studio, Claude Desktop, VS Code, or Cursor - tools you already use</p>
+              </div>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/30 px-4 py-2">
+                <Star className="w-4 h-4 mr-1" />
+                Most Popular
+              </Badge>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {deploymentFormats.map((format, index) => {
+              {deploymentFormats.slice(0, 4).map((format, index) => {
                 const Icon = format.icon;
                 const isSelected = selectedFormat === format.id;
                 const isRecommended = format.recommended;
@@ -997,6 +1125,72 @@ Remember: Your goal is to be genuinely helpful while maintaining high standards 
                         )}
                       </div>
                     </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Enterprise Deployment Section */}
+          <div className="space-y-6 mb-8">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h3 className="text-xl font-semibold text-muted-foreground">🏢 Enterprise Deployment</h3>
+                <p className="text-sm text-muted-foreground">Cloud infrastructure for production teams and organizations</p>
+              </div>
+              <Badge variant="outline" className="bg-muted/10 text-muted-foreground border-muted px-4 py-2">
+                <Cloud className="w-4 h-4 mr-1" />
+                Advanced Users
+              </Badge>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+              {deploymentFormats.slice(4).map((format, index) => {
+                const Icon = format.icon;
+                const isSelected = selectedFormat === format.id;
+                
+                return (
+                  <Card 
+                    key={format.id}
+                    className={`cursor-pointer transition-all duration-300 hover:shadow-md ${
+                      isSelected 
+                        ? 'border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg ring-1 ring-primary/20' 
+                        : 'hover:border-primary/30 hover:shadow-sm border-muted/50'
+                    }`}
+                    onClick={() => setSelectedFormat(format.id)}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${
+                            isSelected ? 'bg-primary/20' : 'bg-muted/30'
+                          } transition-colors`}>
+                            <Icon className={`w-5 h-5 ${
+                              isSelected ? 'text-primary' : 'text-muted-foreground'
+                            }`} />
+                          </div>
+                          <div className="space-y-1">
+                            <CardTitle className="text-base">{format.name}</CardTitle>
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs ${
+                                format.difficulty === 'Easy' ? 'border-success/30 text-success bg-success/10' :
+                                format.difficulty === 'Medium' ? 'border-warning/30 text-warning bg-warning/10' : 
+                                'border-destructive/30 text-destructive bg-destructive/10'
+                              }`}
+                            >
+                              {format.difficulty}
+                            </Badge>
+                          </div>
+                        </div>
+                        {isSelected && (
+                          <CheckCircle className="w-5 h-5 text-primary" />
+                        )}
+                      </div>
+                      <CardDescription className="text-sm leading-relaxed mt-2">
+                        {format.description}
+                      </CardDescription>
+                    </CardHeader>
                   </Card>
                 );
               })}
@@ -1106,7 +1300,12 @@ Remember: Your goal is to be genuinely helpful while maintaining high standards 
                       </div>
                       <pre className="bg-muted/50 p-4 rounded-lg overflow-x-auto text-xs font-mono max-h-96 border border-primary/20 relative">
                         <code className="text-muted-foreground">
-                          {selectedFormat === 'prompt' ? promptOutput : deploymentConfigs[selectedFormat] || 'Loading configuration...'}
+                          {selectedFormat === 'prompt' ? promptOutput : 
+                           selectedFormat === 'lm-studio' ? deploymentConfigs['lm-studio'] :
+                           selectedFormat === 'claude-desktop' ? deploymentConfigs['claude-desktop'] :
+                           selectedFormat === 'vs-code' ? deploymentConfigs['vs-code'] :
+                           selectedFormat === 'cursor' ? deploymentConfigs['cursor'] :
+                           deploymentConfigs[selectedFormat] || 'Loading configuration...'}
                         </code>
                       </pre>
                     </div>
@@ -1177,39 +1376,127 @@ Remember: Your goal is to be genuinely helpful while maintaining high standards 
                     </div>
                   </div>
 
-                  {/* Special recommendations */}
-                  {selectedFormat === 'desktop' && (
+                  {/* Platform-specific recommendations */}
+                  {['lm-studio', 'claude-desktop', 'vs-code', 'cursor'].includes(selectedFormat) && (
                     <div className="p-6 bg-gradient-to-r from-success/10 to-primary/10 rounded-lg border border-success/30">
                       <div className="flex items-start gap-3">
                         <div className="p-2 bg-success/20 rounded-lg">
                           <Star className="w-5 h-5 text-success" />
                         </div>
                         <div className="space-y-2">
-                          <span className="font-semibold text-success">Perfect Choice! 🎉</span>
+                          <span className="font-semibold text-success">Great Choice! 🎉</span>
                           <p className="text-sm text-muted-foreground">
-                            Desktop Extension (.dxt) is the easiest and most reliable deployment method. It provides:
+                            {selectedFormat === 'lm-studio' && 'LM Studio with MCP servers gives you complete local control with privacy and no API costs.'}
+                            {selectedFormat === 'claude-desktop' && 'Claude Desktop provides the most reliable MCP integration with official Anthropic support.'}
+                            {selectedFormat === 'vs-code' && 'VS Code integration works seamlessly with your development workflow through GitHub Copilot.'}
+                            {selectedFormat === 'cursor' && 'Cursor provides the most advanced AI-first development experience with smart MCP server usage.'}
                           </p>
                           <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                            <li>• Automatic extension and security management</li>
-                            <li>• Instant availability in Claude Desktop</li>
-                            <li>• No technical configuration required</li>
-                            <li>• Built-in updates and maintenance</li>
+                            {selectedFormat === 'lm-studio' && (
+                              <>
+                                <li>• Complete privacy - everything runs locally</li>
+                                <li>• No API costs or usage limits</li>
+                                <li>• Works with any local LLM model</li>
+                                <li>• Easy MCP server management</li>
+                              </>
+                            )}
+                            {selectedFormat === 'claude-desktop' && (
+                              <>
+                                <li>• Official Anthropic integration</li>
+                                <li>• Tool confirmation dialogs for security</li>
+                                <li>• Native MCP server lifecycle management</li>
+                                <li>• Professional deployment ready</li>
+                              </>
+                            )}
+                            {selectedFormat === 'vs-code' && (
+                              <>
+                                <li>• Integrates with your existing workflow</li>
+                                <li>• Works with GitHub Copilot subscription</li>
+                                <li>• Project-aware MCP server configuration</li>
+                                <li>• Code-context aware AI assistance</li>
+                              </>
+                            )}
+                            {selectedFormat === 'cursor' && (
+                              <>
+                                <li>• AI-first development experience</li>
+                                <li>• Smart context-based tool usage</li>
+                                <li>• Performance optimized MCP integration</li>
+                                <li>• Advanced code understanding</li>
+                              </>
+                            )}
                           </ul>
                         </div>
                       </div>
                     </div>
                   )}
                   
+                  {/* Detailed Setup Instructions */}
+                  {['lm-studio', 'claude-desktop', 'vs-code', 'cursor'].includes(selectedFormat) && (
+                    <div className="mt-8 p-6 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg">
+                      <div className="flex items-start gap-4">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                          <FileText className="w-6 h-6 text-blue-500" />
+                        </div>
+                        <div className="space-y-3 flex-1">
+                          <h4 className="font-semibold text-blue-500">📖 Detailed Setup Guide Available</h4>
+                          <p className="text-sm text-muted-foreground">
+                            We've generated a comprehensive step-by-step setup guide specifically for {selectedFormatData?.name}. 
+                            This includes prerequisite installation, configuration examples, troubleshooting, and testing instructions.
+                          </p>
+                          <div className="flex items-center gap-3">
+                            <Button 
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const setupInstructions = selectedFormat === 'lm-studio' ? deploymentConfigs['lm-studio-setup.md'] :
+                                                        selectedFormat === 'claude-desktop' ? deploymentConfigs['claude-desktop-setup.md'] :
+                                                        selectedFormat === 'vs-code' ? deploymentConfigs['vs-code-setup.md'] :
+                                                        selectedFormat === 'cursor' ? deploymentConfigs['cursor-setup.md'] : '';
+                                downloadFile(setupInstructions, `${selectedFormat}-setup-guide.md`);
+                              }}
+                              className="border-blue-500/30 text-blue-500 hover:bg-blue-500/10"
+                            >
+                              <Download className="w-4 h-4 mr-2" />
+                              Download Setup Guide
+                            </Button>
+                            <div className="text-xs text-muted-foreground">
+                              Includes: Prerequisites • Step-by-step setup • API configuration • Testing • Troubleshooting
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Deploy now CTA */}
-                  <div className="flex items-center justify-center pt-4">
-                    <Button 
-                      size="lg" 
-                      onClick={handleDownload}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground px-12 py-4 text-lg font-semibold"
-                    >
-                      <Download className="w-5 h-5 mr-3" />
-                      Deploy {data.agentName || 'Your Agent'} Now
-                    </Button>
+                  <div className="flex items-center justify-center pt-6">
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                      <Button 
+                        size="lg" 
+                        onClick={handleDownload}
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground px-12 py-4 text-lg font-semibold"
+                      >
+                        <Download className="w-5 h-5 mr-3" />
+                        Download {selectedFormatData?.name} Config
+                      </Button>
+                      {['lm-studio', 'claude-desktop', 'vs-code', 'cursor'].includes(selectedFormat) && (
+                        <Button 
+                          variant="outline"
+                          size="lg"
+                          onClick={() => {
+                            const setupInstructions = selectedFormat === 'lm-studio' ? deploymentConfigs['lm-studio-setup.md'] :
+                                                    selectedFormat === 'claude-desktop' ? deploymentConfigs['claude-desktop-setup.md'] :
+                                                    selectedFormat === 'vs-code' ? deploymentConfigs['vs-code-setup.md'] :
+                                                    selectedFormat === 'cursor' ? deploymentConfigs['cursor-setup.md'] : '';
+                            downloadFile(setupInstructions, `${selectedFormat}-setup-guide.md`);
+                          }}
+                          className="px-8 py-4 border-primary/30 text-primary hover:bg-primary/10"
+                        >
+                          <FileText className="w-5 h-5 mr-2" />
+                          Get Setup Guide
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </TabsContent>
               </Tabs>
@@ -1568,6 +1855,33 @@ Remember: Your goal is to be genuinely helpful while maintaining high standards 
           )}
         </TabsContent>
       </Tabs>
+      </div>
+
+      {/* Quick Actions Summary */}
+      <div className="bg-gradient-to-r from-primary/5 to-blue-500/5 border border-primary/20 rounded-lg p-6">
+        <div className="text-center mb-6">
+          <h3 className="text-lg font-semibold mb-2">What You Can Do Now</h3>
+          <p className="text-muted-foreground">Your AI agent is fully configured. Here are your next steps.</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="text-center p-4 bg-card rounded-lg border">
+            <Package className="w-8 h-8 mx-auto mb-3 text-primary" />
+            <h4 className="font-medium mb-2">Deploy Now</h4>
+            <p className="text-sm text-muted-foreground">Choose a platform and launch your agent immediately</p>
+          </div>
+          <div className="text-center p-4 bg-card rounded-lg border">
+            <Wand2 className="w-8 h-8 mx-auto mb-3 text-purple-500" />
+            <h4 className="font-medium mb-2">Optimize Prompts</h4>
+            <p className="text-sm text-muted-foreground">Fine-tune for specific LLM providers like OpenAI or Claude</p>
+          </div>
+          <div className="text-center p-4 bg-card rounded-lg border">
+            <Target className="w-8 h-8 mx-auto mb-3 text-blue-500" />
+            <h4 className="font-medium mb-2">Test Performance</h4>
+            <p className="text-sm text-muted-foreground">Compare how your agent performs across different models</p>
+          </div>
+        </div>
+      </div>
 
       {/* Additional Resources */}
       <Card className="selection-card">

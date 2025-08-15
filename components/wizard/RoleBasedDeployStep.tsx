@@ -23,7 +23,12 @@ export function RoleBasedDeployStep(props: RoleBasedDeployStepProps) {
 
   if (!user) return null;
 
-  // Beginner users get simplified deployment options
+  // All users now get the full deployment step with system prompts
+  // The Step6Deploy component will handle role-based UI differences
+  return <Step6Deploy {...props} />;
+  
+  // OLD CODE - Keeping for reference but not used
+  /*
   if (user.role === 'beginner') {
     const beginnerDeploymentOptions = [
       {
@@ -61,13 +66,13 @@ export function RoleBasedDeployStep(props: RoleBasedDeployStepProps) {
           {beginnerDeploymentOptions.map((option) => (
             <Card 
               key={option.id}
-              className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
-                option.recommended ? 'ring-2 ring-green-500 bg-green-50/50' : 'hover:ring-1 hover:ring-primary/30'
+              className={`relative cursor-pointer transition-all duration-300 hover:shadow-lg ${
+                option.recommended ? 'ring-2 ring-green-500 bg-green-500/10 border-green-500/20' : 'hover:ring-1 hover:ring-primary/30'
               }`}
             >
               {option.recommended && (
-                <div className="absolute -top-2 left-4">
-                  <Badge className="bg-green-500 text-white">
+                <div className="absolute -top-2 left-4 z-10">
+                  <Badge className="bg-green-500 text-white shadow-md">
                     Recommended
                   </Badge>
                 </div>
@@ -75,7 +80,7 @@ export function RoleBasedDeployStep(props: RoleBasedDeployStepProps) {
               
               <CardHeader className="text-center pb-4">
                 <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
-                  option.recommended ? 'bg-green-100' : 'bg-blue-100'
+                  option.recommended ? 'bg-green-500/20' : 'bg-primary/20'
                 }`}>
                   {option.icon}
                 </div>
@@ -86,7 +91,7 @@ export function RoleBasedDeployStep(props: RoleBasedDeployStepProps) {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Difficulty</span>
-                  <Badge variant="outline" className="text-green-600 border-green-200">
+                  <Badge variant="outline" className="text-green-500 border-green-500/30">
                     {option.difficulty}
                   </Badge>
                 </div>
@@ -108,7 +113,7 @@ export function RoleBasedDeployStep(props: RoleBasedDeployStepProps) {
                 
                 <Button 
                   className={`w-full ${
-                    option.recommended ? 'bg-green-600 hover:bg-green-700' : ''
+                    option.recommended ? 'bg-green-500 hover:bg-green-600 text-white' : ''
                   }`}
                   onClick={() => props.onCopy(
                     props.deploymentConfigs[option.id] || 'Configuration not available',
@@ -184,7 +189,7 @@ export function RoleBasedDeployStep(props: RoleBasedDeployStepProps) {
                 Save as Template
               </Button>
             )}
-            <Button onClick={props.onStartOver} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={props.onStartOver} className="bg-green-500 hover:bg-green-600 text-white">
               Build Another Agent
             </Button>
           </div>
@@ -195,4 +200,5 @@ export function RoleBasedDeployStep(props: RoleBasedDeployStepProps) {
 
   // Power User and Enterprise get full deployment options
   return <Step6Deploy {...props} />;
+  */
 }

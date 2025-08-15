@@ -13,6 +13,9 @@ export interface AgentTemplate {
   usageCount: number;
   wizardData: WizardData;
   thumbnail?: string;
+  // Fields for pre-configured templates
+  isPreConfigured?: boolean;
+  agentTemplateData?: any; // Original agent template data from agent-templates.ts
 }
 
 export interface TemplateCategory {

@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
 import { UserProfile } from './auth/UserProfile';
+import { ThemeToggle } from './ui/theme-toggle';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,9 +20,8 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="h-16 border-b border-border backdrop-blur-xl sticky top-0 z-50" style={{
-        background: 'rgba(24, 24, 27, 0.8)',
-        boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+      <header className="h-16 border-b border-border backdrop-blur-xl sticky top-0 z-50 bg-navbar/80 text-navbar-foreground" style={{
+        boxShadow: 'var(--navbar-shadow, 0 0 0 1px rgba(255, 255, 255, 0.05))'
       }}>
         <div className="max-w-[1440px] mx-auto h-full px-4 lg:px-6 flex items-center justify-between">
           {/* Mobile sidebar toggle */}
@@ -38,7 +38,7 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
           <div className="flex items-center space-x-2 lg:space-x-8">
             <div className="flex items-center space-x-3">
               <div>
-                <h1 className="text-lg font-normal text-[rgba(203,203,211,1)] font-display text-[20px] italic no-underline">Agent/Engine</h1>
+                <h1 className="text-lg font-normal text-navbar-foreground font-display text-[20px] italic no-underline">Agent/Engine</h1>
                 <div className="flex items-center space-x-2">
                 </div>
               </div>
@@ -49,25 +49,25 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
             {/* Environment selector */}
             <div className="hidden lg:flex items-center space-x-1">
               <div className="w-2 h-2 bg-success rounded-full"></div>
-              <span className="text-xs text-muted-foreground">Proto</span>
+              <span className="text-xs text-navbar-foreground/70">Proto</span>
             </div>
           </div>
 
           {/* Center: Search */}
           <div className="hidden lg:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-navbar-foreground/70" />
               <input
                 type="text"
                 placeholder="Search prompts, templates... (⌘K)"
-                className="w-full pl-10 pr-4 py-2 bg-muted/50 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
+                className="w-full pl-10 pr-4 py-2 bg-muted/50 border border-border rounded-lg text-sm text-navbar-foreground placeholder:text-navbar-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
               />
             </div>
           </div>
 
           {/* Right: Actions and profile */}
           <div className="flex items-center space-x-2 lg:space-x-4">
-            <Button variant="ghost" size="sm" className="hidden lg:flex text-muted-foreground">
+            <Button variant="ghost" size="sm" className="hidden lg:flex text-navbar-foreground/80 hover:text-navbar-foreground">
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </Button>
@@ -76,6 +76,9 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
               <Download className="w-4 h-4 lg:mr-2" />
               <span className="hidden lg:inline">Export</span>
             </Button>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Mobile right panel toggle */}
             <Button 
@@ -100,9 +103,8 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
         {sidebarOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
             <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
-            <aside className="absolute left-0 top-0 w-60 h-full border-r border-border backdrop-blur-xl" style={{
-              background: 'rgba(24, 24, 27, 0.95)',
-              boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+            <aside className="absolute left-0 top-0 w-60 h-full border-r border-border backdrop-blur-xl bg-sidebar/95 text-sidebar-foreground" style={{
+              boxShadow: 'var(--sidebar-shadow, 0 0 0 1px rgba(255, 255, 255, 0.05))'
             }}>
               <div className="flex items-center justify-between p-4 border-b border-border">
                 <span className="font-medium">Navigation</span>
@@ -116,9 +118,8 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
         )}
 
         {/* Desktop sidebar */}
-        <aside className="w-60 min-w-[240px] min-h-[calc(100vh-4rem)] border-r border-border backdrop-blur-xl hidden lg:block" style={{
-          background: 'rgba(24, 24, 27, 0.8)',
-          boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+        <aside className="w-60 min-w-[240px] min-h-[calc(100vh-4rem)] border-r border-border backdrop-blur-xl hidden lg:block bg-sidebar/80 text-sidebar-foreground" style={{
+          boxShadow: 'var(--sidebar-shadow, 0 0 0 1px rgba(255, 255, 255, 0.05))'
         }}>
           {sidebar}
         </aside>
@@ -141,9 +142,8 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
         {rightPanelOpen && (
           <div className="fixed inset-0 z-50 xl:hidden">
             <div className="absolute inset-0 bg-black/50" onClick={() => setRightPanelOpen(false)} />
-            <aside className="absolute right-0 top-0 w-80 h-full border-l border-border backdrop-blur-xl" style={{
-              background: 'rgba(24, 24, 27, 0.95)',
-              boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+            <aside className="absolute right-0 top-0 w-80 h-full border-l border-border backdrop-blur-xl bg-sidebar/95 text-sidebar-foreground" style={{
+              boxShadow: 'var(--sidebar-shadow, 0 0 0 1px rgba(255, 255, 255, 0.05))'
             }}>
               <div className="flex items-center justify-between p-4 border-b border-border">
                 <span className="font-medium">Configuration</span>
@@ -157,9 +157,8 @@ export function Layout({ children, sidebar, rightPanel, selectionTracker }: Layo
         )}
 
         {/* Desktop right panel */}
-        <aside className="w-80 min-w-[320px] min-h-[calc(100vh-4rem)] border-l border-border backdrop-blur-xl hidden xl:block" style={{
-          background: 'rgba(24, 24, 27, 0.8)',
-          boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+        <aside className="w-80 min-w-[320px] min-h-[calc(100vh-4rem)] border-l border-border backdrop-blur-xl hidden xl:block bg-sidebar/80 text-sidebar-foreground" style={{
+          boxShadow: 'var(--sidebar-shadow, 0 0 0 1px rgba(255, 255, 255, 0.05))'
         }}>
           {rightPanel}
         </aside>
