@@ -124,16 +124,16 @@ export class TemplateStorageDB {
 
     // Convert database template to AgentTemplate format
     const agentTemplate: AgentTemplate = {
-      id: dbTemplate.id,
-      name: dbTemplate.name,
-      description: dbTemplate.description,
-      category: dbTemplate.config.category,
-      tags: dbTemplate.config.tags,
-      createdAt: dbTemplate.created_at,
-      updatedAt: dbTemplate.created_at,
-      isPublic: dbTemplate.is_public,
+      id: (dbTemplate as any).id,
+      name: (dbTemplate as any).name,
+      description: (dbTemplate as any).description,
+      category: (dbTemplate as any).config?.category || 'custom',
+      tags: (dbTemplate as any).config?.tags || [],
+      createdAt: (dbTemplate as any).created_at,
+      updatedAt: (dbTemplate as any).created_at,
+      isPublic: (dbTemplate as any).is_public,
       usageCount: 0, // Initialize usage count
-      wizardData: dbTemplate.config.wizardData
+      wizardData: (dbTemplate as any).config?.wizardData
     };
 
     // Log the action if user ID is provided
@@ -180,14 +180,13 @@ export class TemplateStorageDB {
         id: dbTemplate.id,
         name: dbTemplate.name,
         description: dbTemplate.description,
-        category: dbTemplate.config.category || 'custom',
-        tags: dbTemplate.config.tags || [],
+        category: dbTemplate.config?.category || 'custom',
+        tags: dbTemplate.config?.tags || [],
         createdAt: dbTemplate.created_at,
         updatedAt: dbTemplate.updated_at || dbTemplate.created_at,
         isPublic: dbTemplate.is_public,
         usageCount: 0, // TODO: Track usage count
-        wizardData: dbTemplate.config.wizardData,
-        creatorName: dbTemplate.creator_name
+        wizardData: dbTemplate.config?.wizardData
       });
 
       const convertedUserTemplates = userTemplates.map(convertDbTemplate);
@@ -275,7 +274,7 @@ export class TemplateStorageDB {
   /**
    * Get a specific template by ID
    */
-  static async getTemplate(id: string, userRole: UserRole = 'beginner', userId?: string): Promise<AgentTemplate | null> {
+  static async getTemplate(id: string, userRole: UserRole = 'beginner'): Promise<AgentTemplate | null> {
     try {
       // First check if it's a pre-configured template
       const availableAgentTemplates = userRole === 'beginner' ? [] : getAllTemplates(userRole === 'beta' ? 'power_user' : userRole);
@@ -306,14 +305,13 @@ export class TemplateStorageDB {
         id: dbTemplate.id,
         name: dbTemplate.name,
         description: dbTemplate.description,
-        category: dbTemplate.config.category || 'custom',
-        tags: dbTemplate.config.tags || [],
+        category: dbTemplate.config?.category || 'custom',
+        tags: dbTemplate.config?.tags || [],
         createdAt: dbTemplate.created_at,
         updatedAt: dbTemplate.updated_at || dbTemplate.created_at,
         isPublic: dbTemplate.is_public,
         usageCount: 0,
-        wizardData: dbTemplate.config.wizardData,
-        creatorName: dbTemplate.creator_name
+        wizardData: dbTemplate.config?.wizardData
       };
     } catch (error) {
       console.error('Error fetching template:', error);
