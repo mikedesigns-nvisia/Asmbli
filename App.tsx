@@ -29,7 +29,7 @@ import { AgentTemplate } from './types/templates';
 import { AgentTemplate as NewAgentTemplate } from './types/agent-templates';
 import { generatePrompt } from './utils/promptGenerator';
 import { generateDeploymentConfigs } from './utils/deploymentGenerator';
-import { TemplateStorage } from './utils/templateStorage';
+import { TemplateStorageDB } from './utils/templateStorageDB';
 import { useAuth } from './contexts/AuthContext';
 import { AuthModal } from './components/auth/AuthModal';
 
@@ -81,9 +81,31 @@ function AuthenticatedApp() {
   const [selectedAgentTemplate, setSelectedAgentTemplate] = useState<NewAgentTemplate | null>(null);
   const [isTemplateMode, setIsTemplateMode] = useState(false);
   const [templateFiles, setTemplateFiles] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [allTags, setAllTags] = useState<string[]>([]);
   
   // Use templateFiles to avoid unused variable warning
   console.log('Template files:', templateFiles);
+
+  // Load categories and tags for template dialogs
+  useEffect(() => {
+    const loadTemplateData = async () => {
+      try {
+        const [categoriesData, templatesData] = await Promise.all([
+          TemplateStorageDB.getCategories(),
+          TemplateStorageDB.getTemplates(user?.role || 'beginner', user?.id)
+        ]);
+        setCategories(categoriesData);
+        setAllTags(templatesData.flatMap(t => t.tags));
+      } catch (error) {
+        console.error('Failed to load template data:', error);
+      }
+    };
+    
+    if (user) {
+      loadTemplateData();
+    }
+  }, [user]);
 
   // Role-based step configuration
   const getStepConfiguration = () => {
@@ -214,14 +236,18 @@ function AuthenticatedApp() {
     setShowSaveTemplateDialog(true);
   };
 
-  const handleSaveTemplate = (templateInfo: {
+  const handleSaveTemplate = async (templateInfo: {
     name: string;
     description: string;
     category: string;
     tags: string[];
   }) => {
-    TemplateStorage.saveTemplate(wizardData, templateInfo);
-    setShowSaveTemplateDialog(false);
+    try {
+      await TemplateStorageDB.saveTemplate(wizardData, templateInfo, user?.id);
+      setShowSaveTemplateDialog(false);
+    } catch (error) {
+      console.error('Failed to save template:', error);
+    }
   };
 
   const handleShowTemplateReview = (template: AgentTemplate) => {
@@ -734,8 +760,8 @@ function AuthenticatedApp() {
           isOpen={showSaveTemplateDialog}
           onClose={() => setShowSaveTemplateDialog(false)}
           onSave={handleSaveTemplate}
-          categories={TemplateStorage.getCategories()}
-          existingTags={TemplateStorage.getTemplates(user?.role || 'beginner').flatMap(t => t.tags)}
+          categories={categories}
+          existingTags={allTags}
         />
       )}
 

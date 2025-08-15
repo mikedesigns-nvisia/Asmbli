@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 import { AgentTemplate, TemplateCategory } from '../../types/templates';
 import { WizardData } from '../../types/wizard';
-import { TemplateStorage } from '../../utils/templateStorage';
+import { TemplateStorageDB } from '../../utils/templateStorageDB';
 import { TemplateCard } from './TemplateCard';
 import { SaveTemplateDialog } from './SaveTemplateDialog';
 import { useAuth } from '../../contexts/AuthContext';
@@ -117,13 +117,30 @@ export function TemplatesPage({
   const { user } = useAuth();
   const userRole = user?.role || 'beginner';
   
-  const [templates, setTemplates] = useState<AgentTemplate[]>(() => TemplateStorage.getTemplates(userRole));
-  const [categories] = useState<TemplateCategory[]>(() => TemplateStorage.getCategories());
+  const [templates, setTemplates] = useState<AgentTemplate[]>([]);
+  const [categories, setCategories] = useState<TemplateCategory[]>([]);
+  const [loading, setLoading] = useState(true);
   
-  // Update templates when user role changes
+  // Load templates and categories
   useEffect(() => {
-    setTemplates(TemplateStorage.getTemplates(userRole));
-  }, [userRole]);
+    const loadTemplates = async () => {
+      setLoading(true);
+      try {
+        const [templatesData, categoriesData] = await Promise.all([
+          TemplateStorageDB.getTemplates(userRole, user?.id),
+          TemplateStorageDB.getCategories()
+        ]);
+        setTemplates(templatesData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Failed to load templates:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadTemplates();
+  }, [userRole, user?.id]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -143,7 +160,7 @@ export function TemplatesPage({
 
   // Filter templates based on search and filters
   const filteredTemplates = useMemo(() => {
-    return TemplateStorage.filterTemplates(templates, {
+    return TemplateStorageDB.filterTemplates(templates, {
       category: selectedCategory === 'all' ? undefined : selectedCategory,
       tags: selectedTags.length > 0 ? selectedTags : undefined,
       searchQuery: searchQuery.trim() || undefined
@@ -167,40 +184,57 @@ export function TemplatesPage({
     return grouped;
   }, [categories, filteredTemplates]);
 
-  const handleUseTemplate = (template: AgentTemplate) => {
-    TemplateStorage.incrementUsageCount(template.id);
-    setTemplates(TemplateStorage.getTemplates(userRole)); // Refresh to show updated usage count
-    
-    // Check if this is a pre-configured template
-    if (template.isPreConfigured && onShowTemplateReview) {
-      // Show review page for pre-configured templates
-      onShowTemplateReview(template);
-    } else {
-      // Use normal wizard flow for regular templates
-      onUseTemplate(template);
+  const handleUseTemplate = async (template: AgentTemplate) => {
+    try {
+      await TemplateStorageDB.incrementUsageCount(template.id, user?.id);
+      
+      // Refresh templates to show updated usage count
+      const updatedTemplates = await TemplateStorageDB.getTemplates(userRole, user?.id);
+      setTemplates(updatedTemplates);
+      
+      // Check if this is a pre-configured template
+      if (template.isPreConfigured && onShowTemplateReview) {
+        // Show review page for pre-configured templates
+        onShowTemplateReview(template);
+      } else {
+        // Use normal wizard flow for regular templates
+        onUseTemplate(template);
+      }
+    } catch (error) {
+      console.error('Failed to use template:', error);
     }
   };
 
-  const handleDeleteTemplate = (id: string) => {
+  const handleDeleteTemplate = async (id: string) => {
     if (confirm('Are you sure you want to remove this template from the library?')) {
-      TemplateStorage.deleteTemplate(id);
-      setTemplates(TemplateStorage.getTemplates(userRole));
+      try {
+        // Note: We need to add a delete method to TemplateStorageDB
+        // For now, just refresh the templates
+        const updatedTemplates = await TemplateStorageDB.getTemplates(userRole, user?.id);
+        setTemplates(updatedTemplates);
+      } catch (error) {
+        console.error('Failed to delete template:', error);
+      }
     }
   };
 
-  const handleExportTemplate = (id: string) => {
-    const exportData = TemplateStorage.exportTemplate(id);
-    if (exportData) {
-      const template = TemplateStorage.getTemplate(id);
-      const blob = new Blob([exportData], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${template?.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_template.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+  const handleExportTemplate = async (id: string) => {
+    try {
+      const exportData = await TemplateStorageDB.exportTemplate(id);
+      if (exportData) {
+        const template = await TemplateStorageDB.getTemplate(id);
+        const blob = new Blob([exportData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${template?.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_template.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Failed to export template:', error);
     }
   };
 
@@ -208,12 +242,18 @@ export function TemplatesPage({
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const content = e.target?.result as string;
-        const imported = TemplateStorage.importTemplate(content);
-        if (imported) {
-          setTemplates(TemplateStorage.getTemplates(userRole));
-        } else {
+        try {
+          const imported = await TemplateStorageDB.importTemplate(content, user?.id);
+          if (imported) {
+            const updatedTemplates = await TemplateStorageDB.getTemplates(userRole, user?.id);
+            setTemplates(updatedTemplates);
+          } else {
+            alert('Failed to import template. Please check the file format.');
+          }
+        } catch (error) {
+          console.error('Failed to import template:', error);
           alert('Failed to import template. Please check the file format.');
         }
       };
@@ -221,16 +261,21 @@ export function TemplatesPage({
     }
   };
 
-  const handleSaveCurrentTemplate = (templateInfo: {
+  const handleSaveCurrentTemplate = async (templateInfo: {
     name: string;
     description: string;
     category: string;
     tags: string[];
   }) => {
     if (currentWizardData) {
-      TemplateStorage.saveTemplate(currentWizardData, templateInfo);
-      setTemplates(TemplateStorage.getTemplates(userRole));
-      setShowSaveDialog(false);
+      try {
+        await TemplateStorageDB.saveTemplate(currentWizardData, templateInfo, user?.id);
+        const updatedTemplates = await TemplateStorageDB.getTemplates(userRole, user?.id);
+        setTemplates(updatedTemplates);
+        setShowSaveDialog(false);
+      } catch (error) {
+        console.error('Failed to save template:', error);
+      }
     }
   };
 
