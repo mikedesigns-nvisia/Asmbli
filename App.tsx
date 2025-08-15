@@ -29,7 +29,7 @@ import { AgentTemplate } from './types/templates';
 import { AgentTemplate as NewAgentTemplate } from './types/agent-templates';
 import { generatePrompt } from './utils/promptGenerator';
 import { generateDeploymentConfigs } from './utils/deploymentGenerator';
-import { TemplateStorageDB } from './utils/templateStorageDB';
+import { TemplateStorageAPI } from './utils/templateStorageAPI';
 import { useAuth } from './contexts/AuthContext';
 import { AuthModal } from './components/auth/AuthModal';
 
@@ -92,8 +92,8 @@ function AuthenticatedApp() {
     const loadTemplateData = async () => {
       try {
         const [categoriesData, templatesData] = await Promise.all([
-          TemplateStorageDB.getCategories(),
-          TemplateStorageDB.getTemplates(user?.role || 'beginner', user?.id)
+          TemplateStorageAPI.getCategories(),
+          TemplateStorageAPI.getTemplates(user?.role || 'beginner', user?.id)
         ]);
         setCategories(categoriesData);
         setAllTags(templatesData.flatMap(t => t.tags));
@@ -243,7 +243,7 @@ function AuthenticatedApp() {
     tags: string[];
   }) => {
     try {
-      await TemplateStorageDB.saveTemplate(wizardData, templateInfo, user?.id);
+      await TemplateStorageAPI.saveTemplate(wizardData, templateInfo, user?.id);
       setShowSaveTemplateDialog(false);
     } catch (error) {
       console.error('Failed to save template:', error);

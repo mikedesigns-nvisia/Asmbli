@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 import { AgentTemplate, TemplateCategory } from '../../types/templates';
 import { WizardData } from '../../types/wizard';
-import { TemplateStorageDB } from '../../utils/templateStorageDB';
+import { TemplateStorageAPI } from '../../utils/templateStorageAPI';
 import { TemplateCard } from './TemplateCard';
 import { SaveTemplateDialog } from './SaveTemplateDialog';
 import { useAuth } from '../../contexts/AuthContext';
@@ -127,8 +127,8 @@ export function TemplatesPage({
       setLoading(true);
       try {
         const [templatesData, categoriesData] = await Promise.all([
-          TemplateStorageDB.getTemplates(userRole, user?.id),
-          TemplateStorageDB.getCategories()
+          TemplateStorageAPI.getTemplates(userRole, user?.id),
+          TemplateStorageAPI.getCategories()
         ]);
         setTemplates(templatesData);
         setCategories(categoriesData);
@@ -160,7 +160,7 @@ export function TemplatesPage({
 
   // Filter templates based on search and filters
   const filteredTemplates = useMemo(() => {
-    return TemplateStorageDB.filterTemplates(templates, {
+    return TemplateStorageAPI.filterTemplates(templates, {
       category: selectedCategory === 'all' ? undefined : selectedCategory,
       tags: selectedTags.length > 0 ? selectedTags : undefined,
       searchQuery: searchQuery.trim() || undefined
@@ -186,10 +186,10 @@ export function TemplatesPage({
 
   const handleUseTemplate = async (template: AgentTemplate) => {
     try {
-      await TemplateStorageDB.incrementUsageCount(template.id, user?.id);
+      await TemplateStorageAPI.incrementUsageCount(template.id, user?.id);
       
       // Refresh templates to show updated usage count
-      const updatedTemplates = await TemplateStorageDB.getTemplates(userRole, user?.id);
+      const updatedTemplates = await TemplateStorageAPI.getTemplates(userRole, user?.id);
       setTemplates(updatedTemplates);
       
       // Check if this is a pre-configured template
@@ -208,9 +208,9 @@ export function TemplatesPage({
   const handleDeleteTemplate = async (id: string) => {
     if (confirm('Are you sure you want to remove this template from the library?')) {
       try {
-        // Note: We need to add a delete method to TemplateStorageDB
+        // Note: We need to add a delete method to TemplateStorageAPI
         // For now, just refresh the templates
-        const updatedTemplates = await TemplateStorageDB.getTemplates(userRole, user?.id);
+        const updatedTemplates = await TemplateStorageAPI.getTemplates(userRole, user?.id);
         setTemplates(updatedTemplates);
       } catch (error) {
         console.error('Failed to delete template:', error);
@@ -220,9 +220,9 @@ export function TemplatesPage({
 
   const handleExportTemplate = async (id: string) => {
     try {
-      const exportData = await TemplateStorageDB.exportTemplate(id);
+      const exportData = await TemplateStorageAPI.exportTemplate(id);
       if (exportData) {
-        const template = await TemplateStorageDB.getTemplate(id);
+        const template = await TemplateStorageAPI.getTemplate(id);
         const blob = new Blob([exportData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -245,9 +245,9 @@ export function TemplatesPage({
       reader.onload = async (e) => {
         const content = e.target?.result as string;
         try {
-          const imported = await TemplateStorageDB.importTemplate(content, user?.id);
+          const imported = await TemplateStorageAPI.importTemplate(content, user?.id);
           if (imported) {
-            const updatedTemplates = await TemplateStorageDB.getTemplates(userRole, user?.id);
+            const updatedTemplates = await TemplateStorageAPI.getTemplates(userRole, user?.id);
             setTemplates(updatedTemplates);
           } else {
             alert('Failed to import template. Please check the file format.');
@@ -269,8 +269,8 @@ export function TemplatesPage({
   }) => {
     if (currentWizardData) {
       try {
-        await TemplateStorageDB.saveTemplate(currentWizardData, templateInfo, user?.id);
-        const updatedTemplates = await TemplateStorageDB.getTemplates(userRole, user?.id);
+        await TemplateStorageAPI.saveTemplate(currentWizardData, templateInfo, user?.id);
+        const updatedTemplates = await TemplateStorageAPI.getTemplates(userRole, user?.id);
         setTemplates(updatedTemplates);
         setShowSaveDialog(false);
       } catch (error) {
