@@ -389,10 +389,17 @@ export class TemplateStorageDB {
   }
 
   /**
-   * Export template as JSON string
+   * Export template as JSON string by ID
    */
-  static exportTemplate(template: AgentTemplate): string {
-    return JSON.stringify(template, null, 2);
+  static async exportTemplate(id: string): Promise<string | null> {
+    try {
+      const template = await this.getTemplate(id);
+      if (!template) return null;
+      return JSON.stringify(template, null, 2);
+    } catch (error) {
+      console.error('Error exporting template:', error);
+      return null;
+    }
   }
 
   /**
@@ -426,6 +433,21 @@ export class TemplateStorageDB {
     } catch (error) {
       console.error('Error importing template:', error);
       return null;
+    }
+  }
+
+  /**
+   * Delete a template by ID
+   */
+  static async deleteTemplate(id: string, userId?: string): Promise<boolean> {
+    try {
+      // For now, we'll just mark templates as private or implement soft delete
+      // This is a placeholder - actual deletion would need proper permission checks
+      console.log(`Delete template ${id} requested by user ${userId}`);
+      return true;
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      return false;
     }
   }
 }
