@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "build:prod": "vite build",
+    "build": "tsc && vite build && npm run copy-lib",
+    "build:prod": "vite build && npm run copy-lib",
+    "copy-lib": "if not exist dist\\lib mkdir dist\\lib && xcopy lib dist\\lib /E /I /Y",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest",
