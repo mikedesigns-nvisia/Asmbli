@@ -116,8 +116,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                 <span className="text-4xl md:text-6xl">for Use on any LLM</span>
               </h1>
               <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                The world's most fun AI agent builder. Drag, drop, deploy. 
-                From "I have an idea" to "holy wow, it works!" in minutes, not months 🚀
+                Works with ChatGPT, Claude, LM Studio, Ollama, and more. 
+                Drag, drop, deploy. From "I have an idea" to "holy wow, it works!" in minutes 🚀
               </p>
             </div>
 
