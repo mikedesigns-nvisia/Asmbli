@@ -245,6 +245,76 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-24 bg-black/5">
+        <div className="max-width-container section-spacing-x">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>How It Works</h2>
+            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+              From concept to deployment in four simple steps. Build powerful AI agents without the complexity.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                step: "01",
+                title: "Configure",
+                description: "Pre-configure documentation, instructions, and personality traits that define your agent's behavior and expertise.",
+                icon: FileText,
+                color: "text-blue-400"
+              },
+              {
+                step: "02", 
+                title: "Build",
+                description: "Use our intuitive visual builder to create your bespoke agent with custom workflows and decision trees.",
+                icon: Palette,
+                color: "text-green-400"
+              },
+              {
+                step: "03",
+                title: "Deploy",
+                description: "One-click deployment to Claude Desktop, LM Studio, Ollama, and other platforms with seamless integration.",
+                icon: Rocket,
+                color: "text-primary"
+              },
+              {
+                step: "04",
+                title: "Scale",
+                description: "Share agents with your team, version control changes, and collaborate on improvements across projects.",
+                icon: Users,
+                color: "text-orange-400"
+              }
+            ].map((item, index) => (
+              <div key={index} className="text-center space-y-4">
+                <div className="relative">
+                  <div className="w-16 h-16 bg-white/5 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10">
+                    <item.icon className={`w-8 h-8 ${item.color}`} />
+                  </div>
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground">
+                    {item.step}
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold" style={{ fontFamily: '"Noto Serif JP", serif' }}>{item.title}</h3>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Process Flow Connector */}
+          <div className="hidden lg:block relative mt-8">
+            <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent transform -translate-y-1/2"></div>
+            <div className="flex justify-between items-center relative z-10">
+              {[0, 1, 2, 3].map((index) => (
+                <div key={index} className="w-4 h-4 bg-primary/20 rounded-full border-2 border-primary/50"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section id="features" className="py-24 bg-black/20">
         <div className="max-width-container section-spacing-x">
