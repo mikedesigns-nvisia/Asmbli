@@ -123,7 +123,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <h1 className="text-5xl md:text-7xl font-bold gradient-text leading-tight">
                 Create Bespoke Agents
                 <br />
-                <span className="text-4xl md:text-6xl">For Your Workflow</span>
+                <span className="text-5xl md:text-7xl">For Your Workflow</span>
               </h1>
               <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
                 Pre-configure documentation, instructions, and personality once. Deploy consistently across 
