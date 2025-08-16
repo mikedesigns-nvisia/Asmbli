@@ -53,7 +53,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
               id: 'dev-user-123',
               email: 'dev@localhost.com',
               name: 'Development User',
-              role: 'enterprise' as UserRole,
+              role: 'beta' as UserRole,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             };
