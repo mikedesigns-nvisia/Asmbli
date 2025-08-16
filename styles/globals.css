@@ -316,25 +316,17 @@ body::after {
 }
 
 @keyframes gradientShift {
-  0% {
+  0%, 100% {
     background-position: 0% 50%;
-    transform: scale(1);
   }
   25% {
     background-position: 100% 50%;
-    transform: scale(1.02);
   }
   50% {
     background-position: 100% 100%;
-    transform: scale(1);
   }
   75% {
     background-position: 0% 100%;
-    transform: scale(0.98);
-  }
-  100% {
-    background-position: 0% 50%;
-    transform: scale(1);
   }
 }
 
@@ -450,24 +442,18 @@ body::after {
   .gradient-text {
     background: linear-gradient(45deg, 
       #ff6b6b 0%, 
-      #4ecdc4 15%, 
-      #45b7d1 30%, 
-      #96ceb4 45%, 
-      #ffeaa7 60%, 
-      #dda0dd 75%, 
-      #98d8c8 90%, 
-      #ff7675 100%);
+      #4ecdc4 33%, 
+      #45b7d1 66%, 
+      #ff6b6b 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-size: 400% 400%;
-    animation: gradientShift 6s ease-in-out infinite;
-    transition: all 0.3s ease;
+    background-size: 300% 300%;
+    animation: gradientShift 12s ease-in-out infinite;
   }
 
   .gradient-text:hover {
-    animation: gradientRainbow 3s linear infinite;
-    text-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+    animation: gradientRainbow 2s linear infinite;
   }
 
   /* Sparkle effect for extra fun */

@@ -120,7 +120,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
 
             {/* Main Headline */}
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white via-slate-200 to-blue-200 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-5xl md:text-7xl font-bold gradient-text leading-tight">
                 Create Bespoke Agents
                 <br />
                 <span className="text-4xl md:text-6xl">For Your Workflow</span>
