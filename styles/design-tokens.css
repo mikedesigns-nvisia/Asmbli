@@ -96,7 +96,7 @@
   
   /* Font families */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-display: 'Noto Sans JP', var(--font-sans);
+  --font-display: 'Noto Serif JP', var(--font-sans);
   --font-mono: 'JetBrains Mono', 'Monaco', 'Menlo', monospace;
   
   /* Font sizes */

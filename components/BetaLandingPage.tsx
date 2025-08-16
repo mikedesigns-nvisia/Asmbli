@@ -72,7 +72,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         <div className="max-width-container section-spacing-x">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent font-display text-[20px] italic pl-1 pr-2" aria-label="asmbli Logo">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent text-[20px] italic pl-1 pr-2" style={{ fontFamily: '"Noto Serif JP", serif' }} aria-label="asmbli Logo">
                 asmbli
               </span>
               <Badge className="bg-primary/20 text-primary-foreground border-primary/30">
@@ -120,7 +120,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
 
             {/* Main Headline */}
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl font-bold gradient-text leading-tight">
+              <h1 className="text-5xl md:text-7xl font-bold gradient-text leading-tight" style={{ fontFamily: '"Noto Serif JP", serif' }}>
                 Create Bespoke Agents
                 <br />
                 <span className="text-5xl md:text-7xl">For Your Workflow</span>
@@ -181,7 +181,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                     <CheckCircle className="w-8 h-8 text-green-400" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-green-400">You're on the list! 🎉</h3>
+                    <h3 className="text-xl font-semibold text-green-400" style={{ fontFamily: '"Noto Serif JP", serif' }}>You're on the list! 🎉</h3>
                     <p className="text-slate-300 mt-2">
                       We'll send you an invite as soon as your spot is ready.
                     </p>
@@ -205,7 +205,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section className="py-16 bg-black/10">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold">Build Agents For Any Workflow</h2>
+            <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>Build Agents For Any Workflow</h2>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto">
               From creative work to deep research, create specialized agents that understand your unique needs
             </p>
@@ -216,7 +216,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                 <Palette className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Design Assistant</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Noto Serif JP", serif' }}>Design Assistant</h3>
               <p className="text-slate-300 text-sm">
                 Create agents that understand your design system, generate consistent mockups, and provide design feedback
               </p>
@@ -226,7 +226,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                 <Search className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Research Agent</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Noto Serif JP", serif' }}>Research Agent</h3>
               <p className="text-slate-300 text-sm">
                 Build agents that dive deep into topics, synthesize information, and deliver comprehensive research reports
               </p>
@@ -236,7 +236,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Content Creator</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Noto Serif JP", serif' }}>Content Creator</h3>
               <p className="text-slate-300 text-sm">
                 Deploy agents that match your voice, understand your audience, and create consistent, on-brand content
               </p>
@@ -249,7 +249,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section id="features" className="py-24 bg-black/20">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold">Why Choose Asmbli Beta?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>Why Choose Asmbli Beta?</h2>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
               Get exclusive access to cutting-edge features that will transform how you build AI agents.
             </p>
@@ -325,7 +325,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                     </Badge>
                   </div>
                   
-                  <h3 className="text-3xl md:text-4xl font-bold text-white">
+                  <h3 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: '"Noto Serif JP", serif' }}>
                     Join the Beta Program
                   </h3>
                   
@@ -395,7 +395,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         <div className="max-width-container section-spacing-x">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2">
-              <span className="font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent italic pl-1 pr-1">
+              <span className="font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent italic pl-1 pr-1" style={{ fontFamily: '"Noto Serif JP", serif' }}>
                 asmbli
               </span>
               <Badge className="bg-primary/20 text-primary-foreground border-primary/30 text-xs">

@@ -247,7 +247,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
         <div className="max-width-container section-spacing-x">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-display text-[20px] italic pl-1 pr-2" aria-label="asmbli Logo">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent text-[20px] italic pl-1 pr-2" style={{ fontFamily: '"Noto Serif JP", serif' }} aria-label="asmbli Logo">
                 asmbli
               </span>
             </div>
