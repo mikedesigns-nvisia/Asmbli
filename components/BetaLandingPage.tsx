@@ -122,7 +122,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-5xl md:text-7xl font-bold gradient-text leading-tight tracking-tight" style={{ fontFamily: '"Noto Serif JP", serif' }}>
-                Create Bespoke Agents
+                Create Custom Agents
                 <br />
                 <span className="text-5xl md:text-7xl">For Your Workflow</span>
               </h1>
@@ -268,7 +268,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               {
                 step: "02", 
                 title: "Build",
-                description: "Use our intuitive visual builder to create your bespoke agent with custom workflows and decision trees.",
+                description: "Use our intuitive visual builder to create your custom agent with personalized workflows and decision trees.",
                 icon: Palette,
                 color: "text-green-400"
               },
