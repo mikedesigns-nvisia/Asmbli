@@ -20,7 +20,18 @@ import {
   Eye,
   Cloud,
   Monitor,
-  Lock
+  Lock,
+  AlertTriangle,
+  Code2,
+  Download,
+  Key,
+  Settings,
+  Star,
+  Calendar,
+  HelpCircle,
+  ExternalLink,
+  ChevronDown,
+  Quote
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -85,21 +96,22 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               </Badge>
             </div>
             <nav className="hidden md:flex items-center space-x-6" role="navigation" aria-label="Main navigation">
-              <a href="#features" className="text-slate-300 hover:text-white transition-colors">How It Works</a>
-              <a href="#privacy" className="text-slate-300 hover:text-white transition-colors">Privacy</a>
+              <a href="#agents" className="text-slate-300 hover:text-white transition-colors">Agents</a>
+              <a href="#how-it-works" className="text-slate-300 hover:text-white transition-colors">How It Works</a>
+              <a href="#testimonials" className="text-slate-300 hover:text-white transition-colors">Testimonials</a>
               <Button 
                 variant="outline" 
                 className="border-primary/50 text-primary hover:bg-primary/20 bg-transparent"
-                onClick={onViewTemplates}
+                onClick={() => document.getElementById('beta-signup')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                View Templates
+                Schedule Demo
               </Button>
               <Button 
                 variant="default"
                 onClick={onGetStarted}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
-                Beta Sign In
+                Request Access
               </Button>
             </nav>
           </div>
@@ -107,7 +119,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-32 overflow-hidden">
+      <section className="relative pt-20 pb-20 overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5"></div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
@@ -119,157 +131,343 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             <div className="flex justify-center">
               <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-4 py-1 text-sm font-medium">
                 <Sparkles className="w-4 h-4 mr-2" />
-                Early Access Beta
+                Limited Beta Access
               </Badge>
             </div>
 
             {/* Main Headline */}
-            <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl font-bold gradient-text leading-tight tracking-tight" style={{ fontFamily: '"Noto Serif JP", serif' }}>
-                AI Agents That Run
-                <br />
-                <span className="text-5xl md:text-7xl">On Your Computer</span>
+            <div className="space-y-6">
+              <h1 className="text-5xl md:text-6xl font-bold gradient-text leading-tight tracking-tight" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+                AI Agents That Actually Work for You
               </h1>
-              <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Build custom AI assistants that work locally. Your data stays private, 
-                setup takes minutes, and it's completely free 🔒
+              <p className="text-2xl md:text-3xl text-slate-200 max-w-3xl mx-auto leading-relaxed font-medium">
+                Local, Private, and Under Your Control
               </p>
             </div>
 
-            {/* Beta Signup Form */}
-            <div className="max-w-md mx-auto">
-              {!isSubmitted ? (
-                <form onSubmit={handleBetaSignup} className="space-y-4">
-                  <div className="flex gap-3">
-                    <Input
-                      type="email"
-                      placeholder="Enter your email for early access"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="flex-1 bg-white/10 border-white/20 text-white placeholder-slate-400 focus:border-primary"
-                      required
-                    />
-                    <Button 
-                      type="submit" 
-                      disabled={isLoading}
-                      className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-primary-foreground border-0 px-8"
-                    >
-                      {isLoading ? (
-                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          Join Beta
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                  <p className="text-sm text-slate-400">
-                    🔒 Private • 🆓 Free • ⚡ Easy setup • Limited beta spots
-                  </p>
-                  
-                  {/* Sign In Option */}
-                  <div className="text-center pt-4">
-                    <p className="text-sm text-slate-400 mb-3">Already have beta access?</p>
-                    <Button 
-                      variant="outline"
-                      onClick={onGetStarted}
-                      className="border-primary/50 text-primary hover:bg-primary/20 bg-transparent"
-                    >
-                      Sign In to Beta
-                    </Button>
-                  </div>
-                </form>
-              ) : (
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
-                    <CheckCircle className="w-8 h-8 text-green-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-green-400" style={{ fontFamily: '"Noto Serif JP", serif' }}>You're on the list! 🎉</h3>
-                    <p className="text-slate-300 mt-2">
-                      We'll send you an invite as soon as your spot is ready.
-                    </p>
-                  </div>
-                  <Button 
-                    onClick={onGetStarted}
-                    className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
-                  >
-                    Start Building
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
-              )}
+            {/* Quick CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
+              <Button 
+                onClick={() => document.getElementById('beta-signup')?.scrollIntoView({ behavior: 'smooth' })}
+                size="lg"
+                className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-primary-foreground px-8 py-4 text-lg"
+              >
+                Request Beta Access
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              <Button 
+                variant="outline"
+                size="lg"
+                onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
+                className="border-primary/50 text-primary hover:bg-primary/20 bg-transparent px-8 py-4 text-lg"
+              >
+                Schedule Demo
+              </Button>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* Data Privacy Section */}
-      <section id="privacy" className="py-20 bg-gradient-to-r from-slate-900/50 to-slate-800/50 border-y border-slate-700/50">
+      {/* Problem Section */}
+      <section className="py-20 bg-slate-800/50">
         <div className="max-width-container section-spacing-x">
           <div className="max-w-4xl mx-auto">
             <div className="text-center space-y-8">
-              {/* Hook */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-center space-x-2">
-                  <Eye className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
-                    🤔 EVER WONDER WHERE YOUR AI CHATS GO?
-                  </h2>
-                </div>
-              </div>
-
-              {/* Problem Explanation */}
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-4">
-                  <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <Cloud className="w-6 h-6 text-red-400" />
-                      <h3 className="text-lg font-semibold text-red-400">Cloud AI Services</h3>
-                    </div>
-                    <p className="text-slate-300 text-sm leading-relaxed">
-                      When you use ChatGPT, Claude, or any other AI service, your conversations get stored on their servers. That's how they work - your data goes up to the cloud, gets processed, and the response comes back down.
+              <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+                The Problem with Current AI Agents
+              </h2>
+              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-8">
+                <div className="flex items-start space-x-4">
+                  <AlertTriangle className="w-8 h-8 text-red-400 flex-shrink-0 mt-1" />
+                  <div className="text-left">
+                    <p className="text-lg text-slate-300 leading-relaxed mb-4">
+                      Most AI agents are unpredictable black boxes. You send your data to the cloud, hope for the best, 
+                      and lose control over your workflows when the next update changes everything.
                     </p>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-6">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <Monitor className="w-6 h-6 text-green-400" />
-                      <h3 className="text-lg font-semibold text-green-400">Local AI Alternative</h3>
-                    </div>
-                    <p className="text-slate-300 text-sm leading-relaxed">
-                      You can run AI directly on your own computer. Same smart responses, same capabilities, but your data never leaves your machine. Think of it like having your own personal AI assistant instead of calling a shared hotline.
+                    <p className="text-xl font-semibold text-primary" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+                      We built something different.
                     </p>
                   </div>
                 </div>
               </div>
-
-              {/* Solution Statement */}
-              <div className="bg-primary/10 border border-primary/20 rounded-lg p-6">
-                <div className="flex items-center justify-center space-x-3 mb-4">
-                  <Lock className="w-6 h-6 text-primary" />
-                  <h3 className="text-xl font-semibold text-primary" style={{ fontFamily: '"Noto Serif JP", serif' }}>
-                    There's actually another way to do this.
-                  </h3>
-                </div>
-                <p className="text-slate-300 text-center max-w-2xl mx-auto leading-relaxed">
-                  We're making this easy to set up. Want to try it? →
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-8">
+                <p className="text-lg text-slate-300 leading-relaxed">
+                  AI agents that run on your computer, use your API keys, and access only what you choose. 
+                  Professional-grade capabilities without the privacy trade-offs.
                 </p>
-                <div className="mt-6">
-                  <Button 
-                    onClick={onGetStarted}
-                    size="lg"
-                    className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-primary-foreground px-8 py-3"
-                  >
-                    Get Started with Private AI
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Three Specialized Agents Section */}
+      <section id="agents" className="py-20 bg-black/10">
+        <div className="max-width-container section-spacing-x">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+              Three Specialized Agents in Beta
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Research Agent */}
+            <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-colors">
+              <CardHeader>
+                <div className="flex items-center space-x-3">
+                  <Search className="w-6 h-6 text-blue-400" />
+                  <div>
+                    <CardTitle className="text-blue-400">🔍 Research Agent</CardTitle>
+                    <Badge className="bg-green-500/20 text-green-400 border-green-500/30 mt-2">
+                      Available Now
+                    </Badge>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-slate-300">Web research and document analysis that keeps your queries private</p>
+                <ul className="text-sm text-slate-400 space-y-2">
+                  <li>• Perfect for competitive intelligence and sensitive investigations</li>
+                  <li>• Your research data never leaves your computer</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Design Agent */}
+            <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-colors">
+              <CardHeader>
+                <div className="flex items-center space-x-3">
+                  <Palette className="w-6 h-6 text-purple-400" />
+                  <div>
+                    <CardTitle className="text-purple-400">🎨 Design Agent</CardTitle>
+                    <Badge className="bg-green-500/20 text-green-400 border-green-500/30 mt-2">
+                      Available Now
+                    </Badge>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-slate-300">Direct Figma integration and file management without cloud uploads</p>
+                <ul className="text-sm text-slate-400 space-y-2">
+                  <li>• Ideal for client work and confidential design projects</li>
+                  <li>• Your creative assets stay local</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Coding Agent */}
+            <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-colors">
+              <CardHeader>
+                <div className="flex items-center space-x-3">
+                  <Code2 className="w-6 h-6 text-green-400" />
+                  <div>
+                    <CardTitle className="text-green-400">💻 Coding Agent</CardTitle>
+                    <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30 mt-2">
+                      Coming Q1 2025
+                    </Badge>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-slate-300">GitHub integration and local development tools</p>
+                <ul className="text-sm text-slate-400 space-y-2">
+                  <li>• Built for teams that can't risk code exposure</li>
+                  <li>• Your proprietary code stays secure</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 bg-black/20">
+        <div className="max-width-container section-spacing-x">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+              How It Works
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-5 gap-6">
+            {/* Step 1 */}
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Monitor className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Choose Your Setup</h3>
+                <p className="text-sm text-slate-400">Works with LM Studio, Claude Desktop, Ollama, or any local AI interface</p>
+              </CardContent>
+            </Card>
+
+            {/* Step 2 */}
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Download className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Install Agent Bundle</h3>
+                <p className="text-sm text-slate-400">One-click setup includes all MCP servers and integrations</p>
+              </CardContent>
+            </Card>
+
+            {/* Step 3 */}
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Key className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Use Your API Keys</h3>
+                <p className="text-sm text-slate-400">Direct billing with OpenAI, Claude, or your preferred provider</p>
+              </CardContent>
+            </Card>
+
+            {/* Step 4 */}
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Lock className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Work Privately</h3>
+                <p className="text-sm text-slate-400">Agents only access what you explicitly allow</p>
+              </CardContent>
+            </Card>
+
+            {/* Step 5 */}
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Settings className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Stay Consistent</h3>
+                <p className="text-sm text-slate-400">Your workflows work the same way regardless of model updates</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-20 bg-slate-800/30">
+        <div className="max-width-container section-spacing-x">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+              What Beta Users Are Saying
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
+                  <Quote className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <div>
+                    <p className="text-slate-300 mb-4 italic">
+                      "Finally, AI I can use for client projects without NDA concerns."
+                    </p>
+                    <div className="text-sm">
+                      <p className="font-semibold">Sarah K.</p>
+                      <p className="text-slate-400">Design Director</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
+                  <Quote className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <div>
+                    <p className="text-slate-300 mb-4 italic">
+                      "My research is 10x faster and I'm not worried about leaking competitive intel."
+                    </p>
+                    <div className="text-sm">
+                      <p className="font-semibold">Mike R.</p>
+                      <p className="text-slate-400">Strategy Consultant</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
+                  <Quote className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <div>
+                    <p className="text-slate-300 mb-4 italic">
+                      "It's like having a reliable assistant that actually follows instructions."
+                    </p>
+                    <div className="text-sm">
+                      <p className="font-semibold">Jenny L.</p>
+                      <p className="text-slate-400">Senior Analyst</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Key Benefits Section */}
+      <section className="py-20 bg-black/10">
+        <div className="max-width-container section-spacing-x">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+              Key Benefits
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
+                <Lock className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold">🔒 True Privacy</h3>
+              <p className="text-slate-400">Everything runs on your hardware with your API keys</p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
+                <Zap className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold">⚡ Reliable Performance</h3>
+              <p className="text-slate-400">Agents work consistently across AI model updates</p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
+                <Settings className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold">🔧 Full Control</h3>
+              <p className="text-slate-400">You decide exactly what each agent can access</p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
+                <Zap className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold">🔌 Real Integrations</h3>
+              <p className="text-slate-400">Direct connections to Figma, GitHub, filesystems, and web APIs</p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
+                <Clock className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold">💰 Transparent Costs</h3>
+              <p className="text-slate-400">Pay your AI provider directly, no markup or hidden fees</p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
+                <Users className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold">💼 Professional Grade</h3>
+              <p className="text-slate-400">Built for teams handling sensitive client work</p>
             </div>
           </div>
         </div>
