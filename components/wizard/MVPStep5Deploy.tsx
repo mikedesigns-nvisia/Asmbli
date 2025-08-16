@@ -36,107 +36,37 @@ interface MVPStep5DeployProps {
 
 const FREE_PLATFORMS = [
   {
-    id: 'librechat',
-    name: 'LibreChat',
-    description: 'Enhanced ChatGPT clone with full MCP support and 20+ AI providers',
-    icon: MessageSquare,
-    difficulty: 'Easy',
-    setupTime: '8 minutes',
-    downloadUrl: 'https://docs.librechat.ai',
-    downloadLinks: {
-      windows: 'https://github.com/danny-avila/LibreChat/releases/latest',
-      mac: 'https://github.com/danny-avila/LibreChat/releases/latest',
-      linux: 'https://github.com/danny-avila/LibreChat/releases/latest'
-    },
-    docsUrl: 'https://docs.librechat.ai',
-    modelStore: 'https://docs.librechat.ai/install/configuration/ai_endpoints',
-    setupGuideUrl: 'https://docs.librechat.ai/install/installation/docker_compose',
-    features: [
-      'Full MCP server support',
-      '20+ AI provider support',
-      'Multi-user with RBAC',
-      'Complete self-hosting',
-      'Enterprise features'
-    ],
-    benefits: [
-      '🌐 20+ AI providers (OpenAI, Anthropic, Google, etc.)',
-      '🔧 Full MCP integration with UI management',
-      '👥 Multi-user support with role-based access',
-      '🏢 Enterprise features (audit logs, SSO, etc.)'
-    ],
-    requirements: [
-      'Docker and Docker Compose',
-      'Node.js for MCP servers',
-      '4GB+ RAM recommended'
-    ]
-  },
-  {
-    id: 'jan-ai',
-    name: 'Jan.ai',
-    description: 'Desktop AI assistant with seamless local/cloud model switching',
+    id: 'lm-studio',
+    name: 'LM Studio',
+    description: 'Local AI with complete privacy control and MCP server support',
     icon: Brain,
     difficulty: 'Easy',
     setupTime: '5 minutes',
-    downloadUrl: 'https://jan.ai/download',
+    downloadUrl: 'https://lmstudio.ai',
     downloadLinks: {
-      windows: 'https://github.com/janhq/jan/releases/latest/download/jan-win-x64.exe',
-      mac: 'https://github.com/janhq/jan/releases/latest/download/jan-mac-universal.dmg',
-      linux: 'https://github.com/janhq/jan/releases/latest/download/jan-linux-amd64.AppImage'
+      windows: 'https://releases.lmstudio.ai/windows/x64/latest/LM-Studio-Setup.exe',
+      mac: 'https://releases.lmstudio.ai/darwin/arm64/latest/LM-Studio.dmg',
+      linux: 'https://releases.lmstudio.ai/linux/x64/latest/LM-Studio.AppImage'
     },
-    docsUrl: 'https://jan.ai/docs',
-    modelStore: 'https://jan.ai/models',
-    setupGuideUrl: 'https://jan.ai/docs/quickstart',
+    docsUrl: 'https://lmstudio.ai/docs',
+    modelStore: 'https://lmstudio.ai/models',
+    setupGuideUrl: 'https://lmstudio.ai/docs/welcome',
     features: [
-      'Desktop app interface',
-      'Local + cloud models',
-      'MCP extension support',
-      'Professional development',
-      'Simple one-click setup'
+      'Complete local privacy',
+      'No API costs or limits', 
+      'Works with any local model',
+      'MCP server integration',
+      'One-time setup'
     ],
     benefits: [
-      '💻 Beautiful desktop app - no technical setup',
-      '🔄 Switch between local and API models seamlessly',
-      '🔌 MCP support with extension architecture',
-      '💼 Professional development with VC backing'
+      '🔒 Your data never leaves your machine',
+      '🆓 Zero ongoing costs',
+      '⚡ Fast responses with good hardware',
+      '🎛️ Full control over model selection'
     ],
     requirements: [
-      'Desktop application (easy install)',
-      'Node.js for MCP servers',
-      '8GB+ RAM for local models'
-    ]
-  },
-  {
-    id: 'anythingllm',
-    name: 'AnythingLLM',
-    description: 'Enterprise AI platform with no-code agent builder',
-    icon: Building,
-    difficulty: 'Medium',
-    setupTime: '10 minutes',
-    downloadUrl: 'https://anythingllm.com/download',
-    downloadLinks: {
-      windows: 'https://github.com/Mintplex-Labs/anything-llm/releases/latest',
-      mac: 'https://github.com/Mintplex-Labs/anything-llm/releases/latest',
-      linux: 'https://github.com/Mintplex-Labs/anything-llm/releases/latest'
-    },
-    docsUrl: 'https://docs.anythingllm.com',
-    modelStore: 'https://docs.anythingllm.com/llm-configuration',
-    setupGuideUrl: 'https://docs.anythingllm.com/installation/self-hosted/local-docker',
-    features: [
-      'No-code agent builder',
-      'Enterprise workspace system',
-      'RAG and document integration',
-      'Docker or desktop deployment',
-      'Advanced analytics'
-    ],
-    benefits: [
-      '🎯 No-code agent builder for business users',
-      '🏢 Enterprise workspace and document management',
-      '📄 Advanced RAG with document integration',
-      '📊 Built-in analytics and monitoring'
-    ],
-    requirements: [
-      'Docker or desktop app',
-      'Node.js for integrations',
+      'LM Studio v0.3.17+',
+      'Node.js installed',
       '8GB+ RAM recommended'
     ]
   }
@@ -196,7 +126,7 @@ export function MVPStep5Deploy({ wizardData, deployment, onDeploymentChange, onG
     <div className="space-y-6">
       <div className="text-center space-y-2">
         <p className="text-muted-foreground">
-          Choose a powerful platform to deploy your custom AI agent. All options offer enterprise-grade features while keeping your data private.
+          Set up your custom AI agent with LM Studio - the easiest way to run AI locally with complete privacy.
         </p>
       </div>
 
@@ -274,9 +204,9 @@ export function MVPStep5Deploy({ wizardData, deployment, onDeploymentChange, onG
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Rocket className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold">Enterprise Deployment Options</h3>
+          <h3 className="text-lg font-semibold">Local AI Platform</h3>
           <Badge className="bg-green-500/10 text-green-600 border-green-500/30">
-            Self-Hosted
+            Local & Private
           </Badge>
         </div>
 
@@ -584,9 +514,7 @@ export function MVPStep5Deploy({ wizardData, deployment, onDeploymentChange, onG
                             }}
                           >
                             <Brain className="w-3 h-3 mr-2" />
-                            {selectedPlatformData!.id === 'librechat' ? 'AI Providers Setup' : 
-                             selectedPlatformData!.id === 'jan-ai' ? 'Browse Models' : 
-                             'Model Configuration'}
+                            Browse AI Models
                           </Button>
                           <Button
                             variant="outline"

@@ -88,7 +88,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         <div className="max-width-container section-spacing-x">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent text-[20px] italic pl-1 pr-2" style={{ fontFamily: '"Noto Serif JP", serif' }} aria-label="asmbli Logo">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent text-[20px] italic pl-1 pr-2" style={{ fontFamily: '"Noto Sans JP", sans-serif' }} aria-label="asmbli Logo">
                 asmbli
               </span>
               <Badge className="bg-primary/20 text-primary-foreground border-primary/30">
@@ -119,14 +119,14 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-20 overflow-hidden">
+      <section className="relative pt-32 pb-32 overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5"></div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         <div className="relative max-width-container section-spacing-x text-center">
-          <div className="space-y-8">
+          <div className="space-y-12">
             {/* Beta Badge */}
             <div className="flex justify-center">
               <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-4 py-1 text-sm font-medium">
@@ -136,12 +136,12 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             </div>
 
             {/* Main Headline */}
-            <div className="space-y-6">
-              <h1 className="text-5xl md:text-6xl font-bold gradient-text leading-tight tracking-tight" style={{ fontFamily: '"Noto Serif JP", serif' }}>
-                AI Agents That Actually Work for You
+            <div className="space-y-8">
+              <h1 className="text-5xl md:text-6xl font-bold gradient-text leading-tight tracking-tight" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
+                Build and Use A Custom Agent In Minutes
               </h1>
               <p className="text-2xl md:text-3xl text-slate-200 max-w-3xl mx-auto leading-relaxed font-medium">
-                Local, Private, and Under Your Control
+                Works with LM Studio - Local, Private, and Under Your Control
               </p>
             </div>
 
@@ -173,7 +173,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         <div className="max-width-container section-spacing-x">
           <div className="max-w-4xl mx-auto">
             <div className="text-center space-y-8">
-              <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+              <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
                 The Problem with Current AI Agents
               </h2>
               <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-8">
@@ -184,7 +184,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                       Most AI agents are unpredictable black boxes. You send your data to the cloud, hope for the best, 
                       and lose control over your workflows when the next update changes everything.
                     </p>
-                    <p className="text-xl font-semibold text-primary" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+                    <p className="text-xl font-semibold text-primary" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
                       We built something different.
                     </p>
                   </div>
@@ -192,7 +192,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               </div>
               <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-8">
                 <p className="text-lg text-slate-300 leading-relaxed">
-                  AI agents that run on your computer, use your API keys, and access only what you choose. 
+                  AI agents that run locally on LM Studio, use your API keys, and access only what you choose. 
                   Professional-grade capabilities without the privacy trade-offs.
                 </p>
               </div>
@@ -205,7 +205,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section id="agents" className="py-20 bg-black/10">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
               Three Specialized Agents in Beta
             </h2>
           </div>
@@ -284,7 +284,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section id="how-it-works" className="py-20 bg-black/20">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
               How It Works
             </h2>
           </div>
@@ -297,7 +297,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                   <Monitor className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2">Choose Your Setup</h3>
-                <p className="text-sm text-slate-400">Works with LM Studio, Claude Desktop, Ollama, or any local AI interface</p>
+                <p className="text-sm text-slate-400">Optimized for LM Studio - the easiest local AI platform. Also works with Ollama and other local interfaces.</p>
               </CardContent>
             </Card>
 
@@ -352,7 +352,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section id="testimonials" className="py-20 bg-slate-800/30">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
               What Beta Users Are Saying
             </h2>
           </div>
@@ -416,7 +416,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section className="py-20 bg-black/10">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
               Key Benefits
             </h2>
           </div>
@@ -477,7 +477,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section className="py-16 bg-black/10">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>Build Agents For Any Workflow</h2>
+            <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>Build Agents For Any Workflow</h2>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto">
               From creative work to deep research, create specialized agents that understand your unique needs
             </p>
@@ -488,7 +488,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                 <Palette className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Noto Serif JP", serif' }}>Design Assistant</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>Design Assistant</h3>
               <p className="text-slate-300 text-sm">
                 Create agents that understand your design system, generate consistent mockups, and provide design feedback
               </p>
@@ -498,7 +498,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                 <Search className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Noto Serif JP", serif' }}>Research Agent</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>Research Agent</h3>
               <p className="text-slate-300 text-sm">
                 Build agents that dive deep into topics, synthesize information, and deliver comprehensive research reports
               </p>
@@ -508,7 +508,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Noto Serif JP", serif' }}>Content Creator</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>Content Creator</h3>
               <p className="text-slate-300 text-sm">
                 Deploy agents that match your voice, understand your audience, and create consistent, on-brand content
               </p>
@@ -521,7 +521,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section id="features" className="py-24 bg-black/5">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>How It Works</h2>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>How It Works</h2>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
               From concept to deployment in four simple steps. Build powerful AI agents without the complexity.
             </p>
@@ -567,7 +567,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                     {item.step}
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold" style={{ fontFamily: '"Noto Serif JP", serif' }}>{item.title}</h3>
+                <h3 className="text-xl font-semibold" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>{item.title}</h3>
                 <p className="text-slate-300 text-sm leading-relaxed">
                   {item.description}
                 </p>
@@ -591,7 +591,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       <section id="features" className="py-24 bg-black/20">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>Why Choose Asmbli Beta?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>Why Choose Asmbli Beta?</h2>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
               Get exclusive access to cutting-edge features that will transform how you build AI agents.
             </p>
@@ -667,7 +667,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                     </Badge>
                   </div>
                   
-                  <h3 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+                  <h3 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
                     Join the Beta Program
                   </h3>
                   
@@ -737,7 +737,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         <div className="max-width-container section-spacing-x">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2">
-              <span className="font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent italic pl-1 pr-1" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+              <span className="font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent italic pl-1 pr-1" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
                 asmbli
               </span>
               <Badge className="bg-primary/20 text-primary-foreground border-primary/30 text-xs">
