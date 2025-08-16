@@ -18,7 +18,8 @@
       "Bash(npx:*)",
       "WebFetch(domain:code.visualstudio.com)",
       "Bash(git push:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": [],

@@ -120,7 +120,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
 
             {/* Main Headline */}
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl font-bold gradient-text leading-tight" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+              <h1 className="text-5xl md:text-7xl font-bold gradient-text leading-tight tracking-tight" style={{ fontFamily: '"Noto Serif JP", serif' }}>
                 Create Bespoke Agents
                 <br />
                 <span className="text-5xl md:text-7xl">For Your Workflow</span>
