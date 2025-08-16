@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -136,7 +136,23 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
   }, [data.extensions]);
 
   // Use the imported comprehensive extension library
-  const availableExtensions: Extension[] = extensionsLibrary || [];
+  const availableExtensions: Extension[] = React.useMemo(() => {
+    console.log('Extensions library loaded:', extensionsLibrary?.length || 0, 'extensions');
+    return extensionsLibrary || [];
+  }, []);
+
+  // Early return if no extensions available
+  if (!availableExtensions || availableExtensions.length === 0) {
+    console.error('No extensions available in library');
+    return (
+      <div className="text-center py-12">
+        <h3 className="font-medium mb-2">Loading Extensions...</h3>
+        <p className="text-sm text-muted-foreground">
+          Please wait while we load the extensions library.
+        </p>
+      </div>
+    );
+  }
 
   // Get unique categories for filter dropdown
   const categories = useMemo(() => {

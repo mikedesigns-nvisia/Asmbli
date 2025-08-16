@@ -1,3 +1,4 @@
+import React from 'react';
 import { Extension as ExtensionFromLibrary } from '../../../types/wizard';
 
 export interface Extension extends ExtensionFromLibrary {

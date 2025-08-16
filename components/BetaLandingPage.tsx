@@ -89,6 +89,13 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               >
                 View Templates
               </Button>
+              <Button 
+                variant="default"
+                onClick={onGetStarted}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                Beta Sign In
+              </Button>
             </nav>
           </div>
         </div>
@@ -155,6 +162,18 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                   <p className="text-sm text-slate-400">
                     Free forever • No credit card required • Limited spots available
                   </p>
+                  
+                  {/* Sign In Option */}
+                  <div className="text-center pt-4">
+                    <p className="text-sm text-slate-400 mb-3">Already have beta access?</p>
+                    <Button 
+                      variant="outline"
+                      onClick={onGetStarted}
+                      className="border-primary/50 text-primary hover:bg-primary/20 bg-transparent"
+                    >
+                      Sign In to Beta
+                    </Button>
+                  </div>
                 </form>
               ) : (
                 <div className="text-center space-y-4">

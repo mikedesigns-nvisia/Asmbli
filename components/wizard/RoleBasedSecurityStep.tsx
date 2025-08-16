@@ -14,7 +14,7 @@ interface RoleBasedSecurityStepProps {
 }
 
 export function RoleBasedSecurityStep({ data, onUpdate, onNext, onPrev }: RoleBasedSecurityStepProps) {
-  const { user } = useAuth();
+  const { user, updateUserRole } = useAuth();
 
   if (!user) return null;
 

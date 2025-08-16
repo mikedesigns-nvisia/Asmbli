@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { ArrowRight, Settings, HelpCircle, CheckCircle, Zap, Globe, Package, Cloud, AlertCircle, MessageSquare, PenTool, BarChart3, Code, Palette, Search, Sparkles, User } from 'lucide-react';
+import { ArrowRight, Settings, HelpCircle, CheckCircle, Zap, Globe, Package, Cloud, AlertCircle, MessageSquare, PenTool, BarChart3, Code, Palette, Search, Sparkles, User, Star, Upload } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { AgentTemplate, findMatchingTemplate, BEGINNER_AGENT_TEMPLATES } from '../../types/agent-templates';
 
