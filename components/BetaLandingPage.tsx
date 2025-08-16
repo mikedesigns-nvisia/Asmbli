@@ -84,7 +84,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               <a href="#early-access" className="text-slate-300 hover:text-white transition-colors">Early Access</a>
               <Button 
                 variant="outline" 
-                className="border-primary/50 text-primary hover:bg-primary/20"
+                className="border-primary/50 text-primary hover:bg-primary/20 bg-transparent"
                 onClick={onViewTemplates}
               >
                 View Templates
@@ -99,13 +99,13 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5"></div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         <div className="relative max-width-container section-spacing-x text-center">
           <div className="space-y-8">
             {/* Beta Badge */}
             <div className="flex justify-center">
-              <Badge className="bg-gradient-to-r from-primary to-blue-500 text-primary-foreground px-4 py-1 text-sm font-medium">
+              <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-4 py-1 text-sm font-medium">
                 <Sparkles className="w-4 h-4 mr-2" />
                 Early Access Beta
               </Badge>
@@ -114,13 +114,13 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white via-slate-200 to-blue-200 bg-clip-text text-transparent leading-tight">
-                Create AI Agents That
+                Create Bespoke Agents
                 <br />
-                <span className="text-4xl md:text-6xl">Actually Understand You</span>
+                <span className="text-4xl md:text-6xl">For Your Workflow</span>
               </h1>
               <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Build personalized AI agents that work exactly how you do. 
-                Works with Claude Desktop, LM Studio, Ollama, and more 🚀
+                Pre-configure documentation, instructions, and personality once. Deploy consistently across 
+                Claude Desktop, LM Studio, Ollama, and more 🚀
               </p>
             </div>
 
@@ -140,7 +140,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                     <Button 
                       type="submit" 
                       disabled={isLoading}
-                      className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white border-0 px-8"
+                      className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-primary-foreground border-0 px-8"
                     >
                       {isLoading ? (
                         <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -169,7 +169,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                   </div>
                   <Button 
                     onClick={onGetStarted}
-                    className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600"
+                    className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
                   >
                     Explore Demo
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -194,8 +194,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
-                <Palette className="w-6 h-6 text-blue-400" />
+              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                <Palette className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Design Assistant</h3>
               <p className="text-slate-300 text-sm">
@@ -204,8 +204,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             </div>
 
             <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
-                <Search className="w-6 h-6 text-green-400" />
+              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                <Search className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Research Agent</h3>
               <p className="text-slate-300 text-sm">
@@ -214,8 +214,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             </div>
 
             <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
-                <FileText className="w-6 h-6 text-purple-400" />
+              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                <FileText className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Content Creator</h3>
               <p className="text-slate-300 text-sm">

@@ -630,10 +630,27 @@ function AuthenticatedApp() {
   // Show landing page initially
   if (showLanding) {
     return (
-      <BetaLandingPage 
-        onGetStarted={handleGetStarted} 
-        onViewTemplates={handleViewTemplates}
-      />
+      <>
+        <BetaLandingPage 
+          onGetStarted={handleGetStarted} 
+          onViewTemplates={handleViewTemplates}
+        />
+        
+        {/* Templates Preview Modal */}
+        <TemplatesPreviewModal
+          isOpen={showTemplatesPreview}
+          onClose={() => setShowTemplatesPreview(false)}
+          onViewAll={handleViewAllTemplates}
+          onGetStarted={handleGetStarted}
+        />
+
+        {/* Auth Modal */}
+        <AuthModal 
+          isOpen={showAuthModal} 
+          onClose={() => setShowAuthModal(false)}
+          defaultTab="signup"
+        />
+      </>
     );
   }
 
