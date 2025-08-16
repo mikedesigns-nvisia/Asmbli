@@ -33,7 +33,10 @@ import {
   FileText,
   Target,
   Cog,
-  BookmarkPlus
+  BookmarkPlus,
+  Eye,
+  Monitor,
+  Lock
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -332,6 +335,76 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
                 <CheckCircle className="w-4 h-4 text-success" aria-hidden="true" />
                 <span>Zero Configuration</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Data Privacy Section */}
+      <section className="section-spacing relative z-10 bg-gradient-to-r from-muted/30 to-muted/10 border-y border-border/30" aria-label="Data privacy and local AI explanation">
+        <div className="container-max-width">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center golden-content-gap">
+              {/* Hook */}
+              <div className="golden-element-gap">
+                <div className="flex items-center justify-center space-x-3">
+                  <Eye className="w-6 h-6 text-primary" />
+                  <h2 className="text-3xl md:text-4xl font-bold font-display">
+                    🤔 EVER WONDER WHERE YOUR AI CHATS GO?
+                  </h2>
+                </div>
+              </div>
+
+              {/* Problem vs Solution */}
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <Card className="bg-red-500/5 border-red-500/20 hover:bg-red-500/10 transition-colors">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Cloud className="w-6 h-6 text-red-400" />
+                      <h3 className="text-lg font-semibold text-red-400">Cloud AI Services</h3>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed">
+                      When you use ChatGPT, Claude, or any other AI service, your conversations get stored on their servers. That's how they work - your data goes up to the cloud, gets processed, and the response comes back down.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-green-500/5 border-green-500/20 hover:bg-green-500/10 transition-colors">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Monitor className="w-6 h-6 text-green-400" />
+                      <h3 className="text-lg font-semibold text-green-400">Local AI Alternative</h3>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed">
+                      You can run AI directly on your own computer. Same smart responses, same capabilities, but your data never leaves your machine. Think of it like having your own personal AI assistant instead of calling a shared hotline.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Solution Statement */}
+              <Card className="bg-primary/5 border-primary/20 hover:bg-primary/10 transition-colors">
+                <CardContent className="p-8">
+                  <div className="flex items-center justify-center space-x-3 mb-4">
+                    <Lock className="w-6 h-6 text-primary" />
+                    <h3 className="text-xl md:text-2xl font-semibold text-primary font-display">
+                      There's actually another way to do this.
+                    </h3>
+                  </div>
+                  <p className="text-muted-foreground text-center max-w-2xl mx-auto leading-relaxed mb-6">
+                    We're making this easy to set up. Want to try it? →
+                  </p>
+                  <Button 
+                    onClick={isAuthenticated ? onGetStarted : () => setShowAuthModal(true)}
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 h-auto group"
+                  >
+                    <Lock className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                    Get Started with Private AI
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

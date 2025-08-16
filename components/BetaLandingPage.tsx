@@ -16,7 +16,11 @@ import {
   Search,
   FileText,
   Twitter,
-  Linkedin
+  Linkedin,
+  Eye,
+  Cloud,
+  Monitor,
+  Lock
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -198,6 +202,75 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               )}
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* Data Privacy Section */}
+      <section className="py-20 bg-gradient-to-r from-slate-900/50 to-slate-800/50 border-y border-slate-700/50">
+        <div className="max-width-container section-spacing-x">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center space-y-8">
+              {/* Hook */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-center space-x-2">
+                  <Eye className="w-6 h-6 text-primary" />
+                  <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+                    🤔 EVER WONDER WHERE YOUR AI CHATS GO?
+                  </h2>
+                </div>
+              </div>
+
+              {/* Problem Explanation */}
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div className="space-y-4">
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <Cloud className="w-6 h-6 text-red-400" />
+                      <h3 className="text-lg font-semibold text-red-400">Cloud AI Services</h3>
+                    </div>
+                    <p className="text-slate-300 text-sm leading-relaxed">
+                      When you use ChatGPT, Claude, or any other AI service, your conversations get stored on their servers. That's how they work - your data goes up to the cloud, gets processed, and the response comes back down.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-6">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <Monitor className="w-6 h-6 text-green-400" />
+                      <h3 className="text-lg font-semibold text-green-400">Local AI Alternative</h3>
+                    </div>
+                    <p className="text-slate-300 text-sm leading-relaxed">
+                      You can run AI directly on your own computer. Same smart responses, same capabilities, but your data never leaves your machine. Think of it like having your own personal AI assistant instead of calling a shared hotline.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Solution Statement */}
+              <div className="bg-primary/10 border border-primary/20 rounded-lg p-6">
+                <div className="flex items-center justify-center space-x-3 mb-4">
+                  <Lock className="w-6 h-6 text-primary" />
+                  <h3 className="text-xl font-semibold text-primary" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+                    There's actually another way to do this.
+                  </h3>
+                </div>
+                <p className="text-slate-300 text-center max-w-2xl mx-auto leading-relaxed">
+                  We're making this easy to set up. Want to try it? →
+                </p>
+                <div className="mt-6">
+                  <Button 
+                    onClick={onGetStarted}
+                    size="lg"
+                    className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-primary-foreground px-8 py-3"
+                  >
+                    Get Started with Private AI
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
