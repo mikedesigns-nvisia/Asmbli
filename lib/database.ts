@@ -198,4 +198,301 @@ export class Database {
       value: typeof result.value === 'string' ? JSON.parse(result.value) : result.value
     }));
   }
+
+  // Extensions management
+  static async getAllExtensions(userRole?: string) {
+    let extensions;
+
+    // Filter by user role if specified
+    if (userRole === 'beginner') {
+      extensions = await sql`
+        SELECT 
+          id, name, description, category, provider, icon, complexity, enabled,
+          connection_type, auth_method, pricing, features, capabilities, requirements,
+          documentation, setup_complexity, configuration, supported_connection_types,
+          security_level, version, is_official, is_featured, is_verified, usage_count, rating,
+          created_at, updated_at
+        FROM extensions 
+        WHERE enabled = true 
+          AND (is_featured = true OR complexity = 'low')
+          AND pricing IN ('free', 'freemium')
+        ORDER BY is_featured DESC, usage_count DESC
+        LIMIT 20
+      `;
+    } else {
+      extensions = await sql`
+        SELECT 
+          id, name, description, category, provider, icon, complexity, enabled,
+          connection_type, auth_method, pricing, features, capabilities, requirements,
+          documentation, setup_complexity, configuration, supported_connection_types,
+          security_level, version, is_official, is_featured, is_verified, usage_count, rating,
+          created_at, updated_at
+        FROM extensions 
+        WHERE enabled = true
+        ORDER BY is_featured DESC, usage_count DESC
+      `;
+    }
+    return extensions.map(ext => ({
+      ...ext,
+      features: Array.isArray(ext.features) ? ext.features : [],
+      capabilities: Array.isArray(ext.capabilities) ? ext.capabilities : [],
+      requirements: Array.isArray(ext.requirements) ? ext.requirements : [],
+      supported_connection_types: Array.isArray(ext.supported_connection_types) ? ext.supported_connection_types : [],
+      configuration: typeof ext.configuration === 'string' ? JSON.parse(ext.configuration) : ext.configuration
+    }));
+  }
+
+  static async getExtensionsByCategory(category: string, userRole?: string) {
+    let extensions;
+
+    if (userRole === 'beginner') {
+      extensions = await sql`
+        SELECT 
+          id, name, description, category, provider, icon, complexity, enabled,
+          connection_type, auth_method, pricing, features, capabilities, requirements,
+          documentation, setup_complexity, configuration, supported_connection_types,
+          security_level, version, is_official, is_featured, is_verified, usage_count, rating,
+          created_at, updated_at
+        FROM extensions 
+        WHERE enabled = true 
+          AND category = ${category}
+          AND complexity IN ('low', 'medium')
+          AND pricing IN ('free', 'freemium')
+        ORDER BY is_featured DESC, usage_count DESC
+      `;
+    } else {
+      extensions = await sql`
+        SELECT 
+          id, name, description, category, provider, icon, complexity, enabled,
+          connection_type, auth_method, pricing, features, capabilities, requirements,
+          documentation, setup_complexity, configuration, supported_connection_types,
+          security_level, version, is_official, is_featured, is_verified, usage_count, rating,
+          created_at, updated_at
+        FROM extensions 
+        WHERE enabled = true AND category = ${category}
+        ORDER BY is_featured DESC, usage_count DESC
+      `;
+    }
+    return extensions.map(ext => ({
+      ...ext,
+      features: Array.isArray(ext.features) ? ext.features : [],
+      capabilities: Array.isArray(ext.capabilities) ? ext.capabilities : [],
+      requirements: Array.isArray(ext.requirements) ? ext.requirements : [],
+      supported_connection_types: Array.isArray(ext.supported_connection_types) ? ext.supported_connection_types : [],
+      configuration: typeof ext.configuration === 'string' ? JSON.parse(ext.configuration) : ext.configuration
+    }));
+  }
+
+  static async getExtensionById(extensionId: string) {
+    const [extension] = await sql`
+      SELECT 
+        id, name, description, category, provider, icon, complexity, enabled,
+        connection_type, auth_method, pricing, features, capabilities, requirements,
+        documentation, setup_complexity, configuration, supported_connection_types,
+        security_level, version, is_official, is_featured, is_verified, usage_count, rating,
+        created_at, updated_at
+      FROM extensions 
+      WHERE id = ${extensionId}
+    `;
+    
+    if (!extension) return null;
+    
+    return {
+      ...extension,
+      features: Array.isArray(extension.features) ? extension.features : [],
+      capabilities: Array.isArray(extension.capabilities) ? extension.capabilities : [],
+      requirements: Array.isArray(extension.requirements) ? extension.requirements : [],
+      supported_connection_types: Array.isArray(extension.supported_connection_types) ? extension.supported_connection_types : [],
+      configuration: typeof extension.configuration === 'string' ? JSON.parse(extension.configuration) : extension.configuration
+    };
+  }
+
+  static async getFeaturedExtensions(limit = 10) {
+    const extensions = await sql`
+      SELECT 
+        id, name, description, category, provider, icon, complexity, enabled,
+        connection_type, auth_method, pricing, features, capabilities, requirements,
+        documentation, setup_complexity, configuration, supported_connection_types,
+        security_level, version, is_official, is_featured, is_verified, usage_count, rating,
+        created_at, updated_at
+      FROM extensions 
+      WHERE enabled = true AND is_featured = true
+      ORDER BY usage_count DESC, rating DESC
+      LIMIT ${limit}
+    `;
+    
+    return extensions.map(ext => ({
+      ...ext,
+      features: Array.isArray(ext.features) ? ext.features : [],
+      capabilities: Array.isArray(ext.capabilities) ? ext.capabilities : [],
+      requirements: Array.isArray(ext.requirements) ? ext.requirements : [],
+      supported_connection_types: Array.isArray(ext.supported_connection_types) ? ext.supported_connection_types : [],
+      configuration: typeof ext.configuration === 'string' ? JSON.parse(ext.configuration) : ext.configuration
+    }));
+  }
+
+  // User extension preferences
+  static async getUserExtensions(userId: string) {
+    const userExtensions = await sql`
+      SELECT 
+        ue.id, ue.is_enabled, ue.selected_platforms, ue.configuration as user_config,
+        ue.status, ue.config_progress, ue.created_at as user_created_at,
+        e.id as extension_id, e.name, e.description, e.category, e.provider, e.icon, 
+        e.complexity, e.connection_type, e.auth_method, e.pricing, e.features, 
+        e.capabilities, e.requirements, e.documentation, e.setup_complexity, 
+        e.configuration as default_config, e.supported_connection_types,
+        e.security_level, e.version, e.is_official, e.is_featured, e.is_verified
+      FROM user_extensions ue
+      JOIN extensions e ON ue.extension_id = e.id
+      WHERE ue.user_id = ${userId}
+      ORDER BY ue.created_at DESC
+    `;
+    
+    return userExtensions.map(ue => ({
+      id: ue.extension_id,
+      name: ue.name,
+      description: ue.description,
+      category: ue.category,
+      provider: ue.provider,
+      icon: ue.icon,
+      complexity: ue.complexity,
+      enabled: ue.is_enabled,
+      connectionType: ue.connection_type,
+      authMethod: ue.auth_method,
+      pricing: ue.pricing,
+      features: Array.isArray(ue.features) ? ue.features : [],
+      capabilities: Array.isArray(ue.capabilities) ? ue.capabilities : [],
+      requirements: Array.isArray(ue.requirements) ? ue.requirements : [],
+      documentation: ue.documentation,
+      setupComplexity: ue.setup_complexity,
+      configuration: typeof ue.default_config === 'string' ? JSON.parse(ue.default_config) : ue.default_config,
+      supportedConnectionTypes: Array.isArray(ue.supported_connection_types) ? ue.supported_connection_types : [],
+      securityLevel: ue.security_level,
+      version: ue.version,
+      isOfficial: ue.is_official,
+      isFeatured: ue.is_featured,
+      isVerified: ue.is_verified,
+      selectedPlatforms: Array.isArray(ue.selected_platforms) ? ue.selected_platforms : [],
+      status: ue.status,
+      configProgress: ue.config_progress,
+      userConfig: typeof ue.user_config === 'string' ? JSON.parse(ue.user_config) : ue.user_config
+    }));
+  }
+
+  static async saveUserExtension(userId: string, extensionId: string, config: {
+    isEnabled?: boolean;
+    selectedPlatforms?: string[];
+    configuration?: any;
+    status?: string;
+    configProgress?: number;
+  }) {
+    const [userExtension] = await sql`
+      INSERT INTO user_extensions (
+        user_id, extension_id, is_enabled, selected_platforms, configuration, 
+        status, config_progress, created_at, updated_at
+      )
+      VALUES (
+        ${userId}, ${extensionId}, ${config.isEnabled ?? true}, 
+        ${JSON.stringify(config.selectedPlatforms || [])}, 
+        ${JSON.stringify(config.configuration || {})},
+        ${config.status || 'configuring'}, ${config.configProgress || 25},
+        NOW(), NOW()
+      )
+      ON CONFLICT (user_id, extension_id)
+      DO UPDATE SET
+        is_enabled = ${config.isEnabled ?? true},
+        selected_platforms = ${JSON.stringify(config.selectedPlatforms || [])},
+        configuration = ${JSON.stringify(config.configuration || {})},
+        status = ${config.status || 'configuring'},
+        config_progress = ${config.configProgress || 25},
+        updated_at = NOW()
+      RETURNING id, user_id, extension_id, is_enabled, selected_platforms, 
+                configuration, status, config_progress, created_at, updated_at
+    `;
+    
+    return {
+      ...userExtension,
+      selected_platforms: Array.isArray(userExtension.selected_platforms) ? userExtension.selected_platforms : [],
+      configuration: typeof userExtension.configuration === 'string' ? JSON.parse(userExtension.configuration) : userExtension.configuration
+    };
+  }
+
+  static async removeUserExtension(userId: string, extensionId: string) {
+    await sql`
+      DELETE FROM user_extensions 
+      WHERE user_id = ${userId} AND extension_id = ${extensionId}
+    `;
+  }
+
+  // Extension analytics and usage tracking
+  static async logExtensionUsage(userId: string, extensionId: string, action: string, metadata?: any, sessionId?: string) {
+    await sql`
+      INSERT INTO extension_usage (user_id, extension_id, action, metadata, session_id, created_at)
+      VALUES (${userId}, ${extensionId}, ${action}, ${metadata ? JSON.stringify(metadata) : null}, ${sessionId}, NOW())
+    `;
+  }
+
+  static async getExtensionUsageStats(extensionId: string, days = 30) {
+    const stats = await sql`
+      SELECT 
+        action,
+        COUNT(*) as count,
+        COUNT(DISTINCT user_id) as unique_users
+      FROM extension_usage 
+      WHERE extension_id = ${extensionId} 
+        AND created_at > NOW() - INTERVAL '${days} days'
+      GROUP BY action
+      ORDER BY count DESC
+    `;
+    return stats;
+  }
+
+  static async getUserExtensionUsage(userId: string, days = 30) {
+    const usage = await sql`
+      SELECT 
+        eu.extension_id,
+        e.name as extension_name,
+        eu.action,
+        COUNT(*) as count,
+        MAX(eu.created_at) as last_used
+      FROM extension_usage eu
+      JOIN extensions e ON eu.extension_id = e.id
+      WHERE eu.user_id = ${userId} 
+        AND eu.created_at > NOW() - INTERVAL '${days} days'
+      GROUP BY eu.extension_id, e.name, eu.action
+      ORDER BY count DESC, last_used DESC
+    `;
+    return usage;
+  }
+
+  // Extension reviews and ratings
+  static async saveExtensionReview(userId: string, extensionId: string, rating: number, reviewText?: string) {
+    const [review] = await sql`
+      INSERT INTO extension_reviews (user_id, extension_id, rating, review_text, created_at, updated_at)
+      VALUES (${userId}, ${extensionId}, ${rating}, ${reviewText}, NOW(), NOW())
+      ON CONFLICT (user_id, extension_id)
+      DO UPDATE SET
+        rating = ${rating},
+        review_text = ${reviewText},
+        updated_at = NOW()
+      RETURNING id, user_id, extension_id, rating, review_text, is_public, created_at, updated_at
+    `;
+    return review;
+  }
+
+  static async getExtensionReviews(extensionId: string, limit = 10) {
+    const reviews = await sql`
+      SELECT 
+        er.rating, er.review_text, er.created_at,
+        u.name as user_name
+      FROM extension_reviews er
+      JOIN users u ON er.user_id = u.id
+      WHERE er.extension_id = ${extensionId} 
+        AND er.is_public = true
+        AND er.review_text IS NOT NULL
+      ORDER BY er.created_at DESC
+      LIMIT ${limit}
+    `;
+    return reviews;
+  }
 }

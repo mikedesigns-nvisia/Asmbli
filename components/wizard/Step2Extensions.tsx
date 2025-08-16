@@ -22,11 +22,14 @@ import {
   Globe,
   Layers,
   Brain,
-  Server
+  Server,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
-// Import the comprehensive extension library
-import { extensionsLibrary, EXTENSION_CATEGORIES } from '../../data/extensions-library';
+// Import hooks for database extensions
+import { useExtensions, useUserExtensions } from '../../hooks/useExtensions';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Import extracted modules
 import { Extension, ExtensionCategory, Step2ExtensionsProps, ViewMode, SortBy } from './step2/types';
@@ -99,6 +102,10 @@ const getExtensionBadges = (extension: Extension): string[] => {
 };
 
 export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpdate, onNext, onPrev }: Step2ExtensionsProps) {
+  const { user } = useAuth();
+  const { extensions: availableExtensions, loading: extensionsLoading, error: extensionsError } = useExtensions(user?.role);
+  const { userExtensions, saveUserExtension, removeUserExtension, logExtensionUsage } = useUserExtensions();
+  
   const [selectedExtensions, setSelectedExtensions] = useState<Extension[]>(() => {
     console.log('Step2Extensions initializing with data:', data);
     try {
@@ -146,37 +153,6 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
       setSelectedExtensions(normalizedExtensions);
     }
   }, [data.extensions]);
-
-  // Use the imported comprehensive extension library
-  const availableExtensions: Extension[] = React.useMemo(() => {
-    try {
-      console.log('Extensions library loaded:', extensionsLibrary?.length || 0, 'extensions');
-      console.log('First extension sample:', extensionsLibrary?.[0]);
-      return extensionsLibrary || [];
-    } catch (error) {
-      console.error('Error loading extensions library:', error);
-      return [];
-    }
-  }, []);
-
-  // Early return if no extensions available
-  if (!availableExtensions || availableExtensions.length === 0) {
-    console.error('No extensions available in library');
-    return (
-      <div className="text-center py-12">
-        <h3 className="font-medium mb-2">Loading Extensions...</h3>
-        <p className="text-sm text-muted-foreground">
-          Please wait while we load the extensions library.
-        </p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded"
-        >
-          Retry Loading
-        </button>
-      </div>
-    );
-  }
 
   // Wrap main component logic in try-catch
   try {
@@ -277,7 +253,7 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
     return selectedExtensions.some(s => s.id === extensionId);
   };
 
-  const toggleExtension = (extensionId: string, platform?: string) => {
+  const toggleExtension = async (extensionId: string, platform?: string) => {
     console.log('toggleExtension called:', { extensionId, platform });
     const extensionTemplate = availableExtensions.find(s => s.id === extensionId);
     if (!extensionTemplate) {
@@ -288,6 +264,7 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
     const existingIndex = selectedExtensions.findIndex(s => s.id === extensionId);
     console.log('existingIndex:', existingIndex, 'current selections:', selectedExtensions.map(s => s.id));
     let newExtensions: Extension[];
+    let isAdding = false;
 
     if (existingIndex >= 0) {
       if (platform) {
@@ -302,6 +279,11 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
         if (updatedPlatforms.length === 0) {
           // Remove extension if no platforms selected
           newExtensions = selectedExtensions.filter(s => s.id !== extensionId);
+          try {
+            await removeUserExtension(extensionId);
+          } catch (error) {
+            console.error('Failed to remove user extension:', error);
+          }
         } else {
           // Update platforms
           newExtensions = selectedExtensions.map(s => 
@@ -314,13 +296,30 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
                 }
               : s
           );
+          
+          try {
+            await saveUserExtension(extensionId, {
+              isEnabled: true,
+              selectedPlatforms: updatedPlatforms,
+              status: 'configuring',
+              configProgress: 25
+            });
+          } catch (error) {
+            console.error('Failed to update user extension:', error);
+          }
         }
       } else {
         // Toggle entire extension (remove if selected, add if not)
         newExtensions = selectedExtensions.filter(s => s.id !== extensionId);
+        try {
+          await removeUserExtension(extensionId);
+        } catch (error) {
+          console.error('Failed to remove user extension:', error);
+        }
       }
     } else {
       // Add new extension
+      isAdding = true;
       let defaultPlatforms: string[];
       let defaultConnectionType = extensionTemplate.connectionType;
       
@@ -348,11 +347,33 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
       };
 
       newExtensions = [...selectedExtensions, newExtension];
+      
+      try {
+        await saveUserExtension(extensionId, {
+          isEnabled: true,
+          selectedPlatforms: defaultPlatforms,
+          status: 'configuring',
+          configProgress: 25
+        });
+      } catch (error) {
+        console.error('Failed to save user extension:', error);
+      }
     }
 
     console.log('Setting new extensions:', newExtensions.map(e => ({ id: e.id, platforms: e.selectedPlatforms })));
     setSelectedExtensions(newExtensions);
     onUpdate({ extensions: newExtensions });
+
+    // Log analytics
+    try {
+      await logExtensionUsage(
+        extensionId, 
+        isAdding ? 'selected' : 'deselected',
+        { platform, role: user?.role }
+      );
+    } catch (error) {
+      console.error('Failed to log extension usage:', error);
+    }
   };
 
   const toggleFilter = (filter: string) => {
@@ -444,6 +465,59 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
       default: return Sparkles;
     }
   };
+
+  // Early return if loading or no extensions available
+  if (extensionsLoading) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="font-medium mb-2">Loading Extensions...</h3>
+        <p className="text-sm text-muted-foreground">
+          Please wait while we load the extensions library from the database.
+        </p>
+      </div>
+    );
+  }
+
+  if (extensionsError) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="font-medium mb-2 text-red-500">Failed to Load Extensions</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          {extensionsError}
+        </p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-4 py-2 bg-primary text-primary-foreground rounded mr-4"
+        >
+          Retry Loading
+        </button>
+        <button 
+          onClick={onNext} 
+          className="px-4 py-2 bg-secondary text-secondary-foreground rounded"
+        >
+          Skip Extensions
+        </button>
+      </div>
+    );
+  }
+
+  if (!availableExtensions || availableExtensions.length === 0) {
+    console.error('No extensions available from database');
+    return (
+      <div className="text-center py-12">
+        <h3 className="font-medium mb-2">No Extensions Available</h3>
+        <p className="text-sm text-muted-foreground">
+          No extensions found in the database. Please contact support.
+        </p>
+        <button 
+          onClick={onNext} 
+          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded"
+        >
+          Continue Without Extensions
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-8">

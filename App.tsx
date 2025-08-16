@@ -73,7 +73,17 @@ function AuthenticatedApp() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showTemplatesPreview, setShowTemplatesPreview] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(() => {
+    // Development helper: allow jumping to specific steps via URL params
+    if (process.env.NODE_ENV === 'development') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const step = urlParams.get('step');
+      if (step && !isNaN(parseInt(step))) {
+        return parseInt(step);
+      }
+    }
+    return 0;
+  });
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
   const [wizardData, setWizardData] = useState<WizardData>(() => {
     const preConfigured = getPreConfiguredSettings();
@@ -306,15 +316,28 @@ function AuthenticatedApp() {
         buildType: 'template',
         selectedTemplate: updates.selectedTemplate,
         isPreConfigured: true,
-        // Fill in defaults for skipped steps
-        extensions: updates.requiredMcps?.map((mcp: string) => ({
-          id: mcp,
-          name: mcp,
+        // Fill in defaults for skipped steps using proper Extension interface
+        extensions: updates.requiredMcps?.map((mcpId: string) => ({
+          id: mcpId,
+          name: mcpId,
+          description: `Template-required MCP server: ${mcpId}`,
+          category: 'AI & Machine Learning',
+          provider: 'Template',
+          icon: 'Server',
+          complexity: 'low' as const,
           enabled: true,
-          category: 'core',
-          provider: 'template',
-          pricing: 'free',
-          connectionType: 'mcp'
+          connectionType: 'mcp' as const,
+          authMethod: 'none',
+          pricing: 'free' as const,
+          features: ['Template integration'],
+          capabilities: ['Template functionality'],
+          requirements: ['MCP server runtime'],
+          documentation: 'https://modelcontextprotocol.io',
+          setupComplexity: 1,
+          configuration: {},
+          selectedPlatforms: ['claude-desktop'],
+          status: 'configured' as const,
+          configProgress: 100
         })) || [],
         security: {
           authMethod: updates.securitySettings?.authMethod || null,

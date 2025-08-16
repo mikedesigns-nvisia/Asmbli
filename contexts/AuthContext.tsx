@@ -47,7 +47,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
             error: null,
           });
         } else {
-          setAuthState(prev => ({ ...prev, isLoading: false }));
+          // In development, create a default user for testing
+          if (process.env.NODE_ENV === 'development') {
+            const devUser = {
+              id: 'dev-user-123',
+              email: 'dev@localhost.com',
+              name: 'Development User',
+              role: 'enterprise' as UserRole,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+            setAuthState({
+              user: devUser,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+            console.log('🔧 Development Mode: Created default user', devUser);
+          } else {
+            setAuthState(prev => ({ ...prev, isLoading: false }));
+          }
         }
       } catch (error) {
         console.error('Error checking auth status:', error);

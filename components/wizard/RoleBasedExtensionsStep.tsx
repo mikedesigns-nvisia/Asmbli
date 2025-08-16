@@ -5,8 +5,9 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Layers, CheckCircle, ArrowUp, Zap, MessageSquare, PenTool, BarChart3 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { WizardData } from '../../types/wizard';
+import { WizardData, Extension } from '../../types/wizard';
 import { Step2Extensions } from './Step2Extensions';
+import { useFeaturedExtensions, useUserExtensions } from '../../hooks/useExtensions';
 
 interface RoleBasedExtensionsStepProps {
   data: WizardData;
@@ -17,6 +18,8 @@ interface RoleBasedExtensionsStepProps {
 
 export function RoleBasedExtensionsStep({ data, onUpdate, onNext, onPrev }: RoleBasedExtensionsStepProps) {
   const { user, updateUserRole } = useAuth();
+  const { extensions: featuredExtensions, loading: featuredLoading } = useFeaturedExtensions(4);
+  const { saveUserExtension } = useUserExtensions();
 
   if (!user) {
     console.warn('No user found in RoleBasedExtensionsStep');
@@ -34,46 +37,61 @@ export function RoleBasedExtensionsStep({ data, onUpdate, onNext, onPrev }: Role
 
   // Beginner users get basic pre-selected extensions
   if (user.role === 'beginner') {
-    const basicExtensions = [
-      {
-        id: 'claude-conversation',
-        title: 'Claude Conversation',
-        description: 'Enhanced conversation capabilities with memory',
-        icon: <MessageSquare className="w-6 h-6" />,
-        category: 'AI & ML',
-        included: true
-      },
-      {
-        id: 'basic-web-search',
-        title: 'Web Search',
-        description: 'Search the web for current information',
-        icon: <BarChart3 className="w-6 h-6" />,
-        category: 'Data & Research',
-        included: true
-      },
-      {
-        id: 'text-generation',
-        title: 'Text Generation',
-        description: 'Generate and edit text content',
-        icon: <PenTool className="w-6 h-6" />,
-        category: 'Content',
-        included: true
-      }
-    ];
+    // Show loading state while featured extensions load
+    if (featuredLoading) {
+      return (
+        <div className="text-center py-12">
+          <h3 className="font-medium mb-2">Loading Extensions...</h3>
+          <p className="text-sm text-muted-foreground">
+            Please wait while we load the recommended extensions.
+          </p>
+        </div>
+      );
+    }
 
-    // Auto-configure basic extensions for beginners
+    // Use the top 4 featured extensions for beginners
+    const basicExtensions = featuredExtensions.slice(0, 4).map(ext => ({
+      ...ext,
+      title: ext.name,
+      icon: ext.id === 'memory-mcp' ? <MessageSquare className="w-6 h-6" /> :
+            ext.id === 'search-mcp' ? <BarChart3 className="w-6 h-6" /> :
+            ext.id === 'openai-api' ? <PenTool className="w-6 h-6" /> :
+            <MessageSquare className="w-6 h-6" />,
+      included: true
+    }));
+
+    // Auto-configure basic extensions for beginners using proper Extension interface
     React.useEffect(() => {
-      const configuredExtensions = basicExtensions.map(ext => ({
-        id: ext.id,
-        enabled: ext.included,
-        config: {},
-        selectedPlatforms: ['claude-desktop', 'lm-studio'],
-        category: ext.category,
-        securityLevel: 'low'
-      }));
+      const configureExtensions = async () => {
+        const configuredExtensions: Extension[] = basicExtensions.map(ext => ({
+          ...ext,
+          enabled: true,
+          selectedPlatforms: ['claude-desktop', 'lm-studio'],
+          status: 'configuring' as const,
+          configProgress: 25
+        }));
+        
+        // Save to database
+        for (const ext of configuredExtensions) {
+          try {
+            await saveUserExtension(ext.id, {
+              isEnabled: true,
+              selectedPlatforms: ['claude-desktop', 'lm-studio'],
+              status: 'configured',
+              configProgress: 100
+            });
+          } catch (error) {
+            console.error('Failed to save beginner extension:', error);
+          }
+        }
+        
+        onUpdate({ extensions: configuredExtensions });
+      };
       
-      onUpdate({ extensions: configuredExtensions });
-    }, [onUpdate]);
+      if (basicExtensions.length > 0) {
+        configureExtensions();
+      }
+    }, [basicExtensions.length, onUpdate, saveUserExtension]);
 
     return (
       <div className="space-y-8 animate-fadeIn">
@@ -104,7 +122,7 @@ export function RoleBasedExtensionsStep({ data, onUpdate, onNext, onPrev }: Role
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h4 className="font-medium">{extension.title}</h4>
+                        <h4 className="font-medium">{extension.title || extension.name}</h4>
                         <CheckCircle className="w-4 h-4 text-green-500" />
                       </div>
                       <p className="text-sm text-muted-foreground mt-1">{extension.description}</p>
