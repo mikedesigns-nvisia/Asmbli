@@ -100,14 +100,26 @@ const getExtensionBadges = (extension: Extension): string[] => {
 
 export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpdate, onNext, onPrev }: Step2ExtensionsProps) {
   const [selectedExtensions, setSelectedExtensions] = useState<Extension[]>(() => {
-    // Initialize with proper defaults for extensions that might not have all required fields
-    return (data.extensions || []).map(ext => ({
-      ...ext,
-      enabled: ext.enabled ?? true,
-      selectedPlatforms: ext.selectedPlatforms || [ext.connectionType || 'api'],
-      status: ext.status || 'configuring',
-      configProgress: ext.configProgress || 25
-    }));
+    console.log('Step2Extensions initializing with data:', data);
+    try {
+      // Initialize with proper defaults for extensions that might not have all required fields
+      return (data?.extensions || []).map(ext => {
+        if (!ext || typeof ext !== 'object') {
+          console.warn('Invalid extension object:', ext);
+          return null;
+        }
+        return {
+          ...ext,
+          enabled: ext.enabled ?? true,
+          selectedPlatforms: ext.selectedPlatforms || [ext.connectionType || 'api'],
+          status: ext.status || 'configuring',
+          configProgress: ext.configProgress || 25
+        };
+      }).filter(Boolean);
+    } catch (error) {
+      console.error('Error initializing selectedExtensions:', error);
+      return [];
+    }
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -137,8 +149,14 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
 
   // Use the imported comprehensive extension library
   const availableExtensions: Extension[] = React.useMemo(() => {
-    console.log('Extensions library loaded:', extensionsLibrary?.length || 0, 'extensions');
-    return extensionsLibrary || [];
+    try {
+      console.log('Extensions library loaded:', extensionsLibrary?.length || 0, 'extensions');
+      console.log('First extension sample:', extensionsLibrary?.[0]);
+      return extensionsLibrary || [];
+    } catch (error) {
+      console.error('Error loading extensions library:', error);
+      return [];
+    }
   }, []);
 
   // Early return if no extensions available
@@ -150,9 +168,18 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
         <p className="text-sm text-muted-foreground">
           Please wait while we load the extensions library.
         </p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded"
+        >
+          Retry Loading
+        </button>
       </div>
     );
   }
+
+  // Wrap main component logic in try-catch
+  try {
 
   // Get unique categories for filter dropdown
   const categories = useMemo(() => {
@@ -628,6 +655,30 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
       </div>
     </div>
   );
+  
+  } catch (error) {
+    console.error('Critical error in Step2Extensions:', error);
+    return (
+      <div className="text-center py-12">
+        <h3 className="font-medium mb-2 text-red-500">Extension Step Error</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Something went wrong loading the extensions. 
+        </p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-4 py-2 bg-primary text-primary-foreground rounded mr-4"
+        >
+          Reload Page
+        </button>
+        <button 
+          onClick={onNext} 
+          className="px-4 py-2 bg-secondary text-secondary-foreground rounded"
+        >
+          Skip Extensions
+        </button>
+      </div>
+    );
+  }
 });
 
 // Export for lazy loading compatibility

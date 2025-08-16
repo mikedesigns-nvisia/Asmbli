@@ -18,7 +18,19 @@ interface RoleBasedExtensionsStepProps {
 export function RoleBasedExtensionsStep({ data, onUpdate, onNext, onPrev }: RoleBasedExtensionsStepProps) {
   const { user, updateUserRole } = useAuth();
 
-  if (!user) return null;
+  if (!user) {
+    console.warn('No user found in RoleBasedExtensionsStep');
+    return (
+      <div className="text-center py-12">
+        <h3 className="font-medium mb-2">Loading User Data...</h3>
+        <p className="text-sm text-muted-foreground">
+          Please wait while we load your user information.
+        </p>
+      </div>
+    );
+  }
+
+  console.log('RoleBasedExtensionsStep rendering for user role:', user.role);
 
   // Beginner users get basic pre-selected extensions
   if (user.role === 'beginner') {
