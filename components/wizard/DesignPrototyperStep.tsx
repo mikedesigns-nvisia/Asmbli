@@ -74,7 +74,7 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
     return (
       <div className="space-y-8 animate-fadeIn">
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Palette className="w-4 h-4" />
             Design Prototyper Setup
           </div>
@@ -87,13 +87,13 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
         </div>
 
         {/* Template Overview */}
-        <Card className="border-blue-500/20 dark:border-blue-500/30 bg-blue-500/5 dark:bg-blue-500/10">
+        <Card className="border-primary/20 bg-primary/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <div className="text-2xl">{template.icon}</div>
               <div>
                 <div className="text-xl">{template.name}</div>
-                <Badge className="bg-blue-500 dark:bg-blue-600 text-white mt-1">Pre-configured Template</Badge>
+                <Badge className="bg-primary text-white mt-1">Pre-configured Template</Badge>
               </div>
             </CardTitle>
             <CardDescription className="text-base mt-2">
@@ -108,7 +108,7 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
             <Card key={index} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-500/10 dark:bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
                     {capability.icon}
                   </div>
                   <div>
@@ -125,19 +125,19 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
+              <CheckCircle className="w-5 h-5 text-primary" />
               Pre-installed Tools & Integrations
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {template.config.requiredMcps.map((mcp, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
-                  <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400" />
+                <div key={index} className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                  <CheckCircle className="w-4 h-4 text-primary dark:text-green-400" />
                   <span className="font-medium text-foreground">
                     {mcp.replace('-mcp', '').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                   </span>
-                  <Badge variant="outline" className="ml-auto text-xs border-green-300 dark:border-green-700 text-green-600 dark:text-green-400">
+                  <Badge variant="outline" className="ml-auto text-xs border-primary/30 text-primary">
                     Installed
                   </Badge>
                 </div>
@@ -151,7 +151,7 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
           <Button variant="outline" onClick={onBack}>
             Back to Templates
           </Button>
-          <Button onClick={handleContinue} className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white">
+          <Button onClick={handleContinue} className="bg-primary hover:bg-primary/90 text-white">
             Set Up Design Files
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
@@ -164,7 +164,7 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
     return (
       <div className="space-y-8 animate-fadeIn">
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Upload className="w-4 h-4" />
             Upload Design Files
           </div>
@@ -177,7 +177,7 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
         </div>
 
         {/* Upload Instructions */}
-        <Card className="border-blue-500/20 dark:border-blue-500/30 bg-blue-500/5 dark:bg-blue-500/10">
+        <Card className="border-primary/20 bg-primary/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5" />
@@ -235,7 +235,7 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
           </Button>
           <Button 
             onClick={handleContinue} 
-            className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
+            className="bg-primary hover:bg-primary/90 text-white"
             disabled={!hasFiles}
           >
             {hasFiles ? 'Continue Setup' : 'Upload files to continue'}
@@ -244,7 +244,7 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
         </div>
 
         {/* Optional note */}
-        <Card className="border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+        <Card className="border-border bg-muted/30">
           <CardContent className="p-4 text-center">
             <p className="text-sm text-muted-foreground">
               <strong>Note:</strong> You can skip this step and add files later. Your design assistant will be ready to help with or without uploaded files.
@@ -267,8 +267,8 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
   return (
     <div className="space-y-8 animate-fadeIn">
       <div className="text-center">
-        <div className="w-16 h-16 bg-green-500/10 dark:bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle className="w-8 h-8 text-green-500" />
+        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle className="w-8 h-8 text-primary" />
         </div>
         <h2 className="text-3xl font-bold text-foreground mb-4">
           Design Assistant Ready!
@@ -310,26 +310,26 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
+              <CheckCircle className="w-5 h-5 text-primary" />
               Ready to Use
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500" />
+                <CheckCircle className="w-4 h-4 text-primary" />
                 <span className="text-sm">Figma MCP configured</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500" />
+                <CheckCircle className="w-4 h-4 text-primary" />
                 <span className="text-sm">File manager ready</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500" />
+                <CheckCircle className="w-4 h-4 text-primary" />
                 <span className="text-sm">Upload support enabled</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500" />
+                <CheckCircle className="w-4 h-4 text-primary" />
                 <span className="text-sm">Security configured</span>
               </div>
             </div>
@@ -342,7 +342,7 @@ export function DesignPrototyperStep({ template, onNext, onBack, onUpdate }: Des
         <Button variant="outline" onClick={() => setCurrentStep('upload')}>
           Back to Files
         </Button>
-        <Button onClick={onNext} className="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white">
+        <Button onClick={onNext} className="bg-primary hover:bg-primary/90 text-white">
           Complete Setup
           <CheckCircle className="w-4 h-4 ml-2" />
         </Button>

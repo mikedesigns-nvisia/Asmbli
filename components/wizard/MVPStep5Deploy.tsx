@@ -195,7 +195,6 @@ export function MVPStep5Deploy({ wizardData, deployment, onDeploymentChange, onG
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-semibold">Where should your agent run?</h2>
         <p className="text-muted-foreground">
           Choose a free platform to deploy your custom AI agent. All options keep your data private and cost nothing to run.
         </p>

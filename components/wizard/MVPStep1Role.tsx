@@ -13,7 +13,7 @@ const ROLES = [
     title: 'Developer',
     description: 'I write code and build applications',
     icon: Code,
-    color: 'bg-blue-500/10 border-blue-500/30 text-blue-500',
+    color: 'bg-primary/10 border-primary/30 text-primary',
     benefits: [
       'Code that follows your patterns',
       'Git-aware suggestions',
@@ -28,7 +28,7 @@ const ROLES = [
     title: 'Content Creator',
     description: 'I create content, write, or design',
     icon: Palette,
-    color: 'bg-purple-500/10 border-purple-500/30 text-purple-500',
+    color: 'bg-secondary/10 border-secondary/30 text-secondary-foreground',
     benefits: [
       'Content in your brand voice',
       'Design-to-content workflows',
@@ -43,7 +43,7 @@ const ROLES = [
     title: 'Researcher',
     description: 'I conduct research and analyze data',
     icon: GraduationCap,
-    color: 'bg-green-500/10 border-green-500/30 text-green-500',
+    color: 'bg-accent/10 border-accent/30 text-accent-foreground',
     benefits: [
       'Research methodology compliance',
       'Citation format adherence',
@@ -59,7 +59,6 @@ export function MVPStep1Role({ selectedRole, onRoleSelect }: MVPStep1RoleProps) 
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-semibold">What's your primary role?</h2>
         <p className="text-muted-foreground">
           This helps us customize your AI agent with the right tools and knowledge for your workflow.
         </p>

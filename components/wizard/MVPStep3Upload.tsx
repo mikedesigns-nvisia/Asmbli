@@ -308,11 +308,10 @@ export function MVPStep3Upload({ extractedConstraints, selectedRole, onFilesChan
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-semibold">Upload Your Requirements</h2>
         <p className="text-muted-foreground">
           Upload documents, config files, or specifications so your AI agent knows your exact requirements.
         </p>
-        <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/30">
+        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
           Optional but Powerful
         </Badge>
       </div>

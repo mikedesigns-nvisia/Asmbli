@@ -3,6 +3,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { ToolRecommendationEngine } from './ToolRecommendationEngine';
 import { CheckCircle, Search, Plus, GitBranch, Figma, Database, Globe, FileText, Folder, Code, Palette, GraduationCap } from 'lucide-react';
 
 interface MVPStep2ToolsProps {
@@ -157,7 +158,6 @@ export function MVPStep2Tools({ selectedRole, selectedTools, onToolsChange }: MV
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-semibold">What tools do you use?</h2>
         <p className="text-muted-foreground">
           Select the tools and services your AI agent should integrate with. We've pre-selected the most popular ones for {selectedRole}s.
         </p>
@@ -206,6 +206,14 @@ export function MVPStep2Tools({ selectedRole, selectedTools, onToolsChange }: MV
           </div>
         </div>
       )}
+
+      {/* Smart Recommendations */}
+      <ToolRecommendationEngine
+        selectedRole={selectedRole}
+        selectedTools={selectedTools}
+        extractedConstraints={[]}
+        onToolsChange={onToolsChange}
+      />
 
       {/* Primary Category (Based on Role) */}
       <div>
