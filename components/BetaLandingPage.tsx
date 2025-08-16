@@ -141,8 +141,13 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                 Build and Use A Custom Agent In Minutes
               </h1>
               <p className="text-2xl md:text-3xl text-slate-200 max-w-3xl mx-auto leading-relaxed font-medium">
-                Works with LM Studio - Local, Private, and Under Your Control
+                Local, Private, and Under Your Control
               </p>
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 max-w-2xl mx-auto">
+                <p className="text-blue-300 font-medium text-lg">
+                  ⚡ Beta Version: Currently optimized for LM Studio only
+                </p>
+              </div>
             </div>
 
             {/* Quick CTA */}
@@ -195,6 +200,11 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                   AI agents that run locally on LM Studio, use your API keys, and access only what you choose. 
                   Professional-grade capabilities without the privacy trade-offs.
                 </p>
+                <div className="mt-4 bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                  <p className="text-blue-300 text-sm font-medium">
+                    🚧 Beta Notice: Currently supports LM Studio exclusively. Other platforms coming in future releases.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -296,8 +306,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                 <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Monitor className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">Choose Your Setup</h3>
-                <p className="text-sm text-slate-400">Optimized for LM Studio - the easiest local AI platform. Also works with Ollama and other local interfaces.</p>
+                <h3 className="font-semibold mb-2">Download LM Studio</h3>
+                <p className="text-sm text-slate-400">Beta version currently works with LM Studio only. Support for other platforms coming soon.</p>
               </CardContent>
             </Card>
 
