@@ -128,7 +128,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               </h1>
               <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
                 Pre-configure documentation, instructions, and personality once. Deploy consistently across 
-                Claude Desktop, LM Studio, Ollama, and more 🚀
+                LibreChat, Jan.ai, AnythingLLM, and more 🚀
               </p>
             </div>
 
@@ -275,7 +275,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               {
                 step: "03",
                 title: "Deploy",
-                description: "One-click deployment to Claude Desktop, LM Studio, Ollama, and other platforms with seamless integration.",
+                description: "One-click deployment to LibreChat, Jan.ai, AnythingLLM, and other platforms with seamless integration.",
                 icon: Rocket,
                 color: "text-primary"
               },
@@ -343,7 +343,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               {
                 icon: Rocket,
                 title: 'One-Click Deploy',
-                description: 'Deploy to any platform - Claude Desktop, ChatGPT, or your own infrastructure.',
+                description: 'Deploy to any platform - LibreChat, Jan.ai, AnythingLLM, or your own infrastructure.',
                 color: 'text-primary'
               },
               {

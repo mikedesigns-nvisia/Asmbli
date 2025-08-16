@@ -66,19 +66,19 @@ export function generateMVPConfigurations(mvpData: any): Record<string, string> 
     const safeData = validateAndSanitizeMVPData(mvpData);
     
     // Generate platform-specific configurations
-    configs['lm-studio'] = generateLMStudioMVPConfig(safeData);
-    configs['lm-studio-mcp.json'] = configs['lm-studio'];
+    configs['librechat'] = generateLibreChatMVPConfig(safeData);
+    configs['librechat-mcp.json'] = configs['librechat'];
     
-    configs['ollama'] = generateOllamaMVPConfig(safeData);
-    configs['ollama-mcp.json'] = configs['ollama'];
+    configs['jan-ai'] = generateJanAiMVPConfig(safeData);
+    configs['jan-ai-mcp.json'] = configs['jan-ai'];
     
-    configs['vs-code'] = generateVSCodeMVPConfig(safeData);
-    configs['vs-code-mcp.json'] = configs['vs-code'];
+    configs['anythingllm'] = generateAnythingLLMMVPConfig(safeData);
+    configs['anythingllm-mcp.json'] = configs['anythingllm'];
     
     // Generate setup instructions
-    configs['lm-studio-setup.md'] = generateLMStudioMVPInstructions(safeData);
-    configs['ollama-setup.md'] = generateOllamaMVPInstructions(safeData);
-    configs['vs-code-setup.md'] = generateVSCodeMVPInstructions(safeData);
+    configs['librechat-setup.md'] = generateLibreChatMVPInstructions(safeData);
+    configs['jan-ai-setup.md'] = generateJanAiMVPInstructions(safeData);
+    configs['anythingllm-setup.md'] = generateAnythingLLMMVPInstructions(safeData);
     
     return configs;
     
@@ -105,14 +105,14 @@ function validateAndSanitizeMVPData(data: any): MVPWizardData {
       constraints: Array.isArray(data?.style?.constraints) ? data.style.constraints : []
     },
     deployment: {
-      platform: data?.deployment?.platform || 'lm-studio',
+      platform: data?.deployment?.platform || 'librechat',
       configuration: data?.deployment?.configuration || {}
     }
   };
 }
 
-// Generate LM Studio MCP configuration (bulletproof)
-function generateLMStudioMVPConfig(data: MVPWizardData): string {
+// Generate LibreChat MCP configuration (bulletproof)
+function generateLibreChatMVPConfig(data: MVPWizardData): string {
   const mcpServers: Record<string, any> = {};
   
   // Add default essential tools
@@ -278,6 +278,64 @@ function generateLMStudioMVPConfig(data: MVPWizardData): string {
   return JSON.stringify(config, null, 2);
 }
 
+// Generate Jan.ai MCP configuration
+function generateJanAiMVPConfig(data: MVPWizardData): string {
+  // Jan.ai uses similar MCP format but with extensions
+  const baseConfig = createBaseMCPConfig(data);
+  
+  const janConfig = {
+    extensions: {
+      mcp: {
+        servers: baseConfig.mcpServers,
+        agentConfig: baseConfig.agentConfig
+      }
+    },
+    modelConfig: {
+      preferredModel: 'llama3.1:8b',
+      fallbackModel: 'llama3.2:3b',
+      temperature: 0.7,
+      maxTokens: 2048
+    }
+  };
+  
+  return JSON.stringify(janConfig, null, 2);
+}
+
+// Generate AnythingLLM MCP configuration
+function generateAnythingLLMMVPConfig(data: MVPWizardData): string {
+  const baseConfig = createBaseMCPConfig(data);
+  
+  const anythingLLMConfig = {
+    workspace: {
+      name: `${data.role}-workspace`,
+      description: `Workspace for ${data.role} with custom agent`,
+      settings: {
+        LLMProvider: 'native',
+        AgentLLMProvider: 'native',
+        hasRagEnabled: true,
+        chatModel: {
+          provider: 'native',
+          model: 'llama3.1:8b'
+        }
+      },
+      mcpIntegration: {
+        enabled: true,
+        servers: baseConfig.mcpServers,
+        agentConfig: baseConfig.agentConfig
+      }
+    },
+    agents: [{
+      name: baseConfig.agentConfig.name,
+      description: baseConfig.agentConfig.description,
+      role: baseConfig.agentConfig.role,
+      functions: Object.keys(baseConfig.mcpServers),
+      prompt: `You are a ${baseConfig.agentConfig.role} assistant. ${baseConfig.agentConfig.style.constraints.join(' ')}`
+    }]
+  };
+  
+  return JSON.stringify(anythingLLMConfig, null, 2);
+}
+
 // Helper function to create base MCP config without JSON parsing
 function createBaseMCPConfig(data: MVPWizardData): any {
   const mcpServers: Record<string, any> = {};
@@ -416,45 +474,115 @@ function createBaseMCPConfig(data: MVPWizardData): any {
   };
 }
 
-// Generate Ollama MCP configuration
-function generateOllamaMVPConfig(data: MVPWizardData): string {
-  // Ollama uses the same MCP format as LM Studio
-  return generateLMStudioMVPConfig(data);
-}
 
-// Generate VS Code MCP configuration
-function generateVSCodeMVPConfig(data: MVPWizardData): string {
-  // Generate base config without parsing to avoid recursion
-  const baseConfig = createBaseMCPConfig(data);
-  
-  // VS Code specific adjustments
-  const config = {
-    ...baseConfig,
-    workspaceConfig: {
-      "mcp.servers": baseConfig.mcpServers,
-      "mcp.agentConfig": baseConfig.agentConfig
-    }
-  };
-  
-  return JSON.stringify(config.workspaceConfig, null, 2);
-}
-
-// Generate LM Studio setup instructions
-function generateLMStudioMVPInstructions(data: MVPWizardData): string {
+// Generate LibreChat setup instructions
+function generateLibreChatMVPInstructions(data: MVPWizardData): string {
   const requiredPackages = Array.from(new Set(
     data.tools.map((tool: string) => TOOL_TO_MCP_MAPPING[tool]).filter(Boolean)
   ));
   
-  return `# LM Studio Setup Instructions
+  return `# LibreChat Setup Instructions
 
 ## Quick Setup for ${data.role.charAt(0).toUpperCase() + data.role.slice(1)}
 
-### Step 1: Install LM Studio
-1. Download LM Studio from: https://lmstudio.ai/download
-2. Install and launch LM Studio
-3. Download a local model (recommended: Llama 3.1 8B)
+### Step 1: Install LibreChat with Docker
+\`\`\`bash
+# Clone LibreChat repository
+git clone https://github.com/danny-avila/LibreChat.git
+cd LibreChat
+
+# Copy environment template
+cp .env.example .env
+
+# Start LibreChat with Docker
+docker compose up -d
+\`\`\`
 
 ### Step 2: Install MCP Server Dependencies
+\`\`\`bash
+# Install Node.js dependencies for MCP servers
+${requiredPackages.map(pkg => `npm install -g ${pkg}`).join('\n')}
+\`\`\`
+
+### Step 3: Configure MCP Integration
+1. Open LibreChat at http://localhost:3080
+2. Create an account and sign in
+3. Go to **Settings** > **Extensions**
+4. Enable **MCP Support**
+5. Upload your MCP configuration file
+
+### Step 4: Set API Keys and Environment Variables
+Edit your \`.env\` file to include:
+
+\`\`\`bash
+# Add your AI provider API keys
+OPENAI_API_KEY=your_openai_key_here
+ANTHROPIC_API_KEY=your_anthropic_key_here
+GOOGLE_API_KEY=your_google_key_here
+
+# MCP server environment variables
+${data.tools.includes('visual-design') || data.tools.includes('prototyping') ? `FIGMA_ACCESS_TOKEN=your_figma_token_here\n` : ''}${data.tools.includes('database-tools') ? `POSTGRES_CONNECTION_STRING=postgresql://user:password@localhost:5432/database\n` : ''}${data.tools.includes('research-tools') || data.tools.includes('academic-search') ? `BRAVE_API_KEY=your_brave_api_key_here\n` : ''}
+\`\`\`
+
+### Step 5: Test Your Setup
+1. Restart LibreChat: \`docker compose restart\`
+2. Open http://localhost:3080
+3. Start a new conversation
+4. Test MCP functionality: "List files in the current directory"
+5. Try multiple AI providers to find your preference
+
+## Your Assistant Configuration
+- **Role**: ${data.role}
+- **Communication Style**: ${data.style.tone}
+- **Response Length**: ${data.style.responseLength}
+- **Available Providers**: OpenAI, Anthropic, Google, and 20+ others
+- **Selected Tools**: ${data.tools.length} MCP tools configured
+- **Custom Constraints**: ${data.style.constraints.length + data.extractedConstraints.length} behavioral rules
+
+## Key Features
+- ✅ **Multi-user support** with role-based access control
+- ✅ **20+ AI providers** - no vendor lock-in
+- ✅ **Full MCP support** with UI management
+- ✅ **Enterprise features** - audit logs, SSO, workspaces
+- ✅ **Complete self-hosting** - your data stays private
+
+## Troubleshooting
+- Ensure Docker and Docker Compose are installed
+- Check container logs: \`docker compose logs\`
+- Verify API keys are correctly set in .env file
+- Restart containers after configuration changes
+
+Your LibreChat instance is now ready with your custom agent configuration!`;
+}
+
+// Generate Jan.ai setup instructions
+function generateJanAiMVPInstructions(data: MVPWizardData): string {
+  const requiredPackages = Array.from(new Set(
+    data.tools.map((tool: string) => TOOL_TO_MCP_MAPPING[tool]).filter(Boolean)
+  ));
+  
+  return `# Jan.ai Setup Instructions
+
+## Quick Setup for ${data.role.charAt(0).toUpperCase() + data.role.slice(1)}
+
+### Step 1: Install Jan.ai Desktop App
+1. Download Jan.ai from: https://jan.ai/download
+2. Install the desktop application
+3. Launch Jan.ai and complete the initial setup
+
+### Step 2: Download AI Models
+1. In Jan.ai, go to the **Hub** tab
+2. Download recommended models:
+   - **Llama 3.1 8B** (for general use)
+   - **Llama 3.2 3B** (for faster responses)
+3. Wait for models to download and install
+
+### Step 3: Install MCP Extensions
+1. Go to **Settings** > **Extensions**
+2. Enable **MCP Support**
+3. Install the MCP extension from the marketplace
+
+### Step 4: Install MCP Server Dependencies
 Open your terminal and install the required MCP servers:
 
 \`\`\`bash
@@ -462,14 +590,13 @@ Open your terminal and install the required MCP servers:
 ${requiredPackages.map(pkg => `npm install -g ${pkg}`).join('\n')}
 \`\`\`
 
-### Step 3: Configure MCP Servers
-1. In LM Studio, go to **Settings** > **Developer**
-2. Enable **MCP Servers**
-3. Click **Edit mcp.json**
-4. Replace the contents with your downloaded configuration
-5. Save and restart LM Studio
+### Step 5: Configure MCP Servers
+1. In Jan.ai, go to **Settings** > **Extensions** > **MCP**
+2. Click **Import Configuration**
+3. Upload your downloaded jan-ai-mcp.json file
+4. Configure environment variables as needed
 
-### Step 4: Set Environment Variables (if needed)
+### Step 6: Set Environment Variables (if needed)
 ${data.tools.includes('visual-design') || data.tools.includes('prototyping') ? `
 **For Figma integration:**
 \`\`\`bash
@@ -487,128 +614,139 @@ export BRAVE_API_KEY="your_brave_api_key_here"
 \`\`\`
 ` : ''}
 
-### Step 5: Test Your Setup
-1. Open LM Studio
-2. Start a chat with your local model
-3. Test an MCP command like: "List files in the current directory"
+### Step 7: Test Your Setup
+1. Start a new conversation in Jan.ai
+2. Test MCP functionality: "List files in the current directory"
+3. Try switching between local and cloud models
 4. Your assistant should now have access to all your selected tools!
 
 ## Your Assistant Configuration
 - **Role**: ${data.role}
 - **Communication Style**: ${data.style.tone}
 - **Response Length**: ${data.style.responseLength}
-- **Selected Tools**: ${data.tools.length} tools configured
+- **Local + Cloud Models**: Seamless switching
+- **Selected Tools**: ${data.tools.length} MCP tools configured
 - **Custom Constraints**: ${data.style.constraints.length + data.extractedConstraints.length} behavioral rules
 
-## Troubleshooting
-- If MCP servers don't work, ensure Node.js is installed: https://nodejs.org
-- Restart LM Studio after configuration changes
-- Check the developer console for error messages
-- Verify environment variables are set correctly
+## Key Features
+- ✅ **Beautiful desktop app** - no technical setup required
+- ✅ **Local + API models** - switch seamlessly
+- ✅ **MCP extension support** - full protocol compatibility
+- ✅ **Professional development** - VC-backed with regular updates
+- ✅ **Simple one-click setup** - perfect for non-technical users
 
-Your AI assistant is now configured with your exact preferences and tools!`;
+## Troubleshooting
+- Ensure Node.js is installed for MCP servers
+- Restart Jan.ai after MCP configuration changes
+- Check the Extensions tab for error messages
+- Verify environment variables in Settings > Environment
+
+Your Jan.ai assistant is now configured for your ${data.role} workflow!`;
 }
 
-// Generate Ollama setup instructions
-function generateOllamaMVPInstructions(data: MVPWizardData): string {
+// Generate AnythingLLM setup instructions
+function generateAnythingLLMMVPInstructions(data: MVPWizardData): string {
   const requiredPackages = Array.from(new Set(
     data.tools.map((tool: string) => TOOL_TO_MCP_MAPPING[tool]).filter(Boolean)
   ));
   
-  return `# Ollama Setup Instructions
+  return `# AnythingLLM Setup Instructions
 
 ## Quick Setup for ${data.role.charAt(0).toUpperCase() + data.role.slice(1)}
 
-### Step 1: Install Ollama
-\`\`\`bash
-# Install Ollama
-curl -fsSL https://ollama.com/install.sh | sh
+### Step 1: Install AnythingLLM
+**Option A: Desktop App (Recommended)**
+1. Download from: https://anythingllm.com/download
+2. Install the desktop application
+3. Launch AnythingLLM
 
-# Pull a recommended model
-ollama pull llama3.1:8b
+**Option B: Docker**
+\`\`\`bash
+docker run -d -p 3001:3001 \\
+  --cap-add SYS_ADMIN \\
+  -v $(pwd)/anythingllm:/app/server/storage \\
+  -v $(pwd)/anythingllm:/app/collector/hotdir \\
+  --name anythingllm \\
+  mintplexlabs/anythingllm
 \`\`\`
 
-### Step 2: Install MCP Bridge
-\`\`\`bash
-# Install the MCP bridge for Ollama
-npm install -g @modelcontextprotocol/ollama-bridge
+### Step 2: Initial Setup
+1. Open AnythingLLM (desktop app or http://localhost:3001)
+2. Complete the initial setup wizard
+3. Create your admin account
+4. Choose your preferred LLM provider (local or API)
 
-# Install required MCP servers
+### Step 3: Create Your Workspace
+1. Click **Create Workspace**
+2. Name it: \`${data.role}-workspace\`
+3. Upload your anythingllm-mcp.json configuration
+4. Enable **Agent Mode** for advanced functionality
+
+### Step 4: Install MCP Server Dependencies
+\`\`\`bash
+# Install Node.js dependencies for MCP integration
 ${requiredPackages.map(pkg => `npm install -g ${pkg}`).join('\n')}
 \`\`\`
 
-### Step 3: Create MCP Configuration
-1. Create a file called \`mcp-config.json\` in your project directory
-2. Copy your downloaded configuration into this file
-3. Start the MCP bridge:
+### Step 5: Configure MCP Integration
+1. In your workspace, go to **Settings** > **Agent Configuration**
+2. Enable **MCP Support**
+3. Import your MCP server configuration
+4. Set up environment variables for your tools
 
-\`\`\`bash
-mcp-bridge --config mcp-config.json --ollama-model llama3.1:8b
-\`\`\`
-
-### Step 4: Set Environment Variables (if needed)
+### Step 6: Set Environment Variables
 ${data.tools.includes('visual-design') || data.tools.includes('prototyping') ? `
 **For Figma integration:**
 \`\`\`bash
-export FIGMA_ACCESS_TOKEN="your_figma_token_here"
+FIGMA_ACCESS_TOKEN=your_figma_token_here
 \`\`\`
 ` : ''}${data.tools.includes('database-tools') ? `
 **For Database tools:**
 \`\`\`bash
-export POSTGRES_CONNECTION_STRING="postgresql://user:password@localhost:5432/database"
+POSTGRES_CONNECTION_STRING=postgresql://user:password@localhost:5432/database
+\`\`\`
+` : ''}${data.tools.includes('research-tools') || data.tools.includes('academic-search') ? `
+**For Research tools:**
+\`\`\`bash
+BRAVE_API_KEY=your_brave_api_key_here
 \`\`\`
 ` : ''}
 
-### Step 5: Test Your Setup
-\`\`\`bash
-# Test with a simple query
-curl -X POST http://localhost:11434/api/generate \\
-  -d '{"model":"llama3.1:8b","prompt":"List files in current directory","stream":false}'
-\`\`\`
+### Step 7: Test Your Custom Agent
+1. Go to your workspace chat
+2. Enable **Agent Mode** in the chat interface
+3. Test MCP functionality: "List files in the current directory"
+4. Upload documents to test RAG capabilities
+5. Your custom agent should now have access to all selected tools!
 
-Your ${data.role} assistant is now ready with all your selected tools!`;
-}
-
-// Generate VS Code setup instructions
-function generateVSCodeMVPInstructions(data: MVPWizardData): string {
-  return `# VS Code + GitHub Copilot Setup Instructions
-
-## Quick Setup for ${data.role.charAt(0).toUpperCase() + data.role.slice(1)}
-
-### Step 1: Install VS Code
-1. Download from: https://code.visualstudio.com/download
-2. Install VS Code
-
-### Step 2: Install GitHub Copilot
-1. Install the GitHub Copilot extension
-2. Sign in with your GitHub account
-3. Ensure you have an active Copilot subscription
-
-### Step 3: Install MCP Extension
-1. Search for "MCP" in the VS Code extension marketplace
-2. Install the Model Context Protocol extension
-3. Reload VS Code
-
-### Step 4: Configure MCP Servers
-1. Open VS Code settings (Ctrl+,)
-2. Search for "MCP"
-3. Click "Edit in settings.json"
-4. Add your MCP configuration from the downloaded file
-
-### Step 5: Install Required Packages
-Open the VS Code terminal and run:
-\`\`\`bash
-${Array.from(new Set(data.tools.map((tool: string) => TOOL_TO_MCP_MAPPING[tool]).filter(Boolean)))
-  .map(pkg => `npm install -g ${pkg}`).join('\n')}
-\`\`\`
-
-### Your Assistant Configuration
+## Your Assistant Configuration
 - **Role**: ${data.role}
-- **Style**: ${data.style.tone}, ${data.style.responseLength} responses
-- **Tools**: ${data.tools.join(', ')}
-- **Custom Rules**: ${data.style.constraints.length + data.extractedConstraints.length} constraints
+- **Communication Style**: ${data.style.tone}
+- **Response Length**: ${data.style.responseLength}
+- **Workspace**: Dedicated ${data.role} environment
+- **Selected Tools**: ${data.tools.length} MCP tools configured
+- **Custom Constraints**: ${data.style.constraints.length + data.extractedConstraints.length} behavioral rules
 
-Your VS Code assistant is configured for your ${data.role} workflow!`;
+## Key Features
+- ✅ **No-code agent builder** - perfect for business users
+- ✅ **Enterprise workspace system** - organized document management
+- ✅ **Advanced RAG** - upload and query your documents
+- ✅ **Built-in analytics** - track usage and performance
+- ✅ **Docker or desktop** - choose your deployment method
+
+## Advanced Features
+- **Document Management**: Upload PDFs, docs, and more for RAG
+- **Custom Agents**: Build specialized agents for different tasks
+- **Workspace Collaboration**: Share workspaces with team members
+- **Analytics Dashboard**: Monitor agent performance and usage
+
+## Troubleshooting
+- Ensure Node.js is installed for MCP servers
+- Check workspace settings for MCP configuration
+- Verify environment variables in Agent Configuration
+- Restart AnythingLLM after major configuration changes
+
+Your AnythingLLM workspace is now configured with your custom agent!`;
 }
 
 // Generate fallback configurations if main generation fails
@@ -634,11 +772,11 @@ function generateFallbackConfigurations(): Record<string, string> {
   };
   
   return {
-    'lm-studio': JSON.stringify(fallbackConfig, null, 2),
-    'ollama': JSON.stringify(fallbackConfig, null, 2),
-    'vs-code': JSON.stringify({ "mcp.servers": fallbackConfig.mcpServers }, null, 2),
-    'lm-studio-setup.md': '# Basic Setup\n\nA basic configuration has been generated. Please install Node.js and MCP servers manually.',
-    'ollama-setup.md': '# Basic Setup\n\nA basic configuration has been generated. Please install Ollama and MCP bridge manually.',
-    'vs-code-setup.md': '# Basic Setup\n\nA basic configuration has been generated. Please install VS Code and MCP extension manually.'
+    'librechat': JSON.stringify(fallbackConfig, null, 2),
+    'jan-ai': JSON.stringify({ extensions: { mcp: fallbackConfig } }, null, 2),
+    'anythingllm': JSON.stringify({ workspace: { mcpIntegration: fallbackConfig } }, null, 2),
+    'librechat-setup.md': '# Basic Setup\n\nA basic configuration has been generated. Please install Docker and follow LibreChat documentation.',
+    'jan-ai-setup.md': '# Basic Setup\n\nA basic configuration has been generated. Please install Jan.ai desktop app and MCP extensions.',
+    'anythingllm-setup.md': '# Basic Setup\n\nA basic configuration has been generated. Please install AnythingLLM and configure MCP integration.'
   };
 }

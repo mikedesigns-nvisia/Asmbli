@@ -36,23 +36,19 @@ export function generateDeploymentConfigs(wizardData: WizardData | MVPWizardData
   );
 
   // Generate CORRECT MCP configurations for each platform
-  configs['lm-studio'] = generateLMStudioMCPConfig(wizardData);
-  configs['lm-studio-mcp.json'] = configs['lm-studio'];
+  configs['librechat'] = generateLibreChatMCPConfig(wizardData);
+  configs['librechat-mcp.json'] = configs['librechat'];
   
-  configs['claude-desktop'] = generateClaudeDesktopConfig(wizardData);
-  configs['claude_desktop_config.json'] = configs['claude-desktop'];
+  configs['jan-ai'] = generateJanAiMCPConfig(wizardData);
+  configs['jan-ai-mcp.json'] = configs['jan-ai'];
   
-  configs['vs-code'] = generateVSCodeMCPConfig(wizardData);
-  configs['mcp.json'] = configs['vs-code'];
-  
-  configs['cursor'] = generateCursorMCPConfig(wizardData);
-  configs['cursor-mcp.json'] = configs['cursor'];
+  configs['anythingllm'] = generateAnythingLLMMCPConfig(wizardData);
+  configs['anythingllm-mcp.json'] = configs['anythingllm'];
 
   // Generate detailed setup instructions for each platform
-  configs['lm-studio-setup.md'] = generateLMStudioSetupInstructions(wizardData);
-  configs['claude-desktop-setup.md'] = generateClaudeDesktopSetupInstructions(wizardData);
-  configs['vs-code-setup.md'] = generateVSCodeSetupInstructions(wizardData);
-  configs['cursor-setup.md'] = generateCursorSetupInstructions(wizardData);
+  configs['librechat-setup.md'] = generateLibreChatSetupInstructions(wizardData);
+  configs['jan-ai-setup.md'] = generateJanAiSetupInstructions(wizardData);
+  configs['anythingllm-setup.md'] = generateAnythingLLMSetupInstructions(wizardData);
 
   // Generate MCP server configurations and installers
   const mcpConfigs = generateMcpServerConfigs(wizardData);
@@ -177,8 +173,8 @@ export function generateDeploymentConfigs(wizardData: WizardData | MVPWizardData
   return configs;
 }
 
-// Generate LM Studio setup instructions
-function generateLMStudioSetupInstructions(wizardData: WizardData): string {
+// Generate LibreChat setup instructions
+function generateLibreChatSetupInstructions(wizardData: WizardData): string {
   const enabledExtensions = wizardData.extensions?.filter(ext => ext.enabled && ext.connectionType === 'mcp') || [];
   const agentName = wizardData.agentName || 'Your AI Agent';
   
@@ -305,8 +301,8 @@ ${enabledExtensions.map(ext => {
 **✅ Success!** Your ${agentName} is now ready with enhanced capabilities. The AI can now interact with your ${enabledExtensions.map(ext => ext.name.toLowerCase()).join(', ')} directly through natural conversation.`;
 }
 
-// Generate Claude Desktop setup instructions
-function generateClaudeDesktopSetupInstructions(wizardData: WizardData): string {
+// Generate Jan.ai setup instructions
+function generateJanAiSetupInstructions(wizardData: WizardData): string {
   const enabledExtensions = wizardData.extensions?.filter(ext => ext.enabled && ext.connectionType === 'mcp') || [];
   const agentName = wizardData.agentName || 'Your AI Agent';
   
@@ -455,8 +451,8 @@ ${enabledExtensions.map(ext => {
 **✅ Success!** Your ${agentName} is now integrated with Claude Desktop. You can have natural conversations while Claude accesses your ${enabledExtensions.map(ext => ext.name.toLowerCase()).join(', ')} seamlessly.`;
 }
 
-// Generate VS Code setup instructions  
-function generateVSCodeSetupInstructions(wizardData: WizardData): string {
+// Generate AnythingLLM setup instructions  
+function generateAnythingLLMSetupInstructions(wizardData: WizardData): string {
   const enabledExtensions = wizardData.extensions?.filter(ext => ext.enabled && ext.connectionType === 'mcp') || [];
   const agentName = wizardData.agentName || 'Your AI Agent';
   
@@ -606,7 +602,7 @@ ${enabledExtensions.map(ext => {
 **✅ Success!** Your ${agentName} is now integrated with VS Code. Use GitHub Copilot Chat with \`@mcp\` to access your ${enabledExtensions.map(ext => ext.name.toLowerCase()).join(', ')} through natural conversation.`;
 }
 
-// Generate Cursor setup instructions
+// Legacy function - keeping for compatibility
 function generateCursorSetupInstructions(wizardData: WizardData): string {
   const enabledExtensions = wizardData.extensions?.filter(ext => ext.enabled && ext.connectionType === 'mcp') || [];
   const agentName = wizardData.agentName || 'Your AI Agent';
@@ -740,8 +736,8 @@ ${enabledExtensions.map(ext => {
 **✅ Success!** Your ${agentName} is now integrated with Cursor. The AI can seamlessly access your ${enabledExtensions.map(ext => ext.name.toLowerCase()).join(', ')} while you code, providing contextual assistance based on your actual project data.`;
 }
 
-// Generate LM Studio MCP configuration (correct format)
-function generateLMStudioMCPConfig(wizardData: WizardData): string {
+// Generate LibreChat MCP configuration (correct format)
+function generateLibreChatMCPConfig(wizardData: WizardData): string {
   const mcpServers: Record<string, any> = {};
   
   // Add MCP servers based on enabled extensions using correct LM Studio format
@@ -827,8 +823,8 @@ function generateLMStudioMCPConfig(wizardData: WizardData): string {
   return JSON.stringify({ mcpServers }, null, 2);
 }
 
-// Generate VS Code MCP configuration
-function generateVSCodeMCPConfig(wizardData: WizardData): string {
+// Generate Jan.ai MCP configuration
+function generateJanAiMCPConfig(wizardData: WizardData): string {
   const mcpServers: Record<string, any> = {};
   
   wizardData.extensions?.filter(ext => ext.enabled && ext.connectionType === 'mcp').forEach(ext => {
@@ -850,7 +846,7 @@ function generateVSCodeMCPConfig(wizardData: WizardData): string {
           args: [
             '-y', 
             '@modelcontextprotocol/server-filesystem', 
-            '${workspaceFolder}'
+            '${HOME}/Documents'
           ]
         };
         break;
@@ -888,13 +884,94 @@ function generateVSCodeMCPConfig(wizardData: WizardData): string {
     }
   });
 
-  return JSON.stringify({ mcpServers }, null, 2);
+  const janConfig = {
+    extensions: {
+      mcp: {
+        enabled: true,
+        servers: mcpServers
+      }
+    },
+    agentConfig: {
+      name: wizardData.agentName || 'Custom Agent',
+      description: wizardData.agentDescription || 'Custom AI agent with MCP integration'
+    }
+  };
+
+  return JSON.stringify(janConfig, null, 2);
 }
 
-// Generate Cursor MCP configuration
-function generateCursorMCPConfig(wizardData: WizardData): string {
-  // Cursor uses the same format as VS Code but might have slight differences
-  return generateVSCodeMCPConfig(wizardData);
+// Generate AnythingLLM MCP configuration
+function generateAnythingLLMMCPConfig(wizardData: WizardData): string {
+  const mcpServers: Record<string, any> = {};
+  
+  wizardData.extensions?.filter(ext => ext.enabled && ext.connectionType === 'mcp').forEach(ext => {
+    switch (ext.id) {
+      case 'figma-mcp':
+        mcpServers['figma'] = {
+          command: 'npx',
+          args: ['-y', '@modelcontextprotocol/server-figma'],
+          env: {
+            FIGMA_ACCESS_TOKEN: '${FIGMA_ACCESS_TOKEN}'
+          }
+        };
+        break;
+      
+      case 'filesystem-mcp':
+      case 'file-manager-mcp':
+        mcpServers['filesystem'] = {
+          command: 'npx',
+          args: [
+            '-y', 
+            '@modelcontextprotocol/server-filesystem', 
+            '/workspace'
+          ]
+        };
+        break;
+      
+      case 'git-mcp':
+        mcpServers['git'] = {
+          command: 'npx',
+          args: ['-y', '@modelcontextprotocol/server-git']
+        };
+        break;
+      
+      case 'github-api':
+        mcpServers['github'] = {
+          command: 'npx',
+          args: ['-y', '@modelcontextprotocol/server-github'],
+          env: {
+            GITHUB_PERSONAL_ACCESS_TOKEN: '${GITHUB_PERSONAL_ACCESS_TOKEN}'
+          }
+        };
+        break;
+      
+      case 'memory-mcp':
+        mcpServers['memory'] = {
+          command: 'npx',
+          args: ['-y', '@modelcontextprotocol/server-memory']
+        };
+        break;
+
+      case 'fetch-mcp':
+        mcpServers['fetch'] = {
+          command: 'npx',
+          args: ['-y', '@modelcontextprotocol/server-fetch']
+        };
+        break;
+    }
+  });
+
+  const anythingLLMConfig = {
+    workspace: {
+      name: wizardData.agentName || 'Custom Agent Workspace',
+      mcpIntegration: {
+        enabled: true,
+        servers: mcpServers
+      }
+    }
+  };
+
+  return JSON.stringify(anythingLLMConfig, null, 2);
 }
 
 // Generate Claude Desktop configuration with MCP servers

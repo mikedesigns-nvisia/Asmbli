@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Alert, AlertDescription } from '../ui/alert';
-import { Download, CheckCircle, ExternalLink, Brain, Monitor, Code, Rocket, Clock, Heart, FileText, Zap } from 'lucide-react';
+import { Download, CheckCircle, ExternalLink, Brain, Monitor, Code, Rocket, Clock, Heart, FileText, Zap, MessageSquare, Building, Layers } from 'lucide-react';
 import { generateDeploymentConfigs } from '../../utils/deploymentGenerator';
 
 
@@ -36,108 +36,108 @@ interface MVPStep5DeployProps {
 
 const FREE_PLATFORMS = [
   {
-    id: 'lm-studio',
-    name: 'LM Studio',
-    description: 'Local AI with complete privacy control',
+    id: 'librechat',
+    name: 'LibreChat',
+    description: 'Enhanced ChatGPT clone with full MCP support and 20+ AI providers',
+    icon: MessageSquare,
+    difficulty: 'Easy',
+    setupTime: '8 minutes',
+    downloadUrl: 'https://docs.librechat.ai',
+    downloadLinks: {
+      windows: 'https://github.com/danny-avila/LibreChat/releases/latest',
+      mac: 'https://github.com/danny-avila/LibreChat/releases/latest',
+      linux: 'https://github.com/danny-avila/LibreChat/releases/latest'
+    },
+    docsUrl: 'https://docs.librechat.ai',
+    modelStore: 'https://docs.librechat.ai/install/configuration/ai_endpoints',
+    setupGuideUrl: 'https://docs.librechat.ai/install/installation/docker_compose',
+    features: [
+      'Full MCP server support',
+      '20+ AI provider support',
+      'Multi-user with RBAC',
+      'Complete self-hosting',
+      'Enterprise features'
+    ],
+    benefits: [
+      '🌐 20+ AI providers (OpenAI, Anthropic, Google, etc.)',
+      '🔧 Full MCP integration with UI management',
+      '👥 Multi-user support with role-based access',
+      '🏢 Enterprise features (audit logs, SSO, etc.)'
+    ],
+    requirements: [
+      'Docker and Docker Compose',
+      'Node.js for MCP servers',
+      '4GB+ RAM recommended'
+    ]
+  },
+  {
+    id: 'jan-ai',
+    name: 'Jan.ai',
+    description: 'Desktop AI assistant with seamless local/cloud model switching',
     icon: Brain,
     difficulty: 'Easy',
     setupTime: '5 minutes',
-    downloadUrl: 'https://lmstudio.ai',
+    downloadUrl: 'https://jan.ai/download',
     downloadLinks: {
-      windows: 'https://releases.lmstudio.ai/windows/x64/latest/LM-Studio-Setup.exe',
-      mac: 'https://releases.lmstudio.ai/darwin/arm64/latest/LM-Studio.dmg',
-      linux: 'https://releases.lmstudio.ai/linux/x64/latest/LM-Studio.AppImage'
+      windows: 'https://github.com/janhq/jan/releases/latest/download/jan-win-x64.exe',
+      mac: 'https://github.com/janhq/jan/releases/latest/download/jan-mac-universal.dmg',
+      linux: 'https://github.com/janhq/jan/releases/latest/download/jan-linux-amd64.AppImage'
     },
-    docsUrl: 'https://lmstudio.ai/docs',
-    modelStore: 'https://lmstudio.ai/models',
-    setupGuideUrl: 'https://lmstudio.ai/docs/welcome',
+    docsUrl: 'https://jan.ai/docs',
+    modelStore: 'https://jan.ai/models',
+    setupGuideUrl: 'https://jan.ai/docs/quickstart',
     features: [
-      'Complete local privacy',
-      'No API costs or limits', 
-      'Works with any local model',
-      'MCP server integration',
-      'One-time setup'
+      'Desktop app interface',
+      'Local + cloud models',
+      'MCP extension support',
+      'Professional development',
+      'Simple one-click setup'
     ],
     benefits: [
-      '🔒 Your data never leaves your machine',
-      '🆓 Zero ongoing costs',
-      '⚡ Fast responses with good hardware',
-      '🎛️ Full control over model selection'
+      '💻 Beautiful desktop app - no technical setup',
+      '🔄 Switch between local and API models seamlessly',
+      '🔌 MCP support with extension architecture',
+      '💼 Professional development with VC backing'
     ],
     requirements: [
-      'LM Studio v0.3.17+',
-      'Node.js installed',
-      '8GB+ RAM recommended'
+      'Desktop application (easy install)',
+      'Node.js for MCP servers',
+      '8GB+ RAM for local models'
     ]
   },
   {
-    id: 'ollama',
-    name: 'Ollama',
-    description: 'Lightweight local AI for developers',
-    icon: Monitor,
+    id: 'anythingllm',
+    name: 'AnythingLLM',
+    description: 'Enterprise AI platform with no-code agent builder',
+    icon: Building,
     difficulty: 'Medium',
     setupTime: '10 minutes',
-    downloadUrl: 'https://ollama.com/download',
+    downloadUrl: 'https://anythingllm.com/download',
     downloadLinks: {
-      windows: 'https://ollama.com/download/OllamaSetup.exe',
-      mac: 'https://ollama.com/download/Ollama-darwin.zip',
-      linux: 'curl -fsSL https://ollama.com/install.sh | sh'
+      windows: 'https://github.com/Mintplex-Labs/anything-llm/releases/latest',
+      mac: 'https://github.com/Mintplex-Labs/anything-llm/releases/latest',
+      linux: 'https://github.com/Mintplex-Labs/anything-llm/releases/latest'
     },
-    docsUrl: 'https://github.com/ollama/ollama/blob/main/README.md',
-    modelStore: 'https://ollama.com/library',
-    setupGuideUrl: 'https://github.com/ollama/ollama?tab=readme-ov-file#quickstart',
+    docsUrl: 'https://docs.anythingllm.com',
+    modelStore: 'https://docs.anythingllm.com/llm-configuration',
+    setupGuideUrl: 'https://docs.anythingllm.com/installation/self-hosted/local-docker',
     features: [
-      'Lightweight and fast',
-      'Command-line friendly',
-      'Docker support',
-      'Model management',
-      'API compatibility'
+      'No-code agent builder',
+      'Enterprise workspace system',
+      'RAG and document integration',
+      'Docker or desktop deployment',
+      'Advanced analytics'
     ],
     benefits: [
-      '🚀 Optimized for performance',
-      '💻 Great for developers',
-      '🐳 Docker deployment ready',
-      '🔄 Easy model switching'
+      '🎯 No-code agent builder for business users',
+      '🏢 Enterprise workspace and document management',
+      '📄 Advanced RAG with document integration',
+      '📊 Built-in analytics and monitoring'
     ],
     requirements: [
-      'Ollama installed',
-      'Node.js for bridge',
-      '4GB+ RAM minimum'
-    ]
-  },
-  {
-    id: 'vs-code',
-    name: 'VS Code + Copilot',
-    description: 'Integrated into your development workflow',
-    icon: Code,
-    difficulty: 'Medium',
-    setupTime: '8 minutes',
-    downloadUrl: 'https://code.visualstudio.com/download',
-    downloadLinks: {
-      windows: 'https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user',
-      mac: 'https://code.visualstudio.com/sha/download?build=stable&os=darwin-universal',
-      linux: 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64'
-    },
-    docsUrl: 'https://code.visualstudio.com/docs',
-    modelStore: 'https://github.com/features/copilot',
-    setupGuideUrl: 'https://code.visualstudio.com/docs/copilot/setup',
-    features: [
-      'GitHub Copilot integration',
-      'Workspace awareness',
-      'Project-scoped agents',
-      'Development context',
-      'Extension ecosystem'
-    ],
-    benefits: [
-      '🔧 Works in your existing workflow',
-      '🧠 Project-aware suggestions',
-      '🤝 Copilot subscription value',
-      '📁 Workspace-specific configs'
-    ],
-    requirements: [
-      'VS Code installed',
-      'GitHub Copilot subscription',
-      'Node.js for MCP servers'
+      'Docker or desktop app',
+      'Node.js for integrations',
+      '8GB+ RAM recommended'
     ]
   }
 ];
@@ -196,7 +196,7 @@ export function MVPStep5Deploy({ wizardData, deployment, onDeploymentChange, onG
     <div className="space-y-6">
       <div className="text-center space-y-2">
         <p className="text-muted-foreground">
-          Choose a free platform to deploy your custom AI agent. All options keep your data private and cost nothing to run.
+          Choose a powerful platform to deploy your custom AI agent. All options offer enterprise-grade features while keeping your data private.
         </p>
       </div>
 
@@ -274,9 +274,9 @@ export function MVPStep5Deploy({ wizardData, deployment, onDeploymentChange, onG
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Rocket className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold">Free Deployment Options</h3>
+          <h3 className="text-lg font-semibold">Enterprise Deployment Options</h3>
           <Badge className="bg-green-500/10 text-green-600 border-green-500/30">
-            Zero Cost
+            Self-Hosted
           </Badge>
         </div>
 
@@ -584,9 +584,9 @@ export function MVPStep5Deploy({ wizardData, deployment, onDeploymentChange, onG
                             }}
                           >
                             <Brain className="w-3 h-3 mr-2" />
-                            {selectedPlatformData!.id === 'lm-studio' ? 'Browse AI Models' : 
-                             selectedPlatformData!.id === 'ollama' ? 'Ollama Library' : 
-                             'GitHub Copilot'}
+                            {selectedPlatformData!.id === 'librechat' ? 'AI Providers Setup' : 
+                             selectedPlatformData!.id === 'jan-ai' ? 'Browse Models' : 
+                             'Model Configuration'}
                           </Button>
                           <Button
                             variant="outline"

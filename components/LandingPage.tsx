@@ -49,7 +49,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
     {
       icon: Code2,
       title: "Universal Agent Builder",
-      description: "Create AI agents that work across Claude Desktop, Copilot Studio, Power Platform, and custom APIs with zero configuration complexity."
+      description: "Create AI agents that work across LibreChat, Jan.ai, AnythingLLM, and custom APIs with zero configuration complexity."
     },
     {
       icon: Shield,
@@ -286,7 +286,7 @@ export function LandingPage({ onGetStarted, onViewTemplates }: LandingPageProps)
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 The complete toolkit for designing, building, and deploying AI agents that work seamlessly across 
-                Claude Desktop, Microsoft Copilot, and your custom applications.
+                LibreChat, Jan.ai, AnythingLLM, and your custom applications.
               </p>
             </div>
 
