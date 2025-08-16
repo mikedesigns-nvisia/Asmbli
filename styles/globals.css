@@ -316,11 +316,52 @@ body::after {
 }
 
 @keyframes gradientShift {
-  0%, 100% {
+  0% {
     background-position: 0% 50%;
+    transform: scale(1);
+  }
+  25% {
+    background-position: 100% 50%;
+    transform: scale(1.02);
   }
   50% {
+    background-position: 100% 100%;
+    transform: scale(1);
+  }
+  75% {
+    background-position: 0% 100%;
+    transform: scale(0.98);
+  }
+  100% {
+    background-position: 0% 50%;
+    transform: scale(1);
+  }
+}
+
+@keyframes gradientRainbow {
+  0% {
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg);
+  }
+  20% {
+    background-position: 50% 0%;
+    filter: hue-rotate(20deg);
+  }
+  40% {
     background-position: 100% 50%;
+    filter: hue-rotate(40deg);
+  }
+  60% {
+    background-position: 50% 100%;
+    filter: hue-rotate(60deg);
+  }
+  80% {
+    background-position: 0% 50%;
+    filter: hue-rotate(80deg);
+  }
+  100% {
+    background-position: 0% 50%;
+    filter: hue-rotate(100deg);
   }
 }
 
@@ -407,16 +448,76 @@ body::after {
 
   /* Gradient text effects */
   .gradient-text {
-    background: linear-gradient(135deg, 
-      hsl(var(--primary)) 0%, 
-      hsl(var(--primary)) 25%, 
-      rgba(139, 92, 246, 1) 75%, 
-      rgba(16, 185, 129, 1) 100%);
+    background: linear-gradient(45deg, 
+      #ff6b6b 0%, 
+      #4ecdc4 15%, 
+      #45b7d1 30%, 
+      #96ceb4 45%, 
+      #ffeaa7 60%, 
+      #dda0dd 75%, 
+      #98d8c8 90%, 
+      #ff7675 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-size: 200% 200%;
-    animation: gradientShift 4s ease-in-out infinite;
+    background-size: 400% 400%;
+    animation: gradientShift 6s ease-in-out infinite;
+    transition: all 0.3s ease;
+  }
+
+  .gradient-text:hover {
+    animation: gradientRainbow 3s linear infinite;
+    text-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+  }
+
+  /* Sparkle effect for extra fun */
+  .gradient-text-sparkle {
+    position: relative;
+    background: linear-gradient(45deg, 
+      #ff6b6b 0%, 
+      #4ecdc4 15%, 
+      #45b7d1 30%, 
+      #96ceb4 45%, 
+      #ffeaa7 60%, 
+      #dda0dd 75%, 
+      #98d8c8 90%, 
+      #ff7675 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 400% 400%;
+    animation: gradientShift 6s ease-in-out infinite;
+  }
+
+  .gradient-text-sparkle::before {
+    content: '✨';
+    position: absolute;
+    top: -10px;
+    left: 20%;
+    font-size: 1.5rem;
+    animation: sparkleFloat 4s ease-in-out infinite;
+    opacity: 0.7;
+  }
+
+  .gradient-text-sparkle::after {
+    content: '⭐';
+    position: absolute;
+    top: -5px;
+    right: 15%;
+    font-size: 1.2rem;
+    animation: sparkleFloat 3s ease-in-out infinite reverse;
+    opacity: 0.6;
+  }
+
+  @keyframes sparkleFloat {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.7;
+    }
+    50% {
+      transform: translateY(-15px) rotate(180deg);
+      opacity: 1;
+    }
   }
 
   .gradient-text-static {
