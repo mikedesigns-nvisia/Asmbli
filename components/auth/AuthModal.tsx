@@ -19,7 +19,11 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalProps) {
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole>('beginner');
+  const [selectedRole, setSelectedRole] = useState<UserRole>(() => {
+    // Auto-select beta role if user signed up for beta
+    const betaEmail = localStorage.getItem('beta_signup_email');
+    return betaEmail ? 'beta' : 'beginner';
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -28,11 +32,15 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
     password: ''
   });
   
-  const [signupForm, setSignupForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+  const [signupForm, setSignupForm] = useState(() => {
+    // Pre-fill email if user signed up for beta
+    const betaEmail = localStorage.getItem('beta_signup_email');
+    return {
+      name: '',
+      email: betaEmail || '',
+      password: '',
+      confirmPassword: ''
+    };
   });
 
   const { login, signup } = useAuth();

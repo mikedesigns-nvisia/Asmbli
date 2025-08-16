@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
-import { LandingPage } from './components/LandingPage';
 import { BetaLandingPage } from './components/BetaLandingPage';
 import { TemplatesPreviewModal } from './components/TemplatesPreviewModal';
 import { Layout } from './components/Layout';
@@ -214,6 +213,11 @@ function AuthenticatedApp() {
   const handleGetStarted = () => {
     if (!isAuthenticated) {
       setShowAuthModal(true);
+      return;
+    }
+    // For beta users, go directly to MVP wizard
+    if (user?.role === 'beta') {
+      setShowLanding(false);
       return;
     }
     setShowLanding(false);

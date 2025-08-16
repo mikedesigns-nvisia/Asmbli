@@ -11,7 +11,8 @@ import { MVPStep5Deploy } from './MVPStep5Deploy';
 import { ConfigPreview } from './ConfigPreview';
 import { FeedbackSystem } from './FeedbackSystem';
 import { useAnalytics } from './AnalyticsTracker';
-import { Brain, Users, FileText, Palette, Rocket, ArrowRight, ArrowLeft, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Brain, Users, FileText, Palette, Rocket, ArrowRight, ArrowLeft, AlertTriangle, RefreshCw, LogOut } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface MVPWizardData {
   role: 'developer' | 'creator' | 'researcher' | '';
@@ -135,6 +136,7 @@ const initializeWizardData = (): MVPWizardData => {
 };
 
 export function MVPWizard() {
+  const { logout, user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [wizardData, setWizardData] = useState<MVPWizardData>(initializeWizardData);
   const {
@@ -253,7 +255,7 @@ export function MVPWizard() {
               wizardData={wizardData}
               deployment={wizardData.deployment}
               onDeploymentChange={(deployment) => updateWizardData({ deployment })}
-              onGenerate={() => setIsGenerating(true)}
+              onGenerate={() => console.log('Generate clicked')}
             />
           );
         default:
@@ -281,14 +283,58 @@ export function MVPWizard() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Beta Header */}
+      <header className="bg-card border-b border-border">
+        <div className="container mx-auto px-4 py-4 max-w-7xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent italic" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+                asmbli
+              </span>
+              <Badge className="bg-primary/20 text-primary-foreground border-primary/30">
+                Beta
+              </Badge>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-muted-foreground hidden sm:block">
+                Welcome, {user?.name || user?.email}
+              </span>
+              <Badge variant="outline" className="text-xs">
+                Simplified Wizard
+              </Badge>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={logout}
+                className="flex items-center gap-1 text-xs"
+              >
+                <LogOut className="w-3 h-3" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+      
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="text-center mb-8 wizard-header">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+          <div className="flex items-center justify-center space-x-3 mb-3">
+            <span className="font-bold text-2xl bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent italic" style={{ fontFamily: '"Noto Serif JP", serif' }}>
+              asmbli
+            </span>
+            <Badge className="bg-primary/20 text-primary-foreground border-primary/30">
+              Beta
+            </Badge>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3" style={{ fontFamily: '"Noto Serif JP", serif' }}>
             Create Your Custom AI Agent
           </h1>
           <p className="text-lg text-muted-foreground mb-6">
             Get an AI that knows YOUR workflow, constraints, and preferences
+          </p>
+          <p className="text-sm text-primary mb-6 font-medium">
+            ✨ You're part of our exclusive beta program with simplified setup and early access features
           </p>
           
           {/* Progress Indicator */}
@@ -426,8 +472,14 @@ export function MVPWizard() {
           </div>
         </div>
 
-        {/* Benefits Footer */}
+        {/* Beta Benefits Footer */}
         <div className="max-w-4xl mx-auto mt-12 text-center">
+          <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mb-6">
+            <h3 className="font-semibold text-primary mb-2" style={{ fontFamily: '"Noto Serif JP", serif' }}>🎉 You're in the Beta Program!</h3>
+            <p className="text-sm text-muted-foreground">
+              Thanks for being an early adopter. This simplified wizard gets you started quickly while we perfect the full experience.
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
               <div className="text-2xl">🔒</div>
@@ -437,12 +489,12 @@ export function MVPWizard() {
             <div className="space-y-2">
               <div className="text-2xl">🆓</div>
               <h3 className="font-semibold">Completely Free</h3>
-              <p className="text-sm text-muted-foreground">No subscriptions, no API costs, no limits</p>
+              <p className="text-sm text-muted-foreground">No subscriptions, no API costs, no limits during beta</p>
             </div>
             <div className="space-y-2">
               <div className="text-2xl">🎯</div>
-              <h3 className="font-semibold">Your Rules</h3>
-              <p className="text-sm text-muted-foreground">AI that follows your exact constraints and preferences</p>
+              <h3 className="font-semibold">Beta Exclusive</h3>
+              <p className="text-sm text-muted-foreground">Early access features and priority feedback opportunities</p>
             </div>
           </div>
         </div>

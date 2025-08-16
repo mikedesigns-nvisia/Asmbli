@@ -188,15 +188,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Mock signup - in real app, this would call your API
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
 
+      // Check if this email was used for beta signup
+      const betaSignupEmail = localStorage.getItem('beta_signup_email');
+      const shouldUseBetaRole = betaSignupEmail === credentials.email;
+
       const user: User = {
         id: `user_${Date.now()}`,
         email: credentials.email,
         name: credentials.name,
-        role: credentials.role || 'beginner',
+        role: shouldUseBetaRole ? 'beta' : (credentials.role || 'beginner'),
         createdAt: new Date(),
         lastLoginAt: new Date(),
         subscription: {
-          plan: credentials.role || 'beginner',
+          plan: shouldUseBetaRole ? 'beta' : (credentials.role || 'beginner'),
           status: 'active',
           startDate: new Date(),
           features: []
@@ -204,6 +208,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       };
 
       localStorage.setItem('agent_builder_user', JSON.stringify(user));
+      if (shouldUseBetaRole) {
+        localStorage.removeItem('beta_signup_email'); // Clean up
+      }
 
       setAuthState({
         user,

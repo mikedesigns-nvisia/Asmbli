@@ -6,7 +6,6 @@ import {
   Shield, 
   Users, 
   Crown,
-  Star,
   Sparkles,
   Rocket,
   Gift,
@@ -51,6 +50,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
 
       if (response.ok) {
         setIsSubmitted(true);
+        // Store beta signup email for potential auto-login
+        localStorage.setItem('beta_signup_email', email);
       } else {
         console.error('Beta signup failed');
         // Still show success to user for better UX
@@ -190,7 +191,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                     onClick={onGetStarted}
                     className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
                   >
-                    Explore Demo
+                    Start Building
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
