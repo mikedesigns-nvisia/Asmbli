@@ -85,8 +85,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               </Badge>
             </div>
             <nav className="hidden md:flex items-center space-x-6" role="navigation" aria-label="Main navigation">
-              <a href="#features" className="text-slate-300 hover:text-white transition-colors">Features</a>
-              <a href="#early-access" className="text-slate-300 hover:text-white transition-colors">Early Access</a>
+              <a href="#features" className="text-slate-300 hover:text-white transition-colors">How It Works</a>
+              <a href="#privacy" className="text-slate-300 hover:text-white transition-colors">Privacy</a>
               <Button 
                 variant="outline" 
                 className="border-primary/50 text-primary hover:bg-primary/20 bg-transparent"
@@ -126,13 +126,13 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-5xl md:text-7xl font-bold gradient-text leading-tight tracking-tight" style={{ fontFamily: '"Noto Serif JP", serif' }}>
-                Create Custom Agents
+                AI Agents That Run
                 <br />
-                <span className="text-5xl md:text-7xl">For Your Workflow</span>
+                <span className="text-5xl md:text-7xl">On Your Computer</span>
               </h1>
               <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Pre-configure documentation, instructions, and personality once. Deploy consistently across 
-                LibreChat, Jan.ai, AnythingLLM, and more 🚀
+                Build custom AI assistants that work locally. Your data stays private, 
+                setup takes minutes, and it's completely free 🔒
               </p>
             </div>
 
@@ -165,7 +165,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
                     </Button>
                   </div>
                   <p className="text-sm text-slate-400">
-                    Free forever • No credit card required • Limited spots available
+                    🔒 Private • 🆓 Free • ⚡ Easy setup • Limited beta spots
                   </p>
                   
                   {/* Sign In Option */}
@@ -207,7 +207,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       </section>
 
       {/* Data Privacy Section */}
-      <section className="py-20 bg-gradient-to-r from-slate-900/50 to-slate-800/50 border-y border-slate-700/50">
+      <section id="privacy" className="py-20 bg-gradient-to-r from-slate-900/50 to-slate-800/50 border-y border-slate-700/50">
         <div className="max-width-container section-spacing-x">
           <div className="max-w-4xl mx-auto">
             <div className="text-center space-y-8">
@@ -320,7 +320,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       </section>
 
       {/* How It Works Section */}
-      <section className="py-24 bg-black/5">
+      <section id="features" className="py-24 bg-black/5">
         <div className="max-width-container section-spacing-x">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: '"Noto Serif JP", serif' }}>How It Works</h2>
@@ -347,8 +347,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               },
               {
                 step: "03",
-                title: "Deploy",
-                description: "One-click deployment to LibreChat, Jan.ai, AnythingLLM, and other platforms with seamless integration.",
+                title: "Deploy Locally",
+                description: "Download and run on your computer using LibreChat, Jan.ai, AnythingLLM, or other local AI platforms.",
                 icon: Rocket,
                 color: "text-primary"
               },
@@ -415,8 +415,8 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
               },
               {
                 icon: Rocket,
-                title: 'One-Click Deploy',
-                description: 'Deploy to any platform - LibreChat, Jan.ai, AnythingLLM, or your own infrastructure.',
+                title: 'Local Deployment',
+                description: 'Run everything on your computer with popular platforms like LibreChat, Jan.ai, and AnythingLLM.',
                 color: 'text-primary'
               },
               {
