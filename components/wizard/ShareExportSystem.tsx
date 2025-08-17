@@ -24,6 +24,7 @@ import {
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import JSZip from 'jszip';
 import QRCodeLib from 'qrcode';
+import { generateChatMCPConfigs } from '../../utils/chatmcpGenerator';
 
 interface ShareExportProps {
   wizardData: any;
@@ -95,98 +96,73 @@ export function ShareExportSystem({ wizardData, className = '' }: ShareExportPro
     }
   };
 
-  // Create comprehensive export package
+  // Create comprehensive ChatMCP export package
   const createExportPackage = async () => {
     setIsGenerating(true);
     
     try {
       const zip = new JSZip();
 
-      // Configuration files
-      const config = {
+      // Generate ChatMCP configurations using our new generator
+      const chatmcpConfigs = generateChatMCPConfigs(wizardData);
+      
+      // Add all ChatMCP files to the zip
+      Object.entries(chatmcpConfigs).forEach(([filename, content]) => {
+        zip.file(filename, content);
+      });
+
+      // Add legacy agent configuration for compatibility
+      const legacyConfig = {
         name: `${wizardData.role || 'custom'}-agent`,
         version: '1.0.0',
         description: `A custom AI agent configured for ${wizardData.role || 'general'} workflows`,
         role: wizardData.role,
         tools: wizardData.tools,
         style: wizardData.style,
-        deployment: wizardData.deployment,
+        deployment: { platform: 'chatmcp', type: 'mcp' },
         metadata: {
           createdAt: new Date().toISOString(),
           exportedAt: new Date().toISOString(),
-          generator: 'Agent Builder'
+          generator: 'AgentEngine ChatMCP',
+          targetPlatform: 'ChatMCP'
         }
       };
+      zip.file('legacy-config.json', JSON.stringify(legacyConfig, null, 2));
 
-      // JSON config
-      zip.file('agent-config.json', JSON.stringify(config, null, 2));
-
-      // YAML config
-      const yaml = await import('js-yaml');
-      zip.file('agent-config.yaml', yaml.dump(config));
-
-      // MCP Server configuration
-      const mcpConfig = {
-        servers: wizardData.tools.reduce((acc: any, tool: string) => {
-          acc[tool] = {
-            command: 'node',
-            args: [`./servers/${tool}/index.js`],
-            env: {}
-          };
-          return acc;
-        }, {})
+      // Add ChatMCP download links file
+      const downloadInfo = {
+        platform: 'ChatMCP',
+        description: 'Native MCP client for AI chat',
+        downloads: {
+          windows: 'https://github.com/daodao97/chatmcp/releases/latest/download/chatmcp-windows.exe',
+          macos: 'https://github.com/daodao97/chatmcp/releases/latest/download/chatmcp-macos.dmg',
+          linux: 'https://github.com/daodao97/chatmcp/releases/latest/download/chatmcp-linux.AppImage'
+        },
+        documentation: 'https://github.com/daodao97/chatmcp',
+        setupInstructions: 'See chatmcp-setup.md for complete installation guide'
       };
-      zip.file('mcp-config.json', JSON.stringify(mcpConfig, null, 2));
+      zip.file('chatmcp-downloads.json', JSON.stringify(downloadInfo, null, 2));
 
-      // Deployment scripts
-      const deploymentScripts = generateDeploymentScripts(config);
-      const deploymentFolder = zip.folder('deployment');
-      
-      Object.entries(deploymentScripts).forEach(([filename, content]) => {
-        deploymentFolder?.file(filename, content);
-      });
-
-      // Documentation
-      const readme = generateReadme(config);
-      zip.file('README.md', readme);
-
-      // Setup guide
-      const setupGuide = generateSetupGuide(config);
-      zip.file('SETUP.md', setupGuide);
-
-      // Package.json for Node.js projects
-      if (wizardData.tools.some((tool: string) => ['git', 'npm', 'filesystem'].includes(tool))) {
-        const packageJson = {
-          name: config.name,
-          version: config.version,
-          description: config.description,
-          main: 'index.js',
-          scripts: {
-            start: 'node index.js',
-            dev: 'node --watch index.js'
-          },
-          dependencies: {
-            '@anthropic/mcp': '^0.1.0'
-          }
-        };
-        zip.file('package.json', JSON.stringify(packageJson, null, 2));
-      }
+      // Generate agent name for filename
+      const agentName = wizardData.agentName || 
+                       wizardData.role ? `${wizardData.role}-agent` : 
+                       'custom-agent';
 
       // Generate and download zip
       const content = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(content);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${config.name}-export.zip`;
+      a.download = `${agentName}-chatmcp.zip`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      toast.success('Export package downloaded successfully!');
+      toast.success('ChatMCP agent package downloaded successfully!');
     } catch (error) {
-      console.error('Export failed:', error);
-      toast.error('Failed to create export package');
+      console.error('ChatMCP export failed:', error);
+      toast.error('Failed to create ChatMCP package');
     } finally {
       setIsGenerating(false);
     }
@@ -547,10 +523,10 @@ Generated with Agent Builder: ${window.location.origin}
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Package className="w-5 h-5" />
-              Export Configuration Package
+              Export ChatMCP Agent Package
             </DialogTitle>
             <DialogDescription>
-              Download a complete package with all files needed to deploy your agent.
+              Download a complete ChatMCP package with everything needed to deploy your agent.
             </DialogDescription>
           </DialogHeader>
 
@@ -560,19 +536,19 @@ Generated with Agent Builder: ${window.location.origin}
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div className="flex items-center gap-2">
                   <FileDown className="w-4 h-4 text-muted-foreground" />
-                  Configuration files
+                  ChatMCP config.json
                 </div>
                 <div className="flex items-center gap-2">
                   <GitBranch className="w-4 h-4 text-muted-foreground" />
-                  Deployment scripts
+                  Install scripts
                 </div>
                 <div className="flex items-center gap-2">
                   <Package className="w-4 h-4 text-muted-foreground" />
-                  Setup documentation
+                  Setup guide
                 </div>
                 <div className="flex items-center gap-2">
                   <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                  Platform configs
+                  Environment setup
                 </div>
               </div>
             </div>
@@ -590,13 +566,13 @@ Generated with Agent Builder: ${window.location.origin}
               ) : (
                 <>
                   <Download className="w-4 h-4" />
-                  Download Complete Package
+                  Download ChatMCP Package
                 </>
               )}
             </Button>
 
             <p className="text-xs text-muted-foreground text-center">
-              The package includes everything needed to deploy your agent on any supported platform.
+              Package includes everything needed to deploy your agent with ChatMCP.
             </p>
           </div>
         </DialogContent>
