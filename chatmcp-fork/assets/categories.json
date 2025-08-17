@@ -1,0 +1,72 @@
+[
+  {
+    "id": "development-code",
+    "name": "Development & Code",
+    "description": "Tools for software development, version control, and code management",
+    "icon": "Code",
+    "color": "#0066CC"
+  },
+  {
+    "id": "ai-machine-learning",
+    "name": "AI & Machine Learning",
+    "description": "AI models, machine learning platforms, and intelligent automation",
+    "icon": "Brain",
+    "color": "#8B5CF6"
+  },
+  {
+    "id": "web-browser",
+    "name": "Web & Browser",
+    "description": "Web scraping, browser automation, and internet data access",
+    "icon": "Globe",
+    "color": "#059669"
+  },
+  {
+    "id": "database",
+    "name": "Database",
+    "description": "Database connections, queries, and data management",
+    "icon": "Database",
+    "color": "#DC2626"
+  },
+  {
+    "id": "business-tools",
+    "name": "Business Tools",
+    "description": "CRM, project management, and business process automation",
+    "icon": "Briefcase",
+    "color": "#7C3AED"
+  },
+  {
+    "id": "social-media",
+    "name": "Social Media",
+    "description": "Social platform integrations and community management",
+    "icon": "MessageSquare",
+    "color": "#F59E0B"
+  },
+  {
+    "id": "productivity",
+    "name": "Productivity",
+    "description": "Task management, scheduling, and workflow optimization",
+    "icon": "CheckSquare",
+    "color": "#10B981"
+  },
+  {
+    "id": "design",
+    "name": "Design",
+    "description": "Design tools, creative platforms, and visual content creation",
+    "icon": "Palette",
+    "color": "#EC4899"
+  },
+  {
+    "id": "security",
+    "name": "Security",
+    "description": "Security monitoring, authentication, and compliance tools",
+    "icon": "Shield",
+    "color": "#EF4444"
+  },
+  {
+    "id": "analytics",
+    "name": "Analytics",
+    "description": "Data analysis, reporting, and business intelligence",
+    "icon": "BarChart",
+    "color": "#3B82F6"
+  }
+]

@@ -114,6 +114,8 @@ flutter:
     - assets/sandbox/
     - assets/logo/
     - assets/logo_256.png
+    - assets/extensions_library.json
+    - assets/categories.json
 
 flutter_launcher_icons:
   remove_alpha_ios: true

@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:chatmcp/components/widgets/base.dart';
 import 'package:chatmcp/page/layout/widgets/app_info.dart';
 import 'package:chatmcp/config/pagination_config.dart';
+import 'package:chatmcp/agent_builder/pages/asmbli_agent_builder.dart';
 import 'dart:async';
 
 class SidebarPanel extends StatefulWidget {
@@ -534,6 +535,8 @@ class SidebarToolbar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
       child: Row(
         children: [
+          _buildAgentBuilderButton(context),
+          const Gap(size: 4),
           _buildSettingsButton(context),
           const Gap(size: 4),
           _buildSelectModeButton(context),
@@ -543,6 +546,14 @@ class SidebarToolbar extends StatelessWidget {
           const Gap(size: 4),
         ],
       ),
+    );
+  }
+
+  Widget _buildAgentBuilderButton(BuildContext context) {
+    return InkIcon(
+      icon: CupertinoIcons.sparkles,
+      onTap: () => _showAgentBuilderDialog(context),
+      tooltip: 'Create Agent',
     );
   }
 
@@ -578,6 +589,29 @@ class SidebarToolbar extends StatelessWidget {
       onTap: chatProvider.selectedChats.isNotEmpty ? () => _showDeleteConfirmDialog(context) : null,
       tooltip: AppLocalizations.of(context)!.delete,
     );
+  }
+
+  void _showAgentBuilderDialog(BuildContext context) {
+    if (kIsMobile) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const AsmbliAgentBuilder()));
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(20),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.95,
+              height: MediaQuery.of(context).size.height * 0.95,
+              child: const AsmbliAgentBuilder(),
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   void _showSettingsDialog(BuildContext context) {

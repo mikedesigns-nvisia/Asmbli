@@ -19,7 +19,12 @@
       "WebFetch(domain:code.visualstudio.com)",
       "Bash(git push:*)",
       "Bash(curl:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(C:/AgentEngine/flutter/bin/flutter.bat build web)",
+      "Bash(node:*)",
+      "Bash(mkdir:*)",
+      "Bash(C:/AgentEngine/flutter/bin/flutter.bat pub get)",
+      "Bash(C:/AgentEngine/flutter/bin/flutter.bat build web --no-tree-shake-icons)"
     ],
     "deny": [],
     "ask": [],
