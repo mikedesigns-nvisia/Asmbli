@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { 
   ArrowRight, 
-  CheckCircle, 
   Zap, 
   Shield, 
   Users, 
@@ -17,8 +16,6 @@ import {
   FileText,
   Twitter,
   Linkedin,
-  Eye,
-  Cloud,
   Monitor,
   Lock,
   AlertTriangle,
@@ -26,11 +23,6 @@ import {
   Download,
   Key,
   Settings,
-  Star,
-  Calendar,
-  HelpCircle,
-  ExternalLink,
-  ChevronDown,
   Quote
 } from 'lucide-react';
 import { Button } from './ui/button';
@@ -43,7 +35,7 @@ interface BetaLandingPageProps {
   onViewTemplates: () => void;
 }
 
-export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPageProps) {
+export function BetaLandingPage({ onGetStarted }: BetaLandingPageProps) {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

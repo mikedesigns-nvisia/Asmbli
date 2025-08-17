@@ -1,0 +1,56 @@
+{
+  "mcpServers": {
+    "git": {
+      "command": "uvx",
+      "args": [
+        "@modelcontextprotocol/server-git"
+      ]
+    },
+    "github": {
+      "command": "uvx",
+      "args": [
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "filesystem": {
+      "command": "uvx",
+      "args": [
+        "@modelcontextprotocol/server-filesystem",
+        "${HOME}/Documents",
+        "${HOME}/Projects"
+      ]
+    },
+    "web-fetch": {
+      "command": "uvx",
+      "args": [
+        "@modelcontextprotocol/server-fetch"
+      ]
+    },
+    "postgres": {
+      "command": "uvx",
+      "args": [
+        "@modelcontextprotocol/server-postgres"
+      ],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "${POSTGRES_CONNECTION_STRING}"
+      }
+    },
+    "memory": {
+      "command": "uvx",
+      "args": [
+        "@modelcontextprotocol/server-memory"
+      ]
+    }
+  },
+  "agentMetadata": {
+    "name": "Developer Agent",
+    "description": "AI agent specialized for developer workflows",
+    "role": "developer",
+    "version": "1.0.0",
+    "createdAt": "2025-08-17T04:10:38.530Z",
+    "generator": "AgentEngine ChatMCP"
+  }
+}
