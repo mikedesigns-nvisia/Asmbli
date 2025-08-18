@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Bot, Code, Zap, Shield, Cloud, Users } from 'lucide-react'
+import { ArrowRight, Bot, Code, Zap, Users, Server, Figma } from 'lucide-react'
 
 export default function HomePage() {
   return (
@@ -91,26 +91,6 @@ export default function HomePage() {
             </Card>
             <Card>
               <CardHeader>
-                <Shield className="h-10 w-10 mb-2 text-primary" />
-                <CardTitle>Enterprise Security</CardTitle>
-                <CardDescription>
-                  Built-in authentication, rate limiting, audit logging, and
-                  secure API key management
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            <Card>
-              <CardHeader>
-                <Cloud className="h-10 w-10 mb-2 text-primary" />
-                <CardTitle>Cloud Sync</CardTitle>
-                <CardDescription>
-                  Save your agents to the cloud and access them from anywhere.
-                  Share with your team or the community
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            <Card>
-              <CardHeader>
                 <Users className="h-10 w-10 mb-2 text-primary" />
                 <CardTitle>Community Templates</CardTitle>
                 <CardDescription>
@@ -119,6 +99,128 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
+            <Card>
+              <CardHeader>
+                <Server className="h-10 w-10 mb-2 text-primary" />
+                <CardTitle>MCP Servers Library</CardTitle>
+                <CardDescription>
+                  Browse 10+ ready-to-use MCP servers: filesystem, Git, GitHub, 
+                  databases, search, memory, and more integrations
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* MCP Servers Library Section */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              MCP Servers Library
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Connect your agents to powerful tools and services with our curated collection of Model Context Protocol servers
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Code className="h-5 w-5 text-blue-500" />
+                  <CardTitle className="text-sm">Filesystem</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  File operations, directory traversal, search & monitoring
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Code className="h-5 w-5 text-orange-500" />
+                  <CardTitle className="text-sm">Git</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Repository cloning, branch management, commit operations
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Code className="h-5 w-5 text-gray-800" />
+                  <CardTitle className="text-sm">GitHub</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Issues, pull requests, code review, actions integration
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Code className="h-5 w-5 text-blue-600" />
+                  <CardTitle className="text-sm">PostgreSQL</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  SQL execution, schema introspection, performance analysis
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Code className="h-5 w-5 text-purple-500" />
+                  <CardTitle className="text-sm">Memory</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Knowledge storage, semantic search, context management
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Code className="h-5 w-5 text-orange-600" />
+                  <CardTitle className="text-sm">Brave Search</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Real-time web search, ranking, domain-specific queries
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Code className="h-5 w-5 text-green-500" />
+                  <CardTitle className="text-sm">HTTP/Fetch</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  API requests, authentication, response parsing
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Figma className="h-5 w-5 text-purple-600" />
+                  <CardTitle className="text-sm">Figma</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Design files, components, design systems integration
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/templates">
+              <Button variant="outline">
+                View All MCP Servers
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
