@@ -16,6 +16,9 @@ export default function HomePage() {
             <Link href="/templates" className="hover:underline">
               Templates
             </Link>
+            <Link href="/mcp-servers" className="hover:underline">
+              Library
+            </Link>
             <Link href="/dashboard" className="hover:underline">
               Dashboard
             </Link>

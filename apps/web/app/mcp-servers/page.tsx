@@ -1,8 +1,11 @@
+'use client'
+
 import Link from 'next/link'
+import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Server, Code, Database, Globe, Search, Brain, Calendar, Github, Terminal, Clock, Link as LinkIcon, Figma, HardDrive, Bot, Shield, Mail, MessageSquare, Zap, Users } from 'lucide-react'
+import { ArrowLeft, Server, Code, Database, Globe, Search, Brain, Calendar, Github, Terminal, Clock, Link as LinkIcon, Figma, HardDrive, Bot, Shield, Mail, MessageSquare, Zap, Users, X } from 'lucide-react'
 
 // Static data from your extensions library - MCP servers and key integrations
 const mcpServers = [
@@ -281,6 +284,54 @@ const getPricingColor = (pricing: string) => {
 }
 
 export default function MCPServersPage() {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedComplexity, setSelectedComplexity] = useState<string[]>([])
+  const [selectedPricing, setSelectedPricing] = useState<string[]>([])
+
+  // Get unique values for filters
+  const categories = [...new Set(mcpServers.map(server => server.category))]
+  const complexities = [...new Set(mcpServers.map(server => server.complexity))]
+  const pricingOptions = [...new Set(mcpServers.map(server => server.pricing))]
+
+  // Filter servers based on selected filters
+  const filteredServers = useMemo(() => {
+    return mcpServers.filter(server => {
+      const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(server.category)
+      const matchesComplexity = selectedComplexity.length === 0 || selectedComplexity.includes(server.complexity)
+      const matchesPricing = selectedPricing.length === 0 || selectedPricing.includes(server.pricing)
+      
+      return matchesCategory && matchesComplexity && matchesPricing
+    })
+  }, [selectedCategories, selectedComplexity, selectedPricing])
+
+  const toggleFilter = (type: 'category' | 'complexity' | 'pricing', value: string) => {
+    switch (type) {
+      case 'category':
+        setSelectedCategories(prev => 
+          prev.includes(value) ? prev.filter(c => c !== value) : [...prev, value]
+        )
+        break
+      case 'complexity':
+        setSelectedComplexity(prev => 
+          prev.includes(value) ? prev.filter(c => c !== value) : [...prev, value]
+        )
+        break
+      case 'pricing':
+        setSelectedPricing(prev => 
+          prev.includes(value) ? prev.filter(p => p !== value) : [...prev, value]
+        )
+        break
+    }
+  }
+
+  const clearAllFilters = () => {
+    setSelectedCategories([])
+    setSelectedComplexity([])
+    setSelectedPricing([])
+  }
+
+  const hasActiveFilters = selectedCategories.length > 0 || selectedComplexity.length > 0 || selectedPricing.length > 0
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navigation */}
@@ -292,6 +343,9 @@ export default function MCPServersPage() {
           <nav className="flex gap-6 items-center">
             <Link href="/templates" className="hover:underline">
               Templates
+            </Link>
+            <Link href="/mcp-servers" className="hover:underline font-medium">
+              Library
             </Link>
             <Link href="/dashboard" className="hover:underline">
               Dashboard
@@ -316,7 +370,7 @@ export default function MCPServersPage() {
               <Server className="h-16 w-16 text-primary" />
             </div>
             <h1 className="text-4xl font-bold mb-4">
-              MCP Servers Library
+              Library
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
               Model Context Protocol (MCP) servers provide standardized ways for AI agents to interact with 
@@ -381,14 +435,108 @@ export default function MCPServersPage() {
         </div>
       </section>
 
+      {/* Filter Chips Section */}
+      <section className="py-8 px-4 border-b bg-background">
+        <div className="container mx-auto">
+          <div className="flex flex-wrap items-center gap-4 mb-6">
+            <h3 className="text-lg font-semibold">Filter by:</h3>
+            
+            {/* Category Filters */}
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Category:</span>
+              {categories.map(category => (
+                <Badge
+                  key={category}
+                  variant={selectedCategories.includes(category) ? "default" : "outline"}
+                  className={`cursor-pointer transition-colors ${
+                    selectedCategories.includes(category) 
+                      ? getCategoryColor(category).replace('bg-', 'bg-').replace('text-', 'text-') 
+                      : 'hover:bg-muted'
+                  }`}
+                  onClick={() => toggleFilter('category', category)}
+                >
+                  {category}
+                  {selectedCategories.includes(category) && (
+                    <X className="ml-1 h-3 w-3" />
+                  )}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4 mb-6">
+            {/* Complexity Filters */}
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Complexity:</span>
+              {complexities.map(complexity => (
+                <Badge
+                  key={complexity}
+                  variant={selectedComplexity.includes(complexity) ? "default" : "outline"}
+                  className={`cursor-pointer transition-colors ${
+                    selectedComplexity.includes(complexity) 
+                      ? getComplexityColor(complexity) 
+                      : 'hover:bg-muted'
+                  }`}
+                  onClick={() => toggleFilter('complexity', complexity)}
+                >
+                  {complexity}
+                  {selectedComplexity.includes(complexity) && (
+                    <X className="ml-1 h-3 w-3" />
+                  )}
+                </Badge>
+              ))}
+            </div>
+
+            {/* Pricing Filters */}
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Pricing:</span>
+              {pricingOptions.map(pricing => (
+                <Badge
+                  key={pricing}
+                  variant={selectedPricing.includes(pricing) ? "default" : "outline"}
+                  className={`cursor-pointer transition-colors ${
+                    selectedPricing.includes(pricing) 
+                      ? getPricingColor(pricing) 
+                      : 'hover:bg-muted'
+                  }`}
+                  onClick={() => toggleFilter('pricing', pricing)}
+                >
+                  {pricing}
+                  {selectedPricing.includes(pricing) && (
+                    <X className="ml-1 h-3 w-3" />
+                  )}
+                </Badge>
+              ))}
+            </div>
+
+            {/* Clear Filters Button */}
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearAllFilters}
+                className="ml-auto"
+              >
+                <X className="mr-1 h-4 w-4" />
+                Clear All
+              </Button>
+            )}
+          </div>
+
+          <div className="text-sm text-muted-foreground">
+            Showing {filteredServers.length} of {mcpServers.length} servers and integrations
+          </div>
+        </div>
+      </section>
+
       {/* Servers Grid */}
       <section className="py-12 px-4">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">
-            Available MCP Servers & Integrations ({mcpServers.length})
+            Available MCP Servers & Integrations
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mcpServers.map((server) => {
+            {filteredServers.map((server) => {
               const IconComponent = getServerIcon(server.icon)
               return (
                 <Card key={server.id} className="hover:shadow-lg transition-shadow">
