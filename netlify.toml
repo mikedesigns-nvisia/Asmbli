@@ -1,11 +1,7 @@
 [build]
-  publish = "dist"
-  command = "npm install && npx vite build"
+  publish = "apps/web/out"
+  command = "npm install && npm run build:web"
 
 [build.environment]
   NODE_VERSION = "18"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+  NETLIFY = "true"
