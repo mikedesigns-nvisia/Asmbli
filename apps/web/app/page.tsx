@@ -1,31 +1,82 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Bot, Code, Zap, Users, Server, Figma } from 'lucide-react'
+import { ArrowRight, Bot, Code, Zap, Users, Server, Figma, FileText, Key, Target, Menu, X } from 'lucide-react'
 
 export default function HomePage() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navigation */}
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold italic font-display">
-            Asmbli
-          </Link>
-          <nav className="flex gap-6 items-center">
-            <Link href="/templates" className="hover:underline">
-              Templates
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <Link href="/" className="text-2xl font-bold italic font-display">
+              Asmbli
             </Link>
-            <Link href="/mcp-servers" className="hover:underline">
-              Library
-            </Link>
-            <Link href="/dashboard" className="hover:underline">
-              Dashboard
-            </Link>
-            <Link href="/chat">
-              <Button>View Demo</Button>
-            </Link>
-          </nav>
+            
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex gap-6 items-center">
+              <Link href="/templates" className="hover:underline">
+                Templates
+              </Link>
+              <Link href="/mcp-servers" className="hover:underline">
+                Library
+              </Link>
+              <Link href="/dashboard" className="hover:underline">
+                Dashboard
+              </Link>
+              <Link href="/chat">
+                <Button>View Demo</Button>
+              </Link>
+            </nav>
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+
+          {/* Mobile Navigation */}
+          {isMobileMenuOpen && (
+            <nav className="md:hidden mt-4 pb-4 border-t pt-4">
+              <div className="flex flex-col space-y-4">
+                <Link 
+                  href="/templates" 
+                  className="hover:text-primary transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Templates
+                </Link>
+                <Link 
+                  href="/mcp-servers" 
+                  className="hover:text-primary transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Library
+                </Link>
+                <Link 
+                  href="/dashboard" 
+                  className="hover:text-primary transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link href="/chat" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full">View Demo</Button>
+                </Link>
+              </div>
+            </nav>
+          )}
         </div>
       </header>
 
@@ -97,6 +148,133 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* What You Bring Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-muted/30 to-background">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4 font-display">
+              What You Bring
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Everything you need to get started building your custom AI agent
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Documents */}
+            <Card className="border-2 hover:border-primary/30 transition-colors">
+              <CardHeader>
+                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <FileText className="h-6 w-6 text-blue-500" />
+                </div>
+                <CardTitle className="text-xl font-display">Documents</CardTitle>
+                <CardDescription className="text-base">
+                  Your knowledge base and context materials
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm">Design systems</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm">Requirements docs</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm">Company knowledge</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm">Process documentation</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* API Key */}
+            <Card className="border-2 hover:border-primary/30 transition-colors">
+              <CardHeader>
+                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <Key className="h-6 w-6 text-green-500" />
+                </div>
+                <CardTitle className="text-xl font-display">An API Key</CardTitle>
+                <CardDescription className="text-base">
+                  Your preferred AI provider connection
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <span className="text-sm">Anthropic (Claude)</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <span className="text-sm">OpenAI (GPT)</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <span className="text-sm">Google (Gemini)</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <span className="text-sm">Custom providers</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Use Case */}
+            <Card className="border-2 hover:border-primary/30 transition-colors">
+              <CardHeader>
+                <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <Target className="h-6 w-6 text-purple-500" />
+                </div>
+                <CardTitle className="text-xl font-display">A Use Case</CardTitle>
+                <CardDescription className="text-base">
+                  What do you want/need/feel like doing?
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm">Research & analysis</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm">Code & development</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm">Content creation</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm">Process automation</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="text-center mt-12">
+            <p className="text-muted-foreground mb-6">
+              That's it! Bring these three things and you're ready to build.
+            </p>
+            <Link href="/chat">
+              <Button size="lg" className="font-display">
+                Start Building Your Agent
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
