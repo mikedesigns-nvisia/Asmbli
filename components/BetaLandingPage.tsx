@@ -771,7 +771,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
             </div>
             
             <div className="text-sm text-slate-400">
-              © 2025 Asmbli. All rights reserved.
+              © 2025 Asmbli. All rights reserved. Patent Pending.
             </div>
           </div>
         </div>
