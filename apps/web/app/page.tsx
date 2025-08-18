@@ -23,7 +23,7 @@ export default function HomePage() {
               Dashboard
             </Link>
             <Link href="/chat">
-              <Button>Start Chat</Button>
+              <Button>View Demo</Button>
             </Link>
           </nav>
         </div>
@@ -48,9 +48,14 @@ export default function HomePage() {
             </Link>
             <Link href="/chat">
               <Button size="lg" variant="outline">
-                Quick Start Chat
+                View Demo
               </Button>
             </Link>
+          </div>
+          <div className="mt-6">
+            <p className="text-sm text-muted-foreground italic">
+              Desktop app with agent builder coming soon
+            </p>
           </div>
         </div>
       </section>
@@ -65,20 +70,20 @@ export default function HomePage() {
             <Card>
               <CardHeader>
                 <Bot className="h-10 w-10 mb-2 text-primary" />
-                <CardTitle>Template Library</CardTitle>
+                <CardTitle>Template & Community Library</CardTitle>
                 <CardDescription>
-                  Start with pre-built agent templates for research, writing,
-                  development, and more
+                  Start with pre-built agent templates for research, writing, and development. 
+                  Discover and share configurations with the community - fork and customize to your needs
                 </CardDescription>
               </CardHeader>
             </Card>
             <Card>
               <CardHeader>
                 <Code className="h-10 w-10 mb-2 text-primary" />
-                <CardTitle>MCP Integration</CardTitle>
+                <CardTitle>MCP Integration & Servers</CardTitle>
                 <CardDescription>
-                  Connect to filesystem, Git, GitHub, databases, and custom tools
-                  via Model Context Protocol. MCP Gateway support coming soon
+                  Connect to filesystem, Git, GitHub, databases, and custom tools via Model Context Protocol. 
+                  Browse 10+ ready-to-use MCP servers with seamless integrations
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -89,26 +94,6 @@ export default function HomePage() {
                 <CardDescription>
                   Start chatting with your configured AI agents immediately.
                   No deployment needed - just instant conversation
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            <Card>
-              <CardHeader>
-                <Users className="h-10 w-10 mb-2 text-primary" />
-                <CardTitle>Community Templates</CardTitle>
-                <CardDescription>
-                  Discover and share agent configurations with the community.
-                  Fork and customize to your needs
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            <Card>
-              <CardHeader>
-                <Server className="h-10 w-10 mb-2 text-primary" />
-                <CardTitle>MCP Servers Library</CardTitle>
-                <CardDescription>
-                  Browse 10+ ready-to-use MCP servers: filesystem, Git, GitHub, 
-                  databases, search, memory, and more integrations
                 </CardDescription>
               </CardHeader>
             </Card>

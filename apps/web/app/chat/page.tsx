@@ -195,8 +195,8 @@ function ChatInterface() {
       <main className={`flex-1 flex flex-col mt-16 ${isSidebarOpen ? 'ml-0' : 'ml-0'}`}>
         {/* Chat Header */}
         <header className="border-b p-4">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-center">
+            <div className="text-center">
               <h1 className="text-lg font-semibold">
                 {agents.find(a => a.id === selectedAgent)?.name}
               </h1>
