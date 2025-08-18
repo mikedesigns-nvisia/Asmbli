@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Search, Bot, Star, Users, ArrowRight } from 'lucide-react'
+import { Search, Bot, Layers, ArrowRight } from 'lucide-react'
 
 interface Template {
   id: string
@@ -15,8 +15,7 @@ interface Template {
   description: string
   category: string
   author: string
-  rating: number
-  usageCount: number
+  mcpStack: string[]
   tags: string[]
   isPublic: boolean
 }
@@ -50,8 +49,7 @@ export default function TemplatesPage() {
         description: 'Academic research agent with citation management and fact-checking',
         category: 'Research',
         author: 'Asmbli Team',
-        rating: 4.8,
-        usageCount: 1523,
+        mcpStack: ['filesystem', 'brave-search', 'sqlite', 'fetch'],
         tags: ['academic', 'citations', 'fact-checking'],
         isPublic: true
       },
@@ -61,8 +59,7 @@ export default function TemplatesPage() {
         description: 'Automated code review with best practices and security checks',
         category: 'Development',
         author: 'Asmbli Team',
-        rating: 4.9,
-        usageCount: 2341,
+        mcpStack: ['filesystem', 'git', 'github', 'sqlite'],
         tags: ['code-review', 'security', 'best-practices'],
         isPublic: true
       },
@@ -72,8 +69,7 @@ export default function TemplatesPage() {
         description: 'SEO-optimized content generation with tone customization',
         category: 'Writing',
         author: 'Community',
-        rating: 4.7,
-        usageCount: 987,
+        mcpStack: ['fetch', 'sqlite', 'filesystem'],
         tags: ['seo', 'content', 'marketing'],
         isPublic: true
       },
@@ -83,8 +79,7 @@ export default function TemplatesPage() {
         description: 'Statistical analysis and visualization for business insights',
         category: 'Data Analysis',
         author: 'Asmbli Team',
-        rating: 4.6,
-        usageCount: 654,
+        mcpStack: ['sqlite', 'filesystem', 'fetch', 'postgres'],
         tags: ['statistics', 'visualization', 'insights'],
         isPublic: true
       },
@@ -94,8 +89,7 @@ export default function TemplatesPage() {
         description: 'Intelligent support agent with ticket management integration',
         category: 'Customer Support',
         author: 'Community',
-        rating: 4.5,
-        usageCount: 432,
+        mcpStack: ['sqlite', 'fetch', 'filesystem'],
         tags: ['support', 'tickets', 'automation'],
         isPublic: true
       },
@@ -105,8 +99,7 @@ export default function TemplatesPage() {
         description: 'Campaign planning and performance analysis agent',
         category: 'Marketing',
         author: 'Asmbli Team',
-        rating: 4.7,
-        usageCount: 789,
+        mcpStack: ['fetch', 'sqlite', 'brave-search', 'filesystem'],
         tags: ['campaigns', 'strategy', 'analytics'],
         isPublic: true
       }
@@ -140,7 +133,7 @@ export default function TemplatesPage() {
       {/* Header */}
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold">
+          <Link href="/" className="text-2xl font-bold italic">
             Asmbli
           </Link>
           <nav className="flex gap-6 items-center">
@@ -212,14 +205,13 @@ export default function TemplatesPage() {
                       </Badge>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-current text-yellow-500" />
-                      <span>{template.rating}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      <span>{template.usageCount} uses</span>
+                  <div className="flex items-center justify-end text-sm text-muted-foreground">
+                    <div 
+                      className="flex items-center gap-1 cursor-help" 
+                      title={`MCP Stack: ${template.mcpStack.join(', ')}`}
+                    >
+                      <Layers className="h-4 w-4" />
+                      <span>MCP Stack</span>
                     </div>
                   </div>
                 </CardContent>

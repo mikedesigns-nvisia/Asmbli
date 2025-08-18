@@ -34,21 +34,21 @@ export default function DashboardPage() {
         id: '1',
         name: 'Research Assistant',
         description: 'Academic research with citations',
-        lastUsed: new Date('2024-01-15'),
+        lastUsed: new Date('2025-01-15'),
         messageCount: 45
       },
       {
         id: '2',
         name: 'Code Reviewer',
         description: 'Automated code review and suggestions',
-        lastUsed: new Date('2024-01-14'),
+        lastUsed: new Date('2025-01-14'),
         messageCount: 128
       },
       {
         id: '3',
         name: 'Content Writer',
         description: 'SEO-optimized blog posts',
-        lastUsed: new Date('2024-01-13'),
+        lastUsed: new Date('2025-01-13'),
         messageCount: 67
       }
     ])
@@ -58,13 +58,13 @@ export default function DashboardPage() {
         id: '1',
         agentName: 'Research Assistant',
         lastMessage: 'Found 5 relevant papers on quantum computing',
-        timestamp: new Date('2024-01-15T10:30:00')
+        timestamp: new Date('2025-01-15T10:30:00')
       },
       {
         id: '2',
         agentName: 'Code Reviewer',
         lastMessage: 'Identified 3 potential security issues',
-        timestamp: new Date('2024-01-14T15:45:00')
+        timestamp: new Date('2025-01-14T15:45:00')
       }
     ])
 
