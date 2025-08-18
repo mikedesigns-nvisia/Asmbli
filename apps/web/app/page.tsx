@@ -9,7 +9,7 @@ export default function HomePage() {
       {/* Navigation */}
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold">
+          <Link href="/" className="text-2xl font-bold italic">
             Asmbli
           </Link>
           <nav className="flex gap-6 items-center">
@@ -29,12 +29,12 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-4xl text-center">
-          <h1 className="text-5xl font-bold mb-6">
-            Build AI Agents That Actually Work
+          <h1 className="text-5xl font-bold italic mb-6">
+            Making Agents Easy
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
             Professional-grade AI agent configuration platform. Choose from templates,
-            customize with your tools, and deploy anywhere.
+            customize with your tools, and instantly use in chat.
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/templates">
@@ -75,17 +75,17 @@ export default function HomePage() {
                 <CardTitle>MCP Integration</CardTitle>
                 <CardDescription>
                   Connect to filesystem, Git, GitHub, databases, and custom tools
-                  via Model Context Protocol
+                  via Model Context Protocol. MCP Gateway support coming soon
                 </CardDescription>
               </CardHeader>
             </Card>
             <Card>
               <CardHeader>
                 <Zap className="h-10 w-10 mb-2 text-primary" />
-                <CardTitle>Instant Deployment</CardTitle>
+                <CardTitle>Instant Chat</CardTitle>
                 <CardDescription>
-                  Deploy to Claude Desktop, VS Code, or any MCP-compatible platform
-                  with one click
+                  Start chatting with your configured AI agents immediately.
+                  No deployment needed - just instant conversation
                 </CardDescription>
               </CardHeader>
             </Card>

@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Asmbli - AI Agent Configuration Platform',
-  description: 'Build, test, and deploy AI agents with ease',
+  description: 'Build, configure, and chat with AI agents instantly',
 }
 
 export default function RootLayout({
