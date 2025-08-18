@@ -11,13 +11,12 @@
     "dev": "npm run dev --workspace=apps/web",
     "build": "npm run build --workspaces",
     "build:web": "npm run build --workspace=apps/web",
-    "build:packages": "npm run build --workspaces --workspace=packages/*",
+    "build:packages": "echo 'Skipping package builds for now'",
     "clean": "npm run clean --workspaces",
     "lint": "npm run lint --workspaces",
     "test": "npm run test --workspaces",
     "migrate": "npm run migrate --workspace=packages/database",
-    "migrate:status": "npm run migrate --workspace=packages/database -- status",
-    "postinstall": "npm run build:packages"
+    "migrate:status": "npm run migrate --workspace=packages/database -- status"
   },
   "devDependencies": {
     "@types/node": "^20.5.0",
