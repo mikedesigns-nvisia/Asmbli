@@ -215,7 +215,7 @@ export default function HomePage() {
             </Card>
           </div>
           <div className="text-center mt-8">
-            <Link href="/templates">
+            <Link href="/mcp-servers">
               <Button variant="outline">
                 View All MCP Servers
                 <ArrowRight className="ml-2 h-4 w-4" />
