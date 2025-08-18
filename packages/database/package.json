@@ -1,0 +1,19 @@
+{
+  "name": "@agentengine/database",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "migrate": "node dist/migrate.js"
+  },
+  "dependencies": {
+    "@netlify/neon": "^0.1.0",
+    "@agentengine/shared-types": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.2",
+    "@types/node": "^20.5.0"
+  }
+}
