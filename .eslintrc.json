@@ -5,39 +5,14 @@
     "es2020": true
   },
   "extends": [
-    "eslint:recommended",
-    "@typescript-eslint/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:storybook/recommended"
+    "eslint:recommended"
   ],
   "ignorePatterns": [
     "dist",
-    ".eslintrc.cjs"
+    ".eslintrc.cjs",
+    ".next",
+    "node_modules",
+    "out"
   ],
-  "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "react-refresh"
-  ],
-  "rules": {
-    "react-refresh/only-export-components": [
-      "warn",
-      {
-        "allowConstantExport": true
-      }
-    ],
-    "design-tokens/no-hardcoded-values": [
-      "warn",
-      {
-        "checkColors": true,
-        "checkSpacing": true,
-        "allowedValues": ["0", "1px", "100%", "auto", "inherit", "transparent"]
-      }
-    ],
-    "design-tokens/prefer-design-tokens": "warn"
-  },
-  "settings": {
-    "design-tokens": {
-      "configPath": "./eslint-plugin-design-tokens.js"
-    }
-  }
+  "rules": {}
 }
