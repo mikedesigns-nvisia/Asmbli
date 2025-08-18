@@ -33,11 +33,11 @@ export default function HomePage() {
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h1 className="text-5xl font-bold italic mb-6">
-            Making Agents Easy
+            AI Agents Made Easy
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Professional-grade AI agent configuration platform. Choose from templates,
-            customize with your tools, and instantly use in chat.
+            Build, customize, and deploy your own private AI agents with powerful tools and integrations. 
+            Start with templates or create from scratch - your data and agentic experiences stay secure and under your control.
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/templates">
