@@ -23,7 +23,7 @@ export function Navigation({ showBackButton = false, backHref = '/', backLabel =
               ← {backLabel}
             </Link>
           )}
-          <Link href="/" className="text-2xl font-bold italic">
+          <Link href="/" className="text-2xl font-bold italic font-display">
             Asmbli
           </Link>
         </div>

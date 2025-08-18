@@ -9,7 +9,7 @@ export default function HomePage() {
       {/* Navigation */}
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold italic">
+          <Link href="/" className="text-2xl font-bold italic font-display">
             Asmbli
           </Link>
           <nav className="flex gap-6 items-center">
@@ -32,7 +32,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-4xl text-center">
-          <h1 className="text-5xl font-bold italic mb-6">
+          <h1 className="text-5xl font-bold italic mb-6 font-display">
             AI Agents Made Easy
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
@@ -63,7 +63,7 @@ export default function HomePage() {
       {/* Features Grid */}
       <section className="py-20 px-4 bg-muted/50">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">
+          <h2 className="text-3xl font-bold text-center mb-12 font-display">
             Everything You Need to Build AI Agents
           </h2>
           <div className="grid md:grid-cols-3 gap-6">

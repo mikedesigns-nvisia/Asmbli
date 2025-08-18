@@ -150,7 +150,7 @@ function ChatInterface() {
             >
               <Menu className="h-4 w-4" />
             </Button>
-            <Link href="/" className="text-xl font-bold italic">
+            <Link href="/" className="text-xl font-bold italic font-display">
               Asmbli
             </Link>
           </div>
@@ -283,7 +283,7 @@ function ChatInterface() {
         <header className="border-b p-4">
           <div className="flex items-center justify-center">
             <div className="text-center">
-              <h1 className="text-lg font-semibold flex items-center justify-center gap-2">
+              <h1 className="text-lg font-semibold flex items-center justify-center gap-2 font-display">
                 {currentAgent && selectedAgent === currentAgent.id && (
                   <Sparkles className="h-4 w-4 text-primary" />
                 )}
