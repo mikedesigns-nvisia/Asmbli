@@ -8,8 +8,10 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Bot, Send, Upload, Settings, User, Loader2, Menu, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Bot, Send, Upload, Settings, User, Loader2, Menu, X, ChevronLeft, ChevronRight, Library, Sparkles } from 'lucide-react'
 import { MCPServersDisplay } from '@/components/MCPServersDisplay'
+import { AgentLibraryModal } from '@/components/AgentLibraryModal'
+import { Agent, agentLibrary } from '@/lib/agentLibrary'
 
 interface Message {
   id: string
@@ -18,7 +20,7 @@ interface Message {
   timestamp: Date
 }
 
-interface Agent {
+interface BasicAgent {
   id: string
   name: string
   description: string
@@ -33,7 +35,10 @@ function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedAgent, setSelectedAgent] = useState<string>('default')
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const [agents, setAgents] = useState<Agent[]>([
+  const [showAgentLibrary, setShowAgentLibrary] = useState(false)
+  const [isLoadingAgent, setIsLoadingAgent] = useState(false)
+  const [currentAgent, setCurrentAgent] = useState<Agent | null>(null)
+  const [agents, setAgents] = useState<BasicAgent[]>([
     { id: 'default', name: 'General Assistant', description: 'A helpful AI assistant' },
     { id: 'research', name: 'Research Assistant', description: 'Specialized in research and citations' },
     { id: 'code', name: 'Code Assistant', description: 'Helps with programming tasks' }
@@ -83,6 +88,51 @@ function ChatInterface() {
       e.preventDefault()
       handleSendMessage()
     }
+  }
+
+  const handleLoadAgent = async (agent: Agent) => {
+    setIsLoadingAgent(true)
+    
+    // Simulate loading time
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    // Load the agent
+    setCurrentAgent(agent)
+    setSelectedAgent(agent.id)
+    
+    // Add agent to the agents list if not already there
+    setAgents(prev => {
+      const exists = prev.find(a => a.id === agent.id)
+      if (!exists) {
+        return [...prev, {
+          id: agent.id,
+          name: agent.name,
+          description: agent.description
+        }]
+      }
+      return prev
+    })
+    
+    // Add welcome message from the agent
+    const welcomeMessage: Message = {
+      id: Date.now().toString(),
+      role: 'assistant',
+      content: `Hello! I'm ${agent.name}. ${agent.description}\n\nI'm equipped with the following capabilities:\n${agent.capabilities.map(cap => `• ${cap}`).join('\n')}\n\nHow can I help you today?`,
+      timestamp: new Date()
+    }
+    
+    setMessages([welcomeMessage])
+    setIsLoadingAgent(false)
+  }
+
+  const getCurrentAgentDisplay = () => {
+    if (currentAgent && selectedAgent === currentAgent.id) {
+      return {
+        name: currentAgent.name,
+        description: currentAgent.description
+      }
+    }
+    return agents.find(a => a.id === selectedAgent) || agents[0]
   }
 
   return (
@@ -150,6 +200,41 @@ function ChatInterface() {
               </Select>
             </div>
 
+            {/* Agent Library Button */}
+            <Button 
+              onClick={() => setShowAgentLibrary(true)} 
+              variant="outline" 
+              className="w-full justify-start mb-4"
+            >
+              <Library className="mr-2 h-4 w-4" />
+              Browse Agent Library
+            </Button>
+
+            {/* Current Agent Info */}
+            {currentAgent && selectedAgent === currentAgent.id && (
+              <Card className="mb-4 border-primary/20 bg-primary/5">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <CardTitle className="text-sm">Loaded Agent</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <p className="text-sm font-medium">{currentAgent.name}</p>
+                    <p className="text-xs text-muted-foreground">{currentAgent.category}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {currentAgent.tags.slice(0, 3).map(tag => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* MCP Servers Display */}
             <MCPServersDisplay selectedAgentId={selectedAgent} />
 
@@ -197,11 +282,14 @@ function ChatInterface() {
         <header className="border-b p-4">
           <div className="flex items-center justify-center">
             <div className="text-center">
-              <h1 className="text-lg font-semibold">
-                {agents.find(a => a.id === selectedAgent)?.name}
+              <h1 className="text-lg font-semibold flex items-center justify-center gap-2">
+                {currentAgent && selectedAgent === currentAgent.id && (
+                  <Sparkles className="h-4 w-4 text-primary" />
+                )}
+                {getCurrentAgentDisplay().name}
               </h1>
               <p className="text-sm text-muted-foreground">
-                {agents.find(a => a.id === selectedAgent)?.description}
+                {getCurrentAgentDisplay().description}
               </p>
             </div>
           </div>
@@ -286,6 +374,14 @@ function ChatInterface() {
           </div>
         </div>
       </main>
+
+      {/* Agent Library Modal */}
+      <AgentLibraryModal
+        isOpen={showAgentLibrary}
+        onClose={() => setShowAgentLibrary(false)}
+        onSelectAgent={handleLoadAgent}
+        isLoading={isLoadingAgent}
+      />
     </div>
   )
 }

@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Code, Server, Database, Search, Figma, Github, Globe, FileText, Zap } from 'lucide-react'
+import { getAgentById } from '@/lib/agentLibrary'
 
 interface MCPServer {
   id: string
@@ -86,7 +87,20 @@ interface MCPServersDisplayProps {
 }
 
 export function MCPServersDisplay({ selectedAgentId }: MCPServersDisplayProps) {
-  const selectedAgent = mockAgents.find(agent => agent.id === selectedAgentId)
+  // First try to get from the agent library
+  const libraryAgent = getAgentById(selectedAgentId)
+  let selectedAgent = null
+  
+  if (libraryAgent) {
+    selectedAgent = {
+      id: libraryAgent.id,
+      name: libraryAgent.name,
+      mcpServers: libraryAgent.mcpServers
+    }
+  } else {
+    // Fall back to mock agents
+    selectedAgent = mockAgents.find(agent => agent.id === selectedAgentId)
+  }
   
   if (!selectedAgent) {
     return null
