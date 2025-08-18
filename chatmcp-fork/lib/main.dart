@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart' as wm;
 import './logger.dart';
-import './page/layout/layout.dart';
+import './page/asmbli_main.dart';
 import './provider/provider_manager.dart';
 import 'package:logging/logging.dart';
 import 'utils/platform.dart';
@@ -12,6 +12,7 @@ import 'utils/init.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:chatmcp/generated/app_localizations.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'core/design_system.dart';
 
 final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -82,11 +83,11 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           scaffoldMessengerKey: _scaffoldMessengerKey,
           navigatorKey: navigatorKey,
-          title: 'ChatMcp',
-          theme: ThemeData(useMaterial3: true, brightness: Brightness.light, fontFamily: getPlatformFontFamily()),
-          darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark, fontFamily: getPlatformFontFamily()),
+          title: 'ASMBLI - AI Agent Builder',
+          theme: AsmbliDesignSystem.lightTheme,
+          darkTheme: AsmbliDesignSystem.darkTheme,
           themeMode: _getThemeMode(settings.generalSetting.theme),
-          home: LayoutPage(),
+          home: AsmbliMain(),
           locale: Locale(settings.generalSetting.locale),
           builder: BotToastInit(), //1.调用BotToastInit
           navigatorObservers: [BotToastNavigatorObserver()], //2.注册路由观察者

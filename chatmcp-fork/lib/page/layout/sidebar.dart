@@ -11,6 +11,7 @@ import 'package:chatmcp/components/widgets/base.dart';
 import 'package:chatmcp/page/layout/widgets/app_info.dart';
 import 'package:chatmcp/config/pagination_config.dart';
 import 'package:chatmcp/agent_builder/pages/asmbli_agent_builder.dart';
+import 'package:chatmcp/core/design_system.dart';
 import 'dart:async';
 
 class SidebarPanel extends StatefulWidget {
@@ -73,7 +74,10 @@ class _SidebarPanelState extends State<SidebarPanel> {
                   if (kIsWindows || kIsLinux || kIsMobile || kIsBrowser) ...[
                     Image.asset('assets/logo.png', width: 24, height: 24),
                     const Gap(size: 8),
-                    CText(text: 'ChatMCP', size: 12, fontWeight: FontWeight.w700),
+                    ShaderMask(
+                      shaderCallback: (bounds) => AsmbliDesignSystem.primaryGradient.createShader(bounds),
+                      child: CText(text: 'ASMBLI', size: 14, fontWeight: FontWeight.w700),
+                    ),
                   ],
                   const Spacer(),
                   InkIcon(icon: CupertinoIcons.search, onTap: toggleSearchVisibility, tooltip: AppLocalizations.of(context)!.search),

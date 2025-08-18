@@ -78,6 +78,16 @@ class AgentBuilderService {
     return files;
   }
 
+  /// Load saved agents (simplified interface)
+  static Future<List<AgentConfig>> loadSavedAgents() async {
+    return loadAllAgentConfigs();
+  }
+  
+  /// Save agent (simplified interface)
+  static Future<void> saveAgent(AgentConfig config) async {
+    await saveAgentConfig(config);
+  }
+  
   /// Create a default agent configuration
   static AgentConfig createDefaultConfig() {
     return AgentConfig(

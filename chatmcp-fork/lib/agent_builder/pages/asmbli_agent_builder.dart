@@ -6,7 +6,10 @@ import '../services/extension_service.dart';
 import '../services/agent_builder_service.dart';
 
 class AsmbliAgentBuilder extends StatefulWidget {
-  const AsmbliAgentBuilder({super.key});
+  final Function(dynamic)? onDeploy;
+  final VoidCallback? onBack;
+  
+  const AsmbliAgentBuilder({super.key, this.onDeploy, this.onBack});
 
   @override
   State<AsmbliAgentBuilder> createState() => _AsmbliAgentBuilderState();
