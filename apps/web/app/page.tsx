@@ -312,6 +312,17 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Code className="h-5 w-5 text-blue-700" />
+                  <CardTitle className="text-sm">VSCode</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Code editing, extensions, workspace control
+                </CardDescription>
+              </CardHeader>
+            </Card>
           </div>
           <div className="text-center mt-8">
             <Link href="/mcp-servers">

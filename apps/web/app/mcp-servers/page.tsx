@@ -146,12 +146,24 @@ const mcpServers = [
     icon: 'Figma'
   },
   {
+    id: 'vscode',
+    name: 'VSCode MCP Server',
+    category: 'Development & Code',
+    provider: 'Microsoft',
+    description: 'VSCode integration for code editing, extension management, and workspace control through Model Context Protocol',
+    features: ['Open and edit files in VSCode', 'Extension management and recommendations', 'Workspace and project navigation', 'Code formatting and linting', 'Integrated terminal access', 'Debug configuration', 'Snippet management', 'Settings synchronization', 'Multi-cursor editing commands'],
+    complexity: 'medium',
+    authMethod: 'none',
+    pricing: 'free',
+    icon: 'Code'
+  },
+  {
     id: 'github',
-    name: 'GitHub Integration',
+    name: 'GitHub MCP Server',
     category: 'Development & Code',
     provider: 'GitHub',
-    description: 'Access GitHub repositories for code analysis, pull requests, issues, and collaborative development via API or MCP',
-    features: ['Repository and file access', 'Pull request management', 'Issue tracking and creation', 'Code review and comments', 'Branch and commit operations', 'GitHub Actions integration', 'Design system repository management', 'Component library maintenance', 'MCP server protocol support'],
+    description: 'GitHub integration for repository management, pull requests, and collaborative development through Model Context Protocol',
+    features: ['Repository and file access', 'Pull request management', 'Issue tracking and creation', 'Code review and comments', 'Branch and commit operations', 'GitHub Actions integration', 'Design system repository management', 'Component library maintenance', 'Webhook and event handling'],
     complexity: 'medium',
     authMethod: 'oauth',
     pricing: 'freemium',

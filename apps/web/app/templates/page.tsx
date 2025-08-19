@@ -27,6 +27,7 @@ const categories = [
   'Research',
   'Writing',
   'Development',
+  'Design',
   'Data Analysis',
   'Customer Support',
   'Marketing',
@@ -103,6 +104,16 @@ export default function TemplatesPage() {
         author: 'Asmbli Team',
         mcpStack: ['fetch', 'sqlite', 'brave-search', 'filesystem'],
         tags: ['campaigns', 'strategy', 'analytics'],
+        isPublic: true
+      },
+      {
+        id: '7',
+        name: 'Design Agent',
+        description: 'Comprehensive design assistant with Figma integration, code generation, and GitHub collaboration',
+        category: 'Design',
+        author: 'Asmbli Team',
+        mcpStack: ['figma-mcp', 'vscode', 'github', 'filesystem'],
+        tags: ['design-systems', 'ui-ux', 'figma', 'components', 'collaboration'],
         isPublic: true
       }
     ]
