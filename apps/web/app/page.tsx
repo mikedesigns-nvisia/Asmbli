@@ -3,7 +3,22 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Bot, Code, Zap, Users, Server, Figma, FileText, Key, Target, Shield, CheckCircle } from 'lucide-react'
+import { ArrowRight, Bot, Code, Zap, Users, Server, FileText, Key, Target, Shield, CheckCircle, Database, Search } from 'lucide-react'
+import { 
+  SiGithub, 
+  SiFigma, 
+  SiVisualstudiocode, 
+  SiPostgresql,
+  SiGit,
+  SiBrave,
+  SiMongodb,
+  SiSlack,
+  SiNotion,
+  SiLinear,
+  SiDiscord,
+  SiAirtable,
+  SiGooglesheets
+} from 'react-icons/si'
 import { Navigation } from '@/components/Navigation'
 import { Footer } from '@/components/Footer'
 
@@ -227,7 +242,7 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-blue-500" />
+                  <FileText className="h-5 w-5 text-blue-500" />
                   <CardTitle className="text-sm">Filesystem</CardTitle>
                 </div>
                 <CardDescription className="text-xs">
@@ -238,7 +253,7 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-orange-500" />
+                  <SiGit className="h-5 w-5 text-orange-500" />
                   <CardTitle className="text-sm">Git</CardTitle>
                 </div>
                 <CardDescription className="text-xs">
@@ -249,7 +264,7 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-gray-800" />
+                  <SiGithub className="h-5 w-5 text-gray-800" />
                   <CardTitle className="text-sm">GitHub</CardTitle>
                 </div>
                 <CardDescription className="text-xs">
@@ -260,7 +275,7 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-blue-600" />
+                  <SiPostgresql className="h-5 w-5 text-blue-600" />
                   <CardTitle className="text-sm">PostgreSQL</CardTitle>
                 </div>
                 <CardDescription className="text-xs">
@@ -271,7 +286,7 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-purple-500" />
+                  <Database className="h-5 w-5 text-purple-500" />
                   <CardTitle className="text-sm">Memory</CardTitle>
                 </div>
                 <CardDescription className="text-xs">
@@ -282,7 +297,7 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-orange-600" />
+                  <SiBrave className="h-5 w-5 text-orange-600" />
                   <CardTitle className="text-sm">Brave Search</CardTitle>
                 </div>
                 <CardDescription className="text-xs">
@@ -293,7 +308,7 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-green-500" />
+                  <Server className="h-5 w-5 text-green-500" />
                   <CardTitle className="text-sm">HTTP/Fetch</CardTitle>
                 </div>
                 <CardDescription className="text-xs">
@@ -304,7 +319,7 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Figma className="h-5 w-5 text-purple-600" />
+                  <SiFigma className="h-5 w-5 text-purple-600" />
                   <CardTitle className="text-sm">Figma</CardTitle>
                 </div>
                 <CardDescription className="text-xs">
@@ -315,11 +330,44 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-blue-700" />
+                  <SiVisualstudiocode className="h-5 w-5 text-blue-700" />
                   <CardTitle className="text-sm">VSCode</CardTitle>
                 </div>
                 <CardDescription className="text-xs">
                   Code editing, extensions, workspace control
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <SiSlack className="h-5 w-5 text-purple-700" />
+                  <CardTitle className="text-sm">Slack</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Team communication, channels, message automation
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <SiNotion className="h-5 w-5 text-black" />
+                  <CardTitle className="text-sm">Notion</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Knowledge bases, documents, database operations
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <SiLinear className="h-5 w-5 text-blue-800" />
+                  <CardTitle className="text-sm">Linear</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Issue tracking, project management, team workflows
                 </CardDescription>
               </CardHeader>
             </Card>

@@ -2,7 +2,20 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Code, Server, Database, Search, Figma, Github, Globe, FileText, Zap } from 'lucide-react'
+import { Server, Database, Search, FileText, Code2 } from 'lucide-react'
+import { 
+  SiGithub, 
+  SiFigma, 
+  SiVisualstudiocode, 
+  SiPostgresql,
+  SiGit,
+  SiBrave,
+  SiMongodb,
+  SiSlack,
+  SiNotion,
+  SiLinear,
+  SiDiscord
+} from 'react-icons/si'
 import { getAgentById } from '@/lib/agentLibrary'
 
 interface MCPServer {
@@ -32,42 +45,42 @@ const availableServers: MCPServer[] = [
     name: 'Git',
     description: 'Repository management and version control',
     status: 'connected',
-    icon: Code
+    icon: SiGit as any
   },
   {
     id: 'github',
     name: 'GitHub',
     description: 'Issues, PRs, and repository operations',
     status: 'disconnected',
-    icon: Github
+    icon: SiGithub as any
   },
   {
     id: 'vscode',
     name: 'VSCode',
     description: 'Code editing and workspace control',
     status: 'connected',
-    icon: Zap
+    icon: SiVisualstudiocode as any
   },
   {
     id: 'postgresql',
     name: 'PostgreSQL',
     description: 'Database queries and schema operations',
     status: 'connected',
-    icon: Database
+    icon: SiPostgresql as any
   },
   {
     id: 'search',
-    name: 'Web Search',
+    name: 'Brave Search',
     description: 'Real-time web search capabilities',
     status: 'connected',
-    icon: Search
+    icon: SiBrave as any
   },
   {
     id: 'figma',
     name: 'Figma',
     description: 'Design files and component access',
     status: 'error',
-    icon: Figma
+    icon: SiFigma as any
   }
 ]
 

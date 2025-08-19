@@ -5,7 +5,23 @@ import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Server, Code, Database, Globe, Search, Brain, Calendar, Github, Terminal, Clock, Link as LinkIcon, Figma, HardDrive, Bot, Shield, Mail, MessageSquare, Zap, Users, X } from 'lucide-react'
+import { ArrowLeft, Server, Database, Search, Brain, Calendar, Terminal, Clock, Link as LinkIcon, HardDrive, Bot, Shield, Mail, Zap, Users, X, FileText } from 'lucide-react'
+import { 
+  SiGithub, 
+  SiFigma, 
+  SiVisualstudiocode, 
+  SiPostgresql,
+  SiGit,
+  SiBrave,
+  SiSlack,
+  SiNotion,
+  SiLinear,
+  SiDiscord,
+  SiOpenai,
+  SiAnthropic,
+  SiZapier,
+  SiGmail
+} from 'react-icons/si'
 import { Navigation } from '@/components/Navigation'
 import { Footer } from '@/components/Footer'
 
@@ -34,7 +50,7 @@ const mcpServers = [
     complexity: 'medium',
     authMethod: 'none',
     pricing: 'free',
-    icon: 'Code'
+    icon: 'Git'
   },
   {
     id: 'postgres-mcp',
@@ -46,7 +62,7 @@ const mcpServers = [
     complexity: 'high',
     authMethod: 'database-credentials',
     pricing: 'free',
-    icon: 'Database'
+    icon: 'PostgreSQL'
   },
   {
     id: 'memory-mcp',
@@ -155,7 +171,7 @@ const mcpServers = [
     complexity: 'medium',
     authMethod: 'none',
     pricing: 'free',
-    icon: 'Code'
+    icon: 'VSCode'
   },
   {
     id: 'github',
@@ -179,7 +195,7 @@ const mcpServers = [
     complexity: 'medium',
     authMethod: 'oauth',
     pricing: 'freemium',
-    icon: 'MessageSquare'
+    icon: 'Slack'
   },
   {
     id: 'openai-api',
@@ -191,7 +207,7 @@ const mcpServers = [
     complexity: 'low',
     authMethod: 'api-key',
     pricing: 'paid',
-    icon: 'Brain'
+    icon: 'OpenAI'
   },
   {
     id: 'anthropic-api',
@@ -203,7 +219,7 @@ const mcpServers = [
     complexity: 'low',
     authMethod: 'api-key',
     pricing: 'paid',
-    icon: 'Bot'
+    icon: 'Anthropic'
   },
   {
     id: 'zapier-webhooks',
@@ -245,8 +261,9 @@ const mcpServers = [
 
 const getServerIcon = (iconName: string) => {
   switch (iconName) {
-    case 'HardDrive': return HardDrive
-    case 'Code': return Code
+    case 'HardDrive': return FileText
+    case 'Git': return SiGit as any
+    case 'PostgreSQL': return SiPostgresql as any
     case 'Database': return Database
     case 'Brain': return Brain
     case 'Search': return Search
@@ -254,12 +271,15 @@ const getServerIcon = (iconName: string) => {
     case 'LinkIcon': return LinkIcon
     case 'Calendar': return Calendar
     case 'Clock': return Clock
-    case 'Figma': return Figma
-    case 'Github': return Github
-    case 'MessageSquare': return MessageSquare
+    case 'Figma': return SiFigma as any
+    case 'Github': return SiGithub as any
+    case 'VSCode': return SiVisualstudiocode as any
+    case 'Slack': return SiSlack as any
+    case 'OpenAI': return SiOpenai as any
+    case 'Anthropic': return Bot
     case 'Bot': return Bot
-    case 'Zap': return Zap
-    case 'Mail': return Mail
+    case 'Zap': return SiZapier as any
+    case 'Mail': return SiGmail as any
     case 'Users': return Users
     default: return Server
   }
