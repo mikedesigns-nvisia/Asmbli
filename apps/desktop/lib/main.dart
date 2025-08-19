@@ -6,9 +6,9 @@ import 'package:window_manager/window_manager.dart';
 import 'dart:io';
 
 import 'core/theme/app_theme.dart';
-import 'features/wizard/presentation/screens/wizard_screen.dart';
+import 'features/chat/presentation/screens/chat_screen.dart';
 import 'features/templates/presentation/screens/templates_screen.dart';
-import 'features/agents/presentation/screens/agents_screen.dart';
+import 'features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'features/settings/presentation/screens/settings_screen.dart';
 import 'core/services/storage_service.dart';
 
@@ -24,13 +24,14 @@ void main() async {
     await windowManager.ensureInitialized();
     
     WindowOptions windowOptions = const WindowOptions(
-      size: Size(1200, 800),
-      minimumSize: Size(800, 600),
+      size: Size(1400, 900),
+      minimumSize: Size(1000, 700),
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.normal,
       windowButtonVisibility: true,
+      title: 'Asmbli - AI Agents Made Easy',
     );
     
     windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -41,31 +42,32 @@ void main() async {
 
   runApp(
     ProviderScope(
-      child: AgentEngineDesktopApp(),
+      child: AsmblDesktopApp(),
     ),
   );
 }
 
-class AgentEngineDesktopApp extends StatelessWidget {
-  AgentEngineDesktopApp({super.key});
+class AsmblDesktopApp extends StatelessWidget {
+  AsmblDesktopApp({super.key});
 
   final GoRouter _router = GoRouter(
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
         builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
-        path: '/wizard',
-        builder: (context, state) => const WizardScreen(),
+        path: '/chat',
+        builder: (context, state) => const ChatScreen(),
       ),
       GoRoute(
         path: '/templates',
         builder: (context, state) => const TemplatesScreen(),
       ),
       GoRoute(
-        path: '/agents',
-        builder: (context, state) => const AgentsScreen(),
+        path: '/dashboard',
+        builder: (context, state) => const DashboardScreen(),
       ),
       GoRoute(
         path: '/settings',
@@ -77,7 +79,7 @@ class AgentEngineDesktopApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'AgentEngine Desktop',
+      title: 'Asmbli - AI Agents Made Easy',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
@@ -87,87 +89,443 @@ class AgentEngineDesktopApp extends StatelessWidget {
   }
 }
 
+/// Dashboard-style home screen focused on app functionality
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AgentEngine Desktop'),
-        centerTitle: true,
-        elevation: 0,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFFBF9F5),
+              Color(0xFFFCFAF7),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // App Header
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.5),
+                  border: Border(bottom: BorderSide(color: AppTheme.lightBorder.withOpacity(0.3))),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'Asmbli',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        color: AppTheme.lightForeground,
+                      ),
+                    ),
+                    const Spacer(),
+                    _HeaderButton('Templates', Icons.library_books, () => context.go('/templates')),
+                    const SizedBox(width: 16),
+                    _HeaderButton('Library', Icons.folder, () => context.go('/dashboard')),
+                    const SizedBox(width: 16),
+                    _HeaderButton('Settings', Icons.settings, () => context.go('/settings')),
+                    const SizedBox(width: 24),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.lightPrimary,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: GestureDetector(
+                        onTap: () => context.go('/chat'),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add, size: 16, color: AppTheme.lightPrimaryForeground),
+                            SizedBox(width: 8),
+                            Text(
+                              'New Chat',
+                              style: TextStyle(
+                                color: AppTheme.lightPrimaryForeground,
+                                fontFamily: 'Space Grotesk',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Main Dashboard Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Welcome Section
+                      Text(
+                        'Welcome back!',
+                        style: TextStyle(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.lightForeground,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Manage your AI agents and start new conversations',
+                        style: TextStyle(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 16,
+                          color: AppTheme.lightMutedForeground,
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 32),
+                      
+                      // Quick Actions Row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _QuickActionCard(
+                              icon: Icons.chat_bubble_outline,
+                              title: 'Start New Chat',
+                              description: 'Begin a conversation with your AI agents',
+                              onTap: () => context.go('/chat'),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _QuickActionCard(
+                              icon: Icons.library_add,
+                              title: 'Browse Templates',
+                              description: 'Explore pre-built agent configurations',
+                              onTap: () => context.go('/templates'),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _QuickActionCard(
+                              icon: Icons.build,
+                              title: 'Create Agent',
+                              description: 'Build a custom agent from scratch',
+                              onTap: () => context.go('/dashboard'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      const SizedBox(height: 40),
+                      
+                      // Recent Activity & My Agents sections
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Recent Activity
+                          Expanded(
+                            flex: 2,
+                            child: _DashboardSection(
+                              title: 'Recent Activity',
+                              child: Column(
+                                children: [
+                                  _ActivityItem(
+                                    icon: Icons.chat,
+                                    title: 'Chat with Research Assistant',
+                                    subtitle: '2 minutes ago',
+                                    onTap: () => context.go('/chat'),
+                                  ),
+                                  _ActivityItem(
+                                    icon: Icons.edit,
+                                    title: 'Modified Code Review Agent',
+                                    subtitle: '1 hour ago',
+                                    onTap: () => context.go('/dashboard'),
+                                  ),
+                                  _ActivityItem(
+                                    icon: Icons.download,
+                                    title: 'Installed Notion MCP Server',
+                                    subtitle: 'Yesterday',
+                                    onTap: () => context.go('/settings'),
+                                  ),
+                                  _ActivityItem(
+                                    icon: Icons.library_books,
+                                    title: 'Used Writing Assistant template',
+                                    subtitle: '2 days ago',
+                                    onTap: () => context.go('/templates'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          
+                          const SizedBox(width: 24),
+                          
+                          // My Agents
+                          Expanded(
+                            child: _DashboardSection(
+                              title: 'My Agents',
+                              child: Column(
+                                children: [
+                                  _AgentCard(
+                                    name: 'Research Assistant',
+                                    description: 'Helps with research tasks and analysis',
+                                    isActive: true,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  _AgentCard(
+                                    name: 'Code Reviewer',
+                                    description: 'Reviews code and suggests improvements',
+                                    isActive: false,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  _AgentCard(
+                                    name: 'Writing Assistant',
+                                    description: 'Helps with writing and editing',
+                                    isActive: true,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  GestureDetector(
+                                    onTap: () => context.go('/dashboard'),
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.lightPrimary,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: const Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.add, size: 16, color: AppTheme.lightPrimaryForeground),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'Create New Agent',
+                                            style: TextStyle(
+                                              color: AppTheme.lightPrimaryForeground,
+                                              fontFamily: 'Space Grotesk',
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+    );
+  }
+}
+
+// Header button for app navigation
+class _HeaderButton extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _HeaderButton(this.text, this.icon, this.onTap);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: onTap,
+      icon: Icon(icon, size: 16),
+      label: Text(text),
+      style: TextButton.styleFrom(
+        foregroundColor: AppTheme.lightMutedForeground,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+    );
+  }
+}
+
+// Quick action card for dashboard
+class _QuickActionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final VoidCallback onTap;
+
+  const _QuickActionCard({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hero Section
             Container(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                    Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(16),
+                color: AppTheme.lightPrimary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
               ),
+              child: Icon(
+                icon,
+                size: 24,
+                color: AppTheme.lightPrimary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.lightForeground,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              description,
+              style: const TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 13,
+                color: AppTheme.lightMutedForeground,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Dashboard section container
+class _DashboardSection extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _DashboardSection({
+    required this.title,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.lightForeground,
+            ),
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+// Activity item for recent activity list
+class _ActivityItem extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _ActivityItem({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.lightBorder.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(
+                icon,
+                size: 16,
+                color: AppTheme.lightMutedForeground,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Welcome to AgentEngine Desktop',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'Space Grotesk',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.lightForeground,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 2),
                   Text(
-                    'Professional agent builder with local MCP server integration',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    subtitle,
+                    style: const TextStyle(
+                      fontFamily: 'Space Grotesk',
+                      fontSize: 12,
+                      color: AppTheme.lightMutedForeground,
                     ),
-                  ),
-                ],
-              ),
-            ),
-            
-            const SizedBox(height: 32),
-            
-            // Quick Actions Grid
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.5,
-                children: [
-                  _QuickActionCard(
-                    title: 'Create New Agent',
-                    subtitle: 'Build a custom agent with the wizard',
-                    icon: Icons.add_circle_outline,
-                    onTap: () => context.go('/wizard'),
-                  ),
-                  _QuickActionCard(
-                    title: 'Browse Templates',
-                    subtitle: 'Start with pre-built templates',
-                    icon: Icons.library_books,
-                    onTap: () => context.go('/templates'),
-                  ),
-                  _QuickActionCard(
-                    title: 'My Agents',
-                    subtitle: 'Manage saved agents',
-                    icon: Icons.smart_toy,
-                    onTap: () => context.go('/agents'),
-                  ),
-                  _QuickActionCard(
-                    title: 'Settings',
-                    subtitle: 'Configure MCP servers & preferences',
-                    icon: Icons.settings,
-                    onTap: () => context.go('/settings'),
                   ),
                 ],
               ),
@@ -179,55 +537,70 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _QuickActionCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final VoidCallback onTap;
+// Agent card for my agents section
+class _AgentCard extends StatelessWidget {
+  final String name;
+  final String description;
+  final bool isActive;
 
-  const _QuickActionCard({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.onTap,
+  const _AgentCard({
+    required this.name,
+    required this.description,
+    required this.isActive,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 48,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.lightCard.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isActive 
+            ? AppTheme.lightPrimary.withOpacity(0.3)
+            : AppTheme.lightBorder.withOpacity(0.5),
         ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: isActive ? Colors.green : AppTheme.lightMutedForeground,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontFamily: 'Space Grotesk',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.lightForeground,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontFamily: 'Space Grotesk',
+                    fontSize: 12,
+                    color: AppTheme.lightMutedForeground,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

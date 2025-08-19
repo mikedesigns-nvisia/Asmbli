@@ -26,7 +26,7 @@ class _WizardScreenState extends State<WizardScreen> {
       appBar: AppBar(
         title: const Text('Agent Configuration Wizard'),
         bottom: PreferredSize(
-          preferredSize: const Size.double.infinity, 60,
+          preferredSize: const Size.fromHeight(60),
           child: Container(
             padding: const EdgeInsets.all(16),
             child: Row(
