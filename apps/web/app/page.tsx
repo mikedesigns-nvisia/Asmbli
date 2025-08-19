@@ -3,11 +3,10 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Bot, Code, Zap, Users, Server, FileText, Key, Target, Shield, CheckCircle, Database, Search } from 'lucide-react'
+import { ArrowRight, Bot, Code, Zap, Users, Server, FileText, Key, Target, Shield, CheckCircle, Database, Search, Monitor } from 'lucide-react'
 import { 
   SiGithub, 
   SiFigma, 
-  SiVisualstudiocode, 
   SiPostgresql,
   SiGit,
   SiBrave,
@@ -330,7 +329,7 @@ export default function HomePage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <SiVisualstudiocode className="h-5 w-5 text-blue-700" />
+                  <Monitor className="h-5 w-5 text-blue-700" />
                   <CardTitle className="text-sm">VSCode</CardTitle>
                 </div>
                 <CardDescription className="text-xs">

@@ -5,11 +5,10 @@ import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Server, Database, Search, Brain, Calendar, Terminal, Clock, Link as LinkIcon, HardDrive, Bot, Shield, Mail, Zap, Users, X, FileText } from 'lucide-react'
+import { ArrowLeft, Server, Database, Search, Brain, Calendar, Terminal, Clock, Link as LinkIcon, HardDrive, Bot, Shield, Mail, Zap, Users, X, FileText, Monitor } from 'lucide-react'
 import { 
   SiGithub, 
   SiFigma, 
-  SiVisualstudiocode, 
   SiPostgresql,
   SiGit,
   SiBrave,
@@ -273,7 +272,7 @@ const getServerIcon = (iconName: string) => {
     case 'Clock': return Clock
     case 'Figma': return SiFigma as any
     case 'Github': return SiGithub as any
-    case 'VSCode': return SiVisualstudiocode as any
+    case 'VSCode': return Monitor
     case 'Slack': return SiSlack as any
     case 'OpenAI': return SiOpenai as any
     case 'Anthropic': return Bot

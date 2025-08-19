@@ -2,11 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Server, Database, Search, FileText, Code2 } from 'lucide-react'
+import { Server, Database, Search, FileText, Code2, Code } from 'lucide-react'
 import { 
   SiGithub, 
   SiFigma, 
-  SiVisualstudiocode, 
   SiPostgresql,
   SiGit,
   SiBrave,
@@ -59,7 +58,7 @@ const availableServers: MCPServer[] = [
     name: 'VSCode',
     description: 'Code editing and workspace control',
     status: 'connected',
-    icon: SiVisualstudiocode as any
+    icon: Code
   },
   {
     id: 'postgresql',
