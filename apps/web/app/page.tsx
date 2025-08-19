@@ -54,20 +54,20 @@ export default function HomePage() {
             <Card>
               <CardHeader>
                 <Bot className="h-10 w-10 mb-2 text-primary" />
-                <CardTitle>Template & Community Library</CardTitle>
+                <CardTitle>Templates & Community</CardTitle>
                 <CardDescription>
-                  Start with pre-built agent templates for research, writing, and development. 
-                  Discover and share configurations with the community - fork and customize to your needs
+                  Pre-built agents for research, writing, and development. 
+                  Fork and customize community configurations
                 </CardDescription>
               </CardHeader>
             </Card>
             <Card>
               <CardHeader>
                 <Code className="h-10 w-10 mb-2 text-primary" />
-                <CardTitle>MCP Integration & Servers</CardTitle>
+                <CardTitle>MCP Integrations</CardTitle>
                 <CardDescription>
-                  Connect to filesystem, Git, GitHub, databases, and custom tools via Model Context Protocol. 
-                  Browse 10+ ready-to-use MCP servers with seamless integrations
+                  Connect to Git, databases, and custom tools. 
+                  10+ ready-to-use MCP servers available
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -76,8 +76,8 @@ export default function HomePage() {
                 <Zap className="h-10 w-10 mb-2 text-primary" />
                 <CardTitle>Instant Chat</CardTitle>
                 <CardDescription>
-                  Start chatting with your configured AI agents immediately.
-                  No deployment needed - just instant conversation
+                  Start chatting immediately with your AI agents.
+                  No deployment needed
                 </CardDescription>
               </CardHeader>
             </Card>
