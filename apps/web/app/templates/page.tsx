@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Search, Bot, Layers, ArrowRight } from 'lucide-react'
+import { Navigation } from '@/components/Navigation'
 
 interface Template {
   id: string
@@ -130,25 +131,8 @@ export default function TemplatesPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold italic">
-            Asmbli
-          </Link>
-          <nav className="flex gap-6 items-center">
-            <Link href="/templates" className="font-semibold">
-              Templates
-            </Link>
-            <Link href="/dashboard" className="hover:underline">
-              Dashboard
-            </Link>
-            <Link href="/chat">
-              <Button>Start Chat</Button>
-            </Link>
-          </nav>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Page Content */}
       <main className="container mx-auto px-4 py-8">

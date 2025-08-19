@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Bot, MessageSquare, Key, Activity, Plus, Settings, Trash2, Edit } from 'lucide-react'
+import { Navigation } from '@/components/Navigation'
 
 interface SavedAgent {
   id: string
@@ -77,25 +78,8 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold">
-            Asmbli
-          </Link>
-          <nav className="flex gap-6 items-center">
-            <Link href="/templates" className="hover:underline">
-              Templates
-            </Link>
-            <Link href="/dashboard" className="font-semibold">
-              Dashboard
-            </Link>
-            <Link href="/chat">
-              <Button>Start Chat</Button>
-            </Link>
-          </nav>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Dashboard Content */}
       <main className="container mx-auto px-4 py-8">
