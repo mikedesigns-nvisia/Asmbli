@@ -62,7 +62,7 @@ export default function TemplatesPage() {
         description: 'Automated code review with best practices and security checks',
         category: 'Development',
         author: 'Asmbli Team',
-        mcpStack: ['filesystem', 'git', 'github', 'sqlite'],
+        mcpStack: ['filesystem', 'git', 'github', 'vscode', 'sqlite'],
         tags: ['code-review', 'security', 'best-practices'],
         isPublic: true
       },

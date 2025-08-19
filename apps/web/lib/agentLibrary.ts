@@ -88,6 +88,13 @@ export const agentLibrary: Agent[] = [
         description: 'Version control operations',
         status: 'connected',
         icon: 'Code'
+      },
+      {
+        id: 'vscode',
+        name: 'VSCode',
+        description: 'Code editing and workspace control',
+        status: 'connected',
+        icon: 'Code'
       }
     ],
     systemPrompt: 'You are an expert software developer and code assistant. Help users write clean, efficient code, debug issues, and follow best practices. You have access to GitHub repositories and can perform code analysis, reviews, and provide implementation suggestions.',
@@ -118,6 +125,20 @@ export const agentLibrary: Agent[] = [
         description: 'File operations and asset management',
         status: 'connected',
         icon: 'FileText'
+      },
+      {
+        id: 'vscode',
+        name: 'VSCode',
+        description: 'Code editing and component implementation',
+        status: 'connected',
+        icon: 'Code'
+      },
+      {
+        id: 'github',
+        name: 'GitHub',
+        description: 'Design system repository management',
+        status: 'connected',
+        icon: 'Github'
       }
     ],
     systemPrompt: 'You are a professional UI/UX designer and design assistant. Help users create beautiful, functional designs, analyze design systems, and provide feedback on visual hierarchy, accessibility, and user experience.',

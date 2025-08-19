@@ -42,6 +42,13 @@ const availableServers: MCPServer[] = [
     icon: Github
   },
   {
+    id: 'vscode',
+    name: 'VSCode',
+    description: 'Code editing and workspace control',
+    status: 'connected',
+    icon: Zap
+  },
+  {
     id: 'postgresql',
     name: 'PostgreSQL',
     description: 'Database queries and schema operations',
@@ -73,7 +80,7 @@ const mockAgents: Agent[] = [
   {
     id: 'code',
     name: 'Code Assistant',
-    mcpServers: availableServers.filter(s => ['filesystem', 'git', 'github'].includes(s.id))
+    mcpServers: availableServers.filter(s => ['filesystem', 'git', 'github', 'vscode'].includes(s.id))
   },
   {
     id: 'default',
