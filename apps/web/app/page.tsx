@@ -55,6 +55,25 @@ export default function HomePage() {
               Desktop app with agent builder coming soon
             </p>
           </div>
+          <div className="mt-12">
+            <div className="max-w-6xl mx-auto px-4">
+              <p className="text-sm md:text-base text-muted-foreground text-center mb-6">
+                Desktop app now available - manage agents, templates, and conversations locally
+              </p>
+              <div className="rounded-xl border bg-card p-1 md:p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
+                <img 
+                  src="/flutter-desktop-preview.png" 
+                  alt="Asmbli Desktop App - AI Agent Management Dashboard"
+                  className="w-full rounded-lg hover:scale-[1.02] transition-transform duration-300"
+                />
+              </div>
+              <div className="text-center mt-6">
+                <p className="text-xs md:text-sm text-muted-foreground">
+                  Cross-platform desktop app with full agent management capabilities
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
