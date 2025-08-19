@@ -20,8 +20,8 @@ export default function HomePage() {
             AI Agents Made - Easy
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Build custom workflows with powerful tools and integrations. 
-            Start with templates or create from scratch - your data stays private and under your control.
+            Build, customize, and deploy your own private AI agents with powerful tools and integrations. 
+            Start with templates or create from scratch - your data and agentic experiences stay secure and under your control.
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/templates">
