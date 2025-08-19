@@ -13,6 +13,7 @@ import { Bot, Send, Upload, Settings, User, Loader2, Menu, X, ChevronLeft, Chevr
 import { MCPServersDisplay } from '@/components/MCPServersDisplay'
 import { AgentLibraryModal } from '@/components/AgentLibraryModal'
 import { Agent, agentLibrary } from '@/lib/agentLibrary'
+import { Navigation } from '@/components/Navigation'
 
 interface Message {
   id: string
@@ -137,39 +138,13 @@ function ChatInterface() {
   }
 
   return (
-    <div className="flex h-screen">
+    <>
       {/* Navigation Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="lg:hidden"
-            >
-              <Menu className="h-4 w-4" />
-            </Button>
-            <Link href="/" className="text-xl font-bold italic font-display">
-              Asmbli
-            </Link>
-          </div>
-          <nav className="flex gap-6 items-center">
-            <Link href="/templates" className="hover:underline text-sm">
-              Templates
-            </Link>
-            <Link href="/mcp-servers" className="hover:underline text-sm">
-              Library
-            </Link>
-            <Link href="/dashboard" className="hover:underline text-sm">
-              Dashboard
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      {/* Sidebar */}
-      <aside className={`${isSidebarOpen ? 'w-80' : 'w-0'} transition-all duration-300 overflow-hidden border-r bg-muted/50 mt-16 relative`}>
+      <Navigation />
+      
+      <div className="flex h-[calc(100vh-64px)]">
+        {/* Sidebar */}
+        <aside className={`${isSidebarOpen ? 'w-80' : 'w-0'} transition-all duration-300 overflow-hidden border-r bg-muted/50 relative`}>
         <div className="p-4 h-full flex flex-col">
           {/* Sidebar Toggle */}
           <div className="flex items-center justify-between mb-6">
@@ -277,8 +252,8 @@ function ChatInterface() {
         </Button>
       )}
 
-      {/* Main Chat Area */}
-      <main className={`flex-1 flex flex-col mt-16 ${isSidebarOpen ? 'ml-0' : 'ml-0'}`}>
+        {/* Main Chat Area */}
+        <main className="flex-1 flex flex-col">
         {/* Chat Header */}
         <header className="border-b p-4">
           <div className="flex items-center justify-center">
@@ -375,6 +350,7 @@ function ChatInterface() {
           </div>
         </div>
       </main>
+      </div>
 
       {/* Agent Library Modal */}
       <AgentLibraryModal
@@ -383,7 +359,7 @@ function ChatInterface() {
         onSelectAgent={handleLoadAgent}
         isLoading={isLoadingAgent}
       />
-    </div>
+    </>
   )
 }
 

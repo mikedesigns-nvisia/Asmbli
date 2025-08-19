@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Server, Code, Database, Globe, Search, Brain, Calendar, Github, Terminal, Clock, Link as LinkIcon, Figma, HardDrive, Bot, Shield, Mail, MessageSquare, Zap, Users, X } from 'lucide-react'
+import { Navigation } from '@/components/Navigation'
 
 // Static data from your extensions library - MCP servers and key integrations
 const mcpServers = [
@@ -335,27 +336,7 @@ export default function MCPServersPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navigation */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold italic">
-            Asmbli
-          </Link>
-          <nav className="flex gap-6 items-center">
-            <Link href="/templates" className="hover:underline">
-              Templates
-            </Link>
-            <Link href="/mcp-servers" className="hover:underline font-medium">
-              Library
-            </Link>
-            <Link href="/dashboard" className="hover:underline">
-              Dashboard
-            </Link>
-            <Link href="/chat">
-              <Button>Start Chat</Button>
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <Navigation />
 
       {/* Header Section */}
       <section className="py-12 px-4 bg-muted/50">

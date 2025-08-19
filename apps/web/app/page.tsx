@@ -1,84 +1,16 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Bot, Code, Zap, Users, Server, Figma, FileText, Key, Target, Menu, X } from 'lucide-react'
+import { ArrowRight, Bot, Code, Zap, Users, Server, Figma, FileText, Key, Target } from 'lucide-react'
+import { Navigation } from '@/components/Navigation'
 
 export default function HomePage() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navigation */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold italic font-display">
-              Asmbli
-            </Link>
-            
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex gap-6 items-center">
-              <Link href="/templates" className="hover:underline">
-                Templates
-              </Link>
-              <Link href="/mcp-servers" className="hover:underline">
-                Library
-              </Link>
-              <Link href="/dashboard" className="hover:underline">
-                Dashboard
-              </Link>
-              <Link href="/chat">
-                <Button>View Demo</Button>
-              </Link>
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
-          </div>
-
-          {/* Mobile Navigation */}
-          {isMobileMenuOpen && (
-            <nav className="md:hidden mt-4 pb-4 border-t pt-4">
-              <div className="flex flex-col space-y-4">
-                <Link 
-                  href="/templates" 
-                  className="hover:text-primary transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Templates
-                </Link>
-                <Link 
-                  href="/mcp-servers" 
-                  className="hover:text-primary transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Library
-                </Link>
-                <Link 
-                  href="/dashboard" 
-                  className="hover:text-primary transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Dashboard
-                </Link>
-                <Link href="/chat" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full">View Demo</Button>
-                </Link>
-              </div>
-            </nav>
-          )}
-        </div>
-      </header>
+      <Navigation />
 
       {/* Hero Section */}
       <section className="py-20 px-4">
@@ -271,7 +203,7 @@ export default function HomePage() {
             </p>
             <Link href="/chat">
               <Button size="lg" className="font-display">
-                Start Building Your Agent
+                View Demo
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
