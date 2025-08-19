@@ -745,31 +745,7 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
       {/* Footer */}
       <footer className="py-12 bg-black/40 border-t border-white/10">
         <div className="max-width-container section-spacing-x">
-          <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-2">
-              <span className="font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent italic pl-1 pr-1" style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
-                asmbli
-              </span>
-              <Badge className="bg-primary/20 text-primary-foreground border-primary/30 text-xs">
-                Beta
-              </Badge>
-            </div>
-            
-            <div className="flex items-center space-x-6">
-              <a href="mailto:hello@asmbli.io" className="text-slate-400 hover:text-white transition-colors">
-                <Mail className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors">
-                <Github className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </a>
-            </div>
-            
+          <div className="text-center">
             <div className="text-sm text-slate-400">
               © 2025 Asmbli. All rights reserved. Patent Pending.
             </div>
