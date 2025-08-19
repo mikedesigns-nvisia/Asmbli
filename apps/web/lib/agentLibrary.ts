@@ -60,7 +60,7 @@ export const agentLibrary: Agent[] = [
         icon: 'FileText'
       }
     ],
-    systemPrompt: 'You are a professional research assistant. Your role is to help users conduct thorough research, analyze information from multiple sources, and provide well-cited, accurate summaries. Always verify information from multiple sources and provide proper citations. Use Notion to organize research findings and maintain comprehensive documentation.',"
+    systemPrompt: 'You are a professional research assistant. Your role is to help users conduct thorough research, analyze information from multiple sources, and provide well-cited, accurate summaries. Always verify information from multiple sources and provide proper citations. Use Notion to organize research findings and maintain comprehensive documentation.',
     modelConfig: {
       temperature: 0.3,
       maxTokens: 4096,
@@ -169,7 +169,7 @@ export const agentLibrary: Agent[] = [
         icon: 'MessageSquare'
       }
     ],
-    systemPrompt: 'You are a professional UI/UX designer and design assistant. Help users create beautiful, functional designs, analyze design systems, and provide feedback on visual hierarchy, accessibility, and user experience. Use Notion for design documentation and Slack for team collaboration and feedback collection.',"
+    systemPrompt: 'You are a professional UI/UX designer and design assistant. Help users create beautiful, functional designs, analyze design systems, and provide feedback on visual hierarchy, accessibility, and user experience. Use Notion for design documentation and Slack for team collaboration and feedback collection.',
     modelConfig: {
       temperature: 0.7,
       maxTokens: 4096,
@@ -250,7 +250,7 @@ export const agentLibrary: Agent[] = [
         icon: 'MessageSquare'
       }
     ],
-    systemPrompt: 'You are a professional content creator and copywriter. Help users create engaging content, develop content strategies, write compelling copy, and optimize content for different platforms and audiences. Use Notion for content planning and editorial calendars, and Slack for team collaboration and content approvals.',"
+    systemPrompt: 'You are a professional content creator and copywriter. Help users create engaging content, develop content strategies, write compelling copy, and optimize content for different platforms and audiences. Use Notion for content planning and editorial calendars, and Slack for team collaboration and content approvals.',
     modelConfig: {
       temperature: 0.8,
       maxTokens: 4096,
