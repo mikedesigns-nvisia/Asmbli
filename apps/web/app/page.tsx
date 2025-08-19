@@ -58,7 +58,7 @@ export default function HomePage() {
           <div className="mt-12">
             <div className="max-w-6xl mx-auto px-4">
               <p className="text-sm md:text-base text-muted-foreground text-center mb-6">
-                Desktop app now available - manage agents, templates, and conversations locally
+                Desktop app beta - looking for testers to help improve the experience
               </p>
               <div className="rounded-xl border bg-card p-1 md:p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
                 <img 
