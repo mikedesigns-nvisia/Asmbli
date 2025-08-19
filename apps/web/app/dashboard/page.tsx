@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Bot, MessageSquare, Key, Activity, Plus, Settings, Trash2, Edit } from 'lucide-react'
 import { Navigation } from '@/components/Navigation'
+import { Footer } from '@/components/Footer'
 
 interface SavedAgent {
   id: string
@@ -77,7 +78,7 @@ export default function DashboardPage() {
   }, [])
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       {/* Navigation */}
       <Navigation />
 
@@ -235,6 +236,9 @@ export default function DashboardPage() {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Server, Code, Database, Globe, Search, Brain, Calendar, Github, Terminal, Clock, Link as LinkIcon, Figma, HardDrive, Bot, Shield, Mail, MessageSquare, Zap, Users, X } from 'lucide-react'
 import { Navigation } from '@/components/Navigation'
+import { Footer } from '@/components/Footer'
 
 // Static data from your extensions library - MCP servers and key integrations
 const mcpServers = [
@@ -609,15 +610,7 @@ export default function MCPServersPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t mt-auto">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
-              © 2025 Asmbli. All rights reserved. Patent Pending.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

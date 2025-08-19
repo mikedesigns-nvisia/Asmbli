@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Search, Bot, Layers, ArrowRight } from 'lucide-react'
 import { Navigation } from '@/components/Navigation'
+import { Footer } from '@/components/Footer'
 
 interface Template {
   id: string
@@ -130,7 +131,7 @@ export default function TemplatesPage() {
   }, [searchQuery, selectedCategory, templates])
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       {/* Navigation */}
       <Navigation />
 
@@ -218,6 +219,9 @@ export default function TemplatesPage() {
           </div>
         )}
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

@@ -14,6 +14,7 @@ import { MCPServersDisplay } from '@/components/MCPServersDisplay'
 import { AgentLibraryModal } from '@/components/AgentLibraryModal'
 import { Agent, agentLibrary } from '@/lib/agentLibrary'
 import { Navigation } from '@/components/Navigation'
+import { Footer } from '@/components/Footer'
 
 interface Message {
   id: string
