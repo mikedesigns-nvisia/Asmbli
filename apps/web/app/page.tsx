@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Bot, Code, Zap, Users, Server, Figma, FileText, Key, Target } from 'lucide-react'
+import { ArrowRight, Bot, Code, Zap, Users, Server, Figma, FileText, Key, Target, Shield, CheckCircle } from 'lucide-react'
 import { Navigation } from '@/components/Navigation'
 import { Footer } from '@/components/Footer'
 
@@ -324,22 +324,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold mb-6">
-            Ready to Build Your First Agent?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Join thousands of developers building AI agents with Asmbli.
-            Start with a template or create from scratch.
+      {/* Privacy Section */}
+      <section className="py-20 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-3xl text-center">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Shield className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold font-display">
+              Your Privacy, Protected
+            </h2>
+          </div>
+          <p className="text-lg text-muted-foreground mb-6">
+            We don't store your chats or user data. Your conversations with AI agents remain entirely on your device. 
+            We only collect basic profile registration information needed to provide you access to the platform.
           </p>
-          <Link href="/templates">
-            <Button size="lg">
-              Get Started Free
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <span>No chat history stored</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <span>No user data collection</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <span>Profile info only</span>
+            </div>
+          </div>
         </div>
       </section>
 
