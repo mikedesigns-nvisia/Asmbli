@@ -28,7 +28,7 @@ export default function HomePage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-yellow-50/50 to-background">
+      <section className="py-20 px-4 bg-gradient-to-br from-yellow-50/20 to-background">
         <div className="container mx-auto max-w-4xl text-center">
           <h1 className="text-5xl font-bold italic mb-6 font-display">
             AI Agents Made Easy
@@ -39,13 +39,13 @@ export default function HomePage() {
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/templates">
-              <Button size="lg" className="bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-800 hover:to-amber-900 text-white border-0">
+              <Button size="lg">
                 Browse Templates
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
             <Link href="/chat">
-              <Button size="lg" variant="outline" className="border-amber-700 hover:bg-amber-50 text-amber-900">
+              <Button size="lg" variant="outline">
                 View Demo
               </Button>
             </Link>
@@ -78,7 +78,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-4 bg-yellow-50/30">
+      <section className="py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 font-display">
             Everything You Need to Build AI Agents
@@ -119,7 +119,7 @@ export default function HomePage() {
       </section>
 
       {/* What You Bring Section */}
-      <section className="py-20 px-4 bg-yellow-50/20">
+      <section className="py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 font-display">
@@ -132,9 +132,9 @@ export default function HomePage() {
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Documents */}
-            <Card className="border-2 hover:border-yellow-400/30 transition-colors bg-yellow-50/30">
+            <Card className="border-2 hover:border-yellow-400/20 transition-colors bg-yellow-50/10">
               <CardHeader>
-                <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-4">
                   <FileText className="h-6 w-6 text-yellow-600" />
                 </div>
                 <CardTitle className="text-xl font-display">Documents</CardTitle>
@@ -165,9 +165,9 @@ export default function HomePage() {
             </Card>
 
             {/* API Key */}
-            <Card className="border-2 hover:border-yellow-400/30 transition-colors bg-yellow-50/30">
+            <Card className="border-2 hover:border-yellow-400/20 transition-colors bg-yellow-50/10">
               <CardHeader>
-                <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-4">
                   <Key className="h-6 w-6 text-yellow-600" />
                 </div>
                 <CardTitle className="text-xl font-display">An API Key</CardTitle>
@@ -198,7 +198,7 @@ export default function HomePage() {
             </Card>
 
             {/* Use Case */}
-            <Card className="border-2 hover:border-yellow-400/30 transition-colors bg-yellow-50/30">
+            <Card className="border-2 hover:border-yellow-400/20 transition-colors bg-yellow-50/10">
               <CardHeader>
                 <div className="w-12 h-12 bg-yellow-600/20 rounded-xl flex items-center justify-center mb-4">
                   <Target className="h-6 w-6 text-yellow-700" />
@@ -236,7 +236,7 @@ export default function HomePage() {
               That's it! Bring these three things and you're ready to build.
             </p>
             <Link href="/chat">
-              <Button size="lg" className="font-display bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-800 hover:to-amber-900 text-white border-0">
+              <Button size="lg" className="font-display">
                 View Demo
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -246,7 +246,7 @@ export default function HomePage() {
       </section>
 
       {/* What's an API Key Section */}
-      <section className="py-20 px-4 bg-yellow-50/20">
+      <section className="py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 font-display">
@@ -259,10 +259,10 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {/* What is an API Key */}
-            <Card className="border-2 border-yellow-300/30 bg-yellow-50/20">
+            <Card className="border-2 border-yellow-300/20 bg-yellow-50/10">
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
                     <Key className="h-5 w-5 text-yellow-600" />
                   </div>
                   <CardTitle>What is an API Key?</CardTitle>
@@ -294,10 +294,10 @@ export default function HomePage() {
             </Card>
 
             {/* Why It's Important */}
-            <Card className="border-2 border-yellow-300/30 bg-yellow-50/20">
+            <Card className="border-2 border-yellow-300/20 bg-yellow-50/10">
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
                     <Shield className="h-5 w-5 text-yellow-600" />
                   </div>
                   <CardTitle>Why It's Important</CardTitle>
@@ -386,7 +386,7 @@ export default function HomePage() {
                   </ul>
                 </div>
 
-                <div className="mt-6 p-4 bg-yellow-200/30 rounded-lg border border-yellow-300/30">
+                <div className="mt-6 p-4 bg-yellow-200/20 rounded-lg border border-yellow-300/20">
                   <p className="text-sm flex items-start gap-2">
                     <Shield className="h-4 w-4 text-yellow-700 mt-0.5 flex-shrink-0" />
                     <span>
@@ -405,19 +405,19 @@ export default function HomePage() {
             </p>
             <div className="flex gap-4 justify-center">
               <Link href="https://console.anthropic.com/api" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="border-amber-700 hover:bg-amber-50 text-amber-900">
+                <Button variant="outline" size="sm">
                   Get Anthropic API Key
                   <ExternalLink className="ml-2 h-3 w-3" />
                 </Button>
               </Link>
               <Link href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="border-amber-700 hover:bg-amber-50 text-amber-900">
+                <Button variant="outline" size="sm">
                   Get OpenAI API Key
                   <ExternalLink className="ml-2 h-3 w-3" />
                 </Button>
               </Link>
               <Link href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="border-amber-700 hover:bg-amber-50 text-amber-900">
+                <Button variant="outline" size="sm">
                   Get Google API Key
                   <ExternalLink className="ml-2 h-3 w-3" />
                 </Button>
@@ -428,7 +428,7 @@ export default function HomePage() {
       </section>
 
       {/* MCP Servers Library Section */}
-      <section className="py-20 px-4 bg-yellow-50/20">
+      <section className="py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">
@@ -439,7 +439,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-blue-500" />
@@ -450,7 +450,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiGit className="h-5 w-5 text-orange-500" />
@@ -461,7 +461,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiGithub className="h-5 w-5 text-gray-800" />
@@ -472,7 +472,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiPostgresql className="h-5 w-5 text-blue-600" />
@@ -483,7 +483,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <Database className="h-5 w-5 text-purple-500" />
@@ -494,7 +494,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiBrave className="h-5 w-5 text-orange-600" />
@@ -505,7 +505,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <Server className="h-5 w-5 text-green-500" />
@@ -516,7 +516,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiFigma className="h-5 w-5 text-purple-600" />
@@ -527,7 +527,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <Monitor className="h-5 w-5 text-blue-700" />
@@ -538,7 +538,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiSlack className="h-5 w-5 text-purple-700" />
@@ -549,7 +549,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiNotion className="h-5 w-5 text-black" />
@@ -560,7 +560,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/20 border-yellow-200/30">
+            <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiLinear className="h-5 w-5 text-blue-800" />
@@ -574,7 +574,7 @@ export default function HomePage() {
           </div>
           <div className="text-center mt-8">
             <Link href="/mcp-servers">
-              <Button variant="outline" className="border-amber-700 hover:bg-amber-50 text-amber-900">
+              <Button variant="outline">
                 View All MCP Servers
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -584,7 +584,7 @@ export default function HomePage() {
       </section>
 
       {/* Privacy Section */}
-      <section className="py-20 px-4 bg-yellow-50/20">
+      <section className="py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto max-w-3xl text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Shield className="h-6 w-6 text-yellow-600" />
