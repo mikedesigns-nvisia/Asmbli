@@ -30,7 +30,8 @@
       "Bash(grep:*)",
       "Bash(\"C:\\Users\\Mike\\dev\\flutter\\bin\\flutter.bat\" pub get)",
       "Bash(start ms-settings:developers)",
-      "Bash(where flutter)"
+      "Bash(where flutter)",
+      "Bash(flutter analyze:*)"
     ],
     "deny": [],
     "ask": [],

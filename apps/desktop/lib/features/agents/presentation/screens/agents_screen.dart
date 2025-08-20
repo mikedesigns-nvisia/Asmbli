@@ -86,26 +86,39 @@ class _StatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              size: 32,
-              color: Theme.of(context).colorScheme.primary,
+    final theme = Theme.of(context);
+    
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        hoverColor: theme.colorScheme.primary.withOpacity(0.04),
+        splashColor: theme.colorScheme.primary.withOpacity(0.12),
+        onTap: () {
+          // Add stats card interaction if needed
+        },
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Icon(
+                  icon,
+                  size: 32,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  value,
+                  style: theme.textTheme.headlineSmall,
+                ),
+                Text(
+                  title,
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -127,79 +140,89 @@ class _AgentListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          child: Icon(
-            Icons.smart_toy,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-        ),
-        title: Text(name),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(description),
-            const SizedBox(height: 4),
-            Row(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          hoverColor: theme.colorScheme.primary.withOpacity(0.04),
+          splashColor: theme.colorScheme.primary.withOpacity(0.12),
+          onTap: () {
+            // Open agent details/chat
+          },
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: theme.colorScheme.primaryContainer,
+              child: Icon(
+                Icons.smart_toy,
+                color: theme.colorScheme.onPrimaryContainer,
+              ),
+            ),
+            title: Text(name),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Last used: ${_formatDate(lastUsed)}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  '$messageCount messages',
-                  style: Theme.of(context).textTheme.bodySmall,
+                Text(description),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(
+                      'Last used: ${_formatDate(lastUsed)}',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      '$messageCount messages',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+            trailing: PopupMenuButton(
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'edit',
+                  child: ListTile(
+                    leading: Icon(Icons.edit),
+                    title: Text('Edit'),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'duplicate',
+                  child: ListTile(
+                    leading: Icon(Icons.copy),
+                    title: Text('Duplicate'),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'export',
+                  child: ListTile(
+                    leading: Icon(Icons.file_download),
+                    title: Text('Export'),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: ListTile(
+                    leading: Icon(Icons.delete, color: Colors.red),
+                    title: Text('Delete', style: TextStyle(color: Colors.red)),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+              onSelected: (value) {
+                // Handle menu actions
+              },
+            ),
+          ),
         ),
-        trailing: PopupMenuButton(
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'edit',
-              child: ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit'),
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'duplicate',
-              child: ListTile(
-                leading: Icon(Icons.copy),
-                title: Text('Duplicate'),
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'export',
-              child: ListTile(
-                leading: Icon(Icons.file_download),
-                title: Text('Export'),
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'delete',
-              child: ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
-                title: Text('Delete', style: TextStyle(color: Colors.red)),
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-          ],
-          onSelected: (value) {
-            // Handle menu actions
-          },
-        ),
-        onTap: () {
-          // Open agent details/chat
-        },
       ),
     );
   }

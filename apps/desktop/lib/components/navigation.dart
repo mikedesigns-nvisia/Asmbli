@@ -47,15 +47,24 @@ class AsmblNavigation extends StatelessWidget implements PreferredSizeWidget {
           ],
           
           // Brand logo
-          GestureDetector(
-            onTap: () => context.go('/'),
-            child: Text(
-              'Asmbli',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
-                fontFamily: 'Space Grotesk',
-                color: theme.colorScheme.onSurface,
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => context.go('/'),
+              borderRadius: BorderRadius.circular(4),
+              hoverColor: theme.colorScheme.primary.withOpacity(0.08),
+              splashColor: theme.colorScheme.primary.withOpacity(0.16),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                child: Text(
+                  'Asmbli',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontFamily: 'Space Grotesk',
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
               ),
             ),
           ),
@@ -125,28 +134,34 @@ class _NavLink extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: isActive 
-                  ? theme.colorScheme.primary 
-                  : Colors.transparent,
-              width: 2,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(4),
+        hoverColor: theme.colorScheme.primary.withOpacity(0.08),
+        splashColor: theme.colorScheme.primary.withOpacity(0.16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: isActive 
+                    ? theme.colorScheme.primary 
+                    : Colors.transparent,
+                width: 2,
+              ),
             ),
           ),
-        ),
-        child: Text(
-          text,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontFamily: 'Space Grotesk',
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-            color: isActive 
-                ? theme.colorScheme.onSurface
-                : theme.colorScheme.onSurface.withOpacity(0.7),
+          child: Text(
+            text,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontFamily: 'Space Grotesk',
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+              color: isActive 
+                  ? theme.colorScheme.onSurface
+                  : theme.colorScheme.onSurface.withOpacity(0.7),
+            ),
           ),
         ),
       ),

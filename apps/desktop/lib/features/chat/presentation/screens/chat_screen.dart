@@ -72,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     const SizedBox(width: 16),
                     _HeaderButton('Library', Icons.folder, () => context.go('/dashboard')),
                     const SizedBox(width: 16),
-                    _HeaderButton('Dashboard', Icons.dashboard, () => context.go('/dashboard')),
+                    _HeaderButton('Settings', Icons.settings, () => context.go('/settings')),
                   ],
                 ),
               ),
@@ -503,7 +503,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Space Grotesk',
                         color: AppTheme.lightForeground,
                       ),
@@ -529,7 +529,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             height: 16,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation(AppTheme.lightPrimaryForeground),
+                              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.lightPrimaryForeground),
                             ),
                           )
                         : const Icon(Icons.send, size: 18),
@@ -781,7 +781,7 @@ class _HeaderButton extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppTheme.lightPrimaryForeground,
                 fontFamily: 'Space Grotesk',
                 fontWeight: FontWeight.w500,

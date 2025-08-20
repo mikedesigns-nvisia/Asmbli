@@ -122,7 +122,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(width: 16),
                     _HeaderButton('Library', Icons.folder, () {}, isActive: true),
                     const SizedBox(width: 16),
-                    _HeaderButton('Dashboard', Icons.dashboard, () {}),
+                    _HeaderButton('Settings', Icons.settings, () => context.go('/settings')),
                     const SizedBox(width: 24),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

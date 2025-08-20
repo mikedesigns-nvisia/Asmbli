@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:window_manager/window_manager.dart';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
 
 import 'core/theme/app_theme.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
@@ -19,25 +20,32 @@ void main() async {
   await Hive.initFlutter();
   await StorageService.init();
 
-  // Initialize window manager for desktop
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    await windowManager.ensureInitialized();
-    
-    WindowOptions windowOptions = const WindowOptions(
-      size: Size(1400, 900),
-      minimumSize: Size(1000, 700),
-      center: true,
-      backgroundColor: Colors.transparent,
-      skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.normal,
-      windowButtonVisibility: true,
-      title: 'Asmbli - AI Agents Made Easy',
-    );
-    
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.show();
-      await windowManager.focus();
-    });
+  // Initialize window manager for desktop (not web)
+  if (!kIsWeb) {
+    try {
+      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        await windowManager.ensureInitialized();
+        
+        WindowOptions windowOptions = const WindowOptions(
+          size: Size(1400, 900),
+          minimumSize: Size(1000, 700),
+          center: true,
+          backgroundColor: Colors.transparent,
+          skipTaskbar: false,
+          titleBarStyle: TitleBarStyle.normal,
+          windowButtonVisibility: true,
+          title: 'Asmbli - AI Agents Made Easy',
+        );
+        
+        windowManager.waitUntilReadyToShow(windowOptions, () async {
+          await windowManager.show();
+          await windowManager.focus();
+        });
+      }
+    } catch (e) {
+      // Ignore platform errors in web environment
+      print('Window manager initialization skipped: $e');
+    }
   }
 
   runApp(
@@ -72,6 +80,18 @@ class AsmblDesktopApp extends StatelessWidget {
       GoRoute(
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/agents',
+        builder: (context, state) => const DashboardScreen(), // redirect to dashboard for now
+      ),
+      GoRoute(
+        path: '/wizard',
+        builder: (context, state) => const TemplatesScreen(), // redirect to templates for now
+      ),
+      GoRoute(
+        path: '/library',
+        builder: (context, state) => const DashboardScreen(), // redirect to dashboard for now
       ),
     ],
   );
@@ -380,51 +400,57 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppTheme.lightPrimary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        hoverColor: AppTheme.lightPrimary.withOpacity(0.04),
+        splashColor: AppTheme.lightPrimary.withOpacity(0.12),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.lightPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  size: 24,
+                  color: AppTheme.lightPrimary,
+                ),
               ),
-              child: Icon(
-                icon,
-                size: 24,
-                color: AppTheme.lightPrimary,
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'Space Grotesk',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.lightForeground,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: const TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.lightForeground,
+              const SizedBox(height: 6),
+              Text(
+                description,
+                style: const TextStyle(
+                  fontFamily: 'Space Grotesk',
+                  fontSize: 13,
+                  color: AppTheme.lightMutedForeground,
+                  height: 1.4,
+                ),
               ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              description,
-              style: const TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 13,
-                color: AppTheme.lightMutedForeground,
-                height: 1.4,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -486,51 +512,57 @@ class _ActivityItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppTheme.lightBorder.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(6),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        hoverColor: AppTheme.lightPrimary.withOpacity(0.04),
+        splashColor: AppTheme.lightPrimary.withOpacity(0.12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.lightBorder.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(
+                  icon,
+                  size: 16,
+                  color: AppTheme.lightMutedForeground,
+                ),
               ),
-              child: Icon(
-                icon,
-                size: 16,
-                color: AppTheme.lightMutedForeground,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppTheme.lightForeground,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.lightForeground,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontSize: 12,
-                      color: AppTheme.lightMutedForeground,
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 12,
+                        color: AppTheme.lightMutedForeground,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
