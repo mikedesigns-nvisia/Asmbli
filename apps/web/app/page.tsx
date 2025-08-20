@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Bot, Code, Zap, Users, Server, FileText, Key, Target, Shield, CheckCircle, Database, Search, Monitor } from 'lucide-react'
+import { ArrowRight, Bot, Code, Zap, Users, Server, FileText, Key, Target, Shield, CheckCircle, Database, Search, Monitor, ExternalLink, Lock } from 'lucide-react'
 import { 
   SiGithub, 
   SiFigma, 
@@ -241,6 +241,188 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* What's an API Key Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-primary/5 to-background">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4 font-display">
+              What's an API Key and Why It's Important
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              An API key is your secure access credential that lets you use AI services while maintaining control over your data
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* What is an API Key */}
+            <Card className="border-2">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Key className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle>What is an API Key?</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground">
+                  Think of an API key as a secure password that identifies you to an AI service. It's like having your own personal access card that:
+                </p>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span className="text-sm">Authenticates your requests to the AI provider</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span className="text-sm">Tracks your usage for billing purposes</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span className="text-sm">Ensures your conversations remain private to your account</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span className="text-sm">Allows you to set usage limits and control costs</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Why It's Important */}
+            <Card className="border-2">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
+                    <Shield className="h-5 w-5 text-green-500" />
+                  </div>
+                  <CardTitle>Why It's Important</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground">
+                  Using your own API key with Asmbli provides crucial benefits:
+                </p>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span className="text-sm"><strong>Direct relationship</strong> with the AI provider</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span className="text-sm"><strong>No middleman</strong> storing or processing your data</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span className="text-sm"><strong>Full control</strong> over usage limits and costs</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span className="text-sm"><strong>Provider-level security</strong> and data policies apply directly</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Provider Data Safety Policies */}
+          <Card className="border-2 border-primary/20 bg-primary/5">
+            <CardHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Lock className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle>Provider Data Safety Policies</CardTitle>
+              </div>
+              <CardDescription className="text-base">
+                Major AI providers have strong data protection commitments when you use their API keys
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Anthropic */}
+                <div className="space-y-2">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    Anthropic (Claude)
+                  </h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground ml-4">
+                    <li>• API inputs/outputs are <strong>NOT used</strong> for training models</li>
+                    <li>• Data is <strong>automatically deleted</strong> within 30 days unless legally required</li>
+                    <li>• <strong>Zero data retention</strong> option available for enterprise customers</li>
+                    <li>• SOC 2 Type II certified with strict security controls</li>
+                  </ul>
+                </div>
+
+                {/* OpenAI */}
+                <div className="space-y-2">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    OpenAI (GPT)
+                  </h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground ml-4">
+                    <li>• API data is <strong>NOT used</strong> for training by default</li>
+                    <li>• 30-day data retention for abuse monitoring (can opt-out)</li>
+                    <li>• Enterprise agreements available with custom retention</li>
+                    <li>• SOC 2 compliant with regular security audits</li>
+                  </ul>
+                </div>
+
+                {/* Google */}
+                <div className="space-y-2">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    Google (Gemini)
+                  </h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground ml-4">
+                    <li>• API data <strong>NOT used</strong> for model improvement</li>
+                    <li>• Customizable data retention policies</li>
+                    <li>• Cloud-level encryption and security standards</li>
+                    <li>• ISO 27001, SOC 1/2/3 certified infrastructure</li>
+                  </ul>
+                </div>
+
+                <div className="mt-6 p-4 bg-primary/10 rounded-lg">
+                  <p className="text-sm flex items-start gap-2">
+                    <Shield className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>
+                      <strong>Key Point:</strong> When you use your own API key with Asmbli, your data goes directly to your chosen provider. 
+                      We never see, store, or process your conversations - ensuring maximum privacy and compliance with your provider's security policies.
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="text-center mt-8">
+            <p className="text-muted-foreground mb-6">
+              Ready to get started with your own API key?
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Link href="https://console.anthropic.com/api" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm">
+                  Get Anthropic API Key
+                  <ExternalLink className="ml-2 h-3 w-3" />
+                </Button>
+              </Link>
+              <Link href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm">
+                  Get OpenAI API Key
+                  <ExternalLink className="ml-2 h-3 w-3" />
+                </Button>
+              </Link>
+              <Link href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm">
+                  Get Google API Key
+                  <ExternalLink className="ml-2 h-3 w-3" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
