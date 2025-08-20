@@ -28,9 +28,9 @@ export default function HomePage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
+      <section className="py-20 px-4 bg-gradient-to-br from-yellow-50 via-yellow-100/50 to-amber-50">
         <div className="container mx-auto max-w-4xl text-center">
-          <h1 className="text-5xl font-bold italic mb-6 font-display">
+          <h1 className="text-5xl font-bold italic mb-6 font-display bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">
             AI Agents Made Easy
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
@@ -39,13 +39,13 @@ export default function HomePage() {
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/templates">
-              <Button size="lg">
+              <Button size="lg" className="bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white border-0">
                 Browse Templates
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
             <Link href="/chat">
-              <Button size="lg" variant="outline">
+              <Button size="lg" variant="outline" className="border-yellow-400 hover:bg-yellow-50">
                 View Demo
               </Button>
             </Link>
@@ -78,7 +78,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-4 bg-muted/50">
+      <section className="py-20 px-4 bg-gradient-to-br from-yellow-100/30 via-amber-50/20 to-yellow-50/30">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 font-display">
             Everything You Need to Build AI Agents
@@ -86,7 +86,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
-                <Bot className="h-10 w-10 mb-2 text-primary" />
+                <Bot className="h-10 w-10 mb-2 text-yellow-600" />
                 <CardTitle>Templates & Community</CardTitle>
                 <CardDescription>
                   Pre-built agents for research, writing, and development. 
@@ -96,7 +96,7 @@ export default function HomePage() {
             </Card>
             <Card>
               <CardHeader>
-                <Code className="h-10 w-10 mb-2 text-primary" />
+                <Code className="h-10 w-10 mb-2 text-amber-600" />
                 <CardTitle>MCP Integrations</CardTitle>
                 <CardDescription>
                   Connect to Git, databases, and custom tools. 
@@ -106,7 +106,7 @@ export default function HomePage() {
             </Card>
             <Card>
               <CardHeader>
-                <Zap className="h-10 w-10 mb-2 text-primary" />
+                <Zap className="h-10 w-10 mb-2 text-yellow-500" />
                 <CardTitle>Instant Chat</CardTitle>
                 <CardDescription>
                   Start chatting immediately with your AI agents.
@@ -119,7 +119,7 @@ export default function HomePage() {
       </section>
 
       {/* What You Bring Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-muted/30 to-background">
+      <section className="py-20 px-4 bg-gradient-to-br from-yellow-50 via-amber-50/50 to-yellow-100/20">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 font-display">
@@ -132,10 +132,10 @@ export default function HomePage() {
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Documents */}
-            <Card className="border-2 hover:border-primary/30 transition-colors">
+            <Card className="border-2 hover:border-yellow-400/50 transition-colors bg-yellow-50/50">
               <CardHeader>
-                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4">
-                  <FileText className="h-6 w-6 text-blue-500" />
+                <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-4">
+                  <FileText className="h-6 w-6 text-yellow-600" />
                 </div>
                 <CardTitle className="text-xl font-display">Documents</CardTitle>
                 <CardDescription className="text-base">
@@ -145,19 +145,19 @@ export default function HomePage() {
               <CardContent>
                 <ul className="space-y-3">
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
                     <span className="text-sm">Design systems</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
                     <span className="text-sm">Requirements docs</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
                     <span className="text-sm">Company knowledge</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
                     <span className="text-sm">Process documentation</span>
                   </li>
                 </ul>
@@ -165,10 +165,10 @@ export default function HomePage() {
             </Card>
 
             {/* API Key */}
-            <Card className="border-2 hover:border-primary/30 transition-colors">
+            <Card className="border-2 hover:border-yellow-400/50 transition-colors bg-yellow-50/50">
               <CardHeader>
-                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center mb-4">
-                  <Key className="h-6 w-6 text-green-500" />
+                <div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center mb-4">
+                  <Key className="h-6 w-6 text-amber-600" />
                 </div>
                 <CardTitle className="text-xl font-display">An API Key</CardTitle>
                 <CardDescription className="text-base">
@@ -178,19 +178,19 @@ export default function HomePage() {
               <CardContent>
                 <ul className="space-y-3">
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
                     <span className="text-sm">Anthropic (Claude)</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
                     <span className="text-sm">OpenAI (GPT)</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
                     <span className="text-sm">Google (Gemini)</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
                     <span className="text-sm">Custom providers</span>
                   </li>
                 </ul>
@@ -198,10 +198,10 @@ export default function HomePage() {
             </Card>
 
             {/* Use Case */}
-            <Card className="border-2 hover:border-primary/30 transition-colors">
+            <Card className="border-2 hover:border-yellow-400/50 transition-colors bg-yellow-50/50">
               <CardHeader>
-                <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4">
-                  <Target className="h-6 w-6 text-purple-500" />
+                <div className="w-12 h-12 bg-yellow-600/20 rounded-xl flex items-center justify-center mb-4">
+                  <Target className="h-6 w-6 text-yellow-700" />
                 </div>
                 <CardTitle className="text-xl font-display">A Use Case</CardTitle>
                 <CardDescription className="text-base">
@@ -211,19 +211,19 @@ export default function HomePage() {
               <CardContent>
                 <ul className="space-y-3">
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full"></div>
                     <span className="text-sm">Research & analysis</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full"></div>
                     <span className="text-sm">Code & development</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full"></div>
                     <span className="text-sm">Content creation</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full"></div>
                     <span className="text-sm">Process automation</span>
                   </li>
                 </ul>
@@ -236,7 +236,7 @@ export default function HomePage() {
               That's it! Bring these three things and you're ready to build.
             </p>
             <Link href="/chat">
-              <Button size="lg" className="font-display">
+              <Button size="lg" className="font-display bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white border-0">
                 View Demo
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -246,7 +246,7 @@ export default function HomePage() {
       </section>
 
       {/* What's an API Key Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-primary/5 to-background">
+      <section className="py-20 px-4 bg-gradient-to-br from-yellow-100/40 via-amber-50/30 to-yellow-50">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 font-display">
@@ -259,11 +259,11 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {/* What is an API Key */}
-            <Card className="border-2">
+            <Card className="border-2 border-yellow-300/50 bg-gradient-to-br from-yellow-50 to-amber-50/50">
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <Key className="h-5 w-5 text-primary" />
+                  <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                    <Key className="h-5 w-5 text-yellow-600" />
                   </div>
                   <CardTitle>What is an API Key?</CardTitle>
                 </div>
@@ -274,19 +274,19 @@ export default function HomePage() {
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
                     <span className="text-sm">Authenticates your requests to the AI provider</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
                     <span className="text-sm">Tracks your usage for billing purposes</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
                     <span className="text-sm">Ensures your conversations remain private to your account</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
                     <span className="text-sm">Allows you to set usage limits and control costs</span>
                   </li>
                 </ul>
@@ -294,11 +294,11 @@ export default function HomePage() {
             </Card>
 
             {/* Why It's Important */}
-            <Card className="border-2">
+            <Card className="border-2 border-yellow-300/50 bg-gradient-to-br from-yellow-50 to-amber-50/50">
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
-                    <Shield className="h-5 w-5 text-green-500" />
+                  <div className="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                    <Shield className="h-5 w-5 text-amber-600" />
                   </div>
                   <CardTitle>Why It's Important</CardTitle>
                 </div>
@@ -309,19 +309,19 @@ export default function HomePage() {
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
                     <span className="text-sm"><strong>Direct relationship</strong> with the AI provider</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
                     <span className="text-sm"><strong>No middleman</strong> storing or processing your data</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
                     <span className="text-sm"><strong>Full control</strong> over usage limits and costs</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                    <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
                     <span className="text-sm"><strong>Provider-level security</strong> and data policies apply directly</span>
                   </li>
                 </ul>
@@ -330,11 +330,11 @@ export default function HomePage() {
           </div>
 
           {/* Provider Data Safety Policies */}
-          <Card className="border-2 border-primary/20 bg-primary/5">
+          <Card className="border-2 border-yellow-400/30 bg-gradient-to-br from-yellow-100/50 to-amber-100/30">
             <CardHeader>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Lock className="h-5 w-5 text-primary" />
+                <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                  <Lock className="h-5 w-5 text-yellow-700" />
                 </div>
                 <CardTitle>Provider Data Safety Policies</CardTitle>
               </div>
@@ -386,9 +386,9 @@ export default function HomePage() {
                   </ul>
                 </div>
 
-                <div className="mt-6 p-4 bg-primary/10 rounded-lg">
+                <div className="mt-6 p-4 bg-yellow-200/30 rounded-lg border border-yellow-300/30">
                   <p className="text-sm flex items-start gap-2">
-                    <Shield className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <Shield className="h-4 w-4 text-yellow-700 mt-0.5 flex-shrink-0" />
                     <span>
                       <strong>Key Point:</strong> When you use your own API key with Asmbli, your data goes directly to your chosen provider. 
                       We never see, store, or process your conversations - ensuring maximum privacy and compliance with your provider's security policies.
@@ -428,7 +428,7 @@ export default function HomePage() {
       </section>
 
       {/* MCP Servers Library Section */}
-      <section className="py-20 px-4">
+      <section className="py-20 px-4 bg-gradient-to-br from-amber-50 via-yellow-50/50 to-yellow-100/30">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">
@@ -439,7 +439,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-blue-500" />
@@ -450,7 +450,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiGit className="h-5 w-5 text-orange-500" />
@@ -461,7 +461,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiGithub className="h-5 w-5 text-gray-800" />
@@ -472,7 +472,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiPostgresql className="h-5 w-5 text-blue-600" />
@@ -483,7 +483,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <Database className="h-5 w-5 text-purple-500" />
@@ -494,7 +494,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiBrave className="h-5 w-5 text-orange-600" />
@@ -505,7 +505,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <Server className="h-5 w-5 text-green-500" />
@@ -516,7 +516,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiFigma className="h-5 w-5 text-purple-600" />
@@ -527,7 +527,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <Monitor className="h-5 w-5 text-blue-700" />
@@ -538,7 +538,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiSlack className="h-5 w-5 text-purple-700" />
@@ -549,7 +549,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiNotion className="h-5 w-5 text-black" />
@@ -560,7 +560,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/50 to-transparent border-yellow-200/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <SiLinear className="h-5 w-5 text-blue-800" />
@@ -574,7 +574,7 @@ export default function HomePage() {
           </div>
           <div className="text-center mt-8">
             <Link href="/mcp-servers">
-              <Button variant="outline">
+              <Button variant="outline" className="border-yellow-400 hover:bg-yellow-50">
                 View All MCP Servers
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -584,10 +584,10 @@ export default function HomePage() {
       </section>
 
       {/* Privacy Section */}
-      <section className="py-20 px-4 bg-muted/20">
+      <section className="py-20 px-4 bg-gradient-to-br from-yellow-100/30 via-amber-100/20 to-yellow-50">
         <div className="container mx-auto max-w-3xl text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Shield className="h-6 w-6 text-primary" />
+            <Shield className="h-6 w-6 text-yellow-600" />
             <h2 className="text-2xl font-bold font-display">
               Your Privacy, Protected
             </h2>
@@ -598,15 +598,15 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-600" />
+              <CheckCircle className="h-4 w-4 text-yellow-600" />
               <span>No chat history stored</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-600" />
+              <CheckCircle className="h-4 w-4 text-yellow-600" />
               <span>No user data collection</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-600" />
+              <CheckCircle className="h-4 w-4 text-yellow-600" />
               <span>Profile info only</span>
             </div>
           </div>
