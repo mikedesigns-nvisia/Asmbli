@@ -7,18 +7,26 @@ import 'package:flutter/foundation.dart';
 import 'dart:io' show Platform;
 
 import 'core/theme/app_theme.dart';
+import 'core/design_system/design_system.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
 import 'features/templates/presentation/screens/templates_screen.dart';
 import 'features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'features/settings/presentation/screens/settings_screen.dart';
+import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'core/services/storage_service.dart';
+import 'core/services/theme_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive for local storage
-  await Hive.initFlutter();
-  await StorageService.init();
+  // Initialize Hive for local storage with app-specific path
+  try {
+    await Hive.initFlutter('asmbli_app_data');
+    await StorageService.init();
+  } catch (e) {
+    print('Storage initialization failed: $e');
+    // Continue without storage - theme will work in memory only
+  }
 
   // Initialize window manager for desktop (not web)
   if (!kIsWeb) {
@@ -55,67 +63,61 @@ void main() async {
   );
 }
 
-class AsmblDesktopApp extends StatelessWidget {
-  AsmblDesktopApp({super.key});
-
-  final GoRouter _router = GoRouter(
-    initialLocation: '/',
-    routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: '/chat',
-        builder: (context, state) => const ChatScreen(),
-      ),
-      GoRoute(
-        path: '/templates',
-        builder: (context, state) => const TemplatesScreen(),
-      ),
-      GoRoute(
-        path: '/dashboard',
-        builder: (context, state) => const DashboardScreen(),
-      ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
-      ),
-      GoRoute(
-        path: '/agents',
-        builder: (context, state) => const DashboardScreen(), // redirect to dashboard for now
-      ),
-      GoRoute(
-        path: '/wizard',
-        builder: (context, state) => const TemplatesScreen(), // redirect to templates for now
-      ),
-      GoRoute(
-        path: '/library',
-        builder: (context, state) => const DashboardScreen(), // redirect to dashboard for now
-      ),
-    ],
-  );
+class AsmblDesktopApp extends ConsumerWidget {
+  const AsmblDesktopApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeServiceProvider);
+    
     return MaterialApp.router(
       title: 'Asmbli - AI Agents Made Easy',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: _router,
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
+// Create router outside of the widget to avoid global key issues
+final _router = GoRouter(
+  initialLocation: '/',
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: '/chat',
+      builder: (context, state) => const ChatScreen(),
+    ),
+    GoRoute(
+      path: '/templates',
+      builder: (context, state) => const TemplatesScreen(),
+    ),
+    GoRoute(
+      path: '/dashboard',
+      builder: (context, state) => const DashboardScreen(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/agents',
+      builder: (context, state) => const MyAgentsScreen(),
+    ),
+  ],
+);
+
 /// Dashboard-style home screen focused on app functionality
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context, WidgetRef ref) {
     
     return Scaffold(
       body: Container(
@@ -124,8 +126,8 @@ class HomeScreen extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFFBF9F5),
-              Color(0xFFFCFAF7),
+              SemanticColors.backgroundGradientStart,
+              SemanticColors.backgroundGradientEnd,
             ],
           ),
         ),
@@ -133,89 +135,31 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               // App Header
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  border: Border(bottom: BorderSide(color: AppTheme.lightBorder.withOpacity(0.3))),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      'Asmbli',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                        color: AppTheme.lightForeground,
-                      ),
-                    ),
-                    const Spacer(),
-                    _HeaderButton('Templates', Icons.library_books, () => context.go('/templates')),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Library', Icons.folder, () => context.go('/dashboard')),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Settings', Icons.settings, () => context.go('/settings')),
-                    const SizedBox(width: 24),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.lightPrimary,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: GestureDetector(
-                        onTap: () => context.go('/chat'),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.add, size: 16, color: AppTheme.lightPrimaryForeground),
-                            SizedBox(width: 8),
-                            Text(
-                              'New Chat',
-                              style: TextStyle(
-                                color: AppTheme.lightPrimaryForeground,
-                                fontFamily: 'Space Grotesk',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              const AppNavigationBar(currentRoute: '/'),
               
               // Main Dashboard Content
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(SpacingTokens.xxl),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Welcome Section
                       Text(
                         'Welcome back!',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.lightForeground,
+                        style: TextStyles.pageTitle.copyWith(
+                          color: SemanticColors.onSurface,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: SpacingTokens.sm),
                       Text(
                         'Manage your AI agents and start new conversations',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 16,
-                          color: AppTheme.lightMutedForeground,
+                        style: TextStyles.bodyLarge.copyWith(
+                          color: SemanticColors.onSurfaceVariant,
                         ),
                       ),
                       
-                      const SizedBox(height: 32),
+                      const SizedBox(height: SpacingTokens.sectionSpacing),
                       
                       // Quick Actions Row
                       Row(
@@ -228,7 +172,7 @@ class HomeScreen extends StatelessWidget {
                               onTap: () => context.go('/chat'),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          const SizedBox(width: SpacingTokens.lg),
                           Expanded(
                             child: _QuickActionCard(
                               icon: Icons.library_add,
@@ -237,7 +181,7 @@ class HomeScreen extends StatelessWidget {
                               onTap: () => context.go('/templates'),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          const SizedBox(width: SpacingTokens.lg),
                           Expanded(
                             child: _QuickActionCard(
                               icon: Icons.build,
@@ -249,7 +193,7 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       
-                      const SizedBox(height: 40),
+                      const SizedBox(height: SpacingTokens.sectionSpacing),
                       
                       // Recent Activity & My Agents sections
                       Row(
@@ -291,7 +235,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                           
-                          const SizedBox(width: 24),
+                          const SizedBox(width: SpacingTokens.xxl),
                           
                           // My Agents
                           Expanded(
@@ -317,32 +261,10 @@ class HomeScreen extends StatelessWidget {
                                     isActive: true,
                                   ),
                                   const SizedBox(height: 16),
-                                  GestureDetector(
-                                    onTap: () => context.go('/dashboard'),
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.lightPrimary,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: const Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.add, size: 16, color: AppTheme.lightPrimaryForeground),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            'Create New Agent',
-                                            style: TextStyle(
-                                              color: AppTheme.lightPrimaryForeground,
-                                              fontFamily: 'Space Grotesk',
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  AsmblButton.primary(
+                                    text: 'Create New Agent',
+                                    icon: Icons.add,
+                                    onPressed: () => context.go('/dashboard'),
                                   ),
                                 ],
                               ),
@@ -362,27 +284,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// Header button for app navigation
-class _HeaderButton extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _HeaderButton(this.text, this.icon, this.onTap);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, size: 16),
-      label: Text(text),
-      style: TextButton.styleFrom(
-        foregroundColor: AppTheme.lightMutedForeground,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
-    );
-  }
-}
 
 // Quick action card for dashboard
 class _QuickActionCard extends StatelessWidget {
@@ -400,58 +301,38 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        hoverColor: AppTheme.lightPrimary.withOpacity(0.04),
-        splashColor: AppTheme.lightPrimary.withOpacity(0.12),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.8),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+    return AsmblCard(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(SpacingTokens.sm),
+            decoration: BoxDecoration(
+              color: SemanticColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+            ),
+            child: Icon(
+              icon,
+              size: 24,
+              color: SemanticColors.primary,
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppTheme.lightPrimary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  icon,
-                  size: 24,
-                  color: AppTheme.lightPrimary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.lightForeground,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                description,
-                style: const TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 13,
-                  color: AppTheme.lightMutedForeground,
-                  height: 1.4,
-                ),
-              ),
-            ],
+          const SizedBox(height: SpacingTokens.lg),
+          Text(
+            title,
+            style: TextStyles.cardTitle.copyWith(
+              color: SemanticColors.onSurface,
+            ),
           ),
-        ),
+          const SizedBox(height: SpacingTokens.sm),
+          Text(
+            description,
+            style: TextStyles.bodySmall.copyWith(
+              color: SemanticColors.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -469,26 +350,18 @@ class _DashboardSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
-      ),
+    return AsmblCard(
+      isInteractive: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontFamily: 'Space Grotesk',
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.lightForeground,
+            style: TextStyles.sectionTitle.copyWith(
+              color: SemanticColors.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: SpacingTokens.lg),
           child,
         ],
       ),
@@ -516,46 +389,45 @@ class _ActivityItem extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        hoverColor: AppTheme.lightPrimary.withOpacity(0.04),
-        splashColor: AppTheme.lightPrimary.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        hoverColor: SemanticColors.primary.withOpacity(0.04),
+        splashColor: SemanticColors.primary.withOpacity(0.12),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+          padding: const EdgeInsets.symmetric(
+            vertical: SpacingTokens.md,
+            horizontal: SpacingTokens.xs,
+          ),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: AppTheme.lightBorder.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(6),
+                  color: SemanticColors.surfaceVariant,
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Icon(
                   icon,
                   size: 16,
-                  color: AppTheme.lightMutedForeground,
+                  color: SemanticColors.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: SpacingTokens.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 14,
+                      style: TextStyles.bodyMedium.copyWith(
+                        color: SemanticColors.onSurface,
                         fontWeight: FontWeight.w500,
-                        color: AppTheme.lightForeground,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: SpacingTokens.xs),
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 12,
-                        color: AppTheme.lightMutedForeground,
+                      style: TextStyles.caption.copyWith(
+                        color: SemanticColors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -584,14 +456,14 @@ class _AgentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: AppTheme.lightCard.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(8),
+        color: SemanticColors.surfaceVariant.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
           color: isActive 
-            ? AppTheme.lightPrimary.withOpacity(0.3)
-            : AppTheme.lightBorder.withOpacity(0.5),
+            ? SemanticColors.primary.withOpacity(0.3)
+            : SemanticColors.border,
         ),
       ),
       child: Row(
@@ -600,31 +472,27 @@ class _AgentCard extends StatelessWidget {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: isActive ? Colors.green : AppTheme.lightMutedForeground,
+              color: isActive ? SemanticColors.success : SemanticColors.onSurfaceVariant,
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: SpacingTokens.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 14,
+                  style: TextStyles.bodyMedium.copyWith(
+                    color: SemanticColors.onSurface,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.lightForeground,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: SpacingTokens.xs),
                 Text(
                   description,
-                  style: const TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 12,
-                    color: AppTheme.lightMutedForeground,
+                  style: TextStyles.caption.copyWith(
+                    color: SemanticColors.onSurfaceVariant,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

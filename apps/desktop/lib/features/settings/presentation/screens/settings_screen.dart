@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/services/theme_service.dart';
+import '../../../../core/design_system/design_system.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProviderStateMixin {
+class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String selectedTab = 'api';
   
@@ -193,6 +196,9 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeServiceProvider);
+    final themeService = ref.read(themeServiceProvider.notifier);
+    
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -200,45 +206,16 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFFBF9F5),
-              Color(0xFFFCFAF7),
+              SemanticColors.backgroundGradientStart,
+              SemanticColors.backgroundGradientEnd,
             ],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Header matching other pages
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  border: Border(bottom: BorderSide(color: AppTheme.lightBorder.withOpacity(0.3))),
-                ),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.go('/'),
-                      child: Text(
-                        'Asmbli',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          color: AppTheme.lightForeground,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    _HeaderButton('Templates', Icons.library_books, () => context.go('/templates')),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Library', Icons.folder, () => context.go('/dashboard')),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Settings', Icons.settings, () {}, isActive: true),
-                  ],
-                ),
-              ),
+              // Header
+              const AppNavigationBar(currentRoute: '/settings'),
               
               // Main Content
               Expanded(
@@ -330,7 +307,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                           children: [
                             _buildAPIConfigurationTab(),
                             _buildAgentManagementTab(),
-                            _buildGeneralSettingsTab(),
+                            _buildGeneralSettingsTab(themeService),
                           ],
                         ),
                       ),
@@ -412,18 +389,18 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                               height: 40,
                               decoration: BoxDecoration(
                                 color: apiConfig.isConfigured 
-                                    ? Colors.green.withOpacity(0.1)
-                                    : Colors.red.withOpacity(0.1),
+                                    ? SemanticColors.success.withOpacity(0.1)
+                                    : SemanticColors.error.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: apiConfig.isConfigured 
-                                      ? Colors.green.withOpacity(0.3)
-                                      : Colors.red.withOpacity(0.3),
+                                      ? SemanticColors.success.withOpacity(0.3)
+                                      : SemanticColors.error.withOpacity(0.3),
                                 ),
                               ),
                               child: Icon(
                                 apiConfig.isConfigured ? Icons.check_circle : Icons.error,
-                                color: apiConfig.isConfigured ? Colors.green : Colors.red,
+                                color: apiConfig.isConfigured ? SemanticColors.success : SemanticColors.error,
                                 size: 20,
                               ),
                             ),
@@ -512,9 +489,9 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: Colors.blue.withOpacity(0.1),
+                                      color: SemanticColors.primary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                                      border: Border.all(color: SemanticColors.primary.withOpacity(0.3)),
                                     ),
                                     child: Text(
                                       'Edit',
@@ -522,7 +499,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                                         fontFamily: 'Space Grotesk',
                                         fontSize: 10,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.blue,
+                                        color: SemanticColors.primary,
                                       ),
                                     ),
                                   ),
@@ -533,9 +510,9 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: Colors.red.withOpacity(0.1),
+                                      color: SemanticColors.error.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(color: Colors.red.withOpacity(0.3)),
+                                      border: Border.all(color: SemanticColors.error.withOpacity(0.3)),
                                     ),
                                     child: Text(
                                       'Delete',
@@ -543,7 +520,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                                         fontFamily: 'Space Grotesk',
                                         fontSize: 10,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.red,
+                                        color: SemanticColors.error,
                                       ),
                                     ),
                                   ),
@@ -593,16 +570,16 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: SemanticColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                    border: Border.all(color: SemanticColors.primary.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.security,
                         size: 20,
-                        color: Colors.blue,
+                        color: SemanticColors.primary,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -692,7 +669,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                             height: 8,
                             decoration: BoxDecoration(
                               color: agents.firstWhere((a) => a.name == selectedAgent).isActive 
-                                  ? Colors.green : AppTheme.lightMutedForeground,
+                                  ? SemanticColors.success : AppTheme.lightMutedForeground,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -902,7 +879,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildGeneralSettingsTab() {
+  Widget _buildGeneralSettingsTab(ThemeService themeService) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Center(
@@ -916,11 +893,22 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
               children: [
                 _FormField(
                   label: 'Theme',
-                  child: _CustomDropdown(
-                    value: 'Light',
-                    items: const ['Light', 'Dark', 'System'],
-                    onChanged: (value) {
-                      // Handle theme change
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final currentThemeMode = ref.watch(themeServiceProvider);
+                      final currentThemeName = currentThemeMode == ThemeMode.light ? 'Banana Pudding' : 'Midnight Mocha';
+                      
+                      return _CustomDropdown(
+                        value: currentThemeName,
+                        items: const ['Banana Pudding', 'Midnight Mocha'],
+                        onChanged: (value) {
+                          if (value == 'Banana Pudding') {
+                            themeService.setTheme(ThemeMode.light);
+                          } else if (value == 'Midnight Mocha') {
+                            themeService.setTheme(ThemeMode.dark);
+                          }
+                        },
+                      );
                     },
                   ),
                 ),
@@ -1040,13 +1028,13 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: apiConfig.isConfigured 
-            ? Colors.green.withOpacity(0.1) 
-            : Colors.red.withOpacity(0.1),
+            ? SemanticColors.success.withOpacity(0.1) 
+            : SemanticColors.error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: apiConfig.isConfigured 
-              ? Colors.green.withOpacity(0.3) 
-              : Colors.red.withOpacity(0.3),
+              ? SemanticColors.success.withOpacity(0.3) 
+              : SemanticColors.error.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -1055,7 +1043,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
           Icon(
             apiConfig.isConfigured ? Icons.check_circle : Icons.error,
             size: 12,
-            color: apiConfig.isConfigured ? Colors.green : Colors.red,
+            color: apiConfig.isConfigured ? SemanticColors.success : SemanticColors.error,
           ),
           const SizedBox(width: 4),
           Text(
@@ -1064,7 +1052,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
               fontFamily: 'Space Grotesk',
               fontSize: 10,
               fontWeight: FontWeight.w500,
-              color: apiConfig.isConfigured ? Colors.green : Colors.red,
+              color: apiConfig.isConfigured ? SemanticColors.success : SemanticColors.error,
             ),
           ),
         ],
@@ -1116,18 +1104,18 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                       height: 32,
                       decoration: BoxDecoration(
                         color: apiConfig.isConfigured 
-                            ? Colors.green.withOpacity(0.1)
-                            : Colors.red.withOpacity(0.1),
+                            ? SemanticColors.success.withOpacity(0.1)
+                            : SemanticColors.error.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
                           color: apiConfig.isConfigured 
-                              ? Colors.green.withOpacity(0.3)
-                              : Colors.red.withOpacity(0.3),
+                              ? SemanticColors.success.withOpacity(0.3)
+                              : SemanticColors.error.withOpacity(0.3),
                         ),
                       ),
                       child: Icon(
                         apiConfig.isConfigured ? Icons.check_circle : Icons.error,
-                        color: apiConfig.isConfigured ? Colors.green : Colors.red,
+                        color: apiConfig.isConfigured ? SemanticColors.success : SemanticColors.error,
                         size: 16,
                       ),
                     ),
@@ -1624,7 +1612,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
           message,
           style: const TextStyle(fontFamily: 'Space Grotesk'),
         ),
-        backgroundColor: isError ? Colors.red : Colors.green,
+        backgroundColor: isError ? SemanticColors.error : SemanticColors.success,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
@@ -1635,53 +1623,6 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
   }
 }
 
-class _HeaderButton extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool isActive;
-
-  const _HeaderButton(this.text, this.icon, this.onTap, {this.isActive = false});
-
-  @override
-  Widget build(BuildContext context) {
-    if (isActive) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: AppTheme.lightPrimary,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 16, color: AppTheme.lightPrimaryForeground),
-            const SizedBox(width: 8),
-            Text(
-              text,
-              style: TextStyle(
-                color: AppTheme.lightPrimaryForeground,
-                fontFamily: 'Space Grotesk',
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-    
-    return TextButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, size: 16),
-      label: Text(text),
-      style: TextButton.styleFrom(
-        foregroundColor: AppTheme.lightMutedForeground,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
-    );
-  }
-}
 
 class _SettingsSection extends StatelessWidget {
   final String title;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -87,72 +88,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFFBF9F5),
-              Color(0xFFFCFAF7),
+              SemanticColors.backgroundGradientStart,
+              SemanticColors.backgroundGradientEnd,
             ],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Header matching other pages
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  border: Border(bottom: BorderSide(color: AppTheme.lightBorder.withOpacity(0.3))),
-                ),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.go('/'),
-                      child: Text(
-                        'Asmbli',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          color: AppTheme.lightForeground,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    _HeaderButton('Templates', Icons.library_books, () => context.go('/templates')),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Library', Icons.folder, () {}, isActive: true),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Settings', Icons.settings, () => context.go('/settings')),
-                    const SizedBox(width: 24),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.lightPrimary,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: GestureDetector(
-                        onTap: () => context.go('/chat'),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.add, size: 16, color: AppTheme.lightPrimaryForeground),
-                            SizedBox(width: 8),
-                            Text(
-                              'New Chat',
-                              style: TextStyle(
-                                color: AppTheme.lightPrimaryForeground,
-                                fontFamily: 'Space Grotesk',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Header
+              const AppNavigationBar(currentRoute: '/dashboard'),
               
               // Main Content
               Expanded(
@@ -164,20 +109,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       // Page Title
                       Text(
                         'Agent Library',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.lightForeground,
+                        style: TextStyles.pageTitle.copyWith(
+                          color: SemanticColors.onSurface,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: SpacingTokens.sm),
                       Text(
                         'Manage your AI agents, view analytics, and track recent activity',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 16,
-                          color: AppTheme.lightMutedForeground,
+                        style: TextStyles.bodyLarge.copyWith(
+                          color: SemanticColors.onSurfaceVariant,
                         ),
                       ),
                       
@@ -202,7 +142,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               value: myAgents.map((a) => a.totalChats).reduce((a, b) => a + b).toString(),
                               subtitle: 'All time',
                               icon: Icons.chat_bubble_outline,
-                              color: Colors.blue,
+                              color: SemanticColors.primary,
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -212,7 +152,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               value: myAgents.expand((a) => a.mcpServers).toSet().length.toString(),
                               subtitle: 'Unique servers',
                               icon: Icons.hub,
-                              color: Colors.green,
+                              color: SemanticColors.success,
                             ),
                           ),
                         ],
@@ -328,53 +268,6 @@ class RecentActivity {
 }
 
 // Widget Components
-class _HeaderButton extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool isActive;
-
-  const _HeaderButton(this.text, this.icon, this.onTap, {this.isActive = false});
-
-  @override
-  Widget build(BuildContext context) {
-    if (isActive) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: AppTheme.lightPrimary,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 16, color: AppTheme.lightPrimaryForeground),
-            const SizedBox(width: 8),
-            Text(
-              text,
-              style: const TextStyle(
-                color: AppTheme.lightPrimaryForeground,
-                fontFamily: 'Space Grotesk',
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-    
-    return TextButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, size: 16),
-      label: Text(text),
-      style: TextButton.styleFrom(
-        foregroundColor: AppTheme.lightMutedForeground,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
-    );
-  }
-}
 
 class _StatsCard extends StatelessWidget {
   final String title;
@@ -394,11 +287,11 @@ class _StatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(SpacingTokens.xl),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+        color: SemanticColors.surface.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
+        border: Border.all(color: SemanticColors.border.withOpacity(0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

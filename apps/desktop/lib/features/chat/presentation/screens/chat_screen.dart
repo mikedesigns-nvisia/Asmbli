@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends ConsumerState<ChatScreen> {
   bool isSidebarCollapsed = false;
   String selectedAgent = 'general-assistant';
   List<Message> messages = [];
@@ -30,6 +32,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -37,45 +42,16 @@ class _ChatScreenState extends State<ChatScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFFBF9F5),
-              Color(0xFFFCFAF7),
+              SemanticColors.backgroundGradientStart,
+              SemanticColors.backgroundGradientEnd,
             ],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Header matching other pages
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  border: Border(bottom: BorderSide(color: AppTheme.lightBorder.withOpacity(0.3))),
-                ),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.go('/'),
-                      child: Text(
-                        'Asmbli',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          color: AppTheme.lightForeground,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    _HeaderButton('Templates', Icons.library_books, () => context.go('/templates')),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Library', Icons.folder, () => context.go('/dashboard')),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Settings', Icons.settings, () => context.go('/settings')),
-                  ],
-                ),
-              ),
+              // Header
+              const AppNavigationBar(currentRoute: '/chat'),
               
               // Main Content
               Expanded(
@@ -93,8 +69,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       Container(
                         width: 48,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.7),
-                          border: Border(right: BorderSide(color: AppTheme.lightBorder.withOpacity(0.3))),
+                          color: theme.colorScheme.surface.withOpacity(0.7),
+                          border: Border(right: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))),
                         ),
                         child: Column(
                           children: [
@@ -103,9 +79,9 @@ class _ChatScreenState extends State<ChatScreen> {
                               onPressed: () => setState(() => isSidebarCollapsed = false),
                               icon: const Icon(Icons.chevron_right, size: 20),
                               style: IconButton.styleFrom(
-                                backgroundColor: Colors.white.withOpacity(0.8),
-                                foregroundColor: AppTheme.lightMutedForeground,
-                                side: BorderSide(color: AppTheme.lightBorder.withOpacity(0.5)),
+                                backgroundColor: theme.colorScheme.surface.withOpacity(0.8),
+                                foregroundColor: theme.colorScheme.onSurfaceVariant,
+                                side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.5)),
                               ),
                             ),
                           ],
@@ -127,10 +103,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildSidebar(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
-        border: Border(right: BorderSide(color: AppTheme.lightBorder.withOpacity(0.3))),
+        color: theme.colorScheme.surface.withOpacity(0.7),
+        border: Border(right: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +123,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     fontFamily: 'Space Grotesk',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.lightForeground,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 const Spacer(),
@@ -154,7 +131,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () => setState(() => isSidebarCollapsed = true),
                   icon: const Icon(Icons.chevron_left, size: 20),
                   style: IconButton.styleFrom(
-                    foregroundColor: AppTheme.lightMutedForeground,
+                    foregroundColor: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -173,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     fontFamily: 'Space Grotesk',
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: AppTheme.lightMutedForeground,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -181,18 +158,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppTheme.lightBorder),
+                    border: Border.all(color: theme.colorScheme.outline),
                     borderRadius: BorderRadius.circular(6),
-                    color: Colors.white.withOpacity(0.8),
+                    color: theme.colorScheme.surface.withOpacity(0.8),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: selectedAgent,
                       onChanged: (value) => setState(() => selectedAgent = value!),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Space Grotesk',
                         fontSize: 14,
-                        color: AppTheme.lightForeground,
+                        color: theme.colorScheme.onSurface,
                       ),
                       items: agents.map((agent) {
                         return DropdownMenuItem(
@@ -211,16 +188,16 @@ class _ChatScreenState extends State<ChatScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppTheme.lightBorder),
+                    border: Border.all(color: theme.colorScheme.outline),
                     borderRadius: BorderRadius.circular(6),
-                    color: Colors.white.withOpacity(0.8),
+                    color: theme.colorScheme.surface.withOpacity(0.8),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.library_books,
                         size: 16,
-                        color: AppTheme.lightMutedForeground,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -228,7 +205,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         style: TextStyle(
                           fontFamily: 'Space Grotesk',
                           fontSize: 13,
-                          color: AppTheme.lightMutedForeground,
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -251,7 +228,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     Icon(
                       Icons.storage,
                       size: 16,
-                      color: AppTheme.lightMutedForeground,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -260,7 +237,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         fontFamily: 'Space Grotesk',
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: AppTheme.lightMutedForeground,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -276,7 +253,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         width: 6,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: server.isConnected ? Colors.green : AppTheme.lightMutedForeground,
+                          color: server.isConnected ? SemanticColors.success : theme.colorScheme.onSurfaceVariant,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -290,7 +267,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               fontFamily: 'Space Grotesk',
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: AppTheme.lightForeground,
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
                           Text(
@@ -298,7 +275,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             style: TextStyle(
                               fontFamily: 'Space Grotesk',
                               fontSize: 11,
-                              color: AppTheme.lightMutedForeground,
+                              color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -308,7 +285,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.1),
+                            color: SemanticColors.success.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -317,7 +294,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               fontFamily: 'Space Grotesk',
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
-                              color: Colors.green,
+                              color: SemanticColors.success,
                             ),
                           ),
                         ),
@@ -331,7 +308,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   style: TextStyle(
                     fontFamily: 'Space Grotesk',
                     fontSize: 11,
-                    color: AppTheme.lightMutedForeground,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -350,16 +327,16 @@ class _ChatScreenState extends State<ChatScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppTheme.lightBorder),
+                    border: Border.all(color: theme.colorScheme.outline),
                     borderRadius: BorderRadius.circular(6),
-                    color: Colors.white.withOpacity(0.8),
+                    color: theme.colorScheme.surface.withOpacity(0.8),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.upload_file,
                         size: 16,
-                        color: AppTheme.lightMutedForeground,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -367,7 +344,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         style: TextStyle(
                           fontFamily: 'Space Grotesk',
                           fontSize: 13,
-                          color: AppTheme.lightMutedForeground,
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -381,16 +358,16 @@ class _ChatScreenState extends State<ChatScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppTheme.lightBorder),
+                    border: Border.all(color: theme.colorScheme.outline),
                     borderRadius: BorderRadius.circular(6),
-                    color: Colors.white.withOpacity(0.8),
+                    color: theme.colorScheme.surface.withOpacity(0.8),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.settings,
                         size: 16,
-                        color: AppTheme.lightMutedForeground,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -398,7 +375,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         style: TextStyle(
                           fontFamily: 'Space Grotesk',
                           fontSize: 13,
-                          color: AppTheme.lightMutedForeground,
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -420,7 +397,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           fontFamily: 'Space Grotesk',
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
-                          color: AppTheme.lightMutedForeground,
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -435,6 +412,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildChatArea(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       decoration: const BoxDecoration(
         color: Colors.transparent,
@@ -452,14 +430,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     fontFamily: 'Space Grotesk',
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.lightForeground,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppTheme.lightMuted,
+                    color: theme.colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -467,7 +445,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     style: TextStyle(
                       fontFamily: 'Space Grotesk',
                       fontSize: 12,
-                      color: AppTheme.lightMutedForeground,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -488,9 +466,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
+                      color: theme.colorScheme.surface.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppTheme.lightBorder),
+                      border: Border.all(color: theme.colorScheme.outline),
                     ),
                     child: TextField(
                       controller: messageController,
@@ -498,14 +476,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         hintText: 'Type your message...',
                         hintStyle: TextStyle(
                           fontFamily: 'Space Grotesk',
-                          color: AppTheme.lightMutedForeground,
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       ),
                       style: TextStyle(
                         fontFamily: 'Space Grotesk',
-                        color: AppTheme.lightForeground,
+                        color: theme.colorScheme.onSurface,
                       ),
                       maxLines: 3,
                       minLines: 1,
@@ -516,7 +494,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(width: 12),
                 Container(
                   decoration: BoxDecoration(
-                    color: AppTheme.lightMutedForeground,
+                    color: theme.colorScheme.onSurfaceVariant,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
@@ -529,12 +507,12 @@ class _ChatScreenState extends State<ChatScreen> {
                             height: 16,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.lightPrimaryForeground),
+                              valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.onPrimary),
                             ),
                           )
                         : const Icon(Icons.send, size: 18),
                     style: IconButton.styleFrom(
-                      foregroundColor: AppTheme.lightPrimaryForeground,
+                      foregroundColor: theme.colorScheme.onPrimary,
                       padding: const EdgeInsets.all(12),
                     ),
                   ),
@@ -548,6 +526,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    final theme = Theme.of(context);
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 400),
@@ -559,14 +538,14 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: AppTheme.lightMuted,
+                color: theme.colorScheme.surfaceVariant,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.lightBorder),
+                border: Border.all(color: theme.colorScheme.outline),
               ),
               child: Icon(
                 Icons.smart_toy_outlined,
                 size: 32,
-                color: AppTheme.lightMutedForeground,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
             
@@ -579,7 +558,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 fontFamily: 'Space Grotesk',
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.lightForeground,
+                color: theme.colorScheme.onSurface,
               ),
             ),
             
@@ -591,7 +570,7 @@ class _ChatScreenState extends State<ChatScreen> {
               style: TextStyle(
                 fontFamily: 'Space Grotesk',
                 fontSize: 14,
-                color: AppTheme.lightMutedForeground,
+                color: theme.colorScheme.onSurfaceVariant,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -757,50 +736,3 @@ class MCPServer {
   });
 }
 
-class _HeaderButton extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool isActive;
-
-  const _HeaderButton(this.text, this.icon, this.onTap, {this.isActive = false});
-
-  @override
-  Widget build(BuildContext context) {
-    if (isActive) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: AppTheme.lightPrimary,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 16, color: AppTheme.lightPrimaryForeground),
-            const SizedBox(width: 8),
-            Text(
-              text,
-              style: TextStyle(
-                color: AppTheme.lightPrimaryForeground,
-                fontFamily: 'Space Grotesk',
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-    
-    return TextButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, size: 16),
-      label: Text(text),
-      style: TextButton.styleFrom(
-        foregroundColor: AppTheme.lightMutedForeground,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
-    );
-  }
-}

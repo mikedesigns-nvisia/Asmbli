@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class TemplatesScreen extends StatefulWidget {
   const TemplatesScreen({super.key});
@@ -98,72 +99,16 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFFBF9F5),
-              Color(0xFFFCFAF7),
+              SemanticColors.backgroundGradientStart,
+              SemanticColors.backgroundGradientEnd,
             ],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // App Header (reusing same style as home)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  border: Border(bottom: BorderSide(color: AppTheme.lightBorder.withOpacity(0.3))),
-                ),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.go('/'),
-                      child: Text(
-                        'Asmbli',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          color: AppTheme.lightForeground,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    _HeaderButton('Templates', Icons.library_books, () {}, isActive: true),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Library', Icons.folder, () => context.go('/dashboard')),
-                    const SizedBox(width: 16),
-                    _HeaderButton('Settings', Icons.settings, () => context.go('/settings')),
-                    const SizedBox(width: 24),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.lightPrimary,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: GestureDetector(
-                        onTap: () => context.go('/chat'),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.add, size: 16, color: AppTheme.lightPrimaryForeground),
-                            SizedBox(width: 8),
-                            Text(
-                              'New Chat',
-                              style: TextStyle(
-                                color: AppTheme.lightPrimaryForeground,
-                                fontFamily: 'Space Grotesk',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Header
+              const AppNavigationBar(currentRoute: '/templates'),
               
               // Main Content
               Expanded(
@@ -306,28 +251,6 @@ class AgentTemplate {
   });
 }
 
-class _HeaderButton extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool isActive;
-
-  const _HeaderButton(this.text, this.icon, this.onTap, {this.isActive = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, size: 16),
-      label: Text(text),
-      style: TextButton.styleFrom(
-        foregroundColor: isActive ? AppTheme.lightForeground : AppTheme.lightMutedForeground,
-        backgroundColor: isActive ? AppTheme.lightBorder.withOpacity(0.3) : Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
-    );
-  }
-}
 
 class _TemplateCard extends StatelessWidget {
   final AgentTemplate template;

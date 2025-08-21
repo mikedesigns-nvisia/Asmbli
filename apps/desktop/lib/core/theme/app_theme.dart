@@ -267,10 +267,210 @@ class AppTheme {
         error: const Color(0xFFF87171),
         onError: Colors.white,
         outline: const Color(0xFF383838),
+        surfaceVariant: const Color(0xFF262529),
+        onSurfaceVariant: const Color(0xFFA3A3A3),
       ),
       
-      // Keep existing dark theme settings
+      // AppBar Theme - Clean and minimal
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: darkForeground,
+        surfaceTintColor: Colors.transparent,
+        titleTextStyle: const TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          fontStyle: FontStyle.italic,
+          color: darkForeground,
+        ),
+      ),
+      
+      // Card Theme - Dark cards with subtle borders
+      cardTheme: CardThemeData(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: const Color(0xFF383838).withOpacity(0.5)),
+        ),
+        color: darkCard,
+        surfaceTintColor: Colors.transparent,
+        margin: EdgeInsets.zero,
+      ),
+      
+      // Button Themes - Matching dark styling
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: darkPrimary,
+          foregroundColor: darkPrimaryForeground,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          textStyle: const TextStyle(
+            fontFamily: 'Space Grotesk',
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+          ),
+        ),
+      ),
+      
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: darkPrimary,
+          side: const BorderSide(color: Color(0xFF383838)),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          textStyle: const TextStyle(
+            fontFamily: 'Space Grotesk',
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+          ),
+        ),
+      ),
+      
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: darkForeground,
+          textStyle: const TextStyle(
+            fontFamily: 'Space Grotesk',
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+          ),
+        ),
+      ),
+      
+      // Input Theme
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFF383838)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFF383838)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: darkPrimary, width: 2),
+        ),
+        filled: true,
+        fillColor: const Color(0xFF1C1C1F),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      
+      // Typography - Space Grotesk throughout
       fontFamily: 'Space Grotesk',
+      textTheme: TextTheme(
+        displayLarge: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 57,
+          fontWeight: FontWeight.w400,
+          letterSpacing: -0.25,
+          color: darkForeground,
+        ),
+        displayMedium: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 45,
+          fontWeight: FontWeight.w400,
+          color: darkForeground,
+        ),
+        displaySmall: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 36,
+          fontWeight: FontWeight.w400,
+          color: darkForeground,
+        ),
+        headlineLarge: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 32,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.5,
+          color: darkForeground,
+        ),
+        headlineMedium: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 28,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.25,
+          color: darkForeground,
+        ),
+        headlineSmall: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: darkForeground,
+        ),
+        titleLarge: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 22,
+          fontWeight: FontWeight.w500,
+          color: darkForeground,
+        ),
+        titleMedium: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.15,
+          color: darkForeground,
+        ),
+        titleSmall: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.1,
+          color: darkForeground,
+        ),
+        bodyLarge: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.5,
+          color: darkForeground,
+        ),
+        bodyMedium: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.25,
+          color: const Color(0xFFA3A3A3),
+        ),
+        bodySmall: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.4,
+          color: const Color(0xFFA3A3A3),
+        ),
+        labelLarge: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.1,
+          color: darkForeground,
+        ),
+        labelMedium: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+          color: const Color(0xFFA3A3A3),
+        ),
+        labelSmall: TextStyle(
+          fontFamily: 'Space Grotesk',
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+          color: const Color(0xFFA3A3A3),
+        ),
+      ),
     );
   }
 }
