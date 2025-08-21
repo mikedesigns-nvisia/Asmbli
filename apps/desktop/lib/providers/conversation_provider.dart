@@ -12,7 +12,8 @@ final conversationsProvider = StreamProvider<List<Conversation>>((ref) async* {
   
   while (true) {
     try {
-      yield await service.listConversations();
+      final allConversations = await service.listConversations();
+      yield allConversations.where((c) => c.status == ConversationStatus.active).toList();
       await Future.delayed(const Duration(seconds: 5)); 
     } catch (e) {
       yield* Stream.error(e);
@@ -79,3 +80,49 @@ final sendMessageProvider = Provider.autoDispose((ref) {
 final isLoadingProvider = StateProvider<bool>((ref) => false);
 
 final selectedConversationIdProvider = StateProvider<String?>((ref) => null);
+
+// Archive/Unarchive conversation
+final archiveConversationProvider = Provider.autoDispose((ref) {
+  final service = ref.read(conversationServiceProvider);
+  
+  return (String conversationId, bool archive) async {
+    final status = archive ? ConversationStatus.archived : ConversationStatus.active;
+    await service.setConversationStatus(conversationId, status);
+    
+    // Refresh conversations list
+    ref.invalidate(conversationsProvider);
+  };
+});
+
+// Permanently delete conversation
+final deleteConversationProvider = Provider.autoDispose((ref) {
+  final service = ref.read(conversationServiceProvider);
+  
+  return (String conversationId) async {
+    await service.deleteConversation(conversationId);
+    
+    // Clear selection if deleting selected conversation
+    final selectedId = ref.read(selectedConversationIdProvider);
+    if (selectedId == conversationId) {
+      ref.read(selectedConversationIdProvider.notifier).state = null;
+    }
+    
+    // Refresh conversations list
+    ref.invalidate(conversationsProvider);
+  };
+});
+
+// Get archived conversations
+final archivedConversationsProvider = StreamProvider<List<Conversation>>((ref) async* {
+  final service = ref.read(conversationServiceProvider);
+  
+  while (true) {
+    try {
+      final allConversations = await service.listConversations();
+      yield allConversations.where((c) => c.status == ConversationStatus.archived).toList();
+      await Future.delayed(const Duration(seconds: 5)); 
+    } catch (e) {
+      yield* Stream.error(e);
+    }
+  }
+});

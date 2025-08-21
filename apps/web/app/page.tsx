@@ -56,20 +56,20 @@ export default function HomePage() {
             </p>
           </div>
           <div className="mt-12">
-            <div className="max-w-6xl mx-auto px-4">
+            <div className="max-w-7xl mx-auto px-4">
               <p className="text-sm md:text-base text-muted-foreground text-center mb-6">
-                Desktop app beta - looking for testers to help improve the experience
+                Desktop app beta - featuring conversation management and archive system
               </p>
               <div className="rounded-xl border bg-card p-1 md:p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
                 <img 
-                  src="/flutter-desktop-preview.png" 
-                  alt="Asmbli Desktop App - AI Agent Management Dashboard"
-                  className="w-full rounded-lg hover:scale-[1.02] transition-transform duration-300"
+                  src="/flutter-desktop-preview-new.png" 
+                  alt="Asmbli Desktop App - Complete AI Agent Interface with Conversation Management"
+                  className="w-full h-auto rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[600px] md:max-h-[700px] lg:max-h-[800px]"
                 />
               </div>
               <div className="text-center mt-6">
                 <p className="text-xs md:text-sm text-muted-foreground">
-                  Cross-platform desktop app with full agent management capabilities
+                  Full-featured desktop app with agent settings, conversation management, and archive system
                 </p>
               </div>
             </div>

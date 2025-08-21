@@ -7,7 +7,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
-import '../widgets/conversation_list.dart';
+import '../widgets/conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
@@ -114,6 +114,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     Expanded(
                       child: _buildChatArea(context),
                     ),
+                    
+                    // Right Sidebar for Conversations
+                    const ConversationSidebar(),
                   ],
                 ),
               ),
@@ -141,7 +144,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             child: Row(
               children: [
                 Text(
-                  'Agent Control',
+                  'Agent Settings',
                   style: TextStyle(
                     fontFamily: 'Space Grotesk',
                     fontSize: 16,
@@ -160,14 +163,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ],
             ),
           ),
-          
-          // Conversation List
-          const Expanded(
-            flex: 2,
-            child: ConversationList(),
-          ),
-          
-          const Divider(height: 1, color: SemanticColors.border),
           
           // Agent Selection Section
           Padding(

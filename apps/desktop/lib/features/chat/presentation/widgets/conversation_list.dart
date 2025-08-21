@@ -21,9 +21,11 @@ class ConversationList extends ConsumerWidget {
           Row(
             children: [
               Text(
-                'Conversations',
-                style: TextStyles.sectionTitle.copyWith(
+                'New Conversation',
+                style: TextStyles.bodyMedium.copyWith(
                   color: SemanticColors.onSurface,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
                 ),
               ),
               const Spacer(),
@@ -35,7 +37,7 @@ class ConversationList extends ConsumerWidget {
                   foregroundColor: SemanticColors.primary,
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                 ),
-                tooltip: 'New Conversation',
+                tooltip: 'New Conversations',
               ),
             ],
           ),
@@ -59,6 +61,7 @@ class ConversationList extends ConsumerWidget {
                       onTap: () {
                         ref.read(selectedConversationIdProvider.notifier).state = conversation.id;
                       },
+                      onArchive: () => _archiveConversation(ref, conversation.id),
                     );
                   },
                 );
@@ -152,17 +155,34 @@ class ConversationList extends ConsumerWidget {
       ref.read(isLoadingProvider.notifier).state = false;
     }
   }
+
+  void _archiveConversation(WidgetRef ref, String conversationId) async {
+    try {
+      final archiveConversation = ref.read(archiveConversationProvider);
+      await archiveConversation(conversationId, true); // true = archive
+      
+      // Clear selection if archiving selected conversation
+      final selectedId = ref.read(selectedConversationIdProvider);
+      if (selectedId == conversationId) {
+        ref.read(selectedConversationIdProvider.notifier).state = null;
+      }
+    } catch (e) {
+      // Handle error
+    }
+  }
 }
 
 class _ConversationItem extends StatelessWidget {
   final Conversation conversation;
   final bool isSelected;
   final VoidCallback onTap;
+  final VoidCallback onArchive;
 
   const _ConversationItem({
     required this.conversation,
     required this.isSelected,
     required this.onTap,
+    required this.onArchive,
   });
 
   @override
@@ -173,6 +193,7 @@ class _ConversationItem extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
+          onLongPress: () => _showContextMenu(context),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
           hoverColor: SemanticColors.primary.withOpacity(0.04),
           splashColor: SemanticColors.primary.withOpacity(0.12),
@@ -229,6 +250,51 @@ class _ConversationItem extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showContextMenu(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: SemanticColors.surface,
+        title: Text(
+          conversation.title,
+          style: TextStyles.bodyMedium.copyWith(
+            color: SemanticColors.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(
+                Icons.archive,
+                color: SemanticColors.onSurfaceVariant,
+              ),
+              title: Text(
+                'Archive Conversation',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: SemanticColors.onSurface,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+                onArchive();
+              },
+            ),
+          ],
+        ),
+        actions: [
+          AsmblButton.secondary(
+            text: 'Cancel',
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
       ),
     );
   }
