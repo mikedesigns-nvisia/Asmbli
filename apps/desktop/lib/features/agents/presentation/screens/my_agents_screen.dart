@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/constants/routes.dart';
 
 class MyAgentsScreen extends StatefulWidget {
   const MyAgentsScreen({super.key});
@@ -11,6 +12,15 @@ class MyAgentsScreen extends StatefulWidget {
 }
 
 class _MyAgentsScreenState extends State<MyAgentsScreen> {
+  int selectedTab = 0; // 0 = My Agents, 1 = Agent Library
+  String searchQuery = '';
+  String selectedCategory = 'All';
+
+  final List<String> categories = [
+    'All', 'Research', 'Development', 'Writing', 'Data Analysis', 
+    'Customer Support', 'Marketing', 'Design'
+  ];
+
   final List<AgentItem> agents = [
     AgentItem(
       name: 'Research Assistant',
@@ -46,6 +56,77 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
     ),
   ];
 
+  final List<AgentTemplate> templates = [
+    AgentTemplate(
+      name: 'Research Assistant',
+      description: 'Academic research agent with citation management and fact-checking',
+      category: 'Research',
+      tags: ['academic', 'citations', 'fact-checking'],
+      mcpStack: true,
+      mcpServers: ['Brave Search', 'Memory', 'Files', 'Time'],
+    ),
+    AgentTemplate(
+      name: 'Code Reviewer',
+      description: 'Automated code review with best practices and security checks',
+      category: 'Development', 
+      tags: ['code-review', 'security', 'best-practices'],
+      mcpStack: true,
+      mcpServers: ['GitHub', 'Git', 'Files', 'Memory'],
+    ),
+    AgentTemplate(
+      name: 'Content Writer',
+      description: 'SEO-optimized content generation with tone customization',
+      category: 'Writing',
+      tags: ['seo', 'content', 'marketing'],
+      mcpStack: true,
+      mcpServers: ['Brave Search', 'Memory', 'Files'],
+    ),
+    AgentTemplate(
+      name: 'Data Analyst',
+      description: 'Statistical analysis and visualization for business insights',
+      category: 'Data Analysis',
+      tags: ['statistics', 'visualization', 'insights'],
+      mcpStack: true,
+      mcpServers: ['Postgres', 'Files', 'Memory', 'Time'],
+    ),
+    AgentTemplate(
+      name: 'Customer Support Bot',
+      description: 'Intelligent support agent with ticket management integration',
+      category: 'Customer Support',
+      tags: ['support', 'tickets', 'automation'],
+      mcpStack: true,
+      mcpServers: ['Linear', 'Slack', 'Memory', 'Time'],
+    ),
+    AgentTemplate(
+      name: 'Marketing Strategist',
+      description: 'Campaign planning and performance analysis agent',
+      category: 'Marketing',
+      tags: ['campaigns', 'strategy', 'analytics'],
+      mcpStack: true,
+      mcpServers: ['Brave Search', 'Notion', 'Memory', 'Time'],
+    ),
+    AgentTemplate(
+      name: 'Design Agent',
+      description: 'Comprehensive design assistant with Figma integration, code generation, and GitHub collaboration',
+      category: 'Design',
+      tags: ['design-systems', 'ui-ux', 'figma', 'components', 'collaboration'],
+      mcpStack: true,
+      mcpServers: ['Figma', 'GitHub', 'Files', 'Memory'],
+    ),
+  ];
+
+  List<AgentTemplate> get filteredTemplates {
+    return templates.where((template) {
+      final matchesSearch = template.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          template.description.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          template.tags.any((tag) => tag.toLowerCase().contains(searchQuery.toLowerCase()));
+      
+      final matchesCategory = selectedCategory == 'All' || template.category == selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,64 +144,8 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              // Header matching your existing pattern
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: SpacingTokens.headerPadding,
-                  vertical: SpacingTokens.pageVertical,
-                ),
-                decoration: BoxDecoration(
-                  color: SemanticColors.headerBackground,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: SemanticColors.headerBorder,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    // Brand Title
-                    GestureDetector(
-                      onTap: () => context.go('/'),
-                      child: Text(
-                        'Asmbli',
-                        style: TextStyles.brandTitle.copyWith(
-                          color: SemanticColors.onSurface,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    
-                    // Navigation
-                    HeaderButton(
-                      text: 'Templates',
-                      icon: Icons.library_books,
-                      onPressed: () => context.go('/templates'),
-                    ),
-                    const SizedBox(width: SpacingTokens.lg),
-                    HeaderButton(
-                      text: 'My Agents',
-                      icon: Icons.smart_toy,
-                      onPressed: () {},
-                      isActive: true,
-                    ),
-                    const SizedBox(width: SpacingTokens.lg),
-                    HeaderButton(
-                      text: 'Settings',
-                      icon: Icons.settings,
-                      onPressed: () => context.go('/settings'),
-                    ),
-                    const SizedBox(width: SpacingTokens.xxl),
-                    
-                    // New Chat Button
-                    AsmblButton.primary(
-                      text: 'New Chat',
-                      icon: Icons.add,
-                      onPressed: () => context.go('/chat'),
-                    ),
-                  ],
-                ),
-              ),
+              // Header
+              const AppNavigationBar(currentRoute: AppRoutes.agents),
 
               // Main Content
               Expanded(
@@ -131,70 +156,43 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
                     children: [
                       // Page Title
                       Text(
-                        'My AI Agents',
+                        selectedTab == 0 ? 'My AI Agents' : 'Agent Library',
                         style: TextStyles.pageTitle.copyWith(
                           color: SemanticColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: SpacingTokens.sm),
                       Text(
-                        'Manage and organize your AI-powered assistants',
+                        selectedTab == 0 
+                          ? 'Manage and organize your AI-powered assistants'
+                          : 'Start with a pre-built template and customize it to your needs',
                         style: TextStyles.bodyLarge.copyWith(
                           color: SemanticColors.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: SpacingTokens.sectionSpacing),
 
-                      // Stats Row
+                      // Tab Selector
                       Row(
                         children: [
-                          Expanded(
-                            child: AsmblStatsCard(
-                              title: 'Total Agents',
-                              value: '${agents.length}',
-                              icon: Icons.smart_toy,
-                            ),
+                          _TabButton(
+                            text: 'My Agents',
+                            isSelected: selectedTab == 0,
+                            onTap: () => setState(() => selectedTab = 0),
                           ),
-                          const SizedBox(width: SpacingTokens.lg),
-                          Expanded(
-                            child: AsmblStatsCard(
-                              title: 'Active Today',
-                              value: '${agents.where((a) => a.isActive).length}',
-                              icon: Icons.schedule,
-                            ),
-                          ),
-                          const SizedBox(width: SpacingTokens.lg),
-                          Expanded(
-                            child: AsmblStatsCard(
-                              title: 'Total Chats',
-                              value: '${agents.fold(0, (sum, agent) => sum + agent.totalChats)}',
-                              icon: Icons.message,
-                            ),
-                          ),
-                          const SizedBox(width: SpacingTokens.lg),
-                          Expanded(
-                            child: AsmblStatsCard(
-                              title: 'Categories',
-                              value: '${agents.map((a) => a.category).toSet().length}',
-                              icon: Icons.category,
-                            ),
+                          const SizedBox(width: SpacingTokens.md),
+                          _TabButton(
+                            text: 'Agent Library',
+                            isSelected: selectedTab == 1,
+                            onTap: () => setState(() => selectedTab = 1),
                           ),
                         ],
                       ),
-
                       const SizedBox(height: SpacingTokens.sectionSpacing),
 
-                      // Agents List
+                      // Content based on selected tab
                       Expanded(
-                        child: ListView.separated(
-                          itemCount: agents.length,
-                          separatorBuilder: (context, index) => 
-                            const SizedBox(height: SpacingTokens.lg),
-                          itemBuilder: (context, index) {
-                            final agent = agents[index];
-                            return _AgentCard(agent: agent);
-                          },
-                        ),
+                        child: selectedTab == 0 ? _buildMyAgentsContent() : _buildAgentLibraryContent(),
                       ),
                     ],
                   ),
@@ -205,6 +203,136 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildMyAgentsContent() {
+    return Column(
+      children: [
+        // Stats Row
+        Row(
+          children: [
+            Expanded(
+              child: AsmblStatsCard(
+                title: 'Total Agents',
+                value: '${agents.length}',
+                icon: Icons.smart_toy,
+              ),
+            ),
+            const SizedBox(width: SpacingTokens.lg),
+            Expanded(
+              child: AsmblStatsCard(
+                title: 'Active Today',
+                value: '${agents.where((a) => a.isActive).length}',
+                icon: Icons.schedule,
+              ),
+            ),
+            const SizedBox(width: SpacingTokens.lg),
+            Expanded(
+              child: AsmblStatsCard(
+                title: 'Total Chats',
+                value: '${agents.fold(0, (sum, agent) => sum + agent.totalChats)}',
+                icon: Icons.message,
+              ),
+            ),
+            const SizedBox(width: SpacingTokens.lg),
+            Expanded(
+              child: AsmblStatsCard(
+                title: 'Categories',
+                value: '${agents.map((a) => a.category).toSet().length}',
+                icon: Icons.category,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
+        // Agents List
+        Expanded(
+          child: ListView.separated(
+            itemCount: agents.length,
+            separatorBuilder: (context, index) => 
+              const SizedBox(height: SpacingTokens.lg),
+            itemBuilder: (context, index) {
+              final agent = agents[index];
+              return _AgentCard(agent: agent);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAgentLibraryContent() {
+    return Column(
+      children: [
+        // Search and Filter Row
+        Row(
+          children: [
+            // Search Field
+            Expanded(
+              flex: 2,
+              child: AsmblCard(
+                child: TextField(
+                  onChanged: (value) => setState(() => searchQuery = value),
+                  decoration: InputDecoration(
+                    hintText: 'Search templates...',
+                    hintStyle: TextStyles.bodyMedium.copyWith(
+                      color: SemanticColors.onSurfaceVariant,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: SemanticColors.onSurfaceVariant,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: SpacingTokens.md, vertical: SpacingTokens.sm),
+                  ),
+                  style: TextStyles.bodyMedium.copyWith(color: SemanticColors.onSurface),
+                ),
+              ),
+            ),
+            const SizedBox(width: SpacingTokens.lg),
+            // Category Filter
+            AsmblCard(
+              child: DropdownButton<String>(
+                value: selectedCategory,
+                onChanged: (value) => setState(() => selectedCategory = value!),
+                underline: const SizedBox(),
+                style: TextStyles.bodyMedium.copyWith(color: SemanticColors.onSurface),
+                items: categories.map((category) {
+                  return DropdownMenuItem(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
+        // Templates Grid
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: SpacingTokens.lg,
+              mainAxisSpacing: SpacingTokens.lg,
+              childAspectRatio: 0.85,
+            ),
+            itemCount: filteredTemplates.length,
+            itemBuilder: (context, index) {
+              return _TemplateCard(
+                template: filteredTemplates[index],
+                onUseTemplate: () => _useTemplate(filteredTemplates[index]),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _useTemplate(AgentTemplate template) {
+    // Navigate to chat or configuration with this template
+    context.go('${AppRoutes.chat}?template=${template.name}');
   }
 }
 
@@ -364,6 +492,228 @@ class _AgentCard extends StatelessWidget {
       return '${difference.inDays}d ago';
     }
   }
+}
+
+class _TabButton extends StatelessWidget {
+  final String text;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _TabButton({
+    required this.text,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return isSelected 
+        ? AsmblButton.primary(text: text, onPressed: onTap)
+        : AsmblButton.secondary(text: text, onPressed: onTap);
+  }
+}
+
+class _TemplateCard extends StatelessWidget {
+  final AgentTemplate template;
+  final VoidCallback onUseTemplate;
+
+  const _TemplateCard({
+    required this.template,
+    required this.onUseTemplate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AsmblCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with icon and category
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(SpacingTokens.sm),
+                decoration: BoxDecoration(
+                  color: SemanticColors.surfaceVariant,
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Icon(
+                  _getCategoryIcon(template.category),
+                  size: 20,
+                  color: SemanticColors.primary,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
+                decoration: BoxDecoration(
+                  color: SemanticColors.surfaceVariant,
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Text(
+                  template.category,
+                  style: TextStyles.caption.copyWith(
+                    color: SemanticColors.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: SpacingTokens.md),
+          
+          // Template name and description
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  template.name,
+                  style: TextStyles.cardTitle.copyWith(
+                    color: SemanticColors.onSurface,
+                  ),
+                ),
+                const SizedBox(height: SpacingTokens.sm),
+                Text(
+                  template.description,
+                  style: TextStyles.bodySmall.copyWith(
+                    color: SemanticColors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: SpacingTokens.md),
+                
+                // Tags
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: template.tags.take(3).map((tag) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
+                      decoration: BoxDecoration(
+                        color: SemanticColors.surfaceVariant,
+                        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                      ),
+                      child: Text(
+                        tag,
+                        style: TextStyles.caption.copyWith(
+                          color: SemanticColors.onSurfaceVariant,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                
+                const SizedBox(height: SpacingTokens.md),
+                
+                // MCP Servers
+                if (template.mcpStack) ...[
+                  Text(
+                    'MCP Servers',
+                    style: TextStyles.caption.copyWith(
+                      color: SemanticColors.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: SpacingTokens.xs),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: template.mcpServers.take(4).map((server) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.xs, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: SemanticColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                          border: Border.all(
+                            color: SemanticColors.primary.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _getMCPServerIcon(server),
+                              size: 12,
+                              color: SemanticColors.primary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              server,
+                              style: TextStyles.caption.copyWith(
+                                color: SemanticColors.primary,
+                                fontSize: 9,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          
+          // Use Template button
+          const SizedBox(height: SpacingTokens.md),
+          AsmblButton.primary(
+            text: 'Use Template',
+            onPressed: onUseTemplate,
+            icon: Icons.arrow_forward,
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Research': return Icons.search;
+      case 'Development': return Icons.code;
+      case 'Writing': return Icons.edit;
+      case 'Data Analysis': return Icons.analytics;
+      case 'Customer Support': return Icons.support_agent;
+      case 'Marketing': return Icons.campaign;
+      case 'Design': return Icons.design_services;
+      default: return Icons.smart_toy;
+    }
+  }
+
+  IconData _getMCPServerIcon(String server) {
+    switch (server) {
+      case 'Files': return Icons.folder;
+      case 'Git': return Icons.code;
+      case 'Postgres': return Icons.storage;
+      case 'Filesystem': return Icons.description;
+      case 'Memory': return Icons.memory;
+      case 'Time': return Icons.schedule;
+      case 'GitHub': return Icons.code_outlined;
+      case 'Slack': return Icons.chat;
+      case 'Linear': return Icons.assignment;
+      case 'Notion': return Icons.note;
+      case 'Brave Search': return Icons.search;
+      case 'Figma': return Icons.design_services;
+      default: return Icons.extension;
+    }
+  }
+}
+
+class AgentTemplate {
+  final String name;
+  final String description;
+  final String category;
+  final List<String> tags;
+  final bool mcpStack;
+  final List<String> mcpServers;
+
+  AgentTemplate({
+    required this.name,
+    required this.description,
+    required this.category,
+    required this.tags,
+    required this.mcpStack,
+    required this.mcpServers,
+  });
 }
 
 class AgentItem {

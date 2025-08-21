@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:flutter/foundation.dart';
-import 'dart:io' show Platform;
 
 import 'core/theme/app_theme.dart';
 import 'core/design_system/design_system.dart';
+import 'core/constants/routes.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
 import 'features/templates/presentation/screens/templates_screen.dart';
 import 'features/dashboard/presentation/screens/dashboard_screen.dart';
@@ -15,44 +13,42 @@ import 'features/settings/presentation/screens/settings_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/theme_service.dart';
+import 'core/services/desktop/desktop_service_provider.dart';
+import 'core/services/desktop/window_management_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive for local storage with app-specific path
+  // Initialize desktop services
   try {
-    await Hive.initFlutter('asmbli_app_data');
-    await StorageService.init();
+    await DesktopServiceProvider.instance.initialize();
+    print('✓ Desktop services initialized');
   } catch (e) {
-    print('Storage initialization failed: $e');
-    // Continue without storage - theme will work in memory only
+    print('Desktop services initialization failed: $e');
+    // Fallback to legacy storage
+    try {
+      await Hive.initFlutter('asmbli_app_data');
+      await StorageService.init();
+    } catch (e2) {
+      print('Fallback storage initialization failed: $e2');
+    }
   }
 
-  // Initialize window manager for desktop (not web)
-  if (!kIsWeb) {
+  // Configure desktop window
+  if (DesktopServiceProvider.instance.isDesktop) {
     try {
-      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-        await windowManager.ensureInitialized();
-        
-        WindowOptions windowOptions = const WindowOptions(
+      await DesktopServiceProvider.instance.windowManager.configureWindow(
+        const DesktopWindowOptions(
           size: Size(1400, 900),
           minimumSize: Size(1000, 700),
           center: true,
+          title: 'AgentEngine - Desktop',
           backgroundColor: Colors.transparent,
-          skipTaskbar: false,
-          titleBarStyle: TitleBarStyle.normal,
-          windowButtonVisibility: true,
-          title: 'Asmbli - AI Agents Made Easy',
-        );
-        
-        windowManager.waitUntilReadyToShow(windowOptions, () async {
-          await windowManager.show();
-          await windowManager.focus();
-        });
-      }
+        ),
+      );
+      print('✓ Window configured');
     } catch (e) {
-      // Ignore platform errors in web environment
-      print('Window manager initialization skipped: $e');
+      print('Window configuration failed: $e');
     }
   }
 
@@ -83,30 +79,30 @@ class AsmblDesktopApp extends ConsumerWidget {
 
 // Create router outside of the widget to avoid global key issues
 final _router = GoRouter(
-  initialLocation: '/',
+  initialLocation: AppRoutes.home,
   routes: [
     GoRoute(
-      path: '/',
+      path: AppRoutes.home,
       builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
-      path: '/chat',
+      path: AppRoutes.chat,
       builder: (context, state) => const ChatScreen(),
     ),
     GoRoute(
-      path: '/templates',
+      path: AppRoutes.templates,
       builder: (context, state) => const TemplatesScreen(),
     ),
     GoRoute(
-      path: '/dashboard',
+      path: AppRoutes.dashboard,
       builder: (context, state) => const DashboardScreen(),
     ),
     GoRoute(
-      path: '/settings',
+      path: AppRoutes.settings,
       builder: (context, state) => const SettingsScreen(),
     ),
     GoRoute(
-      path: '/agents',
+      path: AppRoutes.agents,
       builder: (context, state) => const MyAgentsScreen(),
     ),
   ],
@@ -135,7 +131,7 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             children: [
               // App Header
-              const AppNavigationBar(currentRoute: '/'),
+              const AppNavigationBar(currentRoute: AppRoutes.home),
               
               // Main Dashboard Content
               Expanded(
@@ -169,7 +165,7 @@ class HomeScreen extends ConsumerWidget {
                               icon: Icons.chat_bubble_outline,
                               title: 'Start New Chat',
                               description: 'Begin a conversation with your AI agents',
-                              onTap: () => context.go('/chat'),
+                              onTap: () => context.go(AppRoutes.chat),
                             ),
                           ),
                           const SizedBox(width: SpacingTokens.lg),
@@ -178,7 +174,7 @@ class HomeScreen extends ConsumerWidget {
                               icon: Icons.library_add,
                               title: 'Browse Templates',
                               description: 'Explore pre-built agent configurations',
-                              onTap: () => context.go('/templates'),
+                              onTap: () => context.go(AppRoutes.templates),
                             ),
                           ),
                           const SizedBox(width: SpacingTokens.lg),
@@ -187,7 +183,7 @@ class HomeScreen extends ConsumerWidget {
                               icon: Icons.build,
                               title: 'Create Agent',
                               description: 'Build a custom agent from scratch',
-                              onTap: () => context.go('/dashboard'),
+                              onTap: () => context.go(AppRoutes.dashboard),
                             ),
                           ),
                         ],
@@ -210,25 +206,25 @@ class HomeScreen extends ConsumerWidget {
                                     icon: Icons.chat,
                                     title: 'Chat with Research Assistant',
                                     subtitle: '2 minutes ago',
-                                    onTap: () => context.go('/chat'),
+                                    onTap: () => context.go(AppRoutes.chat),
                                   ),
                                   _ActivityItem(
                                     icon: Icons.edit,
                                     title: 'Modified Code Review Agent',
                                     subtitle: '1 hour ago',
-                                    onTap: () => context.go('/dashboard'),
+                                    onTap: () => context.go(AppRoutes.dashboard),
                                   ),
                                   _ActivityItem(
                                     icon: Icons.download,
                                     title: 'Installed Notion MCP Server',
                                     subtitle: 'Yesterday',
-                                    onTap: () => context.go('/settings'),
+                                    onTap: () => context.go(AppRoutes.settings),
                                   ),
                                   _ActivityItem(
                                     icon: Icons.library_books,
                                     title: 'Used Writing Assistant template',
                                     subtitle: '2 days ago',
-                                    onTap: () => context.go('/templates'),
+                                    onTap: () => context.go(AppRoutes.templates),
                                   ),
                                 ],
                               ),
@@ -264,7 +260,7 @@ class HomeScreen extends ConsumerWidget {
                                   AsmblButton.primary(
                                     text: 'Create New Agent',
                                     icon: Icons.add,
-                                    onPressed: () => context.go('/dashboard'),
+                                    onPressed: () => context.go(AppRoutes.dashboard),
                                   ),
                                 ],
                               ),

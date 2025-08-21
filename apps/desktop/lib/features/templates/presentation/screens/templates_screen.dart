@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/constants/routes.dart';
 
 class TemplatesScreen extends StatefulWidget {
   const TemplatesScreen({super.key});
@@ -108,7 +109,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
           child: Column(
             children: [
               // Header
-              const AppNavigationBar(currentRoute: '/templates'),
+              const AppNavigationBar(currentRoute: AppRoutes.templates),
               
               // Main Content
               Expanded(
@@ -229,7 +230,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
 
   void _useTemplate(AgentTemplate template) {
     // Navigate to chat or configuration with this template
-    context.go('/chat?template=${template.name}');
+    context.go('${AppRoutes.chat}?template=${template.name}');
   }
 }
 

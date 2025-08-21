@@ -31,7 +31,9 @@
       "Bash(\"C:\\Users\\Mike\\dev\\flutter\\bin\\flutter.bat\" pub get)",
       "Bash(start ms-settings:developers)",
       "Bash(where flutter)",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(dart test:*)",
+      "Bash(C:UsersMikeAppDataLocalPubCachebinformat_coverage.bat --lcov --in=coverage --out=coverage.lcov --report-on=test/helpers)"
     ],
     "deny": [],
     "ask": [],

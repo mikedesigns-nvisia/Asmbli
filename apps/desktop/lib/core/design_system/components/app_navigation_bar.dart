@@ -7,6 +7,7 @@ import '../tokens/typography_tokens.dart';
 import 'header_button.dart';
 import 'asmbli_button.dart';
 import '../../services/theme_service.dart';
+import '../../constants/routes.dart';
 
 // Centralized navigation bar for all screens
 class AppNavigationBar extends ConsumerWidget {
@@ -34,7 +35,7 @@ class AppNavigationBar extends ConsumerWidget {
         children: [
           // Brand Title
           GestureDetector(
-            onTap: () => context.go('/'),
+            onTap: () => context.go(AppRoutes.home),
             child: Text(
               'Asmbli',
               style: TextStyles.brandTitle.copyWith(
@@ -46,34 +47,26 @@ class AppNavigationBar extends ConsumerWidget {
           
           // Navigation Buttons
           HeaderButton(
-            text: 'Templates',
-            icon: Icons.library_books,
-            onPressed: () => context.go('/templates'),
-            isActive: currentRoute == '/templates',
-          ),
-          const SizedBox(width: SpacingTokens.lg),
-          
-          HeaderButton(
             text: 'My Agents',
             icon: Icons.smart_toy,
-            onPressed: () => context.go('/agents'),
-            isActive: currentRoute == '/agents',
+            onPressed: () => context.go(AppRoutes.agents),
+            isActive: currentRoute == AppRoutes.agents,
           ),
           const SizedBox(width: SpacingTokens.lg),
           
           HeaderButton(
             text: 'Library',
             icon: Icons.folder,
-            onPressed: () => context.go('/dashboard'),
-            isActive: currentRoute == '/dashboard',
+            onPressed: () => context.go(AppRoutes.dashboard),
+            isActive: currentRoute == AppRoutes.dashboard,
           ),
           const SizedBox(width: SpacingTokens.lg),
           
           HeaderButton(
             text: 'Settings',
             icon: Icons.settings,
-            onPressed: () => context.go('/settings'),
-            isActive: currentRoute == '/settings',
+            onPressed: () => context.go(AppRoutes.settings),
+            isActive: currentRoute == AppRoutes.settings,
           ),
           const SizedBox(width: SpacingTokens.lg),
           
@@ -116,7 +109,7 @@ class AppNavigationBar extends ConsumerWidget {
           AsmblButton.primary(
             text: 'New Chat',
             icon: Icons.add,
-            onPressed: () => context.go('/chat'),
+            onPressed: () => context.go(AppRoutes.chat),
           ),
         ],
       ),

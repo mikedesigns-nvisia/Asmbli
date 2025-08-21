@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:agent_engine_core/models/conversation.dart' as core;
+import 'package:agent_engine_core/services/implementations/service_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/constants/routes.dart';
+import '../../../../providers/conversation_provider.dart';
+import '../widgets/conversation_list.dart';
+import '../widgets/loading_overlay.dart';
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
 class ChatScreen extends ConsumerStatefulWidget {
@@ -15,9 +21,22 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   bool isSidebarCollapsed = false;
   String selectedAgent = 'general-assistant';
-  List<Message> messages = [];
   final TextEditingController messageController = TextEditingController();
-  bool isLoading = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    _initializeServices();
+  }
+  
+  Future<void> _initializeServices() async {
+    try {
+      ServiceProvider.configure(useInMemory: true);
+      await ServiceProvider.initialize();
+    } catch (e) {
+      print('Service initialization failed: $e');
+    }
+  }
 
   final List<Agent> agents = [
     Agent(id: 'general-assistant', name: 'General Assistant', description: 'A helpful AI assistant'),
@@ -36,22 +55,25 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final isDark = theme.brightness == Brightness.dark;
     
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              SemanticColors.backgroundGradientStart,
-              SemanticColors.backgroundGradientEnd,
-            ],
+      body: LoadingOverlay(
+        isLoading: ref.watch(isLoadingProvider),
+        loadingText: 'Processing...',
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                SemanticColors.backgroundGradientStart,
+                SemanticColors.backgroundGradientEnd,
+              ],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
+          child: SafeArea(
+            child: Column(
             children: [
               // Header
-              const AppNavigationBar(currentRoute: '/chat'),
+              const AppNavigationBar(currentRoute: AppRoutes.chat),
               
               // Main Content
               Expanded(
@@ -96,6 +118,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ),
               ),
             ],
+            ),
           ),
         ),
       ),
@@ -138,9 +161,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ),
           
+          // Conversation List
+          const Expanded(
+            flex: 2,
+            child: ConversationList(),
+          ),
+          
+          const Divider(height: 1, color: SemanticColors.border),
+          
           // Agent Selection Section
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -382,11 +413,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                 ),
                 
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
                 
                 // Browse Templates Button
                 GestureDetector(
-                  onTap: () => context.go('/templates'),
+                  onTap: () => context.go(AppRoutes.templates),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -455,7 +486,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           
           // Messages Area or Empty State
           Expanded(
-            child: messages.isEmpty ? _buildEmptyState(context) : _buildMessagesList(context),
+            child: _buildMessagesArea(context),
           ),
           
           // Input Area
@@ -498,10 +529,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
-                    onPressed: messageController.text.trim().isNotEmpty && !isLoading
+                    onPressed: messageController.text.trim().isNotEmpty && !ref.watch(isLoadingProvider)
                         ? _sendMessage
                         : null,
-                    icon: isLoading 
+                    icon: ref.watch(isLoadingProvider) 
                         ? SizedBox(
                             width: 16,
                             height: 16,
@@ -581,135 +612,220 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Widget _buildMessagesList(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+  Widget _buildMessagesArea(BuildContext context) {
+    final selectedConversationId = ref.watch(selectedConversationIdProvider);
     
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: messages.length,
-      itemBuilder: (context, index) {
-        final message = messages[index];
-        final isUser = message.role == 'user';
+    if (selectedConversationId == null) {
+      return _buildEmptyState(context);
+    }
+    
+    return _buildMessagesList(context, selectedConversationId);
+  }
+  
+  Widget _buildMessagesList(BuildContext context, String conversationId) {
+    final messagesAsync = ref.watch(messagesProvider(conversationId));
+    
+    return messagesAsync.when(
+      data: (messages) {
+        if (messages.isEmpty) {
+          return _buildEmptyConversationState(context);
+        }
         
-        return Container(
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!isUser) ...[
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: colorScheme.primary,
-                  child: Icon(
-                    Icons.smart_toy,
-                    size: 20,
-                    color: colorScheme.onPrimary,
-                  ),
-                ),
-                const SizedBox(width: 12),
-              ],
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isUser ? colorScheme.primary : colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8),
-                    border: !isUser ? Border.all(
-                      color: colorScheme.outline.withOpacity(0.3),
-                    ) : null,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        message.content,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: isUser ? colorScheme.onPrimary : colorScheme.onSurface,
-                          fontFamily: 'Space Grotesk',
-                        ),
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: messages.length + (ref.watch(isLoadingProvider) ? 1 : 0),
+          itemBuilder: (context, index) {
+            // Show typing indicator as last item when loading
+            if (index == messages.length && ref.watch(isLoadingProvider)) {
+              return const MessageLoadingIndicator();
+            }
+            
+            final message = messages[index];
+            final isUser = message.role == core.MessageRole.user;
+            
+            return Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!isUser) ...[
+                    CircleAvatar(
+                      radius: 16,
+                      backgroundColor: colorScheme.primary,
+                      child: Icon(
+                        Icons.smart_toy,
+                        size: 20,
+                        color: colorScheme.onPrimary,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _formatTime(message.timestamp),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: (isUser ? colorScheme.onPrimary : colorScheme.onSurface).withOpacity(0.7),
-                          fontFamily: 'Space Grotesk',
-                        ),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isUser ? colorScheme.primary : colorScheme.surface,
+                        borderRadius: BorderRadius.circular(8),
+                        border: !isUser ? Border.all(
+                          color: colorScheme.outline.withOpacity(0.3),
+                        ) : null,
                       ),
-                    ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            message.content,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: isUser ? colorScheme.onPrimary : colorScheme.onSurface,
+                              fontFamily: 'Space Grotesk',
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _formatTime(message.timestamp),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: (isUser ? colorScheme.onPrimary : colorScheme.onSurface).withOpacity(0.7),
+                              fontFamily: 'Space Grotesk',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  if (isUser) ...[
+                    const SizedBox(width: 12),
+                    CircleAvatar(
+                      radius: 16,
+                      backgroundColor: colorScheme.surface,
+                      child: Icon(
+                        Icons.person,
+                        size: 20,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ],
               ),
-              if (isUser) ...[
-                const SizedBox(width: 12),
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: colorScheme.surface,
-                  child: Icon(
-                    Icons.person,
-                    size: 20,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ],
-          ),
+            );
+          },
         );
       },
+      loading: () => const Center(
+        child: CircularProgressIndicator(color: SemanticColors.primary),
+      ),
+      error: (error, stack) => Center(
+        child: ErrorMessage(
+          message: 'Failed to load messages: ${error.toString()}',
+          onRetry: () {
+            ref.invalidate(messagesProvider(conversationId));
+          },
+        ),
+      ),
     );
   }
 
-  void _sendMessage() {
-    if (messageController.text.trim().isEmpty || isLoading) return;
+  void _sendMessage() async {
+    final selectedConversationId = ref.read(selectedConversationIdProvider);
+    if (messageController.text.trim().isEmpty || 
+        ref.read(isLoadingProvider) || 
+        selectedConversationId == null) return;
 
-    final userMessage = Message(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      role: 'user',
-      content: messageController.text.trim(),
-      timestamp: DateTime.now(),
-    );
-
-    setState(() {
-      messages.add(userMessage);
-      isLoading = true;
-    });
-
-    messageController.clear();
-
-    // Simulate AI response
-    Future.delayed(const Duration(seconds: 1), () {
-      final assistantMessage = Message(
-        id: (DateTime.now().millisecondsSinceEpoch + 1).toString(),
-        role: 'assistant',
-        content: 'I\'m a mock response to: "${userMessage.content}". In production, this would connect to your configured AI model via API.',
+    try {
+      ref.read(isLoadingProvider.notifier).state = true;
+      
+      final sendMessage = ref.read(sendMessageProvider);
+      await sendMessage(
+        conversationId: selectedConversationId,
+        content: messageController.text.trim(),
+      );
+      
+      messageController.clear();
+      
+      // Simulate AI response
+      await Future.delayed(const Duration(seconds: 1));
+      
+      final assistantMessage = core.Message(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        content: 'This is a simulated AI response. In production, this would connect to your configured AI model.',
+        role: core.MessageRole.assistant,
         timestamp: DateTime.now(),
       );
-
-      setState(() {
-        messages.add(assistantMessage);
-        isLoading = false;
-      });
-    });
+      
+      final service = ref.read(conversationServiceProvider);
+      await service.addMessage(selectedConversationId, assistantMessage);
+      
+      // Refresh messages
+      ref.invalidate(messagesProvider(selectedConversationId));
+      
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send message: $e'),
+            backgroundColor: SemanticColors.error,
+          ),
+        );
+      }
+    } finally {
+      ref.read(isLoadingProvider.notifier).state = false;
+    }
   }
 
+  Widget _buildEmptyConversationState(BuildContext context) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceVariant,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: theme.colorScheme.outline),
+              ),
+              child: Icon(
+                Icons.chat_bubble_outline,
+                size: 32,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              'Start the conversation',
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Type a message below to begin this conversation.',
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 14,
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
-}
-
-class Message {
-  final String id;
-  final String role;
-  final String content;
-  final DateTime timestamp;
-
-  Message({
-    required this.id,
-    required this.role,
-    required this.content,
-    required this.timestamp,
-  });
 }
 
 class Agent {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/constants/routes.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -97,7 +98,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Column(
             children: [
               // Header
-              const AppNavigationBar(currentRoute: '/dashboard'),
+              const AppNavigationBar(currentRoute: AppRoutes.dashboard),
               
               // Main Content
               Expanded(
@@ -170,7 +171,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: _DashboardSection(
                               title: 'My Agents',
                               action: GestureDetector(
-                                onTap: () => context.go('/templates'),
+                                onTap: () => context.go(AppRoutes.templates),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
@@ -507,7 +508,7 @@ class _AgentCard extends StatelessWidget {
               ),
               const Spacer(),
               GestureDetector(
-                onTap: () => context.go('/chat?agent=${agent.name}'),
+                onTap: () => context.go('${AppRoutes.chat}?agent=${agent.name}'),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(

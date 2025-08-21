@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/services/theme_service.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/constants/routes.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -215,7 +216,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
           child: Column(
             children: [
               // Header
-              const AppNavigationBar(currentRoute: '/settings'),
+              const AppNavigationBar(currentRoute: AppRoutes.settings),
               
               // Main Content
               Expanded(
@@ -226,7 +227,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     children: [
                       // Back navigation
                       GestureDetector(
-                        onTap: () => context.go('/chat'),
+                        onTap: () => context.go(AppRoutes.chat),
                         child: Row(
                           children: [
                             Icon(
