@@ -745,18 +745,19 @@ body::after {
   /* Enhanced progress dots for light mode */
   [data-theme="light"] .progress-dot.upcoming,
   .light .progress-dot.upcoming {
-    @apply bg-bone-300 border-bone-600;
+    background: hsl(var(--mint-300));
+    border-color: hsl(var(--mint-600));
   }
 
   [data-theme="light"] .progress-dot.active,
   .light .progress-dot.active {
-    @apply bg-pudding-600;
-    box-shadow: 0 0 20px hsl(var(--pudding-600) / 0.5);
+    background: hsl(var(--forest-600));
+    box-shadow: 0 0 20px hsl(var(--forest-600) / 0.5);
   }
 
   [data-theme="light"] .progress-dot.completed,
   .light .progress-dot.completed {
-    @apply bg-pudding-600;
+    background: hsl(var(--forest-600));
   }
 
   /* Responsive grid utilities */
@@ -894,11 +895,13 @@ body::after {
   /* Better contrast for light mode */
   [data-theme="light"] .chip-container,
   .light .chip-container {
-    @apply bg-bone-300/50 border-bone-400;
+    background: hsl(var(--mint-300) / 0.5);
+    border-color: hsl(var(--mint-400));
   }
 
   [data-theme="light"] .badge-container .badge,
   .light .badge-container .badge {
-    @apply bg-bone-800 text-bone-100;
+    background: hsl(var(--forest-800));
+    color: hsl(var(--mint-100));
   }
 }

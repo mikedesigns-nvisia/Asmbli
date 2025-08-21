@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Exact Colors from the Web App CSS - Converted from HSL to RGB
-  // Light Mode Theme
-  static const Color lightBackground = Color(0xFFFBF9F5);    // hsl(54, 35%, 97%)
-  static const Color lightForeground = Color(0xFF3D3328);    // hsl(45, 29%, 15%)
-  static const Color lightCard = Color(0xFFFCFAF7);          // hsl(54, 30%, 98%)
-  static const Color lightCardForeground = Color(0xFF3D3328); // hsl(45, 29%, 15%)
-  static const Color lightPrimary = Color(0xFF3D3328);       // hsl(45, 29%, 15%) - Dark primary
-  static const Color lightPrimaryForeground = Color(0xFFFBF9F5); // hsl(54, 35%, 97%)
-  static const Color lightSecondary = Color(0xFFF5F2ED);     // hsl(50, 30%, 93%)
-  static const Color lightSecondaryForeground = Color(0xFF3D3328); // hsl(45, 29%, 15%)
-  static const Color lightMuted = Color(0xFFF6F3EE);         // hsl(50, 25%, 94%)
-  static const Color lightMutedForeground = Color(0xFF736B5F); // hsl(45, 16%, 46%)
-  static const Color lightAccent = Color(0xFFF5F2ED);        // hsl(50, 30%, 93%)
-  static const Color lightAccentForeground = Color(0xFF3D3328); // hsl(45, 29%, 15%)
-  static const Color lightBorder = Color(0xFFE8E1D3);        // hsl(52, 25%, 89%)
-  static const Color lightInput = Color(0xFFE8E1D3);         // hsl(52, 25%, 89%)
+  // Mint (Light) and Forest (Dark) Theme Colors
+  // Light Mode Theme - Mint
+  static const Color lightBackground = Color(0xFFF5FBF8);    // Soft mint background
+  static const Color lightForeground = Color(0xFF1E3B2B);    // Deep forest green text
+  static const Color lightCard = Color(0xFFF7FCFA);          // Lighter mint background/cards
+  static const Color lightCardForeground = Color(0xFF1E3B2B); // Deep forest green text
+  static const Color lightPrimary = Color(0xFF1E3B2B);       // Deep forest green primary
+  static const Color lightPrimaryForeground = Color(0xFFF5FBF8); // Soft mint on primary
+  static const Color lightSecondary = Color(0xFFEDF5F1);     // Secondary surface
+  static const Color lightSecondaryForeground = Color(0xFF1E3B2B); // Deep forest green text
+  static const Color lightMuted = Color(0xFFEEF6F2);         // Muted mint background
+  static const Color lightMutedForeground = Color(0xFF4A6B5A); // Muted forest green text
+  static const Color lightAccent = Color(0xFFEDF5F1);        // Secondary surface
+  static const Color lightAccentForeground = Color(0xFF1E3B2B); // Deep forest green text
+  static const Color lightBorder = Color(0xFFD3E8DC);        // Soft mint border
+  static const Color lightInput = Color(0xFFD3E8DC);         // Input backgrounds
   
-  // Dark Mode Colors (keep existing)
-  static const Color darkBackground = Color(0xFF0C0C0F);     // hsl(222.2, 84%, 4.9%)
-  static const Color darkForeground = Color(0xFFFAFAFA);     // hsl(210, 40%, 98%)
-  static const Color darkCard = Color(0xFF0C0C0F);           // hsl(222.2, 84%, 4.9%)
-  static const Color darkCardForeground = Color(0xFFFAFAFA); // hsl(210, 40%, 98%)
-  static const Color darkPrimary = Color(0xFFFAFAFA);        // hsl(210, 40%, 98%)
-  static const Color darkPrimaryForeground = Color(0xFF1C1C1F); // hsl(222.2, 47.4%, 11.2%)
+  // Dark Mode Colors - Forest
+  static const Color darkBackground = Color(0xFF0F1C14);     // Deep forest background
+  static const Color darkForeground = Color(0xFFF0F8F3);     // Light mint
+  static const Color darkCard = Color(0xFF1A2920);           // Forest surface
+  static const Color darkCardForeground = Color(0xFFF0F8F3); // Light mint
+  static const Color darkPrimary = Color(0xFFB8E6C8);        // Bright mint accent
+  static const Color darkPrimaryForeground = Color(0xFF0F1C14); // Dark forest on mint
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -258,17 +258,17 @@ class AppTheme {
         brightness: Brightness.dark,
         primary: darkPrimary,
         onPrimary: darkPrimaryForeground,
-        secondary: const Color(0xFF383838),
-        onSecondary: const Color(0xFFA3A3A3),
+        secondary: const Color(0xFF1F2F25),
+        onSecondary: const Color(0xFFA0BDA8),
         surface: darkCard,
         onSurface: darkCardForeground,
         background: darkBackground,
         onBackground: darkForeground,
         error: const Color(0xFFF87171),
         onError: Colors.white,
-        outline: const Color(0xFF383838),
-        surfaceVariant: const Color(0xFF262529),
-        onSurfaceVariant: const Color(0xFFA3A3A3),
+        outline: const Color(0xFF2B3F33),
+        surfaceVariant: const Color(0xFF1F2F25),
+        onSurfaceVariant: const Color(0xFFA0BDA8),
       ),
       
       // AppBar Theme - Clean and minimal
@@ -292,7 +292,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: const Color(0xFF383838).withOpacity(0.5)),
+          side: BorderSide(color: const Color(0xFF2B3F33).withOpacity(0.5)),
         ),
         color: darkCard,
         surfaceTintColor: Colors.transparent,
@@ -321,7 +321,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: darkPrimary,
-          side: const BorderSide(color: Color(0xFF383838)),
+          side: const BorderSide(color: Color(0xFF2B3F33)),
           elevation: 0,
           backgroundColor: Colors.transparent,
           shape: RoundedRectangleBorder(
@@ -351,18 +351,18 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFF383838)),
+          borderSide: const BorderSide(color: Color(0xFF2B3F33)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFF383838)),
+          borderSide: const BorderSide(color: Color(0xFF2B3F33)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: darkPrimary, width: 2),
         ),
         filled: true,
-        fillColor: const Color(0xFF1C1C1F),
+        fillColor: const Color(0xFF142019),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       
@@ -440,14 +440,14 @@ class AppTheme {
           fontSize: 14,
           fontWeight: FontWeight.w400,
           letterSpacing: 0.25,
-          color: const Color(0xFFA3A3A3),
+          color: const Color(0xFFA0BDA8),
         ),
         bodySmall: TextStyle(
           fontFamily: 'Space Grotesk',
           fontSize: 12,
           fontWeight: FontWeight.w400,
           letterSpacing: 0.4,
-          color: const Color(0xFFA3A3A3),
+          color: const Color(0xFFA0BDA8),
         ),
         labelLarge: TextStyle(
           fontFamily: 'Space Grotesk',
@@ -461,14 +461,14 @@ class AppTheme {
           fontSize: 12,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.5,
-          color: const Color(0xFFA3A3A3),
+          color: const Color(0xFFA0BDA8),
         ),
         labelSmall: TextStyle(
           fontFamily: 'Space Grotesk',
           fontSize: 11,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.5,
-          color: const Color(0xFFA3A3A3),
+          color: const Color(0xFFA0BDA8),
         ),
       ),
     );

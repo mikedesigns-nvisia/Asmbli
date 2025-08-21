@@ -16,7 +16,7 @@ class ThemeService extends StateNotifier<ThemeMode> {
       final savedTheme = _box?.get(_themeKey, defaultValue: 'dark') ?? 'dark';
       state = _themeModeFromString(savedTheme);
     } catch (e) {
-      // If Hive fails to initialize, just use dark theme (Midnight Mocha)
+      // If Hive fails to initialize, just use dark theme (Forest)
       print('Failed to initialize theme storage: $e');
       state = ThemeMode.dark;
       _box = null; // Ensure box is null so setTheme won't try to save
@@ -50,11 +50,11 @@ class ThemeService extends StateNotifier<ThemeMode> {
   String getThemeName() {
     switch (state) {
       case ThemeMode.light:
-        return 'Banana Pudding';
+        return 'Mint';
       case ThemeMode.dark:
-        return 'Midnight Mocha';
+        return 'Forest';
       case ThemeMode.system:
-        return 'Midnight Mocha'; // Default to dark if somehow system is selected
+        return 'Forest'; // Default to dark if somehow system is selected
     }
   }
 

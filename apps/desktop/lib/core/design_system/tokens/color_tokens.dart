@@ -1,54 +1,54 @@
 import 'package:flutter/material.dart';
 
-// Design tokens for Banana Pudding (Light) and Midnight Mocha (Dark) themes
+// Design tokens for Mint (Light) and Forest (Dark) themes
 class ColorTokens {
   // Base Colors
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
   
-  // Banana Pudding Palette (Light Theme)
-  static const Color background1 = Color(0xFFFBF9F5);    // Primary background
-  static const Color background2 = Color(0xFFFCFAF7);    // Secondary background/cards
-  static const Color surface = Color(0xFFFCFAF7);        // Card surface
-  static const Color muted = Color(0xFFF6F3EE);          // Muted background
-  static const Color secondary = Color(0xFFF5F2ED);      // Secondary surface
+  // Mint Palette (Light Theme)
+  static const Color background1 = Color(0xFFF5FBF8);    // Soft mint background
+  static const Color background2 = Color(0xFFF7FCFA);    // Lighter mint background/cards
+  static const Color surface = Color(0xFFF7FCFA);        // Card surface
+  static const Color muted = Color(0xFFEEF6F2);          // Muted mint background
+  static const Color secondary = Color(0xFFEDF5F1);      // Secondary surface
   
   // Text Colors
-  static const Color foreground = Color(0xFF3D3328);     // Primary text
-  static const Color mutedForeground = Color(0xFF736B5F); // Secondary text
+  static const Color foreground = Color(0xFF1E3B2B);     // Deep forest green text
+  static const Color mutedForeground = Color(0xFF4A6B5A); // Muted forest green text
   
-  // Primary (Dark Brown/Charcoal)
-  static const Color primary = Color(0xFF3D3328);        // Primary action color
-  static const Color primaryForeground = Color(0xFFFBF9F5); // Text on primary
+  // Primary (Deep Forest Green)
+  static const Color primary = Color(0xFF1E3B2B);        // Primary action color
+  static const Color primaryForeground = Color(0xFFF5FBF8); // Text on primary
   
   // Borders and Lines
-  static const Color border = Color(0xFFE8E1D3);         // Primary border
-  static const Color input = Color(0xFFE8E1D3);          // Input backgrounds
+  static const Color border = Color(0xFFD3E8DC);         // Soft mint border
+  static const Color input = Color(0xFFD3E8DC);          // Input backgrounds
   
   // Interactive States (subtle overlays)
-  static const Color hover = Color(0x0A3D3328);          // 4% primary overlay
-  static const Color pressed = Color(0x143D3328);        // 8% primary overlay
-  static const Color focus = Color(0x1A3D3328);          // 10% primary overlay
+  static const Color hover = Color(0x0A1E3B2B);          // 4% primary overlay
+  static const Color pressed = Color(0x141E3B2B);        // 8% primary overlay
+  static const Color focus = Color(0x1A1E3B2B);          // 10% primary overlay
   
-  // Semantic Colors (harmonious with your palette)
-  static const Color success = Color(0xFF22C55E);
-  static const Color warning = Color(0xFFF59E0B);
+  // Semantic Colors (harmonious with mint/forest palette)
+  static const Color success = Color(0xFF16A34A);
+  static const Color warning = Color(0xFFFAAF00);
   static const Color error = Color(0xFFDC2626);
   
-  // Midnight Mocha Palette (Dark Theme)
-  static const Color darkBackground1 = Color(0xFF1A1814);  // Rich mocha brown
-  static const Color darkBackground2 = Color(0xFF1F1D18);  // Slightly lighter mocha
-  static const Color darkSurface = Color(0xFF252319);      // Coffee surface
-  static const Color darkMuted = Color(0xFF2A2820);        // Muted mocha surface
-  static const Color darkBorder = Color(0xFF3D3A30);       // Warm mocha border
+  // Forest Palette (Dark Theme)
+  static const Color darkBackground1 = Color(0xFF0F1C14);  // Deep forest background
+  static const Color darkBackground2 = Color(0xFF142019);  // Slightly lighter forest
+  static const Color darkSurface = Color(0xFF1A2920);      // Forest surface
+  static const Color darkMuted = Color(0xFF1F2F25);        // Muted forest surface
+  static const Color darkBorder = Color(0xFF2B3F33);       // Forest border
   
-  // Midnight Mocha text (warm creams like foam on coffee)
-  static const Color darkForeground = Color(0xFFFAF8F3);    // Cream foam
-  static const Color darkMutedForeground = Color(0xFFB5AA9A); // Latte foam
+  // Forest text (soft mint greens)
+  static const Color darkForeground = Color(0xFFF0F8F3);    // Light mint
+  static const Color darkMutedForeground = Color(0xFFA0BDA8); // Muted mint
   
-  // Midnight Mocha primary (cream accent like coffee foam)
-  static const Color darkPrimary = Color(0xFFE8DFD0);       // Coffee foam cream
-  static const Color darkPrimaryForeground = Color(0xFF1A1814); // Dark mocha on cream
+  // Forest primary (bright mint accent)
+  static const Color darkPrimary = Color(0xFFB8E6C8);       // Bright mint accent
+  static const Color darkPrimaryForeground = Color(0xFF0F1C14); // Dark forest on mint
 }
 
 class SemanticColors {
@@ -77,7 +77,7 @@ class SemanticColors {
   
   // Header Colors
   static const Color headerBackground = Color(0x80FFFFFF); // white.withOpacity(0.5)
-  static const Color headerBorder = Color(0x4DE8E1D3); // border.withOpacity(0.3)
+  static const Color headerBorder = Color(0x4DD3E8DC); // border.withOpacity(0.3)
   
   // State Colors
   static const Color success = ColorTokens.success;

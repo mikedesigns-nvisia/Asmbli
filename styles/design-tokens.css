@@ -158,40 +158,40 @@
   --color-input: 240 10% 10%;
   --color-ring: 239 84% 67%;
   
-  /* ===== BONE & BANANA PUDDING LIGHT THEME ===== */
+  /* ===== MINT & FOREST LIGHT THEME ===== */
   
-  /* Bone Color Palette (warm creams and off-whites) - Enhanced with darker tones */
-  --bone-50: 54 18% 94%;    /* Warmer off-white */
-  --bone-100: 52 16% 90%;   /* Rich cream */
-  --bone-200: 50 14% 86%;   /* Medium cream */
-  --bone-300: 48 12% 80%;   /* Soft cream */
-  --bone-400: 46 10% 72%;   /* Medium bone */
-  --bone-500: 44 8% 62%;    /* True bone */
-  --bone-600: 42 6% 50%;    /* Darker bone */
-  --bone-700: 40 5% 38%;    /* Deep bone */
-  --bone-800: 38 4% 28%;    /* Rich bone */
-  --bone-900: 36 3% 18%;    /* Darkest bone */
-  --bone-950: 34 2% 12%;    /* Extra dark bone */
+  /* Mint Color Palette (soft mint greens and off-whites) - Enhanced with darker tones */
+  --mint-50: 150 25% 95%;    /* Softest mint white */
+  --mint-100: 148 22% 92%;   /* Very light mint */
+  --mint-200: 146 20% 88%;   /* Light mint */
+  --mint-300: 144 18% 82%;   /* Soft mint */
+  --mint-400: 142 16% 74%;   /* Medium mint */
+  --mint-500: 140 14% 65%;   /* True mint */
+  --mint-600: 138 12% 55%;   /* Darker mint */
+  --mint-700: 136 10% 44%;   /* Deep mint */
+  --mint-800: 134 8% 32%;    /* Rich mint */
+  --mint-900: 132 6% 20%;    /* Darkest mint */
+  --mint-950: 130 4% 14%;    /* Extra dark mint */
   
-  /* Banana Pudding Palette (warm yellows and golds) - Enhanced */
-  --pudding-50: 50 80% 92%;   /* Vanilla cream */
-  --pudding-100: 48 75% 88%;  /* Light banana cream */
-  --pudding-200: 46 70% 84%;  /* Light banana */
-  --pudding-300: 44 65% 78%;  /* Soft banana */
-  --pudding-400: 42 60% 70%;  /* Medium banana */
-  --pudding-500: 40 55% 62%;  /* True banana pudding */
-  --pudding-600: 38 50% 52%;  /* Rich banana */
-  --pudding-700: 36 45% 42%;  /* Deep banana */
-  --pudding-800: 34 40% 32%;  /* Golden brown */
-  --pudding-900: 32 35% 22%;  /* Dark caramel */
-  --pudding-950: 30 30% 15%;  /* Extra dark caramel */
+  /* Forest Palette (deep forest greens) - Enhanced */
+  --forest-50: 135 40% 92%;   /* Lightest forest tint */
+  --forest-100: 133 38% 88%;  /* Light forest */
+  --forest-200: 131 36% 82%;  /* Soft forest */
+  --forest-300: 129 34% 75%;  /* Medium light forest */
+  --forest-400: 127 32% 66%;  /* Medium forest */
+  --forest-500: 125 30% 56%;  /* True forest */
+  --forest-600: 123 28% 45%;  /* Deep forest */
+  --forest-700: 121 26% 34%;  /* Darker forest */
+  --forest-800: 119 24% 24%;  /* Rich forest */
+  --forest-900: 117 22% 16%;  /* Darkest forest */
+  --forest-950: 115 20% 12%;  /* Extra dark forest */
   
   /* Accent Colors for Light Mode */
-  --caramel: 32 72% 45%;      /* Rich caramel accent */
-  --vanilla: 48 35% 88%;      /* Soft vanilla */
-  --cream: 54 25% 94%;        /* Rich cream */
-  --toast: 36 50% 65%;        /* Warm toast */
-  --honey: 44 85% 72%;        /* Golden honey */
+  --sage: 140 20% 50%;        /* Sage green accent */
+  --eucalyptus: 148 25% 85%;  /* Soft eucalyptus */
+  --seafoam: 150 30% 88%;     /* Seafoam green */
+  --jade: 135 45% 45%;        /* Jade green */
+  --emerald: 125 55% 38%;     /* Rich emerald */
   
   /* Semantic color variations */
   --color-primary-50: 239 84% 95%;
@@ -251,68 +251,68 @@
   --z-max: 999;
 }
 
-/* ===== LIGHT MODE THEME (Bone & Banana Pudding) ===== */
+/* ===== LIGHT MODE THEME (Mint & Forest) ===== */
 [data-theme="light"], 
 .light,
 :root.light {
-  /* Light Mode Color Mappings - Enhanced with richer surfaces */
-  --color-background: var(--bone-200);         /* Medium cream background to match surfaces */
-  --color-foreground: 20 5% 8%;                /* Much darker text for better readability */
-  --color-card: var(--bone-100);               /* Rich cream cards */
-  --color-card-foreground: 20 5% 8%;           /* Much darker card text */
-  --color-popover: var(--bone-100);            /* Rich cream popovers */
-  --color-popover-foreground: 20 5% 8%;        /* Much darker popover text */
+  /* Light Mode Color Mappings - Enhanced with mint surfaces */
+  --color-background: var(--mint-200);          /* Light mint background */
+  --color-foreground: var(--forest-900);       /* Deep forest text for readability */
+  --color-card: var(--mint-100);                /* Very light mint cards */
+  --color-card-foreground: var(--forest-900);   /* Deep forest card text */
+  --color-popover: var(--mint-100);             /* Very light mint popovers */
+  --color-popover-foreground: var(--forest-900); /* Deep forest popover text */
   
-  /* Sidebar and Navbar surfaces - darker bone tones */
-  --color-sidebar: var(--bone-300);            /* Darker cream sidebar */
-  --color-sidebar-foreground: 20 5% 8%;        /* Much darker sidebar text */
-  --color-navbar: var(--bone-300);             /* Darker cream navbar */
-  --color-navbar-foreground: 20 5% 8%;         /* Much darker navbar text */
+  /* Sidebar and Navbar surfaces - medium mint tones */
+  --color-sidebar: var(--mint-300);             /* Soft mint sidebar */
+  --color-sidebar-foreground: var(--forest-900); /* Deep forest sidebar text */
+  --color-navbar: var(--mint-300);              /* Soft mint navbar */
+  --color-navbar-foreground: var(--forest-900); /* Deep forest navbar text */
   
-  /* Primary colors using banana pudding with better contrast */
-  --color-primary: var(--pudding-700);         /* Deeper banana primary for better contrast */
-  --color-primary-foreground: var(--bone-50);  /* Light text on primary */
+  /* Primary colors using forest green with better contrast */
+  --color-primary: var(--forest-700);           /* Deep forest primary */
+  --color-primary-foreground: var(--mint-50);   /* Light mint text on primary */
   
-  /* Secondary using darker bone tones */
-  --color-secondary: var(--bone-300);          /* Soft cream secondary */
-  --color-secondary-foreground: 20 5% 8%;      /* Much darker secondary text */
+  /* Secondary using medium mint tones */
+  --color-secondary: var(--mint-300);           /* Soft mint secondary */
+  --color-secondary-foreground: var(--forest-900); /* Deep forest secondary text */
   
-  /* Muted using darker bone for contrast with bone-200 background */
-  --color-muted: var(--bone-400);              /* Medium bone muted */
-  --color-muted-foreground: 20 5% 25%;         /* Darker muted text for better readability */
+  /* Muted using darker mint for contrast with mint-200 background */
+  --color-muted: var(--mint-400);               /* Medium mint muted */
+  --color-muted-foreground: var(--forest-700);  /* Forest muted text for readability */
   
-  /* Accent using darker bone for contrast */
-  --color-accent: var(--bone-400);             /* Medium bone accent */
-  --color-accent-foreground: 20 5% 8%;         /* Much darker accent text */
+  /* Accent using darker mint for contrast */
+  --color-accent: var(--mint-400);              /* Medium mint accent */
+  --color-accent-foreground: var(--forest-900); /* Deep forest accent text */
   
   /* UI elements with better contrast */
-  --color-border: var(--bone-500);             /* Darker bone borders */
-  --color-input: var(--bone-100);              /* Rich cream input backgrounds */
-  --color-ring: var(--pudding-600);            /* Rich banana focus rings */
+  --color-border: var(--mint-500);              /* Darker mint borders */
+  --color-input: var(--mint-100);               /* Very light mint input backgrounds */
+  --color-ring: var(--forest-600);              /* Deep forest focus rings */
   
-  /* State colors with warm tones */
-  --color-destructive: 0 70% 55%;              /* Warm red for errors */
-  --color-destructive-foreground: var(--bone-50); /* Light text */
-  --color-success: 120 45% 45%;                /* Warm green for success */
-  --color-warning: var(--caramel);             /* Caramel for warnings */
+  /* State colors with natural tones */
+  --color-destructive: 0 65% 50%;              /* Natural red for errors */
+  --color-destructive-foreground: var(--mint-50); /* Light mint text */
+  --color-success: var(--forest-600);          /* Forest green for success */
+  --color-warning: var(--sage);                /* Sage for warnings */
   
   /* Dark elements for light mode (chips, badges) */
-  --color-chip: var(--bone-800);               /* Dark bone chips */
-  --color-chip-foreground: var(--bone-100);    /* Light text on chips */
-  --color-badge: var(--bone-900);              /* Very dark bone badges */
-  --color-badge-foreground: var(--bone-100);   /* Light text on badges */
+  --color-chip: var(--forest-800);             /* Dark forest chips */
+  --color-chip-foreground: var(--mint-100);    /* Light mint text on chips */
+  --color-badge: var(--forest-900);            /* Very dark forest badges */
+  --color-badge-foreground: var(--mint-100);   /* Light mint text on badges */
   
   /* Extended palette variations for light mode */
-  --color-primary-50: var(--pudding-50);
-  --color-primary-100: var(--pudding-100);
-  --color-primary-200: var(--pudding-200);
-  --color-primary-300: var(--pudding-300);
-  --color-primary-400: var(--pudding-400);
-  --color-primary-500: var(--pudding-500);
-  --color-primary-600: var(--pudding-600);
-  --color-primary-700: var(--pudding-700);
-  --color-primary-800: var(--pudding-800);
-  --color-primary-900: var(--pudding-900);
+  --color-primary-50: var(--forest-50);
+  --color-primary-100: var(--forest-100);
+  --color-primary-200: var(--forest-200);
+  --color-primary-300: var(--forest-300);
+  --color-primary-400: var(--forest-400);
+  --color-primary-500: var(--forest-500);
+  --color-primary-600: var(--forest-600);
+  --color-primary-700: var(--forest-700);
+  --color-primary-800: var(--forest-800);
+  --color-primary-900: var(--forest-900);
   
   /* Shadows adjusted for light mode with better definition */
   --card-shadow-sm: 0 1px 3px 0 rgb(40 35 28 / 0.12), 0 1px 2px 0 rgb(40 35 28 / 0.08);
