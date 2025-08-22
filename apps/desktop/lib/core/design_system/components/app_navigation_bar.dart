@@ -4,9 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../tokens/color_tokens.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
+import '../tokens/theme_colors.dart';
 import 'header_button.dart';
 import 'asmbli_button.dart';
-import '../../services/theme_service.dart';
+import 'asmbli_button_enhanced.dart';
 import '../../constants/routes.dart';
 
 // Centralized navigation bar for all screens
@@ -20,16 +21,15 @@ class AppNavigationBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeService = ref.read(themeServiceProvider.notifier);
-    
+    final colors = ThemeColors(context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.headerPadding,
         vertical: SpacingTokens.pageVertical,
       ),
-      decoration: const BoxDecoration(
-        color: SemanticColors.headerBackground,
-        border: Border(bottom: BorderSide(color: SemanticColors.headerBorder)),
+      decoration: BoxDecoration(
+        color: colors.headerBackground,
+        border: Border(bottom: BorderSide(color: colors.headerBorder)),
       ),
       child: Row(
         children: [
@@ -39,7 +39,7 @@ class AppNavigationBar extends ConsumerWidget {
             child: Text(
               'Asmbli',
               style: TextStyles.brandTitle.copyWith(
-                color: SemanticColors.onSurface,
+                color: colors.onSurface,
               ),
             ),
           ),
@@ -55,10 +55,10 @@ class AppNavigationBar extends ConsumerWidget {
           const SizedBox(width: SpacingTokens.lg),
           
           HeaderButton(
-            text: 'Library',
-            icon: Icons.folder,
-            onPressed: () => context.go(AppRoutes.dashboard),
-            isActive: currentRoute == AppRoutes.dashboard,
+            text: 'Context',
+            icon: Icons.library_books,
+            onPressed: () => context.go(AppRoutes.context),
+            isActive: currentRoute == AppRoutes.context,
           ),
           const SizedBox(width: SpacingTokens.lg),
           
@@ -68,48 +68,14 @@ class AppNavigationBar extends ConsumerWidget {
             onPressed: () => context.go(AppRoutes.settings),
             isActive: currentRoute == AppRoutes.settings,
           ),
-          const SizedBox(width: SpacingTokens.lg),
-          
-          // Theme toggle button
-          GestureDetector(
-            onTap: () {
-              themeService.toggleTheme();
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SpacingTokens.md,
-                vertical: SpacingTokens.sm,
-              ),
-              decoration: BoxDecoration(
-                color: SemanticColors.surfaceVariant.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    themeService.getThemeIcon(),
-                    size: 16,
-                    color: SemanticColors.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: SpacingTokens.sm),
-                  Text(
-                    themeService.getThemeName(),
-                    style: TextStyles.caption.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
           const SizedBox(width: SpacingTokens.xxl),
           
           // New Chat Button
-          AsmblButton.primary(
+          AsmblButtonEnhanced.accent(
             text: 'New Chat',
             icon: Icons.add,
             onPressed: () => context.go(AppRoutes.chat),
+            size: AsmblButtonSize.medium,
           ),
         ],
       ),

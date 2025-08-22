@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Mint (Light) and Forest (Dark) Theme Colors
+  // Mint (Light) and Forest (Dark) Theme Colors with Enhanced Gradients
   // Light Mode Theme - Mint
   static const Color lightBackground = Color(0xFFF5FBF8);    // Soft mint background
+  static const Color lightBackgroundGradientStart = Color(0xFFF8FCFA); // Lighter mint center
+  static const Color lightBackgroundGradientMiddle = Color(0xFFF5FBF8); // Main mint
+  static const Color lightBackgroundGradientEnd = Color(0xFFE8F3ED);   // Darker mint edges
   static const Color lightForeground = Color(0xFF1E3B2B);    // Deep forest green text
   static const Color lightCard = Color(0xFFF7FCFA);          // Lighter mint background/cards
   static const Color lightCardForeground = Color(0xFF1E3B2B); // Deep forest green text
@@ -13,18 +16,23 @@ class AppTheme {
   static const Color lightSecondaryForeground = Color(0xFF1E3B2B); // Deep forest green text
   static const Color lightMuted = Color(0xFFEEF6F2);         // Muted mint background
   static const Color lightMutedForeground = Color(0xFF4A6B5A); // Muted forest green text
-  static const Color lightAccent = Color(0xFFEDF5F1);        // Secondary surface
-  static const Color lightAccentForeground = Color(0xFF1E3B2B); // Deep forest green text
+  static const Color lightAccent = Color(0xFF6B9080);        // Sage green accent
+  static const Color lightAccentForeground = Color(0xFFFFFFFF); // White text on accent
   static const Color lightBorder = Color(0xFFD3E8DC);        // Soft mint border
   static const Color lightInput = Color(0xFFD3E8DC);         // Input backgrounds
   
-  // Dark Mode Colors - Forest
+  // Dark Mode Colors - Forest with Enhanced Gradients
   static const Color darkBackground = Color(0xFF0F1C14);     // Deep forest background
+  static const Color darkBackgroundGradientStart = Color(0xFF142019); // Lighter forest center
+  static const Color darkBackgroundGradientMiddle = Color(0xFF0F1C14); // Main forest
+  static const Color darkBackgroundGradientEnd = Color(0xFF0A140F);   // Darker forest edges
   static const Color darkForeground = Color(0xFFF0F8F3);     // Light mint
   static const Color darkCard = Color(0xFF1A2920);           // Forest surface
   static const Color darkCardForeground = Color(0xFFF0F8F3); // Light mint
   static const Color darkPrimary = Color(0xFFB8E6C8);        // Bright mint accent
   static const Color darkPrimaryForeground = Color(0xFF0F1C14); // Dark forest on mint
+  static const Color darkAccent = Color(0xFF8DBF9E);           // Brighter sage accent for dark theme
+  static const Color darkAccentForeground = Color(0xFF0F1C14); // Dark forest text on accent
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -36,6 +44,8 @@ class AppTheme {
         onPrimary: lightPrimaryForeground,
         secondary: lightSecondary,
         onSecondary: lightSecondaryForeground,
+        tertiary: lightAccent,
+        onTertiary: lightAccentForeground,
         surface: lightCard,
         onSurface: lightCardForeground,
         background: lightBackground,
@@ -260,6 +270,8 @@ class AppTheme {
         onPrimary: darkPrimaryForeground,
         secondary: const Color(0xFF1F2F25),
         onSecondary: const Color(0xFFA0BDA8),
+        tertiary: darkAccent,
+        onTertiary: darkAccentForeground,
         surface: darkCard,
         onSurface: darkCardForeground,
         background: darkBackground,

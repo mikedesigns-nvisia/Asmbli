@@ -23,7 +23,7 @@ class ConversationList extends ConsumerWidget {
               Text(
                 'New Conversation',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: SemanticColors.onSurface,
+                  color: ThemeColors(context).onSurface,
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                 ),
@@ -33,8 +33,8 @@ class ConversationList extends ConsumerWidget {
                 onPressed: () => _createNewConversation(ref),
                 icon: const Icon(Icons.add, size: 18),
                 style: IconButton.styleFrom(
-                  backgroundColor: SemanticColors.primary.withOpacity(0.1),
-                  foregroundColor: SemanticColors.primary,
+                  backgroundColor: ThemeColors(context).primary.withOpacity(0.1),
+                  foregroundColor: ThemeColors(context).primary,
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                 ),
                 tooltip: 'New Conversations',
@@ -46,7 +46,7 @@ class ConversationList extends ConsumerWidget {
             child: conversationsAsync.when(
               data: (conversations) {
                 if (conversations.isEmpty) {
-                  return _buildEmptyState();
+                  return _buildEmptyState(context);
                 }
                 
                 return ListView.builder(
@@ -66,8 +66,8 @@ class ConversationList extends ConsumerWidget {
                   },
                 );
               },
-              loading: () => _buildLoadingState(),
-              error: (error, stack) => _buildErrorState(error.toString(), ref),
+              loading: () => _buildLoadingState(context),
+              error: (error, stack) => _buildErrorState(context, error.toString(), ref),
             ),
           ),
         ],
@@ -75,7 +75,7 @@ class ConversationList extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -83,20 +83,20 @@ class ConversationList extends ConsumerWidget {
           Icon(
             Icons.chat_bubble_outline,
             size: 48,
-            color: SemanticColors.onSurfaceVariant.withOpacity(0.5),
+            color: ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
           ),
           const SizedBox(height: SpacingTokens.lg),
           Text(
             'No conversations yet',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: ThemeColors(context).onSurfaceVariant,
             ),
           ),
           const SizedBox(height: SpacingTokens.sm),
           Text(
             'Create your first conversation to get started',
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: ThemeColors(context).onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -105,21 +105,21 @@ class ConversationList extends ConsumerWidget {
     );
   }
 
-  Widget _buildLoadingState() {
-    return const Center(
+  Widget _buildLoadingState(BuildContext context) {
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            color: SemanticColors.primary,
+            color: ThemeColors(context).primary,
             strokeWidth: 2,
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           Text(
             'Loading conversations...',
             style: TextStyle(
               fontFamily: 'Space Grotesk',
-              color: SemanticColors.onSurfaceVariant,
+              color: ThemeColors(context).onSurfaceVariant,
             ),
           ),
         ],
@@ -127,7 +127,7 @@ class ConversationList extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(String error, WidgetRef ref) {
+  Widget _buildErrorState(BuildContext context, String error, WidgetRef ref) {
     return Center(
       child: ErrorMessage(
         message: 'Failed to load conversations: $error',
@@ -195,18 +195,18 @@ class _ConversationItem extends StatelessWidget {
           onTap: onTap,
           onLongPress: () => _showContextMenu(context),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-          hoverColor: SemanticColors.primary.withOpacity(0.04),
-          splashColor: SemanticColors.primary.withOpacity(0.12),
+          hoverColor: ThemeColors(context).primary.withOpacity(0.04),
+          splashColor: ThemeColors(context).primary.withOpacity(0.12),
           child: Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               border: isSelected 
-                  ? Border.all(color: SemanticColors.primary, width: 2)
-                  : Border.all(color: SemanticColors.border),
+                  ? Border.all(color: ThemeColors(context).primary, width: 2)
+                  : Border.all(color: ThemeColors(context).border),
               color: isSelected 
-                  ? SemanticColors.primary.withOpacity(0.05)
-                  : SemanticColors.surface.withOpacity(0.5),
+                  ? ThemeColors(context).primary.withOpacity(0.05)
+                  : ThemeColors(context).surface.withOpacity(0.5),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,8 +216,8 @@ class _ConversationItem extends StatelessWidget {
                   style: TextStyles.bodyMedium.copyWith(
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected 
-                        ? SemanticColors.primary
-                        : SemanticColors.onSurface,
+                        ? ThemeColors(context).primary
+                        : ThemeColors(context).onSurface,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -228,20 +228,20 @@ class _ConversationItem extends StatelessWidget {
                     Icon(
                       Icons.message,
                       size: 12,
-                      color: SemanticColors.onSurfaceVariant,
+                      color: ThemeColors(context).onSurfaceVariant,
                     ),
                     const SizedBox(width: SpacingTokens.xs),
                     Text(
                       '${conversation.messages.length} messages',
                       style: TextStyles.caption.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: ThemeColors(context).onSurfaceVariant,
                       ),
                     ),
                     const Spacer(),
                     Text(
                       _formatDate(conversation.createdAt),
                       style: TextStyles.caption.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: ThemeColors(context).onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -258,11 +258,11 @@ class _ConversationItem extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: SemanticColors.surface,
+        backgroundColor: ThemeColors(context).surface,
         title: Text(
           conversation.title,
           style: TextStyles.bodyMedium.copyWith(
-            color: SemanticColors.onSurface,
+            color: ThemeColors(context).onSurface,
             fontWeight: FontWeight.w600,
           ),
           maxLines: 2,
@@ -274,12 +274,12 @@ class _ConversationItem extends StatelessWidget {
             ListTile(
               leading: Icon(
                 Icons.archive,
-                color: SemanticColors.onSurfaceVariant,
+                color: ThemeColors(context).onSurfaceVariant,
               ),
               title: Text(
                 'Archive Conversation',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: SemanticColors.onSurface,
+                  color: ThemeColors(context).onSurface,
                 ),
               ),
               onTap: () {

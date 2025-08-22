@@ -7,9 +7,9 @@ class AppRoutes {
   static const String home = '/';
   static const String chat = '/chat';
   static const String templates = '/templates';
-  static const String dashboard = '/dashboard';
   static const String settings = '/settings';
   static const String agents = '/agents';
+  static const String context = '/context';
   static const String wizard = '/wizard';
   
   // Route names for easier identification
@@ -17,9 +17,9 @@ class AppRoutes {
     home: 'Home',
     chat: 'Chat',
     templates: 'Templates',
-    dashboard: 'Dashboard',
     settings: 'Settings',
     agents: 'My Agents',
+    context: 'Context',
     wizard: 'Wizard',
   };
   
@@ -33,9 +33,9 @@ class AppRoutes {
     home,
     chat,
     templates,
-    dashboard,
     settings,
     agents,
+    context,
     wizard,
   ];
 }

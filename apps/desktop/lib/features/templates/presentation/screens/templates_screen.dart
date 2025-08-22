@@ -95,14 +95,16 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.5,
             colors: [
-              SemanticColors.backgroundGradientStart,
-              SemanticColors.backgroundGradientEnd,
+              ThemeColors(context).backgroundGradientStart,
+              ThemeColors(context).backgroundGradientMiddle,
+              ThemeColors(context).backgroundGradientEnd,
             ],
+            stops: const [0.0, 0.6, 1.0],
           ),
         ),
         child: SafeArea(

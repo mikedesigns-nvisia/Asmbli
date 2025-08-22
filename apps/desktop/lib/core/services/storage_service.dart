@@ -62,6 +62,15 @@ class StorageService {
     await _templatesBoxInstance.clear();
   }
 
+  // Generic string storage for context documents
+  static Future<void> setString(String key, String value) async {
+    await _settingsBoxInstance.put(key, value);
+  }
+
+  static Future<String?> getString(String key) async {
+    return _settingsBoxInstance.get(key) as String?;
+  }
+
   // Clear all data
   static Future<void> clearAll() async {
     await _agentsBoxInstance.clear();

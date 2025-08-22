@@ -6,19 +6,19 @@ class ThemeService extends StateNotifier<ThemeMode> {
   static const String _themeKey = 'theme_mode';
   Box? _box;
 
-  ThemeService() : super(ThemeMode.dark) {
+  ThemeService() : super(ThemeMode.light) {
     _initializeTheme();
   }
 
   Future<void> _initializeTheme() async {
     try {
       _box = await Hive.openBox('app_settings');
-      final savedTheme = _box?.get(_themeKey, defaultValue: 'dark') ?? 'dark';
+      final savedTheme = _box?.get(_themeKey, defaultValue: 'light') ?? 'light';
       state = _themeModeFromString(savedTheme);
     } catch (e) {
-      // If Hive fails to initialize, just use dark theme (Forest)
+      // If Hive fails to initialize, just use light theme (Banana Pudding)
       print('Failed to initialize theme storage: $e');
-      state = ThemeMode.dark;
+      state = ThemeMode.light;
       _box = null; // Ensure box is null so setTheme won't try to save
     }
   }

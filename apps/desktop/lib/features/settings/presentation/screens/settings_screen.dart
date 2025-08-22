@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/services/theme_service.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
@@ -202,14 +201,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
     
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.5,
             colors: [
-              SemanticColors.backgroundGradientStart,
-              SemanticColors.backgroundGradientEnd,
+              ThemeColors(context).backgroundGradientStart,
+              ThemeColors(context).backgroundGradientMiddle,
+              ThemeColors(context).backgroundGradientEnd,
             ],
+            stops: const [0.0, 0.6, 1.0],
           ),
         ),
         child: SafeArea(
@@ -221,7 +222,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
               // Main Content
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -233,22 +234,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                             Icon(
                               Icons.arrow_back,
                               size: 16,
-                              color: AppTheme.lightMutedForeground,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: SpacingTokens.iconSpacing),
                             Text(
                               'Back to Chat',
                               style: TextStyle(
                                 fontFamily: 'Space Grotesk',
                                 fontSize: 14,
-                                color: AppTheme.lightMutedForeground,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
                         ),
                       ),
                       
-                      const SizedBox(height: 24),
+                      const SizedBox(height: SpacingTokens.sectionSpacing),
                       
                       // Page Title
                       Text(
@@ -257,18 +258,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                           fontFamily: 'Space Grotesk',
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.lightForeground,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       
-                      const SizedBox(height: 24),
+                      const SizedBox(height: SpacingTokens.sectionSpacing),
                       
                       // Tab Bar
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.8),
+                          color: ThemeColors(context).surface.withOpacity(0.8),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+                          border: Border.all(color: ThemeColors(context).border.withOpacity(0.5)),
                         ),
                         child: TabBar(
                           controller: _tabController,
@@ -277,8 +278,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                             Tab(text: 'Agent Management'),
                             Tab(text: 'General Settings'),
                           ],
-                          labelColor: AppTheme.lightPrimary,
-                          unselectedLabelColor: AppTheme.lightMutedForeground,
+                          labelColor: Theme.of(context).colorScheme.primary,
+                          unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
                           labelStyle: TextStyle(
                             fontFamily: 'Space Grotesk',
                             fontSize: 14,
@@ -290,7 +291,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                             fontWeight: FontWeight.w500,
                           ),
                           indicator: BoxDecoration(
-                            color: AppTheme.lightPrimary.withOpacity(0.1),
+                            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           indicatorPadding: const EdgeInsets.all(4),
@@ -298,7 +299,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                         ),
                       ),
                       
-                      const SizedBox(height: 32),
+                      const SizedBox(height: SpacingTokens.textSectionSpacing),
                       
                       // Tab View Content
                       SizedBox(
@@ -363,10 +364,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       style: TextStyle(
                         fontFamily: 'Space Grotesk',
                         fontSize: 14,
-                        color: AppTheme.lightMutedForeground,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: SpacingTokens.componentSpacing),
                     
                     // API Keys List
                     ...savedApiKeys.map((apiConfig) {
@@ -374,12 +375,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
+                          color: ThemeColors(context).surface.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: apiConfig.isDefault 
-                                ? AppTheme.lightPrimary.withOpacity(0.3)
-                                : AppTheme.lightBorder.withOpacity(0.5),
+                                ? ThemeColors(context).primary.withOpacity(0.3)
+                                : ThemeColors(context).border.withOpacity(0.5),
                           ),
                         ),
                         child: Row(
@@ -390,18 +391,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                               height: 40,
                               decoration: BoxDecoration(
                                 color: apiConfig.isConfigured 
-                                    ? SemanticColors.success.withOpacity(0.1)
-                                    : SemanticColors.error.withOpacity(0.1),
+                                    ? ThemeColors(context).success.withOpacity(0.1)
+                                    : ThemeColors(context).error.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: apiConfig.isConfigured 
-                                      ? SemanticColors.success.withOpacity(0.3)
-                                      : SemanticColors.error.withOpacity(0.3),
+                                      ? ThemeColors(context).success.withOpacity(0.3)
+                                      : ThemeColors(context).error.withOpacity(0.3),
                                 ),
                               ),
                               child: Icon(
                                 apiConfig.isConfigured ? Icons.check_circle : Icons.error,
-                                color: apiConfig.isConfigured ? SemanticColors.success : SemanticColors.error,
+                                color: apiConfig.isConfigured ? ThemeColors(context).success : ThemeColors(context).error,
                                 size: 20,
                               ),
                             ),
@@ -421,17 +422,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                           fontFamily: 'Space Grotesk',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
-                                          color: AppTheme.lightForeground,
+                                          color: Theme.of(context).colorScheme.onSurface,
                                         ),
                                       ),
                                       if (apiConfig.isDefault) ...[
-                                        const SizedBox(width: 8),
+                                        const SizedBox(width: SpacingTokens.iconSpacing),
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                           decoration: BoxDecoration(
-                                            color: AppTheme.lightPrimary.withOpacity(0.1),
+                                            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                                             borderRadius: BorderRadius.circular(4),
-                                            border: Border.all(color: AppTheme.lightPrimary.withOpacity(0.3)),
+                                            border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
                                           ),
                                           child: Text(
                                             'DEFAULT',
@@ -439,7 +440,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                               fontFamily: 'Space Grotesk',
                                               fontSize: 10,
                                               fontWeight: FontWeight.w600,
-                                              color: AppTheme.lightPrimary,
+                                              color: Theme.of(context).colorScheme.primary,
                                             ),
                                           ),
                                         ),
@@ -452,7 +453,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                     style: TextStyle(
                                       fontFamily: 'Space Grotesk',
                                       fontSize: 14,
-                                      color: AppTheme.lightMutedForeground,
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
@@ -469,9 +470,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.lightPrimary.withOpacity(0.1),
+                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(color: AppTheme.lightPrimary.withOpacity(0.3)),
+                                        border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
                                       ),
                                       child: Text(
                                         'Set Default',
@@ -479,20 +480,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                           fontFamily: 'Space Grotesk',
                                           fontSize: 10,
                                           fontWeight: FontWeight.w500,
-                                          color: AppTheme.lightPrimary,
+                                          color: Theme.of(context).colorScheme.primary,
                                         ),
                                       ),
                                     ),
                                   ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: SpacingTokens.iconSpacing),
                                 GestureDetector(
                                   onTap: () => _editApiKey(apiConfig),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: SemanticColors.primary.withOpacity(0.1),
+                                      color: ThemeColors(context).primary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(color: SemanticColors.primary.withOpacity(0.3)),
+                                      border: Border.all(color: ThemeColors(context).primary.withOpacity(0.3)),
                                     ),
                                     child: Text(
                                       'Edit',
@@ -500,20 +501,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                         fontFamily: 'Space Grotesk',
                                         fontSize: 10,
                                         fontWeight: FontWeight.w500,
-                                        color: SemanticColors.primary,
+                                        color: ThemeColors(context).primary,
                                       ),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: SpacingTokens.iconSpacing),
                                 GestureDetector(
                                   onTap: () => _deleteApiKey(apiConfig.id),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: SemanticColors.error.withOpacity(0.1),
+                                      color: ThemeColors(context).error.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(color: SemanticColors.error.withOpacity(0.3)),
+                                      border: Border.all(color: ThemeColors(context).error.withOpacity(0.3)),
                                     ),
                                     child: Text(
                                       'Delete',
@@ -521,7 +522,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                         fontFamily: 'Space Grotesk',
                                         fontSize: 10,
                                         fontWeight: FontWeight.w500,
-                                        color: SemanticColors.error,
+                                        color: ThemeColors(context).error,
                                       ),
                                     ),
                                   ),
@@ -533,37 +534,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       );
                     }).toList(),
                     
-                    const SizedBox(height: 16),
+                    const SizedBox(height: SpacingTokens.componentSpacing),
                     
                     // Add New API Key Button
-                    Container(
+                    SizedBox(
                       width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.lightBorder, style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextButton.icon(
+                      child: AsmblButtonEnhanced.accent(
+                        text: 'Add New API Key',
+                        icon: Icons.add,
                         onPressed: _showAddApiKeyDialog,
-                        icon: Icon(Icons.add, color: AppTheme.lightPrimary),
-                        label: Text(
-                          'Add New API Key',
-                          style: TextStyle(
-                            fontFamily: 'Space Grotesk',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: AppTheme.lightPrimary,
-                          ),
-                        ),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        ),
+                        size: AsmblButtonSize.medium,
                       ),
                     ),
                   ],
                 ),
               ),
               
-              const SizedBox(height: 32),
+              const SizedBox(height: SpacingTokens.textSectionSpacing),
               
               // Security Section
               _SettingsSection(
@@ -571,16 +558,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: SemanticColors.primary.withOpacity(0.1),
+                    color: ThemeColors(context).primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: SemanticColors.primary.withOpacity(0.3)),
+                    border: Border.all(color: ThemeColors(context).primary.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.security,
                         size: 20,
-                        color: SemanticColors.primary,
+                        color: ThemeColors(context).primary,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -589,7 +576,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                           style: TextStyle(
                             fontFamily: 'Space Grotesk',
                             fontSize: 13,
-                            color: AppTheme.lightForeground,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -621,7 +608,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       children: [
                         _FormField(
                           label: 'Select Agent',
-                          child: _CustomDropdown(
+                          child: AsmblStringDropdown(
                             value: selectedAgent,
                             items: agents.map((agent) => agent.name).toList(),
                             onChanged: (value) {
@@ -636,7 +623,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                         
                         _FormField(
                           label: 'Template Variation',
-                          child: _CustomDropdown(
+                          child: AsmblStringDropdown(
                             value: selectedTemplate,
                             items: agents.firstWhere((a) => a.name == selectedAgent).templates,
                             onChanged: (value) {
@@ -656,9 +643,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppTheme.lightMuted.withOpacity(0.3),
+                    color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+                    border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -670,7 +657,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                             height: 8,
                             decoration: BoxDecoration(
                               color: agents.firstWhere((a) => a.name == selectedAgent).isActive 
-                                  ? SemanticColors.success : AppTheme.lightMutedForeground,
+                                  ? ThemeColors(context).success : Theme.of(context).colorScheme.onSurfaceVariant,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -681,7 +668,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                               style: TextStyle(
                                 fontFamily: 'Space Grotesk',
                                 fontSize: 14,
-                                color: AppTheme.lightForeground,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ),
@@ -693,40 +680,40 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.8),
+                          color: ThemeColors(context).surface.withOpacity(0.8),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+                          border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               Icons.api,
                               size: 16,
-                              color: AppTheme.lightMutedForeground,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: SpacingTokens.iconSpacing),
                             Text(
                               'API:',
                               style: TextStyle(
                                 fontFamily: 'Space Grotesk',
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: AppTheme.lightMutedForeground,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: SpacingTokens.iconSpacing),
                             Expanded(
                               child: _getApiAssignmentWidget(),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: SpacingTokens.iconSpacing),
                             GestureDetector(
                               onTap: _showApiSelectionDialog,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.lightPrimary.withOpacity(0.1),
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(color: AppTheme.lightPrimary.withOpacity(0.3)),
+                                  border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
                                 ),
                                 child: Text(
                                   'Change',
@@ -734,7 +721,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                     fontFamily: 'Space Grotesk',
                                     fontSize: 10,
                                     fontWeight: FontWeight.w500,
-                                    color: AppTheme.lightPrimary,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ),
@@ -753,10 +740,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppTheme.lightPrimary.withOpacity(0.1),
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
-                                color: AppTheme.lightPrimary.withOpacity(0.3),
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                 width: 1,
                               ),
                             ),
@@ -766,7 +753,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                 fontFamily: 'Space Grotesk',
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
-                                color: AppTheme.lightPrimary,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           );
@@ -793,15 +780,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     fontFamily: 'Space Grotesk',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppTheme.lightMutedForeground,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppTheme.lightBorder),
+                    border: Border.all(color: Theme.of(context).colorScheme.outline),
                     borderRadius: BorderRadius.circular(8),
-                    color: Colors.white.withOpacity(0.8),
+                    color: ThemeColors(context).surface.withOpacity(0.8),
                   ),
                   child: TextField(
                     controller: systemPromptController,
@@ -810,7 +797,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       hintText: 'Enter system prompt for this agent template...',
                       hintStyle: TextStyle(
                         fontFamily: 'Space Grotesk',
-                        color: AppTheme.lightMutedForeground,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.all(16),
@@ -818,7 +805,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     style: TextStyle(
                       fontFamily: 'Space Grotesk',
                       fontSize: 14,
-                      color: AppTheme.lightForeground,
+                      color: Theme.of(context).colorScheme.onSurface,
                       height: 1.5,
                     ),
                   ),
@@ -828,14 +815,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.lightBorder),
+                        border: Border.all(color: Theme.of(context).colorScheme.outline),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: TextButton(
                         onPressed: _loadSystemPrompt,
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          foregroundColor: AppTheme.lightForeground,
+                          foregroundColor: Theme.of(context).colorScheme.onSurface,
                         ),
                         child: Text(
                           'Reset to Default',
@@ -849,14 +836,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     const SizedBox(width: 12),
                     Container(
                       decoration: BoxDecoration(
-                        color: AppTheme.lightPrimary,
+                        color: Theme.of(context).colorScheme.primary,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: TextButton(
                         onPressed: _saveAgentPrompt,
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          foregroundColor: AppTheme.lightPrimaryForeground,
+                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
                         ),
                         child: Text(
                           'Save Prompt',
@@ -897,15 +884,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                   child: Consumer(
                     builder: (context, ref, child) {
                       final currentThemeMode = ref.watch(themeServiceProvider);
-                      final currentThemeName = currentThemeMode == ThemeMode.light ? 'Banana Pudding' : 'Midnight Mocha';
+                      final currentThemeName = currentThemeMode == ThemeMode.light ? 'Mint' : 'Forest';
                       
-                      return _CustomDropdown(
+                      return AsmblStringDropdown(
                         value: currentThemeName,
-                        items: const ['Banana Pudding', 'Midnight Mocha'],
+                        items: const ['Mint', 'Forest'],
                         onChanged: (value) {
-                          if (value == 'Banana Pudding') {
+                          if (value == 'Mint') {
                             themeService.setTheme(ThemeMode.light);
-                          } else if (value == 'Midnight Mocha') {
+                          } else if (value == 'Forest') {
                             themeService.setTheme(ThemeMode.dark);
                           }
                         },
@@ -919,7 +906,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     Icon(
                       Icons.notifications,
                       size: 20,
-                      color: AppTheme.lightMutedForeground,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -928,14 +915,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                         style: TextStyle(
                           fontFamily: 'Space Grotesk',
                           fontSize: 14,
-                          color: AppTheme.lightForeground,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
                     Switch(
                       value: true,
                       onChanged: (value) {},
-                      activeColor: AppTheme.lightPrimary,
+                      activeColor: Theme.of(context).colorScheme.primary,
                     ),
                   ],
                 ),
@@ -952,7 +939,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     Icon(
                       Icons.info,
                       size: 20,
-                      color: AppTheme.lightMutedForeground,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 12),
                     Text(
@@ -960,7 +947,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       style: TextStyle(
                         fontFamily: 'Space Grotesk',
                         fontSize: 14,
-                        color: AppTheme.lightForeground,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ],
@@ -1029,13 +1016,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: apiConfig.isConfigured 
-            ? SemanticColors.success.withOpacity(0.1) 
-            : SemanticColors.error.withOpacity(0.1),
+            ? ThemeColors(context).success.withOpacity(0.1) 
+            : ThemeColors(context).error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: apiConfig.isConfigured 
-              ? SemanticColors.success.withOpacity(0.3) 
-              : SemanticColors.error.withOpacity(0.3),
+              ? ThemeColors(context).success.withOpacity(0.3) 
+              : ThemeColors(context).error.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -1044,7 +1031,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
           Icon(
             apiConfig.isConfigured ? Icons.check_circle : Icons.error,
             size: 12,
-            color: apiConfig.isConfigured ? SemanticColors.success : SemanticColors.error,
+            color: apiConfig.isConfigured ? ThemeColors(context).success : ThemeColors(context).error,
           ),
           const SizedBox(width: 4),
           Text(
@@ -1053,7 +1040,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
               fontFamily: 'Space Grotesk',
               fontSize: 10,
               fontWeight: FontWeight.w500,
-              color: apiConfig.isConfigured ? SemanticColors.success : SemanticColors.error,
+              color: apiConfig.isConfigured ? ThemeColors(context).success : ThemeColors(context).error,
             ),
           ),
         ],
@@ -1065,10 +1052,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white.withOpacity(0.95),
+        backgroundColor: ThemeColors(context).surface.withOpacity(0.95),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: AppTheme.lightBorder.withOpacity(0.5)),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
         ),
         title: Text(
           'Select API for ${selectedAgent}',
@@ -1076,7 +1063,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
             fontFamily: 'Space Grotesk',
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppTheme.lightForeground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         content: Container(
@@ -1090,13 +1077,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                   margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
                     color: isSelected 
-                        ? AppTheme.lightPrimary.withOpacity(0.05)
-                        : Colors.white.withOpacity(0.8),
+                        ? Theme.of(context).colorScheme.primary.withOpacity(0.05)
+                        : ThemeColors(context).surface.withOpacity(0.8),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: isSelected 
-                          ? AppTheme.lightPrimary.withOpacity(0.3)
-                          : AppTheme.lightBorder.withOpacity(0.3),
+                          ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
+                          : Theme.of(context).colorScheme.outline.withOpacity(0.3),
                     ),
                   ),
                   child: ListTile(
@@ -1105,18 +1092,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       height: 32,
                       decoration: BoxDecoration(
                         color: apiConfig.isConfigured 
-                            ? SemanticColors.success.withOpacity(0.1)
-                            : SemanticColors.error.withOpacity(0.1),
+                            ? ThemeColors(context).success.withOpacity(0.1)
+                            : ThemeColors(context).error.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
                           color: apiConfig.isConfigured 
-                              ? SemanticColors.success.withOpacity(0.3)
-                              : SemanticColors.error.withOpacity(0.3),
+                              ? ThemeColors(context).success.withOpacity(0.3)
+                              : ThemeColors(context).error.withOpacity(0.3),
                         ),
                       ),
                       child: Icon(
                         apiConfig.isConfigured ? Icons.check_circle : Icons.error,
-                        color: apiConfig.isConfigured ? SemanticColors.success : SemanticColors.error,
+                        color: apiConfig.isConfigured ? ThemeColors(context).success : ThemeColors(context).error,
                         size: 16,
                       ),
                     ),
@@ -1127,17 +1114,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                           style: TextStyle(
                             fontFamily: 'Space Grotesk',
                             fontWeight: FontWeight.w500,
-                            color: AppTheme.lightForeground,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         if (apiConfig.isDefault) ...[
-                          const SizedBox(width: 8),
+                          const SizedBox(width: SpacingTokens.iconSpacing),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
-                              color: AppTheme.lightPrimary.withOpacity(0.1),
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: AppTheme.lightPrimary.withOpacity(0.3)),
+                              border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
                             ),
                             child: Text(
                               'DEFAULT',
@@ -1145,7 +1132,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                 fontFamily: 'Space Grotesk',
                                 fontSize: 8,
                                 fontWeight: FontWeight.w600,
-                                color: AppTheme.lightPrimary,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ),
@@ -1157,7 +1144,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       style: TextStyle(
                         fontFamily: 'Space Grotesk',
                         fontSize: 12,
-                        color: AppTheme.lightMutedForeground,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     trailing: Container(
@@ -1166,13 +1153,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isSelected ? AppTheme.lightPrimary : AppTheme.lightMutedForeground,
+                          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
                           width: 2,
                         ),
-                        color: isSelected ? AppTheme.lightPrimary : Colors.transparent,
+                        color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent,
                       ),
                       child: isSelected 
-                          ? Icon(Icons.check, size: 12, color: Colors.white)
+                          ? Icon(Icons.check, size: 12, color: ThemeColors(context).onPrimary)
                           : null,
                     ),
                     onTap: () {
@@ -1189,7 +1176,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppTheme.lightBorder),
+                  border: Border.all(color: Theme.of(context).colorScheme.outline),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: TextButton.icon(
@@ -1197,12 +1184,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     Navigator.pop(context);
                     _tabController.animateTo(0); // Go to API Configuration tab
                   },
-                  icon: Icon(Icons.add, color: AppTheme.lightPrimary),
+                  icon: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
                   label: Text(
                     'Add New API Configuration',
                     style: TextStyle(
                       fontFamily: 'Space Grotesk',
-                      color: AppTheme.lightPrimary,
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1217,14 +1204,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
         actions: [
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: AppTheme.lightBorder),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
               borderRadius: BorderRadius.circular(6),
             ),
             child: TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                foregroundColor: AppTheme.lightForeground,
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
               ),
               child: Text(
                 'Cancel',
@@ -1288,10 +1275,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: Colors.white.withOpacity(0.95),
+          backgroundColor: ThemeColors(context).surface.withOpacity(0.95),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: AppTheme.lightBorder.withOpacity(0.5)),
+            side: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
           ),
           title: Text(
             isEditing ? 'Edit API Configuration' : 'Add New API Configuration',
@@ -1299,7 +1286,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
               fontFamily: 'Space Grotesk',
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: AppTheme.lightForeground,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           content: Container(
@@ -1314,23 +1301,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     helpText: 'A friendly name for this API configuration',
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.lightBorder),
+                        border: Border.all(color: Theme.of(context).colorScheme.outline),
                         borderRadius: BorderRadius.circular(8),
-                        color: Colors.white.withOpacity(0.8),
+                        color: ThemeColors(context).surface.withOpacity(0.8),
                       ),
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'e.g., "Production Claude", "GPT-4 Testing"',
                           hintStyle: TextStyle(
                             fontFamily: 'Space Grotesk',
-                            color: AppTheme.lightMutedForeground,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
                         style: TextStyle(
                           fontFamily: 'Space Grotesk',
-                          color: AppTheme.lightForeground,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         onChanged: (value) => nameValue = value,
                         controller: TextEditingController(text: nameValue),
@@ -1346,7 +1333,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       Expanded(
                         child: _FormField(
                           label: 'Provider',
-                          child: _CustomDropdown(
+                          child: AsmblStringDropdown(
                             value: providerValue,
                             items: providers,
                             onChanged: (value) {
@@ -1362,7 +1349,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       Expanded(
                         child: _FormField(
                           label: 'Model',
-                          child: _CustomDropdown(
+                          child: AsmblStringDropdown(
                             value: modelValue,
                             items: providerModels[providerValue]!,
                             onChanged: (value) {
@@ -1384,23 +1371,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     helpText: 'Your API key is stored locally and encrypted',
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.lightBorder),
+                        border: Border.all(color: Theme.of(context).colorScheme.outline),
                         borderRadius: BorderRadius.circular(8),
-                        color: Colors.white.withOpacity(0.8),
+                        color: ThemeColors(context).surface.withOpacity(0.8),
                       ),
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'Enter your API key',
                           hintStyle: TextStyle(
                             fontFamily: 'Space Grotesk',
-                            color: AppTheme.lightMutedForeground,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
                         style: TextStyle(
                           fontFamily: 'Space Grotesk',
-                          color: AppTheme.lightForeground,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         obscureText: true,
                         onChanged: (value) => apiKeyValue = value,
@@ -1420,9 +1407,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              border: Border.all(color: AppTheme.lightBorder),
+                              border: Border.all(color: Theme.of(context).colorScheme.outline),
                               borderRadius: BorderRadius.circular(8),
-                              color: Colors.white.withOpacity(0.8),
+                              color: ThemeColors(context).surface.withOpacity(0.8),
                             ),
                             child: Column(
                               children: [
@@ -1434,13 +1421,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                       style: TextStyle(
                                         fontFamily: 'Space Grotesk',
                                         fontSize: 12,
-                                        color: AppTheme.lightMutedForeground,
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.lightPrimary.withOpacity(0.1),
+                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
@@ -1449,7 +1436,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                           fontFamily: 'Space Grotesk',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
-                                          color: AppTheme.lightPrimary,
+                                          color: Theme.of(context).colorScheme.primary,
                                         ),
                                       ),
                                     ),
@@ -1458,7 +1445,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                       style: TextStyle(
                                         fontFamily: 'Space Grotesk',
                                         fontSize: 12,
-                                        color: AppTheme.lightMutedForeground,
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ],
@@ -1466,10 +1453,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                 const SizedBox(height: 8),
                                 SliderTheme(
                                   data: SliderTheme.of(context).copyWith(
-                                    activeTrackColor: AppTheme.lightPrimary,
-                                    inactiveTrackColor: AppTheme.lightBorder,
-                                    thumbColor: AppTheme.lightPrimary,
-                                    overlayColor: AppTheme.lightPrimary.withOpacity(0.1),
+                                    activeTrackColor: Theme.of(context).colorScheme.primary,
+                                    inactiveTrackColor: Theme.of(context).colorScheme.outline,
+                                    thumbColor: Theme.of(context).colorScheme.primary,
+                                    overlayColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                                     thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
                                     trackHeight: 4,
                                   ),
@@ -1497,23 +1484,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                           helpText: 'Default: 2048 tokens',
                           child: Container(
                             decoration: BoxDecoration(
-                              border: Border.all(color: AppTheme.lightBorder),
+                              border: Border.all(color: Theme.of(context).colorScheme.outline),
                               borderRadius: BorderRadius.circular(8),
-                              color: Colors.white.withOpacity(0.8),
+                              color: ThemeColors(context).surface.withOpacity(0.8),
                             ),
                             child: TextField(
                               decoration: InputDecoration(
                                 hintText: '2048 (Default)',
                                 hintStyle: TextStyle(
                                   fontFamily: 'Space Grotesk',
-                                  color: AppTheme.lightMutedForeground,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                               ),
                               style: TextStyle(
                                 fontFamily: 'Space Grotesk',
-                                color: AppTheme.lightForeground,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               keyboardType: TextInputType.number,
                               onChanged: (value) {
@@ -1533,14 +1520,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
           actions: [
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: AppTheme.lightBorder),
+                border: Border.all(color: Theme.of(context).colorScheme.outline),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: TextButton(
                 onPressed: () => Navigator.pop(context),
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  foregroundColor: AppTheme.lightForeground,
+                  foregroundColor: Theme.of(context).colorScheme.onSurface,
                 ),
                 child: Text(
                   'Cancel',
@@ -1554,7 +1541,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
             const SizedBox(width: 12),
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.lightPrimary,
+                color: Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: TextButton(
@@ -1588,7 +1575,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                 },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  foregroundColor: AppTheme.lightPrimaryForeground,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
                 child: Text(
                   isEditing ? 'Update Configuration' : 'Add Configuration',
@@ -1613,7 +1600,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
           message,
           style: const TextStyle(fontFamily: 'Space Grotesk'),
         ),
-        backgroundColor: isError ? SemanticColors.error : SemanticColors.success,
+        backgroundColor: isError ? ThemeColors(context).error : ThemeColors(context).success,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
@@ -1640,9 +1627,9 @@ class _SettingsSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
+        color: ThemeColors(context).surface.withOpacity(0.8),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+        border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1653,7 +1640,7 @@ class _SettingsSection extends StatelessWidget {
               fontFamily: 'Space Grotesk',
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: AppTheme.lightForeground,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -1686,7 +1673,7 @@ class _FormField extends StatelessWidget {
             fontFamily: 'Space Grotesk',
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: AppTheme.lightForeground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         if (helpText != null) ...[
@@ -1696,7 +1683,7 @@ class _FormField extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Space Grotesk',
               fontSize: 12,
-              color: AppTheme.lightMutedForeground,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -1707,68 +1694,6 @@ class _FormField extends StatelessWidget {
   }
 }
 
-class _CustomDropdown extends StatelessWidget {
-  final String value;
-  final List<String> items;
-  final ValueChanged<String?> onChanged;
-
-  const _CustomDropdown({
-    required this.value,
-    required this.items,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppTheme.lightBorder),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white.withOpacity(0.8),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: value,
-          isExpanded: true,
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: AppTheme.lightMutedForeground,
-            size: 20,
-          ),
-          onChanged: onChanged,
-          style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 14,
-            color: AppTheme.lightForeground,
-            fontWeight: FontWeight.w500,
-          ),
-          dropdownColor: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          elevation: 8,
-          menuMaxHeight: 300,
-          items: items.map((item) {
-            return DropdownMenuItem(
-              value: item,
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  item,
-                  style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 14,
-                    color: AppTheme.lightForeground,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-}
 
 // Responsive row component that stacks vertically on smaller screens
 class _ResponsiveRow extends StatelessWidget {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 
@@ -131,14 +130,16 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.5,
             colors: [
-              SemanticColors.backgroundGradientStart,
-              SemanticColors.backgroundGradientEnd,
+              ThemeColors(context).backgroundGradientStart,
+              ThemeColors(context).backgroundGradientMiddle,
+              ThemeColors(context).backgroundGradientEnd,
             ],
+            stops: const [0.0, 0.6, 1.0],
           ),
         ),
         child: SafeArea(
@@ -150,7 +151,7 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
               // Main Content
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(SpacingTokens.xxl),
+                  padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -158,16 +159,16 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
                       Text(
                         selectedTab == 0 ? 'My AI Agents' : 'Agent Library',
                         style: TextStyles.pageTitle.copyWith(
-                          color: SemanticColors.onSurface,
+                          color: ThemeColors(context).onSurface,
                         ),
                       ),
-                      const SizedBox(height: SpacingTokens.sm),
+                      const SizedBox(height: SpacingTokens.iconSpacing),
                       Text(
                         selectedTab == 0 
                           ? 'Manage and organize your AI-powered assistants'
                           : 'Start with a pre-built template and customize it to your needs',
                         style: TextStyles.bodyLarge.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
+                          color: ThemeColors(context).onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: SpacingTokens.sectionSpacing),
@@ -180,7 +181,7 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
                             isSelected: selectedTab == 0,
                             onTap: () => setState(() => selectedTab = 0),
                           ),
-                          const SizedBox(width: SpacingTokens.md),
+                          const SizedBox(width: SpacingTokens.componentSpacing),
                           _TabButton(
                             text: 'Agent Library',
                             isSelected: selectedTab == 1,
@@ -218,7 +219,7 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
                 icon: Icons.smart_toy,
               ),
             ),
-            const SizedBox(width: SpacingTokens.lg),
+            const SizedBox(width: SpacingTokens.elementSpacing),
             Expanded(
               child: AsmblStatsCard(
                 title: 'Active Today',
@@ -226,7 +227,7 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
                 icon: Icons.schedule,
               ),
             ),
-            const SizedBox(width: SpacingTokens.lg),
+            const SizedBox(width: SpacingTokens.elementSpacing),
             Expanded(
               child: AsmblStatsCard(
                 title: 'Total Chats',
@@ -234,7 +235,7 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
                 icon: Icons.message,
               ),
             ),
-            const SizedBox(width: SpacingTokens.lg),
+            const SizedBox(width: SpacingTokens.elementSpacing),
             Expanded(
               child: AsmblStatsCard(
                 title: 'Categories',
@@ -245,12 +246,16 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
           ],
         ),
         const SizedBox(height: SpacingTokens.sectionSpacing),
-        // Agents List
+        // Agents Grid
         Expanded(
-          child: ListView.separated(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: SpacingTokens.componentSpacing,
+              mainAxisSpacing: SpacingTokens.componentSpacing,
+              childAspectRatio: 0.8,
+            ),
             itemCount: agents.length,
-            separatorBuilder: (context, index) => 
-              const SizedBox(height: SpacingTokens.lg),
             itemBuilder: (context, index) {
               final agent = agents[index];
               return _AgentCard(agent: agent);
@@ -276,27 +281,27 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
                   decoration: InputDecoration(
                     hintText: 'Search templates...',
                     hintStyle: TextStyles.bodyMedium.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: ThemeColors(context).onSurfaceVariant,
                     ),
                     prefixIcon: Icon(
                       Icons.search,
-                      color: SemanticColors.onSurfaceVariant,
+                      color: ThemeColors(context).onSurfaceVariant,
                     ),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: SpacingTokens.md, vertical: SpacingTokens.sm),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing, vertical: SpacingTokens.iconSpacing),
                   ),
-                  style: TextStyles.bodyMedium.copyWith(color: SemanticColors.onSurface),
+                  style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurface),
                 ),
               ),
             ),
-            const SizedBox(width: SpacingTokens.lg),
+            const SizedBox(width: SpacingTokens.elementSpacing),
             // Category Filter
             AsmblCard(
               child: DropdownButton<String>(
                 value: selectedCategory,
                 onChanged: (value) => setState(() => selectedCategory = value!),
                 underline: const SizedBox(),
-                style: TextStyles.bodyMedium.copyWith(color: SemanticColors.onSurface),
+                style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurface),
                 items: categories.map((category) {
                   return DropdownMenuItem(
                     value: category,
@@ -313,8 +318,8 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              crossAxisSpacing: SpacingTokens.lg,
-              mainAxisSpacing: SpacingTokens.lg,
+              crossAxisSpacing: SpacingTokens.elementSpacing,
+              mainAxisSpacing: SpacingTokens.elementSpacing,
               childAspectRatio: 0.85,
             ),
             itemCount: filteredTemplates.length,
@@ -347,89 +352,105 @@ class _AgentCard extends StatelessWidget {
       onTap: () {
         // Navigate to agent chat
       },
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Agent Icon
-          Container(
-            padding: const EdgeInsets.all(SpacingTokens.md),
-            decoration: BoxDecoration(
-              color: SemanticColors.surfaceVariant,
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-            ),
-            child: Icon(
-              Icons.smart_toy,
-              size: 24,
-              color: SemanticColors.primary,
-            ),
+          // Header with icon, status, and menu
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(SpacingTokens.xs_precise),
+                decoration: BoxDecoration(
+                  color: ThemeColors(context).surfaceVariant,
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Icon(
+                  Icons.smart_toy,
+                  size: 16,
+                  color: ThemeColors(context).primary,
+                ),
+              ),
+              const SizedBox(width: SpacingTokens.xs_precise),
+              // Status Indicator
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: agent.isActive 
+                    ? ThemeColors(context).success 
+                    : ThemeColors(context).onSurfaceVariant,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.xs, vertical: 2),
+                decoration: BoxDecoration(
+                  color: ThemeColors(context).surfaceVariant,
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Text(
+                  agent.category,
+                  style: TextStyles.caption.copyWith(
+                    color: ThemeColors(context).onSurfaceVariant,
+                    fontSize: 10,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.iconSpacing),
           
-          // Agent Info
+          // Agent name and description
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    // Status Indicator
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: agent.isActive 
-                          ? SemanticColors.success 
-                          : SemanticColors.onSurfaceVariant,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: SpacingTokens.sm),
-                    Expanded(
-                      child: Text(
-                        agent.name,
-                        style: TextStyles.cardTitle.copyWith(
-                          color: SemanticColors.onSurface,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '${agent.totalChats} chats',
-                      style: TextStyles.caption.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+                Text(
+                  agent.name,
+                  style: TextStyles.cardTitle.copyWith(
+                    color: ThemeColors(context).onSurface,
+                    fontSize: 14,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: SpacingTokens.xs),
+                const SizedBox(height: SpacingTokens.xs_precise),
                 Text(
                   agent.description,
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                  style: TextStyles.bodySmall.copyWith(
+                    color: ThemeColors(context).onSurfaceVariant,
+                    fontSize: 11,
+                    height: 1.2,
                   ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: SpacingTokens.xs),
+                const SizedBox(height: SpacingTokens.iconSpacing),
+                
+                // Stats row
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: SpacingTokens.sm,
-                        vertical: SpacingTokens.xs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: SemanticColors.surfaceVariant,
-                        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                      ),
-                      child: Text(
-                        agent.category,
-                        style: TextStyles.caption.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
-                        ),
+                    Icon(
+                      Icons.message,
+                      size: 12,
+                      color: ThemeColors(context).onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 2),
+                    Text(
+                      '${agent.totalChats}',
+                      style: TextStyles.caption.copyWith(
+                        color: ThemeColors(context).onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
                       ),
                     ),
                     const Spacer(),
                     Text(
-                      'Last used: ${_formatLastUsed(agent.lastUsed)}',
+                      _formatLastUsed(agent.lastUsed),
                       style: TextStyles.caption.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: ThemeColors(context).onSurfaceVariant,
+                        fontSize: 10,
                       ),
                     ),
                   ],
@@ -437,43 +458,70 @@ class _AgentCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: SpacingTokens.lg),
           
-          // Actions
-          PopupMenuButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: SemanticColors.onSurfaceVariant,
-            ),
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'edit',
-                child: ListTile(
-                  leading: Icon(Icons.edit),
-                  title: Text('Edit Agent'),
-                  contentPadding: EdgeInsets.zero,
+          // Action buttons
+          const SizedBox(height: SpacingTokens.iconSpacing),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 32,
+                  child: AsmblButton.primary(
+                    text: 'Chat',
+                    onPressed: () {
+                      // Navigate to agent chat
+                    },
+                    icon: Icons.chat,
+                  ),
                 ),
               ),
-              const PopupMenuItem(
-                value: 'duplicate',
-                child: ListTile(
-                  leading: Icon(Icons.copy),
-                  title: Text('Duplicate'),
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'delete',
-                child: ListTile(
-                  leading: Icon(Icons.delete, color: Colors.red),
-                  title: Text('Delete', style: TextStyle(color: Colors.red)),
-                  contentPadding: EdgeInsets.zero,
+              const SizedBox(width: SpacingTokens.xs_precise),
+              SizedBox(
+                width: 32,
+                height: 32,
+                child: PopupMenuButton(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: ThemeColors(context).onSurfaceVariant,
+                    size: 16,
+                  ),
+                  padding: EdgeInsets.zero,
+                  iconSize: 16,
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: ListTile(
+                        leading: Icon(Icons.edit, size: 16),
+                        title: Text('Edit', style: TextStyle(fontSize: 12)),
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'duplicate',
+                      child: ListTile(
+                        leading: Icon(Icons.copy, size: 16),
+                        title: Text('Duplicate', style: TextStyle(fontSize: 12)),
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: ListTile(
+                        leading: Icon(Icons.delete, color: Colors.red, size: 16),
+                        title: Text('Delete', style: TextStyle(color: Colors.red, fontSize: 12)),
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    ),
+                  ],
+                  onSelected: (value) {
+                    // Handle menu actions
+                  },
                 ),
               ),
             ],
-            onSelected: (value) {
-              // Handle menu actions
-            },
           ),
         ],
       ),
@@ -534,32 +582,32 @@ class _TemplateCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: SemanticColors.surfaceVariant,
+                  color: ThemeColors(context).surfaceVariant,
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Icon(
                   _getCategoryIcon(template.category),
                   size: 20,
-                  color: SemanticColors.primary,
+                  color: ThemeColors(context).primary,
                 ),
               ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
                 decoration: BoxDecoration(
-                  color: SemanticColors.surfaceVariant,
+                  color: ThemeColors(context).surfaceVariant,
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(
                   template.category,
                   style: TextStyles.caption.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: ThemeColors(context).onSurfaceVariant,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // Template name and description
           Expanded(
@@ -569,17 +617,17 @@ class _TemplateCard extends StatelessWidget {
                 Text(
                   template.name,
                   style: TextStyles.cardTitle.copyWith(
-                    color: SemanticColors.onSurface,
+                    color: ThemeColors(context).onSurface,
                   ),
                 ),
-                const SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.iconSpacing),
                 Text(
                   template.description,
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: ThemeColors(context).onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: SpacingTokens.md),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 
                 // Tags
                 Wrap(
@@ -589,31 +637,31 @@ class _TemplateCard extends StatelessWidget {
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
                       decoration: BoxDecoration(
-                        color: SemanticColors.surfaceVariant,
+                        color: ThemeColors(context).surfaceVariant,
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                       ),
                       child: Text(
                         tag,
                         style: TextStyles.caption.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
+                          color: ThemeColors(context).onSurfaceVariant,
                         ),
                       ),
                     );
                   }).toList(),
                 ),
                 
-                const SizedBox(height: SpacingTokens.md),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 
                 // MCP Servers
                 if (template.mcpStack) ...[
                   Text(
                     'MCP Servers',
                     style: TextStyles.caption.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: ThemeColors(context).onSurfaceVariant,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs_precise),
                   Wrap(
                     spacing: 4,
                     runSpacing: 4,
@@ -621,10 +669,10 @@ class _TemplateCard extends StatelessWidget {
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.xs, vertical: 2),
                         decoration: BoxDecoration(
-                          color: SemanticColors.primary.withOpacity(0.1),
+                          color: ThemeColors(context).primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                           border: Border.all(
-                            color: SemanticColors.primary.withOpacity(0.3),
+                            color: ThemeColors(context).primary.withOpacity(0.3),
                             width: 1,
                           ),
                         ),
@@ -634,13 +682,13 @@ class _TemplateCard extends StatelessWidget {
                             Icon(
                               _getMCPServerIcon(server),
                               size: 12,
-                              color: SemanticColors.primary,
+                              color: ThemeColors(context).primary,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               server,
                               style: TextStyles.caption.copyWith(
-                                color: SemanticColors.primary,
+                                color: ThemeColors(context).primary,
                                 fontSize: 9,
                               ),
                             ),
@@ -655,7 +703,7 @@ class _TemplateCard extends StatelessWidget {
           ),
           
           // Use Template button
-          const SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           AsmblButton.primary(
             text: 'Use Template',
             onPressed: onUseTemplate,

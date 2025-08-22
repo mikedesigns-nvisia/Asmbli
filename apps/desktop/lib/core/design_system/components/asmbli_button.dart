@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../tokens/color_tokens.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
+import '../tokens/theme_colors.dart';
 
 // Button component matching your existing AppTheme button style
 class AsmblButton extends StatefulWidget {
@@ -50,28 +51,29 @@ class _AsmblButtonState extends State<AsmblButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     final isDisabled = widget.onPressed == null;
     
     // Colors based on your existing theme
     final backgroundColor = widget.isPrimary
       ? (isDisabled 
-          ? SemanticColors.onSurfaceVariant
+          ? colors.onSurfaceVariant
           : _isPressed
-            ? SemanticColors.primary.withOpacity(0.9)
+            ? colors.primary.withOpacity(0.9)
             : _isHovered
-              ? SemanticColors.primary.withOpacity(0.95)
-              : SemanticColors.primary)
+              ? colors.primary.withOpacity(0.95)
+              : colors.primary)
       : Colors.transparent;
       
     final foregroundColor = widget.isPrimary
-      ? SemanticColors.onPrimary
+      ? colors.onPrimary
       : (isDisabled 
-          ? SemanticColors.onSurfaceVariant
-          : SemanticColors.primary);
+          ? colors.onSurfaceVariant
+          : colors.primary);
           
     final borderColor = widget.isPrimary 
       ? Colors.transparent 
-      : SemanticColors.border;
+      : colors.border;
 
     Widget content = widget.isLoading
       ? SizedBox(
@@ -91,7 +93,7 @@ class _AsmblButtonState extends State<AsmblButton> {
                 size: 16,
                 color: foregroundColor,
               ),
-              const SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.iconSpacing),
             ],
             Text(
               widget.text,
@@ -114,7 +116,7 @@ class _AsmblButtonState extends State<AsmblButton> {
           width: widget.isFullWidth ? double.infinity : null,
           padding: const EdgeInsets.symmetric(
             horizontal: SpacingTokens.buttonPadding,
-            vertical: SpacingTokens.buttonPaddingSmall,
+            vertical: SpacingTokens.buttonPaddingVertical,
           ),
           decoration: BoxDecoration(
             color: backgroundColor,

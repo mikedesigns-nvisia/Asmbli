@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../tokens/color_tokens.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
+import '../tokens/theme_colors.dart';
 
 // Header button component matching your existing _HeaderButton pattern
 class HeaderButton extends StatefulWidget {
@@ -27,6 +28,7 @@ class _HeaderButtonState extends State<HeaderButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -35,8 +37,8 @@ class _HeaderButtonState extends State<HeaderButton> {
         child: InkWell(
           onTap: widget.onPressed,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-          hoverColor: SemanticColors.primary.withOpacity(0.08),
-          splashColor: SemanticColors.primary.withOpacity(0.16),
+          hoverColor: colors.accent.withOpacity(0.08),
+          splashColor: colors.accent.withOpacity(0.16),
           child: Container(
             padding: const EdgeInsets.symmetric(
               horizontal: SpacingTokens.md,
@@ -44,11 +46,15 @@ class _HeaderButtonState extends State<HeaderButton> {
             ),
             decoration: BoxDecoration(
               color: widget.isActive
-                ? SemanticColors.surfaceVariant
+                ? colors.accent.withOpacity(0.12)
                 : _isHovered
-                  ? SemanticColors.surfaceVariant.withOpacity(0.5)
+                  ? colors.accent.withOpacity(0.06)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+              border: widget.isActive ? Border.all(
+                color: colors.accent.withOpacity(0.3),
+                width: 1.0,
+              ) : null,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -57,16 +63,16 @@ class _HeaderButtonState extends State<HeaderButton> {
                   widget.icon,
                   size: 16,
                   color: widget.isActive || _isHovered
-                    ? SemanticColors.primary
-                    : SemanticColors.onSurfaceVariant,
+                    ? colors.accent
+                    : colors.onSurfaceVariant,
                 ),
                 const SizedBox(width: SpacingTokens.sm),
                 Text(
                   widget.text,
                   style: TextStyles.navButton.copyWith(
                     color: widget.isActive || _isHovered
-                      ? SemanticColors.primary
-                      : SemanticColors.onSurfaceVariant,
+                      ? colors.accent
+                      : colors.onSurfaceVariant,
                   ),
                 ),
               ],

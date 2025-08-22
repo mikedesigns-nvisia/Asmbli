@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../tokens/color_tokens.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
+import '../tokens/theme_colors.dart';
 
 // Card component matching your existing style
 class AsmblCard extends StatefulWidget {
@@ -27,17 +28,18 @@ class _AsmblCardState extends State<AsmblCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     final hasInteraction = widget.onTap != null && widget.isInteractive;
     final effectivePadding = widget.padding ?? const EdgeInsets.all(SpacingTokens.cardPadding);
 
     Widget card = Container(
       decoration: BoxDecoration(
         color: hasInteraction && _isHovered 
-          ? SemanticColors.surfaceVariant
-          : SemanticColors.surface,
+          ? colors.surfaceVariant
+          : colors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
         border: Border.all(
-          color: SemanticColors.border.withOpacity(0.5),
+          color: colors.border.withOpacity(0.5),
         ),
       ),
       child: Material(
@@ -47,7 +49,7 @@ class _AsmblCardState extends State<AsmblCard> {
               onTap: widget.onTap,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
               hoverColor: Colors.transparent,
-              splashColor: SemanticColors.primary.withOpacity(0.1),
+              splashColor: colors.primary.withOpacity(0.1),
               child: Padding(
                 padding: effectivePadding,
                 child: widget.child,
@@ -89,6 +91,7 @@ class AsmblStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     return AsmblCard(
       onTap: onTap,
       child: Column(
@@ -97,20 +100,20 @@ class AsmblStatsCard extends StatelessWidget {
           Icon(
             icon,
             size: 32,
-            color: SemanticColors.primary,
+            color: colors.primary,
           ),
-          const SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.iconSpacing),
           Text(
             value,
             style: TextStyles.sectionTitle.copyWith(
-              color: SemanticColors.onSurface,
+              color: colors.onSurface,
             ),
           ),
-          const SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs_precise),
           Text(
             title,
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

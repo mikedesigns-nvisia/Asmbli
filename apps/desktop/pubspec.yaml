@@ -37,6 +37,10 @@ dependencies:
   # JSON & Serialization
   json_annotation: ^4.8.1
   
+  # Utilities
+  uuid: ^4.0.0
+  equatable: ^2.0.5
+  
   # Desktop Integration
   window_manager: ^0.3.7
   desktop_drop: ^0.6.1

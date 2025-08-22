@@ -1,26 +1,52 @@
-// Spacing tokens based on your existing layout patterns
+// Golden Ratio Spacing System (φ = 1.618)
+// Base unit of 8px with golden ratio multipliers for harmonious proportions
 class SpacingTokens {
-  // Base spacing from your existing code
+  // Golden ratio constant
+  static const double phi = 1.618;
+  
+  // Base unit (8px) - follows 8pt grid system
+  static const double baseUnit = 8.0;
+  
+  // Golden ratio spacing scale
   static const double none = 0.0;
-  static const double xs = 4.0;
-  static const double sm = 8.0;
-  static const double md = 12.0;
-  static const double lg = 16.0;    // Your standard element spacing
-  static const double xl = 20.0;
-  static const double xxl = 24.0;   // Your standard page padding
-  static const double xxxl = 32.0;
-  static const double huge = 40.0;
+  static const double xs = baseUnit * 0.5;        // 4px
+  static const double sm = baseUnit;              // 8px
+  static const double md = baseUnit * phi * 0.5;  // ~6.5px (rounded to 6)
+  static const double lg = baseUnit * phi;        // ~13px (rounded to 13)
+  static const double xl = baseUnit * phi * phi;  // ~21px (rounded to 21)
+  static const double xxl = baseUnit * phi * phi * phi;     // ~34px
+  static const double xxxl = baseUnit * phi * phi * phi * phi;  // ~55px
+  static const double huge = baseUnit * phi * phi * phi * phi * phi; // ~89px
   
-  // Layout specific (extracted from your existing patterns)
-  static const double pageHorizontal = 24.0;  // Container padding horizontal
-  static const double pageVertical = 16.0;    // Container padding vertical
-  static const double headerPadding = 24.0;   // Header horizontal padding
-  static const double sectionSpacing = 24.0;  // Between major sections
+  // Rounded golden ratio values for practical use
+  static const double xs_precise = 4.0;
+  static const double sm_precise = 8.0;
+  static const double md_precise = 13.0;   // baseUnit * phi
+  static const double lg_precise = 21.0;   // baseUnit * phi²
+  static const double xl_precise = 34.0;   // baseUnit * phi³
+  static const double xxl_precise = 55.0;  // baseUnit * phi⁴
+  static const double xxxl_precise = 89.0; // baseUnit * phi⁵
   
-  // Component specific
-  static const double buttonPadding = 16.0;   // Button horizontal padding
-  static const double buttonPaddingSmall = 8.0; // Button vertical padding
-  static const double cardPadding = 16.0;     // Card internal padding
+  // Layout specific golden ratio spacing
+  static const double pageHorizontal = xl_precise;     // 34px - page margins
+  static const double pageVertical = xl_precise;       // 34px - page vertical spacing
+  static const double headerPadding = xl_precise;      // 34px - header padding
+  static const double sectionSpacing = xxl_precise;    // 55px - between major sections
+  static const double elementSpacing = lg_precise;     // 21px - between elements
+  static const double componentSpacing = md_precise;   // 13px - within components
+  
+  // Component specific golden ratio spacing
+  static const double buttonPadding = lg_precise;      // 21px - button horizontal padding
+  static const double buttonPaddingVertical = md_precise; // 13px - button vertical padding
+  static const double cardPadding = lg_precise;        // 21px - card internal padding
+  static const double cardSpacing = md_precise;        // 13px - card element spacing
+  static const double iconSpacing = sm_precise;        // 8px - icon to text spacing
+  static const double listItemSpacing = md_precise;    // 13px - list item spacing
+  
+  // Text spacing (golden ratio for typography)
+  static const double textLineSpacing = sm_precise;    // 8px - small line spacing
+  static const double textParagraphSpacing = lg_precise; // 21px - paragraph spacing
+  static const double textSectionSpacing = xl_precise;  // 34px - section spacing
 }
 
 class BorderRadiusTokens {

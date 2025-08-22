@@ -20,13 +20,13 @@ class LoadingOverlay extends StatelessWidget {
         child,
         if (isLoading)
           Container(
-            color: SemanticColors.surface.withOpacity(0.8),
+            color: ThemeColors(context).surface.withOpacity(0.8),
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const CircularProgressIndicator(
-                    color: SemanticColors.primary,
+                  CircularProgressIndicator(
+                    color: ThemeColors(context).primary,
                     strokeWidth: 2,
                   ),
                   if (loadingText != null) ...[
@@ -34,7 +34,7 @@ class LoadingOverlay extends StatelessWidget {
                     Text(
                       loadingText!,
                       style: TextStyles.bodyMedium.copyWith(
-                        color: SemanticColors.onSurface,
+                        color: ThemeColors(context).onSurface,
                       ),
                     ),
                   ],
@@ -58,21 +58,21 @@ class MessageLoadingIndicator extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: SemanticColors.primary,
-            child: const Icon(
+            backgroundColor: ThemeColors(context).primary,
+            child: Icon(
               Icons.smart_toy,
               size: 20,
-              color: SemanticColors.surface,
+              color: ThemeColors(context).onPrimary,
             ),
           ),
           const SizedBox(width: SpacingTokens.md),
           Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: SemanticColors.surface,
+              color: ThemeColors(context).surface,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               border: Border.all(
-                color: SemanticColors.border,
+                color: ThemeColors(context).border,
               ),
             ),
             child: Row(
@@ -82,7 +82,7 @@ class MessageLoadingIndicator extends StatelessWidget {
                   width: 16,
                   height: 16,
                   child: CircularProgressIndicator(
-                    color: SemanticColors.primary,
+                    color: ThemeColors(context).primary,
                     strokeWidth: 2,
                   ),
                 ),
@@ -90,7 +90,7 @@ class MessageLoadingIndicator extends StatelessWidget {
                 Text(
                   'AI is typing...',
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: ThemeColors(context).onSurfaceVariant,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -123,14 +123,14 @@ class ErrorMessage extends StatelessWidget {
             children: [
               Icon(
                 Icons.error_outline,
-                color: SemanticColors.error,
+                color: ThemeColors(context).error,
                 size: 20,
               ),
               const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Error',
                 style: TextStyles.cardTitle.copyWith(
-                  color: SemanticColors.error,
+                  color: ThemeColors(context).error,
                 ),
               ),
             ],
@@ -139,7 +139,7 @@ class ErrorMessage extends StatelessWidget {
           Text(
             message,
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurface,
+              color: ThemeColors(context).onSurface,
             ),
           ),
           if (onRetry != null) ...[

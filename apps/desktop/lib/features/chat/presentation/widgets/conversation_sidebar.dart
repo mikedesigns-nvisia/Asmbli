@@ -23,21 +23,21 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
           Container(
             width: 48,
             decoration: BoxDecoration(
-              color: SemanticColors.surface.withOpacity(0.7),
+              color: ThemeColors(context).surface.withOpacity(0.7),
               border: Border(
-                left: BorderSide(color: SemanticColors.border.withOpacity(0.3)),
+                left: BorderSide(color: ThemeColors(context).border.withOpacity(0.3)),
               ),
             ),
             child: Column(
               children: [
-                const SizedBox(height: SpacingTokens.lg),
+                const SizedBox(height: SpacingTokens.elementSpacing),
                 IconButton(
                   onPressed: () => setState(() => isCollapsed = false),
                   icon: const Icon(Icons.chevron_left, size: 20),
                   style: IconButton.styleFrom(
-                    backgroundColor: SemanticColors.surface.withOpacity(0.8),
-                    foregroundColor: SemanticColors.onSurfaceVariant,
-                    side: BorderSide(color: SemanticColors.border.withOpacity(0.5)),
+                    backgroundColor: ThemeColors(context).surface.withOpacity(0.8),
+                    foregroundColor: ThemeColors(context).onSurfaceVariant,
+                    side: BorderSide(color: ThemeColors(context).border.withOpacity(0.5)),
                   ),
                   tooltip: 'Show Conversations',
                 ),
@@ -58,9 +58,9 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
   Widget _buildSidebarContent() {
     return Container(
       decoration: BoxDecoration(
-        color: SemanticColors.surface.withOpacity(0.7),
+        color: ThemeColors(context).surface.withOpacity(0.7),
         border: Border(
-          left: BorderSide(color: SemanticColors.border.withOpacity(0.3)),
+          left: BorderSide(color: ThemeColors(context).border.withOpacity(0.3)),
         ),
       ),
       child: Column(
@@ -68,13 +68,13 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
         children: [
           // Header
           Container(
-            padding: const EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.cardPadding),
             child: Row(
               children: [
                 Text(
                   'Conversations',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: SemanticColors.onSurface,
+                    color: ThemeColors(context).onSurface,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -84,7 +84,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
                   onPressed: () => setState(() => isCollapsed = true),
                   icon: const Icon(Icons.chevron_right, size: 20),
                   style: IconButton.styleFrom(
-                    foregroundColor: SemanticColors.onSurfaceVariant,
+                    foregroundColor: ThemeColors(context).onSurfaceVariant,
                   ),
                   tooltip: 'Hide Conversations',
                 ),
@@ -99,10 +99,10 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
           
           // Footer with additional actions
           Container(
-            padding: const EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.cardPadding),
             decoration: BoxDecoration(
               border: Border(
-                top: BorderSide(color: SemanticColors.border.withOpacity(0.3)),
+                top: BorderSide(color: ThemeColors(context).border.withOpacity(0.3)),
               ),
             ),
             child: Column(
@@ -114,7 +114,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
                   onPressed: () => _showArchiveModal(context),
                   isFullWidth: true,
                 ),
-                const SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.iconSpacing),
                 
                 // Export conversations button
                 AsmblButton.secondary(

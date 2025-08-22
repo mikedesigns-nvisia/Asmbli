@@ -17,9 +17,9 @@ class ConversationArchiveModal extends ConsumerWidget {
         width: 600,
         height: 500,
         decoration: BoxDecoration(
-          color: SemanticColors.surface,
+          color: ThemeColors(context).surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
-          border: Border.all(color: SemanticColors.border),
+          border: Border.all(color: ThemeColors(context).border),
         ),
         child: Column(
           children: [
@@ -28,21 +28,21 @@ class ConversationArchiveModal extends ConsumerWidget {
               padding: const EdgeInsets.all(SpacingTokens.xl),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: SemanticColors.border),
+                  bottom: BorderSide(color: ThemeColors(context).border),
                 ),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.archive,
-                    color: SemanticColors.onSurface,
+                    color: ThemeColors(context).onSurface,
                     size: 20,
                   ),
                   const SizedBox(width: SpacingTokens.sm),
                   Text(
                     'Archived Conversations',
                     style: TextStyles.sectionTitle.copyWith(
-                      color: SemanticColors.onSurface,
+                      color: ThemeColors(context).onSurface,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -51,7 +51,7 @@ class ConversationArchiveModal extends ConsumerWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close, size: 20),
                     style: IconButton.styleFrom(
-                      foregroundColor: SemanticColors.onSurfaceVariant,
+                      foregroundColor: ThemeColors(context).onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -63,7 +63,7 @@ class ConversationArchiveModal extends ConsumerWidget {
               child: archivedConversationsAsync.when(
                 data: (archivedConversations) {
                   if (archivedConversations.isEmpty) {
-                    return _buildEmptyState();
+                    return _buildEmptyState(context);
                   }
                   
                   return ListView.builder(
@@ -79,9 +79,9 @@ class ConversationArchiveModal extends ConsumerWidget {
                     },
                   );
                 },
-                loading: () => const Center(
+                loading: () => Center(
                   child: CircularProgressIndicator(
-                    color: SemanticColors.primary,
+                    color: ThemeColors(context).primary,
                   ),
                 ),
                 error: (error, stack) => Center(
@@ -91,20 +91,20 @@ class ConversationArchiveModal extends ConsumerWidget {
                       Icon(
                         Icons.error_outline,
                         size: 48,
-                        color: SemanticColors.error,
+                        color: ThemeColors(context).error,
                       ),
                       const SizedBox(height: SpacingTokens.lg),
                       Text(
                         'Failed to load archived conversations',
                         style: TextStyles.bodyMedium.copyWith(
-                          color: SemanticColors.error,
+                          color: ThemeColors(context).error,
                         ),
                       ),
                       const SizedBox(height: SpacingTokens.sm),
                       Text(
                         error.toString(),
                         style: TextStyles.caption.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
+                          color: ThemeColors(context).onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -119,7 +119,7 @@ class ConversationArchiveModal extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -127,13 +127,13 @@ class ConversationArchiveModal extends ConsumerWidget {
           Icon(
             Icons.archive_outlined,
             size: 64,
-            color: SemanticColors.onSurfaceVariant.withOpacity(0.5),
+            color: ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
           ),
           const SizedBox(height: SpacingTokens.xl),
           Text(
             'No archived conversations',
             style: TextStyles.bodyLarge.copyWith(
-              color: SemanticColors.onSurface,
+              color: ThemeColors(context).onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -141,7 +141,7 @@ class ConversationArchiveModal extends ConsumerWidget {
           Text(
             'Conversations you archive will appear here',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: ThemeColors(context).onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -163,11 +163,11 @@ class ConversationArchiveModal extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: SemanticColors.surface,
+        backgroundColor: ThemeColors(context).surface,
         title: Text(
           'Delete Conversation',
           style: TextStyles.sectionTitle.copyWith(
-            color: SemanticColors.onSurface,
+            color: ThemeColors(context).onSurface,
           ),
         ),
         content: Column(
@@ -177,14 +177,14 @@ class ConversationArchiveModal extends ConsumerWidget {
             Text(
               'Are you sure you want to permanently delete this conversation?',
               style: TextStyles.bodyMedium.copyWith(
-                color: SemanticColors.onSurface,
+                color: ThemeColors(context).onSurface,
               ),
             ),
             const SizedBox(height: SpacingTokens.sm),
             Text(
               '"${conversation.title}"',
               style: TextStyles.bodyMedium.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: ThemeColors(context).onSurfaceVariant,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -192,7 +192,7 @@ class ConversationArchiveModal extends ConsumerWidget {
             Text(
               'This action cannot be undone.',
               style: TextStyles.caption.copyWith(
-                color: SemanticColors.error,
+                color: ThemeColors(context).error,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -206,13 +206,13 @@ class ConversationArchiveModal extends ConsumerWidget {
           const SizedBox(width: SpacingTokens.sm),
           Container(
             decoration: BoxDecoration(
-              color: SemanticColors.error,
+              color: ThemeColors(context).error,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: TextButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: TextButton.styleFrom(
-                foregroundColor: SemanticColors.surface,
+                foregroundColor: ThemeColors(context).surface,
                 padding: const EdgeInsets.symmetric(
                   horizontal: SpacingTokens.lg,
                   vertical: SpacingTokens.sm,
@@ -221,7 +221,7 @@ class ConversationArchiveModal extends ConsumerWidget {
               child: Text(
                 'Delete Forever',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: SemanticColors.surface,
+                  color: ThemeColors(context).surface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -259,9 +259,9 @@ class _ArchivedConversationItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: SemanticColors.surface,
+        color: ThemeColors(context).surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: ThemeColors(context).border),
       ),
       child: Row(
         children: [
@@ -273,7 +273,7 @@ class _ArchivedConversationItem extends StatelessWidget {
                 Text(
                   conversation.title,
                   style: TextStyles.bodyMedium.copyWith(
-                    color: SemanticColors.onSurface,
+                    color: ThemeColors(context).onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 2,
@@ -285,26 +285,26 @@ class _ArchivedConversationItem extends StatelessWidget {
                     Icon(
                       Icons.message,
                       size: 12,
-                      color: SemanticColors.onSurfaceVariant,
+                      color: ThemeColors(context).onSurfaceVariant,
                     ),
                     const SizedBox(width: SpacingTokens.xs),
                     Text(
                       '${conversation.messages.length} messages',
                       style: TextStyles.caption.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: ThemeColors(context).onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(width: SpacingTokens.sm),
                     Icon(
                       Icons.schedule,
                       size: 12,
-                      color: SemanticColors.onSurfaceVariant,
+                      color: ThemeColors(context).onSurfaceVariant,
                     ),
                     const SizedBox(width: SpacingTokens.xs),
                     Text(
                       _formatDate(conversation.createdAt),
                       style: TextStyles.caption.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: ThemeColors(context).onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -322,8 +322,8 @@ class _ArchivedConversationItem extends StatelessWidget {
                 onPressed: onRestore,
                 icon: const Icon(Icons.unarchive, size: 18),
                 style: IconButton.styleFrom(
-                  backgroundColor: SemanticColors.primary.withOpacity(0.1),
-                  foregroundColor: SemanticColors.primary,
+                  backgroundColor: ThemeColors(context).primary.withOpacity(0.1),
+                  foregroundColor: ThemeColors(context).primary,
                 ),
                 tooltip: 'Restore',
               ),
@@ -334,8 +334,8 @@ class _ArchivedConversationItem extends StatelessWidget {
                 onPressed: onDelete,
                 icon: const Icon(Icons.delete_forever, size: 18),
                 style: IconButton.styleFrom(
-                  backgroundColor: SemanticColors.error.withOpacity(0.1),
-                  foregroundColor: SemanticColors.error,
+                  backgroundColor: ThemeColors(context).error.withOpacity(0.1),
+                  foregroundColor: ThemeColors(context).error,
                 ),
                 tooltip: 'Delete Forever',
               ),

@@ -59,14 +59,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         isLoading: ref.watch(isLoadingProvider),
         loadingText: 'Processing...',
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.topCenter,
+              radius: 1.5,
               colors: [
-                SemanticColors.backgroundGradientStart,
-                SemanticColors.backgroundGradientEnd,
+                ThemeColors(context).backgroundGradientStart,
+                ThemeColors(context).backgroundGradientMiddle,
+                ThemeColors(context).backgroundGradientEnd,
               ],
+              stops: const [0.0, 0.6, 1.0],
             ),
           ),
           child: SafeArea(
@@ -96,7 +98,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ),
                         child: Column(
                           children: [
-                            const SizedBox(height: 20),
+                            const SizedBox(height: SpacingTokens.elementSpacing),
                             IconButton(
                               onPressed: () => setState(() => isSidebarCollapsed = false),
                               icon: const Icon(Icons.chevron_right, size: 20),
@@ -140,7 +142,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         children: [
           // Sidebar Header
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
             child: Row(
               children: [
                 Text(
@@ -166,7 +168,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           
           // Agent Selection Section
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -179,35 +181,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(6),
-                    color: theme.colorScheme.surface.withOpacity(0.8),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: selectedAgent,
-                      onChanged: (value) => setState(() => selectedAgent = value!),
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 14,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                      items: agents.map((agent) {
-                        return DropdownMenuItem(
-                          value: agent.id,
-                          child: Text(agent.name),
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                const SizedBox(height: SpacingTokens.iconSpacing),
+                AsmblStringDropdown(
+                  value: selectedAgent,
+                  items: agents.map((agent) => agent.id).toList(),
+                  onChanged: (value) => setState(() => selectedAgent = value!),
                 ),
                 
-                const SizedBox(height: 16),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 
                 // Browse Agent Library Button
                 Container(
@@ -225,7 +206,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         size: 16,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: SpacingTokens.iconSpacing),
                       Text(
                         'Browse Agent Library',
                         style: TextStyle(
@@ -241,7 +222,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ),
           
-          const SizedBox(height: 24),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           // MCP Servers Section
           Padding(
@@ -256,7 +237,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       size: 16,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: SpacingTokens.iconSpacing),
                     Text(
                       'MCP Servers',
                       style: TextStyle(
@@ -279,11 +260,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         width: 6,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: server.isConnected ? SemanticColors.success : theme.colorScheme.onSurfaceVariant,
+                          color: server.isConnected ? ThemeColors(context).success : theme.colorScheme.onSurfaceVariant,
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: SpacingTokens.componentSpacing),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -311,7 +292,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: SemanticColors.success.withOpacity(0.1),
+                            color: ThemeColors(context).success.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -320,7 +301,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               fontFamily: 'Space Grotesk',
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
-                              color: SemanticColors.success,
+                              color: ThemeColors(context).success,
                             ),
                           ),
                         ),
@@ -328,7 +309,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                 )),
                 
-                const SizedBox(height: 8),
+                const SizedBox(height: SpacingTokens.iconSpacing),
                 Text(
                   '${mcpServers.where((s) => s.isConnected).length} of ${mcpServers.length} servers active',
                   style: TextStyle(
@@ -345,7 +326,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           
           // Bottom Actions
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
             child: Column(
               children: [
                 // Upload Documents
@@ -364,7 +345,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         size: 16,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: SpacingTokens.iconSpacing),
                       Text(
                         'Upload Documents',
                         style: TextStyle(
@@ -395,7 +376,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         size: 16,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: SpacingTokens.iconSpacing),
                       Text(
                         'API Settings',
                         style: TextStyle(
@@ -408,7 +389,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                 ),
                 
-                const SizedBox(height: 16),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 
                 // Browse Templates Button
                 GestureDetector(
@@ -447,7 +428,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         children: [
           // Chat Header with agent info
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
             child: Row(
               children: [
                 Text(
@@ -486,7 +467,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           
           // Input Area
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
             child: Row(
               children: [
                 Expanded(
@@ -517,7 +498,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Container(
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurfaceVariant,
@@ -575,7 +556,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
             ),
             
-            const SizedBox(height: 32),
+            const SizedBox(height: SpacingTokens.textSectionSpacing),
             
             // Start a Conversation
             Text(
@@ -588,7 +569,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
             ),
             
-            const SizedBox(height: 16),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             
             // Description
             Text(
@@ -656,7 +637,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         color: colorScheme.onPrimary,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: SpacingTokens.componentSpacing),
                   ],
                   Expanded(
                     child: Container(
@@ -691,7 +672,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     ),
                   ),
                   if (isUser) ...[
-                    const SizedBox(width: 12),
+                    const SizedBox(width: SpacingTokens.componentSpacing),
                     CircleAvatar(
                       radius: 16,
                       backgroundColor: colorScheme.surface,
@@ -708,8 +689,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           },
         );
       },
-      loading: () => const Center(
-        child: CircularProgressIndicator(color: SemanticColors.primary),
+      loading: () => Center(
+        child: CircularProgressIndicator(color: ThemeColors(context).primary),
       ),
       error: (error, stack) => Center(
         child: ErrorMessage(
@@ -760,7 +741,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to send message: $e'),
-            backgroundColor: SemanticColors.error,
+            backgroundColor: ThemeColors(context).error,
           ),
         );
       }
@@ -791,7 +772,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: SpacingTokens.textSectionSpacing),
             Text(
               'Start the conversation',
               style: TextStyle(
@@ -801,7 +782,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 color: theme.colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Type a message below to begin this conversation.',
               style: TextStyle(
