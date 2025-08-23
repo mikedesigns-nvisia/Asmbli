@@ -176,7 +176,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     selectedModel = providerModels[selectedProvider]!.first;
     _loadSystemPrompt();
   }
@@ -251,64 +251,71 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                       
                       const SizedBox(height: SpacingTokens.sectionSpacing),
                       
-                      // Page Title
-                      Text(
-                        'Settings',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                      // Page Title and Tab Bar (inline, compact)
+                      Row(
+                        children: [
+                          Text(
+                            'Settings',
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(width: SpacingTokens.componentSpacing),
+                          
+                          // Tab Bar (inline)
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: ThemeColors(context).surface.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: ThemeColors(context).border.withOpacity(0.5)),
+                              ),
+                              child: TabBar(
+                                controller: _tabController,
+                                tabs: const [
+                                  Tab(text: 'API Configuration'),
+                                  Tab(text: 'Agent Management'),
+                                  Tab(text: 'Integrations'),
+                                  Tab(text: 'General Settings'),
+                                ],
+                                labelColor: Theme.of(context).colorScheme.primary,
+                                unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                labelStyle: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                unselectedLabelStyle: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                indicator: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                indicatorPadding: const EdgeInsets.all(4),
+                                dividerColor: Colors.transparent,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       
-                      const SizedBox(height: SpacingTokens.sectionSpacing),
+                      const SizedBox(height: SpacingTokens.xs),
                       
-                      // Tab Bar
-                      Container(
-                        decoration: BoxDecoration(
-                          color: ThemeColors(context).surface.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: ThemeColors(context).border.withOpacity(0.5)),
-                        ),
-                        child: TabBar(
-                          controller: _tabController,
-                          tabs: const [
-                            Tab(text: 'API Configuration'),
-                            Tab(text: 'Agent Management'),
-                            Tab(text: 'General Settings'),
-                          ],
-                          labelColor: Theme.of(context).colorScheme.primary,
-                          unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                          labelStyle: TextStyle(
-                            fontFamily: 'Space Grotesk',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          unselectedLabelStyle: TextStyle(
-                            fontFamily: 'Space Grotesk',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          indicator: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          indicatorPadding: const EdgeInsets.all(4),
-                          dividerColor: Colors.transparent,
-                        ),
-                      ),
-                      
-                      const SizedBox(height: SpacingTokens.textSectionSpacing),
-                      
-                      // Tab View Content
+                      // Tab View Content (expanded height)
                       SizedBox(
-                        height: 600,
+                        height: 680,
                         child: TabBarView(
                           controller: _tabController,
                           children: [
                             _buildAPIConfigurationTab(),
                             _buildAgentManagementTab(),
+                            _buildIntegrationsTab(),
                             _buildGeneralSettingsTab(themeService),
                           ],
                         ),
@@ -862,6 +869,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
           ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIntegrationsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: const IntegrationsTabContent(),
         ),
       ),
     );
@@ -1792,4 +1811,1299 @@ class AgentItem {
     required this.systemPrompt,
     required this.templates,
   });
+}
+
+class IntegrationsTabContent extends StatefulWidget {
+  const IntegrationsTabContent({super.key});
+
+  @override
+  State<IntegrationsTabContent> createState() => _IntegrationsTabContentState();
+}
+
+class _IntegrationsTabContentState extends State<IntegrationsTabContent> {
+  String _selectedCategory = 'all';
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  final List<String> _categories = [
+    'All', 'Files & Storage', 'Development', 'Productivity', 'Web & APIs', 'Database', 
+    'DevOps', 'Cloud', 'Design', 'API', 'Testing', 'Finance', 'Analytics', 'Security',
+    'AI/ML', 'Gaming'
+  ];
+
+  final List<Integration> _integrations = [
+    // Core MCP Servers
+    Integration(
+      id: 'filesystem',
+      name: 'File System',
+      description: 'Read, write, and manage local files and folders',
+      category: 'Files & Storage',
+      icon: Icons.folder_outlined,
+      isInstalled: true,
+      developer: 'Anthropic',
+      downloadCount: 'Dec 2024',
+      features: ['Read files', 'Write files', 'Directory operations', 'File search'],
+    ),
+    Integration(
+      id: 'brave-search',
+      name: 'Brave Search',
+      description: 'Search the web with privacy-focused Brave Search',
+      category: 'Web & APIs',
+      icon: Icons.search,
+      isInstalled: true,
+      developer: 'Brave Software',
+      downloadCount: 'Dec 2024',
+      features: ['Web search', 'Real-time results', 'Privacy-focused', 'Rich snippets'],
+    ),
+    Integration(
+      id: 'memory',
+      name: 'Memory',
+      description: 'Remember conversations and context across sessions',
+      category: 'Productivity',
+      icon: Icons.memory,
+      isInstalled: true,
+      developer: 'Anthropic',
+      downloadCount: 'Dec 2024',
+      features: ['Context memory', 'Session persistence', 'Smart recall', 'Privacy-focused'],
+    ),
+    
+    // Development & DevOps
+    Integration(
+      id: 'github',
+      name: 'GitHub',
+      description: 'Access repositories, issues, and pull requests',
+      category: 'Development',
+      icon: Icons.code,
+      isInstalled: false,
+      developer: 'GitHub',
+      downloadCount: 'Jan 2025',
+      features: ['Repository access', 'Issue management', 'Pull requests', 'Code search'],
+    ),
+    Integration(
+      id: 'git',
+      name: 'Git',
+      description: 'Local Git repository operations and version control',
+      category: 'Development',
+      icon: Icons.source,
+      isInstalled: false,
+      developer: 'Git',
+      downloadCount: 'Jan 2025',
+      features: ['Local Git ops', 'Branch management', 'Commit history', 'Diff analysis'],
+    ),
+    Integration(
+      id: 'docker',
+      name: 'Docker',
+      description: 'Manage Docker containers and images',
+      category: 'DevOps',
+      icon: Icons.view_in_ar,
+      isInstalled: false,
+      developer: 'Docker Inc',
+      downloadCount: 'Feb 2025',
+      features: ['Container management', 'Image operations', 'Docker Compose', 'Registry access'],
+    ),
+    Integration(
+      id: 'aws',
+      name: 'Amazon Web Services',
+      description: 'Access and manage AWS cloud resources',
+      category: 'Cloud',
+      icon: Icons.cloud,
+      isInstalled: false,
+      developer: 'Amazon',
+      downloadCount: 'Jan 2025',
+      features: ['EC2 management', 'S3 operations', 'Lambda functions', 'CloudFormation'],
+    ),
+    Integration(
+      id: 'kubernetes',
+      name: 'Kubernetes',
+      description: 'Orchestrate and manage Kubernetes clusters',
+      category: 'DevOps',
+      icon: Icons.settings_ethernet,
+      isInstalled: false,
+      developer: 'CNCF',
+      downloadCount: 'Mar 2025',
+      features: ['Pod management', 'Service discovery', 'Config maps', 'Deployments'],
+    ),
+    
+    // Databases
+    Integration(
+      id: 'postgres',
+      name: 'PostgreSQL',
+      description: 'Connect to PostgreSQL databases and run queries',
+      category: 'Database',
+      icon: Icons.storage,
+      isInstalled: false,
+      developer: 'PostgreSQL',
+      downloadCount: 'Jan 2025',
+      features: ['Database queries', 'Schema inspection', 'Data analysis', 'Secure connections'],
+    ),
+    Integration(
+      id: 'mysql',
+      name: 'MySQL',
+      description: 'Connect to MySQL databases and perform operations',
+      category: 'Database',
+      icon: Icons.dns,
+      isInstalled: false,
+      developer: 'Oracle',
+      downloadCount: 'Feb 2025',
+      features: ['SQL queries', 'Database administration', 'Performance tuning', 'Backup operations'],
+    ),
+    Integration(
+      id: 'redis',
+      name: 'Redis',
+      description: 'In-memory data structure store and cache',
+      category: 'Database',
+      icon: Icons.flash_on,
+      isInstalled: false,
+      developer: 'Redis Ltd',
+      downloadCount: 'Mar 2025',
+      features: ['Key-value operations', 'Pub/Sub messaging', 'Data structures', 'Performance metrics'],
+    ),
+    Integration(
+      id: 'mongodb',
+      name: 'MongoDB',
+      description: 'NoSQL document database operations',
+      category: 'Database',
+      icon: Icons.article,
+      isInstalled: false,
+      developer: 'MongoDB Inc',
+      downloadCount: 'Apr 2025',
+      features: ['Document queries', 'Aggregation pipelines', 'Index management', 'Schema validation'],
+    ),
+    
+    // Design & Creative
+    Integration(
+      id: 'figma',
+      name: 'Figma',
+      description: 'Access design files and components from Figma',
+      category: 'Design',
+      icon: Icons.design_services,
+      isInstalled: false,
+      developer: 'Figma',
+      downloadCount: 'Feb 2025',
+      features: ['Design access', 'Component library', 'Asset export', 'Team collaboration'],
+    ),
+    Integration(
+      id: 'canva',
+      name: 'Canva',
+      description: 'Create and edit designs with Canva integration',
+      category: 'Design',
+      icon: Icons.palette,
+      isInstalled: false,
+      developer: 'Canva',
+      downloadCount: 'Apr 2025',
+      features: ['Template access', 'Design automation', 'Brand kits', 'Asset library'],
+    ),
+    
+    // Productivity & Communication
+    Integration(
+      id: 'slack',
+      name: 'Slack',
+      description: 'Send messages and interact with Slack workspaces',
+      category: 'Productivity',
+      icon: Icons.chat,
+      isInstalled: false,
+      developer: 'Slack Technologies',
+      downloadCount: 'Jan 2025',
+      features: ['Message sending', 'Channel access', 'File sharing', 'Workflow automation'],
+    ),
+    Integration(
+      id: 'jira',
+      name: 'Jira',
+      description: 'Manage projects and track issues with Jira',
+      category: 'Productivity',
+      icon: Icons.bug_report,
+      isInstalled: false,
+      developer: 'Atlassian',
+      downloadCount: 'Feb 2025',
+      features: ['Issue tracking', 'Project management', 'Sprint planning', 'Custom workflows'],
+    ),
+    Integration(
+      id: 'notion',
+      name: 'Notion',
+      description: 'Access and manage Notion workspaces and pages',
+      category: 'Productivity',
+      icon: Icons.note,
+      isInstalled: false,
+      developer: 'Notion Labs',
+      downloadCount: 'Apr 2025',
+      features: ['Page access', 'Database queries', 'Content creation', 'Team collaboration'],
+    ),
+    Integration(
+      id: 'airtable',
+      name: 'Airtable',
+      description: 'Database and spreadsheet operations with Airtable',
+      category: 'Productivity',
+      icon: Icons.table_chart,
+      isInstalled: false,
+      developer: 'Airtable Inc',
+      downloadCount: 'May 2025',
+      features: ['Base management', 'Record operations', 'View filtering', 'API integration'],
+    ),
+    
+    // Development Tools
+    Integration(
+      id: 'python',
+      name: 'Python',
+      description: 'Execute Python code and scripts',
+      category: 'Development',
+      icon: Icons.code,
+      isInstalled: false,
+      developer: 'Python Software Foundation',
+      downloadCount: 'Dec 2024',
+      features: ['Code execution', 'Package management', 'Virtual environments', 'Debugging'],
+    ),
+    Integration(
+      id: 'jupyter',
+      name: 'Jupyter',
+      description: 'Interactive notebooks and data analysis',
+      category: 'Development',
+      icon: Icons.analytics,
+      isInstalled: false,
+      developer: 'Project Jupyter',
+      downloadCount: 'Mar 2025',
+      features: ['Notebook execution', 'Data visualization', 'Interactive computing', 'Kernel management'],
+    ),
+    Integration(
+      id: 'shell',
+      name: 'Shell',
+      description: 'Execute shell commands and scripts',
+      category: 'Development',
+      icon: Icons.terminal,
+      isInstalled: false,
+      developer: 'Various',
+      downloadCount: 'Jan 2025',
+      features: ['Command execution', 'Script automation', 'Process management', 'Environment variables'],
+    ),
+    
+    // API & Testing
+    Integration(
+      id: 'postman',
+      name: 'Postman',
+      description: 'API testing and development with Postman',
+      category: 'API',
+      icon: Icons.api,
+      isInstalled: false,
+      developer: 'Postman Inc',
+      downloadCount: 'Apr 2025',
+      features: ['API testing', 'Collection management', 'Environment variables', 'Mock servers'],
+    ),
+    Integration(
+      id: 'selenium',
+      name: 'Selenium',
+      description: 'Browser automation and web testing',
+      category: 'Testing',
+      icon: Icons.web,
+      isInstalled: false,
+      developer: 'Selenium',
+      downloadCount: 'Apr 2025',
+      features: ['Browser automation', 'Web testing', 'Element interaction', 'Cross-browser support'],
+    ),
+    Integration(
+      id: 'browserbase',
+      name: 'Browserbase',
+      description: 'Cloud browser automation and testing',
+      category: 'Testing',
+      icon: Icons.cloud_queue,
+      isInstalled: false,
+      developer: 'Browserbase',
+      downloadCount: 'May 2025',
+      features: ['Cloud browsers', 'Headless automation', 'Screenshot capture', 'Performance testing'],
+    ),
+    
+    // Finance & Trading
+    Integration(
+      id: 'alpaca',
+      name: 'Alpaca',
+      description: 'Stock and options trading with Alpaca Markets',
+      category: 'Finance',
+      icon: Icons.trending_up,
+      isInstalled: false,
+      developer: 'Alpaca Markets',
+      downloadCount: 'Apr 2025',
+      features: ['Stock trading', 'Options trading', 'Portfolio management', 'Market data'],
+    ),
+    Integration(
+      id: 'stripe',
+      name: 'Stripe',
+      description: 'Payment processing and financial operations',
+      category: 'Finance',
+      icon: Icons.payment,
+      isInstalled: false,
+      developer: 'Stripe Inc',
+      downloadCount: 'Mar 2025',
+      features: ['Payment processing', 'Subscription management', 'Invoice creation', 'Financial reporting'],
+    ),
+    
+    // Cloud Services
+    Integration(
+      id: 'azure',
+      name: 'Microsoft Azure',
+      description: 'Access Microsoft Azure cloud services',
+      category: 'Cloud',
+      icon: Icons.cloud_circle,
+      isInstalled: false,
+      developer: 'Microsoft',
+      downloadCount: 'Feb 2025',
+      features: ['Virtual machines', 'Storage accounts', 'App services', 'Function apps'],
+    ),
+    Integration(
+      id: 'google-analytics',
+      name: 'Google Analytics',
+      description: 'Website analytics and user behavior insights',
+      category: 'Analytics',
+      icon: Icons.analytics,
+      isInstalled: false,
+      developer: 'Google',
+      downloadCount: 'Mar 2025',
+      features: ['Traffic analysis', 'User behavior', 'Conversion tracking', 'Custom reports'],
+    ),
+    
+    // Authentication
+    Integration(
+      id: 'auth0',
+      name: 'Auth0',
+      description: 'Identity and access management platform',
+      category: 'Security',
+      icon: Icons.security,
+      isInstalled: false,
+      developer: 'Auth0 Inc',
+      downloadCount: 'May 2025',
+      features: ['User authentication', 'SSO integration', 'MFA support', 'User management'],
+    ),
+    
+    // Coming Soon
+    Integration(
+      id: 'openai',
+      name: 'OpenAI',
+      description: 'AI model fine-tuning and training operations',
+      category: 'AI/ML',
+      icon: Icons.psychology,
+      isInstalled: false,
+      developer: 'OpenAI',
+      downloadCount: 'Coming Soon',
+      features: ['Model fine-tuning', 'API access', 'Custom training', 'Model deployment'],
+    ),
+    Integration(
+      id: 'huggingface',
+      name: 'Hugging Face',
+      description: 'Access AI models and datasets hub',
+      category: 'AI/ML',
+      icon: Icons.face,
+      isInstalled: false,
+      developer: 'Hugging Face',
+      downloadCount: 'Coming Soon',
+      features: ['Model hub access', 'Dataset management', 'Transformers library', 'Model inference'],
+    ),
+    Integration(
+      id: 'unity',
+      name: 'Unity',
+      description: 'Game development and Unity Editor integration',
+      category: 'Gaming',
+      icon: Icons.videogame_asset,
+      isInstalled: false,
+      developer: 'Unity Technologies',
+      downloadCount: 'Coming Soon',
+      features: ['Scene management', 'Asset pipeline', 'Build automation', 'Performance profiling'],
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+    final filteredIntegrations = _getFilteredIntegrations();
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Search Bar (simplified, app-like)
+        Container(
+          margin: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: colors.surfaceVariant.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colors.border.withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.search, color: colors.onSurfaceVariant, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search integrations',
+                    hintStyle: TextStyle(
+                      fontFamily: 'Space Grotesk',
+                      fontSize: 16,
+                      color: colors.onSurfaceVariant,
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                  style: TextStyle(
+                    fontFamily: 'Space Grotesk',
+                    fontSize: 16,
+                    color: colors.onSurface,
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                ),
+              ),
+              if (_searchQuery.isNotEmpty)
+                GestureDetector(
+                  onTap: () {
+                    _searchController.clear();
+                    setState(() {
+                      _searchQuery = '';
+                    });
+                  },
+                  child: Icon(Icons.clear, color: colors.onSurfaceVariant, size: 20),
+                ),
+            ],
+          ),
+        ),
+        
+        // Filter Chips (app-store style)
+        Container(
+          height: 40,
+          margin: const EdgeInsets.only(bottom: SpacingTokens.sectionSpacing),
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            itemCount: _categories.length,
+            separatorBuilder: (_, __) => const SizedBox(width: SpacingTokens.xs),
+            itemBuilder: (context, index) {
+              final category = _categories[index];
+              final categoryKey = category.toLowerCase().replaceAll(' & ', '_').replaceAll(' ', '_');
+              final isSelected = _selectedCategory == categoryKey;
+              
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedCategory = categoryKey;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isSelected ? colors.primary : colors.surface,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected ? colors.primary : colors.border,
+                      width: 1,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      category,
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 14,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        color: isSelected ? Colors.white : colors.onSurface,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        
+        const SizedBox(height: SpacingTokens.textSectionSpacing),
+        
+        // Popular Integrations Section
+        if (_searchQuery.isEmpty && _selectedCategory == 'all') ...[
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: SpacingTokens.componentSpacing),
+            child: Text(
+              'Popular',
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: colors.onSurface,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 180,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              itemCount: _integrations.take(6).length,
+              separatorBuilder: (_, __) => const SizedBox(width: SpacingTokens.componentSpacing),
+              itemBuilder: (context, index) {
+                final featuredIntegrations = _integrations.take(6).toList();
+                return _buildIntegrationCard(featuredIntegrations[index], isCompact: true);
+              },
+            ),
+          ),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
+        ],
+        
+        // Main Integrations List
+        if (_searchQuery.isEmpty && _selectedCategory == 'all') ...[
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: SpacingTokens.componentSpacing),
+            child: Text(
+              'All Integrations',
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: colors.onSurface,
+              ),
+            ),
+          ),
+        ] else if (_searchQuery.isNotEmpty || _selectedCategory != 'all') ...[
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: SpacingTokens.componentSpacing),
+            child: Text(
+              _searchQuery.isNotEmpty 
+                ? 'Results (${filteredIntegrations.length})'
+                : _categories.firstWhere((cat) => cat.toLowerCase().replaceAll(' & ', '_').replaceAll(' ', '_') == _selectedCategory),
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: colors.onSurface,
+              ),
+            ),
+          ),
+        ],
+        
+        // Integrations Grid
+        filteredIntegrations.isEmpty 
+          ? _buildEmptyState()
+          : GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: SpacingTokens.componentSpacing,
+                mainAxisSpacing: SpacingTokens.componentSpacing,
+                childAspectRatio: 0.9,
+              ),
+              itemCount: filteredIntegrations.length,
+              itemBuilder: (context, index) {
+                return _buildIntegrationCard(filteredIntegrations[index], isCompact: true);
+              },
+            ),
+      ],
+    );
+  }
+
+  List<Integration> _getFilteredIntegrations() {
+    var filtered = _integrations;
+    
+    // Filter by category
+    if (_selectedCategory != 'all') {
+      filtered = filtered.where((integration) {
+        return integration.category.toLowerCase().replaceAll(' & ', '_').replaceAll(' ', '_') == _selectedCategory;
+      }).toList();
+    }
+    
+    // Filter by search query
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered.where((integration) {
+        return integration.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+               integration.description.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+               integration.developer.toLowerCase().contains(_searchQuery.toLowerCase());
+      }).toList();
+    }
+    
+    return filtered;
+  }
+
+  Widget _buildIntegrationCard(Integration integration, {bool isCompact = false, bool isGrid = false}) {
+    final colors = ThemeColors(context);
+    
+    if (isCompact) {
+      // Compact card for featured section (app-like)
+      return Container(
+        width: 160,
+        padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+          border: Border.all(color: colors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with icon
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: colors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    integration.icon,
+                    color: colors.primary,
+                    size: 24,
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: SpacingTokens.componentSpacing),
+            
+            // App name
+            Text(
+              integration.name,
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: colors.onSurface,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            
+            const SizedBox(height: 4),
+            
+            // Description
+            Expanded(
+              child: Text(
+                integration.description,
+                style: TextStyle(
+                  fontFamily: 'Space Grotesk',
+                  fontSize: 12,
+                  color: colors.onSurfaceVariant,
+                  height: 1.3,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            
+            const SizedBox(height: SpacingTokens.componentSpacing),
+            
+            // Button row
+            Row(
+              children: [
+                
+                const Spacer(),
+                
+                // Action button (compact)
+                GestureDetector(
+                  onTap: () {
+                    if (integration.isInstalled) {
+                      _manageIntegration(integration);
+                    } else {
+                      _installIntegration(integration);
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: integration.isInstalled ? 10 : 12, 
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: integration.isInstalled ? colors.surfaceVariant : colors.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      integration.isInstalled ? 'OPEN' : 'GET',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: integration.isInstalled ? colors.primary : Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+    
+    if (isGrid) {
+      // Grid card (app store grid style)
+      return Container(
+        padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+          border: Border.all(color: colors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with icon
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: colors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    integration.icon,
+                    color: colors.primary,
+                    size: 24,
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: SpacingTokens.componentSpacing),
+            
+            // App name
+            Text(
+              integration.name,
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: colors.onSurface,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            
+            const SizedBox(height: 4),
+            
+            // Description
+            Expanded(
+              child: Text(
+                integration.description,
+                style: TextStyle(
+                  fontFamily: 'Space Grotesk',
+                  fontSize: 13,
+                  color: colors.onSurfaceVariant,
+                  height: 1.3,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            
+            const SizedBox(height: SpacingTokens.componentSpacing),
+            
+            // Button row
+            Row(
+              children: [
+                const Spacer(),
+                
+                // Action button (compact)
+                GestureDetector(
+                  onTap: () {
+                    if (integration.isInstalled) {
+                      _manageIntegration(integration);
+                    } else {
+                      _installIntegration(integration);
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: integration.isInstalled ? 12 : 16, 
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: integration.isInstalled ? colors.surfaceVariant : colors.primary,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      integration.isInstalled ? 'OPEN' : 'GET',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: integration.isInstalled ? colors.primary : Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+    
+    // List-style card (like iOS App Store list view)
+    return Container(
+      padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+        border: Border.all(color: colors.border),
+      ),
+      child: Row(
+        children: [
+          // App icon
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: colors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(
+              integration.icon,
+              color: colors.primary,
+              size: 32,
+            ),
+          ),
+          
+          const SizedBox(width: SpacingTokens.componentSpacing),
+          
+          // App info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name and rating row
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        integration.name,
+                        style: TextStyle(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: colors.onSurface,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 4),
+                
+                // Description
+                Text(
+                  integration.description,
+                  style: TextStyle(
+                    fontFamily: 'Space Grotesk',
+                    fontSize: 14,
+                    color: colors.onSurfaceVariant,
+                    height: 1.3,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                
+                const SizedBox(height: SpacingTokens.xs),
+                
+                // Developer info
+                Row(
+                  children: [
+                    Text(
+                      'By ${integration.developer}',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 12,
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      integration.downloadCount,
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(width: SpacingTokens.componentSpacing),
+          
+          // Action button (app store style)
+          GestureDetector(
+            onTap: () {
+              if (integration.isInstalled) {
+                _manageIntegration(integration);
+              } else {
+                _installIntegration(integration);
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: integration.isInstalled ? 16 : 20, 
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: integration.isInstalled ? colors.surfaceVariant : colors.primary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                integration.isInstalled ? 'OPEN' : 'GET',
+                style: TextStyle(
+                  fontFamily: 'Space Grotesk',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: integration.isInstalled ? colors.primary : Colors.white,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    final colors = ThemeColors(context);
+    
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: SpacingTokens.sectionSpacing * 2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 48,
+              color: colors.onSurfaceVariant.withOpacity(0.6),
+            ),
+            const SizedBox(height: SpacingTokens.componentSpacing),
+            Text(
+              'No integrations found',
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: colors.onSurface,
+              ),
+            ),
+            const SizedBox(height: SpacingTokens.xs),
+            Text(
+              'Try adjusting your search or category filter',
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 14,
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _installIntegration(Integration integration) {
+    // Simulate installation
+    setState(() {
+      final index = _integrations.indexWhere((i) => i.id == integration.id);
+      if (index != -1) {
+        _integrations[index] = integration.copyWith(isInstalled: true);
+      }
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${integration.name} installed successfully!',
+          style: const TextStyle(fontFamily: 'Space Grotesk'),
+        ),
+        backgroundColor: ThemeColors(context).success,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _manageIntegration(Integration integration) {
+    showDialog(
+      context: context,
+      builder: (context) => _IntegrationDetailsDialog(integration: integration),
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+}
+
+class Integration {
+  final String id;
+  final String name;
+  final String description;
+  final String category;
+  final IconData icon;
+  final bool isInstalled;
+  final String developer;
+  final String downloadCount;
+  final List<String> features;
+
+  const Integration({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.category,
+    required this.icon,
+    required this.isInstalled,
+    required this.developer,
+    required this.downloadCount,
+    required this.features,
+  });
+
+  Integration copyWith({
+    String? id,
+    String? name,
+    String? description,
+    String? category,
+    IconData? icon,
+    bool? isInstalled,
+    String? developer,
+    String? downloadCount,
+    List<String>? features,
+  }) {
+    return Integration(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      icon: icon ?? this.icon,
+      isInstalled: isInstalled ?? this.isInstalled,
+      developer: developer ?? this.developer,
+      downloadCount: downloadCount ?? this.downloadCount,
+      features: features ?? this.features,
+    );
+  }
+}
+
+class _IntegrationDetailsDialog extends StatelessWidget {
+  final Integration integration;
+
+  const _IntegrationDetailsDialog({required this.integration});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+    
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        width: 500,
+        constraints: const BoxConstraints(maxHeight: 600),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+          border: Border.all(color: colors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: colors.border)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: colors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      integration.icon,
+                      color: colors.primary,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          integration.name,
+                          style: TextStyle(
+                            fontFamily: 'Space Grotesk',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: colors.onSurface,
+                          ),
+                        ),
+                        Text(
+                          'by ${integration.developer}',
+                          style: TextStyle(
+                            fontFamily: 'Space Grotesk',
+                            fontSize: 14,
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close),
+                    style: IconButton.styleFrom(
+                      foregroundColor: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Description
+                    Text(
+                      integration.description,
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 16,
+                        color: colors.onSurface,
+                        height: 1.5,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.sectionSpacing),
+                    
+                    // Stats
+                    Row(
+                      children: [
+                        _buildStatChip(colors, Icons.download, integration.downloadCount),
+                        const SizedBox(width: SpacingTokens.componentSpacing),
+                        _buildStatChip(colors, Icons.category, integration.category),
+                        const SizedBox(width: SpacingTokens.componentSpacing),
+                        _buildStatChip(colors, Icons.person, integration.developer),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.sectionSpacing),
+                    
+                    // Features
+                    Text(
+                      'Features',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: colors.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: SpacingTokens.componentSpacing),
+                    ...integration.features.map((feature) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle,
+                            size: 16,
+                            color: colors.success,
+                          ),
+                          const SizedBox(width: SpacingTokens.xs),
+                          Expanded(
+                            child: Text(
+                              feature,
+                              style: TextStyle(
+                                fontFamily: 'Space Grotesk',
+                                fontSize: 14,
+                                color: colors.onSurface,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+            ),
+            
+            // Footer
+            Container(
+              padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: colors.border)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: integration.isInstalled
+                        ? AsmblButtonEnhanced.secondary(
+                            text: 'Uninstall',
+                            icon: Icons.delete_outline,
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              // Handle uninstall
+                            },
+                            size: AsmblButtonSize.medium,
+                          )
+                        : AsmblButtonEnhanced.accent(
+                            text: 'Install Integration',
+                            icon: Icons.download_outlined,
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              // Handle install
+                            },
+                            size: AsmblButtonSize.medium,
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatChip(ThemeColors colors, IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: colors.surfaceVariant.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: colors.onSurfaceVariant),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 12,
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

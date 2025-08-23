@@ -211,17 +211,63 @@ class _ConversationItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  conversation.title,
-                  style: TextStyles.bodyMedium.copyWith(
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected 
-                        ? ThemeColors(context).primary
-                        : ThemeColors(context).onSurface,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                Row(
+                  children: [
+                    // Agent/API type indicator
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: _getTypeColor(context),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            _getTypeIcon(),
+                            size: 10,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            _getTypeLabel(),
+                            style: TextStyles.caption.copyWith(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        conversation.title,
+                        style: TextStyles.bodyMedium.copyWith(
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          color: isSelected 
+                              ? ThemeColors(context).primary
+                              : ThemeColors(context).onSurface,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
+                if (_getApiProvider() != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'API: ${_getApiProvider()}',
+                    style: TextStyles.caption.copyWith(
+                      color: ThemeColors(context).onSurfaceVariant,
+                      fontSize: 10,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
                 const SizedBox(height: SpacingTokens.xs),
                 Row(
                   children: [
@@ -297,6 +343,46 @@ class _ConversationItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _getTypeLabel() {
+    final type = conversation.metadata?['type'] as String?;
+    switch (type) {
+      case 'agent':
+        return 'AGENT';
+      case 'default_api':
+        return 'API';
+      default:
+        return 'CHAT';
+    }
+  }
+
+  IconData _getTypeIcon() {
+    final type = conversation.metadata?['type'] as String?;
+    switch (type) {
+      case 'agent':
+        return Icons.smart_toy;
+      case 'default_api':
+        return Icons.api;
+      default:
+        return Icons.chat;
+    }
+  }
+
+  Color _getTypeColor(BuildContext context) {
+    final type = conversation.metadata?['type'] as String?;
+    switch (type) {
+      case 'agent':
+        return ThemeColors(context).primary;
+      case 'default_api':
+        return ThemeColors(context).onSurfaceVariant;
+      default:
+        return ThemeColors(context).onSurfaceVariant.withOpacity(0.7);
+    }
+  }
+
+  String? _getApiProvider() {
+    return conversation.metadata?['apiProvider'] as String?;
   }
 
   String _formatDate(DateTime date) {

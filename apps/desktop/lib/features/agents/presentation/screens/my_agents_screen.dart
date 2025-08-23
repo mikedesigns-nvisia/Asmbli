@@ -17,7 +17,11 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
 
   final List<String> categories = [
     'All', 'Research', 'Development', 'Writing', 'Data Analysis', 
-    'Customer Support', 'Marketing', 'Design'
+    'Customer Support', 'Marketing', 'Design', 'DevOps', 'Security',
+    'Product', 'Database', 'API', 'Blockchain', 'QA', 'AI/ML',
+    'Content Creation', 'IoT', 'Gaming', 'Robotics', 'AR/VR',
+    'Quantum', 'Bioinformatics', 'Finance', 'E-commerce', 'Cloud',
+    'Automation', 'Mobile', 'Real Estate', 'Legal', 'Healthcare'
   ];
 
   final List<AgentItem> agents = [
@@ -28,6 +32,11 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       isActive: true,
       lastUsed: DateTime.now().subtract(const Duration(minutes: 15)),
       totalChats: 23,
+      recentChats: [
+        'Can you help me find recent papers on quantum computing?',
+        'What are the latest developments in AI research?',
+        'I need citations for my machine learning paper',
+      ],
     ),
     AgentItem(
       name: 'Code Reviewer',
@@ -36,6 +45,11 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       isActive: true,
       lastUsed: DateTime.now().subtract(const Duration(hours: 2)),
       totalChats: 8,
+      recentChats: [
+        'Please review this React component for security issues',
+        'Check my Python function for performance optimizations',
+        'What are the best practices for error handling?',
+      ],
     ),
     AgentItem(
       name: 'Content Writer',
@@ -44,6 +58,11 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       isActive: false,
       lastUsed: DateTime.now().subtract(const Duration(days: 1)),
       totalChats: 15,
+      recentChats: [
+        'Write a blog post about sustainable technology',
+        'Create social media content for product launch',
+        'Help me improve this marketing copy',
+      ],
     ),
     AgentItem(
       name: 'Data Analyst',
@@ -52,6 +71,11 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       isActive: true,
       lastUsed: DateTime.now().subtract(const Duration(hours: 6)),
       totalChats: 12,
+      recentChats: [
+        'Analyze customer churn patterns in our dataset',
+        'Create visualizations for quarterly report',
+        'What insights can you find in sales data?',
+      ],
     ),
   ];
 
@@ -62,7 +86,9 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       category: 'Research',
       tags: ['academic', 'citations', 'fact-checking'],
       mcpStack: true,
-      mcpServers: ['Brave Search', 'Memory', 'Files', 'Time'],
+      mcpServers: ['brave-search', 'memory', 'filesystem'],
+      exampleUse: 'Find recent papers on quantum computing with proper citations',
+      popularity: 95,
     ),
     AgentTemplate(
       name: 'Code Reviewer',
@@ -70,7 +96,9 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       category: 'Development', 
       tags: ['code-review', 'security', 'best-practices'],
       mcpStack: true,
-      mcpServers: ['GitHub', 'Git', 'Files', 'Memory'],
+      mcpServers: ['github', 'git', 'filesystem', 'memory'],
+      exampleUse: 'Review React components for security vulnerabilities',
+      popularity: 87,
     ),
     AgentTemplate(
       name: 'Content Writer',
@@ -78,7 +106,9 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       category: 'Writing',
       tags: ['seo', 'content', 'marketing'],
       mcpStack: true,
-      mcpServers: ['Brave Search', 'Memory', 'Files'],
+      mcpServers: ['brave-search', 'web-fetch', 'memory', 'filesystem'],
+      exampleUse: 'Create engaging blog posts about sustainable technology',
+      popularity: 92,
     ),
     AgentTemplate(
       name: 'Data Analyst',
@@ -86,7 +116,9 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       category: 'Data Analysis',
       tags: ['statistics', 'visualization', 'insights'],
       mcpStack: true,
-      mcpServers: ['Postgres', 'Files', 'Memory', 'Time'],
+      mcpServers: ['postgres', 'python', 'jupyter', 'memory', 'filesystem'],
+      exampleUse: 'Analyze customer churn patterns and create visualizations',
+      popularity: 78,
     ),
     AgentTemplate(
       name: 'Customer Support Bot',
@@ -94,7 +126,9 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       category: 'Customer Support',
       tags: ['support', 'tickets', 'automation'],
       mcpStack: true,
-      mcpServers: ['Linear', 'Slack', 'Memory', 'Time'],
+      mcpServers: ['jira', 'slack', 'zendesk', 'memory'],
+      exampleUse: 'Handle customer inquiries and route tickets efficiently',
+      popularity: 89,
     ),
     AgentTemplate(
       name: 'Marketing Strategist',
@@ -102,7 +136,9 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       category: 'Marketing',
       tags: ['campaigns', 'strategy', 'analytics'],
       mcpStack: true,
-      mcpServers: ['Brave Search', 'Notion', 'Memory', 'Time'],
+      mcpServers: ['brave-search', 'google-analytics', 'notion', 'memory'],
+      exampleUse: 'Plan social media campaigns with performance tracking',
+      popularity: 84,
     ),
     AgentTemplate(
       name: 'Design Agent',
@@ -110,7 +146,315 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
       category: 'Design',
       tags: ['design-systems', 'ui-ux', 'figma', 'components', 'collaboration'],
       mcpStack: true,
-      mcpServers: ['Figma', 'GitHub', 'Files', 'Memory'],
+      mcpServers: ['figma', 'github', 'filesystem', 'memory'],
+      exampleUse: 'Generate design system components from Figma files',
+      popularity: 91,
+    ),
+    // DevOps & Infrastructure
+    AgentTemplate(
+      name: 'DevOps Engineer',
+      description: 'Infrastructure automation and deployment specialist',
+      category: 'DevOps',
+      tags: ['docker', 'kubernetes', 'aws', 'ci-cd', 'automation'],
+      mcpStack: true,
+      mcpServers: ['aws', 'docker', 'kubernetes', 'shell', 'memory'],
+      exampleUse: 'Automate deployment pipelines and manage cloud infrastructure',
+      popularity: 88,
+    ),
+    AgentTemplate(
+      name: 'Database Administrator',
+      description: 'Database optimization with PostgreSQL and Redis',
+      category: 'Database',
+      tags: ['postgresql', 'mysql', 'redis', 'mongodb', 'optimization'],
+      mcpStack: true,
+      mcpServers: ['postgres', 'mysql', 'redis', 'mongodb', 'memory'],
+      exampleUse: 'Optimize database queries and manage backup strategies',
+      popularity: 82,
+    ),
+    // Security
+    AgentTemplate(
+      name: 'Security Analyst',
+      description: 'Cybersecurity expert with penetration testing tools',
+      category: 'Security',
+      tags: ['pentesting', 'nmap', 'metasploit', 'vulnerability', 'ethical-hacking'],
+      mcpStack: true,
+      mcpServers: ['nmap', 'burp-suite', 'filesystem', 'shell', 'memory'],
+      exampleUse: 'Conduct security audits and vulnerability assessments',
+      popularity: 85,
+    ),
+    // Product & Analytics
+    AgentTemplate(
+      name: 'Product Manager',
+      description: 'Product strategy with Jira and analytics integration',
+      category: 'Product',
+      tags: ['jira', 'analytics', 'roadmap', 'stakeholder', 'metrics'],
+      mcpStack: true,
+      mcpServers: ['jira', 'google-analytics', 'slack', 'memory', 'filesystem'],
+      exampleUse: 'Plan product roadmaps and track success metrics',
+      popularity: 86,
+    ),
+    AgentTemplate(
+      name: 'Data Scientist',
+      description: 'ML/AI specialist with Python and data analysis tools',
+      category: 'Data Analysis',
+      tags: ['python', 'jupyter', 'machine-learning', 'visualization', 'sql'],
+      mcpStack: true,
+      mcpServers: ['python', 'jupyter', 'postgres', 'memory', 'filesystem'],
+      exampleUse: 'Build ML models and analyze complex datasets',
+      popularity: 90,
+    ),
+    // API & Development
+    AgentTemplate(
+      name: 'API Architect',
+      description: 'RESTful and GraphQL API design specialist',
+      category: 'API',
+      tags: ['rest', 'graphql', 'openapi', 'postman', 'microservices'],
+      mcpStack: true,
+      mcpServers: ['postman', 'swagger-ui', 'graphql', 'memory', 'filesystem'],
+      exampleUse: 'Design robust APIs with comprehensive documentation',
+      popularity: 83,
+    ),
+    AgentTemplate(
+      name: 'QA Automation Engineer',
+      description: 'Test automation with Selenium and Cypress',
+      category: 'QA',
+      tags: ['selenium', 'cypress', 'jest', 'testing', 'automation'],
+      mcpStack: true,
+      mcpServers: ['selenium', 'browserbase', 'jest', 'github', 'memory'],
+      exampleUse: 'Create comprehensive test suites and automation frameworks',
+      popularity: 81,
+    ),
+    // Blockchain & Web3
+    AgentTemplate(
+      name: 'Blockchain Developer',
+      description: 'Smart contract and Web3 development expert',
+      category: 'Blockchain',
+      tags: ['ethereum', 'solidity', 'web3', 'defi', 'smart-contracts'],
+      mcpStack: true,
+      mcpServers: ['ethereum', 'ipfs', 'the-graph', 'memory', 'filesystem'],
+      exampleUse: 'Develop and audit smart contracts for DeFi protocols',
+      popularity: 79,
+    ),
+    AgentTemplate(
+      name: 'UX Designer',
+      description: 'User experience design with Figma integration',
+      category: 'Design',
+      tags: ['figma', 'ux', 'user-research', 'prototyping', 'accessibility'],
+      mcpStack: true,
+      mcpServers: ['figma', 'hotjar', 'airtable', 'memory', 'filesystem'],
+      exampleUse: 'Create user-centered designs with comprehensive research',
+      popularity: 87,
+    ),
+    // Coming Soon - AI/ML
+    AgentTemplate(
+      name: 'AI Model Trainer',
+      description: 'Fine-tuning and training custom AI models',
+      category: 'AI/ML',
+      tags: ['huggingface', 'fine-tuning', 'wandb', 'gpu', 'training'],
+      mcpStack: true,
+      mcpServers: ['huggingface', 'openai', 'wandb', 'aws', 'memory'],
+      exampleUse: 'Fine-tune LLMs for domain-specific applications',
+      popularity: 93,
+      isComingSoon: true,
+    ),
+    // Coming Soon - Content Creation
+    AgentTemplate(
+      name: 'Video Content Creator',
+      description: 'AI-powered video editing and generation',
+      category: 'Content Creation',
+      tags: ['runway', 'elevenlabs', 'youtube', 'premiere', 'video-ai'],
+      mcpStack: true,
+      mcpServers: ['runway', 'elevenlabs', 'youtube', 'adobe-creative', 'memory'],
+      exampleUse: 'Create and edit videos with AI-powered tools',
+      popularity: 89,
+      isComingSoon: true,
+    ),
+    // Coming Soon - IoT
+    AgentTemplate(
+      name: 'IoT Systems Engineer',
+      description: 'IoT device management and edge computing',
+      category: 'IoT',
+      tags: ['mqtt', 'azure-iot', 'influxdb', 'edge', 'sensors'],
+      mcpStack: true,
+      mcpServers: ['azure-iot', 'aws-iot', 'influxdb', 'mqtt', 'memory'],
+      exampleUse: 'Manage IoT devices and process sensor data streams',
+      popularity: 76,
+      isComingSoon: true,
+    ),
+    // Coming Soon - Gaming
+    AgentTemplate(
+      name: 'Game Developer',
+      description: 'Game development with Unity and Unreal integration',
+      category: 'Gaming',
+      tags: ['unity', 'unreal', 'steam', 'playfab', 'gamedev'],
+      mcpStack: true,
+      mcpServers: ['unity', 'steam', 'playfab', 'github', 'memory'],
+      exampleUse: 'Develop games with automated testing and deployment',
+      popularity: 80,
+      isComingSoon: true,
+    ),
+    // Coming Soon - Robotics
+    AgentTemplate(
+      name: 'Robotics Engineer',
+      description: 'ROS integration and robot control systems',
+      category: 'Robotics',
+      tags: ['ros', 'gazebo', 'opencv', 'arduino', 'control-systems'],
+      mcpStack: true,
+      mcpServers: ['ros', 'gazebo', 'opencv', 'arduino', 'memory'],
+      exampleUse: 'Program autonomous robots with computer vision',
+      popularity: 74,
+      isComingSoon: true,
+    ),
+    // Coming Soon - AR/VR
+    AgentTemplate(
+      name: 'AR/VR Developer',
+      description: 'Augmented and Virtual Reality experiences',
+      category: 'AR/VR',
+      tags: ['arcore', 'oculus', 'babylon', 'blender', 'spatial'],
+      mcpStack: true,
+      mcpServers: ['arcore', 'oculus', 'unity', 'blender', 'memory'],
+      exampleUse: 'Build immersive AR/VR applications and experiences',
+      popularity: 77,
+      isComingSoon: true,
+    ),
+    // Coming Soon - Quantum
+    AgentTemplate(
+      name: 'Quantum Computing Researcher',
+      description: 'Quantum algorithm development and simulation',
+      category: 'Quantum',
+      tags: ['qiskit', 'cirq', 'aws-braket', 'pennylane', 'quantum-ml'],
+      mcpStack: true,
+      mcpServers: ['qiskit', 'cirq', 'aws-braket', 'pennylane', 'memory'],
+      exampleUse: 'Develop quantum algorithms and run quantum simulations',
+      popularity: 68,
+      isComingSoon: true,
+    ),
+    // Coming Soon - Bioinformatics
+    AgentTemplate(
+      name: 'Bioinformatics Analyst',
+      description: 'Genomic analysis and protein modeling',
+      category: 'Bioinformatics',
+      tags: ['blast', 'alphafold', 'pubmed', 'biopython', 'genomics'],
+      mcpStack: true,
+      mcpServers: ['blast', 'alphafold', 'pubmed', 'biopython', 'memory'],
+      exampleUse: 'Analyze genomic sequences and predict protein structures',
+      popularity: 71,
+      isComingSoon: true,
+    ),
+    // Finance & Trading
+    AgentTemplate(
+      name: 'Financial Analyst',
+      description: 'Market analysis with real-time data and trading tools',
+      category: 'Finance',
+      tags: ['trading', 'market-data', 'alpaca', 'financial', 'analysis'],
+      mcpStack: true,
+      mcpServers: ['alpaca', 'alpha-vantage', 'yahoo-finance', 'stripe', 'memory'],
+      exampleUse: 'Analyze stock trends and execute automated trading strategies',
+      popularity: 84,
+    ),
+    // E-commerce
+    AgentTemplate(
+      name: 'E-commerce Manager',
+      description: 'Online store management with Shopify and payment integration',
+      category: 'E-commerce',
+      tags: ['shopify', 'stripe', 'inventory', 'orders', 'analytics'],
+      mcpStack: true,
+      mcpServers: ['shopify', 'stripe', 'google-analytics', 'zendesk', 'memory'],
+      exampleUse: 'Manage inventory, process orders, and analyze sales performance',
+      popularity: 82,
+    ),
+    // Cloud Infrastructure
+    AgentTemplate(
+      name: 'Cloud Architect',
+      description: 'Multi-cloud infrastructure with Azure, AWS, and Alibaba Cloud',
+      category: 'Cloud',
+      tags: ['azure', 'aws', 'alibaba-cloud', 'terraform', 'monitoring'],
+      mcpStack: true,
+      mcpServers: ['azure', 'aws', 'alibaba-cloud', 'terraform', 'datadog', 'memory'],
+      exampleUse: 'Design and deploy scalable multi-cloud architectures',
+      popularity: 86,
+    ),
+    // Authentication & Identity
+    AgentTemplate(
+      name: 'Identity & Access Manager',
+      description: 'Authentication and authorization with Auth0 and Asgardeo',
+      category: 'Security',
+      tags: ['auth0', 'asgardeo', 'identity', 'oauth', 'security'],
+      mcpStack: true,
+      mcpServers: ['auth0', 'asgardeo', 'okta', 'ldap', 'memory'],
+      exampleUse: 'Configure SSO, manage user permissions, and audit access logs',
+      popularity: 78,
+    ),
+    // Browser Automation
+    AgentTemplate(
+      name: 'Web Automation Specialist',
+      description: 'Advanced browser automation with Browserbase and Puppeteer',
+      category: 'Automation',
+      tags: ['browserbase', 'puppeteer', 'selenium', 'scraping', 'testing'],
+      mcpStack: true,
+      mcpServers: ['browserbase', 'puppeteer', 'selenium', 'playwright', 'memory'],
+      exampleUse: 'Automate complex web workflows and data extraction tasks',
+      popularity: 79,
+    ),
+    // Mobile Development
+    AgentTemplate(
+      name: 'Mobile App Developer',
+      description: 'Cross-platform mobile development with CI/CD integration',
+      category: 'Mobile',
+      tags: ['bitrise', 'firebase', 'react-native', 'flutter', 'ci-cd'],
+      mcpStack: true,
+      mcpServers: ['bitrise', 'firebase', 'expo', 'fastlane', 'memory'],
+      exampleUse: 'Build, test, and deploy mobile apps with automated workflows',
+      popularity: 83,
+      isComingSoon: true,
+    ),
+    // Content Creation
+    AgentTemplate(
+      name: 'Visual Content Creator',
+      description: 'Design automation with Canva and creative tools integration',
+      category: 'Design',
+      tags: ['canva', 'unsplash', 'adobe', 'creative', 'automation'],
+      mcpStack: true,
+      mcpServers: ['canva', 'unsplash', 'adobe-creative', 'pexels', 'memory'],
+      exampleUse: 'Generate branded graphics and marketing materials automatically',
+      popularity: 85,
+      isComingSoon: true,
+    ),
+    // Real Estate
+    AgentTemplate(
+      name: 'Real Estate Analyst',
+      description: 'Property analysis with market data and CRM integration',
+      category: 'Real Estate',
+      tags: ['zillow', 'mls', 'crm', 'market-analysis', 'properties'],
+      mcpStack: true,
+      mcpServers: ['zillow', 'mls-data', 'salesforce', 'google-maps', 'memory'],
+      exampleUse: 'Analyze property values, market trends, and manage client relationships',
+      popularity: 76,
+      isComingSoon: true,
+    ),
+    // Legal & Compliance
+    AgentTemplate(
+      name: 'Legal Research Assistant',
+      description: 'Legal document analysis and compliance checking',
+      category: 'Legal',
+      tags: ['westlaw', 'legal-research', 'compliance', 'documents', 'analysis'],
+      mcpStack: true,
+      mcpServers: ['westlaw', 'lexis-nexis', 'courthouse', 'docusign', 'memory'],
+      exampleUse: 'Research case law, analyze contracts, and ensure regulatory compliance',
+      popularity: 73,
+      isComingSoon: true,
+    ),
+    // Healthcare
+    AgentTemplate(
+      name: 'Healthcare Data Analyst',
+      description: 'Medical data analysis with FHIR and healthcare systems',
+      category: 'Healthcare',
+      tags: ['fhir', 'hl7', 'medical-data', 'epic', 'cerner'],
+      mcpStack: true,
+      mcpServers: ['fhir', 'hl7', 'epic', 'cerner', 'smart-on-fhir', 'memory'],
+      exampleUse: 'Analyze patient data, generate health insights, and ensure HIPAA compliance',
+      popularity: 77,
+      isComingSoon: true,
     ),
   ];
 
@@ -209,51 +553,14 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
   Widget _buildMyAgentsContent() {
     return Column(
       children: [
-        // Stats Row
-        Row(
-          children: [
-            Expanded(
-              child: AsmblStatsCard(
-                title: 'Total Agents',
-                value: '${agents.length}',
-                icon: Icons.smart_toy,
-              ),
-            ),
-            const SizedBox(width: SpacingTokens.elementSpacing),
-            Expanded(
-              child: AsmblStatsCard(
-                title: 'Active Today',
-                value: '${agents.where((a) => a.isActive).length}',
-                icon: Icons.schedule,
-              ),
-            ),
-            const SizedBox(width: SpacingTokens.elementSpacing),
-            Expanded(
-              child: AsmblStatsCard(
-                title: 'Total Chats',
-                value: '${agents.fold(0, (sum, agent) => sum + agent.totalChats)}',
-                icon: Icons.message,
-              ),
-            ),
-            const SizedBox(width: SpacingTokens.elementSpacing),
-            Expanded(
-              child: AsmblStatsCard(
-                title: 'Categories',
-                value: '${agents.map((a) => a.category).toSet().length}',
-                icon: Icons.category,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: SpacingTokens.sectionSpacing),
         // Agents Grid
         Expanded(
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
+              crossAxisCount: 3,
               crossAxisSpacing: SpacingTokens.componentSpacing,
               mainAxisSpacing: SpacingTokens.componentSpacing,
-              childAspectRatio: 0.8,
+              childAspectRatio: 1.6,
             ),
             itemCount: agents.length,
             itemBuilder: (context, index) {
@@ -269,67 +576,117 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
   Widget _buildAgentLibraryContent() {
     return Column(
       children: [
-        // Search and Filter Row
-        Row(
-          children: [
-            // Search Field
-            Expanded(
-              flex: 2,
-              child: AsmblCard(
-                child: TextField(
-                  onChanged: (value) => setState(() => searchQuery = value),
-                  decoration: InputDecoration(
-                    hintText: 'Search templates...',
-                    hintStyle: TextStyles.bodyMedium.copyWith(
-                      color: ThemeColors(context).onSurfaceVariant,
+        // Search and Filter Section - Responsive Layout
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Determine if we should stack (when width is less than 800px)
+            final shouldStack = constraints.maxWidth < 800;
+            
+            if (shouldStack) {
+              // Stacked layout for smaller screens
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Search Bar (full width when stacked)
+                  AsmblCard(
+                    child: TextField(
+                      onChanged: (value) => setState(() => searchQuery = value),
+                      decoration: InputDecoration(
+                        hintText: 'Search templates...',
+                        hintStyle: TextStyles.bodyMedium.copyWith(
+                          color: ThemeColors(context).onSurfaceVariant,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: ThemeColors(context).onSurfaceVariant,
+                          size: 18,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: SpacingTokens.componentSpacing, 
+                          vertical: SpacingTokens.sm,
+                        ),
+                      ),
+                      style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurface),
                     ),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: ThemeColors(context).onSurfaceVariant,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing, vertical: SpacingTokens.iconSpacing),
                   ),
-                  style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurface),
-                ),
-              ),
-            ),
-            const SizedBox(width: SpacingTokens.elementSpacing),
-            // Category Filter
-            AsmblCard(
-              child: DropdownButton<String>(
-                value: selectedCategory,
-                onChanged: (value) => setState(() => selectedCategory = value!),
-                underline: const SizedBox(),
-                style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurface),
-                items: categories.map((category) {
-                  return DropdownMenuItem(
-                    value: category,
-                    child: Text(category),
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
+                  const SizedBox(height: SpacingTokens.componentSpacing),
+                  
+                  // Filter Chips
+                  Wrap(
+                    spacing: SpacingTokens.xs,
+                    runSpacing: SpacingTokens.xs,
+                    children: _buildFilterChips(),
+                  ),
+                ],
+              );
+            } else {
+              // Horizontal layout for larger screens
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Search Bar (flexible width)
+                  Expanded(
+                    flex: 2,
+                    child: AsmblCard(
+                      child: TextField(
+                        onChanged: (value) => setState(() => searchQuery = value),
+                        decoration: InputDecoration(
+                          hintText: 'Search templates...',
+                          hintStyle: TextStyles.bodyMedium.copyWith(
+                            color: ThemeColors(context).onSurfaceVariant,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: ThemeColors(context).onSurfaceVariant,
+                            size: 18,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: SpacingTokens.componentSpacing, 
+                            vertical: SpacingTokens.sm,
+                          ),
+                        ),
+                        style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurface),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
+                  
+                  // Filter Chips (flexible width)
+                  Expanded(
+                    flex: 3,
+                    child: Wrap(
+                      spacing: SpacingTokens.xs,
+                      runSpacing: SpacingTokens.xs,
+                      children: _buildFilterChips(),
+                    ),
+                  ),
+                ],
+              );
+            }
+          },
         ),
-        const SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.elementSpacing),
         // Templates Grid
         Expanded(
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: SpacingTokens.elementSpacing,
-              mainAxisSpacing: SpacingTokens.elementSpacing,
-              childAspectRatio: 0.85,
-            ),
-            itemCount: filteredTemplates.length,
-            itemBuilder: (context, index) {
-              return _TemplateCard(
-                template: filteredTemplates[index],
-                onUseTemplate: () => _useTemplate(filteredTemplates[index]),
-              );
-            },
-          ),
+          child: filteredTemplates.isEmpty 
+            ? _buildEmptyState()
+            : GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: SpacingTokens.componentSpacing,
+                  mainAxisSpacing: SpacingTokens.componentSpacing,
+                  childAspectRatio: 1.4,
+                ),
+                itemCount: filteredTemplates.length,
+                itemBuilder: (context, index) {
+                  return _TemplateCard(
+                    template: filteredTemplates[index],
+                    onUseTemplate: () => _useTemplate(filteredTemplates[index]),
+                  );
+                },
+              ),
         ),
       ],
     );
@@ -338,6 +695,110 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
   void _useTemplate(AgentTemplate template) {
     // Navigate to chat or configuration with this template
     context.go('${AppRoutes.chat}?template=${template.name}');
+  }
+
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Research': return Icons.search;
+      case 'Development': return Icons.code;
+      case 'Writing': return Icons.edit;
+      case 'Data Analysis': return Icons.analytics;
+      case 'Customer Support': return Icons.support_agent;
+      case 'Marketing': return Icons.campaign;
+      case 'Design': return Icons.design_services;
+      default: return Icons.smart_toy;
+    }
+  }
+
+  List<Widget> _buildFilterChips() {
+    return categories.map((category) {
+      final isSelected = selectedCategory == category;
+      return GestureDetector(
+        onTap: () => setState(() => selectedCategory = category),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: SpacingTokens.componentSpacing,
+            vertical: SpacingTokens.xs,
+          ),
+          decoration: BoxDecoration(
+            color: isSelected 
+              ? ThemeColors(context).primary 
+              : ThemeColors(context).surfaceVariant.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
+            border: Border.all(
+              color: isSelected 
+                ? ThemeColors(context).primary 
+                : ThemeColors(context).border,
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (category != 'All') ...[
+                Icon(
+                  _getCategoryIcon(category),
+                  size: 12,
+                  color: isSelected 
+                    ? Colors.white 
+                    : ThemeColors(context).onSurfaceVariant,
+                ),
+                const SizedBox(width: 4),
+              ],
+              Text(
+                category,
+                style: TextStyles.caption.copyWith(
+                  color: isSelected 
+                    ? Colors.white 
+                    : ThemeColors(context).onSurfaceVariant,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }).toList();
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: 48,
+            color: ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
+          ),
+          const SizedBox(height: SpacingTokens.componentSpacing),
+          Text(
+            'No templates found',
+            style: TextStyles.bodyLarge.copyWith(
+              color: ThemeColors(context).onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: SpacingTokens.xs),
+          Text(
+            'Try adjusting your search or filters',
+            style: TextStyles.bodySmall.copyWith(
+              color: ThemeColors(context).onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: SpacingTokens.componentSpacing),
+          AsmblButton.secondary(
+            text: 'Clear Filters',
+            onPressed: () {
+              setState(() {
+                searchQuery = '';
+                selectedCategory = 'All';
+              });
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -351,179 +812,253 @@ class _AgentCard extends StatelessWidget {
     return AsmblCard(
       onTap: () {
         // Navigate to agent chat
+        context.go('${AppRoutes.chat}?agent=${agent.name}');
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with icon, status, and menu
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(SpacingTokens.xs_precise),
-                decoration: BoxDecoration(
-                  color: ThemeColors(context).surfaceVariant,
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                ),
-                child: Icon(
-                  Icons.smart_toy,
-                  size: 16,
-                  color: ThemeColors(context).primary,
-                ),
-              ),
-              const SizedBox(width: SpacingTokens.xs_precise),
-              // Status Indicator
-              Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: agent.isActive 
-                    ? ThemeColors(context).success 
-                    : ThemeColors(context).onSurfaceVariant,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.xs, vertical: 2),
-                decoration: BoxDecoration(
-                  color: ThemeColors(context).surfaceVariant,
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                ),
-                child: Text(
-                  agent.category,
-                  style: TextStyles.caption.copyWith(
-                    color: ThemeColors(context).onSurfaceVariant,
-                    fontSize: 10,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: SpacingTokens.iconSpacing),
-          
-          // Agent name and description
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with icon, name, and actions
+            Row(
               children: [
-                Text(
-                  agent.name,
-                  style: TextStyles.cardTitle.copyWith(
-                    color: ThemeColors(context).onSurface,
-                    fontSize: 14,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: SpacingTokens.xs_precise),
-                Text(
-                  agent.description,
-                  style: TextStyles.bodySmall.copyWith(
-                    color: ThemeColors(context).onSurfaceVariant,
-                    fontSize: 11,
-                    height: 1.2,
-                  ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: SpacingTokens.iconSpacing),
-                
-                // Stats row
-                Row(
+                // Icon with status indicator
+                Stack(
+                  alignment: Alignment.bottomRight,
                   children: [
-                    Icon(
-                      Icons.message,
-                      size: 12,
-                      color: ThemeColors(context).onSurfaceVariant,
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      '${agent.totalChats}',
-                      style: TextStyles.caption.copyWith(
-                        color: ThemeColors(context).onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10,
+                    Container(
+                      padding: const EdgeInsets.all(SpacingTokens.xs),
+                      decoration: BoxDecoration(
+                        color: ThemeColors(context).surfaceVariant,
+                        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                      ),
+                      child: Icon(
+                        Icons.smart_toy,
+                        size: 18,
+                        color: ThemeColors(context).primary,
                       ),
                     ),
-                    const Spacer(),
-                    Text(
-                      _formatLastUsed(agent.lastUsed),
-                      style: TextStyles.caption.copyWith(
-                        color: ThemeColors(context).onSurfaceVariant,
-                        fontSize: 10,
+                    // Status indicator
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: agent.isActive 
+                          ? ThemeColors(context).success 
+                          : ThemeColors(context).onSurfaceVariant,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: ThemeColors(context).surface,
+                          width: 1,
+                        ),
                       ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: SpacingTokens.sm),
+                
+                // Agent name and category
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        agent.name,
+                        style: TextStyles.bodyMedium.copyWith(
+                          color: ThemeColors(context).onSurface,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        agent.category,
+                        style: TextStyles.caption.copyWith(
+                          color: ThemeColors(context).onSurfaceVariant,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Action buttons
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        size: 14,
+                        color: ThemeColors(context).onSurfaceVariant,
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(
+                        minWidth: 24,
+                        minHeight: 24,
+                      ),
+                      onPressed: () {
+                        context.go('/agents/configure/${agent.name}');
+                      },
+                      tooltip: 'Edit',
+                    ),
+                    PopupMenuButton(
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: ThemeColors(context).onSurfaceVariant,
+                        size: 14,
+                      ),
+                      padding: EdgeInsets.zero,
+                      iconSize: 14,
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'duplicate',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.copy, size: 12, color: ThemeColors(context).onSurface),
+                              const SizedBox(width: 6),
+                              Text('Duplicate', style: TextStyle(fontSize: 11, color: ThemeColors(context).onSurface)),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.delete, color: Colors.red, size: 12),
+                              const SizedBox(width: 6),
+                              const Text('Delete', style: TextStyle(color: Colors.red, fontSize: 11)),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onSelected: (value) {
+                        // Handle menu actions
+                      },
                     ),
                   ],
                 ),
               ],
             ),
-          ),
-          
-          // Action buttons
-          const SizedBox(height: SpacingTokens.iconSpacing),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 32,
-                  child: AsmblButton.primary(
-                    text: 'Chat',
-                    onPressed: () {
-                      // Navigate to agent chat
-                    },
-                    icon: Icons.chat,
+            
+            const SizedBox(height: SpacingTokens.sm),
+            
+            // Recent chat preview
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.chat_bubble_outline,
+                        size: 11,
+                        color: ThemeColors(context).onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Recent Chat',
+                        style: TextStyles.caption.copyWith(
+                          color: ThemeColors(context).onSurfaceVariant,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-              const SizedBox(width: SpacingTokens.xs_precise),
-              SizedBox(
-                width: 32,
-                height: 32,
-                child: PopupMenuButton(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: ThemeColors(context).onSurfaceVariant,
-                    size: 16,
+                  const SizedBox(height: 4),
+                  
+                  // Recent chat preview
+                  if (agent.recentChats.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(SpacingTokens.xs),
+                      decoration: BoxDecoration(
+                        color: ThemeColors(context).surfaceVariant.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                        border: Border.all(
+                          color: ThemeColors(context).border.withOpacity(0.5),
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Text(
+                        agent.recentChats.first,
+                        style: TextStyles.caption.copyWith(
+                          color: ThemeColors(context).onSurface,
+                          fontSize: 10,
+                          height: 1.2,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: const EdgeInsets.all(SpacingTokens.xs),
+                      decoration: BoxDecoration(
+                        color: ThemeColors(context).surfaceVariant.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                        border: Border.all(
+                          color: ThemeColors(context).border.withOpacity(0.3),
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Text(
+                        'No recent chats',
+                        style: TextStyles.caption.copyWith(
+                          color: ThemeColors(context).onSurfaceVariant,
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  
+                  const Spacer(),
+                  
+                  // Stats row
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.message,
+                        size: 10,
+                        color: ThemeColors(context).onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        '${agent.totalChats}',
+                        style: TextStyles.caption.copyWith(
+                          color: ThemeColors(context).onSurfaceVariant,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: SpacingTokens.xs),
+                      Icon(
+                        Icons.schedule,
+                        size: 10,
+                        color: ThemeColors(context).onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 3),
+                      Expanded(
+                        child: Text(
+                          _formatLastUsed(agent.lastUsed),
+                          style: TextStyles.caption.copyWith(
+                            color: ThemeColors(context).onSurfaceVariant,
+                            fontSize: 9,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                  padding: EdgeInsets.zero,
-                  iconSize: 16,
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: ListTile(
-                        leading: Icon(Icons.edit, size: 16),
-                        title: Text('Edit', style: TextStyle(fontSize: 12)),
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'duplicate',
-                      child: ListTile(
-                        leading: Icon(Icons.copy, size: 16),
-                        title: Text('Duplicate', style: TextStyle(fontSize: 12)),
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: ListTile(
-                        leading: Icon(Icons.delete, color: Colors.red, size: 16),
-                        title: Text('Delete', style: TextStyle(color: Colors.red, fontSize: 12)),
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                      ),
-                    ),
-                  ],
-                  onSelected: (value) {
-                    // Handle menu actions
-                  },
-                ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -573,143 +1108,228 @@ class _TemplateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AsmblCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with icon and category
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(SpacingTokens.sm),
-                decoration: BoxDecoration(
-                  color: ThemeColors(context).surfaceVariant,
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                ),
-                child: Icon(
-                  _getCategoryIcon(template.category),
-                  size: 20,
-                  color: ThemeColors(context).primary,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
-                decoration: BoxDecoration(
-                  color: ThemeColors(context).surfaceVariant,
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                ),
-                child: Text(
-                  template.category,
-                  style: TextStyles.caption.copyWith(
-                    color: ThemeColors(context).onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: SpacingTokens.componentSpacing),
-          
-          // Template name and description
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      onTap: template.isComingSoon ? null : onUseTemplate,
+      child: Padding(
+        padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with icon, name, and popularity
+            Row(
               children: [
-                Text(
-                  template.name,
-                  style: TextStyles.cardTitle.copyWith(
-                    color: ThemeColors(context).onSurface,
+                // Icon
+                Container(
+                  padding: const EdgeInsets.all(SpacingTokens.xs),
+                  decoration: BoxDecoration(
+                    color: ThemeColors(context).surfaceVariant,
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                  ),
+                  child: Icon(
+                    _getCategoryIcon(template.category),
+                    size: 18,
+                    color: ThemeColors(context).primary,
                   ),
                 ),
-                const SizedBox(height: SpacingTokens.iconSpacing),
-                Text(
-                  template.description,
-                  style: TextStyles.bodySmall.copyWith(
-                    color: ThemeColors(context).onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.sm),
                 
-                // Tags
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: template.tags.take(3).map((tag) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
-                      decoration: BoxDecoration(
-                        color: ThemeColors(context).surfaceVariant,
-                        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                // Template name and category
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              template.name,
+                              style: TextStyles.bodyMedium.copyWith(
+                                color: template.isComingSoon 
+                                    ? ThemeColors(context).onSurfaceVariant
+                                    : ThemeColors(context).onSurface,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (template.isComingSoon) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: ThemeColors(context).primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'SOON',
+                                style: TextStyles.caption.copyWith(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: ThemeColors(context).primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
-                      child: Text(
-                        tag,
+                      const SizedBox(height: 2),
+                      Text(
+                        template.category,
                         style: TextStyles.caption.copyWith(
                           color: ThemeColors(context).onSurfaceVariant,
+                          fontSize: 10,
                         ),
                       ),
-                    );
-                  }).toList(),
+                    ],
+                  ),
                 ),
-                
-                const SizedBox(height: SpacingTokens.componentSpacing),
-                
-                // MCP Servers
-                if (template.mcpStack) ...[
-                  Text(
-                    'MCP Servers',
-                    style: TextStyles.caption.copyWith(
-                      color: ThemeColors(context).onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
+              ],
+            ),
+            
+            const SizedBox(height: SpacingTokens.sm),
+            
+            // Example use case preview
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.lightbulb_outline,
+                        size: 11,
+                        color: ThemeColors(context).onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Example Use',
+                        style: TextStyles.caption.copyWith(
+                          color: ThemeColors(context).onSurfaceVariant,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  
+                  // Example use case
+                  Container(
+                    padding: const EdgeInsets.all(SpacingTokens.xs),
+                    decoration: BoxDecoration(
+                      color: ThemeColors(context).primary.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                      border: Border.all(
+                        color: ThemeColors(context).primary.withOpacity(0.1),
+                        width: 0.5,
+                      ),
+                    ),
+                    child: Text(
+                      template.exampleUse,
+                      style: TextStyles.caption.copyWith(
+                        color: ThemeColors(context).onSurface,
+                        fontSize: 10,
+                        height: 1.2,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(height: SpacingTokens.xs_precise),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: template.mcpServers.take(4).map((server) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.xs, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: ThemeColors(context).primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                          border: Border.all(
-                            color: ThemeColors(context).primary.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                  
+                  const Spacer(),
+                  
+                  // MCP servers preview
+                  if (template.mcpServers.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Icon(
-                              _getMCPServerIcon(server),
-                              size: 12,
-                              color: ThemeColors(context).primary,
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: ThemeColors(context).primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.hub,
+                                    size: 10,
+                                    color: ThemeColors(context).primary,
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    'MCP',
+                                    style: TextStyles.caption.copyWith(
+                                      color: ThemeColors(context).primary,
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 6),
                             Text(
-                              server,
+                              '${template.mcpServers.length} integrations',
                               style: TextStyles.caption.copyWith(
-                                color: ThemeColors(context).primary,
+                                color: ThemeColors(context).onSurfaceVariant,
                                 fontSize: 9,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
-                      );
-                    }).toList(),
-                  ),
+                        const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 3,
+                          runSpacing: 2,
+                          children: template.mcpServers.take(4).map((server) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: ThemeColors(context).surfaceVariant.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(3),
+                                border: Border.all(
+                                  color: ThemeColors(context).primary.withOpacity(0.2),
+                                  width: 0.5,
+                                ),
+                              ),
+                              child: Text(
+                                server,
+                                style: TextStyles.caption.copyWith(
+                                  color: ThemeColors(context).primary,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                        if (template.mcpServers.length > 4)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              '+${template.mcpServers.length - 4} more',
+                              style: TextStyles.caption.copyWith(
+                                color: ThemeColors(context).onSurfaceVariant,
+                                fontSize: 8,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          
-          // Use Template button
-          const SizedBox(height: SpacingTokens.componentSpacing),
-          AsmblButton.primary(
-            text: 'Use Template',
-            onPressed: onUseTemplate,
-            icon: Icons.arrow_forward,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -744,6 +1364,16 @@ class _TemplateCard extends StatelessWidget {
       default: return Icons.extension;
     }
   }
+
+  Color _getPopularityColor(int popularity, BuildContext context) {
+    if (popularity >= 90) {
+      return Colors.green.shade600;
+    } else if (popularity >= 80) {
+      return Colors.orange.shade600;
+    } else {
+      return ThemeColors(context).primary;
+    }
+  }
 }
 
 class AgentTemplate {
@@ -753,6 +1383,9 @@ class AgentTemplate {
   final List<String> tags;
   final bool mcpStack;
   final List<String> mcpServers;
+  final String exampleUse;
+  final int popularity;
+  final bool isComingSoon;
 
   AgentTemplate({
     required this.name,
@@ -761,6 +1394,9 @@ class AgentTemplate {
     required this.tags,
     required this.mcpStack,
     required this.mcpServers,
+    required this.exampleUse,
+    required this.popularity,
+    this.isComingSoon = false,
   });
 }
 
@@ -771,6 +1407,7 @@ class AgentItem {
   final bool isActive;
   final DateTime lastUsed;
   final int totalChats;
+  final List<String> recentChats;
 
   AgentItem({
     required this.name,
@@ -779,5 +1416,6 @@ class AgentItem {
     required this.isActive,
     required this.lastUsed,
     required this.totalChats,
+    this.recentChats = const [],
   });
 }

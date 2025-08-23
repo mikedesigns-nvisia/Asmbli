@@ -7,8 +7,9 @@ import '../../../../core/constants/routes.dart';
 import '../providers/context_provider.dart';
 import '../../data/repositories/context_repository.dart';
 import '../widgets/context_document_card.dart';
-import '../widgets/context_document_form.dart';
+import '../widgets/context_creation_flow.dart';
 import '../widgets/context_filter_bar.dart';
+import '../widgets/context_hub_widget.dart';
 import '../../data/models/context_document.dart';
 
 class ContextScreen extends ConsumerStatefulWidget {
@@ -144,23 +145,25 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
 
           const SizedBox(height: SpacingTokens.sectionSpacing),
 
+          // Context Hub Widget
+          const ContextHubWidget(),
+          
+          const SizedBox(height: SpacingTokens.sectionSpacing),
+
           // Create Form (conditionally shown)
           if (_showCreateForm) ...[
-            AsmblCardEnhanced.outlined(
-              isInteractive: false,
-              child: ContextDocumentForm(
-                onSave: (document) async {
-                  await ref.read(contextRepositoryProvider).createDocument(
-                    title: document.title,
-                    content: document.content,
-                    type: document.type,
-                    tags: document.tags,
-                  );
-                  ref.invalidate(contextDocumentsProvider);
-                  setState(() => _showCreateForm = false);
-                },
-                onCancel: () => setState(() => _showCreateForm = false),
-              ),
+            ContextCreationFlow(
+              onSave: (document) async {
+                await ref.read(contextRepositoryProvider).createDocument(
+                  title: document.title,
+                  content: document.content,
+                  type: document.type,
+                  tags: document.tags,
+                );
+                ref.invalidate(contextDocumentsProvider);
+                setState(() => _showCreateForm = false);
+              },
+              onCancel: () => setState(() => _showCreateForm = false),
             ),
             const SizedBox(height: SpacingTokens.sectionSpacing),
           ],

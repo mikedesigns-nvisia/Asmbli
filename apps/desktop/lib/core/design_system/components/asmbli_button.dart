@@ -107,31 +107,32 @@ class _AsmblButtonState extends State<AsmblButton> {
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          width: widget.isFullWidth ? double.infinity : null,
-          padding: const EdgeInsets.symmetric(
-            horizontal: SpacingTokens.buttonPadding,
-            vertical: SpacingTokens.buttonPaddingVertical,
-          ),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            border: borderColor != Colors.transparent 
-              ? Border.all(color: borderColor)
-              : null,
-            borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: widget.onPressed,
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              child: content,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: widget.onPressed,
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+          hoverColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            width: widget.isFullWidth ? double.infinity : null,
+            padding: const EdgeInsets.symmetric(
+              horizontal: SpacingTokens.buttonPadding,
+              vertical: SpacingTokens.buttonPaddingVertical,
             ),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              border: borderColor != Colors.transparent 
+                ? Border.all(color: borderColor)
+                : null,
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+            ),
+            child: content,
           ),
         ),
       ),

@@ -10,9 +10,10 @@ import 'features/chat/presentation/screens/chat_screen.dart';
 import 'features/templates/presentation/screens/templates_screen.dart';
 import 'features/settings/presentation/screens/settings_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
-import 'features/context/presentation/screens/context_screen.dart';
-import 'features/context/presentation/providers/context_provider.dart';
-import 'features/context/data/models/context_document.dart';
+import 'features/agents/presentation/screens/agent_configuration_screen.dart';
+import 'features/context/presentation/screens/context_library_screen.dart';
+import 'providers/conversation_provider.dart';
+import 'package:agent_engine_core/models/conversation.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/theme_service.dart';
 import 'core/services/desktop/desktop_service_provider.dart';
@@ -104,8 +105,19 @@ final _router = GoRouter(
       builder: (context, state) => const MyAgentsScreen(),
     ),
     GoRoute(
+      path: '/agents/configure/:agentName',
+      builder: (context, state) {
+        final agentName = state.pathParameters['agentName'];
+        return AgentConfigurationScreen(agentName: agentName);
+      },
+    ),
+    GoRoute(
+      path: '/agents/configure',
+      builder: (context, state) => const AgentConfigurationScreen(),
+    ),
+    GoRoute(
       path: AppRoutes.context,
-      builder: (context, state) => const ContextScreen(),
+      builder: (context, state) => const ContextLibraryScreen(),
     ),
   ],
 );
@@ -154,7 +166,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: SpacingTokens.iconSpacing),
                       Text(
-                        'Manage your AI agents and start new conversations',
+                        'Manage your AI agents, conversations, and knowledge base',
                         style: TextStyles.bodyLarge.copyWith(
                           color: colors.onSurfaceVariant,
                         ),
@@ -168,26 +180,17 @@ class HomeScreen extends ConsumerWidget {
                           Expanded(
                             child: _QuickActionCard(
                               icon: Icons.chat_bubble_outline,
-                              title: 'Start New Chat',
-                              description: 'Begin a conversation with your AI agents',
+                              title: 'Start Chat',
+                              description: 'Begin new conversation',
                               onTap: () => context.go(AppRoutes.chat),
                             ),
                           ),
                           const SizedBox(width: SpacingTokens.elementSpacing),
                           Expanded(
                             child: _QuickActionCard(
-                              icon: Icons.library_add,
-                              title: 'Browse Templates',
-                              description: 'Explore pre-built agent configurations',
-                              onTap: () => context.go(AppRoutes.templates),
-                            ),
-                          ),
-                          const SizedBox(width: SpacingTokens.elementSpacing),
-                          Expanded(
-                            child: _QuickActionCard(
                               icon: Icons.build,
-                              title: 'Create Agent',
-                              description: 'Build a custom agent from scratch',
+                              title: 'Build Agent',
+                              description: 'Create custom AI agent',
                               onTap: () => context.go(AppRoutes.agents),
                             ),
                           ),
@@ -196,90 +199,8 @@ class HomeScreen extends ConsumerWidget {
                       
                       const SizedBox(height: SpacingTokens.sectionSpacing),
                       
-                      // Recent Activity, Context & My Agents sections
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Recent Activity
-                          Expanded(
-                            flex: 2,
-                            child: _DashboardSection(
-                              title: 'Recent Activity',
-                              child: Column(
-                                children: [
-                                  _ActivityItem(
-                                    icon: Icons.chat,
-                                    title: 'Chat with Research Assistant',
-                                    subtitle: '2 minutes ago',
-                                    onTap: () => context.go(AppRoutes.chat),
-                                  ),
-                                  _ActivityItem(
-                                    icon: Icons.edit,
-                                    title: 'Modified Code Review Agent',
-                                    subtitle: '1 hour ago',
-                                    onTap: () => context.go(AppRoutes.agents),
-                                  ),
-                                  _ActivityItem(
-                                    icon: Icons.download,
-                                    title: 'Installed Notion MCP Server',
-                                    subtitle: 'Yesterday',
-                                    onTap: () => context.go(AppRoutes.settings),
-                                  ),
-                                  _ActivityItem(
-                                    icon: Icons.library_books,
-                                    title: 'Used Writing Assistant template',
-                                    subtitle: '2 days ago',
-                                    onTap: () => context.go(AppRoutes.templates),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          
-                          const SizedBox(width: SpacingTokens.elementSpacing),
-                          
-                          // Context Documents
-                          Expanded(
-                            child: _ContextDocumentsSection(),
-                          ),
-                          
-                          const SizedBox(width: SpacingTokens.elementSpacing),
-                          
-                          // My Agents
-                          Expanded(
-                            child: _DashboardSection(
-                              title: 'My Agents',
-                              child: Column(
-                                children: [
-                                  _AgentCard(
-                                    name: 'Research Assistant',
-                                    description: 'Helps with research tasks and analysis',
-                                    isActive: true,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  _AgentCard(
-                                    name: 'Code Reviewer',
-                                    description: 'Reviews code and suggests improvements',
-                                    isActive: false,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  _AgentCard(
-                                    name: 'Writing Assistant',
-                                    description: 'Helps with writing and editing',
-                                    isActive: true,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  AsmblButton.primary(
-                                    text: 'Create New Agent',
-                                    icon: Icons.add,
-                                    onPressed: () => context.go(AppRoutes.agents),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Main Content - Recent Conversations
+                      _RecentConversationsSection(),
                     ],
                   ),
                 ),
@@ -291,6 +212,214 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
+
+// Recent Conversations Section
+class _RecentConversationsSection extends ConsumerWidget {
+  const _RecentConversationsSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ThemeColors(context);
+    final conversationsAsync = ref.watch(conversationsProvider);
+    
+    return _DashboardSectionEnhanced(
+      title: 'Recent Conversations',
+      child: conversationsAsync.when(
+        data: (conversations) {
+          final recentConversations = conversations
+              .where((c) => c.status == ConversationStatus.active)
+              .take(5)
+              .toList();
+          
+          if (recentConversations.isEmpty) {
+            return Column(
+              children: [
+                Icon(
+                  Icons.chat_bubble_outline,
+                  size: 32,
+                  color: colors.onSurfaceVariant.withOpacity(0.5),
+                ),
+                const SizedBox(height: SpacingTokens.iconSpacing),
+                Text(
+                  'No conversations yet',
+                  style: TextStyles.bodyMedium.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            );
+          }
+          
+          return Column(
+            children: [
+              ...recentConversations.map((conversation) => Padding(
+                padding: const EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
+                child: _ConversationItem(
+                  conversation: conversation,
+                  onTap: () {
+                    ref.read(selectedConversationIdProvider.notifier).state = conversation.id;
+                    context.go(AppRoutes.chat);
+                  },
+                ),
+              )),
+              if (conversations.length > 5) ...[
+                const SizedBox(height: SpacingTokens.iconSpacing),
+                Text(
+                  '+${conversations.length - 5} more conversations',
+                  style: TextStyles.caption.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+              const SizedBox(height: SpacingTokens.componentSpacing),
+              AsmblButtonEnhanced.outline(
+                text: 'View All Chats',
+                icon: Icons.forum,
+                onPressed: () => context.go(AppRoutes.chat),
+                size: AsmblButtonSize.medium,
+              ),
+            ],
+          );
+        },
+        loading: () => const Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+        error: (error, _) => Column(
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 32,
+              color: colors.error,
+            ),
+            const SizedBox(height: SpacingTokens.iconSpacing),
+            Text(
+              'Failed to load conversations',
+              style: TextStyles.bodyMedium.copyWith(
+                color: colors.error,
+              ),
+            ),
+            const SizedBox(height: SpacingTokens.componentSpacing),
+            AsmblButtonEnhanced.secondary(
+              text: 'Retry',
+              icon: Icons.refresh,
+              onPressed: () => ref.invalidate(conversationsProvider),
+              size: AsmblButtonSize.medium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Conversation item for dashboard
+class _ConversationItem extends StatelessWidget {
+  final Conversation conversation;
+  final VoidCallback onTap;
+
+  const _ConversationItem({
+    required this.conversation,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+    final isAgentConversation = conversation.metadata?['type'] == 'agent';
+    final agentName = conversation.metadata?['agentName'] as String?;
+    
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        hoverColor: colors.primary.withOpacity(0.04),
+        splashColor: colors.primary.withOpacity(0.12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: SpacingTokens.componentSpacing,
+            horizontal: SpacingTokens.xs_precise,
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
+                decoration: BoxDecoration(
+                  color: isAgentConversation 
+                      ? colors.primary.withOpacity(0.1)
+                      : colors.surfaceVariant,
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Icon(
+                  isAgentConversation ? Icons.smart_toy : Icons.chat,
+                  size: 16,
+                  color: isAgentConversation 
+                      ? colors.primary
+                      : colors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: SpacingTokens.componentSpacing),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isAgentConversation && agentName != null
+                          ? agentName
+                          : conversation.title,
+                      style: TextStyles.bodyMedium.copyWith(
+                        color: colors.onSurface,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: SpacingTokens.xs_precise),
+                    Text(
+                      isAgentConversation ? 'Agent Chat' : 'Direct API Chat',
+                      style: TextStyles.caption.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                _formatTime(conversation.createdAt),
+                style: TextStyles.caption.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+    
+    if (difference.inMinutes < 1) {
+      return 'Now';
+    } else if (difference.inHours < 1) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inDays < 1) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else {
+      return '${dateTime.day}/${dateTime.month}';
+    }
+  }
+}
+
+
 
 
 // Quick action card for dashboard
@@ -346,37 +475,6 @@ class _QuickActionCard extends StatelessWidget {
   }
 }
 
-// Dashboard section container
-class _DashboardSection extends StatelessWidget {
-  final String title;
-  final Widget child;
-
-  const _DashboardSection({
-    required this.title,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AsmblCard(
-      isInteractive: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyles.sectionTitle.copyWith(
-              color: ThemeColors(context).onSurface,
-            ),
-          ),
-          const SizedBox(height: SpacingTokens.componentSpacing),
-          child,
-        ],
-      ),
-    );
-  }
-}
-
 // Enhanced dashboard section container
 class _DashboardSectionEnhanced extends StatelessWidget {
   final String title;
@@ -408,344 +506,4 @@ class _DashboardSectionEnhanced extends StatelessWidget {
   }
 }
 
-// Activity item for recent activity list
-class _ActivityItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
 
-  const _ActivityItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        hoverColor: ThemeColors(context).primary.withOpacity(0.04),
-        splashColor: ThemeColors(context).primary.withOpacity(0.12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: SpacingTokens.componentSpacing,
-            horizontal: SpacingTokens.xs_precise,
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
-                decoration: BoxDecoration(
-                  color: ThemeColors(context).surfaceVariant,
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                ),
-                child: Icon(
-                  icon,
-                  size: 16,
-                  color: ThemeColors(context).onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(width: SpacingTokens.componentSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyles.bodyMedium.copyWith(
-                        color: ThemeColors(context).onSurface,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: SpacingTokens.xs_precise),
-                    Text(
-                      subtitle,
-                      style: TextStyles.caption.copyWith(
-                        color: ThemeColors(context).onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Agent card for my agents section
-class _AgentCard extends StatelessWidget {
-  final String name;
-  final String description;
-  final bool isActive;
-
-  const _AgentCard({
-    required this.name,
-    required this.description,
-    required this.isActive,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(SpacingTokens.cardPadding),
-      decoration: BoxDecoration(
-        color: ThemeColors(context).surfaceVariant.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(
-          color: isActive 
-            ? ThemeColors(context).primary.withOpacity(0.3)
-            : ThemeColors(context).border,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: isActive ? ThemeColors(context).success : ThemeColors(context).onSurfaceVariant,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: SpacingTokens.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: ThemeColors(context).onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: SpacingTokens.xs),
-                Text(
-                  description,
-                  style: TextStyles.caption.copyWith(
-                    color: ThemeColors(context).onSurfaceVariant,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Context documents section widget for the home dashboard
-class _ContextDocumentsSection extends ConsumerWidget {
-  const _ContextDocumentsSection();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = ThemeColors(context);
-    final contextDocuments = ref.watch(contextDocumentsProvider);
-    
-    return _DashboardSectionEnhanced(
-      title: 'Context Documents',
-      child: contextDocuments.when(
-        data: (documents) {
-          final recentDocuments = documents.take(3).toList();
-          
-          if (documents.isEmpty) {
-            return Column(
-              children: [
-                Icon(
-                  Icons.library_books_outlined,
-                  size: 32,
-                  color: colors.onSurfaceVariant.withOpacity(0.5),
-                ),
-                const SizedBox(height: SpacingTokens.iconSpacing),
-                Text(
-                  'No context documents yet',
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: SpacingTokens.componentSpacing),
-                AsmblButtonEnhanced.accent(
-                  text: 'Create Document',
-                  icon: Icons.add,
-                  onPressed: () => context.go(AppRoutes.context),
-                  size: AsmblButtonSize.medium,
-                ),
-              ],
-            );
-          }
-          
-          return Column(
-            children: [
-              ...recentDocuments.map((document) => Padding(
-                padding: const EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
-                child: _ContextDocumentItem(document: document),
-              )),
-              if (documents.length > 3) ...[
-                const SizedBox(height: SpacingTokens.iconSpacing),
-                Text(
-                  '+${documents.length - 3} more',
-                  style: TextStyles.caption.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
-              ],
-              const SizedBox(height: SpacingTokens.componentSpacing),
-              AsmblButtonEnhanced.outline(
-                text: 'Manage Context',
-                icon: Icons.library_books,
-                onPressed: () => context.go(AppRoutes.context),
-                size: AsmblButtonSize.medium,
-              ),
-            ],
-          );
-        },
-        loading: () => const Center(
-          child: SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-        error: (error, _) => Column(
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 32,
-              color: colors.error,
-            ),
-            const SizedBox(height: SpacingTokens.iconSpacing),
-            Text(
-              'Failed to load context',
-              style: TextStyles.bodyMedium.copyWith(
-                color: colors.error,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: SpacingTokens.componentSpacing),
-            AsmblButtonEnhanced.secondary(
-              text: 'Retry',
-              icon: Icons.refresh,
-              onPressed: () => ref.invalidate(contextDocumentsProvider),
-              size: AsmblButtonSize.medium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Context document item for home dashboard
-class _ContextDocumentItem extends StatelessWidget {
-  final ContextDocument document;
-
-  const _ContextDocumentItem({required this.document});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = ThemeColors(context);
-    
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => context.go(AppRoutes.context),
-        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        hoverColor: colors.primary.withOpacity(0.04),
-        splashColor: colors.primary.withOpacity(0.12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: SpacingTokens.iconSpacing,
-            horizontal: SpacingTokens.xs_precise,
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(SpacingTokens.xs),
-                decoration: BoxDecoration(
-                  color: _getTypeColor(document.type, colors),
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                ),
-                child: Icon(
-                  _getTypeIcon(document.type),
-                  size: 16,
-                  color: colors.onPrimary,
-                ),
-              ),
-              const SizedBox(width: SpacingTokens.iconSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      document.title,
-                      style: TextStyles.bodyMedium.copyWith(
-                        color: colors.onSurface,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: SpacingTokens.xs_precise),
-                    Text(
-                      document.type.displayName,
-                      style: TextStyles.caption.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Color _getTypeColor(ContextType type, ThemeColors colors) {
-    switch (type) {
-      case ContextType.documentation:
-        return colors.primary;
-      case ContextType.codebase:
-        return colors.info;
-      case ContextType.guidelines:
-        return colors.warning;
-      case ContextType.examples:
-        return colors.success;
-      case ContextType.knowledge:
-        return colors.primary.withOpacity(0.8);
-      case ContextType.custom:
-        return colors.onSurfaceVariant;
-    }
-  }
-
-  IconData _getTypeIcon(ContextType type) {
-    switch (type) {
-      case ContextType.documentation:
-        return Icons.description;
-      case ContextType.codebase:
-        return Icons.code;
-      case ContextType.guidelines:
-        return Icons.rule;
-      case ContextType.examples:
-        return Icons.lightbulb;
-      case ContextType.knowledge:
-        return Icons.school;
-      case ContextType.custom:
-        return Icons.note;
-    }
-  }
-}

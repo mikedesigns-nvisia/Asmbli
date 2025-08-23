@@ -3,12 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:agent_engine_core/models/conversation.dart' as core;
 import 'package:agent_engine_core/services/implementations/service_provider.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/tokens/theme_colors.dart';
+import '../../../../core/design_system/components/app_navigation_bar.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
 import '../widgets/conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
+import '../widgets/agent_deployment_section.dart';
+import '../widgets/api_dropdown.dart';
+import '../widgets/add_context_modal.dart';
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
 class ChatScreen extends ConsumerStatefulWidget {
@@ -20,7 +24,6 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   bool isSidebarCollapsed = false;
-  String selectedAgent = 'general-assistant';
   final TextEditingController messageController = TextEditingController();
   
   @override
@@ -33,21 +36,32 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     try {
       ServiceProvider.configure(useInMemory: true);
       await ServiceProvider.initialize();
+      
+      // Initialize default API conversation after services are ready
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _initializeDefaultConversation();
+      });
     } catch (e) {
       print('Service initialization failed: $e');
     }
   }
 
-  final List<Agent> agents = [
-    Agent(id: 'general-assistant', name: 'General Assistant', description: 'A helpful AI assistant'),
-    Agent(id: 'research-assistant', name: 'Research Assistant', description: 'Specialized in research and citations'),
-    Agent(id: 'code-reviewer', name: 'Code Reviewer', description: 'Helps with code review and programming'),
-  ];
+  Future<void> _initializeDefaultConversation() async {
+    try {
+      final getOrCreateDefault = ref.read(getOrCreateDefaultConversationProvider);
+      final defaultConversation = await getOrCreateDefault();
+      
+      // Set as selected conversation if no conversation is currently selected
+      final currentSelection = ref.read(selectedConversationIdProvider);
+      if (currentSelection == null) {
+        ref.read(selectedConversationIdProvider.notifier).state = defaultConversation.id;
+      }
+    } catch (e) {
+      print('Failed to initialize default conversation: $e');
+    }
+  }
 
-  final List<MCPServer> mcpServers = [
-    MCPServer(name: 'Filesystem', description: 'File operations', isConnected: true),
-    MCPServer(name: 'Brave Search', description: 'Real-time web search', isConnected: true),
-  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +144,255 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
+  Widget _buildChatHeader(ThemeData theme) {
+    final selectedConversationId = ref.watch(selectedConversationIdProvider);
+    
+    if (selectedConversationId == null) {
+      // No conversation selected - show default
+      return Container(
+        padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
+        child: Row(
+          children: [
+            Text(
+              'Welcome to AgentEngine',
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceVariant,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'Select a conversation',
+                style: TextStyle(
+                  fontFamily: 'Space Grotesk',
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ref.watch(conversationProvider(selectedConversationId)).when(
+      data: (conversation) {
+        final isAgent = conversation.metadata?['type'] == 'agent';
+        final isDefaultApi = conversation.metadata?['type'] == 'default_api';
+        
+        return Container(
+          padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
+          child: Row(
+            children: [
+              // Conversation type icon
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: _getConversationTypeColor(conversation, theme).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  _getConversationTypeIcon(conversation),
+                  size: 18,
+                  color: _getConversationTypeColor(conversation, theme),
+                ),
+              ),
+              const SizedBox(width: 12),
+              
+              // Conversation title and info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      conversation.title,
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    if (isAgent) ...[
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Text(
+                            conversation.metadata?['agentName'] ?? 'Agent',
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
+                              fontSize: 13,
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceVariant,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              '${(conversation.metadata?['mcpServers'] as List?)?.length ?? 0} MCP',
+                              style: TextStyle(
+                                fontFamily: 'Space Grotesk',
+                                fontSize: 10,
+                                color: theme.colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              
+              // API Provider badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getConversationTypeColor(conversation, theme).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: _getConversationTypeColor(conversation, theme).withOpacity(0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.api,
+                      size: 12,
+                      color: _getConversationTypeColor(conversation, theme),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      conversation.metadata?['apiProvider'] ?? 'Claude 3.5 Sonnet',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: _getConversationTypeColor(conversation, theme),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Agent status indicator for agent conversations
+              if (isAgent) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: SemanticColors.success.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: SemanticColors.success.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: SemanticColors.success,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'ACTIVE',
+                        style: TextStyle(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                          color: SemanticColors.success,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+      loading: () => Container(
+        padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Loading conversation...',
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 16,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+      error: (error, stack) => Container(
+        padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
+        child: Text(
+          'Error loading conversation',
+          style: TextStyle(
+            fontFamily: 'Space Grotesk',
+            fontSize: 16,
+            color: theme.colorScheme.error,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _getConversationTypeColor(core.Conversation conversation, ThemeData theme) {
+    final type = conversation.metadata?['type'] as String?;
+    switch (type) {
+      case 'agent':
+        return SemanticColors.primary;
+      case 'default_api':
+        return theme.colorScheme.onSurfaceVariant;
+      default:
+        return theme.colorScheme.onSurfaceVariant.withOpacity(0.7);
+    }
+  }
+
+  IconData _getConversationTypeIcon(core.Conversation conversation) {
+    final type = conversation.metadata?['type'] as String?;
+    switch (type) {
+      case 'agent':
+        return Icons.smart_toy;
+      case 'default_api':
+        return Icons.api;
+      default:
+        return Icons.chat;
+    }
+  }
+
   Widget _buildSidebar(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
@@ -140,13 +403,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Sidebar Header
+          // Sidebar Header (fixed)
           Padding(
             padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
             child: Row(
               children: [
                 Text(
-                  'Agent Settings',
+                  'Chat Configuration',
                   style: TextStyle(
                     fontFamily: 'Space Grotesk',
                     fontSize: 16,
@@ -166,251 +429,110 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ),
           
-          // Agent Selection Section
-          Padding(
-            padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Select Agent',
-                  style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: SpacingTokens.iconSpacing),
-                AsmblStringDropdown(
-                  value: selectedAgent,
-                  items: agents.map((agent) => agent.id).toList(),
-                  onChanged: (value) => setState(() => selectedAgent = value!),
-                ),
-                
-                const SizedBox(height: SpacingTokens.componentSpacing),
-                
-                // Browse Agent Library Button
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(6),
-                    color: theme.colorScheme.surface.withOpacity(0.8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.library_books,
-                        size: 16,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: SpacingTokens.iconSpacing),
-                      Text(
-                        'Browse Agent Library',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 13,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          
-          const SizedBox(height: SpacingTokens.sectionSpacing),
-          
-          // MCP Servers Section
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.storage,
-                      size: 16,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: SpacingTokens.iconSpacing),
-                    Text(
-                      'MCP Servers',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                
-                // MCP Server Items
-                ...mcpServers.map((server) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: server.isConnected ? ThemeColors(context).success : theme.colorScheme.onSurfaceVariant,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: SpacingTokens.componentSpacing),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            server.name,
-                            style: TextStyle(
-                              fontFamily: 'Space Grotesk',
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: theme.colorScheme.onSurface,
+          // Scrollable content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: SpacingTokens.elementSpacing),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Agent Loader Section - Wrapped in Flexible to prevent overflow
+                  const AgentLoaderSection(),
+                  
+                  const SizedBox(height: SpacingTokens.sectionSpacing),
+                  
+                  // Bottom Actions
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+                    child: Column(
+                      children: [
+                        // API Dropdown
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4, bottom: 6),
+                              child: Text(
+                                'API Provider',
+                                style: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
                             ),
-                          ),
-                          Text(
-                            server.description,
-                            style: TextStyle(
-                              fontFamily: 'Space Grotesk',
-                              fontSize: 11,
-                              color: theme.colorScheme.onSurfaceVariant,
+                            const ApiDropdown(),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 12),
+                        
+                        // Add Context Button
+                        InkWell(
+                          onTap: () => _showAddContextModal(context),
+                          borderRadius: BorderRadius.circular(6),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: theme.colorScheme.outline),
+                              borderRadius: BorderRadius.circular(6),
+                              color: theme.colorScheme.surface.withOpacity(0.8),
                             ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      if (server.isConnected)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: ThemeColors(context).success.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            'connected',
-                            style: TextStyle(
-                              fontFamily: 'Space Grotesk',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              color: ThemeColors(context).success,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.library_add,
+                                  size: 16,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: SpacingTokens.iconSpacing),
+                                Text(
+                                  'Add Context',
+                                  style: TextStyle(
+                                    fontFamily: 'Space Grotesk',
+                                    fontSize: 13,
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Icon(
+                                  Icons.add,
+                                  size: 14,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                    ],
-                  ),
-                )),
-                
-                const SizedBox(height: SpacingTokens.iconSpacing),
-                Text(
-                  '${mcpServers.where((s) => s.isConnected).length} of ${mcpServers.length} servers active',
-                  style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 11,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          
-          const Spacer(),
-          
-          // Bottom Actions
-          Padding(
-            padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
-            child: Column(
-              children: [
-                // Upload Documents
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(6),
-                    color: theme.colorScheme.surface.withOpacity(0.8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.upload_file,
-                        size: 16,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: SpacingTokens.iconSpacing),
-                      Text(
-                        'Upload Documents',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 13,
-                          color: theme.colorScheme.onSurfaceVariant,
+                        
+                        const SizedBox(height: SpacingTokens.componentSpacing),
+                        
+                        // Browse Templates Button
+                        GestureDetector(
+                          onTap: () => context.go(AppRoutes.templates),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Center(
+                              child: Text(
+                                'Browse Templates',
+                                style: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(height: 12),
-                
-                // API Settings
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(6),
-                    color: theme.colorScheme.surface.withOpacity(0.8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.settings,
-                        size: 16,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: SpacingTokens.iconSpacing),
-                      Text(
-                        'API Settings',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 13,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(height: SpacingTokens.componentSpacing),
-                
-                // Browse Templates Button
-                GestureDetector(
-                  onTap: () => context.go(AppRoutes.templates),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Center(
-                      child: Text(
-                        'Browse Templates',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -426,39 +548,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
       child: Column(
         children: [
-          // Chat Header with agent info
-          Container(
-            padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
-            child: Row(
-              children: [
-                Text(
-                  agents.firstWhere((a) => a.id == selectedAgent).name,
-                  style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    agents.firstWhere((a) => a.id == selectedAgent).description,
-                    style: TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontSize: 12,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Chat Header - shows current conversation/agent
+          _buildChatHeader(theme),
           
           // Messages Area or Empty State
           Expanded(
@@ -560,7 +651,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             
             // Start a Conversation
             Text(
-              'Start a Conversation',
+              'Direct API Chat',
               style: TextStyle(
                 fontFamily: 'Space Grotesk',
                 fontSize: 24,
@@ -573,7 +664,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             
             // Description
             Text(
-              'Select an agent and send a message to begin.\nYou can upload documents for context or\nconfigure API settings in the sidebar.',
+              'Chat directly with Claude 3.5 Sonnet.\nLoad an agent from the sidebar for enhanced\ncapabilities with system prompts and MCP servers.',
               style: TextStyle(
                 fontFamily: 'Space Grotesk',
                 fontSize: 14,
@@ -802,29 +893,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
+
+  void _showAddContextModal(BuildContext context) {
+    final selectedConversationId = ref.read(selectedConversationIdProvider);
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => AddContextModal(
+        conversationId: selectedConversationId,
+      ),
+    );
+  }
 }
 
-class Agent {
-  final String id;
-  final String name;
-  final String description;
-
-  Agent({
-    required this.id,
-    required this.name,
-    required this.description,
-  });
-}
-
-class MCPServer {
-  final String name;
-  final String description;
-  final bool isConnected;
-
-  MCPServer({
-    required this.name,
-    required this.description,
-    required this.isConnected,
-  });
-}
 

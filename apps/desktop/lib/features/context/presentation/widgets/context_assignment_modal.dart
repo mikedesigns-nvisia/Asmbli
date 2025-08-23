@@ -24,12 +24,11 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
 
   @override
   Widget build(BuildContext context) {
-    final colors = ThemeColors(context);
     final contextDocuments = ref.watch(contextDocumentsProvider);
     final assignedContext = ref.watch(contextForAgentProvider(widget.agentId));
 
     return Dialog(
-      backgroundColor: colors.surface,
+      backgroundColor: ColorTokens.surface,
       child: Container(
         width: 600,
         height: 500,
@@ -47,14 +46,14 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                     Text(
                       'Assign Context to Agent',
                       style: TextStyles.pageTitle.copyWith(
-                        color: colors.onSurface,
+                        color: ColorTokens.foreground,
                       ),
                     ),
                     const SizedBox(height: SpacingTokens.xs),
                     Text(
                       'Agent: ${widget.agentName}',
                       style: TextStyles.bodyLarge.copyWith(
-                        color: colors.onSurfaceVariant,
+                        color: ColorTokens.foregroundVariant,
                       ),
                     ),
                   ],
@@ -63,7 +62,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                   onPressed: () => Navigator.of(context).pop(),
                   icon: Icon(
                     Icons.close,
-                    color: colors.onSurfaceVariant,
+                    color: ColorTokens.foregroundVariant,
                   ),
                 ),
               ],
@@ -81,7 +80,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                         Text(
                           'Currently Assigned Context:',
                           style: TextStyles.sectionTitle.copyWith(
-                            color: colors.onSurface,
+                            color: ColorTokens.foreground,
                           ),
                         ),
                         const SizedBox(height: SpacingTokens.sm),
@@ -90,7 +89,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                               child: Container(
                                 padding: const EdgeInsets.all(SpacingTokens.sm),
                                 decoration: BoxDecoration(
-                                  color: colors.surfaceVariant.withOpacity(0.3),
+                                  color: ColorTokens.muted,
                                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                                 ),
                                 child: Row(
@@ -98,14 +97,14 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                                     Icon(
                                       Icons.check_circle,
                                       size: 16,
-                                      color: colors.success,
+                                      color: SemanticColors.success,
                                     ),
                                     const SizedBox(width: SpacingTokens.sm),
                                     Expanded(
                                       child: Text(
                                         doc.title,
                                         style: TextStyles.bodyMedium.copyWith(
-                                          color: colors.onSurface,
+                                          color: ColorTokens.foreground,
                                         ),
                                       ),
                                     ),
@@ -124,7 +123,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
             Text(
               'Available Context Documents:',
               style: TextStyles.sectionTitle.copyWith(
-                color: colors.onSurface,
+                color: ColorTokens.foreground,
               ),
             ),
 
@@ -141,13 +140,13 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                             Icon(
                               Icons.library_books_outlined,
                               size: 48,
-                              color: colors.onSurfaceVariant.withOpacity(0.5),
+                              color: ColorTokens.foregroundVariant.withOpacity(0.5),
                             ),
                             const SizedBox(height: SpacingTokens.md),
                             Text(
                               'No context documents available',
                               style: TextStyles.bodyLarge.copyWith(
-                                color: colors.onSurfaceVariant,
+                                color: ColorTokens.foregroundVariant,
                               ),
                             ),
                           ],
@@ -173,7 +172,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                             title: Text(
                               document.title,
                               style: TextStyles.bodyMedium.copyWith(
-                                color: colors.onSurface,
+                                color: ColorTokens.foreground,
                               ),
                             ),
                             subtitle: Column(
@@ -182,7 +181,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                                 Text(
                                   document.type.displayName,
                                   style: TextStyles.caption.copyWith(
-                                    color: colors.onSurfaceVariant,
+                                    color: ColorTokens.foregroundVariant,
                                   ),
                                 ),
                                 const SizedBox(height: SpacingTokens.xs),
@@ -191,7 +190,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                                       ? '${document.content.substring(0, 100)}...'
                                       : document.content,
                                   style: TextStyles.caption.copyWith(
-                                    color: colors.onSurfaceVariant,
+                                    color: ColorTokens.foregroundVariant,
                                   ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
@@ -199,7 +198,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                               ],
                             ),
                             controlAffinity: ListTileControlAffinity.leading,
-                            activeColor: colors.primary,
+                            activeColor: ColorTokens.primary,
                           );
                         },
                       ),
@@ -210,7 +209,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
                   child: Text(
                     'Error loading documents: $error',
                     style: TextStyles.bodyMedium.copyWith(
-                      color: colors.error,
+                      color: SemanticColors.error,
                     ),
                   ),
                 ),
@@ -263,7 +262,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
             content: Text(
               'Successfully assigned ${selectedDocuments.length} context document(s) to ${widget.agentName}',
             ),
-            backgroundColor: ThemeColors(context).success,
+            backgroundColor: SemanticColors.success,
           ),
         );
       }
@@ -272,7 +271,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to assign context: $e'),
-            backgroundColor: ThemeColors(context).error,
+            backgroundColor: SemanticColors.error,
           ),
         );
       }

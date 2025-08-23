@@ -25,6 +25,7 @@ class HeaderButton extends StatefulWidget {
 
 class _HeaderButtonState extends State<HeaderButton> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +37,15 @@ class _HeaderButtonState extends State<HeaderButton> {
         color: Colors.transparent,
         child: InkWell(
           onTap: widget.onPressed,
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-          hoverColor: colors.accent.withOpacity(0.08),
-          splashColor: colors.accent.withOpacity(0.16),
-          child: Container(
+          hoverColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
             padding: const EdgeInsets.symmetric(
               horizontal: SpacingTokens.md,
               vertical: SpacingTokens.sm,
@@ -47,9 +53,11 @@ class _HeaderButtonState extends State<HeaderButton> {
             decoration: BoxDecoration(
               color: widget.isActive
                 ? colors.accent.withOpacity(0.12)
-                : _isHovered
-                  ? colors.accent.withOpacity(0.06)
-                  : Colors.transparent,
+                : _isPressed
+                  ? colors.accent.withOpacity(0.1)
+                  : _isHovered
+                    ? colors.accent.withOpacity(0.06)
+                    : Colors.transparent,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               border: widget.isActive ? Border.all(
                 color: colors.accent.withOpacity(0.3),
@@ -62,7 +70,7 @@ class _HeaderButtonState extends State<HeaderButton> {
                 Icon(
                   widget.icon,
                   size: 16,
-                  color: widget.isActive || _isHovered
+                  color: widget.isActive || _isHovered || _isPressed
                     ? colors.accent
                     : colors.onSurfaceVariant,
                 ),
@@ -70,7 +78,7 @@ class _HeaderButtonState extends State<HeaderButton> {
                 Text(
                   widget.text,
                   style: TextStyles.navButton.copyWith(
-                    color: widget.isActive || _isHovered
+                    color: widget.isActive || _isHovered || _isPressed
                       ? colors.accent
                       : colors.onSurfaceVariant,
                   ),
