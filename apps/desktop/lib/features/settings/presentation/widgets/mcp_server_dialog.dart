@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/mcp_settings_service.dart';
+import 'enhanced_mcp_server_wizard.dart';
 
 /// Dialog for adding or editing MCP server configurations
 class MCPServerDialog extends ConsumerStatefulWidget {
@@ -120,6 +121,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     _initializeForm();
   }
 
+  void _safeSetState(VoidCallback fn) {
+    if (mounted) {
+      _safeSetState(fn);
+    }
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -144,7 +151,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     final template = _templates[templateId];
     if (template == null) return;
 
-    setState(() {
+    _safeSetState(() {
       _selectedTemplate = templateId;
       _nameController.text = template.name;
       _commandController.text = template.command;
@@ -162,7 +169,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
   Future<void> _saveServer() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
+    _safeSetState(() => _isLoading = true);
 
     try {
       final serverId = widget.serverId ?? 
@@ -197,7 +204,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
         );
       }
     } finally {
-      setState(() => _isLoading = false);
+      _safeSetState(() => _isLoading = false);
     }
   }
 
@@ -206,6 +213,219 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     final theme = Theme.of(context);
     final isEdit = widget.existingConfig != null;
 
+    // Show choice between wizard and quick form
+    return _buildDialogChoice(context, isEdit);
+  }
+
+  Widget _buildDialogChoice(BuildContext context, bool isEdit) {
+    if (isEdit) {
+      // For editing, go straight to the enhanced wizard
+      return EnhancedMCPServerWizard(
+        existingConfig: widget.existingConfig,
+        serverId: widget.serverId,
+      );
+    }
+
+    // For new servers, show choice between wizard and quick setup
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        width: 500,
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: ThemeColors(context).surface.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Row(
+              children: [
+                Icon(
+                  Icons.integration_instructions,
+                  size: 28,
+                  color: SemanticColors.primary,
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Add Integration',
+                        style: TextStyle(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      Text(
+                        'Choose how you want to set up your integration',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(Icons.close),
+                  style: IconButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            
+            SizedBox(height: 24),
+            
+            // Options
+            Row(
+              children: [
+                // Enhanced Wizard Option
+                Expanded(
+                  child: _buildSetupOption(
+                    context,
+                    title: 'Guided Setup',
+                    description: 'Step-by-step wizard with smart recommendations',
+                    icon: Icons.auto_awesome,
+                    badge: 'Recommended',
+                    badgeColor: SemanticColors.success,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      showDialog(
+                        context: context,
+                        builder: (context) => EnhancedMCPServerWizard(),
+                      );
+                    },
+                  ),
+                ),
+                
+                SizedBox(width: 16),
+                
+                // Quick Setup Option
+                Expanded(
+                  child: _buildSetupOption(
+                    context,
+                    title: 'Quick Setup',
+                    description: 'Traditional form for advanced users',
+                    icon: Icons.speed,
+                    badge: 'Advanced',
+                    badgeColor: Colors.orange,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      showDialog(
+                        context: context,
+                        builder: (context) => _buildTraditionalDialog(context, isEdit),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSetupOption(
+    BuildContext context, {
+    required String title,
+    required String description,
+    required IconData icon,
+    String? badge,
+    Color? badgeColor,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+            ),
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: SemanticColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Icon(
+                  icon,
+                  color: SemanticColors.primary,
+                  size: 24,
+                ),
+              ),
+              
+              SizedBox(height: 12),
+              
+              Text(
+                title,
+                style: TextStyle(
+                  fontFamily: 'Space Grotesk',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              SizedBox(height: 6),
+              
+              Text(
+                description,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  height: 1.3,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              if (badge != null) ...[
+                SizedBox(height: 12),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: (badgeColor ?? SemanticColors.primary).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    badge,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: badgeColor ?? SemanticColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTraditionalDialog(BuildContext context, bool isEdit) {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -215,7 +435,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           color: ThemeColors(context).surface.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: theme.colorScheme.outline.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
           ),
         ),
         child: Column(
@@ -227,7 +447,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -246,7 +466,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                         fontFamily: 'Space Grotesk',
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -254,7 +474,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(Icons.close),
                     style: IconButton.styleFrom(
-                      foregroundColor: theme.colorScheme.onSurfaceVariant,
+                      foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -305,7 +525,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -526,7 +746,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 Spacer(),
                 TextButton.icon(
                   onPressed: () {
-                    setState(() => _args.add(''));
+                    _safeSetState(() => _args.add(''));
                   },
                   icon: Icon(Icons.add, size: 16),
                   label: Text('Add Argument'),
@@ -557,14 +777,14 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                           ),
                         ),
                         onChanged: (value) {
-                          setState(() => _args[index] = value);
+                          _safeSetState(() => _args[index] = value);
                         },
                       ),
                     ),
                     SizedBox(width: 8),
                     IconButton(
                       onPressed: () {
-                        setState(() => _args.removeAt(index));
+                        _safeSetState(() => _args.removeAt(index));
                       },
                       icon: Icon(Icons.remove_circle, size: 20),
                       style: IconButton.styleFrom(
@@ -695,7 +915,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   ),
                   IconButton(
                     onPressed: () {
-                      setState(() => _envVars.remove(key));
+                      _safeSetState(() => _envVars.remove(key));
                     },
                     icon: Icon(Icons.delete, size: 16),
                     style: IconButton.styleFrom(
@@ -731,7 +951,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           children: [
             Switch(
               value: _enabled,
-              onChanged: (value) => setState(() => _enabled = value),
+              onChanged: (value) => _safeSetState(() => _enabled = value),
               activeColor: SemanticColors.success,
             ),
             SizedBox(width: 12),
@@ -822,7 +1042,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             onPressed: () {
               final key = keyController.text.trim();
               if (key.isNotEmpty) {
-                setState(() {
+                _safeSetState(() {
                   _envVars[key] = valueController.text.trim();
                 });
                 Navigator.of(context).pop();
@@ -874,7 +1094,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           ),
           ElevatedButton(
             onPressed: () {
-              setState(() {
+              _safeSetState(() {
                 _envVars[key] = valueController.text.trim();
               });
               Navigator.of(context).pop();
