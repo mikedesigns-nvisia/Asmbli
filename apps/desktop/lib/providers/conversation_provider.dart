@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/services/conversation_service.dart';
 import 'package:agent_engine_core/services/implementations/service_provider.dart';
 import 'package:agent_engine_core/models/conversation.dart';
+import '../core/services/mcp_settings_service.dart';
 
 final conversationServiceProvider = Provider<ConversationService>((ref) {
  return ServiceProvider.getConversationService();
@@ -63,9 +64,10 @@ final createConversationProvider = Provider.autoDispose((ref) {
  };
 });
 
-// Create agent conversation with full agent configuration
+// Create agent conversation with full agent configuration using settings service
 final createAgentConversationProvider = Provider.autoDispose((ref) {
  final service = ref.read(conversationServiceProvider);
+ final mcpService = ref.read(mcpSettingsServiceProvider);
  
  return ({
  required String agentId,
@@ -76,18 +78,45 @@ final createAgentConversationProvider = Provider.autoDispose((ref) {
  required Map<String, dynamic> mcpServerConfigs,
  required List<String> contextDocuments,
  }) async {
+ // Get enhanced configuration from settings service
+ final deploymentConfig = await mcpService.getAgentDeploymentConfig(agentId);
+ 
+ // Use global MCP settings if available, fallback to provided configs
+ final enhancedMcpConfigs = <String, dynamic>{};
+ for (final serverId in mcpServers) {
+ final globalConfig = mcpService.getMCPServer(serverId);
+ if (globalConfig != null) {
+ enhancedMcpConfigs[serverId] = globalConfig.toJson();
+ } else {
+ // Fallback to provided config
+ enhancedMcpConfigs[serverId] = mcpServerConfigs[serverId] ?? {};
+ }
+ }
+ 
+ // Get API assignment from settings if available
+ final assignedApiConfigId = mcpService.getAgentApiMapping(agentId);
+ 
+ // Combine agent-specific and global context documents
+ final allContextDocuments = <String>[
+ ...contextDocuments, // Agent-specific contexts
+ ...mcpService.globalContextDocuments, // Global contexts from settings
+ ];
+ 
  final agentMetadata = {
  'type': 'agent',
  'agentId': agentId,
  'agentName': agentName,
  'systemPrompt': systemPrompt,
  'apiProvider': apiProvider,
+ 'assignedApiConfigId': assignedApiConfigId, // From settings
  'mcpServers': mcpServers,
- 'mcpServerConfigs': mcpServerConfigs,
- 'contextDocuments': contextDocuments,
+ 'mcpServerConfigs': enhancedMcpConfigs, // Enhanced with global settings
+ 'contextDocuments': allContextDocuments, // Combined contexts
+ 'globalContextUsed': mcpService.globalContextDocuments.length, // Tracking
  'createdAt': DateTime.now().toIso8601String(),
  'version': '1.0.0',
  'generator': 'AgentEngine ChatMCP',
+ 'settingsVersion': deploymentConfig.timestamp.toIso8601String(),
  };
  
  final conversation = Conversation(

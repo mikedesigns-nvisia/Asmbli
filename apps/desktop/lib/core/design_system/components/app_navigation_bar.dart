@@ -118,6 +118,16 @@ class AppNavigationBar extends ConsumerWidget {
  
  SizedBox(width: SpacingTokens.lg),
  
+ // Create Agent Button
+ AsmblButtonEnhanced.primary(
+  text: 'Create Agent',
+  icon: Icons.build,
+  onPressed: () => context.go(AppRoutes.agentWizard),
+  size: AsmblButtonSize.medium,
+ ),
+ 
+ SizedBox(width: SpacingTokens.sm),
+ 
  // New Chat Button
  AsmblButtonEnhanced.accent(
  text: 'New Chat',

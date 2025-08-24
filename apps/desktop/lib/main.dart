@@ -12,6 +12,7 @@ import 'features/settings/presentation/screens/settings_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'features/agents/presentation/screens/agent_configuration_screen.dart';
 import 'features/context/presentation/screens/context_library_screen.dart';
+import 'features/agent_wizard/presentation/screens/agent_wizard_screen.dart';
 import 'providers/conversation_provider.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import 'core/services/storage_service.dart';
@@ -119,6 +120,10 @@ final _router = GoRouter(
  path: AppRoutes.context,
  builder: (context, state) => const ContextLibraryScreen(),
  ),
+ GoRoute(
+  path: AppRoutes.agentWizard,
+  builder: (context, state) => const AgentWizardScreen(),
+ ),
  ],
 );
 
@@ -191,7 +196,7 @@ class HomeScreen extends ConsumerWidget {
  icon: Icons.build,
  title: 'Build Agent',
  description: 'Create custom AI agent',
- onTap: () => context.go(AppRoutes.agents),
+ onTap: () => context.go(AppRoutes.agentWizard),
  ),
  ),
  ],

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
+import '../../../../core/services/mcp_settings_service.dart';
+import '../../../settings/presentation/widgets/mcp_health_status_widget.dart';
 import '../../../../providers/conversation_provider.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 
@@ -909,7 +911,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  height: 6,
  decoration: BoxDecoration(
  color: agent.isActive 
- ? SemanticColors.success 
+ ? ThemeColors(context).success 
  : theme.colorScheme.onSurfaceVariant,
  shape: BoxShape.circle,
  ),
@@ -1326,28 +1328,89 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  ),
  ),
  Spacer(),
- Text(
- '${agent.mcpServers.length} connected',
+ // Live status count from settings service
+ Consumer(
+ builder: (context, ref, child) {
+ return ref.watch(mcpServerStatusesProvider(agent.mcpServers)).when(
+ data: (statusMap) {
+ final connectedCount = statusMap.values
+ .where((status) => status.isConnected)
+ .length;
+ final totalCount = agent.mcpServers.length;
+ 
+ return Text(
+ '$connectedCount/$totalCount connected',
  style: TextStyle(
  fontFamily: 'Space Grotesk',
  fontSize: 10,
- color: SemanticColors.success,
+ color: connectedCount == totalCount 
+ ? ThemeColors(context).success 
+ : connectedCount > 0
+ ? Colors.orange
+ : ThemeColors(context).error,
  ),
+ );
+ },
+ loading: () => Text(
+ 'Checking...',
+ style: TextStyle(
+ fontFamily: 'Space Grotesk',
+ fontSize: 10,
+ color: theme.colorScheme.onSurfaceVariant,
+ ),
+ ),
+ error: (_, __) => Text(
+ 'Error',
+ style: TextStyle(
+ fontFamily: 'Space Grotesk',
+ fontSize: 10,
+ color: ThemeColors(context).error,
+ ),
+ ),
+ );
+ },
  ),
  ],
  ),
  SizedBox(height: 6),
- Wrap(
+ // Live server status badges from settings service
+ Consumer(
+ builder: (context, ref, child) {
+ return ref.watch(mcpServerStatusesProvider(agent.mcpServers)).when(
+ data: (statusMap) {
+ return Wrap(
  spacing: 4,
  runSpacing: 4,
  children: agent.mcpServers.map((server) {
+ final status = statusMap[server];
+ final isConnected = status?.isConnected ?? false;
+ final connectionStatus = status?.status ?? ConnectionStatus.disconnected;
+ 
+ Color statusColor;
+ switch (connectionStatus) {
+ case ConnectionStatus.connected:
+ statusColor = ThemeColors(context).success;
+ break;
+ case ConnectionStatus.connecting:
+ statusColor = Colors.orange;
+ break;
+ case ConnectionStatus.error:
+ statusColor = ThemeColors(context).error;
+ break;
+ case ConnectionStatus.warning:
+ statusColor = Colors.orange;
+ break;
+ default:
+ statusColor = theme.colorScheme.onSurfaceVariant;
+ }
+ 
  return Container(
  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
  decoration: BoxDecoration(
- color: SemanticColors.success.withValues(alpha: 0.1),
+ color: statusColor.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(4),
  border: Border.all(
- color: SemanticColors.success.withValues(alpha: 0.3),
+ color: statusColor.withValues(alpha: 0.3),
  width: 1,
  ),
  ),
@@ -1358,7 +1421,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  width: 4,
  height: 4,
  decoration: BoxDecoration(
- color: SemanticColors.success,
+ color: statusColor,
  shape: BoxShape.circle,
  ),
  ),
@@ -1368,13 +1431,94 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  style: TextStyle(
  fontFamily: 'Space Grotesk',
  fontSize: 9,
- color: SemanticColors.success,
+ color: statusColor,
  ),
  ),
  ],
  ),
  );
  }).toList(),
+ );
+ },
+ loading: () => Wrap(
+ spacing: 4,
+ runSpacing: 4,
+ children: agent.mcpServers.map((server) {
+ return Container(
+ padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+ decoration: BoxDecoration(
+ color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
+ borderRadius: BorderRadius.circular(4),
+ border: Border.all(
+ color: theme.colorScheme.outline.withValues(alpha: 0.3),
+ width: 1,
+ ),
+ ),
+ child: Row(
+ mainAxisSize: MainAxisSize.min,
+ children: [
+ SizedBox(
+ width: 8,
+ height: 8,
+ child: CircularProgressIndicator(
+ strokeWidth: 1,
+ valueColor: AlwaysStoppedAnimation<Color>(
+ theme.colorScheme.onSurfaceVariant,
+ ),
+ ),
+ ),
+ SizedBox(width: 4),
+ Text(
+ server,
+ style: TextStyle(
+ fontFamily: 'Space Grotesk',
+ fontSize: 9,
+ color: theme.colorScheme.onSurfaceVariant,
+ ),
+ ),
+ ],
+ ),
+ );
+ }).toList(),
+ ),
+ error: (_, __) => Wrap(
+ spacing: 4,
+ runSpacing: 4,
+ children: agent.mcpServers.map((server) {
+ return Container(
+ padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+ decoration: BoxDecoration(
+ color: ThemeColors(context).error.withValues(alpha: 0.1),
+ borderRadius: BorderRadius.circular(4),
+ border: Border.all(
+ color: ThemeColors(context).error.withValues(alpha: 0.3),
+ width: 1,
+ ),
+ ),
+ child: Row(
+ mainAxisSize: MainAxisSize.min,
+ children: [
+ Icon(
+ Icons.error_outline,
+ size: 8,
+ color: ThemeColors(context).error,
+ ),
+ SizedBox(width: 4),
+ Text(
+ server,
+ style: TextStyle(
+ fontFamily: 'Space Grotesk',
+ fontSize: 9,
+ color: ThemeColors(context).error,
+ ),
+ ),
+ ],
+ ),
+ );
+ }).toList(),
+ ),
+ );
+ },
  ),
  ],
  ),
@@ -1511,9 +1655,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  width: double.infinity,
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
  decoration: BoxDecoration(
- color: SemanticColors.success.withValues(alpha: 0.1),
+ color: ThemeColors(context).success.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(8),
- border: Border.all(color: SemanticColors.success.withValues(alpha: 0.3)),
+ border: Border.all(color: ThemeColors(context).success.withValues(alpha: 0.3)),
  ),
  child: Row(
  mainAxisAlignment: MainAxisAlignment.center,
@@ -1521,7 +1665,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  Icon(
  Icons.check_circle,
  size: 18,
- color: SemanticColors.success,
+ color: ThemeColors(context).success,
  ),
  SizedBox(width: 8),
  Flexible(
@@ -1531,7 +1675,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  fontFamily: 'Space Grotesk',
  fontSize: 13,
  fontWeight: FontWeight.w600,
- color: SemanticColors.success,
+ color: ThemeColors(context).success,
  ),
  overflow: TextOverflow.ellipsis,
  ),
@@ -1650,7 +1794,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  ),
  ],
  ),
- backgroundColor: SemanticColors.success,
+ backgroundColor: ThemeColors(context).success,
  behavior: SnackBarBehavior.floating,
  ),
  );
@@ -1666,7 +1810,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  'Failed to awaken agent: $e',
  style: TextStyle(fontFamily: 'Space Grotesk'),
  ),
- backgroundColor: SemanticColors.error,
+ backgroundColor: ThemeColors(context).error,
  behavior: SnackBarBehavior.floating,
  ),
  );

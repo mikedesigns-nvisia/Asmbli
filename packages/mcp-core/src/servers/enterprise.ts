@@ -20,6 +20,7 @@ export const DESIGN_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'api_key', name: 'SKETCH_API_TOKEN', required: true }],
+    config: { features: ['design-management', 'cloud-sync'], pricing: 'paid' },
     enabled: false
   },
   {
@@ -28,6 +29,7 @@ export const DESIGN_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'api_key', name: 'ZEPLIN_API_TOKEN', required: true }],
+    config: { features: ['design-specs', 'handoff'], pricing: 'freemium' },
     enabled: false
   },
   {
@@ -71,6 +73,7 @@ export const MICROSOFT_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'oauth', name: 'Teams OAuth', required: true }],
+    config: { features: ['team-collaboration', 'channels'], pricing: 'freemium' },
     enabled: false
   },
   {
@@ -79,6 +82,7 @@ export const MICROSOFT_SERVERS: MCPServer[] = [
     type: 'custom', 
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'oauth', name: 'Outlook OAuth', required: true }],
+    config: { features: ['email-management', 'calendar'], pricing: 'freemium' },
     enabled: false
   },
   {
@@ -87,6 +91,7 @@ export const MICROSOFT_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'oauth', name: 'SharePoint OAuth', required: true }],
+    config: { features: ['document-management', 'workflows'], pricing: 'paid' },
     enabled: false
   },
   {
@@ -95,6 +100,7 @@ export const MICROSOFT_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'oauth', name: 'OneDrive OAuth', required: true }],
+    config: { features: ['cloud-storage', 'file-sync'], pricing: 'freemium' },
     enabled: false
   },
   {
@@ -103,6 +109,7 @@ export const MICROSOFT_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'oauth', name: 'PowerBI OAuth', required: true }],
+    config: { features: ['data-visualization', 'dashboards'], pricing: 'paid' },
     enabled: false
   },
   {
@@ -111,6 +118,7 @@ export const MICROSOFT_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'], 
     requiredAuth: [{ type: 'oauth', name: 'PowerAutomate OAuth', required: true }],
+    config: { features: ['workflow-automation', 'connectors'], pricing: 'freemium' },
     enabled: false
   },
   {
@@ -119,6 +127,7 @@ export const MICROSOFT_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'api_key', name: 'AZURE_COGNITIVE_KEY', required: true }],
+    config: { features: ['ai-services', 'cognitive-apis'], pricing: 'usage-based' },
     enabled: false
   }
 ]
@@ -147,6 +156,7 @@ export const COMMUNICATION_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'bearer_token', name: 'DISCORD_BOT_TOKEN', required: true }],
+    config: { features: ['server-management', 'community-tools'], pricing: 'free' },
     enabled: false
   },
   {
@@ -155,6 +165,7 @@ export const COMMUNICATION_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'bearer_token', name: 'TELEGRAM_BOT_TOKEN', required: true }],
+    config: { features: ['messaging-api', 'bot-framework'], pricing: 'free' },
     enabled: false
   },
   {
@@ -255,6 +266,7 @@ export const CLOUD_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'oauth', name: 'Dropbox OAuth', required: true }],
+    config: { features: ['cloud-storage', 'file-sharing'], pricing: 'freemium' },
     enabled: false
   },
   {
@@ -327,6 +339,7 @@ export const PRODUCTIVITY_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'], 
     requiredAuth: [{ type: 'oauth', name: 'Google Analytics OAuth', required: true }],
+    config: { features: ['web-analytics', 'reporting'], pricing: 'freemium' },
     enabled: false
   },
   {
@@ -335,6 +348,7 @@ export const PRODUCTIVITY_SERVERS: MCPServer[] = [
     type: 'custom',
     supportedPlatforms: ['web', 'desktop'],
     requiredAuth: [{ type: 'api_key', name: 'MIXPANEL_API_KEY', required: true }],
+    config: { features: ['product-analytics', 'user-tracking'], pricing: 'freemium' },
     enabled: false
   }
 ]
@@ -405,14 +419,14 @@ export const SECURITY_SERVERS: MCPServer[] = [
 ]
 
 // Export all server collections
-export const ALL_ENTERPRISE_SERVERS = {
-  ...DESIGN_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {}),
-  ...MICROSOFT_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {}),
-  ...COMMUNICATION_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {}),
-  ...AI_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {}),
-  ...BROWSER_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {}),
-  ...CLOUD_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {}),
-  ...PRODUCTIVITY_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {}),
-  ...ENTERPRISE_CLOUD_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {}),
-  ...SECURITY_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {})
+export const ALL_ENTERPRISE_SERVERS: Record<string, MCPServer> = {
+  ...DESIGN_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {} as Record<string, MCPServer>),
+  ...MICROSOFT_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {} as Record<string, MCPServer>),
+  ...COMMUNICATION_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {} as Record<string, MCPServer>),
+  ...AI_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {} as Record<string, MCPServer>),
+  ...BROWSER_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {} as Record<string, MCPServer>),
+  ...CLOUD_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {} as Record<string, MCPServer>),
+  ...PRODUCTIVITY_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {} as Record<string, MCPServer>),
+  ...ENTERPRISE_CLOUD_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {} as Record<string, MCPServer>),
+  ...SECURITY_SERVERS.reduce((acc, server) => ({ ...acc, [server.id]: server }), {} as Record<string, MCPServer>)
 }

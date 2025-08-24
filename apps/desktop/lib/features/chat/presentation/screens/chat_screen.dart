@@ -8,11 +8,14 @@ import '../../../../core/design_system/tokens/theme_colors.dart';
 import '../../../../core/design_system/components/app_navigation_bar.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
+import '../../../../core/services/mcp_bridge_service.dart';
+import '../../../../core/services/mcp_settings_service.dart';
 import '../widgets/conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/agent_deployment_section.dart';
 import '../widgets/api_dropdown.dart';
 import '../widgets/add_context_modal.dart';
+import '../widgets/streaming_message_widget.dart';
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
 class ChatScreen extends ConsumerStatefulWidget {
@@ -705,14 +708,43 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  padding: const EdgeInsets.all(16),
  itemCount: messages.length + (ref.watch(isLoadingProvider) ? 1 : 0),
  itemBuilder: (context, index) {
- // Show typing indicator as last item when loading
+ // Show streaming message widget as last item when loading
  if (index == messages.length && ref.watch(isLoadingProvider)) {
+ // Check if we're in an agent conversation to show streaming response
+ final conversation = ref.watch(conversationProvider(conversationId)).value;
+ final isAgentConversation = conversation?.metadata?['type'] == 'agent';
+ 
+ if (isAgentConversation) {
+ return Container(
+ margin: const EdgeInsets.symmetric(vertical: 8),
+ child: StreamingMessageWidget(
+ messageId: 'streaming-temp',
+ role: 'assistant',
+ ),
+ );
+ } else {
  return const MessageLoadingIndicator();
+ }
  }
  
  final message = messages[index];
  final isUser = message.role == core.MessageRole.user;
- 
+ final hasStreamingData = message.metadata?.containsKey('streaming') == true ||
+ message.metadata?.containsKey('mcpInteractions') == true ||
+ message.metadata?.containsKey('toolResults') == true;
+
+ // Use streaming widget for assistant messages with MCP data
+ if (!isUser && hasStreamingData) {
+ return Container(
+ margin: const EdgeInsets.symmetric(vertical: 8),
+ child: StreamingMessageWidget(
+ messageId: message.id,
+ role: 'assistant',
+ ),
+ );
+ }
+
+ // Standard message display for simple messages
  return Container(
  margin: const EdgeInsets.symmetric(vertical: 8),
  child: Row(
@@ -809,23 +841,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  content: messageController.text.trim(),
  );
  
+ final messageContent = messageController.text.trim();
  messageController.clear();
  
- // Simulate AI response
- await Future.delayed(Duration(seconds: 1));
+ // Get conversation details to check if it's an agent conversation
+ final conversation = await ref.read(conversationProvider(selectedConversationId).future);
+ final isAgentConversation = conversation.metadata?['type'] == 'agent';
  
- final assistantMessage = core.Message(
- id: DateTime.now().millisecondsSinceEpoch.toString(),
- content: 'This is a simulated AI response. In production, this would connect to your configured AI model.',
- role: core.MessageRole.assistant,
- timestamp: DateTime.now(),
- );
- 
- final service = ref.read(conversationServiceProvider);
- await service.addMessage(selectedConversationId, assistantMessage);
- 
- // Refresh messages
- ref.invalidate(messagesProvider(selectedConversationId));
+ if (isAgentConversation) {
+ // Use MCP bridge for agent conversations
+ final settingsService = ref.read(mcpSettingsServiceProvider);
+ final mcpBridge = MCPBridgeService(settingsService);
+ await _handleMCPResponse(mcpBridge, selectedConversationId, messageContent, conversation);
+ } else {
+ // Standard API response for non-agent conversations
+ await _handleStandardResponse(selectedConversationId);
+ }
  
  } catch (e) {
  if (mounted) {
@@ -839,6 +870,80 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  } finally {
  ref.read(isLoadingProvider.notifier).state = false;
  }
+ }
+
+ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationId, String userMessage, core.Conversation conversation) async {
+ try {
+ // Create streaming message with MCP metadata
+ final streamingMessage = core.Message(
+ id: DateTime.now().millisecondsSinceEpoch.toString(),
+ content: '',
+ role: core.MessageRole.assistant,
+ timestamp: DateTime.now(),
+ metadata: {
+ 'streaming': true,
+ 'processingStatus': 'initializing',
+ 'mcpInteractions': <Map<String, dynamic>>[],
+ 'toolResults': <Map<String, dynamic>>[],
+ },
+ );
+
+ final service = ref.read(conversationServiceProvider);
+ await service.addMessage(conversationId, streamingMessage);
+ ref.invalidate(messagesProvider(conversationId));
+
+ // Process message through MCP bridge
+ final enabledServers = (conversation.metadata?['mcpServers'] as List<dynamic>?)
+ ?.map((server) => server['id'] as String)
+ ?.toList() ?? <String>[];
+ 
+ final response = await mcpBridge.processMessage(
+ conversationId: conversationId,
+ message: userMessage,
+ enabledServerIds: enabledServers,
+ conversationMetadata: conversation.metadata,
+ );
+
+ // Update message with final content and MCP interaction data
+ final finalMessage = core.Message(
+ id: streamingMessage.id,
+ content: response.response,
+ role: core.MessageRole.assistant,
+ timestamp: streamingMessage.timestamp,
+ metadata: {
+ 'streaming': false,
+ 'processingStatus': 'completed',
+ 'mcpInteractions': response.metadata['interactions'] ?? [],
+ 'toolResults': response.metadata['toolResults'] ?? [],
+ 'executionTime': response.latency,
+ 'mcpServersUsed': response.usedServers,
+ },
+ );
+
+ await service.addMessage(conversationId, finalMessage);
+ ref.invalidate(messagesProvider(conversationId));
+
+ } catch (e) {
+ print('MCP response error: $e');
+ // Fallback to standard response
+ await _handleStandardResponse(conversationId);
+ }
+ }
+
+ Future<void> _handleStandardResponse(String conversationId) async {
+ // Simulate AI response for non-MCP conversations
+ await Future.delayed(Duration(seconds: 1));
+ 
+ final assistantMessage = core.Message(
+ id: DateTime.now().millisecondsSinceEpoch.toString(),
+ content: 'This is a simulated AI response. In production, this would connect to your configured AI model.',
+ role: core.MessageRole.assistant,
+ timestamp: DateTime.now(),
+ );
+ 
+ final service = ref.read(conversationServiceProvider);
+ await service.addMessage(conversationId, assistantMessage);
+ ref.invalidate(messagesProvider(conversationId));
  }
 
  Widget _buildEmptyConversationState(BuildContext context) {

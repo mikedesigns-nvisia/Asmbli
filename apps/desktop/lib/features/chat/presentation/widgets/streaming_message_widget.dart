@@ -1,0 +1,641 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:agent_engine_core/models/conversation.dart' as core;
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/services/mcp_bridge_service.dart';
+
+/// Represents a streaming message state
+class StreamingMessageState {
+  final String id;
+  final String conversationId;
+  final String initialMessage;
+  final List<String> streamedTokens;
+  final List<MCPToolResult> toolResults;
+  final List<MCPResourceData> resourceData;
+  final bool isComplete;
+  final String? error;
+  final Map<String, dynamic> metadata;
+
+  const StreamingMessageState({
+    required this.id,
+    required this.conversationId,
+    required this.initialMessage,
+    this.streamedTokens = const [],
+    this.toolResults = const [],
+    this.resourceData = const [],
+    this.isComplete = false,
+    this.error,
+    this.metadata = const {},
+  });
+
+  StreamingMessageState copyWith({
+    List<String>? streamedTokens,
+    List<MCPToolResult>? toolResults,
+    List<MCPResourceData>? resourceData,
+    bool? isComplete,
+    String? error,
+    Map<String, dynamic>? metadata,
+  }) {
+    return StreamingMessageState(
+      id: id,
+      conversationId: conversationId,
+      initialMessage: initialMessage,
+      streamedTokens: streamedTokens ?? this.streamedTokens,
+      toolResults: toolResults ?? this.toolResults,
+      resourceData: resourceData ?? this.resourceData,
+      isComplete: isComplete ?? this.isComplete,
+      error: error ?? this.error,
+      metadata: metadata ?? this.metadata,
+    );
+  }
+
+  String get fullContent {
+    if (streamedTokens.isEmpty) return initialMessage;
+    return initialMessage + streamedTokens.join('');
+  }
+}
+
+/// MCP Tool execution result for display
+class MCPToolResult {
+  final String serverId;
+  final String toolName;
+  final Map<String, dynamic> arguments;
+  final dynamic result;
+  final bool success;
+  final String? error;
+  final DateTime timestamp;
+
+  const MCPToolResult({
+    required this.serverId,
+    required this.toolName,
+    required this.arguments,
+    required this.result,
+    required this.success,
+    this.error,
+    required this.timestamp,
+  });
+}
+
+/// MCP Resource data for display
+class MCPResourceData {
+  final String serverId;
+  final String resourceUri;
+  final String content;
+  final bool success;
+  final String? error;
+
+  const MCPResourceData({
+    required this.serverId,
+    required this.resourceUri,
+    required this.content,
+    required this.success,
+    this.error,
+  });
+}
+
+/// Provider for managing streaming message states
+class StreamingMessageNotifier extends StateNotifier<Map<String, StreamingMessageState>> {
+  StreamingMessageNotifier() : super({});
+
+  void startStreaming(String messageId, String conversationId, String initialMessage) {
+    state = {
+      ...state,
+      messageId: StreamingMessageState(
+        id: messageId,
+        conversationId: conversationId,
+        initialMessage: initialMessage,
+      ),
+    };
+  }
+
+  void addStreamedToken(String messageId, String token) {
+    final current = state[messageId];
+    if (current != null) {
+      state = {
+        ...state,
+        messageId: current.copyWith(
+          streamedTokens: [...current.streamedTokens, token],
+        ),
+      };
+    }
+  }
+
+  void addToolResult(String messageId, MCPToolResult result) {
+    final current = state[messageId];
+    if (current != null) {
+      state = {
+        ...state,
+        messageId: current.copyWith(
+          toolResults: [...current.toolResults, result],
+        ),
+      };
+    }
+  }
+
+  void addResourceData(String messageId, MCPResourceData data) {
+    final current = state[messageId];
+    if (current != null) {
+      state = {
+        ...state,
+        messageId: current.copyWith(
+          resourceData: [...current.resourceData, data],
+        ),
+      };
+    }
+  }
+
+  void completeStreaming(String messageId, {String? error, Map<String, dynamic>? metadata}) {
+    final current = state[messageId];
+    if (current != null) {
+      state = {
+        ...state,
+        messageId: current.copyWith(
+          isComplete: true,
+          error: error,
+          metadata: metadata ?? {},
+        ),
+      };
+    }
+  }
+
+  void removeStreamingMessage(String messageId) {
+    state = Map.from(state)..remove(messageId);
+  }
+}
+
+final streamingMessageProvider = StateNotifierProvider<StreamingMessageNotifier, Map<String, StreamingMessageState>>((ref) {
+  return StreamingMessageNotifier();
+});
+
+/// Widget for displaying streaming messages with MCP integration
+class StreamingMessageWidget extends ConsumerWidget {
+  final String messageId;
+  final String role;
+  final VoidCallback? onComplete;
+
+  const StreamingMessageWidget({
+    super.key,
+    required this.messageId,
+    required this.role,
+    this.onComplete,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final streamingStates = ref.watch(streamingMessageProvider);
+    final streamingState = streamingStates[messageId];
+
+    if (streamingState == null) {
+      return const SizedBox.shrink();
+    }
+
+    final isUser = role == 'user';
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: EdgeInsets.only(
+        bottom: SpacingTokens.lg,
+        left: isUser ? SpacingTokens.xxl : 0,
+        right: isUser ? 0 : SpacingTokens.xxl,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (!isUser) ...[
+            _buildAvatar(context, isUser),
+            SizedBox(width: SpacingTokens.md),
+          ],
+          
+          Flexible(
+            child: Column(
+              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                // Main message bubble
+                _buildMessageBubble(context, streamingState, isUser),
+                
+                // MCP tool results
+                if (streamingState.toolResults.isNotEmpty)
+                  _buildToolResults(context, streamingState.toolResults),
+                
+                // Resource data
+                if (streamingState.resourceData.isNotEmpty)
+                  _buildResourceData(context, streamingState.resourceData),
+                
+                // Streaming status
+                if (!streamingState.isComplete)
+                  _buildStreamingStatus(context),
+                
+                // Error display
+                if (streamingState.error != null)
+                  _buildErrorDisplay(context, streamingState.error!),
+              ],
+            ),
+          ),
+          
+          if (isUser) ...[
+            SizedBox(width: SpacingTokens.md),
+            _buildAvatar(context, isUser),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar(BuildContext context, bool isUser) {
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: isUser 
+        ? ThemeColors(context).primary.withValues(alpha: 0.1)
+        : ThemeColors(context).primary,
+      child: Icon(
+        isUser ? Icons.person : Icons.smart_toy,
+        size: 20,
+        color: isUser 
+          ? ThemeColors(context).primary
+          : ThemeColors(context).onPrimary,
+      ),
+    );
+  }
+
+  Widget _buildMessageBubble(BuildContext context, StreamingMessageState state, bool isUser) {
+    final theme = Theme.of(context);
+    
+    return Container(
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+      padding: EdgeInsets.all(SpacingTokens.md),
+      decoration: BoxDecoration(
+        color: isUser 
+          ? ThemeColors(context).primary.withValues(alpha: 0.1)
+          : ThemeColors(context).surface,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+        border: isUser 
+          ? Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3))
+          : Border.all(color: ThemeColors(context).border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Message content with streaming cursor
+          _buildMessageContent(context, state, isUser),
+          
+          // Metadata (token count, processing time, etc.)
+          if (state.metadata.isNotEmpty && state.isComplete)
+            _buildMetadata(context, state.metadata),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageContent(BuildContext context, StreamingMessageState state, bool isUser) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: state.fullContent,
+            style: TextStyles.bodyMedium.copyWith(
+              color: isUser 
+                ? ThemeColors(context).primary
+                : ThemeColors(context).onSurface,
+            ),
+          ),
+          // Streaming cursor
+          if (!state.isComplete)
+            WidgetSpan(
+              child: AnimatedStreamingCursor(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildToolResults(BuildContext context, List<MCPToolResult> toolResults) {
+    return Container(
+      margin: EdgeInsets.only(top: SpacingTokens.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '🔧 MCP Tool Results',
+            style: TextStyles.caption.copyWith(
+              color: ThemeColors(context).onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: SpacingTokens.xs),
+          ...toolResults.map((result) => _buildSingleToolResult(context, result)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSingleToolResult(BuildContext context, MCPToolResult result) {
+    return Container(
+      margin: EdgeInsets.only(bottom: SpacingTokens.xs),
+      padding: EdgeInsets.all(SpacingTokens.sm),
+      decoration: BoxDecoration(
+        color: result.success 
+          ? ThemeColors(context).success.withValues(alpha: 0.1)
+          : ThemeColors(context).error.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(
+          color: result.success 
+            ? ThemeColors(context).success.withValues(alpha: 0.3)
+            : ThemeColors(context).error.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                result.success ? Icons.check_circle_outline : Icons.error_outline,
+                size: 16,
+                color: result.success 
+                  ? ThemeColors(context).success
+                  : ThemeColors(context).error,
+              ),
+              SizedBox(width: SpacingTokens.xs),
+              Text(
+                '${result.serverId}/${result.toolName}',
+                style: TextStyles.caption.copyWith(
+                  color: ThemeColors(context).onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Spacer(),
+              Text(
+                _formatTimestamp(result.timestamp),
+                style: TextStyles.caption.copyWith(
+                  color: ThemeColors(context).onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          if (result.success && result.result != null) ...[
+            SizedBox(height: SpacingTokens.xs),
+            Text(
+              _formatToolResult(result.result),
+              style: TextStyles.caption.copyWith(
+                color: ThemeColors(context).onSurfaceVariant,
+              ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+          if (!result.success && result.error != null) ...[
+            SizedBox(height: SpacingTokens.xs),
+            Text(
+              result.error!,
+              style: TextStyles.caption.copyWith(
+                color: ThemeColors(context).error,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResourceData(BuildContext context, List<MCPResourceData> resourceData) {
+    return Container(
+      margin: EdgeInsets.only(top: SpacingTokens.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '📄 Resource Data',
+            style: TextStyles.caption.copyWith(
+              color: ThemeColors(context).onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: SpacingTokens.xs),
+          ...resourceData.map((data) => _buildSingleResourceData(context, data)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSingleResourceData(BuildContext context, MCPResourceData data) {
+    return Container(
+      margin: EdgeInsets.only(bottom: SpacingTokens.xs),
+      padding: EdgeInsets.all(SpacingTokens.sm),
+      decoration: BoxDecoration(
+        color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(color: ThemeColors(context).border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.description_outlined,
+                size: 16,
+                color: ThemeColors(context).onSurfaceVariant,
+              ),
+              SizedBox(width: SpacingTokens.xs),
+              Expanded(
+                child: Text(
+                  '${data.serverId}: ${data.resourceUri}',
+                  style: TextStyles.caption.copyWith(
+                    color: ThemeColors(context).onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: SpacingTokens.xs),
+          Text(
+            data.content.length > 200 ? '${data.content.substring(0, 200)}...' : data.content,
+            style: TextStyles.caption.copyWith(
+              color: ThemeColors(context).onSurfaceVariant,
+            ),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStreamingStatus(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: SpacingTokens.xs),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 12,
+            height: 12,
+            child: CircularProgressIndicator(
+              color: ThemeColors(context).primary,
+              strokeWidth: 2,
+            ),
+          ),
+          SizedBox(width: SpacingTokens.xs),
+          Text(
+            'Processing with MCP servers...',
+            style: TextStyles.caption.copyWith(
+              color: ThemeColors(context).onSurfaceVariant,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorDisplay(BuildContext context, String error) {
+    return Container(
+      margin: EdgeInsets.only(top: SpacingTokens.sm),
+      padding: EdgeInsets.all(SpacingTokens.sm),
+      decoration: BoxDecoration(
+        color: ThemeColors(context).error.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(color: ThemeColors(context).error.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 16,
+            color: ThemeColors(context).error,
+          ),
+          SizedBox(width: SpacingTokens.xs),
+          Expanded(
+            child: Text(
+              error,
+              style: TextStyles.caption.copyWith(
+                color: ThemeColors(context).error,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetadata(BuildContext context, Map<String, dynamic> metadata) {
+    return Container(
+      margin: EdgeInsets.only(top: SpacingTokens.sm),
+      padding: EdgeInsets.all(SpacingTokens.xs),
+      decoration: BoxDecoration(
+        color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (metadata['toolsUsed'] != null) ...[
+            Icon(
+              Icons.build_outlined,
+              size: 12,
+              color: ThemeColors(context).onSurfaceVariant,
+            ),
+            SizedBox(width: SpacingTokens.xs),
+            Text(
+              '${metadata['toolsUsed'].length} tools',
+              style: TextStyles.caption.copyWith(
+                color: ThemeColors(context).onSurfaceVariant,
+                fontSize: 10,
+              ),
+            ),
+            SizedBox(width: SpacingTokens.sm),
+          ],
+          if (metadata['processingTime'] != null) ...[
+            Icon(
+              Icons.timer_outlined,
+              size: 12,
+              color: ThemeColors(context).onSurfaceVariant,
+            ),
+            SizedBox(width: SpacingTokens.xs),
+            Text(
+              '${metadata['processingTime']}ms',
+              style: TextStyles.caption.copyWith(
+                color: ThemeColors(context).onSurfaceVariant,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _formatToolResult(dynamic result) {
+    if (result is String) {
+      return result;
+    } else if (result is Map) {
+      return result.toString();
+    } else if (result is List) {
+      return '${result.length} items';
+    }
+    return result.toString();
+  }
+
+  String _formatTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    final diff = now.difference(timestamp);
+    
+    if (diff.inSeconds < 60) {
+      return '${diff.inSeconds}s ago';
+    } else if (diff.inMinutes < 60) {
+      return '${diff.inMinutes}m ago';
+    }
+    return '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+/// Animated cursor for streaming text
+class AnimatedStreamingCursor extends StatefulWidget {
+  @override
+  _AnimatedStreamingCursorState createState() => _AnimatedStreamingCursorState();
+}
+
+class _AnimatedStreamingCursorState extends State<AnimatedStreamingCursor>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    _animationController.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          width: 2,
+          height: 16,
+          margin: EdgeInsets.only(left: 2),
+          decoration: BoxDecoration(
+            color: ThemeColors(context).primary.withValues(alpha: _animation.value),
+            borderRadius: BorderRadius.circular(1),
+          ),
+        );
+      },
+    );
+  }
+}

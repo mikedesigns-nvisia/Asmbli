@@ -11,6 +11,7 @@ class AppRoutes {
  static const String agents = '/agents';
  static const String context = '/context';
  static const String wizard = '/wizard';
+ static const String agentWizard = '/agent-wizard';
  
  // Route names for easier identification
  static const Map<String, String> routeNames = {
@@ -21,6 +22,7 @@ class AppRoutes {
  agents: 'My Agents',
  context: 'Context',
  wizard: 'Wizard',
+ agentWizard: 'Create Agent',
  };
  
  // Helper method to get route name
@@ -37,5 +39,6 @@ class AppRoutes {
  agents,
  context,
  wizard,
+ agentWizard,
  ];
 }

@@ -1,0 +1,7 @@
+{
+  "name": "agentengine-desktop",
+  "version": "1.0.0",
+  "dependencies": [
+    "nlohmann-json"
+  ]
+}
