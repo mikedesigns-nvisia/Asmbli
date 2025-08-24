@@ -47,7 +47,7 @@ export function useExtensions(userRole?: string) {
       
       setExtensions(formattedExtensions);
     } catch (err) {
-      console.error('Failed to load extensions:', err);
+      // Console output removed for production
       setError(err instanceof Error ? err.message : 'Failed to load extensions');
     } finally {
       setLoading(false);
@@ -108,7 +108,7 @@ export function useExtensionsByCategory(category: string, userRole?: string) {
       
       setExtensions(formattedExtensions);
     } catch (err) {
-      console.error('Failed to load extensions by category:', err);
+      // Console output removed for production
       setError(err instanceof Error ? err.message : 'Failed to load extensions');
     } finally {
       setLoading(false);
@@ -169,7 +169,7 @@ export function useFeaturedExtensions(limit = 10) {
       
       setExtensions(formattedExtensions);
     } catch (err) {
-      console.error('Failed to load featured extensions:', err);
+      // Console output removed for production
       setError(err instanceof Error ? err.message : 'Failed to load featured extensions');
     } finally {
       setLoading(false);
@@ -207,7 +207,7 @@ export function useUserExtensions() {
       const data = await DatabaseAPI.getUserExtensions(user.id);
       setUserExtensions(data);
     } catch (err) {
-      console.error('Failed to load user extensions:', err);
+      // Console output removed for production
       setError(err instanceof Error ? err.message : 'Failed to load user extensions');
     } finally {
       setLoading(false);
@@ -240,7 +240,7 @@ export function useUserExtensions() {
         { platforms: config.selectedPlatforms, status: config.status }
       );
     } catch (err) {
-      console.error('Failed to save user extension:', err);
+      // Console output removed for production
       throw err;
     }
   }, [user?.id, loadUserExtensions]);
@@ -261,7 +261,7 @@ export function useUserExtensions() {
         'removed'
       );
     } catch (err) {
-      console.error('Failed to remove user extension:', err);
+      // Console output removed for production
       throw err;
     }
   }, [user?.id, loadUserExtensions]);
@@ -276,7 +276,7 @@ export function useUserExtensions() {
     try {
       await DatabaseAPI.logExtensionUsage(user.id, extensionId, action, metadata);
     } catch (err) {
-      console.error('Failed to log extension usage:', err);
+      // Console output removed for production
     }
   }, [user?.id]);
 
@@ -321,7 +321,7 @@ export function useExtensionAnalytics(extensionId?: string) {
       setStats(statsData);
       setUserUsage(userUsageData);
     } catch (err) {
-      console.error('Failed to load extension analytics:', err);
+      // Console output removed for production
       setError(err instanceof Error ? err.message : 'Failed to load analytics');
     } finally {
       setLoading(false);
@@ -355,7 +355,7 @@ export function useExtensionReviews(extensionId: string) {
       const data = await DatabaseAPI.getExtensionReviews(extensionId);
       setReviews(data);
     } catch (err) {
-      console.error('Failed to load extension reviews:', err);
+      // Console output removed for production
       setError(err instanceof Error ? err.message : 'Failed to load reviews');
     } finally {
       setLoading(false);
@@ -371,7 +371,7 @@ export function useExtensionReviews(extensionId: string) {
       await DatabaseAPI.saveExtensionReview(user.id, extensionId, rating, reviewText);
       await loadReviews(); // Refresh the list
     } catch (err) {
-      console.error('Failed to save review:', err);
+      // Console output removed for production
       throw err;
     }
   }, [user?.id, extensionId, loadReviews]);

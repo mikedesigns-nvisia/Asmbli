@@ -51,7 +51,7 @@ function ChatInterface() {
   useEffect(() => {
     if (templateId) {
       // Load template configuration
-      console.log('Loading template:', templateId)
+      // Console output removed for production
     }
   }, [templateId])
 

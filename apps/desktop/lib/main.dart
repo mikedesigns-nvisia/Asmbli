@@ -20,403 +20,403 @@ import 'core/services/desktop/desktop_service_provider.dart';
 import 'core/services/desktop/window_management_service.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+ WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize desktop services
-  try {
-    await DesktopServiceProvider.instance.initialize();
-    print('✓ Desktop services initialized');
-  } catch (e) {
-    print('Desktop services initialization failed: $e');
-    // Fallback to legacy storage
-    try {
-      await Hive.initFlutter('asmbli_app_data');
-      await StorageService.init();
-    } catch (e2) {
-      print('Fallback storage initialization failed: $e2');
-    }
-  }
+ // Initialize desktop services
+ try {
+ await DesktopServiceProvider.instance.initialize();
+ // Desktop services initialized successfully
+ } catch (e) {
+ // Desktop services initialization failed - using fallback
+ // Fallback to legacy storage
+ try {
+ await Hive.initFlutter('asmbli_app_data');
+ await StorageService.init();
+ } catch (e2) {
+ // Fallback storage initialization failed
+ }
+ }
 
-  // Configure desktop window
-  if (DesktopServiceProvider.instance.isDesktop) {
-    try {
-      await DesktopServiceProvider.instance.windowManager.configureWindow(
-        const DesktopWindowOptions(
-          size: Size(1400, 900),
-          minimumSize: Size(1000, 700),
-          center: true,
-          title: 'AgentEngine - Desktop',
-          backgroundColor: Colors.transparent,
-        ),
-      );
-      print('✓ Window configured');
-    } catch (e) {
-      print('Window configuration failed: $e');
-    }
-  }
+ // Configure desktop window
+ if (DesktopServiceProvider.instance.isDesktop) {
+ try {
+ await DesktopServiceProvider.instance.windowManager.configureWindow(
+ DesktopWindowOptions(
+ size: Size(1400, 900),
+ minimumSize: Size(1000, 700),
+ center: true,
+ title: 'AgentEngine - Desktop',
+ backgroundColor: Colors.transparent,
+ ),
+ );
+ // Window configured successfully
+ } catch (e) {
+ // Window configuration failed
+ }
+ }
 
-  runApp(
-    ProviderScope(
-      child: AsmblDesktopApp(),
-    ),
-  );
+ runApp(
+ ProviderScope(
+ child: AsmblDesktopApp(),
+ ),
+ );
 }
 
 class AsmblDesktopApp extends ConsumerWidget {
-  const AsmblDesktopApp({super.key});
+ const AsmblDesktopApp({super.key});
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeServiceProvider);
-    
-    return MaterialApp.router(
-      title: 'Asmbli - AI Agents Made Easy',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
-      routerConfig: _router,
-      debugShowCheckedModeBanner: false,
-    );
-  }
+ @override
+ Widget build(BuildContext context, WidgetRef ref) {
+ final themeMode = ref.watch(themeServiceProvider);
+ 
+ return MaterialApp.router(
+ title: 'Asmbli - AI Agents Made Easy',
+ theme: AppTheme.lightTheme,
+ darkTheme: AppTheme.darkTheme,
+ themeMode: themeMode,
+ routerConfig: _router,
+ debugShowCheckedModeBanner: false,
+ );
+ }
 }
 
 // Create router outside of the widget to avoid global key issues
 final _router = GoRouter(
-  initialLocation: AppRoutes.home,
-  routes: [
-    GoRoute(
-      path: AppRoutes.home,
-      builder: (context, state) => const HomeScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.chat,
-      builder: (context, state) => const ChatScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.templates,
-      builder: (context, state) => const TemplatesScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.settings,
-      builder: (context, state) => const SettingsScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.agents,
-      builder: (context, state) => const MyAgentsScreen(),
-    ),
-    GoRoute(
-      path: '/agents/configure/:agentName',
-      builder: (context, state) {
-        final agentName = state.pathParameters['agentName'];
-        return AgentConfigurationScreen(agentName: agentName);
-      },
-    ),
-    GoRoute(
-      path: '/agents/configure',
-      builder: (context, state) => const AgentConfigurationScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.context,
-      builder: (context, state) => const ContextLibraryScreen(),
-    ),
-  ],
+ initialLocation: AppRoutes.home,
+ routes: [
+ GoRoute(
+ path: AppRoutes.home,
+ builder: (context, state) => HomeScreen(),
+ ),
+ GoRoute(
+ path: AppRoutes.chat,
+ builder: (context, state) => const ChatScreen(),
+ ),
+ GoRoute(
+ path: AppRoutes.templates,
+ builder: (context, state) => const TemplatesScreen(),
+ ),
+ GoRoute(
+ path: AppRoutes.settings,
+ builder: (context, state) => const SettingsScreen(),
+ ),
+ GoRoute(
+ path: AppRoutes.agents,
+ builder: (context, state) => const MyAgentsScreen(),
+ ),
+ GoRoute(
+ path: '/agents/configure/:agentName',
+ builder: (context, state) {
+ final agentName = state.pathParameters['agentName'];
+ return AgentConfigurationScreen(agentName: agentName);
+ },
+ ),
+ GoRoute(
+ path: '/agents/configure',
+ builder: (context, state) => AgentConfigurationScreen(),
+ ),
+ GoRoute(
+ path: AppRoutes.context,
+ builder: (context, state) => const ContextLibraryScreen(),
+ ),
+ ],
 );
 
 /// Dashboard-style home screen focused on app functionality
 class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+ const HomeScreen({super.key});
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = ThemeColors(context);
-    
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.topCenter,
-            radius: 1.5,
-            colors: [
-              colors.backgroundGradientStart,
-              colors.backgroundGradientMiddle,
-              colors.backgroundGradientEnd,
-            ],
-            stops: const [0.0, 0.6, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // App Header
-              const AppNavigationBar(currentRoute: AppRoutes.home),
-              
-              // Main Dashboard Content
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Welcome Section
-                      Text(
-                        'Welcome back!',
-                        style: TextStyles.pageTitle.copyWith(
-                          color: colors.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: SpacingTokens.iconSpacing),
-                      Text(
-                        'Manage your AI agents, conversations, and knowledge base',
-                        style: TextStyles.bodyLarge.copyWith(
-                          color: colors.onSurfaceVariant,
-                        ),
-                      ),
-                      
-                      const SizedBox(height: SpacingTokens.sectionSpacing),
-                      
-                      // Quick Actions Row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _QuickActionCard(
-                              icon: Icons.chat_bubble_outline,
-                              title: 'Start Chat',
-                              description: 'Begin new conversation',
-                              onTap: () => context.go(AppRoutes.chat),
-                            ),
-                          ),
-                          const SizedBox(width: SpacingTokens.elementSpacing),
-                          Expanded(
-                            child: _QuickActionCard(
-                              icon: Icons.build,
-                              title: 'Build Agent',
-                              description: 'Create custom AI agent',
-                              onTap: () => context.go(AppRoutes.agents),
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: SpacingTokens.sectionSpacing),
-                      
-                      // Main Content - Recent Conversations
-                      _RecentConversationsSection(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+ @override
+ Widget build(BuildContext context, WidgetRef ref) {
+ final colors = ThemeColors(context);
+ 
+ return Scaffold(
+ body: Container(
+ decoration: BoxDecoration(
+ gradient: RadialGradient(
+ center: Alignment.topCenter,
+ radius: 1.5,
+ colors: [
+ colors.backgroundGradientStart,
+ colors.backgroundGradientMiddle,
+ colors.backgroundGradientEnd,
+ ],
+ stops: const [0.0, 0.6, 1.0],
+ ),
+ ),
+ child: SafeArea(
+ child: Column(
+ children: [
+ // App Header
+ AppNavigationBar(currentRoute: AppRoutes.home),
+ 
+ // Main Dashboard Content
+ Expanded(
+ child: SingleChildScrollView(
+ padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ // Welcome Section
+ Text(
+ 'Welcome back!',
+ style: TextStyles.pageTitle.copyWith(
+ color: colors.onSurface,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.iconSpacing),
+ Text(
+ 'Manage your AI agents, conversations, and knowledge base',
+ style: TextStyles.bodyLarge.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ 
+ SizedBox(height: SpacingTokens.sectionSpacing),
+ 
+ // Quick Actions Row
+ Row(
+ children: [
+ Expanded(
+ child: _QuickActionCard(
+ icon: Icons.chat_bubble_outline,
+ title: 'Start Chat',
+ description: 'Begin new conversation',
+ onTap: () => context.go(AppRoutes.chat),
+ ),
+ ),
+ SizedBox(width: SpacingTokens.elementSpacing),
+ Expanded(
+ child: _QuickActionCard(
+ icon: Icons.build,
+ title: 'Build Agent',
+ description: 'Create custom AI agent',
+ onTap: () => context.go(AppRoutes.agents),
+ ),
+ ),
+ ],
+ ),
+ 
+ SizedBox(height: SpacingTokens.sectionSpacing),
+ 
+ // Main Content - Recent Conversations
+ _RecentConversationsSection(),
+ ],
+ ),
+ ),
+ ),
+ ],
+ ),
+ ),
+ ),
+ );
+ }
 }
 
 // Recent Conversations Section
 class _RecentConversationsSection extends ConsumerWidget {
-  const _RecentConversationsSection();
+ const _RecentConversationsSection();
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = ThemeColors(context);
-    final conversationsAsync = ref.watch(conversationsProvider);
-    
-    return _DashboardSectionEnhanced(
-      title: 'Recent Conversations',
-      child: conversationsAsync.when(
-        data: (conversations) {
-          final recentConversations = conversations
-              .where((c) => c.status == ConversationStatus.active)
-              .take(5)
-              .toList();
-          
-          if (recentConversations.isEmpty) {
-            return Column(
-              children: [
-                Icon(
-                  Icons.chat_bubble_outline,
-                  size: 32,
-                  color: colors.onSurfaceVariant.withOpacity(0.5),
-                ),
-                const SizedBox(height: SpacingTokens.iconSpacing),
-                Text(
-                  'No conversations yet',
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            );
-          }
-          
-          return Column(
-            children: [
-              ...recentConversations.map((conversation) => Padding(
-                padding: const EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
-                child: _ConversationItem(
-                  conversation: conversation,
-                  onTap: () {
-                    ref.read(selectedConversationIdProvider.notifier).state = conversation.id;
-                    context.go(AppRoutes.chat);
-                  },
-                ),
-              )),
-              if (conversations.length > 5) ...[
-                const SizedBox(height: SpacingTokens.iconSpacing),
-                Text(
-                  '+${conversations.length - 5} more conversations',
-                  style: TextStyles.caption.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
-              ],
-              const SizedBox(height: SpacingTokens.componentSpacing),
-              AsmblButtonEnhanced.outline(
-                text: 'View All Chats',
-                icon: Icons.forum,
-                onPressed: () => context.go(AppRoutes.chat),
-                size: AsmblButtonSize.medium,
-              ),
-            ],
-          );
-        },
-        loading: () => const Center(
-          child: SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-        error: (error, _) => Column(
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 32,
-              color: colors.error,
-            ),
-            const SizedBox(height: SpacingTokens.iconSpacing),
-            Text(
-              'Failed to load conversations',
-              style: TextStyles.bodyMedium.copyWith(
-                color: colors.error,
-              ),
-            ),
-            const SizedBox(height: SpacingTokens.componentSpacing),
-            AsmblButtonEnhanced.secondary(
-              text: 'Retry',
-              icon: Icons.refresh,
-              onPressed: () => ref.invalidate(conversationsProvider),
-              size: AsmblButtonSize.medium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+ @override
+ Widget build(BuildContext context, WidgetRef ref) {
+ final colors = ThemeColors(context);
+ final conversationsAsync = ref.watch(conversationsProvider);
+ 
+ return _DashboardSectionEnhanced(
+ title: 'Recent Conversations',
+ child: conversationsAsync.when(
+ data: (conversations) {
+ final recentConversations = conversations
+ .where((c) => c.status == ConversationStatus.active)
+ .take(5)
+ .toList();
+ 
+ if (recentConversations.isEmpty) {
+ return Column(
+ children: [
+ Icon(
+ Icons.chat_bubble_outline,
+ size: 32,
+ color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+ ),
+ SizedBox(height: SpacingTokens.iconSpacing),
+ Text(
+ 'No conversations yet',
+ style: TextStyles.bodyMedium.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ ],
+ );
+ }
+ 
+ return Column(
+ children: [
+ ...recentConversations.map((conversation) => Padding(
+ padding: EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
+ child: _ConversationItem(
+ conversation: conversation,
+ onTap: () {
+ ref.read(selectedConversationIdProvider.notifier).state = conversation.id;
+ context.go(AppRoutes.chat);
+ },
+ ),
+ )),
+ if (conversations.length > 5) ...[
+ SizedBox(height: SpacingTokens.iconSpacing),
+ Text(
+ '+${conversations.length - 5} more conversations',
+ style: TextStyles.caption.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ ],
+ SizedBox(height: SpacingTokens.componentSpacing),
+ AsmblButtonEnhanced.outline(
+ text: 'View All Chats',
+ icon: Icons.forum,
+ onPressed: () => context.go(AppRoutes.chat),
+ size: AsmblButtonSize.medium,
+ ),
+ ],
+ );
+ },
+ loading: () => Center(
+ child: SizedBox(
+ width: 20,
+ height: 20,
+ child: CircularProgressIndicator(strokeWidth: 2),
+ ),
+ ),
+ error: (error, _) => Column(
+ children: [
+ Icon(
+ Icons.error_outline,
+ size: 32,
+ color: colors.error,
+ ),
+ SizedBox(height: SpacingTokens.iconSpacing),
+ Text(
+ 'Failed to load conversations',
+ style: TextStyles.bodyMedium.copyWith(
+ color: colors.error,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.componentSpacing),
+ AsmblButtonEnhanced.secondary(
+ text: 'Retry',
+ icon: Icons.refresh,
+ onPressed: () => ref.invalidate(conversationsProvider),
+ size: AsmblButtonSize.medium,
+ ),
+ ],
+ ),
+ ),
+ );
+ }
 }
 
 // Conversation item for dashboard
 class _ConversationItem extends StatelessWidget {
-  final Conversation conversation;
-  final VoidCallback onTap;
+ final Conversation conversation;
+ final VoidCallback onTap;
 
-  const _ConversationItem({
-    required this.conversation,
-    required this.onTap,
-  });
+ const _ConversationItem({
+ required this.conversation,
+ required this.onTap,
+ });
 
-  @override
-  Widget build(BuildContext context) {
-    final colors = ThemeColors(context);
-    final isAgentConversation = conversation.metadata?['type'] == 'agent';
-    final agentName = conversation.metadata?['agentName'] as String?;
-    
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        hoverColor: colors.primary.withOpacity(0.04),
-        splashColor: colors.primary.withOpacity(0.12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: SpacingTokens.componentSpacing,
-            horizontal: SpacingTokens.xs_precise,
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
-                decoration: BoxDecoration(
-                  color: isAgentConversation 
-                      ? colors.primary.withOpacity(0.1)
-                      : colors.surfaceVariant,
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                ),
-                child: Icon(
-                  isAgentConversation ? Icons.smart_toy : Icons.chat,
-                  size: 16,
-                  color: isAgentConversation 
-                      ? colors.primary
-                      : colors.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(width: SpacingTokens.componentSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      isAgentConversation && agentName != null
-                          ? agentName
-                          : conversation.title,
-                      style: TextStyles.bodyMedium.copyWith(
-                        color: colors.onSurface,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: SpacingTokens.xs_precise),
-                    Text(
-                      isAgentConversation ? 'Agent Chat' : 'Direct API Chat',
-                      style: TextStyles.caption.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Text(
-                _formatTime(conversation.createdAt),
-                style: TextStyles.caption.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+ @override
+ Widget build(BuildContext context) {
+ final colors = ThemeColors(context);
+ final isAgentConversation = conversation.metadata?['type'] == 'agent';
+ final agentName = conversation.metadata?['agentName'] as String?;
+ 
+ return Material(
+ color: Colors.transparent,
+ child: InkWell(
+ onTap: onTap,
+ borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+ hoverColor: colors.primary.withValues(alpha: 0.04),
+ splashColor: colors.primary.withValues(alpha: 0.12),
+ child: Container(
+ padding: EdgeInsets.symmetric(
+ vertical: SpacingTokens.componentSpacing,
+ horizontal: SpacingTokens.xs_precise,
+ ),
+ child: Row(
+ children: [
+ Container(
+ padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+ decoration: BoxDecoration(
+ color: isAgentConversation 
+ ? colors.primary.withValues(alpha: 0.1)
+ : colors.surfaceVariant,
+ borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+ ),
+ child: Icon(
+ isAgentConversation ? Icons.smart_toy : Icons.chat,
+ size: 16,
+ color: isAgentConversation 
+ ? colors.primary
+ : colors.onSurfaceVariant,
+ ),
+ ),
+ SizedBox(width: SpacingTokens.componentSpacing),
+ Expanded(
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ isAgentConversation && agentName != null
+ ? agentName
+ : conversation.title,
+ style: TextStyles.bodyMedium.copyWith(
+ color: colors.onSurface,
+ fontWeight: FontWeight.w500,
+ ),
+ maxLines: 1,
+ overflow: TextOverflow.ellipsis,
+ ),
+ SizedBox(height: SpacingTokens.xs_precise),
+ Text(
+ isAgentConversation ? 'Agent Chat' : 'Direct API Chat',
+ style: TextStyles.caption.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ ],
+ ),
+ ),
+ Text(
+ _formatTime(conversation.createdAt),
+ style: TextStyles.caption.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ ],
+ ),
+ ),
+ ),
+ );
+ }
 
-  String _formatTime(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-    
-    if (difference.inMinutes < 1) {
-      return 'Now';
-    } else if (difference.inHours < 1) {
-      return '${difference.inMinutes}m ago';
-    } else if (difference.inDays < 1) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
-    } else {
-      return '${dateTime.day}/${dateTime.month}';
-    }
-  }
+ String _formatTime(DateTime dateTime) {
+ final now = DateTime.now();
+ final difference = now.difference(dateTime);
+ 
+ if (difference.inMinutes < 1) {
+ return 'Now';
+ } else if (difference.inHours < 1) {
+ return '${difference.inMinutes}m ago';
+ } else if (difference.inDays < 1) {
+ return '${difference.inHours}h ago';
+ } else if (difference.inDays < 7) {
+ return '${difference.inDays}d ago';
+ } else {
+ return '${dateTime.day}/${dateTime.month}';
+ }
+ }
 }
 
 
@@ -424,86 +424,86 @@ class _ConversationItem extends StatelessWidget {
 
 // Quick action card for dashboard
 class _QuickActionCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final VoidCallback onTap;
+ final IconData icon;
+ final String title;
+ final String description;
+ final VoidCallback onTap;
 
-  const _QuickActionCard({
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.onTap,
-  });
+ const _QuickActionCard({
+ required this.icon,
+ required this.title,
+ required this.description,
+ required this.onTap,
+ });
 
-  @override
-  Widget build(BuildContext context) {
-    return AsmblCard(
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
-            decoration: BoxDecoration(
-              color: ThemeColors(context).primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-            ),
-            child: Icon(
-              icon,
-              size: 24,
-              color: ThemeColors(context).primary,
-            ),
-          ),
-          const SizedBox(height: SpacingTokens.componentSpacing),
-          Text(
-            title,
-            style: TextStyles.cardTitle.copyWith(
-              color: ThemeColors(context).onSurface,
-            ),
-          ),
-          const SizedBox(height: SpacingTokens.iconSpacing),
-          Text(
-            description,
-            style: TextStyles.bodySmall.copyWith(
-              color: ThemeColors(context).onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+ @override
+ Widget build(BuildContext context) {
+ return AsmblCard(
+ onTap: onTap,
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Container(
+ padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+ decoration: BoxDecoration(
+ color: ThemeColors(context).primary.withValues(alpha: 0.1),
+ borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+ ),
+ child: Icon(
+ icon,
+ size: 24,
+ color: ThemeColors(context).primary,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.componentSpacing),
+ Text(
+ title,
+ style: TextStyles.cardTitle.copyWith(
+ color: ThemeColors(context).onSurface,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.iconSpacing),
+ Text(
+ description,
+ style: TextStyles.bodySmall.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ ),
+ ],
+ ),
+ );
+ }
 }
 
 // Enhanced dashboard section container
 class _DashboardSectionEnhanced extends StatelessWidget {
-  final String title;
-  final Widget child;
+ final String title;
+ final Widget child;
 
-  const _DashboardSectionEnhanced({
-    required this.title,
-    required this.child,
-  });
+ const _DashboardSectionEnhanced({
+ required this.title,
+ required this.child,
+ });
 
-  @override
-  Widget build(BuildContext context) {
-    return AsmblCardEnhanced.outlined(
-      isInteractive: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyles.sectionTitle.copyWith(
-              color: ThemeColors(context).onSurface,
-            ),
-          ),
-          const SizedBox(height: SpacingTokens.componentSpacing),
-          child,
-        ],
-      ),
-    );
-  }
+ @override
+ Widget build(BuildContext context) {
+ return AsmblCardEnhanced.outlined(
+ isInteractive: false,
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ title,
+ style: TextStyles.sectionTitle.copyWith(
+ color: ThemeColors(context).onSurface,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.componentSpacing),
+ child,
+ ],
+ ),
+ );
+ }
 }
 
 

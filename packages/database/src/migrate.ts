@@ -24,7 +24,7 @@ export class MigrationRunner {
     )
     
     if (existingMigration.rows.length > 0) {
-      console.log(`Migration ${migrationName} already executed`)
+      // Console output removed for production
       return
     }
     
@@ -38,7 +38,7 @@ export class MigrationRunner {
       throw new Error(`Migration file not found: ${migrationPath}`)
     }
     
-    console.log(`Running migration: ${migrationName}`)
+    // Console output removed for production
     
     try {
       // Execute migration in a transaction
@@ -63,11 +63,11 @@ export class MigrationRunner {
       )
       
       await conn.query('COMMIT')
-      console.log(`Migration ${migrationName} completed successfully`)
+      // Console output removed for production
       
     } catch (error) {
       await conn.query('ROLLBACK')
-      console.error(`Migration ${migrationName} failed:`, error)
+      // Console output removed for production
       throw error
     }
   }
@@ -98,8 +98,8 @@ export class MigrationRunner {
   }
   
   async rollbackMigration(migrationName: string): Promise<void> {
-    console.warn('Rollback functionality not implemented yet')
-    console.warn(`To rollback ${migrationName}, please manually reverse the changes`)
+    // Console output removed for production
+    // Console output removed for production
   }
 }
 
@@ -111,7 +111,7 @@ if (require.main === module) {
   
   const databaseUrl = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL
   if (!databaseUrl) {
-    console.error('DATABASE_URL environment variable not set')
+    // Console output removed for production
     process.exit(1)
   }
   
@@ -130,28 +130,28 @@ if (require.main === module) {
           
         case 'status':
           const applied = await runner.getAppliedMigrations()
-          console.log('Applied migrations:')
-          applied.forEach(name => console.log(`  ✓ ${name}`))
+          // Console output removed for production
+          // Console output removed for production
           break
           
         case 'rollback':
           if (!migrationName) {
-            console.error('Migration name required for rollback')
+            // Console output removed for production
             process.exit(1)
           }
           await runner.rollbackMigration(migrationName)
           break
           
         default:
-          console.log('Usage: node migrate.js <command> [migration-name]')
-          console.log('Commands:')
-          console.log('  run [migration-name]  - Run all migrations or specific migration')
-          console.log('  status               - Show applied migrations')
-          console.log('  rollback <migration-name> - Rollback specific migration')
+          // Console output removed for production
+          // Console output removed for production
+          // Console output removed for production
+          // Console output removed for production
+          // Console output removed for production
           break
       }
     } catch (error) {
-      console.error('Migration failed:', error)
+      // Console output removed for production
       process.exit(1)
     }
   }

@@ -152,7 +152,7 @@ export class TemplateStorage {
       // Combine user templates with pre-configured templates
       return [...preConfiguredTemplates, ...userTemplates];
     } catch (error) {
-      console.error('Error loading templates:', error);
+      // Console output removed for production
       return [];
     }
   }
@@ -256,7 +256,7 @@ export class TemplateStorage {
       
       return categories;
     } catch (error) {
-      console.error('Error loading template categories:', error);
+      // Console output removed for production
       return defaultCategories;
     }
   }
@@ -329,7 +329,7 @@ export class TemplateStorage {
       
       return importedTemplate;
     } catch (error) {
-      console.error('Error importing template:', error);
+      // Console output removed for production
       return null;
     }
   }

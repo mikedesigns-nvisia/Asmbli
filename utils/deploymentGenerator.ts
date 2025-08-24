@@ -22,8 +22,8 @@ interface MVPWizardData {
  * - Complete documentation
  */
 export function generateDeploymentConfigs(wizardData: WizardData | MVPWizardData, promptOutput?: string): Record<string, string> {
-  console.log('🚀 AgentEngine Deployment - ChatMCP Only');
-  console.log('Generating ChatMCP configuration packages...');
+  // Console output removed for production
+  // Console output removed for production
   
   // Use the new ChatMCP-focused generator for all deployments
   return generateChatMCPConfigs(wizardData);

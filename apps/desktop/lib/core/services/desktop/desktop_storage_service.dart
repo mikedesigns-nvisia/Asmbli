@@ -7,457 +7,457 @@ import 'package:path_provider/path_provider.dart';
 import 'file_system_service.dart';
 
 enum StorageType {
-  preferences,
-  hive,
-  file,
-  secure,
+ preferences,
+ hive,
+ file,
+ secure,
 }
 
 class DesktopStorageService {
-  static DesktopStorageService? _instance;
-  static SharedPreferences? _preferences;
-  static final Map<String, Box> _hiveBoxes = {};
-  
-  DesktopStorageService._();
-  
-  static DesktopStorageService get instance {
-    _instance ??= DesktopStorageService._();
-    return _instance!;
-  }
+ static DesktopStorageService? _instance;
+ static SharedPreferences? _preferences;
+ static final Map<String, Box> _hiveBoxes = {};
+ 
+ DesktopStorageService._();
+ 
+ static DesktopStorageService get instance {
+ _instance ??= DesktopStorageService._();
+ return _instance!;
+ }
 
-  Future<void> initialize() async {
-    try {
-      _preferences = await SharedPreferences.getInstance();
-      await _initializeHive();
-    } catch (e) {
-      print('Storage initialization failed: $e');
-      rethrow;
-    }
-  }
+ Future<void> initialize() async {
+ try {
+ _preferences = await SharedPreferences.getInstance();
+ await _initializeHive();
+ } catch (e) {
+ print('Storage initialization failed: $e');
+ rethrow;
+ }
+ }
 
-  Future<void> _initializeHive() async {
-    final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
-    final hiveDir = Directory(path.join(appDir.path, 'storage'));
-    
-    if (!await hiveDir.exists()) {
-      await hiveDir.create(recursive: true);
-    }
-    
-    await Hive.initFlutter(hiveDir.path);
-    
-    await _openBox('agents');
-    await _openBox('conversations');
-    await _openBox('templates');
-    await _openBox('settings');
-    await _openBox('cache');
-    await _openBox('user_data');
-    await _openBox('mcp_servers');
-    await _openBox('api_keys');
-  }
+ Future<void> _initializeHive() async {
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
+ final hiveDir = Directory(path.join(appDir.path, 'storage'));
+ 
+ if (!await hiveDir.exists()) {
+ await hiveDir.create(recursive: true);
+ }
+ 
+ await Hive.initFlutter(hiveDir.path);
+ 
+ await _openBox('agents');
+ await _openBox('conversations');
+ await _openBox('templates');
+ await _openBox('settings');
+ await _openBox('cache');
+ await _openBox('user_data');
+ await _openBox('mcp_servers');
+ await _openBox('api_keys');
+ }
 
-  Future<Box<T>> _openBox<T>(String boxName) async {
-    if (_hiveBoxes.containsKey(boxName)) {
-      return _hiveBoxes[boxName] as Box<T>;
-    }
-    
-    final box = await Hive.openBox<T>(boxName);
-    _hiveBoxes[boxName] = box;
-    return box;
-  }
+ Future<Box<T>> _openBox<T>(String boxName) async {
+ if (_hiveBoxes.containsKey(boxName)) {
+ return _hiveBoxes[boxName] as Box<T>;
+ }
+ 
+ final box = await Hive.openBox<T>(boxName);
+ _hiveBoxes[boxName] = box;
+ return box;
+ }
 
-  Future<void> setPreference<T>(String key, T value) async {
-    if (_preferences == null) {
-      throw Exception('Storage not initialized');
-    }
+ Future<void> setPreference<T>(String key, T value) async {
+ if (_preferences == null) {
+ throw Exception('Storage not initialized');
+ }
 
-    switch (T) {
-      case String:
-        await _preferences!.setString(key, value as String);
-        break;
-      case int:
-        await _preferences!.setInt(key, value as int);
-        break;
-      case double:
-        await _preferences!.setDouble(key, value as double);
-        break;
-      case bool:
-        await _preferences!.setBool(key, value as bool);
-        break;
-      case const (List<String>):
-        await _preferences!.setStringList(key, value as List<String>);
-        break;
-      default:
-        await _preferences!.setString(key, jsonEncode(value));
-    }
-  }
+ switch (T) {
+ case String:
+ await _preferences!.setString(key, value as String);
+ break;
+ case int:
+ await _preferences!.setInt(key, value as int);
+ break;
+ case double:
+ await _preferences!.setDouble(key, value as double);
+ break;
+ case bool:
+ await _preferences!.setBool(key, value as bool);
+ break;
+ case const (List<String>):
+ await _preferences!.setStringList(key, value as List<String>);
+ break;
+ default:
+ await _preferences!.setString(key, jsonEncode(value));
+ }
+ }
 
-  T? getPreference<T>(String key, {T? defaultValue}) {
-    if (_preferences == null) {
-      return defaultValue;
-    }
+ T? getPreference<T>(String key, {T? defaultValue}) {
+ if (_preferences == null) {
+ return defaultValue;
+ }
 
-    switch (T) {
-      case String:
-        return _preferences!.getString(key) as T? ?? defaultValue;
-      case int:
-        return _preferences!.getInt(key) as T? ?? defaultValue;
-      case double:
-        return _preferences!.getDouble(key) as T? ?? defaultValue;
-      case bool:
-        return _preferences!.getBool(key) as T? ?? defaultValue;
-      case const (List<String>):
-        return _preferences!.getStringList(key) as T? ?? defaultValue;
-      default:
-        final jsonString = _preferences!.getString(key);
-        if (jsonString != null) {
-          try {
-            return jsonDecode(jsonString) as T;
-          } catch (e) {
-            return defaultValue;
-          }
-        }
-        return defaultValue;
-    }
-  }
+ switch (T) {
+ case String:
+ return _preferences!.getString(key) as T? ?? defaultValue;
+ case int:
+ return _preferences!.getInt(key) as T? ?? defaultValue;
+ case double:
+ return _preferences!.getDouble(key) as T? ?? defaultValue;
+ case bool:
+ return _preferences!.getBool(key) as T? ?? defaultValue;
+ case const (List<String>):
+ return _preferences!.getStringList(key) as T? ?? defaultValue;
+ default:
+ final jsonString = _preferences!.getString(key);
+ if (jsonString != null) {
+ try {
+ return jsonDecode(jsonString) as T;
+ } catch (e) {
+ return defaultValue;
+ }
+ }
+ return defaultValue;
+ }
+ }
 
-  Future<void> removePreference(String key) async {
-    if (_preferences != null) {
-      await _preferences!.remove(key);
-    }
-  }
+ Future<void> removePreference(String key) async {
+ if (_preferences != null) {
+ await _preferences!.remove(key);
+ }
+ }
 
-  Future<void> clearPreferences() async {
-    if (_preferences != null) {
-      await _preferences!.clear();
-    }
-  }
+ Future<void> clearPreferences() async {
+ if (_preferences != null) {
+ await _preferences!.clear();
+ }
+ }
 
-  Future<void> setHiveData<T>(String boxName, String key, T value) async {
-    final box = await _openBox<T>(boxName);
-    await box.put(key, value);
-  }
+ Future<void> setHiveData<T>(String boxName, String key, T value) async {
+ final box = await _openBox<T>(boxName);
+ await box.put(key, value);
+ }
 
-  T? getHiveData<T>(String boxName, String key, {T? defaultValue}) {
-    final box = _hiveBoxes[boxName] as Box<T>?;
-    if (box == null) return defaultValue;
-    return box.get(key, defaultValue: defaultValue);
-  }
+ T? getHiveData<T>(String boxName, String key, {T? defaultValue}) {
+ final box = _hiveBoxes[boxName] as Box<T>?;
+ if (box == null) return defaultValue;
+ return box.get(key, defaultValue: defaultValue);
+ }
 
-  Future<void> removeHiveData(String boxName, String key) async {
-    final box = _hiveBoxes[boxName];
-    if (box != null) {
-      await box.delete(key);
-    }
-  }
+ Future<void> removeHiveData(String boxName, String key) async {
+ final box = _hiveBoxes[boxName];
+ if (box != null) {
+ await box.delete(key);
+ }
+ }
 
-  Future<void> clearHiveBox(String boxName) async {
-    final box = _hiveBoxes[boxName];
-    if (box != null) {
-      await box.clear();
-    }
-  }
+ Future<void> clearHiveBox(String boxName) async {
+ final box = _hiveBoxes[boxName];
+ if (box != null) {
+ await box.clear();
+ }
+ }
 
-  List<String> getHiveKeys(String boxName) {
-    final box = _hiveBoxes[boxName];
-    if (box == null) return [];
-    return box.keys.cast<String>().toList();
-  }
+ List<String> getHiveKeys(String boxName) {
+ final box = _hiveBoxes[boxName];
+ if (box == null) return [];
+ return box.keys.cast<String>().toList();
+ }
 
-  Map<String, dynamic> getAllHiveData(String boxName) {
-    final box = _hiveBoxes[boxName];
-    if (box == null) return {};
-    
-    final Map<String, dynamic> data = {};
-    for (final key in box.keys) {
-      data[key.toString()] = box.get(key);
-    }
-    return data;
-  }
+ Map<String, dynamic> getAllHiveData(String boxName) {
+ final box = _hiveBoxes[boxName];
+ if (box == null) return {};
+ 
+ final Map<String, dynamic> data = {};
+ for (final key in box.keys) {
+ data[key.toString()] = box.get(key);
+ }
+ return data;
+ }
 
-  Future<void> saveToFile(String fileName, Map<String, dynamic> data) async {
-    final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
-    final filePath = path.join(appDir.path, fileName);
-    
-    final jsonString = const JsonEncoder.withIndent('  ').convert(data);
-    await DesktopFileSystemService.instance.writeFile(filePath, jsonString);
-  }
+ Future<void> saveToFile(String fileName, Map<String, dynamic> data) async {
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
+ final filePath = path.join(appDir.path, fileName);
+ 
+ final jsonString = const JsonEncoder.withIndent(' ').convert(data);
+ await DesktopFileSystemService.instance.writeFile(filePath, jsonString);
+ }
 
-  Future<Map<String, dynamic>?> loadFromFile(String fileName) async {
-    try {
-      final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
-      final filePath = path.join(appDir.path, fileName);
-      
-      if (!await DesktopFileSystemService.instance.fileExists(filePath)) {
-        return null;
-      }
-      
-      final jsonString = await DesktopFileSystemService.instance.readFile(filePath);
-      return jsonDecode(jsonString) as Map<String, dynamic>;
-    } catch (e) {
-      print('Error loading file $fileName: $e');
-      return null;
-    }
-  }
+ Future<Map<String, dynamic>?> loadFromFile(String fileName) async {
+ try {
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
+ final filePath = path.join(appDir.path, fileName);
+ 
+ if (!await DesktopFileSystemService.instance.fileExists(filePath)) {
+ return null;
+ }
+ 
+ final jsonString = await DesktopFileSystemService.instance.readFile(filePath);
+ return jsonDecode(jsonString) as Map<String, dynamic>;
+ } catch (e) {
+ print('Error loading file $fileName: $e');
+ return null;
+ }
+ }
 
-  Future<void> deleteFile(String fileName) async {
-    final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
-    final filePath = path.join(appDir.path, fileName);
-    await DesktopFileSystemService.instance.deleteFile(filePath);
-  }
+ Future<void> deleteFile(String fileName) async {
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
+ final filePath = path.join(appDir.path, fileName);
+ await DesktopFileSystemService.instance.deleteFile(filePath);
+ }
 
-  Future<void> exportData(String exportPath) async {
-    final exportData = <String, dynamic>{};
-    
-    for (final boxName in _hiveBoxes.keys) {
-      exportData[boxName] = getAllHiveData(boxName);
-    }
-    
-    exportData['preferences'] = _preferences?.getKeys().fold<Map<String, dynamic>>(
-      {},
-      (map, key) => map..[key] = _preferences!.get(key),
-    ) ?? {};
-    
-    final jsonString = const JsonEncoder.withIndent('  ').convert(exportData);
-    await File(exportPath).writeAsString(jsonString);
-  }
+ Future<void> exportData(String exportPath) async {
+ final exportData = <String, dynamic>{};
+ 
+ for (final boxName in _hiveBoxes.keys) {
+ exportData[boxName] = getAllHiveData(boxName);
+ }
+ 
+ exportData['preferences'] = _preferences?.getKeys().fold<Map<String, dynamic>>(
+ {},
+ (map, key) => map..[key] = _preferences!.get(key),
+ ) ?? {};
+ 
+ final jsonString = const JsonEncoder.withIndent(' ').convert(exportData);
+ await File(exportPath).writeAsString(jsonString);
+ }
 
-  Future<void> importData(String importPath) async {
-    final file = File(importPath);
-    if (!await file.exists()) {
-      throw FileSystemException('Import file not found', importPath);
-    }
-    
-    final jsonString = await file.readAsString();
-    final importData = jsonDecode(jsonString) as Map<String, dynamic>;
-    
-    for (final entry in importData.entries) {
-      if (entry.key == 'preferences') {
-        final prefs = entry.value as Map<String, dynamic>;
-        for (final prefEntry in prefs.entries) {
-          await setPreference(prefEntry.key, prefEntry.value);
-        }
-      } else {
-        final boxData = entry.value as Map<String, dynamic>;
-        for (final dataEntry in boxData.entries) {
-          await setHiveData(entry.key, dataEntry.key, dataEntry.value);
-        }
-      }
-    }
-  }
+ Future<void> importData(String importPath) async {
+ final file = File(importPath);
+ if (!await file.exists()) {
+ throw FileSystemException('Import file not found', importPath);
+ }
+ 
+ final jsonString = await file.readAsString();
+ final importData = jsonDecode(jsonString) as Map<String, dynamic>;
+ 
+ for (final entry in importData.entries) {
+ if (entry.key == 'preferences') {
+ final prefs = entry.value as Map<String, dynamic>;
+ for (final prefEntry in prefs.entries) {
+ await setPreference(prefEntry.key, prefEntry.value);
+ }
+ } else {
+ final boxData = entry.value as Map<String, dynamic>;
+ for (final dataEntry in boxData.entries) {
+ await setHiveData(entry.key, dataEntry.key, dataEntry.value);
+ }
+ }
+ }
+ }
 
-  Future<void> backupData([String? backupPath]) async {
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final defaultBackupPath = backupPath ?? path.join(
-      (await getApplicationDocumentsDirectory()).path,
-      'AgentEngine',
-      'backups',
-      'backup_$timestamp.json',
-    );
-    
-    await DesktopFileSystemService.instance.ensureDirectoryExists(
-      path.dirname(defaultBackupPath),
-    );
-    
-    await exportData(defaultBackupPath);
-  }
+ Future<void> backupData([String? backupPath]) async {
+ final timestamp = DateTime.now().millisecondsSinceEpoch;
+ final defaultBackupPath = backupPath ?? path.join(
+ (await getApplicationDocumentsDirectory()).path,
+ 'AgentEngine',
+ 'backups',
+ 'backup_$timestamp.json',
+ );
+ 
+ await DesktopFileSystemService.instance.ensureDirectoryExists(
+ path.dirname(defaultBackupPath),
+ );
+ 
+ await exportData(defaultBackupPath);
+ }
 
-  Future<List<String>> getBackupFiles() async {
-    final backupsDir = path.join(
-      (await getApplicationDocumentsDirectory()).path,
-      'AgentEngine',
-      'backups',
-    );
-    
-    if (!await Directory(backupsDir).exists()) {
-      return [];
-    }
-    
-    final entities = await DesktopFileSystemService.instance.listDirectory(backupsDir);
-    return entities
-        .whereType<File>()
-        .where((file) => file.path.endsWith('.json'))
-        .map((file) => file.path)
-        .toList();
-  }
+ Future<List<String>> getBackupFiles() async {
+ final backupsDir = path.join(
+ (await getApplicationDocumentsDirectory()).path,
+ 'AgentEngine',
+ 'backups',
+ );
+ 
+ if (!await Directory(backupsDir).exists()) {
+ return [];
+ }
+ 
+ final entities = await DesktopFileSystemService.instance.listDirectory(backupsDir);
+ return entities
+ .whereType<File>()
+ .where((file) => file.path.endsWith('.json'))
+ .map((file) => file.path)
+ .toList();
+ }
 
-  Future<void> restoreFromBackup(String backupPath) async {
-    await clearAllData();
-    await importData(backupPath);
-  }
+ Future<void> restoreFromBackup(String backupPath) async {
+ await clearAllData();
+ await importData(backupPath);
+ }
 
-  Future<void> clearAllData() async {
-    if (_preferences != null) {
-      await _preferences!.clear();
-    }
-    
-    for (final box in _hiveBoxes.values) {
-      await box.clear();
-    }
-  }
+ Future<void> clearAllData() async {
+ if (_preferences != null) {
+ await _preferences!.clear();
+ }
+ 
+ for (final box in _hiveBoxes.values) {
+ await box.clear();
+ }
+ }
 
-  Future<int> getStorageSize() async {
-    int totalSize = 0;
-    
-    final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
-    final entities = await DesktopFileSystemService.instance.listDirectory(
-      appDir.path,
-      recursive: true,
-    );
-    
-    for (final entity in entities) {
-      if (entity is File) {
-        totalSize += await entity.length();
-      }
-    }
-    
-    return totalSize;
-  }
+ Future<int> getStorageSize() async {
+ int totalSize = 0;
+ 
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
+ final entities = await DesktopFileSystemService.instance.listDirectory(
+ appDir.path,
+ recursive: true,
+ );
+ 
+ for (final entity in entities) {
+ if (entity is File) {
+ totalSize += await entity.length();
+ }
+ }
+ 
+ return totalSize;
+ }
 
-  String formatStorageSize(int bytes) {
-    return DesktopFileSystemService.instance.formatFileSize(bytes);
-  }
+ String formatStorageSize(int bytes) {
+ return DesktopFileSystemService.instance.formatFileSize(bytes);
+ }
 
-  Future<Map<String, int>> getStorageBreakdown() async {
-    final breakdown = <String, int>{};
-    
-    final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
-    final directories = ['storage', 'agents', 'templates', 'logs', 'mcp_servers'];
-    
-    for (final dirName in directories) {
-      final dir = Directory(path.join(appDir.path, dirName));
-      if (await dir.exists()) {
-        int dirSize = 0;
-        await for (final entity in dir.list(recursive: true)) {
-          if (entity is File) {
-            dirSize += await entity.length();
-          }
-        }
-        breakdown[dirName] = dirSize;
-      }
-    }
-    
-    return breakdown;
-  }
+ Future<Map<String, int>> getStorageBreakdown() async {
+ final breakdown = <String, int>{};
+ 
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
+ final directories = ['storage', 'agents', 'templates', 'logs', 'mcp_servers'];
+ 
+ for (final dirName in directories) {
+ final dir = Directory(path.join(appDir.path, dirName));
+ if (await dir.exists()) {
+ int dirSize = 0;
+ await for (final entity in dir.list(recursive: true)) {
+ if (entity is File) {
+ dirSize += await entity.length();
+ }
+ }
+ breakdown[dirName] = dirSize;
+ }
+ }
+ 
+ return breakdown;
+ }
 
-  Future<void> cleanupOldData({int maxAgeInDays = 30}) async {
-    final cutoffDate = DateTime.now().subtract(Duration(days: maxAgeInDays));
-    
-    final cacheBox = _hiveBoxes['cache'];
-    if (cacheBox != null) {
-      final keysToDelete = <String>[];
-      
-      for (final key in cacheBox.keys) {
-        final data = cacheBox.get(key);
-        if (data is Map && data.containsKey('timestamp')) {
-          final timestamp = DateTime.fromMillisecondsSinceEpoch(data['timestamp'] as int);
-          if (timestamp.isBefore(cutoffDate)) {
-            keysToDelete.add(key.toString());
-          }
-        }
-      }
-      
-      for (final key in keysToDelete) {
-        await cacheBox.delete(key);
-      }
-    }
-    
-    final backupsDir = path.join(
-      (await getApplicationDocumentsDirectory()).path,
-      'AgentEngine',
-      'backups',
-    );
-    
-    if (await Directory(backupsDir).exists()) {
-      final backupFiles = await Directory(backupsDir).list().toList();
-      
-      for (final file in backupFiles) {
-        if (file is File) {
-          final stat = await file.stat();
-          if (stat.modified.isBefore(cutoffDate)) {
-            await file.delete();
-          }
-        }
-      }
-    }
-  }
+ Future<void> cleanupOldData({int maxAgeInDays = 30}) async {
+ final cutoffDate = DateTime.now().subtract(Duration(days: maxAgeInDays));
+ 
+ final cacheBox = _hiveBoxes['cache'];
+ if (cacheBox != null) {
+ final keysToDelete = <String>[];
+ 
+ for (final key in cacheBox.keys) {
+ final data = cacheBox.get(key);
+ if (data is Map && data.containsKey('timestamp')) {
+ final timestamp = DateTime.fromMillisecondsSinceEpoch(data['timestamp'] as int);
+ if (timestamp.isBefore(cutoffDate)) {
+ keysToDelete.add(key.toString());
+ }
+ }
+ }
+ 
+ for (final key in keysToDelete) {
+ await cacheBox.delete(key);
+ }
+ }
+ 
+ final backupsDir = path.join(
+ (await getApplicationDocumentsDirectory()).path,
+ 'AgentEngine',
+ 'backups',
+ );
+ 
+ if (await Directory(backupsDir).exists()) {
+ final backupFiles = await Directory(backupsDir).list().toList();
+ 
+ for (final file in backupFiles) {
+ if (file is File) {
+ final stat = await file.stat();
+ if (stat.modified.isBefore(cutoffDate)) {
+ await file.delete();
+ }
+ }
+ }
+ }
+ }
 
-  Future<bool> isHealthy() async {
-    try {
-      if (_preferences == null) return false;
-      
-      for (final box in _hiveBoxes.values) {
-        if (!box.isOpen) return false;
-      }
-      
-      final testKey = '_health_check_${DateTime.now().millisecondsSinceEpoch}';
-      await setPreference(testKey, 'test');
-      final testValue = getPreference<String>(testKey);
-      await removePreference(testKey);
-      
-      return testValue == 'test';
-    } catch (e) {
-      return false;
-    }
-  }
+ Future<bool> isHealthy() async {
+ try {
+ if (_preferences == null) return false;
+ 
+ for (final box in _hiveBoxes.values) {
+ if (!box.isOpen) return false;
+ }
+ 
+ final testKey = '_health_check_${DateTime.now().millisecondsSinceEpoch}';
+ await setPreference(testKey, 'test');
+ final testValue = getPreference<String>(testKey);
+ await removePreference(testKey);
+ 
+ return testValue == 'test';
+ } catch (e) {
+ return false;
+ }
+ }
 
-  Future<void> compactStorage() async {
-    for (final box in _hiveBoxes.values) {
-      await box.compact();
-    }
-  }
+ Future<void> compactStorage() async {
+ for (final box in _hiveBoxes.values) {
+ await box.compact();
+ }
+ }
 
-  void dispose() {
-    for (final box in _hiveBoxes.values) {
-      box.close();
-    }
-    _hiveBoxes.clear();
-  }
+ void dispose() {
+ for (final box in _hiveBoxes.values) {
+ box.close();
+ }
+ _hiveBoxes.clear();
+ }
 
-  Future<void> saveAgentData(String agentId, Map<String, dynamic> data) async {
-    await setHiveData('agents', agentId, data);
-  }
+ Future<void> saveAgentData(String agentId, Map<String, dynamic> data) async {
+ await setHiveData('agents', agentId, data);
+ }
 
-  Map<String, dynamic>? getAgentData(String agentId) {
-    return getHiveData<Map<String, dynamic>>('agents', agentId);
-  }
+ Map<String, dynamic>? getAgentData(String agentId) {
+ return getHiveData<Map<String, dynamic>>('agents', agentId);
+ }
 
-  Future<void> deleteAgentData(String agentId) async {
-    await removeHiveData('agents', agentId);
-  }
+ Future<void> deleteAgentData(String agentId) async {
+ await removeHiveData('agents', agentId);
+ }
 
-  List<String> getAllAgentIds() {
-    return getHiveKeys('agents');
-  }
+ List<String> getAllAgentIds() {
+ return getHiveKeys('agents');
+ }
 
-  Future<void> saveConversationData(String conversationId, Map<String, dynamic> data) async {
-    await setHiveData('conversations', conversationId, data);
-  }
+ Future<void> saveConversationData(String conversationId, Map<String, dynamic> data) async {
+ await setHiveData('conversations', conversationId, data);
+ }
 
-  Map<String, dynamic>? getConversationData(String conversationId) {
-    return getHiveData<Map<String, dynamic>>('conversations', conversationId);
-  }
+ Map<String, dynamic>? getConversationData(String conversationId) {
+ return getHiveData<Map<String, dynamic>>('conversations', conversationId);
+ }
 
-  Future<void> deleteConversationData(String conversationId) async {
-    await removeHiveData('conversations', conversationId);
-  }
+ Future<void> deleteConversationData(String conversationId) async {
+ await removeHiveData('conversations', conversationId);
+ }
 
-  List<String> getAllConversationIds() {
-    return getHiveKeys('conversations');
-  }
+ List<String> getAllConversationIds() {
+ return getHiveKeys('conversations');
+ }
 
-  Future<void> cacheTemplate(String templateId, Map<String, dynamic> template) async {
-    await setHiveData('templates', templateId, template);
-  }
+ Future<void> cacheTemplate(String templateId, Map<String, dynamic> template) async {
+ await setHiveData('templates', templateId, template);
+ }
 
-  Map<String, dynamic>? getCachedTemplate(String templateId) {
-    return getHiveData<Map<String, dynamic>>('templates', templateId);
-  }
+ Map<String, dynamic>? getCachedTemplate(String templateId) {
+ return getHiveData<Map<String, dynamic>>('templates', templateId);
+ }
 
-  Future<void> clearTemplateCache() async {
-    await clearHiveBox('templates');
-  }
+ Future<void> clearTemplateCache() async {
+ await clearHiveBox('templates');
+ }
 
-  List<String> getAllCachedTemplateIds() {
-    return getHiveKeys('templates');
-  }
+ List<String> getAllCachedTemplateIds() {
+ return getHiveKeys('templates');
+ }
 }

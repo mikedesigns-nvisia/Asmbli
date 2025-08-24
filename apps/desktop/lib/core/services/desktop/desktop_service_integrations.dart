@@ -12,10 +12,10 @@ import 'package:agent_engine_core/models/agent.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 
 class DesktopAgentService implements AgentService {
-  // Implementation will be added when core package is available
+ // Implementation will be added when core package is available
 }
 
 class DesktopConversationService implements ConversationService {
-  // Implementation will be added when core package is available
+ // Implementation will be added when core package is available
 }
 */

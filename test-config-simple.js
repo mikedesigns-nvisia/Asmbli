@@ -1,5 +1,5 @@
 // Simple test of configuration generation
-console.log('Testing MVP Configuration Generation...');
+// Console output removed for production
 
 // Test data that matches MVP wizard structure
 const testData = {
@@ -13,7 +13,7 @@ const testData = {
   extractedConstraints: []
 };
 
-console.log('Test data:', testData);
+// Console output removed for production
 
 // Check MVP detection logic
 const isMVPData = testData && 
@@ -21,9 +21,9 @@ const isMVPData = testData &&
                  (testData.tools) && 
                  !testData.extensions;
 
-console.log('MVP detection:', isMVPData);
+// Console output removed for production
 
 // This is what the browser would do
-console.log('✅ MVP Configuration test data is properly structured for detection');
-console.log('Data will be routed to generateMVPConfigurations() function');
-console.log('Expected output: JSON configs for lm-studio, ollama, vs-code + setup guides');
+// Console output removed for production
+// Console output removed for production
+// Console output removed for production

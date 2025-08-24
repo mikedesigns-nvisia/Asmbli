@@ -34,7 +34,7 @@ export const handler: Handler = async (event, context) => {
       };
     }
 
-    console.log('Setting up database schema...');
+    // Console output removed for production
 
     // Create migrations table first
     await sql`
@@ -51,7 +51,7 @@ export const handler: Handler = async (event, context) => {
     `;
 
     if (!initialMigration) {
-      console.log('Running initial schema migration...');
+      // Console output removed for production
       
       // Initial schema
       await sql`
@@ -114,7 +114,7 @@ export const handler: Handler = async (event, context) => {
 
       // Record migration
       await sql`INSERT INTO migrations (name) VALUES ('001_initial_schema.sql')`;
-      console.log('✓ Initial schema migration completed');
+      // Console output removed for production
     }
 
     // Check if enhanced schema has been run
@@ -123,7 +123,7 @@ export const handler: Handler = async (event, context) => {
     `;
 
     if (!enhancedMigration) {
-      console.log('Running enhanced template schema migration...');
+      // Console output removed for production
       
       // Enhanced template schema
       await sql`
@@ -201,7 +201,7 @@ export const handler: Handler = async (event, context) => {
 
       // Record migration
       await sql`INSERT INTO migrations (name) VALUES ('002_enhanced_template_schema.sql')`;
-      console.log('✓ Enhanced template schema migration completed');
+      // Console output removed for production
     }
 
     // Get final status
@@ -224,7 +224,7 @@ export const handler: Handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('Database setup error:', error);
+    // Console output removed for production
     
     return {
       statusCode: 500,

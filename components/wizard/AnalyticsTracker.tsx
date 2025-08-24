@@ -77,7 +77,7 @@ class AnalyticsService {
         }
       }
     } catch (error) {
-      console.warn('Failed to load analytics data:', error);
+      // Console output removed for production
     }
   }
 
@@ -88,7 +88,7 @@ class AnalyticsService {
       localStorage.setItem('wizard_analytics', JSON.stringify(this.wizardData));
       localStorage.setItem('analytics_events', JSON.stringify(this.events));
     } catch (error) {
-      console.warn('Failed to save analytics data:', error);
+      // Console output removed for production
     }
   }
 
@@ -298,7 +298,7 @@ class AnalyticsService {
       };
 
       // In a real app, you'd send this to your analytics endpoint
-      console.log('Analytics data (would be sent to server):', aggregatedData);
+      // Console output removed for production
       
       // Store locally for potential later sync
       const existingData = JSON.parse(localStorage.getItem('analytics_queue') || '[]');
@@ -306,7 +306,7 @@ class AnalyticsService {
       localStorage.setItem('analytics_queue', JSON.stringify(existingData));
 
     } catch (error) {
-      console.warn('Failed to send analytics data:', error);
+      // Console output removed for production
     }
   }
 

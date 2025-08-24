@@ -68,12 +68,12 @@ export function BetaLandingPage({ onGetStarted, onViewTemplates }: BetaLandingPa
         // Store beta signup email for potential auto-login
         localStorage.setItem('beta_signup_email', email);
       } else {
-        console.error('Beta signup failed');
+        // Console output removed for production
         // Still show success to user for better UX
         setIsSubmitted(true);
       }
     } catch (error) {
-      console.error('Beta signup error:', error);
+      // Console output removed for production
       // Still show success to user for better UX
       setIsSubmitted(true);
     } finally {

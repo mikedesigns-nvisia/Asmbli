@@ -90,7 +90,7 @@ export function ShareExportSystem({ wizardData, className = '' }: ShareExportPro
 
       return shareUrl;
     } catch (error) {
-      console.error('Failed to generate shareable link:', error);
+      // Console output removed for production
       toast.error('Failed to generate shareable link');
       return '';
     }
@@ -161,7 +161,7 @@ export function ShareExportSystem({ wizardData, className = '' }: ShareExportPro
 
       toast.success('ChatMCP agent package downloaded successfully!');
     } catch (error) {
-      console.error('ChatMCP export failed:', error);
+      // Console output removed for production
       toast.error('Failed to create ChatMCP package');
     } finally {
       setIsGenerating(false);

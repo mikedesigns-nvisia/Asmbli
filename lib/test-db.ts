@@ -6,54 +6,54 @@
 import { Database } from './database';
 
 async function testDatabaseConnection() {
-  console.log('🔌 Testing Neon database connection...');
+  // Console output removed for production
   
   try {
     // Test 1: Basic key-value store operations
-    console.log('\n📝 Testing key-value store...');
+    // Console output removed for production
     
     const testKey = 'test_connection';
     const testValue = { timestamp: new Date().toISOString(), message: 'Hello from asmbli!' };
     
     await Database.set(testKey, testValue);
-    console.log('✅ Set operation successful');
+    // Console output removed for production
     
     const retrievedValue = await Database.get(testKey);
-    console.log('✅ Get operation successful:', retrievedValue);
+    // Console output removed for production
     
     await Database.delete(testKey);
-    console.log('✅ Delete operation successful');
+    // Console output removed for production
     
     // Test 2: User operations (if tables exist)
     try {
-      console.log('\n👤 Testing user operations...');
+      // Console output removed for production
       
       const testUser = await Database.createUser(
         'test@asmbli.com',
         'Test User',
         'beginner'
       );
-      console.log('✅ User creation successful:', testUser);
+      // Console output removed for production
       
       const retrievedUser = await Database.getUserById(testUser.id);
-      console.log('✅ User retrieval successful:', retrievedUser);
+      // Console output removed for production
       
       // Clean up test user
       // Note: You might want to add a delete user method for testing
       
     } catch (error) {
-      console.log('ℹ️  User operations test skipped (tables may not exist yet)');
-      console.log('   Run migrations first: npm run migrate');
+      // Console output removed for production
+      // Console output removed for production
     }
     
-    console.log('\n✅ Database connection test completed successfully!');
+    // Console output removed for production
     
   } catch (error) {
-    console.error('\n❌ Database connection test failed:', error);
-    console.log('\nTroubleshooting:');
-    console.log('1. Make sure NETLIFY_DATABASE_URL is set in your environment');
-    console.log('2. Verify your database is accessible');
-    console.log('3. Run migrations: npm run migrate');
+    // Console output removed for production
+    // Console output removed for production
+    // Console output removed for production
+    // Console output removed for production
+    // Console output removed for production
     throw error;
   }
 }
@@ -62,11 +62,11 @@ async function testDatabaseConnection() {
 if (process.argv[1].endsWith('test-db.ts') || process.argv[1].endsWith('test-db.js')) {
   testDatabaseConnection()
     .then(() => {
-      console.log('\n🎉 All tests passed!');
+      // Console output removed for production
       process.exit(0);
     })
     .catch(() => {
-      console.log('\n💥 Tests failed!');
+      // Console output removed for production
       process.exit(1);
     });
 }

@@ -173,7 +173,7 @@ export class ChatMCPBridge {
         usedServers.push(serverId)
         metadata[serverId] = result
       } catch (error) {
-        console.warn(`Failed to process message with ${serverId}:`, error)
+        // Console output removed for production
       }
     }
 
@@ -186,7 +186,7 @@ export class ChatMCPBridge {
 
   async injectContext(context: { filename: string; content: string }[]): Promise<void> {
     // In production, this would inject document context into the MCP session
-    console.log('Injecting context:', context.map(c => c.filename))
+    // Console output removed for production
   }
 
   async streamResponse(

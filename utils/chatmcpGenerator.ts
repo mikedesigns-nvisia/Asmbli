@@ -194,7 +194,7 @@ const EXTENSION_TO_MCP_MAPPING: Record<string, {
  * Handles both MVP and Enterprise wizard data
  */
 export function generateChatMCPConfigs(wizardData: WizardData | MVPWizardData): Record<string, string> {
-  console.log('🚀 Generating ChatMCP configurations...');
+  // Console output removed for production
   
   const configs: Record<string, string> = {};
   
@@ -202,14 +202,14 @@ export function generateChatMCPConfigs(wizardData: WizardData | MVPWizardData): 
   const isMVPData = detectMVPData(wizardData);
   
   if (isMVPData) {
-    console.log('📱 MVP Wizard detected - generating simplified ChatMCP config');
+    // Console output removed for production
     const chatmcpConfig = generateMVPChatMCPConfig(wizardData as MVPWizardData);
     configs['chatmcp-config.json'] = JSON.stringify(chatmcpConfig, null, 2);
     configs['chatmcp-setup.md'] = generateChatMCPSetupGuide(chatmcpConfig, 'mvp');
     configs['install-chatmcp.sh'] = generateChatMCPInstaller(chatmcpConfig, 'unix');
     configs['install-chatmcp.bat'] = generateChatMCPInstaller(chatmcpConfig, 'windows');
   } else {
-    console.log('🏢 Enterprise Wizard detected - generating full ChatMCP config');
+    // Console output removed for production
     const chatmcpConfig = generateEnterpriseChatMCPConfig(wizardData as WizardData);
     configs['chatmcp-config.json'] = JSON.stringify(chatmcpConfig, null, 2);
     configs['chatmcp-setup.md'] = generateChatMCPSetupGuide(chatmcpConfig, 'enterprise');
@@ -220,7 +220,7 @@ export function generateChatMCPConfigs(wizardData: WizardData | MVPWizardData): 
   // Add environment variables guide
   configs['environment-setup.md'] = generateEnvironmentGuide(configs['chatmcp-config.json']);
   
-  console.log('✅ ChatMCP configuration generation complete');
+  // Console output removed for production
   return configs;
 }
 
@@ -514,6 +514,6 @@ You can also configure these directly in ChatMCP's settings interface.
 
 // Legacy compatibility - redirect old function calls to new ChatMCP generator
 export function generateDeploymentConfigs(wizardData: WizardData | MVPWizardData, promptOutput?: string): Record<string, string> {
-  console.log('🔄 Legacy deployment generator called - redirecting to ChatMCP generator');
+  // Console output removed for production
   return generateChatMCPConfigs(wizardData);
 }

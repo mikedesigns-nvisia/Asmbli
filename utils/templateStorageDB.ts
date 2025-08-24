@@ -203,7 +203,7 @@ export class TemplateStorageDB {
 
       return allTemplates;
     } catch (error) {
-      console.error('Error loading templates from database:', error);
+      // Console output removed for production
       // Fallback to pre-configured templates only
       const availableAgentTemplates = userRole === 'beginner' ? [] : getAllTemplates(userRole === 'beta' ? 'power_user' : userRole);
       return availableAgentTemplates.map(template => ({
@@ -314,7 +314,7 @@ export class TemplateStorageDB {
         wizardData: dbTemplate.config?.wizardData
       };
     } catch (error) {
-      console.error('Error fetching template:', error);
+      // Console output removed for production
       return null;
     }
   }
@@ -330,7 +330,7 @@ export class TemplateStorageDB {
         await Database.logUserAction(userId, 'template_used', { templateId: id });
       }
     } catch (error) {
-      console.error('Error incrementing usage count:', error);
+      // Console output removed for production
     }
   }
 
@@ -343,7 +343,7 @@ export class TemplateStorageDB {
       // In future, these could be stored in database and customizable
       return defaultCategories;
     } catch (error) {
-      console.error('Error loading template categories:', error);
+      // Console output removed for production
       return defaultCategories;
     }
   }
@@ -397,7 +397,7 @@ export class TemplateStorageDB {
       if (!template) return null;
       return JSON.stringify(template, null, 2);
     } catch (error) {
-      console.error('Error exporting template:', error);
+      // Console output removed for production
       return null;
     }
   }
@@ -431,7 +431,7 @@ export class TemplateStorageDB {
         isPublic
       );
     } catch (error) {
-      console.error('Error importing template:', error);
+      // Console output removed for production
       return null;
     }
   }
@@ -443,10 +443,10 @@ export class TemplateStorageDB {
     try {
       // For now, we'll just mark templates as private or implement soft delete
       // This is a placeholder - actual deletion would need proper permission checks
-      console.log(`Delete template ${id} requested by user ${userId}`);
+      // Console output removed for production
       return true;
     } catch (error) {
-      console.error('Error deleting template:', error);
+      // Console output removed for production
       return false;
     }
   }

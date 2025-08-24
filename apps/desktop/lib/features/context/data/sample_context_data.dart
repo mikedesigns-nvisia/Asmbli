@@ -3,31 +3,31 @@ import 'models/context_document.dart';
 import 'package:flutter/material.dart';
 
 class SampleContextData {
-  static List<SampleContext> getAllSamples() {
-    return [
-      // Development Category
-      ...getDevelopmentSamples(),
-      
-      // Business Category  
-      ...getBusinessSamples(),
-      
-      // Research Category
-      ...getResearchSamples(),
-      
-      // Documentation Category
-      ...getDocumentationSamples(),
-      
-      // Templates Category
-      ...getTemplateSamples(),
-    ];
-  }
+ static List<SampleContext> getAllSamples() {
+ return [
+ // Development Category
+ ...getDevelopmentSamples(),
+ 
+ // Business Category 
+ ...getBusinessSamples(),
+ 
+ // Research Category
+ ...getResearchSamples(),
+ 
+ // Documentation Category
+ ...getDocumentationSamples(),
+ 
+ // Templates Category
+ ...getTemplateSamples(),
+ ];
+ }
 
-  static List<SampleContext> getDevelopmentSamples() {
-    return [
-      SampleContext(
-        title: 'API Best Practices',
-        description: 'REST API design principles and standards',
-        content: '''# REST API Best Practices
+ static List<SampleContext> getDevelopmentSamples() {
+ return [
+ SampleContext(
+ title: 'API Best Practices',
+ description: 'REST API design principles and standards',
+ content: '''# REST API Best Practices
 
 ## Design Principles
 - Use HTTP methods appropriately (GET, POST, PUT, DELETE)
@@ -46,118 +46,118 @@ class SampleContextData {
 ## Response Format
 ```json
 {
-  "success": true,
-  "data": {...},
-  "message": "Operation completed successfully",
-  "timestamp": "2024-01-01T00:00:00Z"
+ "success": true,
+ "data": {...},
+ "message": "Operation completed successfully",
+ "timestamp": "2024-01-01T00:00:00Z"
 }
 ```
 
 ## Error Handling
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid input provided",
-    "details": {...}
-  },
-  "timestamp": "2024-01-01T00:00:00Z"
+ "success": false,
+ "error": {
+ "code": "VALIDATION_ERROR",
+ "message": "Invalid input provided",
+ "details": {...}
+ },
+ "timestamp": "2024-01-01T00:00:00Z"
 }
 ```''',
-        contextType: ContextType.guidelines,
-        category: ContextHubCategory.development,
-        tags: ['api', 'rest', 'guidelines', 'backend'],
-        icon: Icons.api,
-      ),
-      
-      SampleContext(
-        title: 'React Component Patterns',
-        description: 'Modern React patterns and best practices',
-        content: '''# React Component Patterns
+ contextType: ContextType.guidelines,
+ category: ContextHubCategory.development,
+ tags: ['api', 'rest', 'guidelines', 'backend'],
+ icon: Icons.api,
+ ),
+ 
+ SampleContext(
+ title: 'React Component Patterns',
+ description: 'Modern React patterns and best practices',
+ content: '''# React Component Patterns
 
 ## Functional Components with Hooks
 ```jsx
 import React, { useState, useEffect, useCallback } from 'react';
 
 const UserProfile = ({ userId }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  
-  const fetchUser = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/users/{userId}`);
-      const userData = await response.json();
-      setUser(userData);
-    } catch (error) {
-      console.error('Failed to fetch user:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
-  
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-  
-  if (loading) return <LoadingSpinner />;
-  if (!user) return <ErrorMessage />;
-  
-  return (
-    <div className="user-profile">
-      <h1>{user.name}</h1>
-      <p>{user.email}</p>
-    </div>
-  );
+ const [user, setUser] = useState(null);
+ const [loading, setLoading] = useState(true);
+ 
+ const fetchUser = useCallback(async () => {
+ try {
+ setLoading(true);
+ const response = await fetch(`/api/users/{userId}`);
+ const userData = await response.json();
+ setUser(userData);
+ } catch (error) {
+ console.error('Failed to fetch user:', error);
+ } finally {
+ setLoading(false);
+ }
+ }, [userId]);
+ 
+ useEffect(() => {
+ fetchUser();
+ }, [fetchUser]);
+ 
+ if (loading) return <LoadingSpinner />;
+ if (!user) return <ErrorMessage />;
+ 
+ return (
+ <div className="user-profile">
+ <h1>{user.name}</h1>
+ <p>{user.email}</p>
+ </div>
+ );
 };
 ```
 
 ## Custom Hooks Pattern
 ```jsx
 const useApi = (url) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    fetch(url)
-      .then(res => res.json())
-      .then(setData)
-      .catch(setError)
-      .finally(() => setLoading(false));
-  }, [url]);
-  
-  return { data, loading, error };
+ const [data, setData] = useState(null);
+ const [loading, setLoading] = useState(true);
+ const [error, setError] = useState(null);
+ 
+ useEffect(() => {
+ fetch(url)
+ .then(res => res.json())
+ .then(setData)
+ .catch(setError)
+ .finally(() => setLoading(false));
+ }, [url]);
+ 
+ return { data, loading, error };
 };
 ```
 
 ## Component Composition
 ```jsx
 const Card = ({ children, className }) => (
-  <div className={`card \${className}`}>
-    {children}
-  </div>
+ <div className={`card \${className}`}>
+ {children}
+ </div>
 );
 
 const CardHeader = ({ children }) => (
-  <div className="card-header">{children}</div>
+ <div className="card-header">{children}</div>
 );
 
 const CardBody = ({ children }) => (
-  <div className="card-body">{children}</div>
+ <div className="card-body">{children}</div>
 );
 ```''',
-        contextType: ContextType.examples,
-        category: ContextHubCategory.development,
-        tags: ['react', 'javascript', 'frontend', 'patterns'],
-        icon: Icons.widgets,
-      ),
-      
-      SampleContext(
-        title: 'Database Schema Design',
-        description: 'SQL database design principles and normalization',
-        content: '''# Database Schema Design
+ contextType: ContextType.examples,
+ category: ContextHubCategory.development,
+ tags: ['react', 'javascript', 'frontend', 'patterns'],
+ icon: Icons.widgets,
+ ),
+ 
+ SampleContext(
+ title: 'Database Schema Design',
+ description: 'SQL database design principles and normalization',
+ content: '''# Database Schema Design
 
 ## Normalization Rules
 - **1NF**: Eliminate duplicate columns from the same table
@@ -168,33 +168,33 @@ const CardBody = ({ children }) => (
 ```sql
 -- Users table
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+ id SERIAL PRIMARY KEY,
+ email VARCHAR(255) UNIQUE NOT NULL,
+ username VARCHAR(50) UNIQUE NOT NULL,
+ password_hash VARCHAR(255) NOT NULL,
+ created_at TIMESTAMP DEFAULT NOW(),
+ updated_at TIMESTAMP DEFAULT NOW()
 );
 
 -- Profiles table (1:1 relationship)
 CREATE TABLE profiles (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    bio TEXT,
-    avatar_url VARCHAR(500)
+ id SERIAL PRIMARY KEY,
+ user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+ first_name VARCHAR(100),
+ last_name VARCHAR(100),
+ bio TEXT,
+ avatar_url VARCHAR(500)
 );
 
 -- Posts table (1:many relationship)
 CREATE TABLE posts (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    title VARCHAR(255) NOT NULL,
-    content TEXT,
-    status VARCHAR(20) DEFAULT 'draft',
-    published_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT NOW()
+ id SERIAL PRIMARY KEY,
+ user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+ title VARCHAR(255) NOT NULL,
+ content TEXT,
+ status VARCHAR(20) DEFAULT 'draft',
+ published_at TIMESTAMP,
+ created_at TIMESTAMP DEFAULT NOW()
 );
 ```
 
@@ -216,20 +216,20 @@ CREATE INDEX idx_posts_user_status ON posts(user_id, status);
 - Index frequently queried columns
 - Normalize data but consider denormalization for performance
 - Use appropriate data types and lengths''',
-        contextType: ContextType.guidelines,
-        category: ContextHubCategory.development,
-        tags: ['database', 'sql', 'schema', 'design'],
-        icon: Icons.storage,
-      ),
-    ];
-  }
+ contextType: ContextType.guidelines,
+ category: ContextHubCategory.development,
+ tags: ['database', 'sql', 'schema', 'design'],
+ icon: Icons.storage,
+ ),
+ ];
+ }
 
-  static List<SampleContext> getBusinessSamples() {
-    return [
-      SampleContext(
-        title: 'Product Requirements Template',
-        description: 'Structured template for product requirements documentation',
-        content: '''# Product Requirements Document (PRD)
+ static List<SampleContext> getBusinessSamples() {
+ return [
+ SampleContext(
+ title: 'Product Requirements Template',
+ description: 'Structured template for product requirements documentation',
+ content: '''# Product Requirements Document (PRD)
 
 ## Executive Summary
 Brief overview of the product, its purpose, and key benefits.
@@ -259,8 +259,8 @@ Brief overview of the product, its purpose, and key benefits.
 ### Epic 1: [Epic Name]
 - **As a** [user type], **I want** [functionality] **so that** [benefit]
 - **Acceptance Criteria**:
-  - [ ] Criterion 1
-  - [ ] Criterion 2
+ - [ ] Criterion 1
+ - [ ] Criterion 2
 
 ## Technical Requirements
 ### Performance
@@ -283,16 +283,16 @@ Brief overview of the product, its purpose, and key benefits.
 - **Design**: 1 designer
 - **QA**: 1 tester
 - **PM**: 1 product manager''',
-        contextType: ContextType.documentation,
-        category: ContextHubCategory.business,
-        tags: ['prd', 'product', 'requirements', 'planning'],
-        icon: Icons.assignment,
-      ),
-      
-      SampleContext(
-        title: 'Meeting Notes Template',
-        description: 'Structured format for capturing meeting discussions and action items',
-        content: '''# Meeting Notes Template
+ contextType: ContextType.documentation,
+ category: ContextHubCategory.business,
+ tags: ['prd', 'product', 'requirements', 'planning'],
+ icon: Icons.assignment,
+ ),
+ 
+ SampleContext(
+ title: 'Meeting Notes Template',
+ description: 'Structured format for capturing meeting discussions and action items',
+ content: '''# Meeting Notes Template
 
 ## Meeting Details
 **Date**: [Date]
@@ -340,20 +340,20 @@ Brief overview of the product, its purpose, and key benefits.
 **Agenda Items**:
 - Follow up on action items
 - [Additional agenda items]''',
-        contextType: ContextType.custom,
-        category: ContextHubCategory.business,
-        tags: ['meetings', 'notes', 'collaboration', 'template'],
-        icon: Icons.event_note,
-      ),
-    ];
-  }
+ contextType: ContextType.custom,
+ category: ContextHubCategory.business,
+ tags: ['meetings', 'notes', 'collaboration', 'template'],
+ icon: Icons.event_note,
+ ),
+ ];
+ }
 
-  static List<SampleContext> getResearchSamples() {
-    return [
-      SampleContext(
-        title: 'User Research Methods',
-        description: 'Guide to various user research methodologies and when to use them',
-        content: '''# User Research Methods Guide
+ static List<SampleContext> getResearchSamples() {
+ return [
+ SampleContext(
+ title: 'User Research Methods',
+ description: 'Guide to various user research methodologies and when to use them',
+ content: '''# User Research Methods Guide
 
 ## Quantitative Methods
 
@@ -424,20 +424,20 @@ Brief overview of the product, its purpose, and key benefits.
 ### Success Metrics
 - **Qualitative**: [Insights, themes, pain points identified]
 - **Quantitative**: [Statistical significance, sample size reached]''',
-        contextType: ContextType.knowledge,
-        category: ContextHubCategory.research,
-        tags: ['research', 'user-research', 'methodology', 'ux'],
-        icon: Icons.psychology,
-      ),
-    ];
-  }
+ contextType: ContextType.knowledge,
+ category: ContextHubCategory.research,
+ tags: ['research', 'user-research', 'methodology', 'ux'],
+ icon: Icons.psychology,
+ ),
+ ];
+ }
 
-  static List<SampleContext> getDocumentationSamples() {
-    return [
-      SampleContext(
-        title: 'API Documentation Template',
-        description: 'Complete template for documenting REST APIs',
-        content: '''# API Documentation Template
+ static List<SampleContext> getDocumentationSamples() {
+ return [
+ SampleContext(
+ title: 'API Documentation Template',
+ description: 'Complete template for documenting REST APIs',
+ content: '''# API Documentation Template
 
 ## Overview
 Brief description of what the API does and its main purpose.
@@ -448,7 +448,7 @@ Brief description of what the API does and its main purpose.
 ## Authentication
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \\
-     https://api.example.com/v1/endpoint
+ https://api.example.com/v1/endpoint
 ```
 
 ## Endpoints
@@ -464,30 +464,30 @@ Retrieve a list of users with optional filtering.
 **Example Request**:
 ```bash
 curl -X GET "https://api.example.com/v1/users?page=1&limit=10" \\
-     -H "Authorization: Bearer YOUR_TOKEN"
+ -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 **Example Response**:
 ```json
 {
-  "success": true,
-  "data": {
-    "users": [
-      {
-        "id": 123,
-        "email": "user@example.com",
-        "name": "John Doe",
-        "status": "active",
-        "created_at": "2024-01-01T00:00:00Z"
-      }
-    ],
-    "pagination": {
-      "current_page": 1,
-      "total_pages": 5,
-      "total_items": 47,
-      "items_per_page": 10
-    }
-  }
+ "success": true,
+ "data": {
+ "users": [
+ {
+ "id": 123,
+ "email": "user@example.com",
+ "name": "John Doe",
+ "status": "active",
+ "created_at": "2024-01-01T00:00:00Z"
+ }
+ ],
+ "pagination": {
+ "current_page": 1,
+ "total_pages": 5,
+ "total_items": 47,
+ "items_per_page": 10
+ }
+ }
 }
 ```
 
@@ -497,26 +497,26 @@ Create a new user account.
 **Request Body**:
 ```json
 {
-  "email": "user@example.com",
-  "name": "John Doe",
-  "password": "secure_password"
+ "email": "user@example.com",
+ "name": "John Doe",
+ "password": "secure_password"
 }
 ```
 
 **Example Response**:
 ```json
 {
-  "success": true,
-  "data": {
-    "user": {
-      "id": 124,
-      "email": "user@example.com",
-      "name": "John Doe",
-      "status": "active",
-      "created_at": "2024-01-01T00:00:00Z"
-    }
-  },
-  "message": "User created successfully"
+ "success": true,
+ "data": {
+ "user": {
+ "id": 124,
+ "email": "user@example.com",
+ "name": "John Doe",
+ "status": "active",
+ "created_at": "2024-01-01T00:00:00Z"
+ }
+ },
+ "message": "User created successfully"
 }
 ```
 
@@ -539,20 +539,20 @@ Create a new user account.
 - [JavaScript SDK](https://github.com/example/js-sdk)
 - [Python SDK](https://github.com/example/python-sdk)
 - [PHP SDK](https://github.com/example/php-sdk)''',
-        contextType: ContextType.documentation,
-        category: ContextHubCategory.documentation,
-        tags: ['api', 'documentation', 'rest', 'reference'],
-        icon: Icons.api,
-      ),
-    ];
-  }
+ contextType: ContextType.documentation,
+ category: ContextHubCategory.documentation,
+ tags: ['api', 'documentation', 'rest', 'reference'],
+ icon: Icons.api,
+ ),
+ ];
+ }
 
-  static List<SampleContext> getTemplateSamples() {
-    return [
-      SampleContext(
-        title: 'Bug Report Template',
-        description: 'Standardized template for reporting software bugs',
-        content: '''# Bug Report Template
+ static List<SampleContext> getTemplateSamples() {
+ return [
+ SampleContext(
+ title: 'Bug Report Template',
+ description: 'Standardized template for reporting software bugs',
+ content: '''# Bug Report Template
 
 ## Summary
 Brief, clear description of the issue in one sentence.
@@ -596,16 +596,16 @@ What actually happens. Be specific about error messages, unexpected behaviors, e
 
 ## Labels
 Add relevant labels: `bug`, `ui`, `performance`, `mobile`, etc.''',
-        contextType: ContextType.custom,
-        category: ContextHubCategory.templates,
-        tags: ['bug-report', 'template', 'qa', 'testing'],
-        icon: Icons.bug_report,
-      ),
-      
-      SampleContext(
-        title: 'Code Review Checklist',
-        description: 'Comprehensive checklist for code review process',
-        content: '''# Code Review Checklist
+ contextType: ContextType.custom,
+ category: ContextHubCategory.templates,
+ tags: ['bug-report', 'template', 'qa', 'testing'],
+ icon: Icons.bug_report,
+ ),
+ 
+ SampleContext(
+ title: 'Code Review Checklist',
+ description: 'Comprehensive checklist for code review process',
+ content: '''# Code Review Checklist
 
 ## Functionality
 - [ ] Code does what it's supposed to do
@@ -671,11 +671,11 @@ Add relevant labels: `bug`, `ui`, `performance`, `mobile`, etc.''',
 
 ## Reviewer Notes
 [Additional context, architectural concerns, or broader feedback]''',
-        contextType: ContextType.guidelines,
-        category: ContextHubCategory.templates,
-        tags: ['code-review', 'checklist', 'quality', 'process'],
-        icon: Icons.checklist,
-      ),
-    ];
-  }
+ contextType: ContextType.guidelines,
+ category: ContextHubCategory.templates,
+ tags: ['code-review', 'checklist', 'quality', 'process'],
+ icon: Icons.checklist,
+ ),
+ ];
+ }
 }

@@ -67,7 +67,7 @@ export const handler: Handler = async (event, context) => {
     }
 
   } catch (error) {
-    console.error('Migration error:', error);
+    // Console output removed for production
     
     return {
       statusCode: 500,

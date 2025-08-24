@@ -55,7 +55,7 @@ export function DataMigrationModal({
         setStep('migrate');
       }
     } catch (error) {
-      console.error('Backup failed:', error);
+      // Console output removed for production
     } finally {
       setIsProcessing(false);
     }
@@ -77,7 +77,7 @@ export function DataMigrationModal({
 
   const handleMigrate = async () => {
     if (!userId) {
-      console.error('User ID is required for migration');
+      // Console output removed for production
       return;
     }
 
@@ -92,7 +92,7 @@ export function DataMigrationModal({
         onMigrationComplete?.();
       }
     } catch (error) {
-      console.error('Migration failed:', error);
+      // Console output removed for production
     } finally {
       setIsProcessing(false);
     }

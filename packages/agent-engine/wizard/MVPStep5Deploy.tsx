@@ -87,9 +87,9 @@ export function MVPStep5Deploy({ wizardData, deployment, onDeploymentChange, onG
       setConfigState('generating');
       
       try {
-        console.log('MVPStep5Deploy: Generating ChatMCP configs...');
+        // Console output removed for production
         const configs = generateDeploymentConfigs(wizardData);
-        console.log('MVPStep5Deploy: Generated configs:', Object.keys(configs));
+        // Console output removed for production
         
         setGeneratedConfigs(configs);
         onDeploymentChange({
@@ -98,7 +98,7 @@ export function MVPStep5Deploy({ wizardData, deployment, onDeploymentChange, onG
         });
         setConfigState('ready');
       } catch (error) {
-        console.error('ChatMCP config generation failed:', error);
+        // Console output removed for production
         setConfigState('idle');
       }
     }

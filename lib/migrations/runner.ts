@@ -38,7 +38,7 @@ export class MigrationRunner {
         .sort();
       return files;
     } catch (error) {
-      console.error('Error reading migration files:', error);
+      // Console output removed for production
       return [];
     }
   }
@@ -60,8 +60,8 @@ export class MigrationRunner {
       try {
         await sql.unsafe(statement);
       } catch (error) {
-        console.error(`Error executing statement in ${filename}:`, error);
-        console.error('Statement:', statement);
+        // Console output removed for production
+        // Console output removed for production
         throw error;
       }
     }
@@ -71,7 +71,7 @@ export class MigrationRunner {
       INSERT INTO migrations (name) VALUES (${filename})
     `;
 
-    console.log(`✓ Executed migration: ${filename}`);
+    // Console output removed for production
   }
 
   /**
@@ -79,7 +79,7 @@ export class MigrationRunner {
    */
   static async runMigrations() {
     try {
-      console.log('Starting database migrations...');
+      // Console output removed for production
       
       // Ensure migrations table exists
       await this.ensureMigrationsTable();
@@ -91,7 +91,7 @@ export class MigrationRunner {
       const migrationFiles = this.getMigrationFiles();
 
       if (migrationFiles.length === 0) {
-        console.log('No migration files found.');
+        // Console output removed for production
         return;
       }
 
@@ -101,20 +101,20 @@ export class MigrationRunner {
       );
 
       if (pendingMigrations.length === 0) {
-        console.log('No pending migrations.');
+        // Console output removed for production
         return;
       }
 
-      console.log(`Found ${pendingMigrations.length} pending migration(s)`);
+      // Console output removed for production
 
       // Execute pending migrations
       for (const migration of pendingMigrations) {
         await this.executeMigration(migration);
       }
 
-      console.log('All migrations completed successfully!');
+      // Console output removed for production
     } catch (error) {
-      console.error('Migration failed:', error);
+      // Console output removed for production
       throw error;
     }
   }
@@ -156,10 +156,10 @@ export class MigrationRunner {
 
     try {
       fs.writeFileSync(filepath, template);
-      console.log(`Created migration file: ${filename}`);
+      // Console output removed for production
       return filename;
     } catch (error) {
-      console.error('Failed to create migration file:', error);
+      // Console output removed for production
       throw error;
     }
   }

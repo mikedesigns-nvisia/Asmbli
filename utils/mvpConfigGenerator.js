@@ -56,7 +56,7 @@ export function generateMVPConfigurations(mvpData) {
         return configs;
     }
     catch (error) {
-        console.error('Configuration generation failed:', error);
+        // Console output removed for production
         return generateFallbackConfigurations();
     }
 }

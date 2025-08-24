@@ -258,7 +258,7 @@ Remember: Your goal is to be genuinely helpful while maintaining high standards 
       setCopiedItem(itemType);
       setTimeout(() => setCopiedItem(null), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      // Console output removed for production
     }
   };
 

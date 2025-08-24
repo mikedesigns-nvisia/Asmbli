@@ -107,12 +107,12 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
   const { userExtensions, saveUserExtension, removeUserExtension, logExtensionUsage } = useUserExtensions();
   
   const [selectedExtensions, setSelectedExtensions] = useState<Extension[]>(() => {
-    console.log('Step2Extensions initializing with data:', data);
+    // Console output removed for production
     try {
       // Initialize with proper defaults for extensions that might not have all required fields
       return (data?.extensions || []).map(ext => {
         if (!ext || typeof ext !== 'object') {
-          console.warn('Invalid extension object:', ext);
+          // Console output removed for production
           return null;
         }
         return {
@@ -124,7 +124,7 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
         };
       }).filter(Boolean);
     } catch (error) {
-      console.error('Error initializing selectedExtensions:', error);
+      // Console output removed for production
       return [];
     }
   });
@@ -254,15 +254,15 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
   };
 
   const toggleExtension = async (extensionId: string, platform?: string) => {
-    console.log('toggleExtension called:', { extensionId, platform });
+    // Console output removed for production
     const extensionTemplate = availableExtensions.find(s => s.id === extensionId);
     if (!extensionTemplate) {
-      console.warn('Extension template not found:', extensionId);
+      // Console output removed for production
       return;
     }
 
     const existingIndex = selectedExtensions.findIndex(s => s.id === extensionId);
-    console.log('existingIndex:', existingIndex, 'current selections:', selectedExtensions.map(s => s.id));
+    // Console output removed for production
     let newExtensions: Extension[];
     let isAdding = false;
 
@@ -282,7 +282,7 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
           try {
             await removeUserExtension(extensionId);
           } catch (error) {
-            console.error('Failed to remove user extension:', error);
+            // Console output removed for production
           }
         } else {
           // Update platforms
@@ -305,7 +305,7 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
               configProgress: 25
             });
           } catch (error) {
-            console.error('Failed to update user extension:', error);
+            // Console output removed for production
           }
         }
       } else {
@@ -314,7 +314,7 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
         try {
           await removeUserExtension(extensionId);
         } catch (error) {
-          console.error('Failed to remove user extension:', error);
+          // Console output removed for production
         }
       }
     } else {
@@ -356,11 +356,11 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
           configProgress: 25
         });
       } catch (error) {
-        console.error('Failed to save user extension:', error);
+        // Console output removed for production
       }
     }
 
-    console.log('Setting new extensions:', newExtensions.map(e => ({ id: e.id, platforms: e.selectedPlatforms })));
+    // Console output removed for production
     setSelectedExtensions(newExtensions);
     onUpdate({ extensions: newExtensions });
 
@@ -372,7 +372,7 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
         { platform, role: user?.role }
       );
     } catch (error) {
-      console.error('Failed to log extension usage:', error);
+      // Console output removed for production
     }
   };
 
@@ -502,7 +502,7 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
   }
 
   if (!availableExtensions || availableExtensions.length === 0) {
-    console.error('No extensions available from database');
+    // Console output removed for production
     return (
       <div className="text-center py-12">
         <h3 className="font-medium mb-2">No Extensions Available</h3>
@@ -731,7 +731,7 @@ export const Step2Extensions = React.memo(function Step2Extensions({ data, onUpd
   );
   
   } catch (error) {
-    console.error('Critical error in Step2Extensions:', error);
+    // Console output removed for production
     return (
       <div className="text-center py-12">
         <h3 className="font-medium mb-2 text-red-500">Extension Step Error</h3>

@@ -18,34 +18,34 @@ async function main() {
     switch (command) {
       case 'status':
         const status = await getMigrationStatus();
-        console.log('\nMigration Status:');
-        console.log(`Total migrations: ${status.total}`);
-        console.log(`Executed: ${status.executed}`);
-        console.log(`Pending: ${status.pending}`);
+        // Console output removed for production
+        // Console output removed for production
+        // Console output removed for production
+        // Console output removed for production
         
         if (status.executedMigrations.length > 0) {
-          console.log('\nExecuted migrations:');
+          // Console output removed for production
           status.executedMigrations.forEach(migration => {
-            console.log(`  ✓ ${migration}`);
+            // Console output removed for production
           });
         }
         
         if (status.pendingMigrations.length > 0) {
-          console.log('\nPending migrations:');
+          // Console output removed for production
           status.pendingMigrations.forEach(migration => {
-            console.log(`  • ${migration}`);
+            // Console output removed for production
           });
         }
         break;
 
       case 'create':
         if (!args[0]) {
-          console.error('Please provide a migration name');
-          console.error('Usage: npm run migrate create <migration_name>');
+          // Console output removed for production
+          // Console output removed for production
           process.exit(1);
         }
         const filename = createMigration(args[0]);
-        console.log(`Created migration: ${filename}`);
+        // Console output removed for production
         break;
 
       case 'run':
@@ -55,12 +55,12 @@ async function main() {
         break;
 
       default:
-        console.error(`Unknown command: ${command}`);
-        console.error('Available commands: run (default), status, create');
+        // Console output removed for production
+        // Console output removed for production
         process.exit(1);
     }
   } catch (error) {
-    console.error('Migration error:', error);
+    // Console output removed for production
     process.exit(1);
   }
 }

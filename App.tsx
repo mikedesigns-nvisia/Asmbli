@@ -97,7 +97,7 @@ function AuthenticatedApp() {
   const [allTags, setAllTags] = useState<string[]>([]);
   
   // Use templateFiles to avoid unused variable warning
-  console.log('Template files:', templateFiles);
+  // Console output removed for production
 
   // Load categories and tags for template dialogs
   useEffect(() => {
@@ -110,7 +110,7 @@ function AuthenticatedApp() {
         setCategories(categoriesData);
         setAllTags(templatesData.flatMap(t => t.tags));
       } catch (error) {
-        console.error('Failed to load template data:', error);
+        // Console output removed for production
       }
     };
     
@@ -173,7 +173,7 @@ function AuthenticatedApp() {
       setCopiedItem(itemType);
       setTimeout(() => setCopiedItem(null), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      // Console output removed for production
     }
   };
 
@@ -268,7 +268,7 @@ function AuthenticatedApp() {
       await TemplateStorageAPI.saveTemplate(wizardData, templateInfo, user?.id);
       setShowSaveTemplateDialog(false);
     } catch (error) {
-      console.error('Failed to save template:', error);
+      // Console output removed for production
     }
   };
 

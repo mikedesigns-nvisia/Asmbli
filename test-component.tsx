@@ -34,9 +34,9 @@ export function ConfigurationTest() {
         results.push(`🔍 Debug: generateDeploymentConfigs exists = ${typeof generateDeploymentConfigs}`);
 
         try {
-          console.log('Test MVP Data:', testMVPData);
+          // Console output removed for production
           const configs = generateDeploymentConfigs(testMVPData);
-          console.log('Generated configs:', configs);
+          // Console output removed for production
           
           if (configs && typeof configs === 'object') {
             results.push('✅ Test 1: Standard MVP data - PASSED');
@@ -54,7 +54,7 @@ export function ConfigurationTest() {
           }
         } catch (genError) {
           results.push(`❌ Test 1: Config generation error: ${genError.message}`);
-          console.error('Configuration generation error:', genError);
+          // Console output removed for production
         }
         
         // Check key platforms

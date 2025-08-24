@@ -88,7 +88,7 @@ export const handler: Handler = async (event, context) => {
                 body: JSON.stringify({ templates: allTemplates }),
               };
             } catch (error) {
-              console.error('Error fetching templates:', error);
+              // Console output removed for production
               return {
                 statusCode: 200,
                 headers,
@@ -268,7 +268,7 @@ export const handler: Handler = async (event, context) => {
     }
 
   } catch (error) {
-    console.error('Templates API error:', error);
+    // Console output removed for production
     
     return {
       statusCode: 500,

@@ -86,7 +86,7 @@ Provider: ${provider}`
       body: streamResponse
     }
   } catch (error) {
-    console.error('Chat stream error:', error)
+    // Console output removed for production
     return {
       statusCode: 500,
       headers: { ...headers, 'Content-Type': 'application/json' },

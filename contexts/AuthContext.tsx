@@ -63,13 +63,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
               isLoading: false,
               error: null,
             });
-            console.log('🔧 Development Mode: Created default user', devUser);
+            // Development Mode: Created default user
           } else {
             setAuthState(prev => ({ ...prev, isLoading: false }));
           }
         }
       } catch (error) {
-        console.error('Error checking auth status:', error);
+        // Error checking auth status
         setAuthState(prev => ({ ...prev, isLoading: false, error: 'Failed to load user session' }));
       }
     };

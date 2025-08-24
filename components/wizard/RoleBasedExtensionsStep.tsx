@@ -22,7 +22,7 @@ export function RoleBasedExtensionsStep({ data, onUpdate, onNext, onPrev }: Role
   const { saveUserExtension } = useUserExtensions();
 
   if (!user) {
-    console.warn('No user found in RoleBasedExtensionsStep');
+    // Console output removed for production
     return (
       <div className="text-center py-12">
         <h3 className="font-medium mb-2">Loading User Data...</h3>
@@ -33,7 +33,7 @@ export function RoleBasedExtensionsStep({ data, onUpdate, onNext, onPrev }: Role
     );
   }
 
-  console.log('RoleBasedExtensionsStep rendering for user role:', user.role);
+  // Console output removed for production
 
   // Beginner users get basic pre-selected extensions
   if (user.role === 'beginner') {
@@ -81,7 +81,7 @@ export function RoleBasedExtensionsStep({ data, onUpdate, onNext, onPrev }: Role
               configProgress: 100
             });
           } catch (error) {
-            console.error('Failed to save beginner extension:', error);
+            // Console output removed for production
           }
         }
         

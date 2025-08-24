@@ -133,7 +133,7 @@ export function TemplatesPage({
         setTemplates(templatesData);
         setCategories(categoriesData);
       } catch (error) {
-        console.error('Failed to load templates:', error);
+        // Console output removed for production
       } finally {
         setLoading(false);
       }
@@ -201,7 +201,7 @@ export function TemplatesPage({
         onUseTemplate(template);
       }
     } catch (error) {
-      console.error('Failed to use template:', error);
+      // Console output removed for production
     }
   };
 
@@ -213,7 +213,7 @@ export function TemplatesPage({
         const updatedTemplates = await TemplateStorageAPI.getTemplates(userRole, user?.id);
         setTemplates(updatedTemplates);
       } catch (error) {
-        console.error('Failed to delete template:', error);
+        // Console output removed for production
       }
     }
   };
@@ -234,7 +234,7 @@ export function TemplatesPage({
         URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.error('Failed to export template:', error);
+      // Console output removed for production
     }
   };
 
@@ -253,7 +253,7 @@ export function TemplatesPage({
             alert('Failed to import template. Please check the file format.');
           }
         } catch (error) {
-          console.error('Failed to import template:', error);
+          // Console output removed for production
           alert('Failed to import template. Please check the file format.');
         }
       };
@@ -274,7 +274,7 @@ export function TemplatesPage({
         setTemplates(updatedTemplates);
         setShowSaveDialog(false);
       } catch (error) {
-        console.error('Failed to save template:', error);
+        // Console output removed for production
       }
     }
   };

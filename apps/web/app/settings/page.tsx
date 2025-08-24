@@ -29,7 +29,7 @@ export default function SettingsPage() {
 
   const handleSave = () => {
     // Save settings logic here
-    console.log('Saving settings:', apiSettings)
+    // Console output removed for production
   }
 
   const testConnection = async () => {

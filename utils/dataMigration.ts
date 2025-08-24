@@ -43,7 +43,7 @@ export class DataMigration {
       
       return hasTemplates || hasConfigs || hasPreferences || hasWizardData;
     } catch (error) {
-      console.warn('Cannot access localStorage:', error);
+      // Console output removed for production
       return false;
     }
   }
@@ -95,7 +95,7 @@ export class DataMigration {
       summary.onboardingComplete = localStorage.getItem(STORAGE_KEYS.ONBOARDING) === 'true';
 
     } catch (error) {
-      console.warn('Error reading localStorage:', error);
+      // Console output removed for production
     }
 
     return summary;
@@ -118,7 +118,7 @@ export class DataMigration {
     };
 
     try {
-      console.log('🚀 Starting data migration...');
+      // Console output removed for production
 
       // Migrate templates
       await this.migrateTemplates(userId, result);
@@ -132,12 +132,12 @@ export class DataMigration {
       // Migrate other data
       await this.migrateOtherData(userId, result);
 
-      console.log(`✅ Migration completed! Migrated ${result.migratedItems} items.`);
+      // Console output removed for production
       
     } catch (error) {
       result.success = false;
       result.errors.push(`Migration failed: ${error instanceof Error ? error.message : String(error)}`);
-      console.error('❌ Migration failed:', error);
+      // Console output removed for production
     }
 
     return result;
@@ -152,7 +152,7 @@ export class DataMigration {
       if (!templatesData) return;
 
       const templates: AgentTemplate[] = JSON.parse(templatesData);
-      console.log(`📝 Migrating ${templates.length} templates...`);
+      // Console output removed for production
 
       for (const template of templates) {
         try {
@@ -189,7 +189,7 @@ export class DataMigration {
         }
       }
 
-      console.log(`✅ Migrated ${result.summary.templates} templates`);
+      // Console output removed for production
 
     } catch (error) {
       result.errors.push(`Template migration failed: ${error}`);
@@ -205,7 +205,7 @@ export class DataMigration {
       if (!configsData) return;
 
       const configs = JSON.parse(configsData);
-      console.log('⚙️ Migrating user configurations...');
+      // Console output removed for production
 
       // If it's a wizard data object, save as agent config
       if (configs && typeof configs === 'object') {
@@ -219,7 +219,7 @@ export class DataMigration {
         result.migratedItems++;
       }
 
-      console.log(`✅ Migrated user configurations`);
+      // Console output removed for production
 
     } catch (error) {
       result.errors.push(`User config migration failed: ${error}`);
@@ -235,7 +235,7 @@ export class DataMigration {
       if (!preferencesData) return;
 
       const preferences = JSON.parse(preferencesData);
-      console.log('👤 Migrating user preferences...');
+      // Console output removed for production
 
       // Store preferences in key-value store
       await Database.set(`user_preferences_${userId}`, {
@@ -247,7 +247,7 @@ export class DataMigration {
       result.summary.preferences++;
       result.migratedItems++;
 
-      console.log(`✅ Migrated user preferences`);
+      // Console output removed for production
 
     } catch (error) {
       result.errors.push(`Preferences migration failed: ${error}`);
@@ -298,7 +298,7 @@ export class DataMigration {
       result.migratedItems += otherItems.length;
 
       if (otherItems.length > 0) {
-        console.log(`✅ Migrated other data: ${otherItems.join(', ')}`);
+        // Console output removed for production
       }
 
     } catch (error) {
@@ -334,7 +334,7 @@ export class DataMigration {
       return JSON.stringify(backup, null, 2);
 
     } catch (error) {
-      console.error('Failed to create backup:', error);
+      // Console output removed for production
       return null;
     }
   }
@@ -347,9 +347,9 @@ export class DataMigration {
       Object.values(STORAGE_KEYS).forEach(key => {
         localStorage.removeItem(key);
       });
-      console.log('✅ Cleared localStorage data');
+      // Console output removed for production
     } catch (error) {
-      console.warn('Failed to clear localStorage:', error);
+      // Console output removed for production
     }
   }
 
@@ -366,11 +366,11 @@ export class DataMigration {
         }
       });
 
-      console.log('✅ Restored data from backup');
+      // Console output removed for production
       return true;
 
     } catch (error) {
-      console.error('Failed to restore from backup:', error);
+      // Console output removed for production
       return false;
     }
   }
@@ -391,7 +391,7 @@ export function useDataMigration() {
       const hasLocalData = DataMigration.hasLocalStorageData();
       setNeedsMigration(hasLocalData);
     } catch (error) {
-      console.error('Error checking migration status:', error);
+      // Console output removed for production
       setNeedsMigration(false);
     } finally {
       setIsChecking(false);

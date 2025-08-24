@@ -59,7 +59,7 @@ class StepErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('MVPWizard step error:', error, errorInfo);
+    // Console output removed for production
   }
 
   render() {
@@ -114,7 +114,7 @@ const initializeWizardData = (): MVPWizardData => {
       }
     }
   } catch (error) {
-    console.warn('Failed to load wizard data from localStorage:', error);
+    // Console output removed for production
     localStorage.removeItem('mvp_wizard_data');
   }
   
@@ -167,7 +167,7 @@ export function MVPWizard() {
         if (updates.deployment?.platform) trackPlatformSelection(updates.deployment.platform);
         
       } catch (error) {
-        console.warn('Failed to save wizard data to localStorage:', error);
+        // Console output removed for production
       }
       return newData;
     });
@@ -255,7 +255,7 @@ export function MVPWizard() {
               wizardData={wizardData}
               deployment={wizardData.deployment}
               onDeploymentChange={(deployment) => updateWizardData({ deployment })}
-              onGenerate={() => console.log('Generate clicked')}
+              // Console output removed for production
             />
           );
         default:
@@ -266,7 +266,7 @@ export function MVPWizard() {
           );
       }
     } catch (error) {
-      console.error('Error rendering step:', error);
+      // Console output removed for production
       return (
         <div className="text-center py-8 space-y-4">
           <AlertTriangle className="w-12 h-12 text-destructive mx-auto" />

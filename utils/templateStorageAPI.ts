@@ -69,7 +69,7 @@ export class TemplateStorageAPI {
       const response = await fetch(`${this.getBaseUrl()}/.netlify/functions/templates?${params}`);
       
       if (!response.ok) {
-        console.error('Failed to fetch templates:', response.statusText);
+        // Console output removed for production
         return this.getFallbackTemplates(userRole);
       }
 
@@ -83,7 +83,7 @@ export class TemplateStorageAPI {
         ...(data.templates || [])
       ];
     } catch (error) {
-      console.error('Error fetching templates:', error);
+      // Console output removed for production
       return this.getFallbackTemplates(userRole);
     }
   }
@@ -109,7 +109,7 @@ export class TemplateStorageAPI {
       const data = await response.json();
       return data.template;
     } catch (error) {
-      console.error('Error fetching template:', error);
+      // Console output removed for production
       return null;
     }
   }
@@ -130,7 +130,7 @@ export class TemplateStorageAPI {
         }),
       });
     } catch (error) {
-      console.error('Error updating usage count:', error);
+      // Console output removed for production
     }
   }
 
@@ -148,7 +148,7 @@ export class TemplateStorageAPI {
       const data = await response.json();
       return data.categories || this.getDefaultCategories();
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      // Console output removed for production
       return this.getDefaultCategories();
     }
   }
@@ -162,7 +162,7 @@ export class TemplateStorageAPI {
       if (!template) return null;
       return JSON.stringify(template, null, 2);
     } catch (error) {
-      console.error('Error exporting template:', error);
+      // Console output removed for production
       return null;
     }
   }
@@ -196,7 +196,7 @@ export class TemplateStorageAPI {
         isPublic
       );
     } catch (error) {
-      console.error('Error importing template:', error);
+      // Console output removed for production
       return null;
     }
   }
@@ -206,7 +206,7 @@ export class TemplateStorageAPI {
    */
   static async deleteTemplate(id: string, userId?: string): Promise<boolean> {
     // For now, just log the request
-    console.log(`Delete template ${id} requested by user ${userId}`);
+    // Console output removed for production
     return true;
   }
 

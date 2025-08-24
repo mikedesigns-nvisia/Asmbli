@@ -314,7 +314,7 @@ export function useUserAnalytics(userId?: string, days = 30) {
     try {
       await Database.logUserAction(userId, action, metadata);
     } catch (err) {
-      console.error('Failed to log user action:', err);
+      // Console output removed for production
     }
   }, [userId]);
 

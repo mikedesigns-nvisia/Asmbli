@@ -27,10 +27,10 @@ async function apiCall<T>(endpoint: string, options: RequestInit = {}): Promise<
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error(`API call failed for ${endpoint}:`, error);
+    // Console output removed for production
     // In development, if API fails, fall back to static data
     if (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost') {
-      console.warn('API failed, falling back to static extensions library for development');
+      // Console output removed for production
       throw new Error('API_FALLBACK_NEEDED');
     }
     throw error;
@@ -48,7 +48,7 @@ export class ExtensionsAPI {
     } catch (error) {
       if (error instanceof Error && error.message === 'API_FALLBACK_NEEDED') {
         // Development fallback - import and use static extensions library
-        console.log('🔧 Development Mode: Using static extensions library');
+        // Console output removed for production
         const { extensionsLibrary } = await import('../data/extensions-library');
         
         // Apply role filtering like the database would
@@ -74,7 +74,7 @@ export class ExtensionsAPI {
       return response.extensions;
     } catch (error) {
       if (error instanceof Error && error.message === 'API_FALLBACK_NEEDED') {
-        console.log('🔧 Development Mode: Using static extensions for category', category);
+        // Console output removed for production
         const { extensionsLibrary } = await import('../data/extensions-library');
         
         // Filter by category
@@ -99,7 +99,7 @@ export class ExtensionsAPI {
       return response.extensions;
     } catch (error) {
       if (error instanceof Error && error.message === 'API_FALLBACK_NEEDED') {
-        console.log('🔧 Development Mode: Using static featured extensions');
+        // Console output removed for production
         const { extensionsLibrary } = await import('../data/extensions-library');
         
         // Return first few extensions as "featured"
@@ -131,8 +131,8 @@ export class ExtensionsAPI {
       return response.result;
     } catch (error) {
       if (error instanceof Error && error.message === 'API_FALLBACK_NEEDED') {
-        console.log('🔧 Development Mode: Skipping user extension save to database');
-        console.log(`Would save extension ${extensionId} for user ${userId}:`, config);
+        // Console output removed for production
+        // Console output removed for production
         return { success: true, fallback: true };
       }
       throw error;
@@ -148,8 +148,8 @@ export class ExtensionsAPI {
       });
     } catch (error) {
       if (error instanceof Error && error.message === 'API_FALLBACK_NEEDED') {
-        console.log('🔧 Development Mode: Skipping user extension removal from database');
-        console.log(`Would remove extension ${extensionId} for user ${userId}`);
+        // Console output removed for production
+        // Console output removed for production
         return;
       }
       throw error;
@@ -166,7 +166,7 @@ export class UserExtensionsAPI {
       return response.userExtensions;
     } catch (error) {
       if (error instanceof Error && error.message === 'API_FALLBACK_NEEDED') {
-        console.log('🔧 Development Mode: Using empty user extensions array');
+        // Console output removed for production
         // In development, return empty array since no database is available
         return [];
       }
@@ -183,9 +183,9 @@ export class UserExtensionsAPI {
       });
     } catch (error) {
       if (error instanceof Error && error.message === 'API_FALLBACK_NEEDED') {
-        console.log('🔧 Development Mode: Skipping extension usage logging');
+        // Console output removed for production
         // In development, just log to console instead of database
-        console.log(`Extension Usage: ${action} ${extensionId}`, { metadata, sessionId });
+        // Console output removed for production
         return;
       }
       throw error;
@@ -206,23 +206,23 @@ export class DatabaseAPI {
 
   // Analytics placeholders (implement these endpoints later if needed)
   static async getExtensionUsageStats(extensionId: string, days = 30) {
-    console.warn('getExtensionUsageStats not implemented yet');
+    // Console output removed for production
     return [];
   }
 
   static async getUserExtensionUsage(userId: string, days = 30) {
-    console.warn('getUserExtensionUsage not implemented yet');
+    // Console output removed for production
     return [];
   }
 
   // Reviews placeholders (implement these endpoints later if needed)
   static async getExtensionReviews(extensionId: string, limit = 10) {
-    console.warn('getExtensionReviews not implemented yet');
+    // Console output removed for production
     return [];
   }
 
   static async saveExtensionReview(userId: string, extensionId: string, rating: number, reviewText?: string) {
-    console.warn('saveExtensionReview not implemented yet');
+    // Console output removed for production
     return null;
   }
 }

@@ -30,7 +30,7 @@ export const handler: Handler = async (event, context) => {
       };
     }
 
-    console.log('User Extensions API called:', { httpMethod, userId });
+    // Console output removed for production
 
     switch (httpMethod) {
       case 'GET':
@@ -70,7 +70,7 @@ export const handler: Handler = async (event, context) => {
         };
     }
   } catch (error) {
-    console.error('User Extensions API error:', error);
+    // Console output removed for production
     return {
       statusCode: 500,
       headers: corsHeaders,

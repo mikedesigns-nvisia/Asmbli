@@ -33,7 +33,9 @@
       "Bash(where flutter)",
       "Bash(flutter analyze:*)",
       "Bash(dart test:*)",
-      "Bash(C:UsersMikeAppDataLocalPubCachebinformat_coverage.bat --lcov --in=coverage --out=coverage.lcov --report-on=test/helpers)"
+      "Bash(C:UsersMikeAppDataLocalPubCachebinformat_coverage.bat --lcov --in=coverage --out=coverage.lcov --report-on=test/helpers)",
+      "Bash(R)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": [],

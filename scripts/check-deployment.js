@@ -41,83 +41,83 @@ function checkUrl(url) {
 }
 
 async function waitForDeployment() {
-  console.log('🚀 Checking deployment status...');
-  console.log(`Site URL: ${SITE_URL}`);
-  console.log('');
+  // Console output removed for production
+  // Console output removed for production
+  // Console output removed for production
 
   const startTime = Date.now();
   let attempt = 0;
 
   while (Date.now() - startTime < MAX_WAIT_TIME) {
     attempt++;
-    console.log(`Attempt ${attempt}: Checking ${SITE_URL}`);
+    // Console output removed for production
 
     const result = await checkUrl(SITE_URL);
     
     if (result.success) {
-      console.log('✅ Site is live!');
-      console.log(`Status: ${result.status}`);
+      // Console output removed for production
+      // Console output removed for production
       
       // Check if it's actually the new version by looking for specific content
-      console.log('\n📋 Checking for database integration...');
+      // Console output removed for production
       
       try {
         // You can add more specific checks here
-        console.log('✅ Deployment appears successful!');
-        console.log('\n🎉 Your asmbli application is deployed and ready!');
-        console.log(`🌐 Visit: ${SITE_URL}`);
-        console.log('\n📝 Next steps:');
-        console.log('1. Open the application in your browser');
-        console.log('2. Check if the database migration modal appears');
-        console.log('3. Run migrations if needed');
-        console.log('4. Migrate your data if you have existing localStorage data');
+        // Console output removed for production
+        // Console output removed for production
+        // Console output removed for production
+        // Console output removed for production
+        // Console output removed for production
+        // Console output removed for production
+        // Console output removed for production
+        // Console output removed for production
         
         return true;
         
       } catch (error) {
-        console.log(`⚠️  Site is live but may not be the latest version: ${error.message}`);
-        console.log('Continuing to wait for full deployment...');
+        // Console output removed for production
+        // Console output removed for production
       }
       
     } else {
-      console.log(`❌ Not ready yet (${result.status || 'No response'})`);
+      // Console output removed for production
       if (result.error) {
-        console.log(`   Error: ${result.error}`);
+        // Console output removed for production
       }
     }
 
     if (Date.now() - startTime < MAX_WAIT_TIME) {
-      console.log(`⏱️  Waiting ${CHECK_INTERVAL / 1000}s before next check...\n`);
+      // Console output removed for production
       await setTimeout(CHECK_INTERVAL);
     }
   }
 
-  console.log('⏰ Timeout reached. The deployment may be taking longer than expected.');
-  console.log('\n💡 You can:');
-  console.log('1. Check your Netlify dashboard for build status');
-  console.log('2. Check the deployment logs for any errors');
-  console.log('3. Try accessing the site manually');
-  console.log(`4. Visit: ${SITE_URL}`);
+  // Console output removed for production
+  // Console output removed for production
+  // Console output removed for production
+  // Console output removed for production
+  // Console output removed for production
+  // Console output removed for production
   
   return false;
 }
 
 async function main() {
-  console.log('🔍 asmbli Deployment Checker');
-  console.log('============================\n');
+  // Console output removed for production
+  // Console output removed for production
 
   try {
     const success = await waitForDeployment();
     process.exit(success ? 0 : 1);
   } catch (error) {
-    console.error('❌ Error during deployment check:', error);
+    // Console output removed for production
     process.exit(1);
   }
 }
 
 // Show help if requested
 if (process.argv.includes('--help') || process.argv.includes('-h')) {
-  console.log(`
+  // Console output removed for production
 asmbli Deployment Checker
 
 Usage: npm run check-deployment
@@ -139,7 +139,7 @@ Example:
 // Allow overriding the site URL via environment variable
 if (process.env.SITE_URL) {
   // Update the SITE_URL if provided via environment
-  console.log(`Using custom site URL: ${process.env.SITE_URL}`);
+  // Console output removed for production
 }
 
 main();

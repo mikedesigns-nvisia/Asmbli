@@ -361,7 +361,7 @@ export function ExtensionCard({
                     window.location.href = url;
                   }
                 } catch (error) {
-                  console.error('Failed to open documentation:', error);
+                  // Console output removed for production
                   // Fallback to direct navigation
                   window.location.href = extension.documentation;
                 }

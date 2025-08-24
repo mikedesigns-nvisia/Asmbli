@@ -110,7 +110,7 @@ export class DeploymentChecker {
       const status = await getMigrationStatus();
       return status.pending > 0;
     } catch (error) {
-      console.warn('Could not check migration status:', error);
+      // Console output removed for production
       return false;
     }
   }
@@ -155,7 +155,7 @@ export function useDeploymentStatus(autoCheck = true, checkInterval = 30000) {
       const newStatus = await DeploymentChecker.checkDeploymentStatus();
       setStatus(newStatus);
     } catch (error) {
-      console.error('Error checking deployment status:', error);
+      // Console output removed for production
       setStatus(prev => prev ? {
         ...prev,
         errors: [...prev.errors, `Status check failed: ${error}`],

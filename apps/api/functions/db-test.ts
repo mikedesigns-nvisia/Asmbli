@@ -61,7 +61,7 @@ export const handler: Handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('Database test failed:', error);
+    // Console output removed for production
     
     return {
       statusCode: 500,

@@ -121,7 +121,7 @@ export function FeedbackSystem({ currentStep, wizardData, onComplete }: Feedback
         localStorage.setItem('feedback_history', JSON.stringify(feedbackHistory));
       }
     } catch (error) {
-      console.error('Feedback submission error:', error);
+      // Console output removed for production
       toast.error('Failed to send feedback. Please try again or contact support directly.');
     } finally {
       setIsSubmitting(false);

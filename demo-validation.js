@@ -1,21 +1,21 @@
 import { validateComponentTokenUsage, checkHardcodedValues, getDesignTokensByCategory } from './src/utils/design-token-validator.js';
 import fs from 'fs';
 
-console.log('🎯 asmbli Design System Testing Demo\n');
+// Console output removed for production
 
 // Test 1: Validate the test component with violations
-console.log('1. Testing component with hardcoded values:');
+// Console output removed for production
 const badComponent = fs.readFileSync('test-component.tsx', 'utf-8');
 const badResult = validateComponentTokenUsage(badComponent);
 
-console.log(`   ❌ Validation result: ${badResult.isValid ? 'PASSED' : 'FAILED'}`);
-console.log(`   📊 Found ${badResult.errors.length} errors:`);
+// Console output removed for production
+// Console output removed for production
 badResult.errors.forEach((error, i) => {
-  console.log(`      ${i + 1}. ${error}`);
+  // Console output removed for production
 });
 
 // Test 2: Check individual CSS values
-console.log('\n2. Testing individual CSS values:');
+// Console output removed for production
 const testCases = [
   'padding: 16px',
   'color: #3b82f6',
@@ -26,20 +26,20 @@ const testCases = [
 testCases.forEach(css => {
   const result = checkHardcodedValues(css);
   const status = result.length === 0 ? '✅ PASS' : '❌ FAIL';
-  console.log(`   ${status} "${css}"`);
+  // Console output removed for production
   if (result.length > 0) {
-    console.log(`        → ${result[0]}`);
+    // Console output removed for production
   }
 });
 
 // Test 3: Show available design tokens
-console.log('\n3. Available design tokens:');
+// Console output removed for production
 const tokens = getDesignTokensByCategory();
 Object.entries(tokens).forEach(([category, subcategories]) => {
-  console.log(`   📁 ${category.toUpperCase()}:`);
+  // Console output removed for production
   Object.entries(subcategories).forEach(([subcat, tokenList]) => {
-    console.log(`      ${subcat}: ${tokenList.slice(0, 3).join(', ')}...`);
+    // Console output removed for production
   });
 });
 
-console.log('\n🚀 Design system testing is working! Ready to validate new components.');
+// Console output removed for production

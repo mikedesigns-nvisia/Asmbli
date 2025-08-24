@@ -24,8 +24,8 @@ const EXPECTED_SERVERS = {
 
 const TOTAL_EXPECTED = Object.values(EXPECTED_SERVERS).reduce((sum, count) => sum + count, 0);
 
-console.log('🔍 AgentEngine MCP Server Integration Verification');
-console.log('=' .repeat(60));
+// Console output removed for production
+// Console output removed for production
 
 // Verify MCP Core Package Structure
 function verifyMCPCorePackage() {
@@ -33,7 +33,7 @@ function verifyMCPCorePackage() {
   const srcPath = path.join(mcpCorePath, 'src');
   const serversPath = path.join(srcPath, 'servers');
   
-  console.log('\n📦 Checking MCP Core Package Structure...');
+  // Console output removed for production
   
   const requiredFiles = [
     'src/index.ts',
@@ -48,9 +48,9 @@ function verifyMCPCorePackage() {
   for (const file of requiredFiles) {
     const filePath = path.join(mcpCorePath, file);
     if (fs.existsSync(filePath)) {
-      console.log(`  ✅ ${file}`);
+      // Console output removed for production
     } else {
-      console.log(`  ❌ ${file} - MISSING`);
+      // Console output removed for production
       structureValid = false;
     }
   }
@@ -60,7 +60,7 @@ function verifyMCPCorePackage() {
 
 // Verify Server Definitions
 function verifyServerDefinitions() {
-  console.log('\n🖥️ Checking Server Definitions...');
+  // Console output removed for production
   
   try {
     // This would work in a Node.js environment with proper TypeScript compilation
@@ -70,12 +70,12 @@ function verifyServerDefinitions() {
     const enterpriseServersFile = path.join(__dirname, '..', 'packages', 'mcp-core', 'src', 'servers', 'enterprise.ts');
     
     if (!fs.existsSync(coreServersFile)) {
-      console.log('  ❌ Core servers file missing');
+      // Console output removed for production
       return false;
     }
     
     if (!fs.existsSync(enterpriseServersFile)) {
-      console.log('  ❌ Enterprise servers file missing');
+      // Console output removed for production
       return false;
     }
     
@@ -100,40 +100,40 @@ function verifyServerDefinitions() {
     for (const serverId of coreServerIds) {
       if (coreContent.includes(`id: '${serverId}'`)) {
         coreFound++;
-        console.log(`  ✅ Core: ${serverId}`);
+        // Console output removed for production
       } else {
-        console.log(`  ❌ Core: ${serverId} - MISSING`);
+        // Console output removed for production
       }
     }
     
     for (const serverId of enterpriseServerIds) {
       if (enterpriseContent.includes(`id: '${serverId}'`)) {
         enterpriseFound++;
-        console.log(`  ✅ Enterprise: ${serverId}`);
+        // Console output removed for production
       } else {
-        console.log(`  ❌ Enterprise: ${serverId} - MISSING`);
+        // Console output removed for production
       }
     }
     
-    console.log(`\n  📊 Core Servers: ${coreFound}/${coreServerIds.length}`);
-    console.log(`  📊 Enterprise Servers: ${enterpriseFound}/${enterpriseServerIds.length}`);
+    // Console output removed for production
+    // Console output removed for production
     
     return coreFound === coreServerIds.length && enterpriseFound >= 8; // At least 8 enterprise servers
     
   } catch (error) {
-    console.log(`  ❌ Error checking server definitions: ${error.message}`);
+    // Console output removed for production
     return false;
   }
 }
 
 // Verify Database Migration
 function verifyDatabaseMigration() {
-  console.log('\n🗃️ Checking Database Migration...');
+  // Console output removed for production
   
   const migrationFile = path.join(__dirname, '..', 'packages', 'database', 'migrations', 'refactor_001.sql');
   
   if (!fs.existsSync(migrationFile)) {
-    console.log('  ❌ Refactor migration file missing');
+    // Console output removed for production
     return false;
   }
   
@@ -153,35 +153,35 @@ function verifyDatabaseMigration() {
   for (const element of requiredElements) {
     if (migrationContent.includes(element)) {
       elementsFound++;
-      console.log(`  ✅ ${element}`);
+      // Console output removed for production
     } else {
-      console.log(`  ❌ ${element} - MISSING`);
+      // Console output removed for production
     }
   }
   
-  console.log(`\n  📊 Migration Elements: ${elementsFound}/${requiredElements.length}`);
+  // Console output removed for production
   return elementsFound === requiredElements.length;
 }
 
 // Verify Web App Integration
 function verifyWebAppIntegration() {
-  console.log('\n🌐 Checking Web App Integration...');
+  // Console output removed for production
   
   const webAppPath = path.join(__dirname, '..', 'apps', 'web');
   const templatesPagePath = path.join(webAppPath, 'app', 'templates', 'page.tsx');
   
   if (!fs.existsSync(templatesPagePath)) {
-    console.log('  ❌ Templates page missing');
+    // Console output removed for production
     return false;
   }
   
-  console.log('  ✅ Templates page exists');
+  // Console output removed for production
   
   // Check if web app has proper package.json
   const webPackageJsonPath = path.join(webAppPath, 'package.json');
   if (fs.existsSync(webPackageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(webPackageJsonPath, 'utf8'));
-    console.log(`  ✅ Web app package: ${packageJson.name}`);
+    // Console output removed for production
     return true;
   }
   
@@ -190,7 +190,7 @@ function verifyWebAppIntegration() {
 
 // Verify Desktop App Integration  
 function verifyDesktopAppIntegration() {
-  console.log('\n🖥️ Checking Desktop App Integration...');
+  // Console output removed for production
   
   const desktopAppPath = path.join(__dirname, '..', 'apps', 'desktop');
   const pubspecPath = path.join(desktopAppPath, 'pubspec.yaml');
@@ -199,16 +199,16 @@ function verifyDesktopAppIntegration() {
   let desktopValid = true;
   
   if (fs.existsSync(pubspecPath)) {
-    console.log('  ✅ Flutter pubspec.yaml exists');
+    // Console output removed for production
   } else {
-    console.log('  ❌ Flutter pubspec.yaml missing');
+    // Console output removed for production
     desktopValid = false;
   }
   
   if (fs.existsSync(mainDartPath)) {
-    console.log('  ✅ Flutter main.dart exists');
+    // Console output removed for production
   } else {
-    console.log('  ❌ Flutter main.dart missing');
+    // Console output removed for production
     desktopValid = false;
   }
   
@@ -217,8 +217,8 @@ function verifyDesktopAppIntegration() {
 
 // Main verification
 async function main() {
-  console.log(`Expected Total Servers: ${TOTAL_EXPECTED}`);
-  console.log('Category breakdown:', EXPECTED_SERVERS);
+  // Console output removed for production
+  // Console output removed for production
   
   const results = {
     structure: verifyMCPCorePackage(),
@@ -228,26 +228,26 @@ async function main() {
     desktopApp: verifyDesktopAppIntegration()
   };
   
-  console.log('\n' + '='.repeat(60));
-  console.log('📋 VERIFICATION RESULTS');
-  console.log('='.repeat(60));
+  // Console output removed for production
+  // Console output removed for production
+  // Console output removed for production
   
   Object.entries(results).forEach(([check, passed]) => {
-    console.log(`${passed ? '✅' : '❌'} ${check.charAt(0).toUpperCase() + check.slice(1)}: ${passed ? 'PASSED' : 'FAILED'}`);
+    // Console output removed for production
   });
   
   const allPassed = Object.values(results).every(Boolean);
   
-  console.log('\n' + '='.repeat(60));
-  console.log(`🎯 OVERALL STATUS: ${allPassed ? '✅ PASSED' : '❌ FAILED'}`);
-  console.log('='.repeat(60));
+  // Console output removed for production
+  // Console output removed for production
+  // Console output removed for production
   
   if (allPassed) {
-    console.log('🎉 All MCP servers are properly integrated!');
-    console.log('Ready for development and deployment.');
+    // Console output removed for production
+    // Console output removed for production
   } else {
-    console.log('⚠️  Some integration issues found.');
-    console.log('Please review the failed checks above.');
+    // Console output removed for production
+    // Console output removed for production
   }
   
   process.exit(allPassed ? 0 : 1);

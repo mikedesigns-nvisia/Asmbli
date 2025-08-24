@@ -25,7 +25,7 @@ export const handler: Handler = async (event, context) => {
     const extensionId = queryStringParameters?.id as string;
     const limit = queryStringParameters?.limit ? parseInt(queryStringParameters.limit) : undefined;
 
-    console.log('Extensions API called:', { httpMethod, path, userRole, category, extensionId });
+    // Console output removed for production
 
     switch (httpMethod) {
       case 'GET':
@@ -125,7 +125,7 @@ export const handler: Handler = async (event, context) => {
         };
     }
   } catch (error) {
-    console.error('Extensions API error:', error);
+    // Console output removed for production
     return {
       statusCode: 500,
       headers: corsHeaders,

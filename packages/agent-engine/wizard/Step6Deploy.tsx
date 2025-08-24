@@ -601,7 +601,7 @@ Remember: Your goal is to be genuinely helpful while maintaining high standards 
       await navigator.clipboard.writeText(text);
       onCopy(text, itemType);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      // Console output removed for production
     }
   };
 

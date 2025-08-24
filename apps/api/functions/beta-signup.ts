@@ -74,7 +74,7 @@ export const handler: Handler = async (event, context) => {
     try {
       await Database.logUserAction(null, 'beta_signup', { email });
     } catch (error) {
-      console.log('Failed to log user action:', error);
+      // Console output removed for production
       // Don't fail the request if logging fails
     }
 
@@ -89,7 +89,7 @@ export const handler: Handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('Beta signup error:', error);
+    // Console output removed for production
     
     return {
       statusCode: 500,
