@@ -80,6 +80,20 @@ export default function DownloadSection() {
       return;
     }
     
+    // Check for beta access (simplified - in production, this would be server-side)
+    const hasAccess = (typeof window !== 'undefined' && 
+                      (localStorage.getItem('beta_access') === 'true' || 
+                       new URLSearchParams(window.location.search).get('access') === 'beta'));
+    
+    if (!hasAccess) {
+      if (confirm('Beta access required. Would you like to sign up for the beta program?')) {
+        window.location.href = '/#beta-signup';
+        return;
+      } else {
+        return;
+      }
+    }
+    
     // Track download analytics
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'download', {
@@ -106,10 +120,18 @@ export default function DownloadSection() {
           <h2 className="text-4xl font-bold text-neutral-900 mb-4">
             Download Asmbli
           </h2>
-          <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-600 max-w-2xl mx-auto mb-6">
             Professional AI agent deployment platform. Start building and deploying 
             specialized AI agents in minutes.
           </p>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 max-w-xl mx-auto">
+            <p className="text-sm text-amber-800">
+              <strong>Beta Access Required:</strong> Downloads are currently restricted to beta users. 
+              <a href="/#beta-signup" className="underline hover:no-underline font-medium">
+                Sign up for beta access
+              </a> to download.
+            </p>
+          </div>
         </div>
 
         {/* Download Cards */}

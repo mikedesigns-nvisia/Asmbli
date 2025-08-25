@@ -38,9 +38,9 @@ export default function HomePage() {
             Start with templates or create from scratch - your data and agentic experiences stay secure and under your control.
           </p>
           <div className="flex gap-4 justify-center">
-            <Link href="/download">
+            <Link href="#beta-signup">
               <Button size="lg" className="bg-amber-400 hover:bg-amber-500 text-amber-950">
-                Download Asmbli
+                Join Beta
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -68,7 +68,7 @@ export default function HomePage() {
           </div>
           <div className="mt-6">
             <p className="text-sm text-muted-foreground italic">
-              Desktop app with agent builder coming soon
+              <Link href="#beta-signup" className="text-primary hover:underline">Sign up for beta access</Link> to download the desktop app
             </p>
           </div>
           <div className="mt-12">
@@ -595,6 +595,90 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Beta Signup Section */}
+      <section id="beta-signup" className="py-20 px-4 bg-gradient-to-br from-amber-50/30 to-yellow-50/30">
+        <div className="container mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold mb-6 font-display">
+            Join the Beta
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8">
+            Get early access to Asmbli's professional AI agent platform. 
+            Beta users receive priority support and exclusive features.
+          </p>
+          
+          <div className="bg-white rounded-xl shadow-lg p-8 border">
+            <form className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="First Name"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Last Name"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <textarea
+                  placeholder="What would you like to use AI agents for? (Optional)"
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent resize-none"
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full bg-amber-400 hover:bg-amber-500 text-amber-950 py-3 text-lg"
+              >
+                Request Beta Access
+              </Button>
+            </form>
+            
+            <div className="mt-6 pt-6 border-t">
+              <p className="text-sm text-muted-foreground mb-4">
+                Already have beta access?
+              </p>
+              <Link href="/download">
+                <Button variant="outline" className="w-full">
+                  Go to Downloads
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+          
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-amber-500" />
+              <span>Free beta access</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-amber-500" />
+              <span>Priority support</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-amber-500" />
+              <span>Exclusive features</span>
+            </div>
           </div>
         </div>
       </section>

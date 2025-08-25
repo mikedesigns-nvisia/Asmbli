@@ -1,5 +1,7 @@
 import React from 'react';
 import DownloadSection from '@/components/DownloadSection';
+import { Navigation } from '@/components/Navigation';
+import { Footer } from '@/components/Footer';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -22,6 +24,8 @@ export const metadata: Metadata = {
 export default function DownloadPage() {
   return (
     <div className="min-h-screen">
+      {/* Navigation */}
+      <Navigation showBackButton={true} backHref="/" backLabel="Home" />
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-20">
         <div className="container mx-auto px-4 text-center">
@@ -107,6 +111,9 @@ export default function DownloadPage() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
