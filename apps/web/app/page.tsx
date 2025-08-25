@@ -74,18 +74,18 @@ export default function HomePage() {
           <div className="mt-12">
             <div className="max-w-7xl mx-auto px-4">
               <p className="text-sm md:text-base text-muted-foreground text-center mb-6">
-                Desktop app beta - featuring conversation management and archive system
+                Professional UX Designer agent with live MCP tool integrations
               </p>
               <div className="rounded-xl border bg-card p-1 md:p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
                 <img 
-                  src="/flutter-desktop-preview-new.png" 
-                  alt="Asmbli Desktop App - Complete AI Agent Interface with Conversation Management"
+                  src="/hero-screenshot.png" 
+                  alt="Asmbli UX Designer Agent - Professional AI Assistant with MCP Integration"
                   className="w-full h-auto rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[600px] md:max-h-[700px] lg:max-h-[800px]"
                 />
               </div>
               <div className="text-center mt-6">
                 <p className="text-xs md:text-sm text-muted-foreground">
-                  Full-featured desktop app with agent settings, conversation management, and archive system
+                  Live demonstration showing specialized agent with professional tools and real-time MCP connections
                 </p>
               </div>
             </div>
