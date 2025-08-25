@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/components/app_navigation_bar.dart';
+import '../../../../core/constants/routes.dart';
 import '../../../settings/presentation/widgets/integration_marketplace.dart';
 
 class MarketplaceScreen extends ConsumerWidget {
@@ -9,61 +11,32 @@ class MarketplaceScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: SemanticColors.background,
-      body: Column(
-        children: [
-          // Header with gradient background
-          Container(
-            height: 120,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  SemanticColors.primary.withValues(alpha: 0.1),
-                  SemanticColors.background,
-                ],
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: SpacingTokens.xxl),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.store,
-                      color: SemanticColors.primary,
-                      size: 32,
-                    ),
-                    SizedBox(width: SpacingTokens.lg),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Integration Marketplace',
-                          style: TextStyles.pageTitle,
-                        ),
-                        SizedBox(height: SpacingTokens.xs),
-                        Text(
-                          'Discover and install powerful integrations to enhance your agents',
-                          style: TextStyles.bodyMedium.copyWith(
-                            color: SemanticColors.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.5,
+            colors: [
+              SemanticColors.primary.withValues(alpha: 0.05),
+              SemanticColors.background.withValues(alpha: 0.8),
+              SemanticColors.background,
+            ],
+            stops: const [0.0, 0.6, 1.0],
           ),
-          
-          // Marketplace content
-          Expanded(
-            child: IntegrationMarketplace(),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // App Navigation Bar
+              AppNavigationBar(currentRoute: AppRoutes.marketplace),
+              
+              // Marketplace content
+              Expanded(
+                child: IntegrationMarketplace(),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
