@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "releaseDate": "2024-12-19",
+  "releaseDate": "2025-08-25",
   "platforms": {
     "windows": {
       "architecture": "x64",
@@ -17,6 +17,9 @@
         "Professional AI agent deployment",
         "20+ specialized agent templates", 
         "MCP tool integration (40+ tools)",
+        "Dedicated integration marketplace",
+        "Streamlined settings interface",
+        "Clean minimalist design",
         "Context document management",
         "Real-time chat interface",
         "Professional development tools"
@@ -40,10 +43,14 @@
       "type": "major",
       "highlights": [
         "Initial public release",
-        "Professional agent framework",
+        "Professional agent framework", 
         "Full MCP integration",
         "Consumer-grade UI/UX",
-        "Cross-platform architecture"
+        "Cross-platform architecture",
+        "Dedicated integration marketplace",
+        "Simplified settings interface",
+        "Clean minimalist branding",
+        "Beta access system integration"
       ]
     }
   }
