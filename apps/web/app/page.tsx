@@ -83,11 +83,6 @@ export default function HomePage() {
                   className="w-full h-auto rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[600px] md:max-h-[700px] lg:max-h-[800px]"
                 />
               </div>
-              <div className="text-center mt-6">
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  Live demonstration showing specialized agent with professional tools and real-time MCP connections
-                </p>
-              </div>
             </div>
           </div>
         </div>
