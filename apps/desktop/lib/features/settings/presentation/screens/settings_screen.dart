@@ -3,10 +3,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/services/theme_service.dart';
 import '../../../../core/services/mcp_settings_service.dart';
+import '../../../../core/services/api_config_service.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../widgets/mcp_server_dialog.dart';
+import '../widgets/enhanced_mcp_server_wizard.dart';
 import '../widgets/mcp_health_status_widget.dart';
+import '../widgets/api_key_dialog.dart';
+import '../../../../core/design_system/components/unified_mcp_server_card.dart';
+
+// Integration model for unified display
+class Integration {
+  final String id;
+  final String name;
+  final String description;
+  final String category;
+  final IconData icon;
+  final Color color;
+  final bool isConfigured;
+  final bool isMCPServer;
+  final MCPServerConfig? mcpServer;
+
+  Integration({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.category,
+    required this.icon,
+    required this.color,
+    required this.isConfigured,
+    required this.isMCPServer,
+    this.mcpServer,
+  });
+}
 
 class SettingsScreen extends ConsumerStatefulWidget {
  const SettingsScreen({super.key});
@@ -33,25 +62,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  String selectedTemplate = 'Default';
  final TextEditingController systemPromptController = TextEditingController();
 
- // API Key Management
- List<ApiKeyConfig> savedApiKeys = [
- ApiKeyConfig(
- id: 'anthropic-1',
- name: 'Anthropic Production',
- provider: 'Anthropic',
- model: 'claude-3-5-sonnet-20241022',
- isDefault: true,
- isConfigured: true,
- ),
- ApiKeyConfig(
- id: 'openai-1',
- name: 'OpenAI GPT-4o',
- provider: 'OpenAI',
- model: 'gpt-4o',
- isDefault: false,
- isConfigured: false,
- ),
- ];
+ // API Key Management - now handled by ApiConfigService
 
  // Agent API Assignments
  Map<String, String> agentApiAssignments = {
@@ -179,7 +190,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  @override
  void initState() {
  super.initState();
- _tabController = TabController(length: 5, vsync: this); // Updated to 5 tabs
+ _tabController = TabController(length: 4, vsync: this); // Updated to 5 tabs
  selectedModel = providerModels[selectedProvider]!.first;
  _loadSystemPrompt();
  }
@@ -281,7 +292,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  tabs: const [
  Tab(text: 'API Configuration'),
  Tab(text: 'Agent Management'),
- Tab(text: 'MCP Servers'),
  Tab(text: 'Integrations'),
  Tab(text: 'General Settings'),
  ],
@@ -319,7 +329,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  children: [
  _buildAPIConfigurationTab(),
  _buildAgentManagementTab(),
- _buildMCPServersTab(),
  _buildIntegrationsTab(),
  _buildGeneralSettingsTab(themeService),
  ],
@@ -358,6 +367,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  }
 
  Widget _buildAPIConfigurationTab() {
+ final allApiConfigs = ref.watch(apiConfigsProvider);
+ final defaultApiConfig = ref.watch(defaultApiConfigProvider);
+ 
  return SingleChildScrollView(
  padding: const EdgeInsets.all(24),
  child: Center(
@@ -382,7 +394,52 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  SizedBox(height: SpacingTokens.componentSpacing),
  
  // API Keys List
- ...savedApiKeys.map((apiConfig) {
+ if (allApiConfigs.isEmpty) ...[
+ Container(
+ padding: const EdgeInsets.all(24),
+ decoration: BoxDecoration(
+ color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+ borderRadius: BorderRadius.circular(8),
+ border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
+ ),
+ child: Column(
+ children: [
+ Icon(
+ Icons.api_outlined,
+ size: 48,
+ color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+ ),
+ SizedBox(height: 16),
+ Text(
+ 'No API Keys Configured',
+ style: TextStyle(
+ fontFamily: 'Space Grotesk',
+ fontSize: 16,
+ fontWeight: FontWeight.w500,
+ color: Theme.of(context).colorScheme.onSurface,
+ ),
+ ),
+ SizedBox(height: 8),
+ Text(
+ 'Add your first API key to start using the app with real AI models.',
+ style: TextStyle(
+ fontFamily: 'Space Grotesk',
+ fontSize: 14,
+ color: Theme.of(context).colorScheme.onSurfaceVariant,
+ ),
+ textAlign: TextAlign.center,
+ ),
+ SizedBox(height: 16),
+ AsmblButton.primary(
+ text: 'Add API Key',
+ onPressed: () => _showAddApiKeyDialog(),
+ ),
+ ],
+ ),
+ ),
+ ] else ...[
+ ...allApiConfigs.entries.map((entry) {
+ final apiConfig = entry.value;
  return Container(
  margin: const EdgeInsets.only(bottom: 12),
  padding: const EdgeInsets.all(16),
@@ -558,6 +615,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  size: AsmblButtonSize.medium,
  ),
  ),
+ ],
  ],
  ),
  ),
@@ -835,6 +893,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  style: TextButton.styleFrom(
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
  foregroundColor: Theme.of(context).colorScheme.onSurface,
+ overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
  ),
  child: Text(
  'Reset to Default',
@@ -856,6 +915,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  style: TextButton.styleFrom(
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+ overlayColor: Colors.white.withValues(alpha: 0.1),
  ),
  child: Text(
  'Save Prompt',
@@ -997,8 +1057,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  }
 
  Widget _getApiAssignmentWidget() {
+ final mcpSettingsService = ref.watch(mcpSettingsServiceProvider);
+final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
  final assignedApiId = agentApiAssignments[selectedAgent];
- if (assignedApiId == null) {
+ 
+ if (assignedApiId == null || !allApiConfigs.containsKey(assignedApiId)) {
  return GestureDetector(
  onTap: () {
  // Navigate to API settings tab
@@ -1035,7 +1098,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  );
  }
 
- final apiConfig = savedApiKeys.firstWhere((key) => key.id == assignedApiId);
+ final apiConfig = allApiConfigs[assignedApiId]!;
  return Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
@@ -1073,6 +1136,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  }
 
  void _showApiSelectionDialog() {
+ final allApiConfigs = ref.read(mcpSettingsServiceProvider).allDirectAPIConfigs;
+ 
  showDialog(
  context: context,
  builder: (context) => AlertDialog(
@@ -1095,7 +1160,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Column(
  mainAxisSize: MainAxisSize.min,
  children: [
- ...savedApiKeys.map((apiConfig) {
+ ...allApiConfigs.entries.map((entry) {
+ final apiConfig = entry.value;
  final isSelected = agentApiAssignments[selectedAgent] == apiConfig.id;
  return Container(
  margin: EdgeInsets.only(bottom: 8),
@@ -1219,6 +1285,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  style: TextButton.styleFrom(
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+ overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
  ),
  ),
  ),
@@ -1236,6 +1303,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  style: TextButton.styleFrom(
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
  foregroundColor: Theme.of(context).colorScheme.onSurface,
+ overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
  ),
  child: Text(
  'Cancel',
@@ -1251,369 +1319,60 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  );
  }
 
- void _setAsDefault(String apiId) {
- setState(() {
- // Remove default from all keys
- savedApiKeys = savedApiKeys.map((key) => ApiKeyConfig(
- id: key.id,
- name: key.name,
- provider: key.provider,
- model: key.model,
- isDefault: key.id == apiId,
- isConfigured: key.isConfigured,
- )).toList();
- });
+ Future<void> _setAsDefault(String apiId) async {
+ try {
+ final mcpSettingsService = ref.read(mcpSettingsServiceProvider);
+ await mcpSettingsService.setDefaultDirectAPIConfig(apiId);
  _showMessage('Default API key updated successfully!');
+ } catch (e) {
+ _showMessage('Failed to update default API key: $e', isError: true);
+ }
  }
 
- void _deleteApiKey(String apiId) {
- // Prevent deleting the default API key
- final apiToDelete = savedApiKeys.firstWhere((key) => key.id == apiId);
+ Future<void> _deleteApiKey(String apiId) async {
+ try {
+ final allApiConfigs = ref.read(mcpSettingsServiceProvider).allDirectAPIConfigs;
+ final apiToDelete = allApiConfigs[apiId];
+ 
+ if (apiToDelete == null) {
+ _showMessage('API key not found', isError: true);
+ return;
+ }
+ 
  if (apiToDelete.isDefault) {
  _showMessage('Cannot delete the default API key. Set another key as default first.', isError: true);
  return;
  }
 
- setState(() {
- savedApiKeys.removeWhere((key) => key.id == apiId);
- // Remove assignments for this API key
- agentApiAssignments.removeWhere((agent, assignedApiId) => assignedApiId == apiId);
- });
+ final mcpSettingsService = ref.read(mcpSettingsServiceProvider);
+ await mcpSettingsService.removeDirectAPIConfig(apiId);
  _showMessage('API key deleted successfully!');
+ } catch (e) {
+ _showMessage('Failed to delete API key: $e', isError: true);
+ }
  }
 
- void _editApiKey(ApiKeyConfig apiConfig) {
- _showAddApiKeyDialog(editingConfig: apiConfig);
- }
-
- void _showAddApiKeyDialog({ApiKeyConfig? editingConfig}) {
- final isEditing = editingConfig != null;
- String nameValue = editingConfig?.name ?? '';
- String providerValue = editingConfig?.provider ?? 'Anthropic';
- String modelValue = editingConfig?.model ?? providerModels['Anthropic']!.first;
- String apiKeyValue = '';
- double tempValue = 0.7;
- int maxTokensValue = 2048;
-
- showDialog(
- context: context,
- builder: (context) => StatefulBuilder(
- builder: (context, setDialogState) => AlertDialog(
- backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.95),
- shape: RoundedRectangleBorder(
- borderRadius: BorderRadius.circular(12),
- side: BorderSide(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
- ),
- title: Text(
- isEditing ? 'Edit API Configuration' : 'Add New API Configuration',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 20,
- fontWeight: FontWeight.w600,
- color: Theme.of(context).colorScheme.onSurface,
- ),
- ),
- content: Container(
- width: 500,
- child: SingleChildScrollView(
- child: Column(
- mainAxisSize: MainAxisSize.min,
- children: [
- // Name field
- _FormField(
- label: 'Configuration Name',
- helpText: 'A friendly name for this API configuration',
- child: Container(
- decoration: BoxDecoration(
- border: Border.all(color: Theme.of(context).colorScheme.outline),
- borderRadius: BorderRadius.circular(8),
- color: ThemeColors(context).surface.withValues(alpha: 0.8),
- ),
- child: TextField(
- decoration: InputDecoration(
- hintText: 'e.g., "Production Claude", "GPT-4 Testing"',
- hintStyle: TextStyle(
- fontFamily: 'Space Grotesk',
- color: Theme.of(context).colorScheme.onSurfaceVariant,
- ),
- border: InputBorder.none,
- contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
- ),
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- color: Theme.of(context).colorScheme.onSurface,
- ),
- onChanged: (value) => nameValue = value,
- controller: TextEditingController(text: nameValue),
- ),
- ),
- ),
- 
- SizedBox(height: 20),
- 
- // Provider and Model row
- Row(
- children: [
- Expanded(
- child: _FormField(
- label: 'Provider',
- child: AsmblStringDropdown(
- value: providerValue,
- items: providers,
- onChanged: (value) {
- setDialogState(() {
- providerValue = value!;
- modelValue = providerModels[providerValue]!.first;
- });
- },
- ),
- ),
- ),
- SizedBox(width: 16),
- Expanded(
- child: _FormField(
- label: 'Model',
- child: AsmblStringDropdown(
- value: modelValue,
- items: providerModels[providerValue]!,
- onChanged: (value) {
- setDialogState(() {
- modelValue = value!;
- });
- },
- ),
- ),
- ),
- ],
- ),
- 
- SizedBox(height: 20),
- 
- // API Key field
- _FormField(
- label: 'API Key',
- helpText: 'Your API key is stored locally and encrypted',
- child: Container(
- decoration: BoxDecoration(
- border: Border.all(color: Theme.of(context).colorScheme.outline),
- borderRadius: BorderRadius.circular(8),
- color: ThemeColors(context).surface.withValues(alpha: 0.8),
- ),
- child: TextField(
- decoration: InputDecoration(
- hintText: 'Enter your API key',
- hintStyle: TextStyle(
- fontFamily: 'Space Grotesk',
- color: Theme.of(context).colorScheme.onSurfaceVariant,
- ),
- border: InputBorder.none,
- contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
- ),
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- color: Theme.of(context).colorScheme.onSurface,
- ),
- obscureText: true,
- onChanged: (value) => apiKeyValue = value,
- ),
- ),
- ),
- 
- SizedBox(height: 20),
- 
- // Temperature and Max Tokens row
- Row(
- children: [
- Expanded(
- flex: 2,
- child: _FormField(
- label: 'Creativity Level',
- child: Container(
- padding: const EdgeInsets.all(16),
- decoration: BoxDecoration(
- border: Border.all(color: Theme.of(context).colorScheme.outline),
- borderRadius: BorderRadius.circular(8),
- color: ThemeColors(context).surface.withValues(alpha: 0.8),
- ),
- child: Column(
- children: [
- Row(
- mainAxisAlignment: MainAxisAlignment.spaceBetween,
- children: [
- Text(
- 'Focused',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
- color: Theme.of(context).colorScheme.onSurfaceVariant,
- ),
- ),
- Container(
- padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
- decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(4),
- ),
- child: Text(
- tempValue.toStringAsFixed(2),
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
- fontWeight: FontWeight.w600,
- color: Theme.of(context).colorScheme.primary,
- ),
- ),
- ),
- Text(
- 'Creative',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
- color: Theme.of(context).colorScheme.onSurfaceVariant,
- ),
- ),
- ],
- ),
- SizedBox(height: 8),
- SliderTheme(
- data: SliderTheme.of(context).copyWith(
- activeTrackColor: Theme.of(context).colorScheme.primary,
- inactiveTrackColor: Theme.of(context).colorScheme.outline,
- thumbColor: Theme.of(context).colorScheme.primary,
- overlayColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
- thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8),
- trackHeight: 4,
- ),
- child: Slider(
- value: tempValue,
- min: 0.0,
- max: 1.0,
- divisions: 20,
- onChanged: (value) {
- setDialogState(() {
- tempValue = value;
- });
- },
- ),
- ),
- ],
- ),
- ),
- ),
- ),
- SizedBox(width: 16),
- Expanded(
- child: _FormField(
- label: 'Response Length',
- helpText: 'Default: 2048 tokens',
- child: Container(
- decoration: BoxDecoration(
- border: Border.all(color: Theme.of(context).colorScheme.outline),
- borderRadius: BorderRadius.circular(8),
- color: ThemeColors(context).surface.withValues(alpha: 0.8),
- ),
- child: TextField(
- decoration: InputDecoration(
- hintText: '2048 (Default)',
- hintStyle: TextStyle(
- fontFamily: 'Space Grotesk',
- color: Theme.of(context).colorScheme.onSurfaceVariant,
- ),
- border: InputBorder.none,
- contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
- ),
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- color: Theme.of(context).colorScheme.onSurface,
- ),
- keyboardType: TextInputType.number,
- onChanged: (value) {
- maxTokensValue = int.tryParse(value) ?? 2048;
- },
- controller: TextEditingController(text: maxTokensValue == 2048 ? '' : maxTokensValue.toString()),
- ),
- ),
- ),
- ),
- ],
- ),
- ],
- ),
- ),
- ),
- actions: [
- Container(
- decoration: BoxDecoration(
- border: Border.all(color: Theme.of(context).colorScheme.outline),
- borderRadius: BorderRadius.circular(6),
- ),
- child: TextButton(
- onPressed: () => Navigator.pop(context),
- style: TextButton.styleFrom(
- padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
- foregroundColor: Theme.of(context).colorScheme.onSurface,
- ),
- child: Text(
- 'Cancel',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
- ),
- ),
- ),
- ),
- SizedBox(width: 12),
- Container(
- decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.primary,
- borderRadius: BorderRadius.circular(6),
- ),
- child: TextButton(
- onPressed: () {
- if (nameValue.trim().isEmpty || apiKeyValue.trim().isEmpty) {
- _showMessage('Please fill in all required fields', isError: true);
- return;
- }
-
- final newId = isEditing ? editingConfig!.id : 'api_${DateTime.now().millisecondsSinceEpoch}';
- final newConfig = ApiKeyConfig(
- id: newId,
- name: nameValue.trim(),
- provider: providerValue,
- model: modelValue,
- isDefault: isEditing ? editingConfig!.isDefault : savedApiKeys.isEmpty,
- isConfigured: true,
+ void _editApiKey(ApiConfig apiConfig) {
+ // Convert ApiConfig to DirectAPIConfig for compatibility with existing dialog
+ // TODO: Update ApiKeyDialog to work with ApiConfig directly
+ final directConfig = DirectAPIConfig(
+   id: apiConfig.id,
+   name: apiConfig.name,
+   provider: apiConfig.provider,
+   model: apiConfig.model,
+   apiKey: apiConfig.apiKey,
+   baseUrl: apiConfig.baseUrl,
+   isDefault: apiConfig.isDefault,
+   enabled: apiConfig.enabled,
+   createdAt: DateTime.now(),
  );
-
- setState(() {
- if (isEditing) {
- final index = savedApiKeys.indexWhere((key) => key.id == editingConfig!.id);
- savedApiKeys[index] = newConfig;
- } else {
- savedApiKeys.add(newConfig);
+ _showAddApiKeyDialog(editingConfig: directConfig);
  }
- });
 
- Navigator.pop(context);
- _showMessage(isEditing ? 'API configuration updated successfully!' : 'API configuration added successfully!');
- },
- style: TextButton.styleFrom(
- padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
- foregroundColor: Theme.of(context).colorScheme.onPrimary,
- ),
- child: Text(
- isEditing ? 'Update Configuration' : 'Add Configuration',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
- fontWeight: FontWeight.w500,
- ),
- ),
- ),
- ),
- ],
- ),
- ),
+ Future<void> _showAddApiKeyDialog({DirectAPIConfig? editingConfig}) async {
+ await showDialog<bool>(
+ context: context,
+ builder: (context) => ApiKeyDialog(existingConfig: editingConfig),
  );
  }
 
@@ -1962,6 +1721,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     icon: Icon(Icons.play_circle, size: 20),
                     style: IconButton.styleFrom(
                       foregroundColor: SemanticColors.primary,
+                      overlayColor: SemanticColors.primary.withValues(alpha: 0.1),
                     ),
                   ),
                   IconButton(
@@ -1969,6 +1729,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     icon: Icon(Icons.edit, size: 18),
                     style: IconButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                      overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
                     ),
                   ),
                   IconButton(
@@ -1976,6 +1737,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     icon: Icon(Icons.delete, size: 18),
                     style: IconButton.styleFrom(
                       foregroundColor: SemanticColors.error,
+                      overlayColor: SemanticColors.error.withValues(alpha: 0.1),
                     ),
                   ),
                 ],
@@ -2151,6 +1913,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
+            style: TextButton.styleFrom(
+              overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
+            ),
             child: Text('Cancel'),
           ),
           ElevatedButton(
@@ -2359,71 +2124,518 @@ class AgentItem {
   });
 }
 
-// Integration class for the integrations tab
-class Integration {
-  final String id;
-  final String name;
-  final String description;
-  final String category;
-  final IconData icon;
-  final bool isInstalled;
-  final String developer;
-  final String downloadCount;
-  final List<String> features;
 
-  const Integration({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.category,
-    required this.icon,
-    required this.isInstalled,
-    required this.developer,
-    required this.downloadCount,
-    required this.features,
-  });
-}
-
-// Simple placeholder for IntegrationsTabContent
-class IntegrationsTabContent extends StatelessWidget {
+// Unified integrations tab content with MCP servers and available integrations
+class IntegrationsTabContent extends ConsumerStatefulWidget {
   const IntegrationsTabContent({super.key});
 
   @override
+  ConsumerState<IntegrationsTabContent> createState() => _IntegrationsTabContentState();
+}
+
+class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent> {
+  String _searchQuery = '';
+  String _selectedCategory = 'All';
+  
+  final List<String> _categories = [
+    'All',
+    'Development',
+    'Communication', 
+    'Productivity',
+    'Cloud Services',
+    'AI/ML',
+  ];
+
+  @override
   Widget build(BuildContext context) {
+    final mcpService = ref.watch(mcpSettingsServiceProvider);
+    final allMCPServers = mcpService.allMCPServers;
+    
+    // Filter configured MCP servers and available integrations
+    final configuredServers = allMCPServers.values.where((server) => server.enabled).toList();
+    final availableIntegrations = _getAvailableIntegrations();
+    
+    // Combine and filter
+    final allIntegrations = [
+      ...configuredServers.map((s) => _mcpServerToIntegration(s)), 
+      ...availableIntegrations,
+    ];
+    final filteredItems = _filterItems(allIntegrations);
+    
     return Container(
       padding: const EdgeInsets.all(24),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.extension,
-              size: 64,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Text(
+            'Integrations',
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Configure integrations that can be used when building custom agents.',
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 14,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Integrations Coming Soon',
-              style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
+          ),
+          const SizedBox(height: 24),
+          
+          // Search and Filter Row
+          Row(
+            children: [
+              // Search Bar
+              Expanded(
+                flex: 2,
+                child: TextField(
+                  onChanged: (value) => setState(() => _searchQuery = value),
+                  decoration: InputDecoration(
+                    hintText: 'Search integrations...',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              
+              // Category Filter
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: _selectedCategory,
+                  onChanged: (value) => setState(() => _selectedCategory = value!),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  items: _categories.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(category),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          
+          // Integrations Grid
+          filteredItems.isEmpty 
+              ? _buildEmptyState()
+              : SizedBox(
+                  height: 400, // Fixed height instead of Expanded
+                  child: GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                        childAspectRatio: 0.75, // Further reduced for more height
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: filteredItems.length,
+                      itemBuilder: (context, index) {
+                        final integration = filteredItems[index];
+                        return _buildIntegrationCard(integration);
+                      },
+                    ),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No integrations found',
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try adjusting your search or filter.',
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIntegrationCard(Integration integration) {
+    if (integration.isMCPServer && integration.mcpServer != null) {
+      // Use the existing unified MCP server card for configured servers
+      return Column(
+        children: [
+          Flexible(
+            child: UnifiedMCPServerCard(
+              serverId: integration.id,
+              config: integration.mcpServer,
+              showHealth: false,
+              showDescription: true,
+              trailing: Container(
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Text(
+                  'CONFIGURED',
+                  style: TextStyles.caption.copyWith(
+                    color: ThemeColors(context).primary,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Connect your favorite tools and services to extend functionality.',
-              style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          SizedBox(height: SpacingTokens.xs),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.sm),
+            child: AsmblButton.secondary(
+              text: 'Configure',
+              onPressed: () => _handleIntegrationAction(integration),
+              isFullWidth: true,
+            ),
+          ),
+        ],
+      );
+    } else {
+      // Create a custom card for unconfigured integrations using design system components
+      return AsmblCard(
+        child: Column(
+          children: [
+            // Header with icon and info
+            Padding(
+              padding: EdgeInsets.all(SpacingTokens.sm),
+              child: Column(
+                children: [
+                  // Icon
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: integration.color.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                    ),
+                    child: Icon(
+                      integration.icon,
+                      color: integration.color,
+                      size: 20,
+                    ),
+                  ),
+                  SizedBox(height: SpacingTokens.xs),
+                  
+                  // Name
+                  Text(
+                    integration.name,
+                    style: TextStyles.bodySmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: ThemeColors(context).onSurface,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 2),
+                  
+                  // Description
+                  Text(
+                    integration.description,
+                    style: TextStyles.caption.copyWith(
+                      color: ThemeColors(context).onSurfaceVariant,
+                      fontSize: 11,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
+            ),
+            
+            // Footer
+            Padding(
+              padding: EdgeInsets.all(SpacingTokens.sm),
+              child: Column(
+                children: [
+                  // Status badge
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: ThemeColors(context).surface,
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                      border: Border.all(
+                        color: ThemeColors(context).border.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Text(
+                      'AVAILABLE',
+                      style: TextStyles.caption.copyWith(
+                        color: ThemeColors(context).onSurfaceVariant,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: SpacingTokens.xs),
+                  
+                  // Action Button
+                  AsmblButton.primary(
+                    text: 'Install',
+                    onPressed: () => _handleIntegrationAction(integration),
+                    isFullWidth: true,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
+      );
+    }
+  }
+
+  List<Integration> _getAvailableIntegrations() {
+    // Sample of available MCP servers from the extensions library
+    // In a real implementation, this would load from the extensions-library.ts
+    return [
+      Integration(
+        id: 'filesystem-mcp',
+        name: 'Filesystem MCP Server',
+        description: 'Access and manage local files and directories through Model Context Protocol',
+        category: 'Development',
+        icon: Icons.folder,
+        color: Colors.orange,
+        isConfigured: false,
+        isMCPServer: true,
       ),
+      Integration(
+        id: 'git-mcp',
+        name: 'Git MCP Server',
+        description: 'Git repository operations and version control through Model Context Protocol',
+        category: 'Development',
+        icon: Icons.code_outlined,
+        color: Colors.orange.shade800,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'postgres-mcp',
+        name: 'PostgreSQL MCP Server',
+        description: 'PostgreSQL database operations and queries through Model Context Protocol',
+        category: 'Development',
+        icon: Icons.storage,
+        color: Colors.blue.shade700,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'memory-mcp',
+        name: 'Memory MCP Server',
+        description: 'Persistent memory and knowledge base management for AI agents',
+        category: 'AI/ML',
+        icon: Icons.psychology,
+        color: Colors.purple,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'search-mcp',
+        name: 'Search MCP Server',
+        description: 'Web search and information retrieval through Model Context Protocol',
+        category: 'AI/ML',
+        icon: Icons.search,
+        color: Colors.green,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'terminal-mcp',
+        name: 'Terminal MCP Server',
+        description: 'Execute shell commands and terminal operations through Model Context Protocol',
+        category: 'Development',
+        icon: Icons.terminal,
+        color: Colors.grey.shade800,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'http-mcp',
+        name: 'HTTP MCP Server',
+        description: 'HTTP client for API requests and web service integration',
+        category: 'Development',
+        icon: Icons.http,
+        color: Colors.blue,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'calendar-mcp',
+        name: 'Calendar MCP Server',
+        description: 'Calendar and scheduling operations through Model Context Protocol',
+        category: 'Productivity',
+        icon: Icons.calendar_today,
+        color: Colors.indigo,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'sequential-thinking-mcp',
+        name: 'Sequential Thinking MCP Server',
+        description: 'Dynamic problem-solving through thought sequences and structured reasoning',
+        category: 'AI/ML',
+        icon: Icons.auto_awesome,
+        color: Colors.deepPurple,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'time-mcp',
+        name: 'Time MCP Server',
+        description: 'Time and timezone conversion capabilities with scheduling and temporal operations',
+        category: 'Productivity',
+        icon: Icons.access_time,
+        color: Colors.teal,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'figma-mcp',
+        name: 'Figma MCP Server',
+        description: 'Connect to Figma files, components, and design systems through Model Context Protocol',
+        category: 'Design',
+        icon: Icons.design_services,
+        color: Colors.pink,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'github',
+        name: 'GitHub Integration',
+        description: 'Access GitHub repositories for code analysis, pull requests, issues, and collaborative development',
+        category: 'Development',
+        icon: Icons.code,
+        color: Colors.black,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'slack',
+        name: 'Slack Integration',
+        description: 'Integrate with Slack for team communication, notifications, and design collaboration workflows',
+        category: 'Communication',
+        icon: Icons.chat,
+        color: Colors.purple.shade600,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'notion-api',
+        name: 'Notion Workspace',
+        description: 'Connect to Notion for design documentation, project management, and knowledge base creation',
+        category: 'Productivity',
+        icon: Icons.note,
+        color: Colors.black87,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+      Integration(
+        id: 'google-drive',
+        name: 'Google Drive',
+        description: 'Access and manage design files, assets, and collaborative documents in Google Drive',
+        category: 'Cloud Services',
+        icon: Icons.cloud,
+        color: Colors.blue,
+        isConfigured: false,
+        isMCPServer: true,
+      ),
+    ];
+  }
+
+  Integration _mcpServerToIntegration(MCPServerConfig server) {
+    return Integration(
+      id: server.id,
+      name: server.name,
+      description: server.description ?? 'MCP Server',
+      category: 'Development',
+      icon: Icons.dns,
+      color: Theme.of(context).colorScheme.primary,
+      isConfigured: true,
+      isMCPServer: true,
+      mcpServer: server,
     );
+  }
+
+  List<Integration> _filterItems(List<Integration> items) {
+    return items.where((item) {
+      final matchesSearch = _searchQuery.isEmpty || 
+          item.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          item.description.toLowerCase().contains(_searchQuery.toLowerCase());
+      
+      final matchesCategory = _selectedCategory == 'All' || item.category == _selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    }).toList();
+  }
+
+  void _handleIntegrationAction(Integration integration) {
+    if (integration.isMCPServer) {
+      if (integration.mcpServer != null) {
+        // Edit existing MCP server configuration
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EnhancedMCPServerWizard(
+              existingConfig: integration.mcpServer,
+            ),
+          ),
+        );
+      } else {
+        // Create new MCP server configuration
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EnhancedMCPServerWizard(
+              serverId: integration.id,
+            ),
+          ),
+        );
+      }
+    } else {
+      // Show coming soon message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${integration.name} integration coming soon!'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }

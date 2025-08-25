@@ -40,6 +40,7 @@ dependencies:
   # Utilities
   uuid: ^4.0.0
   equatable: ^2.0.5
+  url_launcher: ^6.2.0
   
   # Desktop Integration
   window_manager: ^0.3.7

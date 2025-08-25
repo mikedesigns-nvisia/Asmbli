@@ -13,12 +13,15 @@ import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'features/agents/presentation/screens/agent_configuration_screen.dart';
 import 'features/context/presentation/screens/context_library_screen.dart';
 import 'features/agent_wizard/presentation/screens/agent_wizard_screen.dart';
+import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'providers/conversation_provider.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/theme_service.dart';
 import 'core/services/desktop/desktop_service_provider.dart';
 import 'core/services/desktop/window_management_service.dart';
+import 'core/services/desktop/desktop_storage_service.dart';
+import 'core/services/api_config_service.dart';
 
 void main() async {
  WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +49,7 @@ void main() async {
  size: Size(1400, 900),
  minimumSize: Size(1000, 700),
  center: true,
- title: 'AgentEngine - Desktop',
+ title: 'Asmbli - Desktop',
  backgroundColor: Colors.transparent,
  ),
  );
@@ -84,7 +87,15 @@ class AsmblDesktopApp extends ConsumerWidget {
 // Create router outside of the widget to avoid global key issues
 final _router = GoRouter(
  initialLocation: AppRoutes.home,
+ redirect: (context, state) {
+   // We'll handle onboarding check in HomeScreen instead
+   return null;
+ },
  routes: [
+ GoRoute(
+ path: '/onboarding',
+ builder: (context, state) => const OnboardingScreen(),
+ ),
  GoRoute(
  path: AppRoutes.home,
  builder: (context, state) => HomeScreen(),
@@ -128,11 +139,44 @@ final _router = GoRouter(
 );
 
 /// Dashboard-style home screen focused on app functionality
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
  const HomeScreen({super.key});
 
  @override
- Widget build(BuildContext context, WidgetRef ref) {
+ ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+ @override
+ void initState() {
+   super.initState();
+   _checkOnboarding();
+ }
+
+ Future<void> _checkOnboarding() async {
+   try {
+     // Small delay to ensure storage is initialized
+     await Future.delayed(Duration(milliseconds: 100));
+     
+     final storage = DesktopStorageService.instance;
+     final onboardingCompleted = storage.getPreference<bool>('onboarding_completed') ?? false;
+     
+     // Check if any API keys are configured
+     final apiService = ApiConfigService(storage);
+     await apiService.initialize();
+     final hasApiKeys = apiService.allApiConfigs.values.any((config) => config.apiKey.isNotEmpty);
+     
+     // If not onboarded and no API keys, redirect to onboarding
+     if (!onboardingCompleted && !hasApiKeys && mounted) {
+       context.go('/onboarding');
+     }
+   } catch (e) {
+     print('Error checking onboarding status: $e');
+   }
+ }
+
+ @override
+ Widget build(BuildContext context) {
  final colors = ThemeColors(context);
  
  return Scaffold(
@@ -178,6 +222,18 @@ class HomeScreen extends ConsumerWidget {
  ),
  
  SizedBox(height: SpacingTokens.sectionSpacing),
+ 
+ // Temporary onboarding test button
+ TextButton.icon(
+ onPressed: () => context.go('/onboarding'),
+ icon: Icon(Icons.rocket_launch),
+ label: Text('Test Onboarding Flow'),
+ style: TextButton.styleFrom(
+ foregroundColor: colors.primary,
+ ),
+ ),
+ 
+ SizedBox(height: SpacingTokens.md),
  
  // Quick Actions Row
  Row(
