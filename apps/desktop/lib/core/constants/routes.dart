@@ -13,6 +13,7 @@ class AppRoutes {
  static const String marketplace = '/marketplace';
  static const String wizard = '/wizard';
  static const String agentWizard = '/agent-wizard';
+ static const String integrations = '/integrations';
  
  // Route names for easier identification
  static const Map<String, String> routeNames = {
@@ -25,6 +26,7 @@ class AppRoutes {
  marketplace: 'Marketplace',
  wizard: 'Wizard',
  agentWizard: 'Create Agent',
+ integrations: 'Add Integrations',
  };
  
  // Helper method to get route name
@@ -43,5 +45,6 @@ class AppRoutes {
  marketplace,
  wizard,
  agentWizard,
+ integrations,
  ];
 }

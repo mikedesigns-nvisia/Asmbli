@@ -4,6 +4,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/design_system/components/enhanced_template_browser.dart';
 import '../../../../core/design_system/components/smart_mcp_form.dart';
 import '../../../../core/design_system/components/mcp_testing_widgets.dart';
+import '../../../../core/design_system/components/auto_detect_button.dart';
 import '../../../../core/models/enhanced_mcp_template.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/enhanced_mcp_testing_service.dart';
@@ -280,15 +281,49 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
   Widget _buildTemplateBrowserStep(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(24),
-      child: EnhancedTemplateBrowser(
-        userRole: widget.userRole,
-        recommendedTags: widget.contextTags,
-        onTemplateSelected: (template) {
-          setState(() {
-            _selectedTemplate = template;
-          });
-          _nextStep();
-        },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Auto-detect option at top
+          AutoDetectButton(
+            onDetectionComplete: () => Navigator.of(context).pop(),
+          ),
+          
+          SizedBox(height: 24),
+          
+          // Divider with "OR CHOOSE MANUALLY" text
+          Row(
+            children: [
+              Expanded(child: Divider(color: SemanticColors.border)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'OR CHOOSE MANUALLY',
+                  style: TextStyles.labelSmall.copyWith(
+                    color: SemanticColors.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              Expanded(child: Divider(color: SemanticColors.border)),
+            ],
+          ),
+          
+          SizedBox(height: 24),
+          
+          // Template browser
+          Expanded(
+            child: EnhancedTemplateBrowser(
+              userRole: widget.userRole,
+              recommendedTags: widget.contextTags,
+              onTemplateSelected: (template) {
+                setState(() {
+                  _selectedTemplate = template;
+                });
+                _nextStep();
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/components/auto_detect_button.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import 'enhanced_mcp_server_wizard.dart';
 
@@ -288,7 +289,33 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             
             SizedBox(height: 24),
             
-            // Options
+            // Auto-detect option at top
+            AutoDetectButton(
+              onDetectionComplete: () => Navigator.of(context).pop(),
+            ),
+            
+            SizedBox(height: 24),
+            
+            // Divider with "OR" text
+            Row(
+              children: [
+                Expanded(child: Divider(color: SemanticColors.border)),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'OR',
+                    style: TextStyles.labelSmall.copyWith(
+                      color: SemanticColors.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                Expanded(child: Divider(color: SemanticColors.border)),
+              ],
+            ),
+            
+            SizedBox(height: 24),
+            
+            // Manual setup options
             Row(
               children: [
                 // Enhanced Wizard Option
@@ -296,7 +323,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   child: _buildSetupOption(
                     context,
                     title: 'Guided Setup',
-                    description: 'Step-by-step wizard with smart recommendations',
+                    description: 'Step-by-step wizard with recommendations',
                     icon: Icons.auto_awesome,
                     badge: 'Recommended',
                     badgeColor: SemanticColors.success,
@@ -316,9 +343,9 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 Expanded(
                   child: _buildSetupOption(
                     context,
-                    title: 'Quick Setup',
+                    title: 'Manual Setup',
                     description: 'Traditional form for advanced users',
-                    icon: Icons.speed,
+                    icon: Icons.settings,
                     badge: 'Advanced',
                     badgeColor: Colors.orange,
                     onTap: () {
