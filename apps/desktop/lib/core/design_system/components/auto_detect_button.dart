@@ -28,7 +28,7 @@ class AutoDetectButton extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: SemanticColors.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadiusTokens.md,
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: SemanticColors.primary.withValues(alpha: 0.3),
         ),
@@ -37,9 +37,9 @@ class AutoDetectButton extends ConsumerWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => _showAutoDetection(context),
-          borderRadius: BorderRadiusTokens.md,
+          borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: SpacingTokens.md,
+            padding: EdgeInsets.all(16),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -48,7 +48,7 @@ class AutoDetectButton extends ConsumerWidget {
                   size: 18,
                   color: SemanticColors.primary,
                 ),
-                SizedBox(width: SpacingTokens.sm),
+                SizedBox(width: 8),
                 Text(
                   'Auto-Detect',
                   style: TextStyles.labelMedium.copyWith(
@@ -65,7 +65,7 @@ class AutoDetectButton extends ConsumerWidget {
 
   Widget _buildFullButton(BuildContext context) {
     return Container(
-      padding: SpacingTokens.lg,
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -73,7 +73,7 @@ class AutoDetectButton extends ConsumerWidget {
             SemanticColors.primary.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadiusTokens.lg,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: SemanticColors.primary.withValues(alpha: 0.2),
         ),
@@ -84,10 +84,10 @@ class AutoDetectButton extends ConsumerWidget {
           Row(
             children: [
               Container(
-                padding: SpacingTokens.sm,
+                padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: SemanticColors.primary,
-                  borderRadius: BorderRadiusTokens.sm,
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(
                   Icons.auto_fix_high,
@@ -95,7 +95,7 @@ class AutoDetectButton extends ConsumerWidget {
                   size: 20,
                 ),
               ),
-              SizedBox(width: SpacingTokens.md),
+              SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,9 +104,11 @@ class AutoDetectButton extends ConsumerWidget {
                       specificIntegration != null
                           ? 'Auto-Detect ${specificIntegration}'
                           : 'Auto-Detect Configuration',
-                      style: TextStyles.titleMedium.copyWith(
+                      style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                         color: SemanticColors.primary,
-                      ),
+                      ).copyWith(color: SemanticColors.primary),
                     ),
                     Text(
                       'Automatically find and configure installed tools',
@@ -119,7 +121,7 @@ class AutoDetectButton extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.md),
+          SizedBox(height: 16),
           AsmblButton.primary(
             text: 'Start Detection',
             onPressed: () => _showAutoDetection(context),
@@ -184,15 +186,15 @@ class AutoDetectFormField extends ConsumerWidget {
             filled: true,
             fillColor: SemanticColors.surface,
             border: OutlineInputBorder(
-              borderRadius: BorderRadiusTokens.md,
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: SemanticColors.border),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadiusTokens.md,
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: SemanticColors.border),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadiusTokens.md,
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: SemanticColors.primary),
             ),
           ),

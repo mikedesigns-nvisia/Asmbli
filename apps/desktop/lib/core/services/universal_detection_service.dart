@@ -4,6 +4,46 @@ import 'package:path/path.dart' as path;
 import 'dev_tools_detection_service.dart';
 import 'browser_detection_service.dart';
 
+/// Status of an integration
+enum IntegrationStatus {
+  ready,
+  needsAuth,
+  needsStart,
+  notFound,
+}
+
+/// Individual integration instance
+class IntegrationInstance {
+  final String name;
+  final IntegrationStatus status;
+  final String? path;
+  final int confidence;
+  final Map<String, dynamic>? metadata;
+
+  const IntegrationInstance({
+    required this.name,
+    required this.status,
+    this.path,
+    required this.confidence,
+    this.metadata,
+  });
+}
+
+/// Integration configuration for setup
+class IntegrationConfig {
+  final String name;
+  final String? executablePath;
+  final Map<String, String> envVars;
+  final List<String> setupCommands;
+
+  const IntegrationConfig({
+    required this.name,
+    this.executablePath,
+    required this.envVars,
+    required this.setupCommands,
+  });
+}
+
 /// Universal detection service for ALL integrations
 /// This is our key differentiator - everything "just works"
 class UniversalDetectionService {
@@ -27,10 +67,10 @@ class UniversalDetectionService {
           found: browsers.isNotEmpty,
           integrations: browsers.map((b) => IntegrationInstance(
             name: b.name,
-            status: b.found ? IntegrationStatus.ready : IntegrationStatus.notFound,
+            status: IntegrationStatus.ready,
             path: b.executablePath,
-            confidence: b.confidence.index * 25,
-            metadata: {'profiles': b.profiles?.length ?? 0},
+            confidence: 90,
+            metadata: {'profiles': b.profiles.length},
           )).toList(),
         );
         break;
@@ -59,10 +99,21 @@ class UniversalDetectionService {
         return await detectEverything();
     }
     
+    // Calculate summary stats
+    int totalFound = 0;
+    int totalReady = 0;
+    for (final detection in results.values) {
+      totalFound += detection.integrations.length;
+      totalReady += detection.integrations.where((i) => i.status == IntegrationStatus.ready).length;
+    }
+    
+    final readinessScore = totalFound > 0 ? ((totalReady / totalFound) * 100).round() : 0;
+    
     return UniversalDetectionResult(
-      categories: results,
-      detectionTime: DateTime.now(),
-      platformInfo: await _getPlatformInfo(),
+      detections: results,
+      totalIntegrationsFound: totalFound,
+      totalReady: totalReady,
+      readinessScore: readinessScore,
     );
   }
 
@@ -1182,7 +1233,7 @@ class UniversalDetectionService {
   Future<IntegrationConfig?> _detectPython() async {
     try {
       // Try python3 first, then python
-      Process result;
+      ProcessResult result;
       try {
         result = await Process.run('python3', ['--version']);
       } catch (e) {
@@ -1191,7 +1242,7 @@ class UniversalDetectionService {
       
       if (result.exitCode == 0) {
         // Check for pip
-        Process pipResult;
+        ProcessResult? pipResult;
         try {
           pipResult = await Process.run('pip3', ['--version']);
         } catch (e) {
