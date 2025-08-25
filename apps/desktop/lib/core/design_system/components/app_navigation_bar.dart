@@ -34,46 +34,16 @@ class AppNavigationBar extends ConsumerWidget {
  ),
  child: Row(
  children: [
- // Brand Logo and Title
+ // Brand Title
  GestureDetector(
  onTap: () => context.go(AppRoutes.home),
  child: Row(
  children: [
- // Logo Mark with subtle glow
- Container(
- height: 24,
- width: 24,
- decoration: BoxDecoration(
- borderRadius: BorderRadius.circular(4),
- boxShadow: [
- BoxShadow(
- color: colors.accent.withValues(alpha: 0.15),
- blurRadius: 8,
- spreadRadius: 2,
- offset: Offset(0, 0),
- ),
- BoxShadow(
- color: colors.accent.withValues(alpha: 0.08),
- blurRadius: 4,
- spreadRadius: 1,
- offset: Offset(0, 0),
- ),
- ],
- ),
- child: Image.asset(
- 'assets/images/logo.png',
- height: 24,
- width: 24,
- fit: BoxFit.contain,
- errorBuilder: (context, error, stackTrace) {
- // Fallback icon if image fails to load
- return Icon(
+ // Simple brand icon
+ Icon(
  Icons.hub,
  size: 24,
  color: colors.primary,
- );
- },
- ),
  ),
  SizedBox(width: SpacingTokens.sm),
  // Brand Title
