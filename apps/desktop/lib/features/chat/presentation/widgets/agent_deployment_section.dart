@@ -849,7 +849,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  fontSize: 13,
  fontWeight: FontWeight.w500,
  color: currentConversation?.metadata?['type'] == 'agent'
- ? SemanticColors.primary
+ ? ThemeColors(context).primary
  : theme.colorScheme.onSurfaceVariant,
  ),
  ),
@@ -922,10 +922,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  crossAxisAlignment: CrossAxisAlignment.start,
  mainAxisSize: MainAxisSize.min,
  children: [
- Row(
- children: [
- Expanded(
- child: Text(
+ Text(
  agent.name,
  style: TextStyle(
  fontFamily: 'Space Grotesk',
@@ -935,27 +932,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  ? theme.colorScheme.onSurface
  : theme.colorScheme.onSurfaceVariant,
  ),
- ),
- ),
- if (!agent.isActive) ...[
- Container(
- padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
- decoration: BoxDecoration(
- color: theme.colorScheme.primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(4),
- ),
- child: Text(
- 'SOON',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 8,
- fontWeight: FontWeight.bold,
- color: theme.colorScheme.primary,
- ),
- ),
- ),
- ],
- ],
+ maxLines: 1,
+ overflow: TextOverflow.ellipsis,
  ),
  Text(
  agent.description,
@@ -964,6 +942,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  fontSize: 10,
  color: theme.colorScheme.onSurfaceVariant,
  ),
+ maxLines: 1,
+ overflow: TextOverflow.ellipsis,
  ),
  ],
  ),
@@ -989,16 +969,16 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  width: double.infinity,
  padding: const EdgeInsets.all(10),
  decoration: BoxDecoration(
- color: SemanticColors.primary.withValues(alpha: 0.1),
+ color: ThemeColors(context).primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(6),
- border: Border.all(color: SemanticColors.primary.withValues(alpha: 0.3)),
+ border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
  ),
  child: Row(
  children: [
  Icon(
  Icons.info_outline,
  size: 14,
- color: SemanticColors.primary,
+ color: ThemeColors(context).primary,
  ),
  SizedBox(width: 8),
  Expanded(
@@ -1007,7 +987,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  style: TextStyle(
  fontFamily: 'Space Grotesk',
  fontSize: 11,
- color: SemanticColors.primary,
+ color: ThemeColors(context).primary,
  fontWeight: FontWeight.w500,
  ),
  ),
@@ -1048,9 +1028,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  width: double.infinity,
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
  decoration: BoxDecoration(
- color: SemanticColors.primary.withValues(alpha: 0.1),
+ color: ThemeColors(context).primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(8),
- border: Border.all(color: SemanticColors.primary.withValues(alpha: 0.3)),
+ border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
  ),
  child: Row(
  mainAxisAlignment: MainAxisAlignment.center,
@@ -1058,7 +1038,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  Icon(
  Icons.chat,
  size: 18,
- color: SemanticColors.primary,
+ color: ThemeColors(context).primary,
  ),
  SizedBox(width: 8),
  Flexible(
@@ -1068,7 +1048,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  fontFamily: 'Space Grotesk',
  fontSize: 13,
  fontWeight: FontWeight.w600,
- color: SemanticColors.primary,
+ color: ThemeColors(context).primary,
  ),
  overflow: TextOverflow.ellipsis,
  ),
@@ -1095,9 +1075,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  child: Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
  decoration: BoxDecoration(
- border: Border.all(color: SemanticColors.primary),
+ border: Border.all(color: ThemeColors(context).primary),
  borderRadius: BorderRadius.circular(6),
- color: SemanticColors.primary.withValues(alpha: 0.1),
+ color: ThemeColors(context).primary.withValues(alpha: 0.1),
  ),
  child: Center(
  child: Text(
@@ -1105,7 +1085,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  style: TextStyle(
  fontFamily: 'Space Grotesk',
  fontSize: 11,
- color: SemanticColors.primary,
+ color: ThemeColors(context).primary,
  fontWeight: FontWeight.w600,
  ),
  ),
@@ -1280,7 +1260,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
  decoration: BoxDecoration(
- color: SemanticColors.primary.withValues(alpha: 0.1),
+ color: ThemeColors(context).primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(4),
  ),
  child: Text(
@@ -1289,7 +1269,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  fontFamily: 'Space Grotesk',
  fontSize: 10,
  fontWeight: FontWeight.w500,
- color: SemanticColors.primary,
+ color: ThemeColors(context).primary,
  ),
  ),
  ),
@@ -1691,9 +1671,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  width: double.infinity,
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
  decoration: BoxDecoration(
- color: SemanticColors.primary.withValues(alpha: 0.1),
+ color: ThemeColors(context).primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(8),
- border: Border.all(color: SemanticColors.primary.withValues(alpha: 0.3)),
+ border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
  ),
  child: Row(
  mainAxisAlignment: MainAxisAlignment.center,
@@ -1703,7 +1683,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  height: 18,
  child: CircularProgressIndicator(
  strokeWidth: 2,
- valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
+ valueColor: AlwaysStoppedAnimation<Color>(ThemeColors(context).primary),
  ),
  ),
  SizedBox(width: 12),
@@ -1716,7 +1696,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  fontFamily: 'Space Grotesk',
  fontSize: 13,
  fontWeight: FontWeight.w600,
- color: SemanticColors.primary,
+ color: ThemeColors(context).primary,
  ),
  overflow: TextOverflow.ellipsis,
  ),
@@ -1726,7 +1706,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  style: TextStyle(
  fontFamily: 'Space Grotesk',
  fontSize: 10,
- color: SemanticColors.primary.withValues(alpha: 0.8),
+ color: ThemeColors(context).primary.withValues(alpha: 0.8),
  fontStyle: FontStyle.italic,
  ),
  overflow: TextOverflow.ellipsis,

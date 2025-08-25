@@ -1,0 +1,27 @@
+{
+  "name": "@agent-engine/core",
+  "version": "1.0.0",
+  "description": "Core models and services for AgentEngine",
+  "main": "lib/integration_registry.d.ts",
+  "types": "lib/integration_registry.d.ts",
+  "files": [
+    "lib/"
+  ],
+  "exports": {
+    ".": {
+      "types": "./lib/integration_registry.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "echo 'No build needed for TypeScript declarations'",
+    "test": "echo 'No tests configured'"
+  },
+  "keywords": [
+    "agent-engine",
+    "integrations",
+    "mcp",
+    "ai"
+  ],
+  "author": "AgentEngine Team",
+  "license": "MIT"
+}

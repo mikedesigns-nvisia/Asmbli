@@ -44,30 +44,60 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
 
   void _addCommonEnvVariables() {
     final selectedServers = widget.wizardState.selectedMCPServers;
+    final mcpService = ref.read(mcpSettingsServiceProvider);
     final commonVars = <String, String>{};
     
-    // Add environment variables based on selected MCP servers
-    if (selectedServers.contains('github')) {
-      commonVars['GITHUB_TOKEN'] = '';
-    }
-    if (selectedServers.contains('postgres')) {
-      commonVars['POSTGRES_CONNECTION_STRING'] = '';
-    }
-    if (selectedServers.contains('slack')) {
-      commonVars['SLACK_TOKEN'] = '';
-    }
-    if (selectedServers.contains('notion')) {
-      commonVars['NOTION_TOKEN'] = '';
+    // Add environment variables based on selected MCP servers from actual configurations
+    for (final serverId in selectedServers) {
+      final serverConfig = mcpService.allMCPServers[serverId];
+      if (serverConfig != null) {
+        // Extract environment variable patterns from server configuration
+        serverConfig.env?.forEach((key, value) {
+          if (value.isEmpty || value.startsWith('\${')) {
+            // This is a template variable that needs to be filled
+            commonVars[key] = '';
+          }
+        });
+      } else {
+        // Fallback to hardcoded common variables for known servers
+        _addHardcodedEnvVars(serverId, commonVars);
+      }
     }
     
     // Add controllers for common variables
     for (final entry in commonVars.entries) {
-      _envControllers[entry.key] = TextEditingController(text: entry.value);
-      widget.wizardState.setEnvironmentVariable(entry.key, entry.value);
+      if (!_envControllers.containsKey(entry.key)) {
+        _envControllers[entry.key] = TextEditingController(text: entry.value);
+        widget.wizardState.setEnvironmentVariable(entry.key, entry.value);
+      }
     }
     
     if (commonVars.isNotEmpty) {
       widget.onChanged();
+    }
+  }
+  
+  void _addHardcodedEnvVars(String serverId, Map<String, String> commonVars) {
+    // Fallback environment variables for known servers
+    switch (serverId.toLowerCase()) {
+      case 'github':
+        commonVars['GITHUB_TOKEN'] = '';
+        break;
+      case 'postgres':
+        commonVars['POSTGRES_CONNECTION_STRING'] = '';
+        break;
+      case 'slack':
+        commonVars['SLACK_TOKEN'] = '';
+        break;
+      case 'notion':
+        commonVars['NOTION_TOKEN'] = '';
+        break;
+      case 'brave-search':
+        commonVars['BRAVE_API_KEY'] = '';
+        break;
+      case 'openai':
+        commonVars['OPENAI_API_KEY'] = '';
+        break;
     }
   }
 
@@ -96,6 +126,11 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               
               // Environment Variables Section
               _buildEnvironmentVariablesSection(context),
+              
+              SizedBox(height: SpacingTokens.xxl),
+              
+              // MCP Server Status Section
+              _buildMCPServerStatusSection(context),
               
               SizedBox(height: SpacingTokens.xxl),
               
@@ -210,10 +245,10 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
 
   Widget _buildEnvironmentHelp(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: ThemeColors(context).info.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(color: ThemeColors(context).info.withValues(alpha: 0.3)),
       ),
       child: Column(
@@ -221,61 +256,299 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.lightbulb_outline,
-                color: ThemeColors(context).info,
-                size: 16,
+              Container(
+                padding: EdgeInsets.all(SpacingTokens.sm),
+                decoration: BoxDecoration(
+                  color: ThemeColors(context).info.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Icon(
+                  Icons.info_outline,
+                  color: ThemeColors(context).info,
+                  size: 20,
+                ),
               ),
-              SizedBox(width: SpacingTokens.xs),
+              SizedBox(width: SpacingTokens.md),
               Text(
                 'Environment Variable Guide',
-                style: TextStyles.bodySmall.copyWith(
+                style: TextStyles.cardTitle.copyWith(
                   color: ThemeColors(context).info,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.xs),
-          Text(
-            '• GITHUB_TOKEN: Personal access token for GitHub operations\n'
-            '• SLACK_TOKEN: Bot or OAuth token for Slack integration\n'
-            '• NOTION_TOKEN: Integration token for Notion workspace\n'
-            '• POSTGRES_CONNECTION_STRING: Database connection string\n'
-            '• Variables are securely stored and not visible in logs',
-            style: TextStyles.bodySmall.copyWith(
-              color: ThemeColors(context).onSurface,
+          SizedBox(height: SpacingTokens.lg),
+          
+          _buildHelpSection(context, 'How to get API keys:', [
+            'GitHub: Settings → Developer settings → Personal access tokens → Generate new token',
+            'OpenAI: Platform.openai.com → API Keys → Create new secret key',
+            'Brave Search: Search.brave.com → Sign up → API Keys',
+          ]),
+          
+          SizedBox(height: SpacingTokens.md),
+          
+          _buildHelpSection(context, 'Security & Storage:', [
+            'All variables are encrypted and stored securely',
+            'Values are never displayed in plain text or logs',
+            'Only your agents can access these variables',
+            'You can update or remove variables anytime',
+          ]),
+          
+          SizedBox(height: SpacingTokens.md),
+          
+          Container(
+            padding: EdgeInsets.all(SpacingTokens.md),
+            decoration: BoxDecoration(
+              color: ThemeColors(context).warning.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.security,
+                  color: ThemeColors(context).warning,
+                  size: 16,
+                ),
+                SizedBox(width: SpacingTokens.sm),
+                Expanded(
+                  child: Text(
+                    'Never share your API keys or tokens with others. Keep them secure and rotate them regularly.',
+                    style: TextStyles.bodySmall.copyWith(
+                      color: ThemeColors(context).onSurface,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
+  
+  Widget _buildHelpSection(BuildContext context, String title, List<String> items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: ThemeColors(context).onSurface,
+          ),
+        ),
+        SizedBox(height: SpacingTokens.sm),
+        ...items.map((item) => Padding(
+          padding: EdgeInsets.only(
+            left: SpacingTokens.md,
+            bottom: SpacingTokens.xs,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 6),
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: ThemeColors(context).primary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              SizedBox(width: SpacingTokens.sm),
+              Expanded(
+                child: Text(
+                  item,
+                  style: TextStyles.bodySmall.copyWith(
+                    color: ThemeColors(context).onSurface,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )),
+      ],
+    );
+  }
 
   Widget _buildEmptyEnvState(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          Icon(
-            Icons.eco,
-            size: 48,
-            color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
-          ),
-          SizedBox(height: SpacingTokens.sm),
-          Text(
-            'No environment variables configured',
-            style: TextStyles.bodyMedium.copyWith(
-              color: ThemeColors(context).onSurfaceVariant,
+    return Column(
+      children: [
+        // Enhanced empty state with better visual design
+        Container(
+          padding: EdgeInsets.all(SpacingTokens.xl),
+          decoration: BoxDecoration(
+            color: ThemeColors(context).surface,
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+            border: Border.all(
+              color: ThemeColors(context).border.withValues(alpha: 0.5),
+              style: BorderStyle.solid,
+              width: 2,
             ),
           ),
-          Text(
-            'Your agent will work without environment variables, but some MCP servers may need API keys.',
-            style: TextStyles.bodySmall.copyWith(
-              color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.7),
-            ),
-            textAlign: TextAlign.center,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(SpacingTokens.lg),
+                decoration: BoxDecoration(
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
+                ),
+                child: Icon(
+                  Icons.key,
+                  size: 40,
+                  color: ThemeColors(context).primary,
+                ),
+              ),
+              SizedBox(height: SpacingTokens.lg),
+              Text(
+                'No environment variables configured',
+                style: TextStyles.cardTitle.copyWith(
+                  color: ThemeColors(context).onSurface,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: SpacingTokens.sm),
+              Text(
+                'Environment variables store API keys, tokens, and other sensitive configuration data that your agents need to access external services.',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: ThemeColors(context).onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-        ],
+        ),
+        
+        SizedBox(height: SpacingTokens.lg),
+        
+        // Quick setup cards for common variables
+        _buildCommonVariablesSection(context),
+      ],
+    );
+  }
+  
+  Widget _buildCommonVariablesSection(BuildContext context) {
+    final commonVars = [
+      {
+        'name': 'GITHUB_TOKEN',
+        'description': 'Personal access token for GitHub API access',
+        'icon': Icons.code,
+        'example': 'ghp_xxxxxxxxxxxxxxxxxxxx',
+        'category': 'Development',
+      },
+      {
+        'name': 'OPENAI_API_KEY',
+        'description': 'API key for OpenAI services',
+        'icon': Icons.psychology,
+        'example': 'sk-xxxxxxxxxxxxxxxxxxxxxxxx',
+        'category': 'AI Services',
+      },
+      {
+        'name': 'BRAVE_API_KEY',
+        'description': 'API key for Brave Search integration',
+        'icon': Icons.search,
+        'example': 'BSAxxxxxxxxxxxxxxxxxxxxxxx',
+        'category': 'Web Services',
+      },
+    ];
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Quick Setup - Common Variables',
+          style: TextStyles.sectionTitle.copyWith(
+            color: ThemeColors(context).onSurface,
+          ),
+        ),
+        SizedBox(height: SpacingTokens.md),
+        Text(
+          'Click on any card below to quickly add a common environment variable:',
+          style: TextStyles.bodySmall.copyWith(
+            color: ThemeColors(context).onSurfaceVariant,
+          ),
+        ),
+        SizedBox(height: SpacingTokens.lg),
+        ...commonVars.map((variable) => _buildQuickSetupCard(context, variable)),
+      ],
+    );
+  }
+  
+  Widget _buildQuickSetupCard(BuildContext context, Map<String, dynamic> variable) {
+    return Container(
+      margin: EdgeInsets.only(bottom: SpacingTokens.md),
+      child: AsmblCard(
+        onTap: () => _addCommonVariable(variable['name'], variable['example']),
+        child: Padding(
+          padding: EdgeInsets.all(SpacingTokens.md),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(SpacingTokens.sm),
+                decoration: BoxDecoration(
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Icon(
+                  variable['icon'],
+                  size: 20,
+                  color: ThemeColors(context).primary,
+                ),
+              ),
+              SizedBox(width: SpacingTokens.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          variable['name'],
+                          style: TextStyles.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                        SizedBox(width: SpacingTokens.sm),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: SpacingTokens.sm,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                          ),
+                          child: Text(
+                            variable['category'],
+                            style: TextStyles.caption.copyWith(
+                              color: ThemeColors(context).primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: SpacingTokens.xs),
+                    Text(
+                      variable['description'],
+                      style: TextStyles.bodySmall.copyWith(
+                        color: ThemeColors(context).onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.add_circle_outline,
+                color: ThemeColors(context).primary,
+                size: 20,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -399,6 +672,181 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
         ),
       ],
     );
+  }
+
+  Widget _buildMCPServerStatusSection(BuildContext context) {
+    final selectedServers = widget.wizardState.selectedMCPServers;
+    final mcpService = ref.read(mcpSettingsServiceProvider);
+    
+    if (selectedServers.isEmpty) {
+      return SizedBox.shrink();
+    }
+    
+    return AsmblCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.integration_instructions,
+                color: ThemeColors(context).primary,
+                size: 20,
+              ),
+              SizedBox(width: SpacingTokens.sm),
+              Text(
+                'MCP Server Status',
+                style: TextStyles.cardTitle,
+              ),
+            ],
+          ),
+          
+          SizedBox(height: SpacingTokens.sm),
+          
+          Text(
+            'Status of MCP servers selected for this agent:',
+            style: TextStyles.bodySmall.copyWith(
+              color: ThemeColors(context).onSurfaceVariant,
+            ),
+          ),
+          
+          SizedBox(height: SpacingTokens.lg),
+          
+          Column(
+            children: selectedServers.map((serverId) {
+              return Container(
+                margin: EdgeInsets.only(bottom: SpacingTokens.md),
+                child: _buildMCPServerStatusItem(context, serverId, mcpService),
+              );
+            }).toList(),
+          ),
+          
+          if (_hasUnconfiguredServers(selectedServers, mcpService)) ...[
+            SizedBox(height: SpacingTokens.lg),
+            Container(
+              padding: EdgeInsets.all(SpacingTokens.md),
+              decoration: BoxDecoration(
+                color: ThemeColors(context).warning.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                border: Border.all(color: ThemeColors(context).warning.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: ThemeColors(context).warning,
+                    size: 16,
+                  ),
+                  SizedBox(width: SpacingTokens.sm),
+                  Expanded(
+                    child: Text(
+                      'Some MCP servers need configuration. Visit Settings > MCP Servers to set them up.',
+                      style: TextStyles.bodySmall.copyWith(
+                        color: ThemeColors(context).onSurface,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMCPServerStatusItem(BuildContext context, String serverId, mcpService) {
+    final serverConfig = mcpService.allMCPServers[serverId];
+    final isConfigured = serverConfig != null;
+    final isEnabled = serverConfig?.enabled ?? false;
+    
+    Color statusColor;
+    IconData statusIcon;
+    String statusText;
+    
+    if (isConfigured && isEnabled) {
+      statusColor = SemanticColors.success;
+      statusIcon = Icons.check_circle;
+      statusText = 'Ready';
+    } else if (isConfigured && !isEnabled) {
+      statusColor = ThemeColors(context).warning;
+      statusIcon = Icons.pause_circle;
+      statusText = 'Disabled';
+    } else {
+      statusColor = ThemeColors(context).error;
+      statusIcon = Icons.error_outline;
+      statusText = 'Not configured';
+    }
+    
+    return Container(
+      padding: EdgeInsets.all(SpacingTokens.md),
+      decoration: BoxDecoration(
+        color: ThemeColors(context).surface,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(color: ThemeColors(context).border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(SpacingTokens.sm),
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+            ),
+            child: Icon(
+              statusIcon,
+              color: statusColor,
+              size: 16,
+            ),
+          ),
+          SizedBox(width: SpacingTokens.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  serverId,
+                  style: TextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  isConfigured 
+                    ? (serverConfig?.description ?? 'MCP Server')
+                    : 'Server not configured in settings',
+                  style: TextStyles.bodySmall.copyWith(
+                    color: ThemeColors(context).onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+            ),
+            child: Text(
+              statusText,
+              style: TextStyles.caption.copyWith(
+                color: statusColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _hasUnconfiguredServers(List<String> selectedServers, mcpService) {
+    return selectedServers.any((serverId) {
+      final serverConfig = mcpService.allMCPServers[serverId];
+      return serverConfig == null;
+    });
   }
 
   Widget _buildContextDocumentsSection(BuildContext context) {
@@ -788,6 +1236,29 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             },
           ),
         ],
+      ),
+    );
+  }
+  
+  void _addCommonVariable(String name, String example) {
+    setState(() {
+      if (!widget.wizardState.environmentVariables.containsKey(name)) {
+        _envControllers[name] = TextEditingController();
+        widget.wizardState.setEnvironmentVariable(name, '');
+        widget.onChanged();
+      }
+    });
+    
+    // Show a helpful message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Added $name - don\'t forget to enter your actual API key!'),
+        backgroundColor: SemanticColors.success,
+        action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.white,
+          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+        ),
       ),
     );
   }

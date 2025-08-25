@@ -123,7 +123,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
 
   void _safeSetState(VoidCallback fn) {
     if (mounted) {
-      _safeSetState(fn);
+      setState(fn);
     }
   }
 
@@ -204,7 +204,9 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
         );
       }
     } finally {
-      _safeSetState(() => _isLoading = false);
+      if (mounted) {
+        _safeSetState(() => _isLoading = false);
+      }
     }
   }
 

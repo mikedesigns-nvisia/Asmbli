@@ -3,6 +3,7 @@ import 'package:agent_engine_core/services/conversation_service.dart';
 import 'package:agent_engine_core/services/implementations/service_provider.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import '../core/services/mcp_settings_service.dart';
+import '../core/services/agent_system_prompt_service.dart';
 
 final conversationServiceProvider = Provider<ConversationService>((ref) {
  return ServiceProvider.getConversationService();
@@ -102,11 +103,22 @@ final createAgentConversationProvider = Provider.autoDispose((ref) {
  ...mcpService.globalContextDocuments, // Global contexts from settings
  ];
  
+ // Generate complete system prompt with real-time MCP integration context
+ final completeSystemPrompt = AgentSystemPromptService.getCompleteSystemPrompt(
+   baseSystemPrompt: systemPrompt,
+   agentId: agentId,
+   mcpServers: mcpServers,
+   mcpServerConfigs: enhancedMcpConfigs,
+   contextDocuments: allContextDocuments,
+   environmentTokens: <String, String>{}, // TODO: Add environment tokens to AgentDeploymentConfig
+ );
+
  final agentMetadata = {
  'type': 'agent',
  'agentId': agentId,
  'agentName': agentName,
- 'systemPrompt': systemPrompt,
+ 'systemPrompt': completeSystemPrompt, // Using enhanced system prompt
+ 'baseSystemPrompt': systemPrompt, // Keep original for reference
  'apiProvider': apiProvider,
  'assignedApiConfigId': assignedApiConfigId, // From settings
  'mcpServers': mcpServers,

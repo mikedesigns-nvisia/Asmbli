@@ -66,7 +66,7 @@ class MCPBridgeService {
         'enabledServerIds': enabledServerIds,
         'metadata': conversationMetadata ?? {},
         'serverConfigs': await _getServerConfigs(enabledServerIds),
-        'contextDocuments': _settingsService.globalContextDocuments,
+        'contextDocuments': (conversationMetadata?['contextDocuments'] as List<dynamic>?)?.cast<String>() ?? _settingsService.globalContextDocuments,
       };
 
       // Send to native/JS layer
@@ -105,7 +105,7 @@ class MCPBridgeService {
         'enabledServerIds': enabledServerIds,
         'metadata': conversationMetadata ?? {},
         'serverConfigs': await _getServerConfigs(enabledServerIds),
-        'contextDocuments': _settingsService.globalContextDocuments,
+        'contextDocuments': (conversationMetadata?['contextDocuments'] as List<dynamic>?)?.cast<String>() ?? _settingsService.globalContextDocuments,
       };
 
       // Start streaming

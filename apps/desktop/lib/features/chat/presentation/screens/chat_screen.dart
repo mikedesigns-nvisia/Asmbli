@@ -10,6 +10,8 @@ import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
 import '../../../../core/services/mcp_bridge_service.dart';
 import '../../../../core/services/mcp_settings_service.dart';
+import '../../../../core/services/claude_api_service.dart';
+import '../../../../core/services/api_config_service.dart';
 import '../widgets/conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/agent_deployment_section.dart';
@@ -72,11 +74,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final isDark = theme.brightness == Brightness.dark;
  
  return Scaffold(
- body: LoadingOverlay(
- isLoading: ref.watch(isLoadingProvider),
- loadingText: 'Processing...',
- child: Container(
- decoration: BoxDecoration(
+ body: Container(
+  decoration: BoxDecoration(
  gradient: RadialGradient(
  center: Alignment.topCenter,
  radius: 1.5,
@@ -140,7 +139,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  ],
- ),
  ),
  ),
  ),
@@ -299,10 +297,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
  decoration: BoxDecoration(
- color: SemanticColors.success.withValues(alpha: 0.1),
+ color: ThemeColors(context).success.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(8),
  border: Border.all(
- color: SemanticColors.success.withValues(alpha: 0.3),
+ color: ThemeColors(context).success.withValues(alpha: 0.3),
  ),
  ),
  child: Row(
@@ -312,7 +310,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  width: 6,
  height: 6,
  decoration: BoxDecoration(
- color: SemanticColors.success,
+ color: ThemeColors(context).success,
  shape: BoxShape.circle,
  ),
  ),
@@ -323,7 +321,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  fontFamily: 'Space Grotesk',
  fontSize: 9,
  fontWeight: FontWeight.w600,
- color: SemanticColors.success,
+ color: ThemeColors(context).success,
  ),
  ),
  ],
@@ -376,7 +374,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final type = conversation.metadata?['type'] as String?;
  switch (type) {
  case 'agent':
- return SemanticColors.primary;
+ return ThemeColors(context).primary;
  case 'default_api':
  return theme.colorScheme.onSurfaceVariant;
  default:
@@ -411,13 +409,28 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Row(
  children: [
+ Expanded(
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
  Text(
- 'Chat Configuration',
+ 'Agent Control Panel',
  style: TextStyle(
  fontFamily: 'Space Grotesk',
  fontSize: 16,
  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
+ ),
+ ),
+ Text(
+ 'What your agent sees & can access',
+ style: TextStyle(
+ fontFamily: 'Space Grotesk',
+ fontSize: 11,
+ color: theme.colorScheme.onSurfaceVariant,
+ ),
+ ),
+ ],
  ),
  ),
  Spacer(),
@@ -439,8 +452,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
+ // Active Agent Context
+ _buildActiveAgentContext(context),
+ 
+ SizedBox(height: SpacingTokens.sectionSpacing),
+ 
  // Agent Loader Section - Wrapped in Flexible to prevent overflow
  AgentLoaderSection(),
+ 
+ SizedBox(height: SpacingTokens.sectionSpacing),
+ 
+ // Agent Tools & Context
+ _buildAgentToolsContext(context),
  
  SizedBox(height: SpacingTokens.sectionSpacing),
  
@@ -574,7 +597,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: TextField(
  controller: messageController,
  decoration: InputDecoration(
- hintText: 'Type your message...',
+ hintText: 'Type your message... (Enter to send, Shift+Enter for new line)',
  hintStyle: TextStyle(
  fontFamily: 'Space Grotesk',
  color: theme.colorScheme.onSurfaceVariant,
@@ -586,9 +609,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  fontFamily: 'Space Grotesk',
  color: theme.colorScheme.onSurface,
  ),
- maxLines: 3,
+ maxLines: 5,
  minLines: 1,
  onSubmitted: (_) => _sendMessage(),
+onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
  ),
  ),
  ),
@@ -613,7 +637,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  )
  : Icon(Icons.send, size: 18),
  style: IconButton.styleFrom(
- foregroundColor: theme.colorScheme.onPrimary,
+ foregroundColor: messageController.text.trim().isNotEmpty && !ref.watch(isLoadingProvider)
+? Colors.white
+: theme.colorScheme.onSurfaceVariant,
  padding: const EdgeInsets.all(12),
  ),
  ),
@@ -826,6 +852,416 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  );
  }
 
+ Widget _buildActiveAgentContext(BuildContext context) {
+   final selectedConversationId = ref.watch(selectedConversationIdProvider);
+   final theme = Theme.of(context);
+   
+   if (selectedConversationId == null) {
+     return _buildNoActiveAgentCard(theme);
+   }
+   
+   final conversationAsync = ref.watch(conversationProvider(selectedConversationId));
+   
+   return conversationAsync.when(
+     data: (conversation) => _buildAgentContextCard(conversation, theme),
+     loading: () => _buildLoadingAgentCard(theme),
+     error: (_, __) => _buildErrorAgentCard(theme),
+   );
+ }
+
+ Widget _buildAgentToolsContext(BuildContext context) {
+   final selectedConversationId = ref.watch(selectedConversationIdProvider);
+   final theme = Theme.of(context);
+   
+   if (selectedConversationId == null) {
+     return Container();
+   }
+   
+   final conversationAsync = ref.watch(conversationProvider(selectedConversationId));
+   
+   return conversationAsync.when(
+     data: (conversation) => _buildToolsContextCard(conversation, theme),
+     loading: () => Container(),
+     error: (_, __) => Container(),
+   );
+ }
+
+ Widget _buildAgentContextCard(core.Conversation conversation, ThemeData theme) {
+   final agentName = conversation.metadata?['agentName'] ?? 'Default API';
+   final agentType = conversation.metadata?['type'] ?? 'default_api';
+   final mcpServers = conversation.metadata?['mcpServers'] as List<dynamic>? ?? [];
+   final contextDocs = conversation.metadata?['contextDocuments'] as List<dynamic>? ?? [];
+   
+   return Padding(
+     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     child: Container(
+       padding: EdgeInsets.all(SpacingTokens.cardPadding),
+       decoration: BoxDecoration(
+         color: agentType == 'agent' 
+           ? theme.colorScheme.primary.withValues(alpha: 0.08)
+           : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
+         borderRadius: BorderRadius.circular(12),
+         border: Border.all(
+           color: agentType == 'agent' 
+             ? theme.colorScheme.primary.withValues(alpha: 0.2)
+             : theme.colorScheme.outline.withValues(alpha: 0.2),
+         ),
+       ),
+       child: Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           // Agent header
+           Row(
+             children: [
+               Container(
+                 padding: EdgeInsets.all(8),
+                 decoration: BoxDecoration(
+                   color: agentType == 'agent'
+                     ? theme.colorScheme.primary.withValues(alpha: 0.1)
+                     : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
+                   borderRadius: BorderRadius.circular(8),
+                 ),
+                 child: Icon(
+                   agentType == 'agent' ? Icons.psychology : Icons.chat,
+                   size: 16,
+                   color: agentType == 'agent'
+                     ? theme.colorScheme.primary
+                     : theme.colorScheme.onSurfaceVariant,
+                 ),
+               ),
+               SizedBox(width: SpacingTokens.componentSpacing),
+               Expanded(
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: [
+                     Text(
+                       agentName,
+                       style: TextStyle(
+                         fontFamily: 'Space Grotesk',
+                         fontSize: 14,
+                         fontWeight: FontWeight.w600,
+                         color: theme.colorScheme.onSurface,
+                       ),
+                     ),
+                     Text(
+                       agentType == 'agent' ? 'MCP-Enabled Agent' : 'Basic API Assistant',
+                       style: TextStyle(
+                         fontFamily: 'Space Grotesk',
+                         fontSize: 11,
+                         color: theme.colorScheme.onSurfaceVariant,
+                       ),
+                     ),
+                   ],
+                 ),
+               ),
+               Container(
+                 padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                 decoration: BoxDecoration(
+                   color: agentType == 'agent' ? Colors.green : Colors.orange,
+                   borderRadius: BorderRadius.circular(4),
+                 ),
+                 child: Text(
+                   agentType == 'agent' ? 'LIVE' : 'BASIC',
+                   style: TextStyle(
+                     fontFamily: 'Space Grotesk',
+                     fontSize: 9,
+                     fontWeight: FontWeight.w600,
+                     color: Colors.white,
+                   ),
+                 ),
+               ),
+             ],
+           ),
+           
+           // Agent capabilities summary
+           SizedBox(height: SpacingTokens.componentSpacing),
+           Row(
+             children: [
+               _buildCapabilityChip(
+                 '${mcpServers.length} Tools',
+                 Icons.extension,
+                 mcpServers.isNotEmpty ? Colors.green : theme.colorScheme.onSurfaceVariant,
+                 theme,
+               ),
+               SizedBox(width: SpacingTokens.componentSpacing),
+               _buildCapabilityChip(
+                 '${contextDocs.length} Docs',
+                 Icons.description,
+                 contextDocs.isNotEmpty ? Colors.blue : theme.colorScheme.onSurfaceVariant,
+                 theme,
+               ),
+             ],
+           ),
+         ],
+       ),
+     ),
+   );
+ }
+
+ Widget _buildToolsContextCard(core.Conversation conversation, ThemeData theme) {
+   final mcpServers = conversation.metadata?['mcpServers'] as List<dynamic>? ?? [];
+   final mcpConfigs = conversation.metadata?['mcpServerConfigs'] as Map<String, dynamic>? ?? {};
+   final contextDocs = conversation.metadata?['contextDocuments'] as List<dynamic>? ?? [];
+   
+   if (mcpServers.isEmpty && contextDocs.isEmpty) {
+     return Container();
+   }
+   
+   return Padding(
+     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     child: Column(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children: [
+         // Section header
+         Text(
+           'Agent Resources',
+           style: TextStyle(
+             fontFamily: 'Space Grotesk',
+             fontSize: 13,
+             fontWeight: FontWeight.w600,
+             color: theme.colorScheme.onSurface,
+           ),
+         ),
+         SizedBox(height: SpacingTokens.componentSpacing),
+         
+         // MCP Tools
+         if (mcpServers.isNotEmpty) ...[
+           _buildSectionTitle('Active Tools (${mcpServers.length})', Icons.extension, theme),
+           SizedBox(height: SpacingTokens.iconSpacing),
+           ...mcpServers.take(4).map((serverId) {
+             final config = mcpConfigs[serverId] as Map<String, dynamic>?;
+             final status = config?['status'] ?? 'connected';
+             return _buildToolItem(serverId.toString(), status, theme);
+           }),
+           if (mcpServers.length > 4)
+             Text(
+               '+ ${mcpServers.length - 4} more tools',
+               style: TextStyle(
+                 fontFamily: 'Space Grotesk',
+                 fontSize: 11,
+                 color: theme.colorScheme.onSurfaceVariant,
+                 fontStyle: FontStyle.italic,
+               ),
+             ),
+           SizedBox(height: SpacingTokens.componentSpacing),
+         ],
+         
+         // Context Documents
+         if (contextDocs.isNotEmpty) ...[
+           _buildSectionTitle('Context Documents (${contextDocs.length})', Icons.description, theme),
+           SizedBox(height: SpacingTokens.iconSpacing),
+           ...contextDocs.take(3).map((doc) => _buildContextDocItem(doc.toString(), theme)),
+           if (contextDocs.length > 3)
+             Text(
+               '+ ${contextDocs.length - 3} more documents',
+               style: TextStyle(
+                 fontFamily: 'Space Grotesk',
+                 fontSize: 11,
+                 color: theme.colorScheme.onSurfaceVariant,
+                 fontStyle: FontStyle.italic,
+               ),
+             ),
+         ],
+       ],
+     ),
+   );
+ }
+
+ Widget _buildCapabilityChip(String text, IconData icon, Color color, ThemeData theme) {
+   return Container(
+     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+     decoration: BoxDecoration(
+       color: color.withValues(alpha: 0.1),
+       borderRadius: BorderRadius.circular(12),
+     ),
+     child: Row(
+       mainAxisSize: MainAxisSize.min,
+       children: [
+         Icon(icon, size: 12, color: color),
+         SizedBox(width: 4),
+         Text(
+           text,
+           style: TextStyle(
+             fontFamily: 'Space Grotesk',
+             fontSize: 10,
+             fontWeight: FontWeight.w500,
+             color: color,
+           ),
+         ),
+       ],
+     ),
+   );
+ }
+
+ Widget _buildSectionTitle(String title, IconData icon, ThemeData theme) {
+   return Row(
+     children: [
+       Icon(icon, size: 14, color: theme.colorScheme.primary),
+       SizedBox(width: 6),
+       Text(
+         title,
+         style: TextStyle(
+           fontFamily: 'Space Grotesk',
+           fontSize: 12,
+           fontWeight: FontWeight.w500,
+           color: theme.colorScheme.onSurface,
+         ),
+       ),
+     ],
+   );
+ }
+
+ Widget _buildToolItem(String serverId, String status, ThemeData theme) {
+   final statusColor = status == 'connected' ? Colors.green : 
+                      status == 'error' ? Colors.red : Colors.orange;
+   
+   return Padding(
+     padding: EdgeInsets.only(bottom: 6),
+     child: Row(
+       children: [
+         Container(
+           width: 6,
+           height: 6,
+           decoration: BoxDecoration(
+             color: statusColor,
+             shape: BoxShape.circle,
+           ),
+         ),
+         SizedBox(width: 8),
+         Expanded(
+           child: Text(
+             serverId,
+             style: TextStyle(
+               fontFamily: 'Space Grotesk',
+               fontSize: 11,
+               color: theme.colorScheme.onSurface,
+             ),
+           ),
+         ),
+         Text(
+           status.toUpperCase(),
+           style: TextStyle(
+             fontFamily: 'Space Grotesk',
+             fontSize: 9,
+             fontWeight: FontWeight.w600,
+             color: statusColor,
+           ),
+         ),
+       ],
+     ),
+   );
+ }
+
+ Widget _buildContextDocItem(String docName, ThemeData theme) {
+   return Padding(
+     padding: EdgeInsets.only(bottom: 6),
+     child: Row(
+       children: [
+         Icon(Icons.description, size: 12, color: theme.colorScheme.primary),
+         SizedBox(width: 8),
+         Expanded(
+           child: Text(
+             docName,
+             style: TextStyle(
+               fontFamily: 'Space Grotesk',
+               fontSize: 11,
+               color: theme.colorScheme.onSurface,
+             ),
+             overflow: TextOverflow.ellipsis,
+           ),
+         ),
+       ],
+     ),
+   );
+ }
+
+ Widget _buildNoActiveAgentCard(ThemeData theme) {
+   return Padding(
+     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     child: Container(
+       padding: EdgeInsets.all(SpacingTokens.cardPadding),
+       decoration: BoxDecoration(
+         color: theme.colorScheme.surface.withValues(alpha: 0.5),
+         borderRadius: BorderRadius.circular(12),
+         border: Border.all(
+           color: theme.colorScheme.outline.withValues(alpha: 0.2),
+         ),
+       ),
+       child: Column(
+         children: [
+           Icon(
+             Icons.chat_bubble_outline,
+             size: 32,
+             color: theme.colorScheme.onSurfaceVariant,
+           ),
+           SizedBox(height: SpacingTokens.componentSpacing),
+           Text(
+             'No conversation selected',
+             style: TextStyle(
+               fontFamily: 'Space Grotesk',
+               fontSize: 12,
+               fontWeight: FontWeight.w500,
+               color: theme.colorScheme.onSurfaceVariant,
+             ),
+           ),
+         ],
+       ),
+     ),
+   );
+ }
+
+ Widget _buildLoadingAgentCard(ThemeData theme) {
+   return Padding(
+     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     child: Container(
+       padding: EdgeInsets.all(SpacingTokens.cardPadding),
+       decoration: BoxDecoration(
+         color: theme.colorScheme.surface.withValues(alpha: 0.5),
+         borderRadius: BorderRadius.circular(12),
+       ),
+       child: Row(
+         children: [
+           SizedBox(
+             width: 16,
+             height: 16,
+             child: CircularProgressIndicator(strokeWidth: 2),
+           ),
+           SizedBox(width: SpacingTokens.componentSpacing),
+           Text(
+             'Loading agent context...',
+             style: TextStyle(
+               fontFamily: 'Space Grotesk',
+               fontSize: 12,
+               color: theme.colorScheme.onSurfaceVariant,
+             ),
+           ),
+         ],
+       ),
+     ),
+   );
+ }
+
+ Widget _buildErrorAgentCard(ThemeData theme) {
+   return Padding(
+     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     child: Container(
+       padding: EdgeInsets.all(SpacingTokens.cardPadding),
+       decoration: BoxDecoration(
+         color: Colors.red.withValues(alpha: 0.1),
+         borderRadius: BorderRadius.circular(12),
+       ),
+       child: Text(
+         'Error loading agent context',
+         style: TextStyle(
+           fontFamily: 'Space Grotesk',
+           fontSize: 12,
+           color: Colors.red,
+         ),
+       ),
+     ),
+   );
+ }
+
  void _sendMessage() async {
  final selectedConversationId = ref.read(selectedConversationIdProvider);
  if (messageController.text.trim().isEmpty || 
@@ -931,19 +1367,84 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  }
 
  Future<void> _handleStandardResponse(String conversationId) async {
- // Simulate AI response for non-MCP conversations
- await Future.delayed(Duration(seconds: 1));
+ try {
+ // Get API configuration from MCP settings
+ final mcpSettingsService = ref.read(mcpSettingsServiceProvider);
+ final claudeApiService = ref.read(claudeApiServiceProvider);
+ final defaultApiConfig = mcpSettingsService.defaultDirectAPIConfig;
+
+ if (defaultApiConfig == null || !defaultApiConfig.isConfigured) {
+ throw Exception('No API configuration found. Please configure your API key in Settings.');
+ }
+
+ // Get conversation messages for context
+ final service = ref.read(conversationServiceProvider);
+ final messages = await service.getMessages(conversationId);
  
+ // Build conversation history for Claude API
+ final conversationHistory = messages
+ .where((msg) => msg.role != core.MessageRole.system)
+ .map((msg) => {
+ 'role': msg.role == core.MessageRole.user ? 'user' : 'assistant',
+ 'content': msg.content,
+ })
+ .toList();
+
+ // Remove the last user message since it will be sent separately
+ final lastUserMessage = conversationHistory.removeLast();
+ final userMessage = lastUserMessage['content'] as String;
+
+ // Get conversation details to check for system prompt
+ final conversation = await ref.read(conversationProvider(conversationId).future);
+ final systemPrompt = conversation.metadata?['systemPrompt'] as String?;
+
+ // Call Claude API
+ final response = await claudeApiService.sendMessage(
+ message: userMessage,
+ apiKey: defaultApiConfig.apiKey,
+ model: defaultApiConfig.model,
+ systemPrompt: systemPrompt,
+ conversationHistory: conversationHistory,
+ );
+
+ // Create assistant message with the response
  final assistantMessage = core.Message(
  id: DateTime.now().millisecondsSinceEpoch.toString(),
- content: 'This is a simulated AI response. In production, this would connect to your configured AI model.',
+ content: response.text,
  role: core.MessageRole.assistant,
  timestamp: DateTime.now(),
+ metadata: {
+ 'apiProvider': defaultApiConfig.provider,
+ 'model': defaultApiConfig.model,
+ 'tokenUsage': {
+ 'inputTokens': response.usage.inputTokens,
+ 'outputTokens': response.usage.outputTokens,
+ 'totalTokens': response.usage.totalTokens,
+ },
+ 'stopReason': response.stopReason,
+ },
  );
- 
- final service = ref.read(conversationServiceProvider);
+
  await service.addMessage(conversationId, assistantMessage);
  ref.invalidate(messagesProvider(conversationId));
+ 
+ } catch (e) {
+ // Create error message
+ final errorMessage = core.Message(
+ id: DateTime.now().millisecondsSinceEpoch.toString(),
+ content: 'Sorry, I encountered an error: ${e.toString()}',
+ role: core.MessageRole.assistant,
+ timestamp: DateTime.now(),
+ metadata: {
+ 'isError': true,
+ 'errorType': e.runtimeType.toString(),
+ },
+ );
+
+ final service = ref.read(conversationServiceProvider);
+ await service.addMessage(conversationId, errorMessage);
+ ref.invalidate(messagesProvider(conversationId));
+ }
  }
 
  Widget _buildEmptyConversationState(BuildContext context) {

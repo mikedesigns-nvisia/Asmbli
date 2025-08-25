@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../../../core/services/agent_system_prompt_service.dart';
 
 /// State management for the agent deployment wizard
 /// Tracks user input across all wizard steps
@@ -205,12 +206,25 @@ class AgentWizardState extends ChangeNotifier {
 
   // Build final agent configuration
   Future<Map<String, dynamic>> buildAgentConfig() async {
+    final agentId = _generateAgentId();
+    
+    // Generate complete system prompt with MCP integration context
+    final completeSystemPrompt = AgentSystemPromptService.getCompleteSystemPrompt(
+      baseSystemPrompt: _systemPrompt,
+      agentId: agentId,
+      mcpServers: _selectedMCPServers,
+      mcpServerConfigs: _mcpServerConfigs,
+      contextDocuments: _contextDocuments,
+      environmentTokens: _environmentVariables.map((k, v) => MapEntry(k, v.toString())),
+    );
+    
     return {
-      'id': _generateAgentId(),
+      'id': agentId,
       'name': _agentName,
       'description': _agentDescription,
       'role': _agentRole,
-      'systemPrompt': _systemPrompt,
+      'systemPrompt': completeSystemPrompt, // Enhanced with MCP identity and context
+      'baseSystemPrompt': _systemPrompt, // Keep original for reference
       'apiProvider': _selectedApiProvider,
       'modelParameters': _modelParameters,
       'mcpServers': _selectedMCPServers,

@@ -35,7 +35,12 @@
       "Bash(dart test:*)",
       "Bash(C:UsersMikeAppDataLocalPubCachebinformat_coverage.bat --lcov --in=coverage --out=coverage.lcov --report-on=test/helpers)",
       "Bash(R)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Read(/c:\\Users\\Mike\\OneDrive\\Desktop/**)",
+      "Read(/C:\\c\\AgentEngine\\apps/**)",
+      "Read(/C:\\c\\AgentEngine\\apps/**)",
+      "Bash(flutter build:*)",
+      "Bash(tar:*)"
     ],
     "deny": [],
     "ask": [],

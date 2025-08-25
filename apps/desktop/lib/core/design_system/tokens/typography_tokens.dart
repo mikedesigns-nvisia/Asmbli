@@ -78,6 +78,28 @@ class TextStyles {
  fontWeight: TypographyTokens.medium,
  );
  
+ // Labels
+ static const TextStyle labelLarge = TextStyle(
+ fontFamily: TypographyTokens.fontFamily,
+ fontSize: 14,
+ fontWeight: TypographyTokens.medium,
+ letterSpacing: 0.1,
+ );
+ 
+ static const TextStyle labelMedium = TextStyle(
+ fontFamily: TypographyTokens.fontFamily,
+ fontSize: 12,
+ fontWeight: TypographyTokens.medium,
+ letterSpacing: 0.5,
+ );
+ 
+ static const TextStyle labelSmall = TextStyle(
+ fontFamily: TypographyTokens.fontFamily,
+ fontSize: 11,
+ fontWeight: TypographyTokens.medium,
+ letterSpacing: 0.5,
+ );
+ 
  // Caption/Helper Text
  static const TextStyle caption = TextStyle(
  fontFamily: TypographyTokens.fontFamily,

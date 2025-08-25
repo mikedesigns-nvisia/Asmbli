@@ -422,13 +422,383 @@ class EnhancedMCPTemplates {
     isPopular: true,
   );
 
+  // ==================== MISSING TEMPLATES ====================
+
+  static const memory = EnhancedMCPTemplate(
+    id: 'memory',
+    name: 'Memory',
+    description: 'Persistent memory and knowledge base management for AI agents',
+    icon: Icons.psychology,
+    category: 'AI',
+    difficulty: 'Medium',
+    tags: ['memory', 'knowledge', 'persistence', 'ai'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-memory'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'storageType',
+        label: 'Storage Type',
+        description: 'Choose how memory is stored',
+        required: true,
+        fieldType: MCPFieldType.select,
+        options: {
+          'options': ['local', 'cloud', 'hybrid'],
+          'labels': ['Local Files', 'Cloud Storage', 'Hybrid'],
+        },
+        defaultValue: 'local',
+      ),
+      MCPFieldDefinition(
+        id: 'maxMemorySize',
+        label: 'Max Memory Size (MB)',
+        description: 'Maximum memory storage size',
+        fieldType: MCPFieldType.number,
+        defaultValue: 100,
+      ),
+    ],
+    capabilities: ['Long-term memory', 'Context persistence', 'Knowledge synthesis'],
+    isRecommended: true,
+  );
+
+  static const webSearch = EnhancedMCPTemplate(
+    id: 'web-search',
+    name: 'Web Search',
+    description: 'Web search and information retrieval',
+    icon: Icons.search,
+    category: 'Cloud',
+    difficulty: 'Easy',
+    tags: ['search', 'web', 'information', 'research'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-brave-search'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'apiKey',
+        label: 'Brave Search API Key',
+        description: 'Your Brave Search API key',
+        required: true,
+        fieldType: MCPFieldType.apiToken,
+        placeholder: 'BSA...',
+      ),
+      MCPFieldDefinition(
+        id: 'maxResults',
+        label: 'Max Results',
+        description: 'Maximum search results per query',
+        fieldType: MCPFieldType.number,
+        defaultValue: 10,
+      ),
+    ],
+    setupInstructions: [
+      SetupInstruction(
+        step: 1,
+        title: 'Get Brave Search API Key',
+        description: 'Sign up for Brave Search API and get your API key',
+        actionUrl: 'https://brave.com/search/api/',
+        actionText: 'Get API Key',
+      ),
+    ],
+    capabilities: ['Web search', 'Real-time information', 'News search', 'Image search'],
+    isPopular: true,
+  );
+
+  static const terminal = EnhancedMCPTemplate(
+    id: 'terminal',
+    name: 'Terminal',
+    description: 'Execute shell commands and terminal operations',
+    icon: Icons.terminal,
+    category: 'Local',
+    difficulty: 'Hard',
+    tags: ['terminal', 'shell', 'commands'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-shell'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'workingDirectory',
+        label: 'Working Directory',
+        description: 'Default directory for command execution',
+        fieldType: MCPFieldType.directory,
+      ),
+      MCPFieldDefinition(
+        id: 'allowDangerous',
+        label: 'Allow Dangerous Commands',
+        description: 'Allow potentially destructive commands (use with caution)',
+        fieldType: MCPFieldType.boolean,
+        defaultValue: false,
+      ),
+      MCPFieldDefinition(
+        id: 'timeoutSeconds',
+        label: 'Command Timeout (seconds)',
+        description: 'Maximum time to wait for command execution',
+        fieldType: MCPFieldType.number,
+        defaultValue: 30,
+      ),
+    ],
+    capabilities: ['Command execution', 'Environment access', 'Process management'],
+    prerequisites: ['System shell access'],
+  );
+
+  static const httpClient = EnhancedMCPTemplate(
+    id: 'http-client',
+    name: 'HTTP Client',
+    description: 'HTTP requests and API integration',
+    icon: Icons.http,
+    category: 'Development',
+    difficulty: 'Medium',
+    tags: ['http', 'api', 'requests', 'client'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-fetch'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'defaultHeaders',
+        label: 'Default Headers',
+        description: 'JSON object with default HTTP headers',
+        fieldType: MCPFieldType.text,
+        placeholder: '{"User-Agent": "MyApp/1.0"}',
+      ),
+      MCPFieldDefinition(
+        id: 'timeoutMs',
+        label: 'Request Timeout (ms)',
+        description: 'Default timeout for HTTP requests',
+        fieldType: MCPFieldType.number,
+        defaultValue: 10000,
+      ),
+    ],
+    capabilities: ['HTTP requests', 'API integration', 'Data fetching', 'Webhook handling'],
+  );
+
+  static const calendar = EnhancedMCPTemplate(
+    id: 'calendar',
+    name: 'Calendar',
+    description: 'Calendar and scheduling operations',
+    icon: Icons.calendar_today,
+    category: 'Cloud',
+    difficulty: 'Medium',
+    tags: ['calendar', 'scheduling', 'events', 'time'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-calendar'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'provider',
+        label: 'Calendar Provider',
+        description: 'Choose your calendar service',
+        required: true,
+        fieldType: MCPFieldType.select,
+        options: {
+          'options': ['google', 'outlook', 'apple'],
+          'labels': ['Google Calendar', 'Outlook Calendar', 'Apple Calendar'],
+        },
+      ),
+      MCPFieldDefinition(
+        id: 'accessToken',
+        label: 'Access Token',
+        description: 'OAuth token for calendar access',
+        required: true,
+        fieldType: MCPFieldType.oauth,
+      ),
+    ],
+    capabilities: ['Event management', 'Scheduling', 'Reminders', 'Availability'],
+  );
+
+  static const slack = EnhancedMCPTemplate(
+    id: 'slack',
+    name: 'Slack',
+    description: 'Team communication and notifications',
+    icon: Icons.chat,
+    category: 'Communication',
+    difficulty: 'Medium',
+    tags: ['slack', 'communication', 'team', 'notifications'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-slack'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'botToken',
+        label: 'Bot Token',
+        description: 'Slack Bot User OAuth Token',
+        required: true,
+        fieldType: MCPFieldType.apiToken,
+        placeholder: 'xoxb-...',
+      ),
+      MCPFieldDefinition(
+        id: 'workspace',
+        label: 'Workspace',
+        description: 'Slack workspace URL',
+        required: true,
+        fieldType: MCPFieldType.url,
+        placeholder: 'https://your-workspace.slack.com',
+      ),
+    ],
+    setupInstructions: [
+      SetupInstruction(
+        step: 1,
+        title: 'Create Slack App',
+        description: 'Create a new Slack app in your workspace',
+        actionUrl: 'https://api.slack.com/apps',
+        actionText: 'Create App',
+      ),
+      SetupInstruction(
+        step: 2,
+        title: 'Add Bot Token Scopes',
+        description: 'Add necessary bot token scopes like chat:write, channels:read',
+      ),
+    ],
+    capabilities: ['Send messages', 'Channel management', 'File sharing', 'Notifications'],
+  );
+
+  static const notion = EnhancedMCPTemplate(
+    id: 'notion',
+    name: 'Notion',
+    description: 'Documentation and knowledge management',
+    icon: Icons.note,
+    category: 'Cloud',
+    difficulty: 'Medium',
+    tags: ['notion', 'documentation', 'knowledge', 'productivity'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-notion'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'integrationToken',
+        label: 'Integration Token',
+        description: 'Notion integration secret token',
+        required: true,
+        fieldType: MCPFieldType.apiToken,
+        placeholder: 'secret_...',
+      ),
+      MCPFieldDefinition(
+        id: 'databaseId',
+        label: 'Default Database ID',
+        description: 'ID of the default database to use',
+        fieldType: MCPFieldType.text,
+      ),
+    ],
+    setupInstructions: [
+      SetupInstruction(
+        step: 1,
+        title: 'Create Integration',
+        description: 'Create a new integration in your Notion workspace',
+        actionUrl: 'https://developers.notion.com/docs/create-a-notion-integration',
+        actionText: 'Create Integration',
+      ),
+    ],
+    capabilities: ['Page management', 'Database queries', 'Content creation', 'Search'],
+    isPopular: true,
+  );
+
+  static const linearApp = EnhancedMCPTemplate(
+    id: 'linear',
+    name: 'Linear',
+    description: 'Issue tracking and project management',
+    icon: Icons.linear_scale,
+    category: 'Cloud',
+    difficulty: 'Medium',
+    tags: ['linear', 'project-management', 'issues', 'tracking'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-linear'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'apiKey',
+        label: 'API Key',
+        description: 'Linear personal API key',
+        required: true,
+        fieldType: MCPFieldType.apiToken,
+        placeholder: 'lin_api_...',
+      ),
+      MCPFieldDefinition(
+        id: 'teamId',
+        label: 'Team ID',
+        description: 'ID of the team to work with',
+        fieldType: MCPFieldType.text,
+      ),
+    ],
+    setupInstructions: [
+      SetupInstruction(
+        step: 1,
+        title: 'Generate API Key',
+        description: 'Generate a personal API key in Linear settings',
+        actionUrl: 'https://linear.app/settings/api',
+        actionText: 'Generate Key',
+      ),
+    ],
+    capabilities: ['Issue management', 'Project tracking', 'Team coordination', 'Reporting'],
+  );
+
+  static const time = EnhancedMCPTemplate(
+    id: 'time',
+    name: 'Time',
+    description: 'Time and timezone operations',
+    icon: Icons.access_time,
+    category: 'Development',
+    difficulty: 'Easy',
+    tags: ['time', 'timezone', 'scheduling', 'temporal'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-time'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'defaultTimezone',
+        label: 'Default Timezone',
+        description: 'Default timezone for operations',
+        fieldType: MCPFieldType.text,
+        defaultValue: 'UTC',
+        placeholder: 'America/New_York',
+      ),
+    ],
+    capabilities: ['Time conversion', 'Timezone handling', 'Scheduling', 'Temporal operations'],
+  );
+
+  static const sequentialThinking = EnhancedMCPTemplate(
+    id: 'sequential-thinking',
+    name: 'Sequential Thinking',
+    description: 'Dynamic problem-solving through thought sequences',
+    icon: Icons.auto_awesome,
+    category: 'AI',
+    difficulty: 'Hard',
+    tags: ['thinking', 'reasoning', 'problem-solving', 'ai'],
+    command: 'uvx',
+    args: ['@modelcontextprotocol/server-sequential-thinking'],
+    fields: [
+      MCPFieldDefinition(
+        id: 'maxSteps',
+        label: 'Max Thinking Steps',
+        description: 'Maximum number of reasoning steps',
+        fieldType: MCPFieldType.number,
+        defaultValue: 10,
+      ),
+      MCPFieldDefinition(
+        id: 'enableLogging',
+        label: 'Enable Logging',
+        description: 'Log thinking process for debugging',
+        fieldType: MCPFieldType.boolean,
+        defaultValue: false,
+      ),
+    ],
+    capabilities: ['Structured reasoning', 'Problem decomposition', 'Thought chains'],
+  );
+
   // Template registry
   static List<EnhancedMCPTemplate> get allTemplates => [
+    // Local
     filesystem,
     git,
+    terminal,
+    
+    // Cloud APIs
     github,
     figma,
+    slack,
+    notion,
+    linearApp,
+    webSearch,
+    calendar,
+    
+    // Databases
     postgresql,
+    
+    // AI/ML
+    memory,
+    sequentialThinking,
+    
+    // Utilities
+    httpClient,
+    time,
+    
+    // Enterprise/Other
     microsoftGraph,
     openai,
   ];

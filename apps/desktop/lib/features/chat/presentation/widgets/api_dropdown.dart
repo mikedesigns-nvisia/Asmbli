@@ -3,217 +3,253 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
+import '../../../../core/services/mcp_settings_service.dart';
 
 class ApiDropdown extends ConsumerStatefulWidget {
- const ApiDropdown({super.key});
+  const ApiDropdown({super.key});
 
- @override
- ConsumerState<ApiDropdown> createState() => _ApiDropdownState();
+  @override
+  ConsumerState<ApiDropdown> createState() => _ApiDropdownState();
 }
 
 class _ApiDropdownState extends ConsumerState<ApiDropdown> {
- // Mock API keys - in production, these would come from secure storage
- final List<ApiKeyConfig> _apiKeys = [
- ApiKeyConfig(
- id: 'claude-35-sonnet',
- name: 'Claude 3.5 Sonnet',
- provider: 'Anthropic',
- isActive: true,
- isDefault: true,
- ),
- ];
+  String? _selectedApiId;
 
- String? _selectedApiId = 'claude-35-sonnet';
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final mcpSettingsService = ref.watch(mcpSettingsServiceProvider);
+    final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
+    final defaultApiConfig = mcpSettingsService.defaultDirectAPIConfig;
+    
+    // Set selected API ID if not set or if current selection is invalid
+    if (allApiConfigs.isEmpty) {
+      _selectedApiId = '__loading__';
+    } else if (_selectedApiId == null || !allApiConfigs.containsKey(_selectedApiId)) {
+      _selectedApiId = defaultApiConfig?.id;
+    }
+    
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: theme.colorScheme.outline),
+        borderRadius: BorderRadius.circular(6),
+        color: theme.colorScheme.surface.withValues(alpha: 0.8),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedApiId,
+          isExpanded: true,
+          icon: Icon(
+            Icons.keyboard_arrow_down,
+            size: 16,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+          items: [
+            // Show loading or empty state if no configs
+            if (allApiConfigs.isEmpty) 
+              DropdownMenuItem<String>(
+                value: '__loading__',
+                child: Container(
+                  height: 32,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Loading API configs...',
+                        style: TextStyle(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 12,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            
+            // Existing API keys
+            ...allApiConfigs.entries.map((entry) {
+              final apiConfig = entry.value;
+              return DropdownMenuItem<String>(
+                value: apiConfig.id,
+                child: Container(
+                  height: 32,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.api,
+                        size: 14,
+                        color: apiConfig.isConfigured 
+                          ? ThemeColors(context).success 
+                          : theme.colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          apiConfig.name,
+                          style: TextStyle(
+                            fontFamily: 'Space Grotesk',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      if (apiConfig.isDefault)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                          decoration: BoxDecoration(
+                            color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Text(
+                            'DEFAULT',
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
+                              fontSize: 8,
+                              fontWeight: FontWeight.w600,
+                              color: ThemeColors(context).primary,
+                            ),
+                          ),
+                        ),
+                      if (!apiConfig.isConfigured)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.errorContainer,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Text(
+                            'NO KEY',
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
+                              fontSize: 8,
+                              fontWeight: FontWeight.w600,
+                              color: theme.colorScheme.onErrorContainer,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+            
+            // Divider
+            if (allApiConfigs.isNotEmpty)
+              DropdownMenuItem<String>(
+                enabled: false,
+                value: '__divider__',
+                child: const Divider(height: 1),
+              ),
+            
+            // Add new API key option
+            DropdownMenuItem<String>(
+              value: '__add_new__',
+              child: Container(
+                height: 32,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.add_circle_outline,
+                      size: 16,
+                      color: ThemeColors(context).primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Add New API Key',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: ThemeColors(context).primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            // Settings option
+            DropdownMenuItem<String>(
+              value: '__settings__',
+              child: Container(
+                height: 32,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.settings,
+                      size: 16,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'API Settings',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          onChanged: (value) async {
+            if (value == '__add_new__') {
+              _showAddApiKeyDialog();
+            } else if (value == '__settings__') {
+              context.go(AppRoutes.settings);
+            } else if (value != '__divider__' && value != '__loading__') {
+              setState(() {
+                _selectedApiId = value;
+              });
+              _showApiSwitchedSnackbar(value!);
+            }
+          },
+        ),
+      ),
+    );
+  }
 
- @override
- Widget build(BuildContext context) {
- final theme = Theme.of(context);
- 
- return Container(
- width: double.infinity,
- padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
- decoration: BoxDecoration(
- border: Border.all(color: theme.colorScheme.outline),
- borderRadius: BorderRadius.circular(6),
- color: theme.colorScheme.surface.withValues(alpha: 0.8),
- ),
- child: DropdownButtonHideUnderline(
- child: DropdownButton<String>(
- value: _selectedApiId,
- isExpanded: true,
- icon: Icon(
- Icons.keyboard_arrow_down,
- size: 16,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- items: [
- // Existing API keys
- ..._apiKeys.map((apiKey) {
- return DropdownMenuItem<String>(
- value: apiKey.id,
- child: Row(
- children: [
- Icon(
- Icons.api,
- size: 14,
- color: apiKey.isActive 
- ? SemanticColors.success 
- : theme.colorScheme.onSurfaceVariant,
- ),
- SizedBox(width: 8),
- Expanded(
- child: Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- mainAxisSize: MainAxisSize.min,
- children: [
- Text(
- apiKey.name,
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
- fontWeight: FontWeight.w500,
- color: theme.colorScheme.onSurface,
- ),
- ),
- Text(
- apiKey.provider,
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 10,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- ),
- ],
- ),
- ),
- if (apiKey.isDefault)
- Container(
- padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
- decoration: BoxDecoration(
- color: SemanticColors.primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(4),
- ),
- child: Text(
- 'DEFAULT',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 9,
- fontWeight: FontWeight.w600,
- color: SemanticColors.primary,
- ),
- ),
- ),
- ],
- ),
- );
- }).toList(),
- 
- // Divider
- DropdownMenuItem<String>(
- enabled: false,
- value: '__divider__',
- child: Divider(height: 1),
- ),
- 
- // Add new API key option
- DropdownMenuItem<String>(
- value: '__add_new__',
- child: Row(
- children: [
- Icon(
- Icons.add_circle_outline,
- size: 16,
- color: SemanticColors.primary,
- ),
- SizedBox(width: 8),
- Text(
- 'Add New API Key',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
- fontWeight: FontWeight.w500,
- color: SemanticColors.primary,
- ),
- ),
- ],
- ),
- ),
- 
- // Settings option
- DropdownMenuItem<String>(
- value: '__settings__',
- child: Row(
- children: [
- Icon(
- Icons.settings,
- size: 16,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- SizedBox(width: 8),
- Text(
- 'API Settings',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
- fontWeight: FontWeight.w500,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- ),
- ],
- ),
- ),
- ],
- onChanged: (value) {
- if (value == '__add_new__' || value == '__settings__') {
- // Navigate to settings page
- context.go(AppRoutes.settings);
- } else if (value != '__divider__') {
- setState(() {
- _selectedApiId = value;
- });
- // In production, this would update the active API key
- _showApiSwitchedSnackbar(value!);
- }
- },
- ),
- ),
- );
- }
+  void _showAddApiKeyDialog() {
+    // Navigate to settings page to manage API keys
+    context.go(AppRoutes.settings);
+  }
 
- void _showApiSwitchedSnackbar(String apiId) {
- final apiKey = _apiKeys.firstWhere((key) => key.id == apiId);
- ScaffoldMessenger.of(context).showSnackBar(
- SnackBar(
- content: Row(
- children: [
- Icon(Icons.check_circle, color: Colors.white, size: 16),
- SizedBox(width: 8),
- Text(
- 'Switched to ${apiKey.name}',
- style: TextStyle(fontFamily: 'Space Grotesk'),
- ),
- ],
- ),
- backgroundColor: SemanticColors.success,
- behavior: SnackBarBehavior.floating,
- duration: const Duration(seconds: 2),
- ),
- );
- }
-}
-
-class ApiKeyConfig {
- final String id;
- final String name;
- final String provider;
- final bool isActive;
- final bool isDefault;
-
- ApiKeyConfig({
- required this.id,
- required this.name,
- required this.provider,
- required this.isActive,
- this.isDefault = false,
- });
+  void _showApiSwitchedSnackbar(String apiId) {
+    final mcpSettingsService = ref.read(mcpSettingsServiceProvider);
+    final apiConfig = mcpSettingsService.getDirectAPIConfig(apiId);
+    if (apiConfig != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white, size: 16),
+              SizedBox(width: 8),
+              Text(
+                'Switched to ${apiConfig.name}',
+                style: TextStyle(fontFamily: 'Space Grotesk'),
+              ),
+            ],
+          ),
+          backgroundColor: ThemeColors(context).success,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 }

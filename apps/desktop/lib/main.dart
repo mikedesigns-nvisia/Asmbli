@@ -223,17 +223,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  
  SizedBox(height: SpacingTokens.sectionSpacing),
  
- // Temporary onboarding test button
+ /* Consumer build - onboarding button removed
  TextButton.icon(
- onPressed: () => context.go('/onboarding'),
+ onPressed: null,
  icon: Icon(Icons.rocket_launch),
- label: Text('Test Onboarding Flow'),
+ label: Text(''),
  style: TextButton.styleFrom(
  foregroundColor: colors.primary,
  ),
  ),
  
  SizedBox(height: SpacingTokens.md),
+*/
  
  // Quick Actions Row
  Row(

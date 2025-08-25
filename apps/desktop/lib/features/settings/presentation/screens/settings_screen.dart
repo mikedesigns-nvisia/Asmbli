@@ -7,10 +7,20 @@ import '../../../../core/services/api_config_service.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../widgets/mcp_server_dialog.dart';
-import '../widgets/enhanced_mcp_server_wizard.dart';
 import '../widgets/mcp_health_status_widget.dart';
 import '../widgets/api_key_dialog.dart';
 import '../../../../core/design_system/components/unified_mcp_server_card.dart';
+import 'package:agent_engine_core/agent_engine_core.dart';
+import '../../../../core/services/integration_service.dart';
+import '../../../../core/services/integration_dependency_service.dart';
+import '../../../../core/design_system/components/integration_status_indicators.dart';
+import '../../../../core/services/integration_health_service.dart';
+import '../widgets/integration_health_dashboard.dart';
+import '../widgets/integration_recommendations_widget.dart';
+import '../widgets/integration_dependency_dialog.dart';
+import '../widgets/integration_analytics_dashboard.dart';
+import '../widgets/integration_marketplace.dart';
+import '../widgets/integration_testing_dashboard.dart';
 
 // Integration model for unified display
 class Integration {
@@ -190,7 +200,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  @override
  void initState() {
  super.initState();
- _tabController = TabController(length: 4, vsync: this); // Updated to 5 tabs
+ _tabController = TabController(length: 8, vsync: this); // Added Health Monitor tab
  selectedModel = providerModels[selectedProvider]!.first;
  _loadSystemPrompt();
  }
@@ -293,6 +303,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Tab(text: 'API Configuration'),
  Tab(text: 'Agent Management'),
  Tab(text: 'Integrations'),
+ Tab(text: 'Marketplace'),
+ Tab(text: 'Health Monitor'),
+ Tab(text: 'Analytics'),
+ Tab(text: 'Testing'),
  Tab(text: 'General Settings'),
  ],
  labelColor: Theme.of(context).colorScheme.primary,
@@ -330,6 +344,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  _buildAPIConfigurationTab(),
  _buildAgentManagementTab(),
  _buildIntegrationsTab(),
+ _buildMarketplaceTab(),
+ _buildHealthMonitorTab(),
+ _buildAnalyticsTab(),
+ _buildTestingTab(),
  _buildGeneralSettingsTab(themeService),
  ],
  ),
@@ -949,6 +967,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  ),
  );
+ }
+
+ Widget _buildHealthMonitorTab() {
+ return Container(
+ padding: const EdgeInsets.all(24),
+ child: const IntegrationHealthDashboard(),
+ );
+ }
+
+ Widget _buildMarketplaceTab() {
+ return const IntegrationMarketplace();
+ }
+
+ Widget _buildAnalyticsTab() {
+ return const IntegrationAnalyticsDashboard();
+ }
+
+ Widget _buildTestingTab() {
+ return const IntegrationTestingDashboard();
  }
 
  Widget _buildGeneralSettingsTab(ThemeService themeService) {
@@ -2139,28 +2176,17 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   
   final List<String> _categories = [
     'All',
-    'Development',
-    'Communication', 
-    'Productivity',
-    'Cloud Services',
-    'AI/ML',
+    ...IntegrationCategory.values.map((category) => category.displayName),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final mcpService = ref.watch(mcpSettingsServiceProvider);
-    final allMCPServers = mcpService.allMCPServers;
+    final integrationService = ref.watch(integrationServiceProvider);
+    final allIntegrationsWithStatus = integrationService.getAllIntegrationsWithStatus();
+    final stats = integrationService.getStats();
     
-    // Filter configured MCP servers and available integrations
-    final configuredServers = allMCPServers.values.where((server) => server.enabled).toList();
-    final availableIntegrations = _getAvailableIntegrations();
-    
-    // Combine and filter
-    final allIntegrations = [
-      ...configuredServers.map((s) => _mcpServerToIntegration(s)), 
-      ...availableIntegrations,
-    ];
-    final filteredItems = _filterItems(allIntegrations);
+    // Filter integrations directly as IntegrationStatus objects
+    final filteredItems = _filterIntegrationStatus(allIntegrationsWithStatus);
     
     return Container(
       padding: const EdgeInsets.all(24),
@@ -2188,7 +2214,11 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           ),
           const SizedBox(height: 24),
           
-          // Search and Filter Row
+          // Integration Stats Overview
+          _buildStatsOverview(stats),
+          const SizedBox(height: 24),
+          
+          // Search, Filter and Add Row
           Row(
             children: [
               // Search Bar
@@ -2228,8 +2258,20 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                   }).toList(),
                 ),
               ),
+              const SizedBox(width: 16),
+              
+              // Add Integration Button
+              AsmblButton.primary(
+                text: 'Add Integration',
+                icon: Icons.add,
+                onPressed: () => _showAddIntegrationDialog(),
+              ),
             ],
           ),
+          const SizedBox(height: 24),
+          
+          // Recommendations Section
+          const IntegrationRecommendationsWidget(),
           const SizedBox(height: 24),
           
           // Integrations Grid
@@ -2246,8 +2288,8 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                       ),
                       itemCount: filteredItems.length,
                       itemBuilder: (context, index) {
-                        final integration = filteredItems[index];
-                        return _buildIntegrationCard(integration);
+                        final integrationStatus = filteredItems[index];
+                        return _buildIntegrationStatusCard(integrationStatus);
                       },
                     ),
                 ),
@@ -2322,7 +2364,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           Padding(
             padding: EdgeInsets.symmetric(horizontal: SpacingTokens.sm),
             child: AsmblButton.secondary(
-              text: 'Configure',
+              text: 'Edit',
               onPressed: () => _handleIntegrationAction(integration),
               isFullWidth: true,
             ),
@@ -2424,161 +2466,20 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
     }
   }
 
-  List<Integration> _getAvailableIntegrations() {
-    // Sample of available MCP servers from the extensions library
-    // In a real implementation, this would load from the extensions-library.ts
-    return [
-      Integration(
-        id: 'filesystem-mcp',
-        name: 'Filesystem MCP Server',
-        description: 'Access and manage local files and directories through Model Context Protocol',
-        category: 'Development',
-        icon: Icons.folder,
-        color: Colors.orange,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'git-mcp',
-        name: 'Git MCP Server',
-        description: 'Git repository operations and version control through Model Context Protocol',
-        category: 'Development',
-        icon: Icons.code_outlined,
-        color: Colors.orange.shade800,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'postgres-mcp',
-        name: 'PostgreSQL MCP Server',
-        description: 'PostgreSQL database operations and queries through Model Context Protocol',
-        category: 'Development',
-        icon: Icons.storage,
-        color: Colors.blue.shade700,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'memory-mcp',
-        name: 'Memory MCP Server',
-        description: 'Persistent memory and knowledge base management for AI agents',
-        category: 'AI/ML',
-        icon: Icons.psychology,
-        color: Colors.purple,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'search-mcp',
-        name: 'Search MCP Server',
-        description: 'Web search and information retrieval through Model Context Protocol',
-        category: 'AI/ML',
-        icon: Icons.search,
-        color: Colors.green,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'terminal-mcp',
-        name: 'Terminal MCP Server',
-        description: 'Execute shell commands and terminal operations through Model Context Protocol',
-        category: 'Development',
-        icon: Icons.terminal,
-        color: Colors.grey.shade800,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'http-mcp',
-        name: 'HTTP MCP Server',
-        description: 'HTTP client for API requests and web service integration',
-        category: 'Development',
-        icon: Icons.http,
-        color: Colors.blue,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'calendar-mcp',
-        name: 'Calendar MCP Server',
-        description: 'Calendar and scheduling operations through Model Context Protocol',
-        category: 'Productivity',
-        icon: Icons.calendar_today,
-        color: Colors.indigo,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'sequential-thinking-mcp',
-        name: 'Sequential Thinking MCP Server',
-        description: 'Dynamic problem-solving through thought sequences and structured reasoning',
-        category: 'AI/ML',
-        icon: Icons.auto_awesome,
-        color: Colors.deepPurple,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'time-mcp',
-        name: 'Time MCP Server',
-        description: 'Time and timezone conversion capabilities with scheduling and temporal operations',
-        category: 'Productivity',
-        icon: Icons.access_time,
-        color: Colors.teal,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'figma-mcp',
-        name: 'Figma MCP Server',
-        description: 'Connect to Figma files, components, and design systems through Model Context Protocol',
-        category: 'Design',
-        icon: Icons.design_services,
-        color: Colors.pink,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'github',
-        name: 'GitHub Integration',
-        description: 'Access GitHub repositories for code analysis, pull requests, issues, and collaborative development',
-        category: 'Development',
-        icon: Icons.code,
-        color: Colors.black,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'slack',
-        name: 'Slack Integration',
-        description: 'Integrate with Slack for team communication, notifications, and design collaboration workflows',
-        category: 'Communication',
-        icon: Icons.chat,
-        color: Colors.purple.shade600,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'notion-api',
-        name: 'Notion Workspace',
-        description: 'Connect to Notion for design documentation, project management, and knowledge base creation',
-        category: 'Productivity',
-        icon: Icons.note,
-        color: Colors.black87,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-      Integration(
-        id: 'google-drive',
-        name: 'Google Drive',
-        description: 'Access and manage design files, assets, and collaborative documents in Google Drive',
-        category: 'Cloud Services',
-        icon: Icons.cloud,
-        color: Colors.blue,
-        isConfigured: false,
-        isMCPServer: true,
-      ),
-    ];
+
+  Color _getCategoryColor(IntegrationCategory category) {
+    switch (category) {
+      case IntegrationCategory.local:
+        return Colors.orange;
+      case IntegrationCategory.cloudAPIs:
+        return Colors.blue;
+      case IntegrationCategory.databases:
+        return Colors.green;
+      case IntegrationCategory.utilities:
+        return Colors.purple;
+      case IntegrationCategory.aiML:
+        return Colors.deepPurple;
+    }
   }
 
   Integration _mcpServerToIntegration(MCPServerConfig server) {
@@ -2595,6 +2496,20 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
     );
   }
 
+  List<IntegrationStatus> _filterIntegrationStatus(List<IntegrationStatus> items) {
+    return items.where((status) {
+      final integration = status.definition;
+      final matchesSearch = _searchQuery.isEmpty ||
+          integration.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          integration.description.toLowerCase().contains(_searchQuery.toLowerCase());
+      
+      final matchesCategory = _selectedCategory == 'All' ||
+          integration.category.displayName == _selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    }).toList();
+  }
+
   List<Integration> _filterItems(List<Integration> items) {
     return items.where((item) {
       final matchesSearch = _searchQuery.isEmpty || 
@@ -2607,26 +2522,358 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
     }).toList();
   }
 
+  Widget _buildStatsOverview(IntegrationStats stats) {
+    return Container(
+      padding: EdgeInsets.all(SpacingTokens.lg),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Row(
+        children: [
+          _buildStatCard(
+            'Total',
+            '${stats.total}',
+            Icons.apps,
+            SemanticColors.primary,
+          ),
+          SizedBox(width: SpacingTokens.lg),
+          _buildStatCard(
+            'Configured',
+            '${stats.configured}',
+            Icons.check_circle,
+            SemanticColors.success,
+          ),
+          SizedBox(width: SpacingTokens.lg),
+          _buildStatCard(
+            'Active',
+            '${stats.enabled}',
+            Icons.play_circle,
+            ThemeColors(context).primary,
+          ),
+          SizedBox(width: SpacingTokens.lg),
+          _buildStatCard(
+            'Available',
+            '${stats.available}',
+            Icons.download,
+            SemanticColors.warning,
+          ),
+          Spacer(),
+          // Quick category indicators
+          Wrap(
+            spacing: SpacingTokens.xs,
+            children: stats.byCategory.entries.map((entry) {
+              final category = entry.key;
+              final categoryStats = entry.value;
+              
+              return Tooltip(
+                message: '${category.displayName}: ${categoryStats.configured}/${categoryStats.total} configured',
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _getCategoryColor(category).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: _getCategoryColor(category),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        '${categoryStats.configured}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: _getCategoryColor(category),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    return Column(
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: color),
+            SizedBox(width: SpacingTokens.xs),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 2),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            color: SemanticColors.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIntegrationStatusCard(IntegrationStatus status) {
+    final integration = status.definition;
+    final color = integration.brandColor ?? _getCategoryColor(integration.category);
+
+    return AsmblCard(
+      child: Column(
+        children: [
+          // Header with icon, status indicators, and info
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(SpacingTokens.sm),
+              child: Column(
+                children: [
+                  // Status row at top
+                  Row(
+                    children: [
+                      IntegrationStatusIndicators.statusBadge(status, compact: true),
+                      Spacer(),
+                      IntegrationStatusIndicators.difficultyBadge(integration.difficulty, showIcon: false),
+                    ],
+                  ),
+                  SizedBox(height: SpacingTokens.xs),
+                  
+                  // Icon
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                    ),
+                    child: Icon(
+                      integration.icon,
+                      color: color,
+                      size: 20,
+                    ),
+                  ),
+                  SizedBox(height: SpacingTokens.xs),
+                  
+                  // Name
+                  Text(
+                    integration.name,
+                    style: TextStyles.bodySmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: ThemeColors(context).onSurface,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 2),
+                  
+                  // Description
+                  Expanded(
+                    child: Text(
+                      integration.description,
+                      style: TextStyles.caption.copyWith(
+                        color: ThemeColors(context).onSurfaceVariant,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  
+                  SizedBox(height: SpacingTokens.xs),
+                  
+                  // Capabilities preview
+                  IntegrationStatusIndicators.capabilitiesPreview(integration.capabilities),
+                  
+                  SizedBox(height: SpacingTokens.xs),
+                  
+                  // Prerequisites indicator
+                  IntegrationStatusIndicators.prerequisitesIndicator(integration.prerequisites),
+                ],
+              ),
+            ),
+          ),
+          
+          // Action button
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
+            child: AsmblButton.secondary(
+              text: _getActionButtonText(status),
+              onPressed: integration.isAvailable 
+                  ? () => _handleIntegrationStatusAction(status)
+                  : null,
+              isFullWidth: true,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getActionButtonText(IntegrationStatus status) {
+    if (!status.definition.isAvailable) return 'Coming Soon';
+    if (!status.isConfigured) return 'Install';
+    if (!status.isEnabled) return 'Enable';
+    return 'Edit';
+  }
+
+  void _handleIntegrationStatusAction(IntegrationStatus status) async {
+    if (status.isConfigured) {
+      // Edit existing configuration - no dependency check needed
+      showDialog(
+        context: context,
+        builder: (context) => MCPServerDialog(
+          existingConfig: status.mcpConfig,
+          serverId: status.definition.id,
+        ),
+      ).then((result) {
+        if (result == true) {
+          setState(() {});
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Integration updated successfully!'),
+              backgroundColor: ThemeColors(context).success,
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.all(16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
+        }
+      });
+    } else {
+      // Check dependencies before creating new configuration
+      final dependencyService = ref.read(integrationDependencyServiceProvider);
+      final depCheck = dependencyService.checkDependencies(status.definition.id);
+      
+      // Show dependency dialog if there are issues
+      if (depCheck.missingRequired.isNotEmpty || depCheck.conflicts.isNotEmpty) {
+        final shouldProceed = await showDialog<bool>(
+          context: context,
+          builder: (context) => IntegrationDependencyDialog(
+            integrationId: status.definition.id,
+            isRemoving: false,
+          ),
+        );
+        
+        if (shouldProceed != true) return;
+        
+        // If there are missing required dependencies, don't proceed
+        if (depCheck.missingRequired.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please install required dependencies first: ${depCheck.missingRequired.join(', ')}'),
+              backgroundColor: ThemeColors(context).error,
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.all(16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
+          return;
+        }
+      }
+      
+      // Create new configuration
+      showDialog(
+        context: context,
+        builder: (context) => MCPServerDialog(
+          serverId: status.definition.id,
+        ),
+      ).then((result) {
+        if (result == true) {
+          setState(() {});
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Integration installed successfully!'),
+              backgroundColor: ThemeColors(context).success,
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.all(16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
+        }
+      });
+    }
+  }
+
   void _handleIntegrationAction(Integration integration) {
     if (integration.isMCPServer) {
       if (integration.mcpServer != null) {
-        // Edit existing MCP server configuration
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => EnhancedMCPServerWizard(
-              existingConfig: integration.mcpServer,
-            ),
+        // Edit existing MCP server configuration using simple dialog
+        showDialog(
+          context: context,
+          builder: (context) => MCPServerDialog(
+            existingConfig: integration.mcpServer,
+            serverId: integration.id,
           ),
-        );
+        ).then((result) {
+          if (result == true) {
+            setState(() {}); // Refresh the integrations list
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Integration updated successfully!'),
+                backgroundColor: ThemeColors(context).success,
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            );
+          }
+        });
       } else {
-        // Create new MCP server configuration
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => EnhancedMCPServerWizard(
-              serverId: integration.id,
-            ),
+        // Create new MCP server configuration using simple dialog
+        showDialog(
+          context: context,
+          builder: (context) => MCPServerDialog(
+            serverId: integration.id,
           ),
-        );
+        ).then((result) {
+          if (result == true) {
+            setState(() {}); // Refresh the integrations list
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Integration added successfully!'),
+                backgroundColor: ThemeColors(context).success,
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            );
+          }
+        });
       }
     } else {
       // Show coming soon message
@@ -2637,5 +2884,27 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         ),
       );
     }
+  }
+
+  void _showAddIntegrationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => MCPServerDialog(),
+    ).then((result) {
+      if (result == true) {
+        setState(() {}); // Refresh the integrations list
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Integration added successfully!'),
+            backgroundColor: ThemeColors(context).success,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    });
   }
 }

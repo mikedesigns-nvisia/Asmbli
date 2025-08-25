@@ -1,0 +1,50 @@
+{
+  "version": "1.0.0",
+  "releaseDate": "2024-12-19",
+  "platforms": {
+    "windows": {
+      "architecture": "x64",
+      "format": "zip",
+      "filename": "Asmbli-1.0.0-windows-x64.zip",
+      "size": "~25MB",
+      "requirements": {
+        "os": "Windows 10 64-bit or Windows 11",
+        "ram": "4GB (8GB recommended)",
+        "disk": "200MB available space",
+        "network": "Internet connection for AI API access"
+      },
+      "features": [
+        "Professional AI agent deployment",
+        "20+ specialized agent templates", 
+        "MCP tool integration (40+ tools)",
+        "Context document management",
+        "Real-time chat interface",
+        "Professional development tools"
+      ]
+    },
+    "macos": {
+      "status": "coming-soon",
+      "architecture": "universal",
+      "format": "dmg",
+      "requirements": {
+        "os": "macOS 10.15 (Catalina) or later",
+        "architecture": "Intel x64 or Apple Silicon (M1/M2/M3)",
+        "ram": "4GB (8GB recommended)",
+        "disk": "200MB available space"
+      },
+      "note": "macOS build requires macOS development environment. Coming in next release."
+    }
+  },
+  "changelog": {
+    "1.0.0": {
+      "type": "major",
+      "highlights": [
+        "Initial public release",
+        "Professional agent framework",
+        "Full MCP integration",
+        "Consumer-grade UI/UX",
+        "Cross-platform architecture"
+      ]
+    }
+  }
+}

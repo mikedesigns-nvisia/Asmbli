@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import 'desktop/desktop_storage_service.dart';
@@ -11,6 +12,9 @@ class MCPSettingsService {
   
   // Global MCP server configurations
   final Map<String, MCPServerConfig> _globalMCPConfigs = {};
+  
+  // Direct API configurations (for services like Anthropic, OpenAI)
+  final Map<String, DirectAPIConfig> _directAPIConfigs = {};
   
   // Agent-specific API assignments (agent_id -> api_config_id)
   final Map<String, String> _agentApiMappings = {};
@@ -32,6 +36,7 @@ class MCPSettingsService {
   /// Load all MCP settings from storage
   Future<void> _loadSettings() async {
     await _loadMCPConfigs();
+    await _loadDirectAPIConfigs();
     await _loadAgentApiMappings();
     await _loadGlobalContext();
     await _initializeServerStatuses();
@@ -40,6 +45,7 @@ class MCPSettingsService {
   /// Save all settings to storage
   Future<void> saveSettings() async {
     await _saveMCPConfigs();
+    await _saveDirectAPIConfigs();
     await _saveAgentApiMappings();
     await _saveGlobalContext();
   }
@@ -134,6 +140,118 @@ class MCPSettingsService {
       serverIds.where((id) => _serverStatuses.containsKey(id))
               .map((id) => MapEntry(id, _serverStatuses[id]!))
     );
+  }
+
+  // ==================== Direct API Configuration ====================
+
+  /// Get all direct API configurations
+  Map<String, DirectAPIConfig> get allDirectAPIConfigs => Map.from(_directAPIConfigs);
+
+  /// Get direct API configuration by ID
+  DirectAPIConfig? getDirectAPIConfig(String id) => _directAPIConfigs[id];
+
+  /// Get the default direct API configuration
+  DirectAPIConfig? get defaultDirectAPIConfig {
+    return _directAPIConfigs.values.where((config) => config.isDefault).firstOrNull;
+  }
+
+  /// Add or update direct API configuration
+  Future<void> setDirectAPIConfig(String id, DirectAPIConfig config) async {
+    // If this is being set as default, remove default from others
+    if (config.isDefault) {
+      for (final existingConfig in _directAPIConfigs.values) {
+        if (existingConfig.id != id && existingConfig.isDefault) {
+          _directAPIConfigs[existingConfig.id] = existingConfig.copyWith(isDefault: false);
+        }
+      }
+    }
+
+    _directAPIConfigs[id] = config;
+    await _saveDirectAPIConfigs();
+    _settingsUpdatesController.add({'directAPIConfigs': _directAPIConfigs});
+  }
+
+  /// Remove direct API configuration
+  Future<void> removeDirectAPIConfig(String id) async {
+    final removed = _directAPIConfigs.remove(id);
+    if (removed != null) {
+      // If we removed the default, set another as default
+      if (removed.isDefault && _directAPIConfigs.isNotEmpty) {
+        final newDefault = _directAPIConfigs.values.first;
+        _directAPIConfigs[newDefault.id] = newDefault.copyWith(isDefault: true);
+      }
+      await _saveDirectAPIConfigs();
+      _settingsUpdatesController.add({'directAPIConfigs': _directAPIConfigs});
+    }
+  }
+
+  /// Set default direct API configuration
+  Future<void> setDefaultDirectAPIConfig(String id) async {
+    if (_directAPIConfigs.containsKey(id)) {
+      // Remove default from all configs
+      for (final config in _directAPIConfigs.values) {
+        if (config.isDefault) {
+          _directAPIConfigs[config.id] = config.copyWith(isDefault: false);
+        }
+      }
+      // Set new default
+      final config = _directAPIConfigs[id]!;
+      _directAPIConfigs[id] = config.copyWith(isDefault: true);
+      await _saveDirectAPIConfigs();
+      _settingsUpdatesController.add({'directAPIConfigs': _directAPIConfigs});
+    }
+  }
+
+  /// Load direct API configurations from storage
+  Future<void> _loadDirectAPIConfigs() async {
+    try {
+      final data = _storageService.getPreference<String>('direct_api_configs');
+      if (data != null) {
+        final Map<String, dynamic> configsJson = Map<String, dynamic>.from(json.decode(data));
+        for (final entry in configsJson.entries) {
+          _directAPIConfigs[entry.key] = DirectAPIConfig.fromJson(entry.value);
+        }
+      }
+
+      // Create default configuration if none exists
+      if (_directAPIConfigs.isEmpty) {
+        await _createDefaultDirectAPIConfig();
+      }
+    } catch (e) {
+      print('Error loading direct API configs: $e');
+      await _createDefaultDirectAPIConfig();
+    }
+  }
+
+  /// Save direct API configurations to storage
+  Future<void> _saveDirectAPIConfigs() async {
+    try {
+      final Map<String, dynamic> configsJson = {};
+      for (final entry in _directAPIConfigs.entries) {
+        configsJson[entry.key] = entry.value.toJson();
+      }
+      await _storageService.setPreference('direct_api_configs', json.encode(configsJson));
+    } catch (e) {
+      print('Error saving direct API configs: $e');
+    }
+  }
+
+  /// Create default direct API configuration
+  Future<void> _createDefaultDirectAPIConfig() async {
+    final defaultConfig = DirectAPIConfig(
+      id: 'anthropic-default',
+      name: 'Claude 3.5 Sonnet',
+      provider: 'Anthropic',
+      model: 'claude-3-5-sonnet-20241022',
+      apiKey: '',
+      baseUrl: 'https://api.anthropic.com',
+      isDefault: true,
+      enabled: true,
+      createdAt: DateTime.now(),
+    );
+
+    _directAPIConfigs[defaultConfig.id] = defaultConfig;
+    await _saveDirectAPIConfigs();
   }
 
   // ==================== Agent API Assignments ====================
@@ -413,6 +531,93 @@ class AgentDeploymentConfig {
     required this.contextDocuments,
     required this.timestamp,
   });
+}
+
+/// Direct API configuration for services like Anthropic, OpenAI
+class DirectAPIConfig {
+  final String id;
+  final String name;
+  final String provider;
+  final String model;
+  final String apiKey;
+  final String baseUrl;
+  final bool isDefault;
+  final bool enabled;
+  final DateTime createdAt;
+  final DateTime? lastUpdated;
+
+  const DirectAPIConfig({
+    required this.id,
+    required this.name,
+    required this.provider,
+    required this.model,
+    required this.apiKey,
+    required this.baseUrl,
+    this.isDefault = false,
+    this.enabled = true,
+    required this.createdAt,
+    this.lastUpdated,
+  });
+
+  bool get isConfigured => apiKey.isNotEmpty;
+
+  factory DirectAPIConfig.fromJson(Map<String, dynamic> json) {
+    return DirectAPIConfig(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      provider: json['provider'] as String,
+      model: json['model'] as String,
+      apiKey: json['apiKey'] as String,
+      baseUrl: json['baseUrl'] as String,
+      isDefault: json['isDefault'] as bool? ?? false,
+      enabled: json['enabled'] as bool? ?? true,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      lastUpdated: json['lastUpdated'] != null 
+        ? DateTime.parse(json['lastUpdated'] as String) 
+        : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'provider': provider,
+      'model': model,
+      'apiKey': apiKey,
+      'baseUrl': baseUrl,
+      'isDefault': isDefault,
+      'enabled': enabled,
+      'createdAt': createdAt.toIso8601String(),
+      if (lastUpdated != null) 'lastUpdated': lastUpdated!.toIso8601String(),
+    };
+  }
+
+  DirectAPIConfig copyWith({
+    String? id,
+    String? name,
+    String? provider,
+    String? model,
+    String? apiKey,
+    String? baseUrl,
+    bool? isDefault,
+    bool? enabled,
+    DateTime? createdAt,
+    DateTime? lastUpdated,
+  }) {
+    return DirectAPIConfig(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      provider: provider ?? this.provider,
+      model: model ?? this.model,
+      apiKey: apiKey ?? this.apiKey,
+      baseUrl: baseUrl ?? this.baseUrl,
+      isDefault: isDefault ?? this.isDefault,
+      enabled: enabled ?? this.enabled,
+      createdAt: createdAt ?? this.createdAt,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+    );
+  }
 }
 
 // ==================== Riverpod Providers ====================

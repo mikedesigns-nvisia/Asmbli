@@ -130,12 +130,23 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  
  // Actions
  _buildDropdownAction(
+ icon: Icons.add,
+ title: 'New Chat',
+ description: 'Start a conversation',
+ onTap: () {
+ _closeDropdown();
+ context.go(AppRoutes.chat);
+ },
+ color: colors.accent,
+ ),
+ 
+ _buildDropdownAction(
  icon: Icons.build,
  title: 'Create Agent',
  description: 'Build custom AI agent',
  onTap: () {
  _closeDropdown();
- context.go(AppRoutes.agents);
+ context.go(AppRoutes.agentWizard);
  },
  color: colors.primary,
  ),

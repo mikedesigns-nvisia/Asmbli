@@ -61,7 +61,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  // Show advanced flow if requested
  if (_showAdvancedFlow) {
  return Dialog(
- backgroundColor: ColorTokens.surface,
+ backgroundColor: ThemeColors(context).surface,
  surfaceTintColor: Colors.transparent,
  child: ContextCreationFlow(
  onSave: (document) async {
@@ -95,7 +95,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  ),
  ],
  ),
- backgroundColor: SemanticColors.success,
+ backgroundColor: ThemeColors(context).success,
  behavior: SnackBarBehavior.floating,
  ),
  );
@@ -108,7 +108,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  }
  
  return Dialog(
- backgroundColor: ColorTokens.surface,
+ backgroundColor: ThemeColors(context).surface,
  surfaceTintColor: Colors.transparent,
  child: AsmblCard(
  padding: EdgeInsets.zero,
@@ -123,13 +123,13 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  Container(
  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
  decoration: BoxDecoration(
- color: ColorTokens.surface,
+ color: ThemeColors(context).surface,
  borderRadius: BorderRadius.only(
  topLeft: Radius.circular(BorderRadiusTokens.xl),
  topRight: Radius.circular(BorderRadiusTokens.xl),
  ),
  border: Border(
- bottom: BorderSide(color: ColorTokens.border),
+ bottom: BorderSide(color: ThemeColors(context).border),
  ),
  ),
  child: Row(
@@ -137,7 +137,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  Icon(
  Icons.library_add,
  size: 20,
- color: ColorTokens.primary,
+ color: ThemeColors(context).primary,
  ),
  SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
@@ -158,7 +158,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  ? 'Upload documents to enhance agent knowledge'
  : 'Upload documents to enhance AI understanding',
  style: TextStyles.bodySmall.copyWith(
- color: ColorTokens.mutedForeground,
+ color: ThemeColors(context).onSurfaceVariant,
  ),
  ),
  ],
@@ -168,7 +168,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  onPressed: () => Navigator.of(context).pop(),
  icon: Icon(Icons.close, size: 20),
  style: IconButton.styleFrom(
- foregroundColor: ColorTokens.mutedForeground,
+ foregroundColor: ThemeColors(context).onSurfaceVariant,
  ),
  ),
  ],
@@ -193,21 +193,21 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  Icon(
  Icons.cloud_upload_outlined,
  size: 48,
- color: ColorTokens.primary,
+ color: ThemeColors(context).primary,
  ),
  SizedBox(height: SpacingTokens.elementSpacing),
  Text(
  'Click to browse or drag and drop',
  style: TextStyles.bodyMedium.copyWith(
  fontWeight: FontWeight.w500,
- color: ColorTokens.foreground,
+ color: ThemeColors(context).onSurface,
  ),
  ),
  SizedBox(height: 4),
  Text(
  'PDF, TXT, MD, JSON, CSV (max 10MB each)',
  style: TextStyles.bodySmall.copyWith(
- color: ColorTokens.mutedForeground,
+ color: ThemeColors(context).onSurfaceVariant,
  ),
  ),
  ],
@@ -241,7 +241,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  Icon(
  _getFileIcon(doc.extension),
  size: 20,
- color: ColorTokens.primary,
+ color: ThemeColors(context).primary,
  ),
  SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
@@ -258,7 +258,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  Text(
  doc.sizeFormatted,
  style: TextStyles.caption.copyWith(
- color: ColorTokens.mutedForeground,
+ color: ThemeColors(context).onSurfaceVariant,
  ),
  ),
  ],
@@ -271,7 +271,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  child: CircularProgressIndicator(
  strokeWidth: 2,
  valueColor: AlwaysStoppedAnimation<Color>(
- ColorTokens.primary,
+ ThemeColors(context).primary,
  ),
  ),
  )
@@ -279,7 +279,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  Icon(
  Icons.check_circle,
  size: 18,
- color: SemanticColors.success,
+ color: ThemeColors(context).success,
  )
  else
  GestureDetector(
@@ -291,7 +291,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  child: Icon(
  Icons.close,
  size: 16,
- color: ColorTokens.mutedForeground,
+ color: ThemeColors(context).onSurfaceVariant,
  ),
  ),
  ),
@@ -318,10 +318,10 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  width: double.infinity,
  padding: const EdgeInsets.all(12),
  decoration: BoxDecoration(
- color: ColorTokens.muted,
+ color: ThemeColors(context).surfaceVariant,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
  border: Border.all(
- color: ColorTokens.border.withValues(alpha: 0.5),
+ color: ThemeColors(context).border.withValues(alpha: 0.5),
  ),
  ),
  child: Column(
@@ -334,14 +334,14 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  Icon(
  Icons.check_circle,
  size: 14,
- color: SemanticColors.success,
+ color: ThemeColors(context).success,
  ),
  SizedBox(width: 6),
  Expanded(
  child: Text(
  doc,
  style: TextStyles.bodySmall.copyWith(
- color: ColorTokens.foreground,
+ color: ThemeColors(context).onSurface,
  ),
  overflow: TextOverflow.ellipsis,
  ),
@@ -384,13 +384,13 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  Container(
  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
  decoration: BoxDecoration(
- color: ColorTokens.surface,
+ color: ThemeColors(context).surface,
  borderRadius: BorderRadius.only(
  bottomLeft: Radius.circular(BorderRadiusTokens.xl),
  bottomRight: Radius.circular(BorderRadiusTokens.xl),
  ),
  border: Border(
- top: BorderSide(color: ColorTokens.border),
+ top: BorderSide(color: ThemeColors(context).border),
  ),
  ),
  child: Row(
@@ -444,11 +444,11 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
  decoration: BoxDecoration(
  color: isSelected 
- ? ColorTokens.primary.withValues(alpha: 0.1)
- : SemanticColors.surface,
+ ? ThemeColors(context).primary.withValues(alpha: 0.1)
+ : ThemeColors(context).surface,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
  border: Border.all(
- color: isSelected ? ColorTokens.primary : SemanticColors.border,
+ color: isSelected ? ThemeColors(context).primary : ThemeColors(context).border,
  ),
  ),
  child: Row(
@@ -457,13 +457,13 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  Icon(
  icon,
  size: 14,
- color: isSelected ? ColorTokens.primary : ColorTokens.mutedForeground,
+ color: isSelected ? ThemeColors(context).primary : ThemeColors(context).onSurfaceVariant,
  ),
  SizedBox(width: 6),
  Text(
  label,
  style: TextStyles.bodySmall.copyWith(
- color: isSelected ? ColorTokens.primary : ColorTokens.mutedForeground,
+ color: isSelected ? ThemeColors(context).primary : ThemeColors(context).onSurfaceVariant,
  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
  ),
  ),
@@ -574,7 +574,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  ),
  ],
  ),
- backgroundColor: SemanticColors.success,
+ backgroundColor: ThemeColors(context).success,
  behavior: SnackBarBehavior.floating,
  ),
  );

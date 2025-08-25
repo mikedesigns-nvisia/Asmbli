@@ -113,28 +113,8 @@ class AppNavigationBar extends ConsumerWidget {
  ),
  SizedBox(width: SpacingTokens.xxl),
  
- // Quick Actions Dropdown (will be used for sign-in flow later)
+ // Quick Actions Dropdown
  QuickActionsDropdown(),
- 
- SizedBox(width: SpacingTokens.lg),
- 
- // Create Agent Button
- AsmblButtonEnhanced.primary(
-  text: 'Create Agent',
-  icon: Icons.build,
-  onPressed: () => context.go(AppRoutes.agentWizard),
-  size: AsmblButtonSize.medium,
- ),
- 
- SizedBox(width: SpacingTokens.sm),
- 
- // New Chat Button
- AsmblButtonEnhanced.accent(
- text: 'New Chat',
- icon: Icons.add,
- onPressed: () => context.go(AppRoutes.chat),
- size: AsmblButtonSize.medium,
- ),
  ],
  ),
  );

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/conversation.dart';
+import 'package:agent_engine_core/models/agent.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../providers/conversation_provider.dart';
+import '../../../../providers/agent_provider.dart';
 import 'loading_overlay.dart';
 
 class ConversationList extends ConsumerWidget {
@@ -172,7 +174,7 @@ class ConversationList extends ConsumerWidget {
  }
 }
 
-class _ConversationItem extends StatelessWidget {
+class _ConversationItem extends ConsumerWidget {
  final Conversation conversation;
  final bool isSelected;
  final VoidCallback onTap;
@@ -186,7 +188,7 @@ class _ConversationItem extends StatelessWidget {
  });
 
  @override
- Widget build(BuildContext context) {
+ Widget build(BuildContext context, WidgetRef ref) {
  return Container(
  margin: EdgeInsets.only(bottom: SpacingTokens.sm),
  child: Material(
@@ -208,7 +210,213 @@ class _ConversationItem extends StatelessWidget {
  ? ThemeColors(context).primary.withValues(alpha: 0.05)
  : ThemeColors(context).surface.withValues(alpha: 0.5),
  ),
+ child: _buildConversationContent(context, ref),
+ ),
+ ),
+ ),
+ );
+ }
+
+ Widget _buildConversationContent(BuildContext context, WidgetRef ref) {
+ final agentId = _getAgentId();
+ 
+ if (agentId != null) {
+ return _buildAgentConversationCard(context, ref, agentId);
+ } else {
+ return _buildStandardConversationCard(context);
+ }
+ }
+ 
+ Widget _buildAgentConversationCard(BuildContext context, WidgetRef ref, String agentId) {
+ final agentsAsync = ref.watch(agentNotifierProvider);
+ 
+ return agentsAsync.when(
+ loading: () => _buildStandardConversationCard(context),
+ error: (_, __) => _buildStandardConversationCard(context),
+ data: (agents) {
+ final agent = agents.firstWhere(
+ (a) => a.id == agentId,
+ orElse: () => Agent(
+ id: agentId,
+ name: agentId,
+ description: 'Unknown agent',
+ capabilities: [],
+ ),
+ );
+ 
+ return Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ // Agent Header
+ Row(
+ children: [
+ Container(
+ width: 32,
+ height: 32,
+ decoration: BoxDecoration(
+ color: _getAgentColor(agent).withValues(alpha: 0.1),
+ borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+ border: Border.all(
+ color: _getAgentColor(agent).withValues(alpha: 0.3),
+ width: 1,
+ ),
+ ),
+ child: Icon(
+ _getAgentIcon(agent),
+ size: 16,
+ color: _getAgentColor(agent),
+ ),
+ ),
+ SizedBox(width: SpacingTokens.sm),
+ Expanded(
  child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Row(
+ children: [
+ Container(
+ padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+ decoration: BoxDecoration(
+ color: _getAgentColor(agent),
+ borderRadius: BorderRadius.circular(4),
+ ),
+ child: Row(
+ mainAxisSize: MainAxisSize.min,
+ children: [
+ Icon(
+ Icons.smart_toy,
+ size: 8,
+ color: Colors.white,
+ ),
+ SizedBox(width: 2),
+ Text(
+ 'AGENT',
+ style: TextStyles.caption.copyWith(
+ color: Colors.white,
+ fontSize: 8,
+ fontWeight: FontWeight.w600,
+ ),
+ ),
+ ],
+ ),
+ ),
+ Spacer(),
+ if (agent.status == AgentStatus.active) ...[
+ Container(
+ width: 8,
+ height: 8,
+ decoration: BoxDecoration(
+ color: ThemeColors(context).success,
+ borderRadius: BorderRadius.circular(4),
+ ),
+ ),
+ ],
+ ],
+ ),
+ Text(
+ agent.name,
+ style: TextStyles.bodyMedium.copyWith(
+ fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+ color: isSelected 
+ ? ThemeColors(context).primary
+ : ThemeColors(context).onSurface,
+ ),
+ maxLines: 1,
+ overflow: TextOverflow.ellipsis,
+ ),
+ ],
+ ),
+ ),
+ ],
+ ),
+ 
+ SizedBox(height: SpacingTokens.xs),
+ 
+ // Conversation Title (if different from agent name)
+ if (conversation.title != agent.name && conversation.title.isNotEmpty) ...[
+ Text(
+ conversation.title,
+ style: TextStyles.bodySmall.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ fontStyle: FontStyle.italic,
+ ),
+ maxLines: 1,
+ overflow: TextOverflow.ellipsis,
+ ),
+ SizedBox(height: SpacingTokens.xs),
+ ],
+ 
+ // Agent capabilities (show top 2)
+ if (agent.capabilities.isNotEmpty) ...[
+ Row(
+ children: [
+ ...agent.capabilities.take(2).map((capability) => Container(
+ margin: EdgeInsets.only(right: 4),
+ padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+ decoration: BoxDecoration(
+ color: _getAgentColor(agent).withValues(alpha: 0.1),
+ borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+ ),
+ child: Text(
+ capability,
+ style: TextStyles.caption.copyWith(
+ color: _getAgentColor(agent),
+ fontSize: 9,
+ ),
+ ),
+ )),
+ if (agent.capabilities.length > 2) ...[
+ Text(
+ '+${agent.capabilities.length - 2}',
+ style: TextStyles.caption.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ fontSize: 9,
+ ),
+ ),
+ ],
+ Spacer(),
+ Text(
+ _formatDate(conversation.createdAt),
+ style: TextStyles.caption.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ ),
+ ],
+ ),
+ ] else ...[
+ // Fallback info row
+ Row(
+ children: [
+ Icon(
+ Icons.message,
+ size: 12,
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ SizedBox(width: SpacingTokens.xs),
+ Text(
+ '${conversation.messages.length} messages',
+ style: TextStyles.caption.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ ),
+ Spacer(),
+ Text(
+ _formatDate(conversation.createdAt),
+ style: TextStyles.caption.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ ),
+ ],
+ ),
+ ],
+ ],
+ );
+ },
+ );
+ }
+ 
+ Widget _buildStandardConversationCard(BuildContext context) {
+ return Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Row(
@@ -293,10 +501,6 @@ class _ConversationItem extends StatelessWidget {
  ],
  ),
  ],
- ),
- ),
- ),
- ),
  );
  }
 
@@ -397,6 +601,36 @@ class _ConversationItem extends StatelessWidget {
  return '${diff.inDays}d ago';
  } else {
  return '${date.day}/${date.month}';
+ }
+ }
+
+ String? _getAgentId() {
+ return conversation.metadata?['agentId'] as String?;
+ }
+
+ Color _getAgentColor(Agent agent) {
+ switch (agent.id) {
+ case 'research-assistant':
+ return const Color(0xFF4CAF50); // Green
+ case 'code-helper':
+ return const Color(0xFF2196F3); // Blue
+ case 'data-analyst':
+ return const Color(0xFFFF9800); // Orange
+ default:
+ return const Color(0xFF3D3328); // Default primary color
+ }
+ }
+
+ IconData _getAgentIcon(Agent agent) {
+ switch (agent.id) {
+ case 'research-assistant':
+ return Icons.search;
+ case 'code-helper':
+ return Icons.code;
+ case 'data-analyst':
+ return Icons.analytics;
+ default:
+ return Icons.smart_toy;
  }
  }
 }

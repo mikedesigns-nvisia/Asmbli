@@ -38,17 +38,33 @@ export default function HomePage() {
             Start with templates or create from scratch - your data and agentic experiences stay secure and under your control.
           </p>
           <div className="flex gap-4 justify-center">
-            <Link href="/templates">
-              <Button size="lg">
-                Browse Templates
+            <Link href="/download">
+              <Button size="lg" className="bg-amber-400 hover:bg-amber-500 text-amber-950">
+                Download Asmbli
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Link href="/chat">
+            <Link href="/templates">
               <Button size="lg" variant="outline">
-                View Demo
+                Browse Templates
               </Button>
             </Link>
+          </div>
+          
+          {/* Quick Download Links */}
+          <div className="mt-8 flex items-center justify-center gap-6 text-sm text-muted-foreground">
+            <Link href="/download" className="flex items-center hover:text-foreground transition-colors">
+              <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+              Windows Ready
+            </Link>
+            <Link href="/download" className="flex items-center hover:text-foreground transition-colors">
+              <span className="w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
+              macOS Coming Soon
+            </Link>
+            <span className="flex items-center">
+              <Shield className="w-3 h-3 mr-1" />
+              100% Local & Private
+            </span>
           </div>
           <div className="mt-6">
             <p className="text-sm text-muted-foreground italic">

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:agent_engine_core/models/conversation.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../providers/conversation_provider.dart';
 import 'conversation_list.dart';
 import 'conversation_archive_modal.dart';
 
@@ -13,6 +15,7 @@ class ConversationSidebar extends ConsumerStatefulWidget {
 
 class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  bool isCollapsed = false;
+ int _selectedTab = 0; // 0: Conversations, 1: Agent Context
 
  @override
  Widget build(BuildContext context) {
