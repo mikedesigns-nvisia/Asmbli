@@ -19,7 +19,6 @@ import '../widgets/integration_health_dashboard.dart';
 import '../widgets/integration_recommendations_widget.dart';
 import '../widgets/integration_dependency_dialog.dart';
 import '../widgets/integration_analytics_dashboard.dart';
-import '../widgets/integration_marketplace.dart';
 import '../widgets/integration_testing_dashboard.dart';
 
 // Integration model for unified display
@@ -200,7 +199,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  @override
  void initState() {
  super.initState();
- _tabController = TabController(length: 8, vsync: this); // Added Health Monitor tab
+ _tabController = TabController(length: 7, vsync: this); // Removed Marketplace tab
  selectedModel = providerModels[selectedProvider]!.first;
  _loadSystemPrompt();
  }
@@ -303,7 +302,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Tab(text: 'API Configuration'),
  Tab(text: 'Agent Management'),
  Tab(text: 'Integrations'),
- Tab(text: 'Marketplace'),
  Tab(text: 'Health Monitor'),
  Tab(text: 'Analytics'),
  Tab(text: 'Testing'),
@@ -344,7 +342,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  _buildAPIConfigurationTab(),
  _buildAgentManagementTab(),
  _buildIntegrationsTab(),
- _buildMarketplaceTab(),
  _buildHealthMonitorTab(),
  _buildAnalyticsTab(),
  _buildTestingTab(),
@@ -974,10 +971,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  padding: const EdgeInsets.all(24),
  child: const IntegrationHealthDashboard(),
  );
- }
-
- Widget _buildMarketplaceTab() {
- return const IntegrationMarketplace();
  }
 
  Widget _buildAnalyticsTab() {
@@ -2205,7 +2198,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           ),
           const SizedBox(height: 8),
           Text(
-            'Configure integrations that can be used when building custom agents.',
+            'Manage your configured integrations. Visit the Marketplace to add new ones.',
             style: TextStyle(
               fontFamily: 'Space Grotesk',
               fontSize: 14,
@@ -2260,11 +2253,11 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               ),
               const SizedBox(width: 16),
               
-              // Add Integration Button
+              // Browse Marketplace Button
               AsmblButton.primary(
-                text: 'Add Integration',
-                icon: Icons.add,
-                onPressed: () => _showAddIntegrationDialog(),
+                text: 'Browse Marketplace',
+                icon: Icons.store,
+                onPressed: () => context.go(AppRoutes.marketplace),
               ),
             ],
           ),
@@ -2310,7 +2303,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           ),
           const SizedBox(height: 16),
           Text(
-            'No integrations found',
+            'No configured integrations',
             style: TextStyle(
               fontFamily: 'Space Grotesk',
               fontSize: 20,
@@ -2320,12 +2313,18 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           ),
           const SizedBox(height: 8),
           Text(
-            'Try adjusting your search or filter.',
+            'Visit the Marketplace to add integrations to your agents.',
             style: TextStyle(
               fontFamily: 'Space Grotesk',
               fontSize: 14,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
+          ),
+          const SizedBox(height: 16),
+          AsmblButton.primary(
+            text: 'Browse Marketplace',
+            icon: Icons.store,
+            onPressed: () => context.go(AppRoutes.marketplace),
           ),
         ],
       ),
@@ -2499,6 +2498,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   List<IntegrationStatus> _filterIntegrationStatus(List<IntegrationStatus> items) {
     return items.where((status) {
       final integration = status.definition;
+      
+      // Only show configured/connected integrations in settings
+      if (!status.isConfigured) return false;
+      
       final matchesSearch = _searchQuery.isEmpty ||
           integration.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           integration.description.toLowerCase().contains(_searchQuery.toLowerCase());

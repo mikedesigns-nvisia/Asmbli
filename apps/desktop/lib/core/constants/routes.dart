@@ -10,6 +10,7 @@ class AppRoutes {
  static const String settings = '/settings';
  static const String agents = '/agents';
  static const String context = '/context';
+ static const String marketplace = '/marketplace';
  static const String wizard = '/wizard';
  static const String agentWizard = '/agent-wizard';
  
@@ -21,6 +22,7 @@ class AppRoutes {
  settings: 'Settings',
  agents: 'My Agents',
  context: 'Context',
+ marketplace: 'Marketplace',
  wizard: 'Wizard',
  agentWizard: 'Create Agent',
  };
@@ -38,6 +40,7 @@ class AppRoutes {
  settings,
  agents,
  context,
+ marketplace,
  wizard,
  agentWizard,
  ];

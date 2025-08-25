@@ -12,6 +12,7 @@ import 'features/settings/presentation/screens/settings_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'features/agents/presentation/screens/agent_configuration_screen.dart';
 import 'features/context/presentation/screens/context_library_screen.dart';
+import 'features/marketplace/presentation/screens/marketplace_screen.dart';
 import 'features/agent_wizard/presentation/screens/agent_wizard_screen.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'providers/conversation_provider.dart';
@@ -130,6 +131,10 @@ final _router = GoRouter(
  GoRoute(
  path: AppRoutes.context,
  builder: (context, state) => const ContextLibraryScreen(),
+ ),
+ GoRoute(
+ path: AppRoutes.marketplace,
+ builder: (context, state) => const MarketplaceScreen(),
  ),
  GoRoute(
   path: AppRoutes.agentWizard,
