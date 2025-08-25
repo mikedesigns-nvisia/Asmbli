@@ -35,7 +35,7 @@ function integrationToMCPServer(integration: IntegrationDefinition): MCPServer {
     name: integration.name,
     description: integration.description,
     status: integration.isAvailable ? 'connected' : 'disconnected',
-    icon: getIconName(integration.icon), // Convert Flutter IconData to web icon name
+    icon: getIconName((integration as any).icon), // Convert Flutter IconData to web icon name
   };
 }
 
