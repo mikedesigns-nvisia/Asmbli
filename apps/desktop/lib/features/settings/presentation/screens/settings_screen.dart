@@ -15,11 +15,8 @@ import '../../../../core/services/integration_service.dart';
 import '../../../../core/services/integration_dependency_service.dart';
 import '../../../../core/design_system/components/integration_status_indicators.dart';
 import '../../../../core/services/integration_health_service.dart';
-import '../widgets/integration_health_dashboard.dart';
 import '../widgets/integration_recommendations_widget.dart';
 import '../widgets/integration_dependency_dialog.dart';
-import '../widgets/integration_analytics_dashboard.dart';
-import '../widgets/integration_testing_dashboard.dart';
 
 // Integration model for unified display
 class Integration {
@@ -199,7 +196,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  @override
  void initState() {
  super.initState();
- _tabController = TabController(length: 7, vsync: this); // Removed Marketplace tab
+ _tabController = TabController(length: 4, vsync: this); // Reduced to core settings only
  selectedModel = providerModels[selectedProvider]!.first;
  _loadSystemPrompt();
  }
@@ -302,9 +299,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Tab(text: 'API Configuration'),
  Tab(text: 'Agent Management'),
  Tab(text: 'Integrations'),
- Tab(text: 'Health Monitor'),
- Tab(text: 'Analytics'),
- Tab(text: 'Testing'),
  Tab(text: 'General Settings'),
  ],
  labelColor: Theme.of(context).colorScheme.primary,
@@ -342,9 +336,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  _buildAPIConfigurationTab(),
  _buildAgentManagementTab(),
  _buildIntegrationsTab(),
- _buildHealthMonitorTab(),
- _buildAnalyticsTab(),
- _buildTestingTab(),
  _buildGeneralSettingsTab(themeService),
  ],
  ),
@@ -964,21 +955,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  ),
  );
- }
-
- Widget _buildHealthMonitorTab() {
- return Container(
- padding: const EdgeInsets.all(24),
- child: const IntegrationHealthDashboard(),
- );
- }
-
- Widget _buildAnalyticsTab() {
- return const IntegrationAnalyticsDashboard();
- }
-
- Widget _buildTestingTab() {
- return const IntegrationTestingDashboard();
  }
 
  Widget _buildGeneralSettingsTab(ThemeService themeService) {

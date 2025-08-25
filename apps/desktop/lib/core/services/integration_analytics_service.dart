@@ -24,22 +24,26 @@ class IntegrationAnalyticsService {
   void _initializeMockData() {
     final configured = _integrationService.getConfiguredIntegrations();
     
-    for (final integration in configured) {
-      if (integration.isEnabled) {
-        _usageData[integration.definition.id] = IntegrationUsageData(
-          integrationId: integration.definition.id,
-          totalInvocations: _generateRandomUsage(),
-          lastUsed: DateTime.now().subtract(Duration(
-            hours: Random().nextInt(72), // Last 3 days
-          )),
-          averageResponseTime: 100 + Random().nextInt(400), // 100-500ms
-          successRate: 0.85 + (Random().nextDouble() * 0.14), // 85-99%
-          dailyUsage: _generateDailyUsage(),
-          topTools: _generateTopTools(integration.definition.id),
-          errorCount: Random().nextInt(5),
-          totalDataTransferred: _generateDataTransfer(),
-        );
-      }
+    // Always generate mock data for demonstration, even if no integrations are configured
+    final demoIntegrations = ['github', 'filesystem', 'figma', 'postgresql', 'memory'];
+    final integrationsToMock = configured.isNotEmpty 
+        ? configured.where((integration) => integration.isEnabled).map((i) => i.definition.id).toList()
+        : demoIntegrations;
+    
+    for (final integrationId in integrationsToMock) {
+      _usageData[integrationId] = IntegrationUsageData(
+        integrationId: integrationId,
+        totalInvocations: _generateRandomUsage(),
+        lastUsed: DateTime.now().subtract(Duration(
+          hours: Random().nextInt(72), // Last 3 days
+        )),
+        averageResponseTime: 100 + Random().nextInt(400), // 100-500ms
+        successRate: 0.85 + (Random().nextDouble() * 0.14), // 85-99%
+        dailyUsage: _generateDailyUsage(),
+        topTools: _generateTopTools(integrationId),
+        errorCount: Random().nextInt(5),
+        totalDataTransferred: _generateDataTransfer(),
+      );
     }
     
     _generateAnalyticsEvents();
@@ -333,8 +337,24 @@ class IntegrationAnalyticsService {
         tools['write-file'] = Random().nextInt(30) + 5;
         tools['list-directory'] = Random().nextInt(40) + 8;
         break;
+      case 'figma':
+        tools['get-files'] = Random().nextInt(30) + 8;
+        tools['get-components'] = Random().nextInt(20) + 5;
+        tools['get-styles'] = Random().nextInt(15) + 3;
+        break;
+      case 'postgresql':
+        tools['query'] = Random().nextInt(40) + 15;
+        tools['list-tables'] = Random().nextInt(10) + 2;
+        tools['get-schema'] = Random().nextInt(8) + 1;
+        break;
+      case 'memory':
+        tools['store-memory'] = Random().nextInt(35) + 10;
+        tools['recall-memory'] = Random().nextInt(45) + 12;
+        tools['search-memory'] = Random().nextInt(25) + 8;
+        break;
       default:
         tools['default-tool'] = Random().nextInt(30) + 5;
+        tools['secondary-tool'] = Random().nextInt(20) + 3;
     }
     
     return tools;
