@@ -81,8 +81,8 @@ export default function DownloadSection() {
     }
     
     // Track download analytics
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'download', {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'download', {
         event_category: 'software',
         event_label: download.platform,
         value: 1
