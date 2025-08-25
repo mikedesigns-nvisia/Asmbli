@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/components/auto_detect_button.dart';
+import 'simple_auto_detection_wizard.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import 'enhanced_mcp_server_wizard.dart';
 
@@ -290,8 +290,76 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             SizedBox(height: 24),
             
             // Auto-detect option at top
-            AutoDetectButton(
-              onDetectionComplete: () => Navigator.of(context).pop(),
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    SemanticColors.primary.withValues(alpha: 0.1),
+                    SemanticColors.primary.withValues(alpha: 0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: SemanticColors.primary.withValues(alpha: 0.2),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: SemanticColors.primary,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Icon(
+                          Icons.auto_fix_high,
+                          color: SemanticColors.surface,
+                          size: 20,
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Auto-Detect Configuration',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: SemanticColors.primary,
+                              ),
+                            ),
+                            Text(
+                              'Automatically find and configure installed tools',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: SemanticColors.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  AsmblButton.primary(
+                    text: 'Start Detection',
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showDialog(
+                        context: context,
+                        builder: (context) => SimpleAutoDetectionWizard(
+                          onComplete: () {},
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
             
             SizedBox(height: 24),

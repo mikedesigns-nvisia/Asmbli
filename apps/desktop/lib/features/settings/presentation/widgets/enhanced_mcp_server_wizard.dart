@@ -4,7 +4,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/design_system/components/enhanced_template_browser.dart';
 import '../../../../core/design_system/components/smart_mcp_form.dart';
 import '../../../../core/design_system/components/mcp_testing_widgets.dart';
-import '../../../../core/design_system/components/auto_detect_button.dart';
+import 'simple_auto_detection_wizard.dart';
 import '../../../../core/models/enhanced_mcp_template.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/enhanced_mcp_testing_service.dart';
@@ -285,8 +285,46 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Auto-detect option at top
-          AutoDetectButton(
-            onDetectionComplete: () => Navigator.of(context).pop(),
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  SemanticColors.primary.withValues(alpha: 0.1),
+                  SemanticColors.primary.withValues(alpha: 0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: SemanticColors.primary.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.auto_fix_high, color: SemanticColors.primary),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Auto-Detect All Integrations',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: SemanticColors.primary,
+                    ),
+                  ),
+                ),
+                AsmblButton.primary(
+                  text: 'Detect',
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    showDialog(
+                      context: context,
+                      builder: (context) => SimpleAutoDetectionWizard(),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
           
           SizedBox(height: 24),
