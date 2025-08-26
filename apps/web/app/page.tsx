@@ -36,7 +36,7 @@ export default function HomePage() {
               <div className="rounded-xl border bg-card p-1 md:p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
                 <img 
                   src="/hero-app-screenshot.png" 
-                  alt="Asmbli - Professional AI Agent Platform with Auto-Detection and MCP Integration"
+                  alt="Asmbli - Professional AI Agent Platform with Your Tools and MCP Integration"
                   className="w-full h-auto rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[500px] md:max-h-[600px] lg:max-h-[700px]"
                 />
               </div>
@@ -58,7 +58,7 @@ export default function HomePage() {
               <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Zap className="h-6 w-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold mb-2">🎯 Auto-Detection</h3>
+              <h3 className="font-semibold mb-2">🎯 Your Tools</h3>
               <p className="text-sm text-muted-foreground">
                 Immediately access your tools through MCP Servers. Set up your tool workflows naturally in the app.
               </p>
