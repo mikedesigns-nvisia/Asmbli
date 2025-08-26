@@ -1,12 +1,12 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "releaseDate": "2025-08-25",
   "platforms": {
     "windows": {
       "architecture": "x64",
       "format": "zip",
-      "filename": "Asmbli-1.0.0-windows-x64.zip",
-      "size": "~25MB",
+      "filename": "Asmbli-1.1.0-windows-x64-auto-detection.zip",
+      "size": "~26MB",
       "requirements": {
         "os": "Windows 10 64-bit or Windows 11",
         "ram": "4GB (8GB recommended)",
@@ -14,10 +14,12 @@
         "network": "Internet connection for AI API access"
       },
       "features": [
+        "🎯 AUTOMATIC INTEGRATION DETECTION - Zero-configuration setup",
         "Professional AI agent deployment",
         "20+ specialized agent templates", 
         "MCP tool integration (40+ tools)",
         "Dedicated integration marketplace",
+        "Auto-detection for VS Code, Git, GitHub CLI, and more",
         "Streamlined settings interface",
         "Clean minimalist design",
         "Context document management",
@@ -39,6 +41,18 @@
     }
   },
   "changelog": {
+    "1.1.0": {
+      "type": "major",
+      "highlights": [
+        "🚀 AUTOMATIC INTEGRATION DETECTION - Game-changing UX improvement",
+        "Zero-configuration setup for VS Code, Git, and GitHub CLI",
+        "Smart detection wizard with confidence scoring",
+        "Auto-detect buttons integrated throughout the UI",
+        "Platform-specific path resolution (Windows/macOS/Linux)",
+        "Eliminates technical configuration barriers",
+        "Major competitive differentiator: 'everything just works'"
+      ]
+    },
     "1.0.0": {
       "type": "major",
       "highlights": [
