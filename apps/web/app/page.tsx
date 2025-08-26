@@ -30,225 +30,191 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-yellow-50/20 to-background">
         <div className="container mx-auto max-w-4xl text-center">
+          {/* Hero Screenshot First */}
+          <div className="mb-12">
+            <div className="max-w-5xl mx-auto px-4">
+              <div className="rounded-xl border bg-card p-1 md:p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
+                <img 
+                  src="/hero-app-screenshot.png" 
+                  alt="AgentEngine - Professional AI Agent Platform with Auto-Detection and MCP Integration"
+                  className="w-full h-auto rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[500px] md:max-h-[600px] lg:max-h-[700px]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Hero Text */}
           <h1 className="text-5xl font-bold italic mb-6 font-display">
-            AI Agents Made Easy
+            Professional AI Agents
           </h1>
-          <p className="text-xl text-muted-foreground mb-8">
-            Build, customize, and deploy your own private AI agents with powerful tools and integrations. 
-            Start with templates or create from scratch - your data and agentic experiences stay secure and under your control.
+          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+            The only AI agent platform where integrations configure themselves automatically. 
+            Deploy specialized agents with your tools, your data, your control.
           </p>
+
+          {/* Key Capabilities */}
+          <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Zap className="h-6 w-6 text-amber-600" />
+              </div>
+              <h3 className="font-semibold mb-2">🎯 Auto-Detection</h3>
+              <p className="text-sm text-muted-foreground">
+                Zero-configuration setup. We automatically detect and configure VS Code, Git, databases, and 40+ tools.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Bot className="h-6 w-6 text-amber-600" />
+              </div>
+              <h3 className="font-semibold mb-2">🚀 20+ Templates</h3>
+              <p className="text-sm text-muted-foreground">
+                Blockchain developer, UX designer, DevOps engineer, and more. Professional agents ready in seconds.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Shield className="h-6 w-6 text-amber-600" />
+              </div>
+              <h3 className="font-semibold mb-2">🔒 Private & Secure</h3>
+              <p className="text-sm text-muted-foreground">
+                Your API key, your data, your agents. Everything runs locally with enterprise-grade security.
+              </p>
+            </div>
+          </div>
+
           <div className="flex gap-4 justify-center">
             <Link href="#beta-signup">
               <Button size="lg" className="bg-amber-400 hover:bg-amber-500 text-amber-950">
-                Join Beta
+                Get Early Access
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
             <Link href="/templates">
               <Button size="lg" variant="outline">
-                Browse Templates
+                View Templates
               </Button>
             </Link>
           </div>
           
-          {/* Quick Download Links */}
+          {/* Status Bar */}
           <div className="mt-8 flex items-center justify-center gap-6 text-sm text-muted-foreground">
-            <Link href="/download" className="flex items-center hover:text-foreground transition-colors">
+            <span className="flex items-center">
               <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Windows Ready
-            </Link>
-            <Link href="/download" className="flex items-center hover:text-foreground transition-colors">
+              Windows Available Now
+            </span>
+            <span className="flex items-center">
               <span className="w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
               macOS Coming Soon
-            </Link>
+            </span>
             <span className="flex items-center">
               <Shield className="w-3 h-3 mr-1" />
-              100% Local & Private
+              100% Private
             </span>
           </div>
-          <div className="mt-6">
-            <p className="text-sm text-muted-foreground italic">
-              <Link href="#beta-signup" className="text-primary hover:underline">Sign up for beta access</Link> to download the desktop app
-            </p>
-          </div>
-          <div className="mt-12">
-            <div className="max-w-7xl mx-auto px-4">
-              <p className="text-sm md:text-base text-muted-foreground text-center mb-6">
-                Professional UX Designer agent with live MCP tool integrations
-              </p>
-              <div className="rounded-xl border bg-card p-1 md:p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-                <img 
-                  src="/hero-screenshot.png" 
-                  alt="Asmbli UX Designer Agent - Professional AI Assistant with MCP Integration"
-                  className="w-full h-auto rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[600px] md:max-h-[700px] lg:max-h-[800px]"
-                />
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-20 px-4 bg-yellow-50/10">
-        <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 font-display">
-            Everything You Need to Build AI Agents
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <Bot className="h-10 w-10 mb-2 text-yellow-600" />
-                <CardTitle>Templates & Community</CardTitle>
-                <CardDescription>
-                  Pre-built agents for research, writing, and development. 
-                  Fork and customize community configurations
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            <Card>
-              <CardHeader>
-                <Code className="h-10 w-10 mb-2 text-yellow-600" />
-                <CardTitle>MCP Integrations</CardTitle>
-                <CardDescription>
-                  Connect to Git, databases, and custom tools. 
-                  10+ ready-to-use MCP servers available
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            <Card>
-              <CardHeader>
-                <Zap className="h-10 w-10 mb-2 text-yellow-500" />
-                <CardTitle>Instant Chat</CardTitle>
-                <CardDescription>
-                  Start chatting immediately with your AI agents.
-                  No deployment needed
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* What You Bring Section */}
+      {/* Why AgentEngine Section */}
       <section className="py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 font-display">
-              What You Bring
+              Why AgentEngine?
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to get started building your custom AI agent
+              The professional AI agent platform that actually works in your environment
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Documents */}
-            <Card className="border-2 hover:border-yellow-400/20 transition-colors bg-yellow-50/10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            <Card className="text-center border-2 hover:border-amber-200 transition-colors">
               <CardHeader>
-                <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-4">
-                  <FileText className="h-6 w-6 text-yellow-600" />
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Zap className="h-6 w-6 text-green-600" />
                 </div>
-                <CardTitle className="text-xl font-display">Documents</CardTitle>
-                <CardDescription className="text-base">
-                  Your knowledge base and context materials
+                <CardTitle className="text-lg">Zero Setup</CardTitle>
+                <CardDescription>
+                  Auto-detects your tools. No configuration files, no YAML, no complex setup.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Design systems</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Requirements docs</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Company knowledge</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Process documentation</span>
-                  </li>
-                </ul>
-              </CardContent>
             </Card>
-
-            {/* API Key */}
-            <Card className="border-2 hover:border-yellow-400/20 transition-colors bg-yellow-50/10">
+            <Card className="text-center border-2 hover:border-amber-200 transition-colors">
               <CardHeader>
-                <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-4">
-                  <Key className="h-6 w-6 text-yellow-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Code className="h-6 w-6 text-blue-600" />
                 </div>
-                <CardTitle className="text-xl font-display">An API Key</CardTitle>
-                <CardDescription className="text-base">
-                  Your preferred AI provider connection
+                <CardTitle className="text-lg">Real Integration</CardTitle>
+                <CardDescription>
+                  Connect to actual tools: Git repos, databases, Figma, Slack. Not just chat.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Anthropic (Claude)</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">OpenAI (GPT)</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Google (Gemini)</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Custom providers</span>
-                  </li>
-                </ul>
-              </CardContent>
             </Card>
-
-            {/* Use Case */}
-            <Card className="border-2 hover:border-yellow-400/20 transition-colors bg-yellow-50/10">
+            <Card className="text-center border-2 hover:border-amber-200 transition-colors">
               <CardHeader>
-                <div className="w-12 h-12 bg-yellow-600/20 rounded-xl flex items-center justify-center mb-4">
-                  <Target className="h-6 w-6 text-yellow-700" />
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Bot className="h-6 w-6 text-purple-600" />
                 </div>
-                <CardTitle className="text-xl font-display">A Use Case</CardTitle>
-                <CardDescription className="text-base">
-                  What do you want/need/feel like doing?
+                <CardTitle className="text-lg">Professional Agents</CardTitle>
+                <CardDescription>
+                  Specialized for real work: blockchain dev, UX design, DevOps, research.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full"></div>
-                    <span className="text-sm">Research & analysis</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full"></div>
-                    <span className="text-sm">Code & development</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full"></div>
-                    <span className="text-sm">Content creation</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full"></div>
-                    <span className="text-sm">Process automation</span>
-                  </li>
-                </ul>
-              </CardContent>
+            </Card>
+            <Card className="text-center border-2 hover:border-amber-200 transition-colors">
+              <CardHeader>
+                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Shield className="h-6 w-6 text-amber-600" />
+                </div>
+                <CardTitle className="text-lg">Your Control</CardTitle>
+                <CardDescription>
+                  Your API keys, your data, your agents. Nothing leaves your machine.
+                </CardDescription>
+              </CardHeader>
             </Card>
           </div>
+        </div>
+      </section>
+
+      {/* Get Started Section */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl font-bold mb-6 font-display">
+            Get Started in 3 Steps
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-amber-800">1</span>
+              </div>
+              <h3 className="font-semibold mb-2">Download AgentEngine</h3>
+              <p className="text-sm text-muted-foreground">
+                Get the desktop app and sign in with beta access
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-amber-800">2</span>
+              </div>
+              <h3 className="font-semibold mb-2">Add Your API Key</h3>
+              <p className="text-sm text-muted-foreground">
+                Connect Claude, GPT, or Gemini. Your key, your data, your control.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-amber-800">3</span>
+              </div>
+              <h3 className="font-semibold mb-2">Pick an Agent & Chat</h3>
+              <p className="text-sm text-muted-foreground">
+                Choose a template or create custom. Auto-detection handles the rest.
+              </p>
+            </div>
+          </div>
           
-          <div className="text-center mt-12">
-            <p className="text-muted-foreground mb-6">
-              That's it! Bring these three things and you're ready to build.
-            </p>
-            <Link href="/chat">
-              <Button size="lg" className="font-display">
-                View Demo
+          <div className="mt-12">
+            <Link href="#beta-signup">
+              <Button size="lg" className="bg-amber-400 hover:bg-amber-500 text-amber-950">
+                Start Building Agents
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
