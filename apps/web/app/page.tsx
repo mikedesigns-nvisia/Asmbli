@@ -128,7 +128,7 @@ export default function HomePage() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             <Card className="text-center border-2 hover:border-amber-200 transition-colors">
-              <CardHeader>
+              <CardHeader className="pb-8 pt-8">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Zap className="h-6 w-6 text-green-600" />
                 </div>
@@ -139,7 +139,7 @@ export default function HomePage() {
               </CardHeader>
             </Card>
             <Card className="text-center border-2 hover:border-amber-200 transition-colors">
-              <CardHeader>
+              <CardHeader className="pb-8 pt-8">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Code className="h-6 w-6 text-blue-600" />
                 </div>
@@ -150,7 +150,7 @@ export default function HomePage() {
               </CardHeader>
             </Card>
             <Card className="text-center border-2 hover:border-amber-200 transition-colors">
-              <CardHeader>
+              <CardHeader className="pb-8 pt-8">
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Bot className="h-6 w-6 text-purple-600" />
                 </div>
@@ -161,7 +161,7 @@ export default function HomePage() {
               </CardHeader>
             </Card>
             <Card className="text-center border-2 hover:border-amber-200 transition-colors">
-              <CardHeader>
+              <CardHeader className="pb-8 pt-8">
                 <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Shield className="h-6 w-6 text-amber-600" />
                 </div>
