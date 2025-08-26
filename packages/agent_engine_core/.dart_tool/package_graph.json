@@ -8,9 +8,7 @@
       "version": "1.0.0",
       "dependencies": [
         "freezed_annotation",
-        "json_annotation",
-        "path",
-        "sqlite3"
+        "json_annotation"
       ],
       "devDependencies": [
         "build_runner",
@@ -131,23 +129,6 @@
         "web",
         "web_socket_channel",
         "yaml"
-      ]
-    },
-    {
-      "name": "path",
-      "version": "1.9.1",
-      "dependencies": []
-    },
-    {
-      "name": "sqlite3",
-      "version": "2.9.0",
-      "dependencies": [
-        "collection",
-        "ffi",
-        "meta",
-        "path",
-        "typed_data",
-        "web"
       ]
     },
     {
@@ -313,6 +294,11 @@
         "async",
         "stack_trace"
       ]
+    },
+    {
+      "name": "path",
+      "version": "1.9.1",
+      "dependencies": []
     },
     {
       "name": "package_config",
@@ -663,11 +649,6 @@
     {
       "name": "args",
       "version": "2.7.0",
-      "dependencies": []
-    },
-    {
-      "name": "ffi",
-      "version": "2.1.4",
       "dependencies": []
     },
     {

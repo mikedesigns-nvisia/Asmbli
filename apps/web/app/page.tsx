@@ -45,11 +45,11 @@ export default function HomePage() {
 
           {/* Hero Text */}
           <h1 className="text-5xl font-bold italic mb-6 font-display">
-            Professional AI Agents
+            Build and integrate custom AI agents into your workflow
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
             The only AI agent platform where integrations configure themselves automatically. 
-            Deploy specialized agents with your tools, your data, your control.
+            Connect your tools, deploy specialized agents, stay in control.
           </p>
 
           {/* Key Capabilities */}
