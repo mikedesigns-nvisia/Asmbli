@@ -4,6 +4,8 @@ import '../../../../core/design_system/design_system.dart';
 import 'enhanced_auto_detection_modal.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import 'enhanced_mcp_server_wizard.dart';
+import 'manual_mcp_server_modal.dart';
+import 'custom_mcp_server_modal.dart';
 
 /// Dialog for adding or editing MCP server configurations
 class MCPServerDialog extends ConsumerStatefulWidget {
@@ -211,6 +213,54 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     }
   }
 
+  /// Handle MCP configuration added from manual/custom modals
+  Future<void> _handleMCPConfigAdded(Map<String, dynamic> config) async {
+    try {
+      final mcpService = ref.read(mcpSettingsServiceProvider);
+      
+      // Extract server configuration from the config map
+      // Format: {serverId: {command: "...", args: [...], env: {...}}}
+      final serverId = config.keys.first;
+      final serverConfig = config[serverId] as Map<String, dynamic>;
+      
+      // Create MCPServerConfig object
+      final mcpConfig = MCPServerConfig(
+        id: serverId,
+        name: serverId.replaceAll('-', ' ').split(' ').map((word) => 
+          word[0].toUpperCase() + word.substring(1)).join(' '),
+        command: serverConfig['command'] as String? ?? '',
+        args: (serverConfig['args'] as List?)?.cast<String>() ?? [],
+        env: serverConfig['env'] as Map<String, String>?,
+        description: 'Custom MCP server configuration',
+        enabled: true,
+        createdAt: DateTime.now(),
+        lastUpdated: DateTime.now(),
+      );
+      
+      // Save the configuration
+      await mcpService.setMCPServer(serverId, mcpConfig);
+      await mcpService.saveSettings();
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('MCP server "$serverId" added successfully!'),
+            backgroundColor: SemanticColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add MCP server: $e'),
+            backgroundColor: SemanticColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -378,46 +428,102 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             SizedBox(height: 24),
             
             // Manual setup options
-            Row(
+            Column(
               children: [
-                // Enhanced Wizard Option
-                Expanded(
-                  child: _buildSetupOption(
-                    context,
-                    title: 'Guided Setup',
-                    description: 'Step-by-step wizard with recommendations',
-                    icon: Icons.auto_awesome,
-                    badge: 'Recommended',
-                    badgeColor: SemanticColors.success,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      showDialog(
-                        context: context,
-                        builder: (context) => EnhancedMCPServerWizard(),
-                      );
-                    },
-                  ),
+                // First row - Server Library and Custom Config
+                Row(
+                  children: [
+                    // MCP Server Library Option
+                    Expanded(
+                      child: _buildSetupOption(
+                        context,
+                        title: 'Server Library',
+                        description: 'Select from curated MCP servers',
+                        icon: Icons.library_books,
+                        badge: 'Popular',
+                        badgeColor: SemanticColors.primary,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (context) => ManualMCPServerModal(
+                              onConfigurationComplete: _handleMCPConfigAdded,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    
+                    SizedBox(width: 16),
+                    
+                    // Custom Configuration Option
+                    Expanded(
+                      child: _buildSetupOption(
+                        context,
+                        title: 'Custom Config',
+                        description: 'Add any MCP server with JSON',
+                        icon: Icons.code,
+                        badge: 'JSON',
+                        badgeColor: SemanticColors.warning,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (context) => CustomMCPServerModal(
+                              onConfigurationComplete: _handleMCPConfigAdded,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 
-                SizedBox(width: 16),
+                SizedBox(height: 16),
                 
-                // Quick Setup Option
-                Expanded(
-                  child: _buildSetupOption(
-                    context,
-                    title: 'Manual Setup',
-                    description: 'Traditional form for advanced users',
-                    icon: Icons.settings,
-                    badge: 'Advanced',
-                    badgeColor: SemanticColors.warning,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      showDialog(
-                        context: context,
-                        builder: (context) => _buildTraditionalDialog(context, isEdit),
-                      );
-                    },
-                  ),
+                // Second row - Legacy options
+                Row(
+                  children: [
+                    // Enhanced Wizard Option
+                    Expanded(
+                      child: _buildSetupOption(
+                        context,
+                        title: 'Guided Setup',
+                        description: 'Step-by-step wizard with recommendations',
+                        icon: Icons.auto_awesome,
+                        badge: 'Recommended',
+                        badgeColor: SemanticColors.success,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (context) => EnhancedMCPServerWizard(),
+                          );
+                        },
+                      ),
+                    ),
+                    
+                    SizedBox(width: 16),
+                    
+                    // Quick Setup Option
+                    Expanded(
+                      child: _buildSetupOption(
+                        context,
+                        title: 'Manual Setup',
+                        description: 'Traditional form for advanced users',
+                        icon: Icons.settings,
+                        badge: 'Advanced',
+                        badgeColor: SemanticColors.warning,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (context) => _buildTraditionalDialog(context, isEdit),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

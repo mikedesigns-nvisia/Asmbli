@@ -21,6 +21,9 @@ import '../widgets/integration_recommendations_widget.dart';
 import '../widgets/integration_dependency_dialog.dart';
 import '../widgets/integration_marketplace.dart';
 import '../widgets/integration_health_dashboard.dart';
+import '../widgets/enhanced_integrations_tab.dart';
+import '../widgets/manual_mcp_server_modal.dart';
+import '../widgets/custom_mcp_server_modal.dart';
 import 'detection_results_screen.dart';
 
 // Integration model for unified display
@@ -953,15 +956,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  }
 
  Widget _buildIntegrationsTab() {
- return SingleChildScrollView(
- padding: const EdgeInsets.all(24),
- child: Center(
- child: Container(
- constraints: BoxConstraints(maxWidth: 1200),
- child: const IntegrationsTabContent(),
- ),
- ),
- );
+ return const EnhancedIntegrationsTab();
  }
 
  Widget _buildGeneralSettingsTab(ThemeService themeService) {
@@ -1611,6 +1606,23 @@ final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
             ),
             textAlign: TextAlign.center,
           ),
+          SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AsmblButton.secondary(
+                text: 'Browse Library',
+                icon: Icons.library_books,
+                onPressed: _showManualMCPServerModal,
+              ),
+              SizedBox(width: SpacingTokens.componentSpacing),
+              AsmblButton.primary(
+                text: 'Add MCP Server',
+                icon: Icons.add,
+                onPressed: _showAddMCPServerDialog,
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -1618,16 +1630,305 @@ final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
 
   // MCP Server management methods
   void _showAddMCPServerDialog() {
+    // Show the enhanced server selection options
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: ThemeColors(context).surface,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(BorderRadiusTokens.xl),
+            topRight: Radius.circular(BorderRadiusTokens.xl),
+          ),
+        ),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.6,
+          padding: EdgeInsets.all(SpacingTokens.xxl),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                    decoration: BoxDecoration(
+                      color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                    ),
+                    child: Icon(
+                      Icons.add_circle_outline,
+                      size: 24,
+                      color: ThemeColors(context).primary,
+                    ),
+                  ),
+                  SizedBox(width: SpacingTokens.componentSpacing),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Add MCP Server',
+                          style: TextStyles.pageTitle.copyWith(color: ThemeColors(context).onSurface),
+                        ),
+                        SizedBox(height: SpacingTokens.xs_precise),
+                        Text(
+                          'Choose how you want to add an MCP server integration',
+                          style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.close, color: ThemeColors(context).onSurfaceVariant),
+                  ),
+                ],
+              ),
+              
+              SizedBox(height: SpacingTokens.sectionSpacing),
+              
+              // Options
+              Expanded(
+                child: ListView(
+                  children: [
+                    // Auto-Detection Option
+                    _buildAddServerOption(
+                      title: 'Auto-Detect Tools',
+                      description: 'Automatically find and configure installed development tools',
+                      icon: Icons.auto_fix_high,
+                      color: ThemeColors(context).primary,
+                      badge: 'Recommended',
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showAutoDetectionModal();
+                      },
+                    ),
+                    
+                    SizedBox(height: SpacingTokens.componentSpacing),
+                    
+                    // Server Library Option
+                    _buildAddServerOption(
+                      title: 'Browse MCP Server Library',
+                      description: 'Select from curated official and community MCP servers',
+                      icon: Icons.library_books,
+                      color: Colors.blue,
+                      badge: 'Popular',
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showManualMCPServerModal();
+                      },
+                    ),
+                    
+                    SizedBox(height: SpacingTokens.componentSpacing),
+                    
+                    // Custom Configuration Option
+                    _buildAddServerOption(
+                      title: 'Custom MCP Server',
+                      description: 'Configure any MCP server with JSON or manual setup',
+                      icon: Icons.code,
+                      color: Colors.orange,
+                      badge: 'Advanced',
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showCustomMCPServerModal();
+                      },
+                    ),
+                    
+                    SizedBox(height: SpacingTokens.componentSpacing),
+                    
+                    // Legacy Option
+                    _buildAddServerOption(
+                      title: 'Quick Setup Wizard',
+                      description: 'Traditional guided setup for MCP server configuration',
+                      icon: Icons.auto_awesome,
+                      color: Colors.green,
+                      badge: 'Classic',
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showLegacyMCPServerDialog();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddServerOption({
+    required String title,
+    required String description,
+    required IconData icon,
+    required Color color,
+    required String badge,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+        decoration: BoxDecoration(
+          color: ThemeColors(context).surfaceVariant,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+          border: Border.all(color: ThemeColors(context).border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+              ),
+              child: Icon(icon, size: 32, color: color),
+            ),
+            SizedBox(width: SpacingTokens.sectionSpacing),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyles.cardTitle.copyWith(color: ThemeColors(context).onSurface),
+                      ),
+                      SizedBox(width: SpacingTokens.iconSpacing),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: SpacingTokens.iconSpacing,
+                          vertical: SpacingTokens.xs_precise,
+                        ),
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                        ),
+                        child: Text(
+                          badge,
+                          style: TextStyles.caption.copyWith(
+                            color: color,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: SpacingTokens.xs_precise),
+                  Text(
+                    description,
+                    style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurfaceVariant),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios, 
+                 size: 16, 
+                 color: ThemeColors(context).onSurfaceVariant),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAutoDetectionModal() {
+    showDialog(
+      context: context,
+      builder: (context) => EnhancedAutoDetectionModal(
+        onComplete: () {
+          setState(() {});
+          _showMessage('Auto-detection completed!');
+        },
+      ),
+    );
+  }
+
+  void _showManualMCPServerModal() {
+    showDialog(
+      context: context,
+      builder: (context) => ManualMCPServerModal(
+        onConfigurationComplete: _handleMCPConfigurationAdded,
+      ),
+    );
+  }
+
+  void _showCustomMCPServerModal() {
+    showDialog(
+      context: context,
+      builder: (context) => CustomMCPServerModal(
+        onConfigurationComplete: _handleMCPConfigurationAdded,
+      ),
+    );
+  }
+
+  void _showLegacyMCPServerDialog() {
     showDialog(
       context: context,
       builder: (context) => MCPServerDialog(),
     ).then((result) {
       if (result == true) {
-        // Refresh the UI after successful add
         setState(() {});
         _showMessage('MCP Server added successfully!');
       }
     });
+  }
+
+  Future<void> _handleMCPConfigurationAdded(Map<String, dynamic> config) async {
+    try {
+      final mcpService = ref.read(mcpSettingsServiceProvider);
+      
+      // Extract server configuration from the config map
+      final serverId = config.keys.first;
+      final serverConfig = config[serverId] as Map<String, dynamic>;
+      
+      // Handle special cases (like Figma SSE transport)
+      MCPServerConfig mcpConfig;
+      if (serverConfig.containsKey('transport') && serverConfig['transport'] == 'sse') {
+        // SSE transport configuration
+        mcpConfig = MCPServerConfig(
+          id: serverId,
+          name: serverId.replaceAll('-', ' ').split(' ').map((word) => 
+            word[0].toUpperCase() + word.substring(1)).join(' '),
+          command: '', // SSE doesn't use command
+          args: [], // SSE doesn't use args
+          env: serverConfig['env'] as Map<String, String>? ?? {},
+          description: 'MCP Server via Server-Sent Events',
+          enabled: true,
+          createdAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+          transport: 'sse',
+          url: serverConfig['url'] as String?,
+        );
+      } else {
+        // Standard stdio transport configuration
+        mcpConfig = MCPServerConfig(
+          id: serverId,
+          name: serverId.replaceAll('-', ' ').split(' ').map((word) => 
+            word[0].toUpperCase() + word.substring(1)).join(' '),
+          command: serverConfig['command'] as String? ?? '',
+          args: (serverConfig['args'] as List?)?.cast<String>() ?? [],
+          env: serverConfig['env'] as Map<String, String>?,
+          description: 'Custom MCP server configuration',
+          enabled: true,
+          createdAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+        );
+      }
+      
+      // Save the configuration
+      await mcpService.setMCPServer(serverId, mcpConfig);
+      await mcpService.saveSettings();
+      
+      setState(() {});
+      _showMessage('MCP server "$serverId" added successfully!');
+    } catch (e) {
+      _showMessage('Failed to add MCP server: $e', isError: true);
+    }
   }
 
   void _showImportMCPConfigDialog() {
@@ -2245,7 +2546,15 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               ),
               const SizedBox(width: 16),
               
-              // Browse Marketplace Button
+              // Add MCP Server Button
+              AsmblButton.secondary(
+                text: 'Add MCP Server',
+                icon: Icons.integration_instructions,
+                onPressed: () => _showAddMCPServerDialog(),
+              ),
+              const SizedBox(width: 12),
+              
+              // Browse Marketplace Button  
               AsmblButton.primary(
                 text: 'Browse Marketplace',
                 icon: Icons.store,

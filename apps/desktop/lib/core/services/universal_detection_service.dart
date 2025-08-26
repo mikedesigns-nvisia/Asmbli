@@ -782,37 +782,84 @@ class UniversalDetectionService {
   }
   
   Future<IntegrationConfig?> _detectFigma() async {
+    // First check for Figma MCP server at localhost:3845
+    bool mcpServerRunning = false;
+    try {
+      final client = HttpClient();
+      final request = await client.get('localhost', 3845, '/mcp');
+      final response = await request.close();
+      mcpServerRunning = response.statusCode == 200;
+      client.close();
+    } catch (e) {
+      // MCP server not running or accessible
+    }
+    
+    // Check for desktop app installation
+    String? desktopPath;
+    bool desktopInstalled = false;
+    
     if (Platform.isWindows) {
       final figmaPath = '${Platform.environment['LOCALAPPDATA']}\\Figma\\Figma.exe';
       if (await File(figmaPath).exists()) {
-        return IntegrationConfig(
-          id: 'figma',
-          name: 'Figma',
-          status: DetectionStatus.needsAuth,
-          configuration: {'path': figmaPath},
-          message: 'Figma desktop found. Add API token for access.',
-        );
+        desktopInstalled = true;
+        desktopPath = figmaPath;
       }
     } else if (Platform.isMacOS) {
       const figmaPath = '/Applications/Figma.app/Contents/MacOS/Figma';
       if (await File(figmaPath).exists()) {
-        return IntegrationConfig(
-          id: 'figma',
-          name: 'Figma',
-          status: DetectionStatus.needsAuth,
-          configuration: {'path': figmaPath},
-          message: 'Figma found. Add API token for access.',
-        );
+        desktopInstalled = true;
+        desktopPath = figmaPath;
       }
     }
     
-    // Even if desktop app not found, Figma can work via API
+    // Determine status based on what we found
+    if (mcpServerRunning && desktopInstalled) {
+      return IntegrationConfig(
+        id: 'figma',
+        name: 'Figma MCP Server',
+        status: DetectionStatus.ready,
+        configuration: {
+          'mcpUrl': 'http://localhost:3845/mcp',
+          'transport': 'sse',
+          'desktopPath': desktopPath,
+          'mcpEnabled': true,
+        },
+        message: 'Figma MCP server is running and ready to use!',
+      );
+    } else if (desktopInstalled && !mcpServerRunning) {
+      return IntegrationConfig(
+        id: 'figma',
+        name: 'Figma Desktop',
+        status: DetectionStatus.needsStart,
+        configuration: {
+          'desktopPath': desktopPath,
+          'mcpEnabled': false,
+        },
+        message: 'Figma desktop found. Enable MCP server in Preferences.',
+        setupCommand: 'Open Figma → Preferences → Enable "Dev Mode MCP Server"',
+      );
+    } else if (mcpServerRunning && !desktopInstalled) {
+      return IntegrationConfig(
+        id: 'figma',
+        name: 'Figma MCP Server',
+        status: DetectionStatus.ready,
+        configuration: {
+          'mcpUrl': 'http://localhost:3845/mcp',
+          'transport': 'sse',
+          'mcpEnabled': true,
+          'type': 'mcp-only',
+        },
+        message: 'Figma MCP server running (web-based setup)',
+      );
+    }
+    
+    // Fallback: API-based integration
     return IntegrationConfig(
       id: 'figma',
-      name: 'Figma (Web)',
+      name: 'Figma (API)',
       status: DetectionStatus.needsAuth,
-      configuration: {'type': 'web'},
-      message: 'Figma available via web API. Add token to connect.',
+      configuration: {'type': 'api'},
+      message: 'Install Figma Desktop and enable MCP server, or use API token.',
     );
   }
   
