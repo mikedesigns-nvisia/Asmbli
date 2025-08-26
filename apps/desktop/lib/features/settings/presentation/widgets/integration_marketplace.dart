@@ -19,17 +19,7 @@ class IntegrationMarketplace extends ConsumerStatefulWidget {
 }
 
 class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace> {
-  String _searchQuery = '';
   String _selectedCategory = 'All';
-  String _sortBy = 'Popular';
-  bool _showConfiguredOnly = false;
-  
-  final List<String> _categories = [
-    'All',
-    ...IntegrationCategory.values.map((category) => category.displayName),
-  ];
-  
-  final List<String> _sortOptions = ['Popular', 'Alphabetical', 'Category', 'Recently Added', 'Most Used'];
   
   @override
   Widget build(BuildContext context) {
@@ -41,7 +31,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     final healthStats = healthService.getHealthStatistics();
     final filteredIntegrations = _filterIntegrations(allIntegrationsWithStatus);
     
-    return SingleChildScrollView(
+    return Padding(
       padding: EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,20 +43,22 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           _buildMarketplaceStats(marketplaceStats, healthStats),
           SizedBox(height: SpacingTokens.xxl),
           
-          // Featured Integrations Banner
-          _buildFeaturedSection(allIntegrationsWithStatus),
-          SizedBox(height: SpacingTokens.xxl),
-          
-          // Search and Filters
-          _buildSearchAndFilters(),
-          SizedBox(height: SpacingTokens.xl),
-          
-          // Category Overview
-          _buildCategoryOverview(allIntegrationsWithStatus),
-          SizedBox(height: SpacingTokens.xxl),
-          
-          // Main Integration Grid
-          _buildIntegrationsGrid(filteredIntegrations),
+          // Main content with sidebar
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Sidebar
+                _buildSidebar(allIntegrationsWithStatus),
+                SizedBox(width: SpacingTokens.xxl),
+                
+                // Main content
+                Expanded(
+                  child: _buildMainContent(filteredIntegrations),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -98,6 +90,131 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSidebar(List<IntegrationStatus> allIntegrations) {
+    final categoryStats = <IntegrationCategory, Map<String, int>>{};
+    
+    for (final category in IntegrationCategory.values) {
+      final categoryIntegrations = allIntegrations.where((status) => status.definition.category == category);
+      categoryStats[category] = {
+        'total': categoryIntegrations.length,
+        'configured': categoryIntegrations.where((status) => status.isConfigured).length,
+        'available': categoryIntegrations.where((status) => status.definition.isAvailable).length,
+      };
+    }
+    
+    return Container(
+      width: 280,
+      child: AsmblCard(
+        padding: EdgeInsets.all(SpacingTokens.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Categories',
+              style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: SpacingTokens.lg),
+            
+            // All category
+            _buildSidebarCategoryItem(
+              'All',
+              Icons.apps,
+              allIntegrations.length,
+              allIntegrations.where((status) => status.isConfigured).length,
+              _selectedCategory == 'All',
+              () => setState(() => _selectedCategory = 'All'),
+            ),
+            SizedBox(height: SpacingTokens.sm),
+            
+            // Individual categories
+            ...IntegrationCategory.values.map((category) {
+              final stats = categoryStats[category]!;
+              final isSelected = _selectedCategory == category.displayName;
+              
+              return Padding(
+                padding: EdgeInsets.only(bottom: SpacingTokens.sm),
+                child: _buildSidebarCategoryItem(
+                  category.displayName,
+                  _getCategoryIcon(category),
+                  stats['total']!,
+                  stats['configured']!,
+                  isSelected,
+                  () => setState(() => _selectedCategory = category.displayName),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildSidebarCategoryItem(
+    String name,
+    IconData icon,
+    int total,
+    int configured,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(SpacingTokens.sm),
+        decoration: BoxDecoration(
+          color: isSelected 
+              ? SemanticColors.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+          border: isSelected 
+              ? Border.all(color: SemanticColors.primary.withValues(alpha: 0.3))
+              : null,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? SemanticColors.primary : SemanticColors.onSurface,
+              size: 18,
+            ),
+            SizedBox(width: SpacingTokens.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: TextStyles.bodyMedium.copyWith(
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      color: isSelected ? SemanticColors.primary : SemanticColors.onSurface,
+                    ),
+                  ),
+                  Text(
+                    '$configured/$total configured',
+                    style: TextStyles.bodySmall.copyWith(
+                      color: SemanticColors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildMainContent(List<IntegrationStatus> filteredIntegrations) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildIntegrationsGrid(filteredIntegrations),
+        ],
+      ),
     );
   }
 
@@ -140,37 +257,6 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
             Icons.thumb_up,
             SemanticColors.primary,
           ),
-          Spacer(),
-          
-          // Health indicator
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: healthStats.isHealthy ? SemanticColors.success.withValues(alpha: 0.1) : SemanticColors.warning.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-              border: Border.all(
-                color: healthStats.isHealthy ? SemanticColors.success.withValues(alpha: 0.3) : SemanticColors.warning.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  healthStats.isHealthy ? Icons.health_and_safety : Icons.warning,
-                  size: 16,
-                  color: healthStats.isHealthy ? SemanticColors.success : SemanticColors.warning,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  '${healthStats.healthPercentage.toStringAsFixed(0)}% Healthy',
-                  style: TextStyles.caption.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: healthStats.isHealthy ? SemanticColors.success : SemanticColors.warning,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -204,264 +290,6 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           ),
         ],
       ),
-    );
-  }
-  
-  Widget _buildFeaturedSection(List<IntegrationStatus> allIntegrations) {
-    // Get featured integrations (popular ones that are available)
-    final featured = allIntegrations
-        .where((status) => status.definition.isAvailable && !status.isConfigured)
-        .take(3)
-        .toList();
-    
-    if (featured.isEmpty) {
-      return SizedBox.shrink();
-    }
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.star, color: SemanticColors.warning, size: 16),
-            SizedBox(width: SpacingTokens.xs),
-            Text(
-              'Featured Integrations',
-              style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        SizedBox(height: SpacingTokens.lg),
-        
-        SizedBox(
-          height: 160,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: featured.length,
-            separatorBuilder: (context, index) => SizedBox(width: SpacingTokens.lg),
-            itemBuilder: (context, index) => _buildFeaturedCard(featured[index]),
-          ),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildFeaturedCard(IntegrationStatus status) {
-    return Container(
-      width: 300,
-      child: AsmblCard(
-        padding: EdgeInsets.all(SpacingTokens.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                _buildIntegrationIcon(status.definition, size: 32),
-                SizedBox(width: SpacingTokens.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        status.definition.name,
-                        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        status.definition.category.displayName,
-                        style: TextStyles.bodySmall.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: SemanticColors.warning.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    'FEATURED',
-                    style: TextStyle(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w600,
-                      color: SemanticColors.warning,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: SpacingTokens.sm),
-            
-            Text(
-              status.definition.description,
-              style: TextStyles.bodySmall,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            
-            Spacer(),
-            
-            Row(
-              children: [
-                IntegrationStatusIndicators.difficultyBadge(status.definition.difficulty),
-                Spacer(),
-                AsmblButton.primary(
-                  text: 'Install',
-                  onPressed: () => _handleInstall(status),
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  
-  Widget _buildSearchAndFilters() {
-    return Row(
-      children: [
-        // Search Bar
-        Expanded(
-          flex: 3,
-          child: TextField(
-            onChanged: (value) => setState(() => _searchQuery = value),
-            decoration: InputDecoration(
-              hintText: 'Search integrations...',
-              prefixIcon: Icon(Icons.search),
-              suffixIcon: _searchQuery.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: () => setState(() => _searchQuery = ''),
-                    )
-                  : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                borderSide: BorderSide(color: SemanticColors.border),
-              ),
-              contentPadding: EdgeInsets.symmetric(horizontal: SpacingTokens.lg, vertical: SpacingTokens.sm),
-            ),
-          ),
-        ),
-        SizedBox(width: SpacingTokens.lg),
-        
-        // Category Filter
-        Expanded(
-          child: AsmblStringDropdown(
-            value: _selectedCategory,
-            items: _categories,
-            onChanged: (value) => setState(() => _selectedCategory = value ?? 'All'),
-          ),
-        ),
-        SizedBox(width: SpacingTokens.sm),
-        
-        // Sort By
-        Expanded(
-          child: AsmblStringDropdown(
-            value: _sortBy,
-            items: _sortOptions,
-            onChanged: (value) => setState(() => _sortBy = value ?? 'Popular'),
-          ),
-        ),
-        SizedBox(width: SpacingTokens.sm),
-        
-        // Show Configured Only Toggle
-        Row(
-          children: [
-            Checkbox(
-              value: _showConfiguredOnly,
-              onChanged: (value) => setState(() => _showConfiguredOnly = value ?? false),
-            ),
-            Text(
-              'Configured Only',
-              style: TextStyles.bodySmall,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildCategoryOverview(List<IntegrationStatus> allIntegrations) {
-    final categoryStats = <IntegrationCategory, Map<String, int>>{};
-    
-    for (final category in IntegrationCategory.values) {
-      final categoryIntegrations = allIntegrations.where((status) => status.definition.category == category);
-      categoryStats[category] = {
-        'total': categoryIntegrations.length,
-        'configured': categoryIntegrations.where((status) => status.isConfigured).length,
-        'available': categoryIntegrations.where((status) => status.definition.isAvailable).length,
-      };
-    }
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Browse by Category',
-          style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
-        ),
-        SizedBox(height: SpacingTokens.lg),
-        
-        Wrap(
-          spacing: SpacingTokens.sm,
-          runSpacing: SpacingTokens.sm,
-          children: IntegrationCategory.values.map((category) {
-            final stats = categoryStats[category]!;
-            final isSelected = _selectedCategory == category.displayName;
-            
-            return GestureDetector(
-              onTap: () => setState(() => _selectedCategory = category.displayName),
-              child: Container(
-                padding: EdgeInsets.all(SpacingTokens.sm),
-                decoration: BoxDecoration(
-                  color: isSelected 
-                      ? SemanticColors.primary.withValues(alpha: 0.1)
-                      : SemanticColors.surface,
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                  border: Border.all(
-                    color: isSelected 
-                        ? SemanticColors.primary
-                        : SemanticColors.border,
-                    width: isSelected ? 2 : 1,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _getCategoryIcon(category),
-                          color: isSelected ? SemanticColors.primary : SemanticColors.onSurface,
-                          size: 16,
-                        ),
-                        SizedBox(width: SpacingTokens.xs),
-                        Text(
-                          category.displayName,
-                          style: TextStyles.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: isSelected ? SemanticColors.primary : SemanticColors.onSurface,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: SpacingTokens.xs),
-                    Text(
-                      '${stats['configured']}/${stats['available']} configured',
-                      style: TextStyles.bodySmall.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
     );
   }
   
@@ -584,30 +412,28 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
       child: Column(
         children: [
           Icon(
-            Icons.search_off,
+            Icons.apps,
             size: 64,
             color: SemanticColors.onSurfaceVariant,
           ),
           SizedBox(height: SpacingTokens.lg),
           Text(
-            'No integrations found',
+            'No integrations in this category',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
           SizedBox(height: SpacingTokens.xs),
           Text(
-            'Try adjusting your search or filters',
+            'Try selecting a different category',
             style: TextStyles.bodyMedium.copyWith(
               color: SemanticColors.onSurfaceVariant,
             ),
           ),
           SizedBox(height: SpacingTokens.lg),
           AsmblButton.secondary(
-            text: 'Clear Filters',
+            text: 'Show All',
             onPressed: () {
               setState(() {
-                _searchQuery = '';
                 _selectedCategory = 'All';
-                _showConfiguredOnly = false;
               });
             },
           ),
@@ -635,60 +461,23 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
   // Helper methods
   List<IntegrationStatus> _filterIntegrations(List<IntegrationStatus> integrations) {
     var filtered = integrations.where((status) {
-      // Search filter
-      if (_searchQuery.isNotEmpty) {
-        final query = _searchQuery.toLowerCase();
-        final nameMatch = status.definition.name.toLowerCase().contains(query);
-        final descMatch = status.definition.description.toLowerCase().contains(query);
-        if (!nameMatch && !descMatch) return false;
-      }
-      
       // Category filter
       if (_selectedCategory != 'All' && 
           status.definition.category.displayName != _selectedCategory) {
         return false;
       }
       
-      // Configured only filter
-      if (_showConfiguredOnly && !status.isConfigured) {
-        return false;
-      }
-      
       return true;
     }).toList();
     
-    // Sorting
-    switch (_sortBy) {
-      case 'Alphabetical':
-        filtered.sort((a, b) => a.definition.name.compareTo(b.definition.name));
-        break;
-      case 'Category':
-        filtered.sort((a, b) => a.definition.category.displayName.compareTo(b.definition.category.displayName));
-        break;
-      case 'Recently Added':
-        // Mock sorting - in real app would use actual dates
-        filtered.sort((a, b) => a.definition.id.compareTo(b.definition.id));
-        break;
-      case 'Most Used':
-        // Sort configured first, then by availability
-        filtered.sort((a, b) {
-          if (a.isConfigured && !b.isConfigured) return -1;
-          if (!a.isConfigured && b.isConfigured) return 1;
-          return 0;
-        });
-        break;
-      case 'Popular':
-      default:
-        // Sort by: configured > available > coming soon
-        filtered.sort((a, b) {
-          if (a.isConfigured && !b.isConfigured) return -1;
-          if (!a.isConfigured && b.isConfigured) return 1;
-          if (a.definition.isAvailable && !b.definition.isAvailable) return -1;
-          if (!a.definition.isAvailable && b.definition.isAvailable) return 1;
-          return a.definition.name.compareTo(b.definition.name);
-        });
-        break;
-    }
+    // Sort by: configured > available > coming soon, then alphabetically
+    filtered.sort((a, b) {
+      if (a.isConfigured && !b.isConfigured) return -1;
+      if (!a.isConfigured && b.isConfigured) return 1;
+      if (a.definition.isAvailable && !b.definition.isAvailable) return -1;
+      if (!a.definition.isAvailable && b.definition.isAvailable) return 1;
+      return a.definition.name.compareTo(b.definition.name);
+    });
     
     return filtered;
   }
