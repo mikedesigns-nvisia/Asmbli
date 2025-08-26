@@ -264,7 +264,7 @@ export default function HomePage() {
                 </div>
                 <CardTitle className="text-lg">Zero Setup</CardTitle>
                 <CardDescription>
-                  Auto-detects your tools. No configuration files, no YAML, no complex setup.
+                  MCP tool integration. No configuration files, no YAML, no complex setup.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -336,7 +336,7 @@ export default function HomePage() {
               </div>
               <h3 className="font-semibold mb-2">Pick an Agent & Chat</h3>
               <p className="text-sm text-muted-foreground">
-                Choose a template or create custom. Auto-detection handles the rest.
+                Choose a template or create custom. MCP integration handles the rest.
               </p>
             </div>
           </div>
