@@ -1,7 +1,7 @@
 // Bridge between unified IntegrationRegistry and web agent configurations
 // This ensures consistency between desktop and web integration definitions
 
-import { IntegrationRegistry, IntegrationDefinition, IntegrationCategory } from '@agent-engine/core';
+import { IntegrationRegistry, IntegrationDefinition, IntegrationCategory } from '@asmbli/core';
 
 export interface MCPServer {
   id: string;
