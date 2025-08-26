@@ -89,6 +89,15 @@ class AppNavigationBar extends ConsumerWidget {
  onPressed: () => context.go(AppRoutes.settings),
  isActive: currentRoute == AppRoutes.settings,
  ),
+ SizedBox(width: SpacingTokens.lg),
+ 
+ // Demo button (remove after video)
+ HeaderButton(
+ text: 'DEMO',
+ icon: Icons.play_arrow,
+ onPressed: () => context.go(AppRoutes.demoChat),
+ isActive: currentRoute == AppRoutes.demoChat,
+ ),
  SizedBox(width: SpacingTokens.xxl),
  
  // Quick Actions Dropdown

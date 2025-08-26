@@ -7,6 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'core/design_system/design_system.dart';
 import 'core/constants/routes.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
+import 'features/chat/presentation/screens/demo_chat_screen.dart'; // Remove after video
 import 'features/templates/presentation/screens/templates_screen.dart';
 import 'features/settings/presentation/screens/settings_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
@@ -104,6 +105,11 @@ final _router = GoRouter(
  GoRoute(
  path: AppRoutes.chat,
  builder: (context, state) => const ChatScreen(),
+ ),
+ // Demo route for video recording (remove after video)
+ GoRoute(
+ path: AppRoutes.demoChat,
+ builder: (context, state) => const DemoChatScreen(),
  ),
  GoRoute(
  path: AppRoutes.templates,

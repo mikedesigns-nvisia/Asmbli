@@ -15,6 +15,9 @@ class AppRoutes {
  static const String agentWizard = '/agent-wizard';
  static const String integrations = '/integrations';
  
+ // Demo route (remove after video recording)
+ static const String demoChat = '/demo-chat';
+ 
  // Route names for easier identification
  static const Map<String, String> routeNames = {
  home: 'Home',
@@ -27,6 +30,7 @@ class AppRoutes {
  wizard: 'Wizard',
  agentWizard: 'Create Agent',
  integrations: 'Add Integrations',
+ demoChat: 'Demo Chat', // Remove after video
  };
  
  // Helper method to get route name
@@ -46,5 +50,6 @@ class AppRoutes {
  wizard,
  agentWizard,
  integrations,
+ demoChat, // Remove after video
  ];
 }
