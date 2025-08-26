@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowRight, Bot, Code, Zap, Users, Server, FileText, Key, Target, Shield, CheckCircle, Database, Search, Monitor, ExternalLink, Lock } from 'lucide-react'
@@ -20,6 +21,125 @@ import {
 } from 'react-icons/si'
 import { Navigation } from '@/components/Navigation'
 import { Footer } from '@/components/Footer'
+
+function BetaSignupForm() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    useCase: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      const response = await fetch('/.netlify/functions/beta-signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormData({ firstName: '', lastName: '', email: '', useCase: '' });
+      } else {
+        throw new Error('Submission failed');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  if (submitStatus === 'success') {
+    return (
+      <div className="text-center py-8">
+        <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-green-700 mb-2">Thank you for signing up!</h3>
+        <p className="text-muted-foreground">
+          We've received your beta access request. You'll hear from us soon!
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+            required
+          />
+        </div>
+        <div>
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+            required
+          />
+        </div>
+      </div>
+      <div>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email Address"
+          value={formData.email}
+          onChange={handleChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+          required
+        />
+      </div>
+      <div>
+        <textarea
+          name="useCase"
+          placeholder="What would you like to use AI agents for? (Optional)"
+          value={formData.useCase}
+          onChange={handleChange}
+          rows={3}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent resize-none"
+        />
+      </div>
+      <Button 
+        type="submit" 
+        disabled={isSubmitting}
+        className="w-full bg-amber-400 hover:bg-amber-500 text-amber-950 py-3 text-lg disabled:opacity-50"
+      >
+        {isSubmitting ? 'Submitting...' : 'Request Beta Access'}
+      </Button>
+      {submitStatus === 'error' && (
+        <p className="text-red-600 text-center text-sm">
+          Something went wrong. Please try again or email us directly.
+        </p>
+      )}
+    </form>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -572,47 +692,7 @@ export default function HomePage() {
           </p>
           
           <div className="bg-white rounded-xl shadow-lg p-8 border">
-            <form className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="First Name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent"
-                    required
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <textarea
-                  placeholder="What would you like to use AI agents for? (Optional)"
-                  rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent resize-none"
-                />
-              </div>
-              <Button 
-                type="submit" 
-                className="w-full bg-amber-400 hover:bg-amber-500 text-amber-950 py-3 text-lg"
-              >
-                Request Beta Access
-              </Button>
-            </form>
+            <BetaSignupForm />
             
             <div className="mt-6 pt-6 border-t">
               <p className="text-sm text-muted-foreground mb-4">
