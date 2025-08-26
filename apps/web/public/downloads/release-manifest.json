@@ -14,7 +14,7 @@
         "network": "Internet connection for AI API access"
       },
       "features": [
-        "🎯 AUTOMATIC INTEGRATION DETECTION - Zero-configuration setup",
+        "🎯 AUTOMATIC INTEGRATION DETECTION - immediately access your tools through MCP Servers. Set up your tool workflows naturally in the app",
         "Professional AI agent deployment",
         "20+ specialized agent templates", 
         "MCP tool integration (40+ tools)",
@@ -45,7 +45,7 @@
       "type": "major",
       "highlights": [
         "🚀 AUTOMATIC INTEGRATION DETECTION - Game-changing UX improvement",
-        "Zero-configuration setup for VS Code, Git, and GitHub CLI",
+        "Immediately access your tools through MCP Servers. Set up your tool workflows naturally in the app",
         "Smart detection wizard with confidence scoring",
         "Auto-detect buttons integrated throughout the UI",
         "Platform-specific path resolution (Windows/macOS/Linux)",

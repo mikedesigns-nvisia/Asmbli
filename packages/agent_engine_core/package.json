@@ -1,7 +1,7 @@
 {
-  "name": "@agent-engine/core",
+  "name": "@asmbli/core",
   "version": "1.0.0",
-  "description": "Core models and services for AgentEngine",
+  "description": "Core models and services for Asmbli",
   "main": "lib/integration_registry.d.ts",
   "types": "lib/integration_registry.d.ts",
   "files": [
@@ -22,6 +22,6 @@
     "mcp",
     "ai"
   ],
-  "author": "AgentEngine Team",
+  "author": "Asmbli Team",
   "license": "MIT"
 }

@@ -36,7 +36,7 @@ export default function HomePage() {
               <div className="rounded-xl border bg-card p-1 md:p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
                 <img 
                   src="/hero-app-screenshot.png" 
-                  alt="AgentEngine - Professional AI Agent Platform with Auto-Detection and MCP Integration"
+                  alt="Asmbli - Professional AI Agent Platform with Auto-Detection and MCP Integration"
                   className="w-full h-auto rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[500px] md:max-h-[600px] lg:max-h-[700px]"
                 />
               </div>
@@ -60,7 +60,7 @@ export default function HomePage() {
               </div>
               <h3 className="font-semibold mb-2">🎯 Auto-Detection</h3>
               <p className="text-sm text-muted-foreground">
-                Zero-configuration setup. We automatically detect and configure VS Code, Git, databases, and 40+ tools.
+                Immediately access your tools through MCP Servers. Set up your tool workflows naturally in the app.
               </p>
             </div>
             <div className="text-center">
@@ -115,12 +115,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why AgentEngine Section */}
+      {/* Why Asmbli Section */}
       <section className="py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 font-display">
-              Why AgentEngine?
+              Why Asmbli?
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               The professional AI agent platform that actually works in your environment
@@ -186,7 +186,7 @@ export default function HomePage() {
               <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-amber-800">1</span>
               </div>
-              <h3 className="font-semibold mb-2">Download AgentEngine</h3>
+              <h3 className="font-semibold mb-2">Download Asmbli</h3>
               <p className="text-sm text-muted-foreground">
                 Get the desktop app and sign in with beta access
               </p>
