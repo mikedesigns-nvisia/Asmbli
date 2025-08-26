@@ -193,18 +193,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.topCenter,
-                radius: 1.5,
-                colors: [
-                  SemanticColors.primary.withValues(alpha: 0.05),
-                  SemanticColors.background.withValues(alpha: 0.8),
-                  SemanticColors.background,
-                ],
-                stops: const [0.0, 0.6, 1.0],
-              ),
-            ),
+            color: SemanticColors.background,
             child: SafeArea(
               child: Column(
                 children: [
@@ -374,23 +363,26 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
   }
 
   Widget _buildDemoChatArea() {
-    return Column(
-      children: [
-        // Chat Header
-        _buildDemoChatHeader(),
-        
-        // Messages
-        Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.all(SpacingTokens.lg),
-            itemCount: _demoMessages.length,
-            itemBuilder: (context, index) => _buildDemoMessage(_demoMessages[index]),
+    return Container(
+      color: SemanticColors.background,
+      child: Column(
+        children: [
+          // Chat Header
+          _buildDemoChatHeader(),
+          
+          // Messages
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.all(SpacingTokens.lg),
+              itemCount: _demoMessages.length,
+              itemBuilder: (context, index) => _buildDemoMessage(_demoMessages[index]),
+            ),
           ),
-        ),
-        
-        // Input Area
-        _buildDemoInputArea(),
-      ],
+          
+          // Input Area
+          _buildDemoInputArea(),
+        ],
+      ),
     );
   }
 
