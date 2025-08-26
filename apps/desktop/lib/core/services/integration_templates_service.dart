@@ -86,7 +86,8 @@ class IntegrationTemplatesService {
     final configurations = <IntegrationConfiguration>[];
     
     for (final integrationId in integrationIds) {
-      final status = _integrationService.getIntegrationStatus(integrationId);
+      final allStatuses = _integrationService.getAllIntegrationsWithStatus();
+      final status = allStatuses.where((s) => s.definition.id == integrationId).firstOrNull;
       if (status?.isConfigured == true && status?.mcpConfig != null) {
         final integration = IntegrationRegistry.getById(integrationId);
         if (integration != null) {
@@ -213,7 +214,8 @@ class IntegrationTemplatesService {
         }
         
         // Check if integration is already configured
-        final existingStatus = _integrationService.getIntegrationStatus(config.integrationId);
+        final allStatuses = _integrationService.getAllIntegrationsWithStatus();
+        final existingStatus = allStatuses.where((s) => s.definition.id == config.integrationId).firstOrNull;
         if (existingStatus?.isConfigured == true) {
           switch (options.conflictResolution) {
             case ConflictResolution.skip:

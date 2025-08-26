@@ -18,108 +18,363 @@ class SimpleAutoDetectionWizard extends ConsumerStatefulWidget {
 class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionWizard> {
   bool _isDetecting = false;
   SimpleDetectionResult? _detectionResult;
-  String _currentStep = 'ready';
+  String _currentStep = 'overview';
+  String _selectedCategory = 'all';
+
+  final Map<String, String> _categories = {
+    'all': 'All Tools',
+    'development': 'Development',
+    'browsers': 'Browsers',
+    'productivity': 'Productivity',
+  };
+
+  final Map<String, String> _categoryIcons = {
+    'all': 'auto_fix_high',
+    'development': 'code',
+    'browsers': 'web',
+    'productivity': 'work',
+  };
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: Colors.transparent,
       child: Container(
-        width: 500,
-        height: 400,
+        width: 900,
+        height: 600,
         decoration: BoxDecoration(
           color: SemanticColors.surface,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: SemanticColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
-        child: Column(
+        child: Row(
           children: [
-            _buildHeader(),
-            Expanded(child: _buildContent()),
-            _buildFooter(),
+            _buildSidebar(),
+            Expanded(child: _buildMainContent()),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildSidebar() {
     return Container(
-      padding: EdgeInsets.all(24),
+      width: 280,
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: SemanticColors.border)),
+        color: SemanticColors.background,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(16),
+          bottomLeft: Radius.circular(16),
+        ),
+        border: Border(
+          right: BorderSide(color: SemanticColors.border),
+        ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.auto_fix_high,
-            color: SemanticColors.primary,
-            size: 24,
-          ),
-          SizedBox(width: 16),
-          Text(
-            'Auto-Detect Integrations',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: SemanticColors.onSurface,
+          // Header
+          Container(
+            padding: const EdgeInsets.all(24),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: SemanticColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.auto_fix_high,
+                    color: SemanticColors.primary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Auto-Detect\nIntegrations',
+                    style: TextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          Spacer(),
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.close, color: SemanticColors.onSurfaceVariant),
+          
+          // Progress Steps
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Progress',
+                  style: TextStyles.bodySmall.copyWith(
+                    color: SemanticColors.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildProgressStep('Overview', 'overview', Icons.info_outline),
+                _buildProgressStep('Categories', 'categories', Icons.category_outlined),
+                _buildProgressStep('Detection', 'detecting', Icons.search),
+                _buildProgressStep('Results', 'results', Icons.check_circle_outline),
+              ],
+            ),
           ),
+          
+          const SizedBox(height: 24),
+          
+          // Category Filters (show only when appropriate)
+          if (_currentStep == 'categories' || _currentStep == 'results') ..[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Categories',
+                    style: TextStyles.bodySmall.copyWith(
+                      color: SemanticColors.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ..._categories.entries.map((entry) => 
+                    _buildCategoryFilter(entry.key, entry.value)
+                  ).toList(),
+                ],
+              ),
+            ),
+          ],
+          
+          const Spacer(),
+          
+          // Summary (show when detection is complete)
+          if (_detectionResult != null) ..[
+            Container(
+              margin: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        color: Colors.green.shade700,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Detection Complete',
+                        style: TextStyles.bodySmall.copyWith(
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${_detectionResult!.totalFound} Tools Ready',
+                        style: TextStyles.bodySmall.copyWith(
+                          color: Colors.green.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildContent() {
-    if (_currentStep == 'ready') {
-      return _buildReadyStep();
-    } else if (_currentStep == 'detecting') {
-      return _buildDetectingStep();
-    } else {
-      return _buildResultsStep();
+  Widget _buildMainContent() {
+    return Column(
+      children: [
+        _buildMainHeader(),
+        Expanded(child: _buildStepContent()),
+        _buildMainFooter(),
+      ],
+    );
+  }
+  
+  Widget _buildMainHeader() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: SemanticColors.border)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _getStepTitle(),
+                  style: TextStyles.pageTitle,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _getStepDescription(),
+                  style: TextStyles.bodyMedium.copyWith(
+                    color: SemanticColors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: Icon(
+              Icons.close,
+              color: SemanticColors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildStepContent() {
+    switch (_currentStep) {
+      case 'overview':
+        return _buildOverviewStep();
+      case 'categories':
+        return _buildCategoriesStep();
+      case 'detecting':
+        return _buildDetectingStep();
+      case 'results':
+        return _buildResultsStep();
+      default:
+        return _buildOverviewStep();
     }
   }
 
-  Widget _buildReadyStep() {
-    return Padding(
-      padding: EdgeInsets.all(24),
+  Widget _buildOverviewStep() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(height: 40),
           Container(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
-              Icons.search,
+              Icons.auto_fix_high,
               size: 48,
               color: SemanticColors.primary,
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 32),
           Text(
             'Automatic Integration Detection',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: SemanticColors.onSurface,
+            style: TextStyles.pageTitle.copyWith(fontSize: 24),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'We\'ll scan your system for installed development tools, browsers, and productivity apps, then automatically configure the ones we find. No manual setup required.',
+            style: TextStyles.bodyMedium.copyWith(
+              color: SemanticColors.onSurfaceVariant,
+              height: 1.5,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 32),
+          
+          // Feature highlights
+          Row(
+            children: [
+              Expanded(
+                child: _buildFeatureCard(
+                  Icons.speed,
+                  'Fast Detection',
+                  'Scans your entire system in seconds',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildFeatureCard(
+                  Icons.shield_outlined,
+                  'Safe & Secure',
+                  'Only reads installation paths, no private data',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildFeatureCard(
+                  Icons.widgets_outlined,
+                  'Smart Config',
+                  'Automatically configures found tools',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildCategoriesStep() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
           Text(
-            'We\'ll scan your system for installed development tools and automatically configure the ones we find.',
-            style: TextStyle(
-              fontSize: 14,
+            'What would you like to detect?',
+            style: TextStyles.bodyLarge.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Choose the categories you want us to scan for, or select all to detect everything.',
+            style: TextStyles.bodyMedium.copyWith(
               color: SemanticColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          
+          // Category cards
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: 1.5,
+            children: _categories.entries.map((entry) {
+              return _buildCategoryCard(entry.key, entry.value);
+            }).toList(),
           ),
         ],
       ),
@@ -128,33 +383,46 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
 
   Widget _buildDetectingStep() {
     return Padding(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 60,
-            height: 60,
+            width: 80,
+            height: 80,
             child: CircularProgressIndicator(
-              strokeWidth: 4,
+              strokeWidth: 6,
               valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 32),
           Text(
-            'Scanning System...',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: SemanticColors.onSurface,
+            'Scanning Your System',
+            style: TextStyles.pageTitle.copyWith(fontSize: 20),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Detecting installed tools and applications...',
+            style: TextStyles.bodyMedium.copyWith(
+              color: SemanticColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 12),
-          Text(
-            'Detecting installed tools and services',
-            style: TextStyle(
-              fontSize: 14,
-              color: SemanticColors.onSurfaceVariant,
+          const SizedBox(height: 24),
+          
+          // Progress indicators
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: SemanticColors.background,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: SemanticColors.border),
+            ),
+            child: Column(
+              children: [
+                _buildDetectionProgress('Development Tools', true),
+                _buildDetectionProgress('Web Browsers', true),
+                _buildDetectionProgress('Productivity Apps', false),
+              ],
             ),
           ),
         ],
@@ -163,110 +431,63 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
   }
 
   Widget _buildResultsStep() {
-    if (_detectionResult == null) return SizedBox();
+    if (_detectionResult == null) return const SizedBox();
+
+    // Filter detections by category
+    final filteredDetections = _getFilteredDetections();
+    
+    // Sort detections: found items first
+    final sortedDetections = filteredDetections.entries.toList()
+      ..sort((a, b) {
+        if (a.value != b.value) {
+          return b.value ? -1 : 1; // Found items first
+        }
+        return a.key.compareTo(b.key);
+      });
 
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Summary
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: SemanticColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
+          // Category selector
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      '${_detectionResult!.totalFound}',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: SemanticColors.primary,
-                      ),
-                    ),
-                    Text(
-                      'Found',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: SemanticColors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      '${_detectionResult!.confidence}%',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: SemanticColors.primary,
-                      ),
-                    ),
-                    Text(
-                      'Confidence',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: SemanticColors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          
-          SizedBox(height: 16),
-          
-          // Results list
-          Expanded(
-            child: ListView(
-              children: _detectionResult!.detections.entries.map((entry) {
+              children: _categories.entries.map((entry) {
+                final isSelected = _selectedCategory == entry.key;
                 return Container(
-                  margin: EdgeInsets.only(bottom: 8),
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: SemanticColors.surface,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: SemanticColors.border),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: entry.value ? Colors.green : Colors.grey,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          entry.key,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: SemanticColors.onSurface,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        entry.value ? 'Ready' : 'Not Found',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: entry.value ? Colors.green : SemanticColors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
+                  margin: const EdgeInsets.only(right: 8),
+                  child: AsmblButton.secondary(
+                    text: entry.value,
+                    onPressed: () {
+                      setState(() {
+                        _selectedCategory = entry.key;
+                      });
+                    },
                   ),
                 );
               }).toList(),
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Results grid
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 3,
+              ),
+              itemCount: sortedDetections.length,
+              itemBuilder: (context, index) {
+                final entry = sortedDetections[index];
+                final isFound = entry.value;
+                return _buildResultCard(entry.key, isFound);
+              },
             ),
           ),
         ],
@@ -274,42 +495,402 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildMainFooter() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: SemanticColors.border)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (_currentStep == 'ready') ...[
+          // Back button (except on first step)
+          if (_currentStep != 'overview')
             AsmblButton.secondary(
-              text: 'Cancel',
-              onPressed: () => Navigator.of(context).pop(),
+              text: 'Back',
+              onPressed: _goToPreviousStep,
+            )
+          else
+            const SizedBox(),
+          
+          // Forward/Action buttons
+          Row(
+            children: [
+              AsmblButton.secondary(
+                text: 'Cancel',
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              const SizedBox(width: 16),
+              if (_currentStep == 'overview')
+                AsmblButton.primary(
+                  text: 'Get Started',
+                  onPressed: () => setState(() => _currentStep = 'categories'),
+                )
+              else if (_currentStep == 'categories')
+                AsmblButton.primary(
+                  text: 'Start Detection',
+                  onPressed: _startDetection,
+                )
+              else if (_currentStep == 'results')
+                AsmblButton.primary(
+                  text: 'Complete Setup',
+                  onPressed: () {
+                    widget.onComplete?.call();
+                    Navigator.of(context).pop();
+                  },
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper methods
+  String _getStepTitle() {
+    switch (_currentStep) {
+      case 'overview':
+        return 'Welcome to Auto-Detection';
+      case 'categories':
+        return 'Choose Detection Categories';
+      case 'detecting':
+        return 'Scanning System';
+      case 'results':
+        return 'Detection Results';
+      default:
+        return 'Auto-Detection';
+    }
+  }
+  
+  String _getStepDescription() {
+    switch (_currentStep) {
+      case 'overview':
+        return 'Automatically detect and configure your development tools';
+      case 'categories':
+        return 'Select the types of tools you want us to find';
+      case 'detecting':
+        return 'Please wait while we scan your system';
+      case 'results':
+        return 'Review and configure the tools we found';
+      default:
+        return '';
+    }
+  }
+  
+  void _goToPreviousStep() {
+    setState(() {
+      switch (_currentStep) {
+        case 'categories':
+          _currentStep = 'overview';
+          break;
+        case 'detecting':
+          _currentStep = 'categories';
+          break;
+        case 'results':
+          _currentStep = 'categories';
+          break;
+      }
+    });
+  }
+  
+  Map<String, bool> _getFilteredDetections() {
+    if (_detectionResult == null || _selectedCategory == 'all') {
+      return _detectionResult?.detections ?? {};
+    }
+    
+    // Simple category filtering based on tool names
+    final filtered = <String, bool>{};
+    _detectionResult!.detections.forEach((key, value) {
+      switch (_selectedCategory) {
+        case 'development':
+          if (key.contains('VS Code') || key.contains('Git') || key.contains('GitHub') || 
+              key.contains('Node.js') || key.contains('Python') || key.contains('Docker')) {
+            filtered[key] = value;
+          }
+          break;
+        case 'browsers':
+          if (key.contains('Chrome') || key.contains('Firefox') || key.contains('Safari') || 
+              key.contains('Edge') || key.contains('Brave')) {
+            filtered[key] = value;
+          }
+          break;
+        case 'productivity':
+          // Add productivity tools here
+          break;
+      }
+    });
+    return filtered;
+  }
+  
+  Widget _buildProgressStep(String title, String step, IconData icon) {
+    final isActive = _currentStep == step;
+    final isCompleted = _getStepIndex(_currentStep) > _getStepIndex(step);
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: isCompleted 
+                ? Colors.green
+                : isActive 
+                  ? SemanticColors.primary
+                  : SemanticColors.border,
+              borderRadius: BorderRadius.circular(12),
             ),
-            SizedBox(width: 16),
-            AsmblButton.primary(
-              text: 'Start Detection',
-              onPressed: _startDetection,
+            child: Icon(
+              isCompleted ? Icons.check : icon,
+              size: 12,
+              color: isCompleted || isActive 
+                ? Colors.white 
+                : SemanticColors.onSurfaceVariant,
             ),
-          ] else if (_currentStep == 'results') ...[
-            AsmblButton.secondary(
-              text: 'Detect Again',
-              onPressed: () => setState(() {
-                _currentStep = 'ready';
-                _detectionResult = null;
-              }),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: TextStyles.bodySmall.copyWith(
+              color: isActive 
+                ? SemanticColors.onSurface
+                : SemanticColors.onSurfaceVariant,
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
             ),
-            SizedBox(width: 16),
-            AsmblButton.primary(
-              text: 'Complete',
-              onPressed: () {
-                widget.onComplete?.call();
-                Navigator.of(context).pop();
-              },
+          ),
+        ],
+      ),
+    );
+  }
+  
+  int _getStepIndex(String step) {
+    switch (step) {
+      case 'overview': return 0;
+      case 'categories': return 1;
+      case 'detecting': return 2;
+      case 'results': return 3;
+      default: return 0;
+    }
+  }
+  
+  Widget _buildCategoryFilter(String key, String label) {
+    final isSelected = _selectedCategory == key;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: InkWell(
+        onTap: () => setState(() => _selectedCategory = key),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          decoration: BoxDecoration(
+            color: isSelected 
+              ? SemanticColors.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                _getCategoryIcon(key),
+                size: 16,
+                color: isSelected 
+                  ? SemanticColors.primary
+                  : SemanticColors.onSurfaceVariant,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyles.bodySmall.copyWith(
+                  color: isSelected 
+                    ? SemanticColors.primary
+                    : SemanticColors.onSurfaceVariant,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'all': return Icons.auto_fix_high;
+      case 'development': return Icons.code;
+      case 'browsers': return Icons.web;
+      case 'productivity': return Icons.work;
+      default: return Icons.category;
+    }
+  }
+  
+  Widget _buildFeatureCard(IconData icon, String title, String description) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: SemanticColors.background,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: SemanticColors.border),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            color: SemanticColors.primary,
+            size: 24,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            description,
+            style: TextStyles.bodySmall.copyWith(
+              color: SemanticColors.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildCategoryCard(String key, String label) {
+    final isSelected = _selectedCategory == key;
+    return InkWell(
+      onTap: () => setState(() => _selectedCategory = key),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected 
+            ? SemanticColors.primary.withValues(alpha: 0.1)
+            : SemanticColors.background,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected 
+              ? SemanticColors.primary
+              : SemanticColors.border,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              _getCategoryIcon(key),
+              color: isSelected 
+                ? SemanticColors.primary
+                : SemanticColors.onSurfaceVariant,
+              size: 32,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyles.bodyMedium.copyWith(
+                color: isSelected 
+                  ? SemanticColors.primary
+                  : SemanticColors.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildDetectionProgress(String label, bool isComplete) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              color: isComplete 
+                ? Colors.green
+                : SemanticColors.primary.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: isComplete 
+              ? const Icon(Icons.check, size: 10, color: Colors.white)
+              : const SizedBox(),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: TextStyles.bodySmall.copyWith(
+              color: isComplete 
+                ? Colors.green.shade700
+                : SemanticColors.onSurfaceVariant,
+            ),
+          ),
+          const Spacer(),
+          if (!isComplete)
+            SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildResultCard(String name, bool isFound) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isFound 
+          ? Colors.green.withValues(alpha: 0.05)
+          : SemanticColors.background,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isFound 
+            ? Colors.green.withValues(alpha: 0.3)
+            : SemanticColors.border,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: isFound
+                ? Colors.green.withValues(alpha: 0.15)
+                : Colors.grey.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              isFound ? Icons.check : Icons.close,
+              color: isFound ? Colors.green.shade700 : Colors.grey,
+              size: 14,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              name,
+              style: TextStyles.bodySmall.copyWith(
+                color: isFound 
+                  ? SemanticColors.onSurface
+                  : SemanticColors.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -330,7 +911,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
       });
     } catch (e) {
       setState(() {
-        _currentStep = 'ready';
+        _currentStep = 'categories';
       });
       
       if (mounted) {

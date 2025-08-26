@@ -6,6 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:agent_engine_core/agent_engine_core.dart';
 import 'integration_service.dart';
 import 'mcp_settings_service.dart';
+import 'integration_testing_service.dart'; // For ValidationIssue and ValidationSeverity
 
 /// Service for backing up and exporting integration configurations
 class IntegrationBackupService {
@@ -407,7 +408,7 @@ class IntegrationBackupService {
   Future<void> _createConfiguration(IntegrationConfiguration config) async {
     // Convert back to MCPServerConfig and save
     final mcpConfig = MCPServerConfig.fromJson(config.settings);
-    await _mcpService.addMCPServer(config.integrationId, mcpConfig);
+    await _mcpService.setMCPServer(config.integrationId, mcpConfig);
   }
   
   Future<void> _replaceConfiguration(IntegrationConfiguration config) async {
@@ -422,7 +423,7 @@ class IntegrationBackupService {
       ...config.settings,
     });
     
-    await _mcpService.updateMCPServer(config.integrationId, mergedConfig);
+    await _mcpService.setMCPServer(config.integrationId, mergedConfig);
   }
 }
 

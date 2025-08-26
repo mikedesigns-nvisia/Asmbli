@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/integration_service.dart';
 import '../../../../core/services/integration_dependency_service.dart';
+import '../../../../core/services/integration_marketplace_service.dart';
+import '../../../../core/services/integration_installation_service.dart' as installation;
+import '../../../../core/services/integration_health_monitoring_service.dart';
 import '../../../../core/design_system/components/integration_status_indicators.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import 'integration_dependency_dialog.dart';
@@ -31,7 +34,11 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
   @override
   Widget build(BuildContext context) {
     final integrationService = ref.watch(integrationServiceProvider);
+    final marketplaceService = ref.watch(integrationMarketplaceServiceProvider);
+    final healthService = ref.watch(integrationHealthMonitoringServiceProvider);
     final allIntegrationsWithStatus = integrationService.getAllIntegrationsWithStatus();
+    final marketplaceStats = marketplaceService.getMarketplaceStatistics();
+    final healthStats = healthService.getHealthStatistics();
     final filteredIntegrations = _filterIntegrations(allIntegrationsWithStatus);
     
     return SingleChildScrollView(
@@ -40,6 +47,10 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
+          SizedBox(height: SpacingTokens.lg),
+          
+          // Marketplace Stats Overview
+          _buildMarketplaceStats(marketplaceStats, healthStats),
           SizedBox(height: SpacingTokens.xxl),
           
           // Featured Integrations Banner
@@ -87,6 +98,112 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMarketplaceStats(MarketplaceStatistics marketplaceStats, HealthStatistics healthStats) {
+    return Container(
+      padding: EdgeInsets.all(SpacingTokens.lg),
+      decoration: BoxDecoration(
+        color: SemanticColors.surface.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+        border: Border.all(
+          color: SemanticColors.border.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Row(
+        children: [
+          _buildStatCard(
+            'Available',
+            '${marketplaceStats.available}',
+            Icons.apps,
+            SemanticColors.primary,
+          ),
+          SizedBox(width: SpacingTokens.lg),
+          _buildStatCard(
+            'Installed',
+            '${marketplaceStats.installed}',
+            Icons.check_circle,
+            SemanticColors.success,
+          ),
+          SizedBox(width: SpacingTokens.lg),
+          _buildStatCard(
+            'Popular',
+            '${marketplaceStats.popular}',
+            Icons.star,
+            SemanticColors.warning,
+          ),
+          SizedBox(width: SpacingTokens.lg),
+          _buildStatCard(
+            'Recommended',
+            '${marketplaceStats.recommended}',
+            Icons.thumb_up,
+            SemanticColors.primary,
+          ),
+          Spacer(),
+          
+          // Health indicator
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: healthStats.isHealthy ? SemanticColors.success.withValues(alpha: 0.1) : SemanticColors.warning.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+              border: Border.all(
+                color: healthStats.isHealthy ? SemanticColors.success.withValues(alpha: 0.3) : SemanticColors.warning.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  healthStats.isHealthy ? Icons.health_and_safety : Icons.warning,
+                  size: 16,
+                  color: healthStats.isHealthy ? SemanticColors.success : SemanticColors.warning,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  '${healthStats.healthPercentage.toStringAsFixed(0)}% Healthy',
+                  style: TextStyles.caption.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: healthStats.isHealthy ? SemanticColors.success : SemanticColors.warning,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: EdgeInsets.all(SpacingTokens.sm),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 20),
+          SizedBox(height: SpacingTokens.xs),
+          Text(
+            value,
+            style: TextStyles.bodyLarge.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyles.caption.copyWith(
+              color: SemanticColors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
   
@@ -592,6 +709,9 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
   
   void _handleInstall(IntegrationStatus status) async {
     final dependencyService = ref.read(integrationDependencyServiceProvider);
+    final installationService = ref.read(installation.integrationInstallationServiceProvider);
+    final marketplaceService = ref.read(integrationMarketplaceServiceProvider);
+    
     final depCheck = dependencyService.checkDependencies(status.definition.id);
     
     // Show dependency dialog if there are issues
@@ -618,22 +738,36 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
       }
     }
     
-    // Show installation dialog
-    showDialog(
-      context: context,
-      builder: (context) => MCPServerDialog(
-        serverId: status.definition.id,
-      ),
-    ).then((result) {
-      if (result == true) {
+    try {
+      // Use the new installation service for enhanced workflow
+      final result = await marketplaceService.installIntegration(
+        status.definition.id,
+        autoDetect: true,
+      );
+      
+      if (result.success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${status.definition.name} installed successfully!'),
             backgroundColor: SemanticColors.success,
           ),
         );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Installation failed: ${result.error ?? 'Unknown error'}'),
+            backgroundColor: SemanticColors.error,
+          ),
+        );
       }
-    });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Installation error: $e'),
+          backgroundColor: SemanticColors.error,
+        ),
+      );
+    }
   }
   
   void _handleConfigure(IntegrationStatus status) {

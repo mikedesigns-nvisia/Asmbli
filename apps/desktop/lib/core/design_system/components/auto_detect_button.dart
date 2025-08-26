@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../design_system.dart';
-import '../../../features/settings/presentation/widgets/auto_detection_wizard.dart';
+import '../../../features/settings/presentation/widgets/enhanced_auto_detection_modal.dart';
 
 class AutoDetectButton extends ConsumerWidget {
   final String? specificIntegration;
@@ -134,9 +134,16 @@ class AutoDetectButton extends ConsumerWidget {
   void _showAutoDetection(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AutoDetectionWizard(
-        specificIntegration: specificIntegration,
-        onComplete: onDetectionComplete,
+      builder: (context) => EnhancedAutoDetectionModal(
+        onComplete: onDetectionComplete ?? () {
+          print('AutoDetectButton: Default onComplete callback executed');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Auto-detection completed successfully!'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        },
       ),
     );
   }

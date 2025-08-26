@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import 'simple_auto_detection_wizard.dart';
+import 'enhanced_auto_detection_modal.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import 'enhanced_mcp_server_wizard.dart';
 
@@ -233,8 +233,11 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        width: 500,
-        padding: EdgeInsets.all(24),
+        constraints: BoxConstraints(
+          maxWidth: 500,
+          minWidth: 400,
+        ),
+        padding: EdgeInsets.all(SpacingTokens.elementSpacing),
         decoration: BoxDecoration(
           color: ThemeColors(context).surface.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(16),
@@ -260,18 +263,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     children: [
                       Text(
                         'Add Integration',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                        style: TextStyles.sectionTitle,
                       ),
                       Text(
                         'Choose how you want to set up your integration',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        style: TextStyles.bodyMedium.copyWith(
+                          color: SemanticColors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -327,16 +324,13 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                           children: [
                             Text(
                               'Auto-Detect Configuration',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                              style: TextStyles.titleMedium.copyWith(
                                 color: SemanticColors.primary,
                               ),
                             ),
                             Text(
                               'Automatically find and configure installed tools',
-                              style: TextStyle(
-                                fontSize: 14,
+                              style: TextStyles.bodyMedium.copyWith(
                                 color: SemanticColors.onSurfaceVariant,
                               ),
                             ),
@@ -352,7 +346,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       Navigator.of(context).pop();
                       showDialog(
                         context: context,
-                        builder: (context) => SimpleAutoDetectionWizard(
+                        builder: (context) => EnhancedAutoDetectionModal(
                           onComplete: () {},
                         ),
                       );
@@ -415,7 +409,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     description: 'Traditional form for advanced users',
                     icon: Icons.settings,
                     badge: 'Advanced',
-                    badgeColor: Colors.orange,
+                    badgeColor: SemanticColors.warning,
                     onTap: () {
                       Navigator.of(context).pop();
                       showDialog(
@@ -476,12 +470,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               
               Text(
                 title,
-                style: TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+                style: TextStyles.cardTitle,
                 textAlign: TextAlign.center,
               ),
               
@@ -489,9 +478,8 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                style: TextStyles.caption.copyWith(
+                  color: SemanticColors.onSurfaceVariant,
                   height: 1.3,
                 ),
                 textAlign: TextAlign.center,
@@ -507,8 +495,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   ),
                   child: Text(
                     badge,
-                    style: TextStyle(
-                      fontSize: 10,
+                    style: TextStyles.labelSmall.copyWith(
                       color: badgeColor ?? SemanticColors.primary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -526,8 +513,11 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        width: 800,
-        constraints: BoxConstraints(maxHeight: 700),
+        constraints: BoxConstraints(
+          maxWidth: 800,
+          maxHeight: 700,
+          minWidth: 600,
+        ),
         decoration: BoxDecoration(
           color: ThemeColors(context).surface.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(16),
@@ -559,12 +549,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   Expanded(
                     child: Text(
                       isEdit ? 'Edit MCP Server' : 'Add MCP Server',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                      style: TextStyles.sectionTitle,
                     ),
                   ),
                   IconButton(
@@ -658,12 +643,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       children: [
         Text(
           'Server Template',
-          style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: TextStyles.cardTitle,
         ),
         SizedBox(height: SpacingTokens.componentSpacing),
         
@@ -679,8 +659,11 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             return GestureDetector(
               onTap: () => _applyTemplate(templateId),
               child: Container(
-                width: 160,
-                padding: const EdgeInsets.all(12),
+                constraints: BoxConstraints(
+                  maxWidth: 160,
+                  minWidth: 120,
+                ),
+                padding: EdgeInsets.all(SpacingTokens.componentSpacing),
                 decoration: BoxDecoration(
                   color: isSelected 
                     ? SemanticColors.primary.withValues(alpha: 0.1)
@@ -704,23 +687,18 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     SizedBox(height: 8),
                     Text(
                       template.name,
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                      style: TextStyles.labelMedium.copyWith(
                         color: isSelected 
                           ? SemanticColors.primary
-                          : Theme.of(context).colorScheme.onSurface,
+                          : SemanticColors.onSurface,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 4),
                     Text(
                       template.category,
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 10,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      style: TextStyles.labelSmall.copyWith(
+                        color: SemanticColors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -739,12 +717,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       children: [
         Text(
           'Basic Configuration',
-          style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: TextStyles.cardTitle,
         ),
         SizedBox(height: SpacingTokens.componentSpacing),
 
@@ -796,12 +769,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       children: [
         Text(
           'Command Configuration',
-          style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: TextStyles.cardTitle,
         ),
         SizedBox(height: SpacingTokens.componentSpacing),
 
@@ -833,12 +801,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               children: [
                 Text(
                   'Arguments',
-                  style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                  style: TextStyles.labelLarge,
                 ),
                 Spacer(),
                 TextButton.icon(
@@ -906,12 +869,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           children: [
             Text(
               'Environment Variables',
-              style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+              style: TextStyles.cardTitle,
             ),
             Spacer(),
             TextButton.icon(
@@ -947,10 +905,8 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 SizedBox(width: 8),
                 Text(
                   'No environment variables configured',
-                  style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 13,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  style: TextStyles.bodySmall.copyWith(
+                    color: SemanticColors.onSurfaceVariant,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -1034,12 +990,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       children: [
         Text(
           'Advanced Options',
-          style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: TextStyles.cardTitle,
         ),
         SizedBox(height: SpacingTokens.componentSpacing),
 
@@ -1058,19 +1009,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 children: [
                   Text(
                     'Enable Server',
-                    style: TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                    style: TextStyles.labelLarge,
                   ),
                   Text(
                     'Server will be available for agent deployment when enabled',
-                    style: TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    style: TextStyles.caption.copyWith(
+                      color: SemanticColors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -1088,66 +1032,121 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.95),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: 500,
+            maxHeight: 400,
+            minWidth: 400,
           ),
-        ),
-        title: Text(
-          'Add Environment Variable',
-          style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontWeight: FontWeight.w600,
+          decoration: BoxDecoration(
+            color: ThemeColors(context).surface.withValues(alpha: 0.95),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: SemanticColors.border.withValues(alpha: 0.5),
+            ),
           ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: keyController,
-              decoration: InputDecoration(
-                labelText: 'Variable Name',
-                hintText: 'e.g., API_KEY',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: SemanticColors.border.withValues(alpha: 0.3),
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Add Environment Variable',
+                        style: TextStyles.cardTitle,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Icon(Icons.close),
+                      style: IconButton.styleFrom(
+                        foregroundColor: SemanticColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-            TextFormField(
-              controller: valueController,
-              decoration: InputDecoration(
-                labelText: 'Value',
-                hintText: 'Variable value (can be set later)',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+              // Content
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: keyController,
+                        decoration: InputDecoration(
+                          labelText: 'Variable Name',
+                          hintText: 'e.g., API_KEY',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: SpacingTokens.componentSpacing),
+                      TextFormField(
+                        controller: valueController,
+                        decoration: InputDecoration(
+                          labelText: 'Value',
+                          hintText: 'Variable value (can be set later)',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        obscureText: true,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              obscureText: true,
-            ),
-          ],
+              // Actions
+              Container(
+                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: SemanticColors.border.withValues(alpha: 0.3),
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AsmblButton.secondary(
+                      text: 'Cancel',
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    SizedBox(width: SpacingTokens.componentSpacing),
+                    AsmblButton.primary(
+                      text: 'Add',
+                      onPressed: () {
+                        final key = keyController.text.trim();
+                        if (key.isNotEmpty) {
+                          _safeSetState(() {
+                            _envVars[key] = valueController.text.trim();
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final key = keyController.text.trim();
-              if (key.isNotEmpty) {
-                _safeSetState(() {
-                  _envVars[key] = valueController.text.trim();
-                });
-                Navigator.of(context).pop();
-              }
-            },
-            child: Text('Add'),
-          ),
-        ],
       ),
     );
   }
@@ -1157,48 +1156,103 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.95),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: 500,
+            maxHeight: 350,
+            minWidth: 400,
           ),
-        ),
-        title: Text(
-          'Edit $key',
-          style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        content: TextFormField(
-          controller: valueController,
-          decoration: InputDecoration(
-            labelText: 'Value',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+          decoration: BoxDecoration(
+            color: ThemeColors(context).surface.withValues(alpha: 0.95),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: SemanticColors.border.withValues(alpha: 0.5),
             ),
           ),
-          obscureText: key.toLowerCase().contains('key') || 
-                      key.toLowerCase().contains('token') ||
-                      key.toLowerCase().contains('password'),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: SemanticColors.border.withValues(alpha: 0.3),
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Edit $key',
+                        style: TextStyles.cardTitle,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Icon(Icons.close),
+                      style: IconButton.styleFrom(
+                        foregroundColor: SemanticColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Content
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                  child: TextFormField(
+                    controller: valueController,
+                    decoration: InputDecoration(
+                      labelText: 'Value',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    obscureText: key.toLowerCase().contains('key') || 
+                                key.toLowerCase().contains('token') ||
+                                key.toLowerCase().contains('password'),
+                  ),
+                ),
+              ),
+              // Actions
+              Container(
+                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: SemanticColors.border.withValues(alpha: 0.3),
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AsmblButton.secondary(
+                      text: 'Cancel',
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    SizedBox(width: SpacingTokens.componentSpacing),
+                    AsmblButton.primary(
+                      text: 'Update',
+                      onPressed: () {
+                        _safeSetState(() {
+                          _envVars[key] = valueController.text.trim();
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _safeSetState(() {
-                _envVars[key] = valueController.text.trim();
-              });
-              Navigator.of(context).pop();
-            },
-            child: Text('Update'),
-          ),
-        ],
       ),
     );
   }

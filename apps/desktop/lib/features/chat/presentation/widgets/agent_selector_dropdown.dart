@@ -30,7 +30,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
       height: 40,
       margin: EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.5),
+        color: SemanticColors.surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Center(
@@ -40,7 +40,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
           child: CircularProgressIndicator(
             strokeWidth: 2,
             valueColor: AlwaysStoppedAnimation<Color>(
-              ThemeColors(context).primary.withValues(alpha: 0.6),
+              SemanticColors.primary.withValues(alpha: 0.6),
             ),
           ),
         ),
@@ -53,23 +53,23 @@ class AgentSelectorDropdown extends ConsumerWidget {
       margin: EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
       padding: EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: ThemeColors(context).error.withValues(alpha: 0.1),
+        color: SemanticColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: ThemeColors(context).error.withValues(alpha: 0.3)),
+        border: Border.all(color: SemanticColors.error.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
           Icon(
             Icons.error_outline,
             size: 16,
-            color: ThemeColors(context).error,
+            color: SemanticColors.error,
           ),
           SizedBox(width: SpacingTokens.xs),
           Expanded(
             child: Text(
               'Failed to load agents',
               style: TextStyles.bodySmall.copyWith(
-                color: ThemeColors(context).error,
+                color: SemanticColors.error,
               ),
             ),
           ),
@@ -83,23 +83,23 @@ class AgentSelectorDropdown extends ConsumerWidget {
       margin: EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
       padding: EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
+        color: SemanticColors.surfaceVariant.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: ThemeColors(context).border),
+        border: Border.all(color: SemanticColors.border),
       ),
       child: Row(
         children: [
           Icon(
             Icons.smart_toy_outlined,
             size: 16,
-            color: ThemeColors(context).onSurfaceVariant,
+            color: SemanticColors.onSurfaceVariant,
           ),
           SizedBox(width: SpacingTokens.xs),
           Expanded(
             child: Text(
               'No agents available',
               style: TextStyles.bodySmall.copyWith(
-                color: ThemeColors(context).onSurfaceVariant,
+                color: SemanticColors.onSurfaceVariant,
               ),
             ),
           ),
@@ -126,11 +126,11 @@ class AgentSelectorDropdown extends ConsumerWidget {
             return agents.map((agent) => _buildSelectedItem(context, agent)).toList();
           },
           items: agents.map((agent) => _buildDropdownItem(context, agent)).toList(),
-          dropdownColor: ThemeColors(context).surface,
+          dropdownColor: SemanticColors.surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           elevation: 8,
           style: TextStyles.bodyMedium.copyWith(
-            color: ThemeColors(context).onSurface,
+            color: SemanticColors.onSurface,
           ),
         ),
       ),
@@ -148,13 +148,13 @@ class AgentSelectorDropdown extends ConsumerWidget {
           Icon(
             Icons.smart_toy_outlined,
             size: 16,
-            color: ThemeColors(context).onSurfaceVariant,
+            color: SemanticColors.onSurfaceVariant,
           ),
           SizedBox(width: SpacingTokens.xs),
           Text(
             'Select an agent',
             style: TextStyles.bodySmall.copyWith(
-              color: ThemeColors(context).onSurfaceVariant,
+              color: SemanticColors.onSurfaceVariant,
             ),
           ),
         ],
@@ -198,7 +198,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
                   agent.name,
                   style: TextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: ThemeColors(context).onSurface,
+                    color: SemanticColors.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -232,7 +232,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
           Icon(
             Icons.keyboard_arrow_down,
             size: 16,
-            color: ThemeColors(context).onSurfaceVariant,
+            color: SemanticColors.onSurfaceVariant,
           ),
         ],
       ),
@@ -271,7 +271,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
                           agent.name,
                           style: TextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: ThemeColors(context).onSurface,
+                            color: SemanticColors.onSurface,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -293,7 +293,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
                   Text(
                     agent.description,
                     style: TextStyles.bodySmall.copyWith(
-                      color: ThemeColors(context).onSurfaceVariant,
+                      color: SemanticColors.onSurfaceVariant,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -320,7 +320,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
                         Text(
                           '+${agent.capabilities.length - 3}',
                           style: TextStyles.caption.copyWith(
-                            color: ThemeColors(context).onSurfaceVariant,
+                            color: SemanticColors.onSurfaceVariant,
                             fontSize: 9,
                           ),
                         ),

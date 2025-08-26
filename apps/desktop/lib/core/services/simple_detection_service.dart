@@ -38,6 +38,38 @@ class SimpleDetectionService {
         results['GitHub CLI'] = false;
       }
       
+      // Test Node.js
+      try {
+        final nodeResult = await Process.run('node', ['--version']);
+        results['Node.js'] = nodeResult.exitCode == 0;
+      } catch (e) {
+        results['Node.js'] = false;
+      }
+      
+      // Test Python
+      try {
+        final pythonResult = await Process.run('python', ['--version']);
+        results['Python'] = pythonResult.exitCode == 0;
+      } catch (e) {
+        results['Python'] = false;
+      }
+      
+      // Test Docker
+      try {
+        final dockerResult = await Process.run('docker', ['--version']);
+        results['Docker'] = dockerResult.exitCode == 0;
+      } catch (e) {
+        results['Docker'] = false;
+      }
+      
+      // Test Brave Browser
+      final braveDataPath = '${Platform.environment['LOCALAPPDATA']}\\BraveSoftware\\Brave-Browser\\User Data';
+      results['Brave Browser'] = await Directory(braveDataPath).exists();
+      
+      // Test Chrome Browser
+      final chromeDataPath = '${Platform.environment['LOCALAPPDATA']}\\Google\\Chrome\\User Data';
+      results['Chrome Browser'] = await Directory(chromeDataPath).exists();
+      
     } catch (e) {
       // Error handling
     }

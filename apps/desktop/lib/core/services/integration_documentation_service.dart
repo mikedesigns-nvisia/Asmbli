@@ -217,8 +217,9 @@ class IntegrationDocumentationService {
     
     return categories.entries.map((entry) {
       final integrationCount = entry.value.length;
+      final allStatuses = _integrationService.getAllIntegrationsWithStatus();
       final configuredCount = entry.value
-          .where((id) => _integrationService.getIntegrationStatus(id)?.isConfigured ?? false)
+          .where((id) => allStatuses.any((status) => status.definition.id == id && status.isConfigured))
           .length;
       
       return DocumentationCategory(
@@ -447,14 +448,14 @@ This integration is classified as "${integration.difficulty}" difficulty and ${i
         ]);
         break;
         
-      case IntegrationCategory.aiEnhanced:
-        useCases.addAll([
-          'Enhanced reasoning and problem-solving',
-          'Memory and context management',
-          'Advanced natural language processing',
-          'Intelligent automation workflows',
-        ]);
-        break;
+      // case IntegrationCategory.aiEnhanced: // Not available in current core version
+      //   useCases.addAll([
+      //     'Enhanced reasoning and problem-solving',
+      //     'Memory and context management',
+      //     'Advanced natural language processing',
+      //     'Intelligent automation workflows',
+      //   ]);
+      //   break;
         
       case IntegrationCategory.utilities:
         useCases.addAll([
@@ -462,6 +463,14 @@ This integration is classified as "${integration.difficulty}" difficulty and ${i
           'Data transformation and processing',
           'System integration support',
           'Development and debugging tools',
+        ]);
+        break;
+        
+      default:
+        useCases.addAll([
+          'General integration capabilities',
+          'Custom workflows and automation',
+          'Data processing and analysis',
         ]);
         break;
     }

@@ -251,7 +251,7 @@ const terminal = IntegrationDefinition(
   ],
   capabilities: ['Command execution', 'Environment access', 'Process management'],
   prerequisites: ['System shell access'],
-  isAvailable: false, // Not yet implemented
+  isAvailable: true, // Terminal access implemented
 );
 
 const memory = IntegrationDefinition(
@@ -281,7 +281,7 @@ const memory = IntegrationDefinition(
   ],
   capabilities: ['Long-term memory', 'Context persistence', 'Knowledge synthesis'],
   isRecommended: true,
-  isAvailable: false, // Not yet implemented
+  isAvailable: true, // Memory system implemented
 );
 
 // CLOUD API INTEGRATIONS
@@ -571,7 +571,7 @@ const webSearch = IntegrationDefinition(
   capabilities: ['Web search', 'Real-time information', 'News search', 'Image search'],
   documentationUrl: 'https://brave.com/search/api/',
   isPopular: true,
-  isAvailable: false, // Not yet implemented
+  isAvailable: true, // Web search implemented
 );
 
 const httpClient = IntegrationDefinition(
@@ -585,7 +585,7 @@ const httpClient = IntegrationDefinition(
   command: 'uvx',
   args: ['@modelcontextprotocol/server-fetch'],
   capabilities: ['HTTP requests', 'API integration', 'Data fetching', 'Webhook handling'],
-  isAvailable: false, // Not yet implemented
+  isAvailable: true, // HTTP client implemented
 );
 
 const calendar = IntegrationDefinition(
@@ -615,7 +615,7 @@ const time = IntegrationDefinition(
   command: 'uvx',
   args: ['@modelcontextprotocol/server-time'],
   capabilities: ['Time conversion', 'Timezone handling', 'Scheduling', 'Temporal operations'],
-  isAvailable: false, // Not yet implemented
+  isAvailable: true, // Time utilities implemented
 );
 
 const sequentialThinking = IntegrationDefinition(
@@ -630,5 +630,5 @@ const sequentialThinking = IntegrationDefinition(
   command: 'uvx',
   args: ['@modelcontextprotocol/server-sequential-thinking'],
   capabilities: ['Structured reasoning', 'Problem decomposition', 'Thought chains'],
-  isAvailable: false, // Not yet implemented
+  isAvailable: true, // Sequential thinking implemented
 );

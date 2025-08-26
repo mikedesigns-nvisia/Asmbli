@@ -107,4 +107,9 @@ class TextStyles {
  fontWeight: TypographyTokens.medium,
  letterSpacing: 0.5,
  );
+ 
+ // Additional title styles for compatibility
+ static const TextStyle titleLarge = pageTitle;
+ static const TextStyle titleMedium = cardTitle;
+ static const TextStyle titleSmall = labelLarge;
 }

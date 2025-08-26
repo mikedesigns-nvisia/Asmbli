@@ -122,6 +122,29 @@ class IntegrationService {
     await _mcpService.saveSettings();
   }
 
+  /// Update integration status (from agent_engine_core enum)
+  Future<void> updateIntegrationStatus(String integrationId, dynamic status) async {
+    // This is a placeholder implementation
+    // The status update is handled through the MCP server configuration
+    // For now, we'll update the MCP server's enabled state based on the status
+    final mcpConfig = _mcpService.getMCPServer(integrationId);
+    if (mcpConfig != null) {
+      final updatedConfig = MCPServerConfig(
+        id: mcpConfig.id,
+        name: mcpConfig.name,
+        command: mcpConfig.command,
+        args: mcpConfig.args,
+        env: mcpConfig.env,
+        description: mcpConfig.description,
+        enabled: status.toString().contains('active'),
+        createdAt: mcpConfig.createdAt,
+        lastUpdated: DateTime.now(),
+      );
+      await _mcpService.setMCPServer(integrationId, updatedConfig);
+      await _mcpService.saveSettings();
+    }
+  }
+
   /// Get integration statistics
   IntegrationStats getStats() {
     final all = getAllIntegrationsWithStatus();

@@ -4,7 +4,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/design_system/components/enhanced_template_browser.dart';
 import '../../../../core/design_system/components/smart_mcp_form.dart';
 import '../../../../core/design_system/components/mcp_testing_widgets.dart';
-import 'simple_auto_detection_wizard.dart';
+import 'enhanced_auto_detection_modal.dart';
 import '../../../../core/models/enhanced_mcp_template.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/enhanced_mcp_testing_service.dart';
@@ -319,7 +319,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                     Navigator.of(context).pop();
                     showDialog(
                       context: context,
-                      builder: (context) => SimpleAutoDetectionWizard(),
+                      builder: (context) => EnhancedAutoDetectionModal(),
                     );
                   },
                 ),

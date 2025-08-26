@@ -145,8 +145,8 @@ class AsmblButton extends StatelessWidget {
  hoverColor: foregroundColor.withValues(alpha: 0.08),
  splashColor: foregroundColor.withValues(alpha: 0.16),
  child: Container(
- padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
- child: const Center(child: buttonChild),
+ padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+ child: Center(child: buttonChild),
  ),
  ),
  ),

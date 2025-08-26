@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import 'mcp_settings_service.dart';
+import 'integration_health_monitoring_service.dart';
 
 /// Bridge service that connects Flutter to the TypeScript MCP core
 /// Handles message processing with MCP server integration
@@ -13,6 +14,7 @@ class MCPBridgeService {
   static const EventChannel _eventChannel = EventChannel('agentengine.mcp.events');
   
   final MCPSettingsService _settingsService;
+  final IntegrationHealthMonitoringService? _healthService;
   StreamSubscription? _eventSubscription;
   
   // Internal state
@@ -20,7 +22,7 @@ class MCPBridgeService {
   final Map<String, StreamController<String>> _responseStreams = {};
   final Map<String, Completer<Map<String, dynamic>>> _pendingRequests = {};
 
-  MCPBridgeService(this._settingsService);
+  MCPBridgeService(this._settingsService, [this._healthService]);
 
   /// Initialize the MCP bridge
   Future<void> initialize() async {
@@ -74,6 +76,15 @@ class MCPBridgeService {
 
       // Wait for response
       final response = await completer.future;
+      
+      // Update health monitoring for used servers after successful processing
+      if (_healthService != null && response['success'] == true) {
+        for (final serverId in enabledServerIds) {
+          _healthService!.forceHealthCheck(serverId).catchError((e) {
+            print('Health check failed for $serverId: $e');
+          });
+        }
+      }
       
       return MCPResponse.fromJson(response);
     } catch (e) {
@@ -356,12 +367,14 @@ class MCPResponse {
   final List<String> usedServers;
   final Map<String, dynamic> metadata;
   final int? latency;
+  final bool success;
 
   const MCPResponse({
     required this.response,
     required this.usedServers,
     required this.metadata,
     this.latency,
+    this.success = true,
   });
 
   factory MCPResponse.fromJson(Map<String, dynamic> json) {
@@ -370,6 +383,7 @@ class MCPResponse {
       usedServers: List<String>.from(json['usedServers'] as List),
       metadata: Map<String, dynamic>.from(json['metadata'] as Map),
       latency: json['latency'] as int?,
+      success: json['success'] as bool? ?? true,
     );
   }
 }
@@ -455,7 +469,8 @@ class MCPBridgeException implements Exception {
 
 final mcpBridgeServiceProvider = Provider<MCPBridgeService>((ref) {
   final settingsService = ref.read(mcpSettingsServiceProvider);
-  final bridge = MCPBridgeService(settingsService);
+  final healthService = ref.read(integrationHealthMonitoringServiceProvider);
+  final bridge = MCPBridgeService(settingsService, healthService);
   
   // Initialize on first access
   bridge.initialize().catchError((error) {

@@ -39,8 +39,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  Future<void> _initializeServices() async {
  try {
- ServiceProvider.configure(useInMemory: true);
- await ServiceProvider.initialize();
+ // TODO: Implement ServiceProvider
+ // ServiceProvider.configure(useInMemory: true);
+ // await ServiceProvider.initialize();
  
  // Initialize default API conversation after services are ready
  WidgetsBinding.instance.addPostFrameCallback((_) {

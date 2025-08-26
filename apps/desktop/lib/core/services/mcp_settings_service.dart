@@ -496,6 +496,8 @@ class MCPServerStatus {
   final ConnectionStatus status;
   final String? message;
   final Map<String, dynamic>? metadata;
+  final int? latencyMs;
+  final String? errorMessage;
 
   const MCPServerStatus({
     required this.serverId,
@@ -504,6 +506,8 @@ class MCPServerStatus {
     required this.status,
     this.message,
     this.metadata,
+    this.latencyMs,
+    this.errorMessage,
   });
 }
 
