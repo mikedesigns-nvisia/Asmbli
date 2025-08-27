@@ -4,15 +4,21 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/integration_service.dart';
 import '../../../../core/services/integration_dependency_service.dart';
 import '../../../../core/services/integration_marketplace_service.dart';
-import '../../../../core/services/integration_installation_service.dart' as installation;
+// integration_installation_service is available via provider when needed
 import '../../../../core/services/integration_health_monitoring_service.dart';
+import '../../../../core/services/detection_integration_mapping.dart';
 import '../../../../core/design_system/components/integration_status_indicators.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import 'integration_dependency_dialog.dart';
 import '../widgets/mcp_server_dialog.dart';
 
 class IntegrationMarketplace extends ConsumerStatefulWidget {
-  const IntegrationMarketplace({super.key});
+  final Map<String, bool>? detectedTools;
+
+  const IntegrationMarketplace({
+    super.key,
+    this.detectedTools,
+  });
 
   @override
   ConsumerState<IntegrationMarketplace> createState() => _IntegrationMarketplaceState();
@@ -20,6 +26,7 @@ class IntegrationMarketplace extends ConsumerStatefulWidget {
 
 class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace> {
   String _selectedCategory = 'All';
+  bool _showDetectedOnly = false;
   
   @override
   Widget build(BuildContext context) {
@@ -36,6 +43,10 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (widget.detectedTools != null && widget.detectedTools!.isNotEmpty) ...[
+            _buildDetectedToolsBanner(widget.detectedTools!),
+            SizedBox(height: SpacingTokens.lg),
+          ],
           _buildHeader(),
           SizedBox(height: SpacingTokens.lg),
           
@@ -90,6 +101,138 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildDetectedToolsBanner(Map<String, bool> detected) {
+    final found = detected.entries.where((e) => e.value).map((e) => e.key).toList();
+    if (found.isEmpty) return SizedBox();
+
+    return AsmblCard(
+      padding: EdgeInsets.all(SpacingTokens.lg),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'We found ${found.length} tools on your system',
+                  style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+                ),
+                SizedBox(height: SpacingTokens.xs),
+                Text(
+                  'Quick actions: configure detected tools or browse other integrations',
+                  style: TextStyles.bodyMedium.copyWith(color: SemanticColors.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: SpacingTokens.lg),
+          Column(
+            children: [
+              Row(
+                children: [
+                  AsmblButton.secondary(
+                    text: _showDetectedOnly ? 'Show All' : 'Configure Detected',
+                    onPressed: () {
+                      setState(() {
+                        _selectedCategory = 'All';
+                        _showDetectedOnly = !_showDetectedOnly;
+                      });
+                    },
+                  ),
+                  SizedBox(width: SpacingTokens.sm),
+                  AsmblButton.primary(
+                    text: 'Install Selected',
+                    onPressed: () => _showConfigureDetectedDialog(detected),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showConfigureDetectedDialog(Map<String, bool> detected) {
+    final found = detected.entries.where((e) => e.value).map((e) => e.key).toList();
+    showDialog(
+      context: context,
+      builder: (context) {
+        final selections = <String, bool>{for (var k in found) k: true};
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Configure Detected Tools'),
+              content: Container(
+                width: 520,
+                height: 360,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        children: found.map((name) {
+                          return CheckboxListTile(
+                            value: selections[name],
+                            title: Text(name),
+                            onChanged: (v) => setState(() => selections[name] = v ?? false),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    SizedBox(height: SpacingTokens.sm),
+                    Text(
+                      'Selected items will be auto-configured where we have an integration match.',
+                      style: TextStyles.bodySmall.copyWith(color: SemanticColors.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Cancel'),
+                ),
+                AsmblButton.primary(
+                  text: 'Install Selected',
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    final marketplaceService = ref.read(integrationMarketplaceServiceProvider);
+                    final results = <String, bool>{};
+                    for (final entry in selections.entries.where((e) => e.value)) {
+                      final name = entry.key;
+                      String? integrationId = mapDetectionToIntegrationId(name);
+                      if (integrationId == null) {
+                        // fallback to search
+                        final matches = IntegrationRegistry.search(name);
+                        if (matches.isNotEmpty) integrationId = matches.firstWhere((d) => d.isAvailable, orElse: () => matches.first).id;
+                      }
+
+                      if (integrationId != null) {
+                        final res = await marketplaceService.installIntegration(integrationId, autoDetect: true);
+                        results[name] = res.success;
+                      } else {
+                        results[name] = false;
+                      }
+                    }
+
+                    final successCount = results.values.where((v) => v).length;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Installed $successCount of ${results.length} selected integrations'),
+                        backgroundColor: successCount > 0 ? SemanticColors.success : SemanticColors.error,
+                      ),
+                    );
+                    setState(() {});
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -336,6 +479,20 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
   }
   
   Widget _buildIntegrationCard(IntegrationStatus status) {
+    // Determine if this integration matches any detected tool
+    bool matchedByDetection = false;
+    String? matchedToolName;
+    if (widget.detectedTools != null && widget.detectedTools!.isNotEmpty) {
+      for (final entry in widget.detectedTools!.entries) {
+        if (!entry.value) continue;
+        final mapped = mapDetectionToIntegrationId(entry.key);
+        if (mapped != null && mapped == status.definition.id) {
+          matchedByDetection = true;
+          matchedToolName = entry.key;
+          break;
+        }
+      }
+    }
     return AsmblCard(
       padding: EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -384,6 +541,11 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
             runSpacing: 4,
             children: [
               IntegrationStatusIndicators.difficultyBadge(status.definition.difficulty, showIcon: false),
+              if (matchedByDetection)
+                Chip(
+                  label: Text('Detected: ${matchedToolName ?? ''}'),
+                  backgroundColor: SemanticColors.primary.withValues(alpha: 0.12),
+                ),
               if (!status.definition.isAvailable)
                 IntegrationStatusIndicators.availabilityIndicator(status.definition),
               if (status.definition.prerequisites.isNotEmpty)
@@ -393,14 +555,24 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           SizedBox(height: SpacingTokens.sm),
           
           // Action button
-          SizedBox(
-            width: double.infinity,
-            child: AsmblButton.primary(
-              text: _getActionText(status),
-              onPressed: status.definition.isAvailable 
-                  ? () => _handleAction(status)
-                  : null,
+          Row(
+            children: [
+              Expanded(
+                child: AsmblButton.primary(
+                  text: _getActionText(status),
+                  onPressed: status.definition.isAvailable 
+                      ? () => _handleAction(status)
+                      : null,
+                ),
               ),
+              if (matchedByDetection) ...[
+                SizedBox(width: SpacingTokens.sm),
+                TextButton(
+                  onPressed: status.isConfigured ? () => _handleConfigure(status) : () => _handleInstall(status),
+                  child: Text('Configure'),
+                ),
+              ],
+            ],
           ),
         ],
       ),
@@ -467,6 +639,15 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         return false;
       }
       
+      // If showing detected only, filter by names passed from the wizard
+      if (_showDetectedOnly && widget.detectedTools != null && widget.detectedTools!.isNotEmpty) {
+        final detectedNames = widget.detectedTools!.entries.where((e) => e.value).map((e) => e.key).toList();
+        // match if integration name appears in detected name list (case-insensitive)
+        final name = status.definition.name.toLowerCase();
+        final matches = detectedNames.any((d) => d.toLowerCase().contains(name) || name.contains(d.toLowerCase()));
+        return matches;
+      }
+
       return true;
     }).toList();
     
@@ -497,9 +678,8 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
   }
   
   void _handleInstall(IntegrationStatus status) async {
-    final dependencyService = ref.read(integrationDependencyServiceProvider);
-    final installationService = ref.read(installation.integrationInstallationServiceProvider);
-    final marketplaceService = ref.read(integrationMarketplaceServiceProvider);
+  final dependencyService = ref.read(integrationDependencyServiceProvider);
+  final marketplaceService = ref.read(integrationMarketplaceServiceProvider);
     
     final depCheck = dependencyService.checkDependencies(status.definition.id);
     

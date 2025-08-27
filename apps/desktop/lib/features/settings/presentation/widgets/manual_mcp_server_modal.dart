@@ -430,7 +430,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
 
   Widget _buildEnvVarInput(String envVar, {required bool required}) {
     final colors = ThemeColors(context);
-    final description = MCPServerConfigurationService._getEnvVarDescription(envVar);
+    final description = _getEnvVarDescription(envVar);
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,6 +511,42 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
     
     widget.onConfigurationComplete(config);
     Navigator.of(context).pop();
+  }
+
+  /// Get human-readable description for environment variables
+  String _getEnvVarDescription(String envVar) {
+    switch (envVar) {
+      case 'GITHUB_PERSONAL_ACCESS_TOKEN':
+        return 'GitHub Personal Access Token with repo permissions';
+      case 'SLACK_BOT_TOKEN':
+        return 'Slack Bot User OAuth Token (starts with xoxb-)';
+      case 'NOTION_API_KEY':
+        return 'Notion Integration API Key';
+      case 'NOTION_DATABASE_ID':
+        return 'ID of the Notion database to access';
+      case 'LINEAR_API_KEY':
+        return 'Linear API key from account settings';
+      case 'POSTGRES_CONNECTION_STRING':
+        return 'PostgreSQL connection string (postgresql://user:pass@host:port/db)';
+      case 'BRAVE_API_KEY':
+        return 'Brave Search API key';
+      case 'GOOGLE_DRIVE_CREDENTIALS_JSON':
+        return 'Path to Google Drive API credentials JSON file';
+      case 'JIRA_URL':
+        return 'Your Jira instance URL (e.g., https://yourcompany.atlassian.net)';
+      case 'JIRA_EMAIL':
+        return 'Your Jira account email';
+      case 'JIRA_API_TOKEN':
+        return 'Jira API token from account settings';
+      case 'DISCORD_BOT_TOKEN':
+        return 'Discord bot token from Developer Portal';
+      case 'AIRTABLE_API_KEY':
+        return 'Airtable API key from account settings';
+      case 'AIRTABLE_BASE_ID':
+        return 'ID of the Airtable base to access';
+      default:
+        return 'Required for authentication';
+    }
   }
 }
 

@@ -163,7 +163,7 @@ class _WizardScreenState extends State<WizardScreen> {
  ),
  SizedBox(height: 8),
  Text(
- 'Define your agent's basic information and primary purpose',
+				"Define your agent's basic information and primary purpose",
  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
  color: Colors.grey.shade600,
  ),

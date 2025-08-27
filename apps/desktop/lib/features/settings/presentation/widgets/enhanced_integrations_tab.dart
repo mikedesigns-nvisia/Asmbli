@@ -304,7 +304,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
           SizedBox(height: SpacingTokens.iconSpacing),
           Text(
             value,
-            style: TextStyles.displaySmall.copyWith(color: colors.onSurface),
+            style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
           ),
           SizedBox(height: SpacingTokens.xs_precise),
           Text(
@@ -665,7 +665,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
       children: [
         Text(
           value,
-          style: TextStyles.displaySmall.copyWith(color: colors.primary),
+          style: TextStyles.pageTitle.copyWith(color: colors.primary),
         ),
         Text(
           label,
@@ -675,7 +675,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
     );
   }
 
-  Widget _buildDetectedIntegrationCard(IntegrationConfig integration, ThemeColors colors) {
+  Widget _buildDetectedIntegrationCard(DetectedIntegration integration, ThemeColors colors) {
     final availableServers = MCPServerConfigurationService.getServersForIntegration(integration.id);
     
     return AsmblCard(

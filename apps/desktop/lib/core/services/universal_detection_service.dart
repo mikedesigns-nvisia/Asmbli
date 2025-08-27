@@ -65,12 +65,15 @@ class UniversalDetectionService {
         results['browsers'] = IntegrationDetection(
           category: 'Browsers',
           found: browsers.isNotEmpty,
-          integrations: browsers.map((b) => IntegrationInstance(
+          integrations: browsers.map((b) => DetectedIntegration(
+            id: b.type.name,
             name: b.name,
-            status: IntegrationStatus.ready,
-            path: b.executablePath,
-            confidence: 90,
-            metadata: {'profiles': b.profiles.length},
+            status: DetectionStatus.ready,
+            configuration: {
+              'path': b.executablePath,
+              'profiles': b.profiles.length,
+            },
+            message: 'Browser detected and ready to use',
           )).toList(),
         );
         break;
@@ -153,7 +156,7 @@ class UniversalDetectionService {
       results['browsers'] = IntegrationDetection(
         category: 'Browsers',
         found: browsers.isNotEmpty,
-        integrations: browsers.map((b) => IntegrationConfig(
+        integrations: browsers.map((b) => DetectedIntegration(
           id: b.type.name,
           name: b.name,
           status: DetectionStatus.ready,
@@ -187,12 +190,12 @@ class UniversalDetectionService {
   }
   
   /// Detect specific integration by ID
-  Future<IntegrationConfig?> detectIntegration(String integrationId) async {
+  Future<DetectedIntegration?> detectIntegration(String integrationId) async {
     switch (integrationId) {
       // Development
       case 'vscode':
         final result = await _devTools.detectVSCode();
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'vscode',
           name: 'Visual Studio Code',
           status: result.found ? DetectionStatus.ready : DetectionStatus.notFound,
@@ -203,7 +206,7 @@ class UniversalDetectionService {
       case 'github':
         final git = await _devTools.detectGit();
         final gh = await _devTools.detectGitHubCLI();
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'github',
           name: 'GitHub',
           status: git.found ? 
@@ -284,12 +287,12 @@ class UniversalDetectionService {
   // DEVELOPMENT TOOLS DETECTION
   
   Future<IntegrationDetection> _detectDevelopmentTools() async {
-    final integrations = <IntegrationConfig>[];
+    final integrations = <DetectedIntegration>[];
     
     // VS Code
     final vscode = await _devTools.detectVSCode();
     if (vscode.found) {
-      integrations.add(IntegrationConfig(
+      integrations.add(DetectedIntegration(
         id: 'vscode',
         name: 'Visual Studio Code',
         status: DetectionStatus.ready,
@@ -301,7 +304,7 @@ class UniversalDetectionService {
     // Git
     final git = await _devTools.detectGit();
     if (git.found) {
-      integrations.add(IntegrationConfig(
+      integrations.add(DetectedIntegration(
         id: 'git',
         name: 'Git',
         status: DetectionStatus.ready,
@@ -335,7 +338,7 @@ class UniversalDetectionService {
   // DATABASE DETECTION
   
   Future<IntegrationDetection> _detectDatabases() async {
-    final integrations = <IntegrationConfig>[];
+    final integrations = <DetectedIntegration>[];
     
     final detectors = [
       _detectPostgreSQL(),
@@ -346,7 +349,7 @@ class UniversalDetectionService {
     ];
     
     final results = await Future.wait(detectors);
-    integrations.addAll(results.whereType<IntegrationConfig>());
+    integrations.addAll(results.whereType<DetectedIntegration>());
     
     return IntegrationDetection(
       category: 'Databases',
@@ -355,7 +358,7 @@ class UniversalDetectionService {
     );
   }
   
-  Future<IntegrationConfig?> _detectPostgreSQL() async {
+  Future<DetectedIntegration?> _detectPostgreSQL() async {
     final paths = Platform.isWindows
       ? [
           'C:\\Program Files\\PostgreSQL\\15\\bin\\psql.exe',
@@ -376,7 +379,7 @@ class UniversalDetectionService {
           final result = await Process.run(psqlPath, ['--version']);
           final version = result.stdout.toString().trim();
           
-          return IntegrationConfig(
+          return DetectedIntegration(
             id: 'postgresql',
             name: 'PostgreSQL',
             status: DetectionStatus.needsAuth,
@@ -397,7 +400,7 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectMySQL() async {
+  Future<DetectedIntegration?> _detectMySQL() async {
     final paths = Platform.isWindows
       ? [
           'C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe',
@@ -411,7 +414,7 @@ class UniversalDetectionService {
           final result = await Process.run(mysqlPath, ['--version']);
           final version = result.stdout.toString().trim();
           
-          return IntegrationConfig(
+          return DetectedIntegration(
             id: 'mysql',
             name: 'MySQL',
             status: DetectionStatus.needsAuth,
@@ -430,7 +433,7 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectSQLite() async {
+  Future<DetectedIntegration?> _detectSQLite() async {
     final paths = Platform.isWindows
       ? ['sqlite3.exe', 'C:\\Tools\\sqlite\\sqlite3.exe']
       : ['/usr/bin/sqlite3', '/usr/local/bin/sqlite3'];
@@ -439,7 +442,7 @@ class UniversalDetectionService {
       try {
         final result = await Process.run(sqlitePath, ['--version']);
         if (result.exitCode == 0) {
-          return IntegrationConfig(
+          return DetectedIntegration(
             id: 'sqlite',
             name: 'SQLite',
             status: DetectionStatus.ready,
@@ -457,14 +460,14 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectMongoDB() async {
+  Future<DetectedIntegration?> _detectMongoDB() async {
     final paths = Platform.isWindows
       ? ['C:\\Program Files\\MongoDB\\Server\\6.0\\bin\\mongo.exe']
       : ['/usr/bin/mongo', '/usr/local/bin/mongo'];
     
     for (final mongoPath in paths) {
       if (await File(mongoPath).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'mongodb',
           name: 'MongoDB',
           status: DetectionStatus.needsAuth,
@@ -479,11 +482,11 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectRedis() async {
+  Future<DetectedIntegration?> _detectRedis() async {
     try {
       final result = await Process.run(Platform.isWindows ? 'where' : 'which', ['redis-cli']);
       if (result.exitCode == 0) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'redis',
           name: 'Redis',
           status: DetectionStatus.needsAuth,
@@ -503,7 +506,7 @@ class UniversalDetectionService {
   // CLOUD SERVICES DETECTION
   
   Future<IntegrationDetection> _detectCloudServices() async {
-    final integrations = <IntegrationConfig>[];
+    final integrations = <DetectedIntegration>[];
     
     // AWS CLI
     final aws = await _detectAWS();
@@ -532,7 +535,7 @@ class UniversalDetectionService {
     );
   }
   
-  Future<IntegrationConfig?> _detectAWS() async {
+  Future<DetectedIntegration?> _detectAWS() async {
     try {
       final result = await Process.run('aws', ['--version']);
       if (result.exitCode == 0) {
@@ -543,7 +546,7 @@ class UniversalDetectionService {
         
         final hasCredentials = await File(credsFile).exists();
         
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'aws',
           name: 'AWS CLI',
           status: hasCredentials ? DetectionStatus.ready : DetectionStatus.needsAuth,
@@ -563,7 +566,7 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectGCP() async {
+  Future<DetectedIntegration?> _detectGCP() async {
     try {
       final result = await Process.run('gcloud', ['--version']);
       if (result.exitCode == 0) {
@@ -571,7 +574,7 @@ class UniversalDetectionService {
         final authResult = await Process.run('gcloud', ['auth', 'list']);
         final isAuthenticated = authResult.stdout.toString().contains('*');
         
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'gcp',
           name: 'Google Cloud SDK',
           status: isAuthenticated ? DetectionStatus.ready : DetectionStatus.needsAuth,
@@ -591,7 +594,7 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectAzure() async {
+  Future<DetectedIntegration?> _detectAzure() async {
     try {
       final result = await Process.run('az', ['--version']);
       if (result.exitCode == 0) {
@@ -599,7 +602,7 @@ class UniversalDetectionService {
         final loginResult = await Process.run('az', ['account', 'show']);
         final isLoggedIn = loginResult.exitCode == 0;
         
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'azure',
           name: 'Azure CLI',
           status: isLoggedIn ? DetectionStatus.ready : DetectionStatus.needsAuth,
@@ -617,11 +620,11 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectVercel() async {
+  Future<DetectedIntegration?> _detectVercel() async {
     try {
       final result = await Process.run('vercel', ['--version']);
       if (result.exitCode == 0) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'vercel',
           name: 'Vercel',
           status: DetectionStatus.needsAuth,
@@ -638,11 +641,11 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectNetlify() async {
+  Future<DetectedIntegration?> _detectNetlify() async {
     try {
       final result = await Process.run('netlify', ['--version']);
       if (result.exitCode == 0) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'netlify',
           name: 'Netlify',
           status: DetectionStatus.needsAuth,
@@ -662,7 +665,7 @@ class UniversalDetectionService {
   // COMMUNICATION TOOLS DETECTION
   
   Future<IntegrationDetection> _detectCommunicationTools() async {
-    final integrations = <IntegrationConfig>[];
+    final integrations = <DetectedIntegration>[];
     
     final slack = await _detectSlack();
     if (slack != null) integrations.add(slack);
@@ -680,7 +683,7 @@ class UniversalDetectionService {
     );
   }
   
-  Future<IntegrationConfig?> _detectSlack() async {
+  Future<DetectedIntegration?> _detectSlack() async {
     final slackPaths = Platform.isWindows
       ? [
           '${Platform.environment['LOCALAPPDATA']}\\slack\\slack.exe',
@@ -692,7 +695,7 @@ class UniversalDetectionService {
     
     for (final slackPath in slackPaths) {
       if (await File(slackPath).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'slack',
           name: 'Slack',
           status: DetectionStatus.needsAuth,
@@ -704,7 +707,7 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectDiscord() async {
+  Future<DetectedIntegration?> _detectDiscord() async {
     final discordPaths = Platform.isWindows
       ? [
           '${Platform.environment['LOCALAPPDATA']}\\Discord\\app-*\\Discord.exe',
@@ -721,7 +724,7 @@ class UniversalDetectionService {
         if (await dir.exists()) {
           await for (final entity in dir.list()) {
             if (entity is File && entity.path.endsWith('Discord.exe')) {
-              return IntegrationConfig(
+              return DetectedIntegration(
                 id: 'discord',
                 name: 'Discord',
                 status: DetectionStatus.needsAuth,
@@ -732,7 +735,7 @@ class UniversalDetectionService {
           }
         }
       } else if (await File(pattern).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'discord',
           name: 'Discord',
           status: DetectionStatus.needsAuth,
@@ -744,11 +747,11 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectTeams() async {
+  Future<DetectedIntegration?> _detectTeams() async {
     if (Platform.isWindows) {
       final teamsPath = '${Platform.environment['LOCALAPPDATA']}\\Microsoft\\Teams\\current\\Teams.exe';
       if (await File(teamsPath).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'teams',
           name: 'Microsoft Teams',
           status: DetectionStatus.needsAuth,
@@ -763,7 +766,7 @@ class UniversalDetectionService {
   // DESIGN TOOLS DETECTION
   
   Future<IntegrationDetection> _detectDesignTools() async {
-    final integrations = <IntegrationConfig>[];
+    final integrations = <DetectedIntegration>[];
     
     final figma = await _detectFigma();
     if (figma != null) integrations.add(figma);
@@ -781,7 +784,7 @@ class UniversalDetectionService {
     );
   }
   
-  Future<IntegrationConfig?> _detectFigma() async {
+  Future<DetectedIntegration?> _detectFigma() async {
     // First check for Figma MCP server at localhost:3845
     bool mcpServerRunning = false;
     try {
@@ -814,7 +817,7 @@ class UniversalDetectionService {
     
     // Determine status based on what we found
     if (mcpServerRunning && desktopInstalled) {
-      return IntegrationConfig(
+      return DetectedIntegration(
         id: 'figma',
         name: 'Figma MCP Server',
         status: DetectionStatus.ready,
@@ -827,7 +830,7 @@ class UniversalDetectionService {
         message: 'Figma MCP server is running and ready to use!',
       );
     } else if (desktopInstalled && !mcpServerRunning) {
-      return IntegrationConfig(
+      return DetectedIntegration(
         id: 'figma',
         name: 'Figma Desktop',
         status: DetectionStatus.needsStart,
@@ -839,7 +842,7 @@ class UniversalDetectionService {
         setupCommand: 'Open Figma → Preferences → Enable "Dev Mode MCP Server"',
       );
     } else if (mcpServerRunning && !desktopInstalled) {
-      return IntegrationConfig(
+      return DetectedIntegration(
         id: 'figma',
         name: 'Figma MCP Server',
         status: DetectionStatus.ready,
@@ -854,7 +857,7 @@ class UniversalDetectionService {
     }
     
     // Fallback: API-based integration
-    return IntegrationConfig(
+    return DetectedIntegration(
       id: 'figma',
       name: 'Figma (API)',
       status: DetectionStatus.needsAuth,
@@ -863,11 +866,11 @@ class UniversalDetectionService {
     );
   }
   
-  Future<IntegrationConfig?> _detectSketch() async {
+  Future<DetectedIntegration?> _detectSketch() async {
     if (Platform.isMacOS) {
       const sketchPath = '/Applications/Sketch.app/Contents/MacOS/Sketch';
       if (await File(sketchPath).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'sketch',
           name: 'Sketch',
           status: DetectionStatus.ready,
@@ -879,7 +882,7 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectAdobeCC() async {
+  Future<DetectedIntegration?> _detectAdobeCC() async {
     final adobePaths = Platform.isWindows
       ? ['C:\\Program Files\\Adobe\\']
       : Platform.isMacOS
@@ -889,7 +892,7 @@ class UniversalDetectionService {
     for (final adobePath in adobePaths) {
       final dir = Directory(adobePath);
       if (await dir.exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'adobe',
           name: 'Adobe Creative Cloud',
           status: DetectionStatus.ready,
@@ -904,7 +907,7 @@ class UniversalDetectionService {
   // PRODUCTIVITY TOOLS DETECTION
   
   Future<IntegrationDetection> _detectProductivityTools() async {
-    final integrations = <IntegrationConfig>[];
+    final integrations = <DetectedIntegration>[];
     
     final notion = await _detectNotion();
     if (notion != null) integrations.add(notion);
@@ -925,7 +928,7 @@ class UniversalDetectionService {
     );
   }
   
-  Future<IntegrationConfig?> _detectNotion() async {
+  Future<DetectedIntegration?> _detectNotion() async {
     final notionPaths = Platform.isWindows
       ? ['${Platform.environment['LOCALAPPDATA']}\\Programs\\Notion\\Notion.exe']
       : Platform.isMacOS
@@ -934,7 +937,7 @@ class UniversalDetectionService {
     
     for (final notionPath in notionPaths) {
       if (await File(notionPath).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'notion',
           name: 'Notion',
           status: DetectionStatus.needsAuth,
@@ -945,7 +948,7 @@ class UniversalDetectionService {
     }
     
     // Notion primarily works via API
-    return IntegrationConfig(
+    return DetectedIntegration(
       id: 'notion',
       name: 'Notion (API)',
       status: DetectionStatus.needsAuth,
@@ -954,7 +957,7 @@ class UniversalDetectionService {
     );
   }
   
-  Future<IntegrationConfig?> _detectObsidian() async {
+  Future<DetectedIntegration?> _detectObsidian() async {
     final obsidianPaths = Platform.isWindows
       ? [
           '${Platform.environment['LOCALAPPDATA']}\\Obsidian\\Obsidian.exe',
@@ -977,7 +980,7 @@ class UniversalDetectionService {
           
           final vaults = await _findObsidianVaults(vaultsPath);
           
-          return IntegrationConfig(
+          return DetectedIntegration(
             id: 'obsidian',
             name: 'Obsidian',
             status: DetectionStatus.ready,
@@ -991,7 +994,7 @@ class UniversalDetectionService {
       } else if (await Directory(obsidianPath).exists()) {
         final vaults = await _findObsidianVaults(obsidianPath);
         if (vaults.isNotEmpty) {
-          return IntegrationConfig(
+          return DetectedIntegration(
             id: 'obsidian',
             name: 'Obsidian',
             status: DetectionStatus.ready,
@@ -1029,12 +1032,12 @@ class UniversalDetectionService {
     return vaults;
   }
   
-  Future<IntegrationConfig?> _detectJira() async {
+  Future<DetectedIntegration?> _detectJira() async {
     // Jira is web-based, check for CLI tool
     try {
       final result = await Process.run('jira', ['version']);
       if (result.exitCode == 0) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'jira',
           name: 'Jira CLI',
           status: DetectionStatus.needsAuth,
@@ -1050,7 +1053,7 @@ class UniversalDetectionService {
     }
     
     // Return API-based config
-    return IntegrationConfig(
+    return DetectedIntegration(
       id: 'jira',
       name: 'Jira (API)',
       status: DetectionStatus.needsAuth,
@@ -1059,9 +1062,9 @@ class UniversalDetectionService {
     );
   }
   
-  Future<IntegrationConfig?> _detectLinear() async {
+  Future<DetectedIntegration?> _detectLinear() async {
     // Linear is primarily API-based
-    return IntegrationConfig(
+    return DetectedIntegration(
       id: 'linear',
       name: 'Linear',
       status: DetectionStatus.needsAuth,
@@ -1073,12 +1076,12 @@ class UniversalDetectionService {
   // AI/ML TOOLS DETECTION
   
   Future<IntegrationDetection> _detectAITools() async {
-    final integrations = <IntegrationConfig>[];
+    final integrations = <DetectedIntegration>[];
     
     // OpenAI
     final openaiKey = Platform.environment['OPENAI_API_KEY'];
     if (openaiKey != null && openaiKey.isNotEmpty) {
-      integrations.add(IntegrationConfig(
+      integrations.add(DetectedIntegration(
         id: 'openai',
         name: 'OpenAI',
         status: DetectionStatus.ready,
@@ -1090,7 +1093,7 @@ class UniversalDetectionService {
     // Anthropic
     final anthropicKey = Platform.environment['ANTHROPIC_API_KEY'];
     if (anthropicKey != null && anthropicKey.isNotEmpty) {
-      integrations.add(IntegrationConfig(
+      integrations.add(DetectedIntegration(
         id: 'anthropic',
         name: 'Anthropic',
         status: DetectionStatus.ready,
@@ -1102,7 +1105,7 @@ class UniversalDetectionService {
     // Hugging Face
     final hfToken = Platform.environment['HF_TOKEN'] ?? Platform.environment['HUGGING_FACE_HUB_TOKEN'];
     if (hfToken != null && hfToken.isNotEmpty) {
-      integrations.add(IntegrationConfig(
+      integrations.add(DetectedIntegration(
         id: 'huggingface',
         name: 'Hugging Face',
         status: DetectionStatus.ready,
@@ -1115,7 +1118,7 @@ class UniversalDetectionService {
     try {
       final result = await Process.run('ollama', ['version']);
       if (result.exitCode == 0) {
-        integrations.add(IntegrationConfig(
+        integrations.add(DetectedIntegration(
           id: 'ollama',
           name: 'Ollama',
           status: DetectionStatus.ready,
@@ -1140,7 +1143,7 @@ class UniversalDetectionService {
   // FILE STORAGE DETECTION
   
   Future<IntegrationDetection> _detectFileStorage() async {
-    final integrations = <IntegrationConfig>[];
+    final integrations = <DetectedIntegration>[];
     
     final dropbox = await _detectDropbox();
     if (dropbox != null) integrations.add(dropbox);
@@ -1158,7 +1161,7 @@ class UniversalDetectionService {
     );
   }
   
-  Future<IntegrationConfig?> _detectDropbox() async {
+  Future<DetectedIntegration?> _detectDropbox() async {
     final dropboxPaths = Platform.isWindows
       ? [
           '${Platform.environment['LOCALAPPDATA']}\\Dropbox',
@@ -1171,7 +1174,7 @@ class UniversalDetectionService {
     
     for (final dropboxPath in dropboxPaths) {
       if (await Directory(dropboxPath).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'dropbox',
           name: 'Dropbox',
           status: DetectionStatus.ready,
@@ -1183,11 +1186,11 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectGoogleDrive() async {
+  Future<DetectedIntegration?> _detectGoogleDrive() async {
     if (Platform.isWindows) {
       final drivePath = '${Platform.environment['USERPROFILE']}\\Google Drive';
       if (await Directory(drivePath).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'googledrive',
           name: 'Google Drive',
           status: DetectionStatus.ready,
@@ -1198,7 +1201,7 @@ class UniversalDetectionService {
     } else if (Platform.isMacOS) {
       final drivePath = '${Platform.environment['HOME']}/Google Drive';
       if (await Directory(drivePath).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'googledrive',
           name: 'Google Drive',
           status: DetectionStatus.ready,
@@ -1210,11 +1213,11 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectOneDrive() async {
+  Future<DetectedIntegration?> _detectOneDrive() async {
     if (Platform.isWindows) {
       final oneDrivePath = '${Platform.environment['USERPROFILE']}\\OneDrive';
       if (await Directory(oneDrivePath).exists()) {
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'onedrive',
           name: 'OneDrive',
           status: DetectionStatus.ready,
@@ -1228,7 +1231,7 @@ class UniversalDetectionService {
   
   // ADDITIONAL DEVELOPMENT TOOLS
   
-  Future<IntegrationConfig?> _detectDocker() async {
+  Future<DetectedIntegration?> _detectDocker() async {
     try {
       final result = await Process.run('docker', ['--version']);
       if (result.exitCode == 0) {
@@ -1236,7 +1239,7 @@ class UniversalDetectionService {
         final psResult = await Process.run('docker', ['ps']);
         final isRunning = psResult.exitCode == 0;
         
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'docker',
           name: 'Docker',
           status: isRunning ? DetectionStatus.ready : DetectionStatus.needsStart,
@@ -1254,13 +1257,13 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectNodeJS() async {
+  Future<DetectedIntegration?> _detectNodeJS() async {
     try {
       final result = await Process.run('node', ['--version']);
       if (result.exitCode == 0) {
         final npmResult = await Process.run('npm', ['--version']);
         
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'nodejs',
           name: 'Node.js',
           status: DetectionStatus.ready,
@@ -1277,7 +1280,7 @@ class UniversalDetectionService {
     return null;
   }
   
-  Future<IntegrationConfig?> _detectPython() async {
+  Future<DetectedIntegration?> _detectPython() async {
     try {
       // Try python3 first, then python
       ProcessResult result;
@@ -1296,7 +1299,7 @@ class UniversalDetectionService {
           pipResult = await Process.run('pip', ['--version']);
         }
         
-        return IntegrationConfig(
+        return DetectedIntegration(
           id: 'python',
           name: 'Python',
           status: DetectionStatus.ready,
@@ -1343,7 +1346,7 @@ class UniversalDetectionResult {
 class IntegrationDetection {
   final String category;
   final bool found;
-  final List<IntegrationConfig> integrations;
+  final List<DetectedIntegration> integrations;
   
   const IntegrationDetection({
     required this.category,
@@ -1352,8 +1355,8 @@ class IntegrationDetection {
   });
 }
 
-/// Individual integration configuration
-class IntegrationConfig {
+/// Individual integration configuration (renamed to avoid conflict)
+class DetectedIntegration {
   final String id;
   final String name;
   final DetectionStatus status;
@@ -1361,7 +1364,7 @@ class IntegrationConfig {
   final String message;
   final String? setupCommand;
   
-  const IntegrationConfig({
+  const DetectedIntegration({
     required this.id,
     required this.name,
     required this.status,

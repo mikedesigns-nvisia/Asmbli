@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:agent_engine_core/models/conversation.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
 
@@ -327,13 +326,11 @@ class MCPSettingsService {
   Future<void> _loadMCPConfigs() async {
     try {
       final data = _storageService.getAllHiveData('mcp_servers');
-      if (data != null) {
-        final Map<String, dynamic> configs = Map<String, dynamic>.from(data);
-        _globalMCPConfigs.clear();
-        configs.forEach((key, value) {
-          _globalMCPConfigs[key] = MCPServerConfig.fromJson(value);
-        });
-      }
+      final Map<String, dynamic> configs = Map<String, dynamic>.from(data);
+      _globalMCPConfigs.clear();
+      configs.forEach((key, value) {
+        _globalMCPConfigs[key] = MCPServerConfig.fromJson(value);
+      });
     } catch (e) {
       // Handle loading error, use defaults
     }
@@ -351,11 +348,9 @@ class MCPSettingsService {
 
   Future<void> _loadAgentApiMappings() async {
     try {
-      final data = _storageService.getAllHiveData('settings');
-      if (data != null) {
-        _agentApiMappings.clear();
-        _agentApiMappings.addAll(Map<String, String>.from(data));
-      }
+  final data = _storageService.getAllHiveData('settings');
+  _agentApiMappings.clear();
+  _agentApiMappings.addAll(Map<String, String>.from(data));
     } catch (e) {
       // Handle loading error, use defaults
     }
@@ -367,8 +362,7 @@ class MCPSettingsService {
 
   Future<void> _loadGlobalContext() async {
     try {
-      final contextData = _storageService.getHiveData('settings', 'global_context_documents');
-      final data = contextData;
+      final data = _storageService.getHiveData('settings', 'global_context_documents');
       if (data != null) {
         _globalContextDocuments.clear();
         _globalContextDocuments.addAll(List<String>.from(data));
@@ -420,6 +414,8 @@ class MCPServerConfig {
   final bool enabled;
   final DateTime createdAt;
   final DateTime? lastUpdated;
+  final String? transport; // 'stdio' or 'sse'
+  final String? url; // For SSE transport
 
   const MCPServerConfig({
     required this.id,
@@ -431,6 +427,8 @@ class MCPServerConfig {
     this.enabled = true,
     required this.createdAt,
     this.lastUpdated,
+    this.transport,
+    this.url,
   });
 
   factory MCPServerConfig.fromJson(Map<String, dynamic> json) {
@@ -446,6 +444,8 @@ class MCPServerConfig {
       lastUpdated: json['lastUpdated'] != null 
         ? DateTime.parse(json['lastUpdated'] as String) 
         : null,
+      transport: json['transport'] as String?,
+      url: json['url'] as String?,
     );
   }
 
@@ -460,6 +460,8 @@ class MCPServerConfig {
       'enabled': enabled,
       'createdAt': createdAt.toIso8601String(),
       if (lastUpdated != null) 'lastUpdated': lastUpdated!.toIso8601String(),
+      if (transport != null) 'transport': transport,
+      if (url != null) 'url': url,
     };
   }
 
@@ -473,6 +475,8 @@ class MCPServerConfig {
     bool? enabled,
     DateTime? createdAt,
     DateTime? lastUpdated,
+    String? transport,
+    String? url,
   }) {
     return MCPServerConfig(
       id: id ?? this.id,
@@ -484,6 +488,8 @@ class MCPServerConfig {
       enabled: enabled ?? this.enabled,
       createdAt: createdAt ?? this.createdAt,
       lastUpdated: lastUpdated ?? this.lastUpdated,
+      transport: transport ?? this.transport,
+      url: url ?? this.url,
     );
   }
 }

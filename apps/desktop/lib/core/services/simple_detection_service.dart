@@ -24,7 +24,7 @@ class SimpleDetectionService {
       
       // Test Git
       try {
-        final gitResult = await Process.run('git', ['--version']);
+        final gitResult = await Process.run('git', ['--version'], runInShell: true);
         results['Git'] = gitResult.exitCode == 0;
       } catch (e) {
         results['Git'] = false;
@@ -32,7 +32,7 @@ class SimpleDetectionService {
       
       // Test GitHub CLI
       try {
-        final ghResult = await Process.run('gh', ['--version']);
+        final ghResult = await Process.run('gh', ['--version'], runInShell: true);
         results['GitHub CLI'] = ghResult.exitCode == 0;
       } catch (e) {
         results['GitHub CLI'] = false;
@@ -40,23 +40,37 @@ class SimpleDetectionService {
       
       // Test Node.js
       try {
-        final nodeResult = await Process.run('node', ['--version']);
+        final nodeResult = await Process.run('node', ['--version'], runInShell: true);
         results['Node.js'] = nodeResult.exitCode == 0;
       } catch (e) {
         results['Node.js'] = false;
       }
       
-      // Test Python
+      // Test Python (try common executables)
       try {
-        final pythonResult = await Process.run('python', ['--version']);
-        results['Python'] = pythonResult.exitCode == 0;
+        var pyOk = false;
+        try {
+          final pythonResult = await Process.run('python', ['--version'], runInShell: true);
+          pyOk = pythonResult.exitCode == 0;
+        } catch (_) {
+          // ignore
+        }
+        if (!pyOk) {
+          try {
+            final pyResult = await Process.run('py', ['-V'], runInShell: true);
+            pyOk = pyResult.exitCode == 0;
+          } catch (_) {
+            pyOk = false;
+          }
+        }
+        results['Python'] = pyOk;
       } catch (e) {
         results['Python'] = false;
       }
       
       // Test Docker
       try {
-        final dockerResult = await Process.run('docker', ['--version']);
+        final dockerResult = await Process.run('docker', ['--version'], runInShell: true);
         results['Docker'] = dockerResult.exitCode == 0;
       } catch (e) {
         results['Docker'] = false;

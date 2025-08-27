@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../tabs/api_configuration_tab.dart';
+import '../tabs/agent_management_tab.dart';
 import '../../../../core/services/theme_service.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/api_config_service.dart';
@@ -24,7 +26,8 @@ import '../widgets/integration_health_dashboard.dart';
 import '../widgets/enhanced_integrations_tab.dart';
 import '../widgets/manual_mcp_server_modal.dart';
 import '../widgets/custom_mcp_server_modal.dart';
-import 'detection_results_screen.dart';
+import '../widgets/simple_auto_detection_wizard.dart';
+import '../tabs/general_settings_tab.dart';
 
 // Integration model for unified display
 class Integration {
@@ -204,7 +207,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  @override
  void initState() {
  super.initState();
- _tabController = TabController(length: 5, vsync: this); // Added detection results tab
+  _tabController = TabController(length: 4, vsync: this);
  selectedModel = providerModels[selectedProvider]!.first;
  _loadSystemPrompt();
  }
@@ -307,7 +310,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Tab(text: 'API Configuration'),
  Tab(text: 'Agent Management'),
  Tab(text: 'Integrations'),
- Tab(text: 'Detection Results'),
  Tab(text: 'General Settings'),
  ],
  labelColor: Theme.of(context).colorScheme.primary,
@@ -342,11 +344,49 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: TabBarView(
  controller: _tabController,
  children: [
- _buildAPIConfigurationTab(),
- _buildAgentManagementTab(),
- _buildIntegrationsTab(),
- _buildDetectionResultsTab(),
- _buildGeneralSettingsTab(themeService),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final allApiConfigs = ref.watch(apiConfigsProvider);
+                    return APIConfigurationTab(
+                      apiConfigs: allApiConfigs.values.map((c) => c.toJson()).toList(),
+                      onAddApiKey: _showAddApiKeyDialog,
+                      onDeleteApiKey: (id) => _deleteApiKey(id),
+                      onEditApiKey: (cfg) => _editApiKeyFromMap(cfg),
+                      onSetAsDefault: (id) => _setAsDefault(id),
+                    );
+                  },
+                ),
+                Consumer(
+                  builder: (context, ref, _) {
+                    return AgentManagementTab(
+                      agents: agents,
+                      selectedAgent: selectedAgent,
+                      selectedTemplate: selectedTemplate,
+                      systemPrompt: systemPromptController.text,
+                      onSelectAgent: (id) {
+                        setState(() {
+                          selectedAgent = id;
+                          selectedTemplate = agents.firstWhere((a) => a.name == selectedAgent).templates.first;
+                          _loadSystemPrompt();
+                        });
+                      },
+                      onSelectTemplate: (tmpl) {
+                        setState(() {
+                          selectedTemplate = tmpl;
+                          _loadSystemPrompt();
+                        });
+                      },
+                      onShowApiSelection: _showApiSelectionDialog,
+                      onSavePrompt: () {
+                        _saveAgentPrompt();
+                      },
+                      onUpdateSystemPrompt: (text) => systemPromptController.text = text,
+                      apiAssignmentWidget: _getApiAssignmentWidget(),
+                    );
+                  },
+                ),
+                const EnhancedIntegrationsTab(),
+                GeneralSettingsTab(themeService: themeService),
  ],
  ),
  ),
@@ -955,9 +995,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  );
  }
 
- Widget _buildIntegrationsTab() {
- return const EnhancedIntegrationsTab();
- }
+// Integrations tab is handled by `EnhancedIntegrationsTab` (extracted widget).
 
  Widget _buildGeneralSettingsTab(ThemeService themeService) {
  return SingleChildScrollView(
@@ -1376,6 +1414,21 @@ final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
  );
  _showAddApiKeyDialog(editingConfig: directConfig);
  }
+
+void _editApiKeyFromMap(Map<String, dynamic> cfg) {
+  final directConfig = DirectAPIConfig(
+    id: cfg['id']?.toString() ?? '',
+    name: cfg['name']?.toString() ?? 'API Key',
+    provider: cfg['provider']?.toString() ?? '',
+    model: cfg['model']?.toString() ?? '',
+    apiKey: cfg['apiKey']?.toString() ?? '',
+    baseUrl: cfg['baseUrl']?.toString() ?? '',
+    isDefault: cfg['isDefault'] == true,
+    enabled: cfg['enabled'] == true,
+    createdAt: DateTime.tryParse(cfg['createdAt']?.toString() ?? '') ?? DateTime.now(),
+  );
+  _showAddApiKeyDialog(editingConfig: directConfig);
+}
 
  Future<void> _showAddApiKeyDialog({DirectAPIConfig? editingConfig}) async {
  await showDialog<bool>(
@@ -1839,10 +1892,21 @@ final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
   void _showAutoDetectionModal() {
     showDialog(
       context: context,
-      builder: (context) => EnhancedAutoDetectionModal(
-        onComplete: () {
-          setState(() {});
-          _showMessage('Auto-detection completed!');
+      builder: (context) => SimpleAutoDetectionWizard(
+        onComplete: (result) {
+          // Open marketplace and surface detected tools for user action after the wizard finishes
+          Future.microtask(() {
+            showDialog(
+              context: context,
+              builder: (context) => Dialog(
+                child: Container(
+                  width: 1000,
+                  height: 700,
+                  child: IntegrationMarketplace(detectedTools: result.detections),
+                ),
+              ),
+            );
+          });
         },
       ),
     );
@@ -2255,10 +2319,7 @@ final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
     }
   }
 
-  /// Build Detection Results Tab
-  Widget _buildDetectionResultsTab() {
-    return const DetectionResultsScreen();
-  }
+  // Detection results removed from app.
 }
 
 // Helper widget classes

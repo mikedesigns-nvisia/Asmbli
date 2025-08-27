@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
+import 'package:agent_engine_core/agent_engine_core.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/services/mcp_template_service.dart';
+import '../../../../core/services/mcp_settings_service.dart';
+import 'structured_form_renderer.dart';
 
-/// Modal for manually configuring custom MCP servers with JSON input
+/// Modal for manually configuring custom MCP servers with JSON input or structured forms
 class CustomMCPServerModal extends StatefulWidget {
   final Function(Map<String, dynamic>) onConfigurationComplete;
   final Map<String, dynamic>? initialConfig;
+  final IntegrationDefinition? integration; // For structured form rendering
+  final MCPServerTemplate? template; // Alternative structured form source
 
   const CustomMCPServerModal({
     super.key,
     required this.onConfigurationComplete,
     this.initialConfig,
+    this.integration,
+    this.template,
   });
 
   @override
@@ -29,6 +37,10 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
   // Configuration method
   ConfigurationMethod configMethod = ConfigurationMethod.json;
   
+  // Structured form data
+  Map<String, dynamic> structuredFormValues = {};
+  bool structuredFormValid = false;
+  
   // Manual configuration fields
   final _commandController = TextEditingController();
   final List<String> arguments = [];
@@ -45,6 +57,11 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
   @override
   void initState() {
     super.initState();
+    // If we have integration or template, default to structured form
+    if (widget.integration != null || widget.template != null) {
+      configMethod = ConfigurationMethod.structured;
+    }
+    
     if (widget.initialConfig != null) {
       _loadInitialConfig(widget.initialConfig!);
     } else {
@@ -110,9 +127,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
               // Content
               Expanded(
                 child: SingleChildScrollView(
-                  child: configMethod == ConfigurationMethod.json
-                    ? _buildJsonConfigurationView(colors)
-                    : _buildManualConfigurationView(colors),
+                  child: _buildConfigurationContent(colors),
                 ),
               ),
               
@@ -170,6 +185,14 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
   Widget _buildConfigurationMethodSelector(ThemeColors colors) {
     return Row(
       children: [
+        if (widget.integration != null || widget.template != null) ..[
+          _MethodTab(
+            label: 'Structured Form',
+            isSelected: configMethod == ConfigurationMethod.structured,
+            onTap: () => setState(() => configMethod = ConfigurationMethod.structured),
+          ),
+          SizedBox(width: SpacingTokens.iconSpacing),
+        ],
         _MethodTab(
           label: 'JSON Configuration',
           isSelected: configMethod == ConfigurationMethod.json,
@@ -642,7 +665,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
         SizedBox(width: SpacingTokens.componentSpacing),
         AsmblButton.primary(
           text: 'Add MCP Server',
-          onPressed: _handleAddServer,
+          onPressed: _canAddServer() ? _handleAddServer : null,
         ),
       ],
     );
@@ -708,13 +731,155 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
     });
   }
 
+  Widget _buildConfigurationContent(ThemeColors colors) {
+    switch (configMethod) {
+      case ConfigurationMethod.structured:
+        return _buildStructuredConfigurationView(colors);
+      case ConfigurationMethod.json:
+        return _buildJsonConfigurationView(colors);
+      case ConfigurationMethod.manual:
+        return _buildManualConfigurationView(colors);
+    }
+  }
+
+  Widget _buildStructuredConfigurationView(ThemeColors colors) {
+    final configFields = _getConfigFields();
+    
+    if (configFields.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.warning,
+              size: 48,
+              color: colors.onSurfaceVariant,
+            ),
+            SizedBox(height: SpacingTokens.componentSpacing),
+            Text(
+              'No configuration fields available for this integration.',
+              style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: SpacingTokens.componentSpacing),
+            Text(
+              'Please use JSON or Manual configuration instead.',
+              style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Server name input
+        _buildServerNameInput(colors),
+        SizedBox(height: SpacingTokens.sectionSpacing),
+        
+        // Integration info (if available)
+        if (widget.integration != null) ...[
+          _buildIntegrationInfo(widget.integration!, colors),
+          SizedBox(height: SpacingTokens.sectionSpacing),
+        ],
+        
+        // Structured form
+        Text(
+          'Configuration',
+          style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
+        ),
+        SizedBox(height: SpacingTokens.componentSpacing),
+        
+        StructuredFormRenderer(
+          configFields: configFields,
+          initialValues: structuredFormValues,
+          onValuesChanged: (values, isValid) {
+            setState(() {
+              structuredFormValues = values;
+              structuredFormValid = isValid;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIntegrationInfo(IntegrationDefinition integration, ThemeColors colors) {
+    return AsmblCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                decoration: BoxDecoration(
+                  color: colors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Icon(
+                  Icons.integration_instructions,
+                  size: 20,
+                  color: colors.primary,
+                ),
+              ),
+              SizedBox(width: SpacingTokens.componentSpacing),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      integration.name,
+                      style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
+                    ),
+                    SizedBox(height: SpacingTokens.xs_precise),
+                    Text(
+                      integration.description,
+                      style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<dynamic> _getConfigFields() {
+    if (widget.integration != null) {
+      return widget.integration!.configFields;
+    }
+    if (widget.template != null) {
+      return widget.template!.configFields;
+    }
+    return [];
+  }
+
+  bool _canAddServer() {
+    switch (configMethod) {
+      case ConfigurationMethod.structured:
+        return _serverNameController.text.isNotEmpty && structuredFormValid;
+      case ConfigurationMethod.json:
+        return _serverNameController.text.isNotEmpty && parsedConfig != null;
+      case ConfigurationMethod.manual:
+        return _formKey.currentState?.validate() ?? false;
+    }
+  }
+
   void _handleAddServer() {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_canAddServer()) return;
     
     final serverName = _serverNameController.text;
-    Map<String, dynamic> serverConfig;
+    Map<String, dynamic> serverConfigData;
     
-    if (configMethod == ConfigurationMethod.json) {
+    if (configMethod == ConfigurationMethod.structured) {
+      // Use structured form values to build server config
+      serverConfigData = _buildServerConfigFromStructuredForm();
+    } else if (configMethod == ConfigurationMethod.json) {
       if (parsedConfig == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -724,16 +889,16 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
         );
         return;
       }
-      serverConfig = parsedConfig!;
+      serverConfigData = parsedConfig!;
     } else {
       // Build manual configuration
       if (transportType == TransportType.stdio) {
-        serverConfig = {
+        serverConfigData = {
           'command': _commandController.text,
           'args': arguments,
         };
       } else {
-        serverConfig = {
+        serverConfigData = {
           'transport': 'sse',
           'url': _urlController.text,
         };
@@ -750,19 +915,86 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
           }
         }
         if (envMap.isNotEmpty) {
-          serverConfig['env'] = envMap;
+          serverConfigData['env'] = envMap;
         }
       }
     }
     
-    final finalConfig = {serverName: serverConfig};
+    // Create MCPServerConfig object
+    final mcpConfig = MCPServerConfig(
+      id: serverName,
+      name: widget.integration?.name ?? serverName,
+      command: serverConfigData['command']?.toString() ?? 'npx',
+      args: List<String>.from(serverConfigData['args'] ?? []),
+      env: serverConfigData['env'] != null ? Map<String, String>.from(serverConfigData['env']) : null,
+      description: widget.integration?.description ?? 'Custom MCP Server',
+      enabled: true,
+      createdAt: DateTime.now(),
+      transport: serverConfigData['transport']?.toString(),
+      url: serverConfigData['url']?.toString(),
+    );
+    
+    // For backward compatibility with existing callers, pass the raw config format
+    final finalConfig = {serverName: serverConfigData};
     widget.onConfigurationComplete(finalConfig);
     Navigator.of(context).pop();
+  }
+
+  Map<String, dynamic> _buildServerConfigFromStructuredForm() {
+    // Build environment variables from form
+    final envVars = <String, String>{};
+    for (final entry in structuredFormValues.entries) {
+      final key = entry.key;
+      final value = entry.value;
+      
+      if (value != null && value.toString().isNotEmpty) {
+        // Convert to environment variable format
+        final envKey = key.toUpperCase().replaceAll(RegExp(r'[^A-Z0-9_]'), '_');
+        envVars[envKey] = value.toString();
+      }
+    }
+    
+    // Extract command and args from integration/template defaults
+    String command = 'npx';
+    List<String> args = [];
+    String? transport;
+    String? url;
+    
+    if (widget.integration != null) {
+      command = widget.integration!.command;
+      args = List<String>.from(widget.integration!.args);
+    } else if (widget.template != null) {
+      final serverDefaults = widget.template!.serverDefaults;
+      command = serverDefaults['command']?.toString() ?? 'npx';
+      if (serverDefaults['args'] is List) {
+        args = List<String>.from(serverDefaults['args']);
+      }
+      transport = serverDefaults['transport']?.toString();
+      url = serverDefaults['url']?.toString();
+    }
+    
+    // Create the config object that matches what CustomMCPServerModal expects
+    final config = <String, dynamic>{
+      'command': command,
+      'args': args,
+    };
+    
+    if (transport != null) {
+      config['transport'] = transport;
+    }
+    if (url != null) {
+      config['url'] = url;
+    }
+    if (envVars.isNotEmpty) {
+      config['env'] = envVars;
+    }
+    
+    return config;
   }
 }
 
 // Enums and helper classes
-enum ConfigurationMethod { json, manual }
+enum ConfigurationMethod { json, manual, structured }
 enum TransportType { stdio, sse }
 
 class _EnvVarPair {

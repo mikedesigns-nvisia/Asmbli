@@ -223,6 +223,26 @@ class IntegrationInstallationService {
 
   /// Auto-detect configuration for an integration
   Future<Map<String, dynamic>?> _autoDetectConfiguration(IntegrationDefinition integration) async {
+    // First, try detection-derived configuration via DetectionConfigurationService
+    try {
+      final detectionConfig = await _detectionConfigurationService.generateConfigurationForIntegration(integration.id);
+      if (detectionConfig != null) {
+        // Map ToolConfiguration -> Map<String,dynamic> expected by installer
+        final map = <String, dynamic>{};
+        map['executablePath'] = detectionConfig.executablePath;
+        if (detectionConfig.environmentVariables.isNotEmpty) {
+          map.addAll(detectionConfig.environmentVariables);
+        }
+        if (detectionConfig.configPaths.isNotEmpty) {
+          map['configPaths'] = detectionConfig.configPaths;
+        }
+        return map;
+      }
+    } catch (e) {
+      // ignore and fallback to older detectors
+    }
+
+    // Fallback to built-in integration-specific detectors
     switch (integration.id) {
       case 'filesystem':
         return await _autoDetectFilesystem();

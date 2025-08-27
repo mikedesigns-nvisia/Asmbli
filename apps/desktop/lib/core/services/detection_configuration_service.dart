@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'simple_detection_service.dart';
+import 'detection_integration_mapping.dart';
 import 'mcp_settings_service.dart';
 
 /// Service that bridges detection results to MCP server configuration
@@ -85,6 +86,26 @@ class DetectionConfigurationService {
       print('DetectionConfigurationService: Error configuring $toolName: $e');
       return false;
     }
+  }
+
+  /// Public helper: given an integration id, check detection results and
+  /// return a ToolConfiguration for the first detected tool that maps to
+  /// the requested integration id (using the deterministic mapping).
+  Future<ToolConfiguration?> generateConfigurationForIntegration(String integrationId) async {
+    final detectionResult = await _detectionService.detectBasicTools();
+
+    for (final entry in detectionResult.detections.entries) {
+      if (!entry.value) continue;
+      final toolName = entry.key;
+      final mapped = mapDetectionToIntegrationId(toolName);
+      if (mapped != null && mapped == integrationId) {
+        // Try to generate a configuration for this tool
+        final config = await _generateConfigurationForTool(toolName);
+        if (config != null) return config;
+      }
+    }
+
+    return null;
   }
 
   /// Generate configuration for a detected tool

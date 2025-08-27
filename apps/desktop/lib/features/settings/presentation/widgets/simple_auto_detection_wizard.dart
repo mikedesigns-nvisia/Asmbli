@@ -4,7 +4,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/simple_detection_service.dart';
 
 class SimpleAutoDetectionWizard extends ConsumerStatefulWidget {
-  final VoidCallback? onComplete;
+  final void Function(SimpleDetectionResult result)? onComplete;
 
   const SimpleAutoDetectionWizard({
     super.key,
@@ -136,7 +136,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           const SizedBox(height: 24),
           
           // Category Filters (show only when appropriate)
-          if (_currentStep == 'categories' || _currentStep == 'results') ..[
+          if (_currentStep == 'categories' || _currentStep == 'results') ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
@@ -161,7 +161,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           const Spacer(),
           
           // Summary (show when detection is complete)
-          if (_detectionResult != null) ..[
+          if (_detectionResult != null) ...[
             Container(
               margin: const EdgeInsets.all(24),
               padding: const EdgeInsets.all(16),
@@ -535,7 +535,12 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
                 AsmblButton.primary(
                   text: 'Complete Setup',
                   onPressed: () {
-                    widget.onComplete?.call();
+                    if (_detectionResult != null) {
+                      widget.onComplete?.call(_detectionResult!);
+                    } else {
+                      // If nothing detected, still call with empty result
+                      widget.onComplete?.call(SimpleDetectionResult(detections: {}, totalFound: 0, confidence: 0));
+                    }
                     Navigator.of(context).pop();
                   },
                 ),
