@@ -178,7 +178,7 @@ export default function HomePage() {
             Build and integrate custom AI agents into your workflow
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
-            The only AI agent platform where integrations configure themselves automatically. 
+            Build, customize, flow. 
             Connect your tools, deploy specialized agents, stay in control.
           </p>
 
