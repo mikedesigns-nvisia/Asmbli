@@ -1,0 +1,531 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/constants/routes.dart';
+import '../widgets/settings/settings_search_bar.dart';
+import '../widgets/settings/settings_category_card.dart';
+import '../widgets/settings/quick_settings_panel.dart';
+import 'api_settings_screen.dart';
+import 'agent_settings_screen.dart';
+import 'appearance_settings_screen.dart';
+
+/// Modern Settings Screen - Card-based, searchable, progressive disclosure
+/// Replaces the old tab-based interface with a cleaner, more intuitive design
+class ModernSettingsScreen extends ConsumerStatefulWidget {
+  const ModernSettingsScreen({super.key});
+
+  @override
+  ConsumerState<ModernSettingsScreen> createState() => _ModernSettingsScreenState();
+}
+
+class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  String? _expandedCategory;
+
+  final List<SettingsCategory> _categories = [
+    SettingsCategory(
+      id: 'account',
+      title: 'Account & Profile',
+      description: 'Personal information and preferences',
+      icon: Icons.person,
+      color: Colors.blue,
+      priority: 1,
+    ),
+    SettingsCategory(
+      id: 'api',
+      title: 'API Configuration',
+      description: 'AI provider settings and API keys',
+      icon: Icons.key,
+      color: Colors.green,
+      priority: 2,
+      badge: '3 configured',
+    ),
+    SettingsCategory(
+      id: 'agents',
+      title: 'AI Agents',
+      description: 'Agent management and system prompts',
+      icon: Icons.smart_toy,
+      color: Colors.purple,
+      priority: 3,
+      badge: '5 agents',
+    ),
+    SettingsCategory(
+      id: 'appearance',
+      title: 'Appearance',
+      description: 'Theme, colors, and display options',
+      icon: Icons.palette,
+      color: Colors.orange,
+      priority: 4,
+    ),
+    SettingsCategory(
+      id: 'privacy',
+      title: 'Privacy & Security',
+      description: 'Data handling and security preferences',
+      icon: Icons.shield,
+      color: Colors.red,
+      priority: 5,
+    ),
+    SettingsCategory(
+      id: 'notifications',
+      title: 'Notifications',
+      description: 'Alert preferences and notification settings',
+      icon: Icons.notifications,
+      color: Colors.indigo,
+      priority: 6,
+    ),
+    SettingsCategory(
+      id: 'advanced',
+      title: 'Advanced',
+      description: 'Developer settings and experimental features',
+      icon: Icons.settings_applications,
+      color: Colors.grey,
+      priority: 7,
+      isAdvanced: true,
+    ),
+    SettingsCategory(
+      id: 'about',
+      title: 'About',
+      description: 'App information, updates, and support',
+      icon: Icons.info,
+      color: Colors.teal,
+      priority: 8,
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _searchController.text;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+    final filteredCategories = _getFilteredCategories();
+
+    return Scaffold(
+      backgroundColor: colors.background,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colors.background,
+              colors.background.withValues(alpha: 0.8),
+            ],
+          ),
+        ),
+        child: Column(
+          children: [
+            // App Navigation
+            AppNavigationBar(currentRoute: AppRoutes.settings),
+            
+            // Settings Header & Search
+            _buildHeader(colors),
+            
+            // Main Content
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Main Settings Content
+                  Expanded(
+                    flex: 3,
+                    child: _buildMainContent(colors, filteredCategories),
+                  ),
+                  
+                  // Quick Settings Panel (Right Side)
+                  SizedBox(
+                    width: 300,
+                    child: QuickSettingsPanel(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(ThemeColors colors) {
+    return Container(
+      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      decoration: BoxDecoration(
+        color: colors.surface.withValues(alpha: 0.8),
+        border: Border(
+          bottom: BorderSide(color: colors.border.withValues(alpha: 0.5)),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Title & Search
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Settings',
+                      style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
+                    ),
+                    SizedBox(height: SpacingTokens.xs_precise),
+                    Text(
+                      'Customize your AgentEngine experience',
+                      style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+              
+              SizedBox(width: SpacingTokens.sectionSpacing),
+              
+              // Search Bar
+              SizedBox(
+                width: 300,
+                child: SettingsSearchBar(
+                  controller: _searchController,
+                  onChanged: (value) => _onSearchChanged(),
+                ),
+              ),
+            ],
+          ),
+          
+          // Quick Stats
+          if (_searchQuery.isEmpty) ...[
+            SizedBox(height: SpacingTokens.sectionSpacing),
+            _buildQuickStats(colors),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickStats(ThemeColors colors) {
+    return Row(
+      children: [
+        _buildStatChip('3 API Keys', Icons.key, colors.primary, colors),
+        SizedBox(width: SpacingTokens.componentSpacing),
+        _buildStatChip('5 Agents', Icons.smart_toy, colors.success, colors),
+        SizedBox(width: SpacingTokens.componentSpacing),
+        _buildStatChip('12 Integrations', Icons.hub, colors.accent, colors),
+        
+        Spacer(),
+        
+        // Quick Actions
+        AsmblButton.secondary(
+          text: 'Export Settings',
+          onPressed: _exportSettings,
+                  ),
+        SizedBox(width: SpacingTokens.componentSpacing),
+        AsmblButton.primary(
+          text: 'Quick Setup',
+          onPressed: _runQuickSetup,
+                  ),
+      ],
+    );
+  }
+
+  Widget _buildStatChip(String label, IconData icon, Color color, ThemeColors colors) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: SpacingTokens.componentSpacing,
+        vertical: SpacingTokens.iconSpacing,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: color),
+          SizedBox(width: SpacingTokens.iconSpacing),
+          Text(
+            label,
+            style: TextStyles.caption.copyWith(
+              color: colors.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMainContent(ThemeColors colors, List<SettingsCategory> categories) {
+    if (_searchQuery.isNotEmpty && categories.isEmpty) {
+      return _buildEmptySearchState(colors);
+    }
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Search Results or Categories
+          if (_searchQuery.isNotEmpty) ...[
+            Text(
+              'Search Results (${categories.length})',
+              style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
+            ),
+            SizedBox(height: SpacingTokens.componentSpacing),
+          ],
+          
+          // Category Cards
+          ...categories.map((category) => Padding(
+            padding: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+            child: SettingsCategoryCard(
+              category: category,
+              isExpanded: _expandedCategory == category.id,
+              onTap: () => _handleCategoryTap(category),
+              onExpand: () => _toggleCategoryExpansion(category.id),
+            ),
+          )),
+          
+          // Advanced Settings Toggle
+          if (_searchQuery.isEmpty && !_categories.any((c) => c.isAdvanced && _shouldShowCategory(c))) ...[
+            SizedBox(height: SpacingTokens.sectionSpacing),
+            _buildAdvancedToggle(colors),
+          ],
+          
+          SizedBox(height: SpacingTokens.xxl), // Bottom padding
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptySearchState(ThemeColors colors) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(SpacingTokens.xxl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 64,
+              color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+            ),
+            SizedBox(height: SpacingTokens.sectionSpacing),
+            Text(
+              'No settings found',
+              style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
+            ),
+            SizedBox(height: SpacingTokens.componentSpacing),
+            Text(
+              'Try adjusting your search terms or browse categories below',
+              style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: SpacingTokens.sectionSpacing),
+            AsmblButton.secondary(
+              text: 'Clear Search',
+              onPressed: () {
+                _searchController.clear();
+                _onSearchChanged();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdvancedToggle(ThemeColors colors) {
+    return AsmblCard(
+      child: Row(
+        children: [
+          Icon(
+            Icons.engineering,
+            color: colors.onSurfaceVariant,
+          ),
+          SizedBox(width: SpacingTokens.componentSpacing),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Show Advanced Settings',
+                  style: TextStyles.bodyLarge.copyWith(color: colors.onSurface),
+                ),
+                Text(
+                  'Access developer tools and experimental features',
+                  style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: _shouldShowAdvanced(),
+            onChanged: _toggleAdvancedSettings,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper methods
+  List<SettingsCategory> _getFilteredCategories() {
+    return _categories.where((category) {
+      if (!_shouldShowCategory(category)) return false;
+      
+      if (_searchQuery.isEmpty) return true;
+      
+      final query = _searchQuery.toLowerCase();
+      return category.title.toLowerCase().contains(query) ||
+             category.description.toLowerCase().contains(query) ||
+             category.searchKeywords.any((keyword) => keyword.toLowerCase().contains(query));
+    }).toList()..sort((a, b) => a.priority.compareTo(b.priority));
+  }
+
+  bool _shouldShowCategory(SettingsCategory category) {
+    if (!category.isAdvanced) return true;
+    return _shouldShowAdvanced();
+  }
+
+  bool _shouldShowAdvanced() {
+    // TODO: Check user preference
+    return false;
+  }
+
+  void _toggleAdvancedSettings(bool value) {
+    // TODO: Save preference
+    setState(() {});
+  }
+
+  void _handleCategoryTap(SettingsCategory category) {
+    // Navigate to specific settings page or expand inline
+    _navigateToCategory(category);
+  }
+
+  void _toggleCategoryExpansion(String categoryId) {
+    setState(() {
+      _expandedCategory = _expandedCategory == categoryId ? null : categoryId;
+    });
+  }
+
+  void _navigateToCategory(SettingsCategory category) {
+    switch (category.id) {
+      case 'api':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const APISettingsScreen()),
+        );
+        break;
+      case 'agents':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const AgentSettingsScreen()),
+        );
+        break;
+      case 'appearance':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const AppearanceSettingsScreen()),
+        );
+        break;
+      case 'privacy':
+        _showComingSoonDialog(category.title);
+        break;
+      case 'notifications':
+        _showComingSoonDialog(category.title);
+        break;
+      case 'advanced':
+        _showComingSoonDialog(category.title);
+        break;
+      case 'about':
+        _showAboutDialog();
+        break;
+      default:
+        _showComingSoonDialog(category.title);
+    }
+  }
+
+  void _showComingSoonDialog(String categoryTitle) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('$categoryTitle Settings'),
+        content: Text('Detailed $categoryTitle settings are coming soon! For now, you can use the quick settings in the sidebar.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Got it'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAboutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('About AgentEngine'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Version: 1.0.0'),
+            Text('Build: Desktop'),
+            SizedBox(height: 16),
+            Text('AgentEngine makes AI agents easy to create, manage, and deploy.'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _exportSettings() {
+    // TODO: Implement settings export
+  }
+
+  void _runQuickSetup() {
+    // TODO: Implement quick setup wizard
+  }
+}
+
+/// Settings Category Data Model
+class SettingsCategory {
+  final String id;
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
+  final int priority;
+  final String? badge;
+  final bool isAdvanced;
+  final List<String> searchKeywords;
+
+  SettingsCategory({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+    required this.priority,
+    this.badge,
+    this.isAdvanced = false,
+    this.searchKeywords = const [],
+  });
+}

@@ -696,11 +696,7 @@ class MCPTemplateService {
       command: 'uvx', // Default command, will be customized based on server type
       args: _getArgsForServer(template, config),
       env: _getEnvForServer(template, config),
-      workingDirectory: config['rootPath'] as String? ?? '',
       enabled: true,
-      requiredAuth: (serverDefaults['requiredAuth'] as List<dynamic>?)
-          ?.cast<Map<String, dynamic>>()
-          .toList() ?? [],
     );
   }
 
@@ -728,7 +724,7 @@ class MCPTemplateService {
         }
         break;
       case 'url':
-        if (value is String && !Uri.tryParse(value)?.hasAbsolutePath == true) {
+        if (value is String && (Uri.tryParse(value)?.hasAbsolutePath != true)) {
           errors.add(TemplateValidationError(
             field: field.name,
             message: '${field.label} must be a valid URL',

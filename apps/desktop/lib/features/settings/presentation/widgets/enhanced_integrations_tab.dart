@@ -14,6 +14,7 @@ import 'custom_mcp_server_modal.dart';
 import 'enhanced_auto_detection_modal.dart';
 import 'integration_recommendations_widget.dart';
 import 'integration_marketplace.dart';
+import 'adaptive_integration_router.dart';
 
 /// Enhanced integrations tab that ties together:
 /// 1. Auto-detection → Available MCP servers

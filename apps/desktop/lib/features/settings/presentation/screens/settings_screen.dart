@@ -55,7 +55,9 @@ class Integration {
 }
 
 class SettingsScreen extends ConsumerStatefulWidget {
- const SettingsScreen({super.key});
+ final String? initialTab;
+ 
+ const SettingsScreen({super.key, this.initialTab});
 
  @override
  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
@@ -207,8 +209,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  @override
  void initState() {
  super.initState();
-  _tabController = TabController(length: 4, vsync: this);
+  _tabController = TabController(length: 3, vsync: this);
  selectedModel = providerModels[selectedProvider]!.first;
+ 
+ // Set initial tab if provided
+ if (widget.initialTab != null) {
+   selectedTab = widget.initialTab!;
+ }
+ 
  _loadSystemPrompt();
  }
 
@@ -309,7 +317,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  tabs: const [
  Tab(text: 'API Configuration'),
  Tab(text: 'Agent Management'),
- Tab(text: 'Integrations'),
  Tab(text: 'General Settings'),
  ],
  labelColor: Theme.of(context).colorScheme.primary,
@@ -385,7 +392,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     );
                   },
                 ),
-                const EnhancedIntegrationsTab(),
                 GeneralSettingsTab(themeService: themeService),
  ],
  ),
@@ -3541,6 +3547,28 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         ),
       ),
     );
+  }
+
+  void _showAddMCPServerDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => MCPServerDialog(),
+    ).then((result) {
+      if (result == true) {
+        setState(() {}); // Refresh the integrations list
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('MCP Server added successfully!'),
+            backgroundColor: ThemeColors(context).success,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    });
   }
 
 }

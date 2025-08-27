@@ -10,6 +10,7 @@ import 'features/chat/presentation/screens/chat_screen.dart';
 import 'features/chat/presentation/screens/demo_chat_screen.dart'; // Remove after video
 import 'features/templates/presentation/screens/templates_screen.dart';
 import 'features/settings/presentation/screens/settings_screen.dart';
+import 'features/settings/presentation/screens/modern_settings_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'features/agents/presentation/screens/agent_configuration_screen.dart';
 import 'features/context/presentation/screens/context_library_screen.dart';
@@ -24,6 +25,10 @@ import 'core/services/desktop/desktop_service_provider.dart';
 import 'core/services/desktop/window_management_service.dart';
 import 'core/services/desktop/desktop_storage_service.dart';
 import 'core/services/api_config_service.dart';
+import 'core/services/feature_flag_service.dart';
+import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
+import 'features/settings/presentation/screens/integration_hub_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
  WidgetsFlutterBinding.ensureInitialized();
@@ -61,8 +66,14 @@ void main() async {
  }
  }
 
+ // Initialize SharedPreferences for feature flags
+ final prefs = await SharedPreferences.getInstance();
+ 
  runApp(
  ProviderScope(
+ overrides: [
+ featureFlagServiceProvider.overrideWithValue(FeatureFlagService(prefs)),
+ ],
  child: AsmblDesktopApp(),
  ),
  );
@@ -117,7 +128,16 @@ final _router = GoRouter(
  ),
  GoRoute(
  path: AppRoutes.settings,
- builder: (context, state) => const SettingsScreen(),
+ builder: (context, state) => const ModernSettingsScreen(),
+ ),
+ GoRoute(
+ path: AppRoutes.integrationHub,
+ builder: (context, state) => const IntegrationHubScreen(),
+ ),
+ // Legacy route redirects to Integration Hub
+ GoRoute(
+ path: '/settings/integrations',
+ builder: (context, state) => const AdaptiveIntegrationRouter(initialTab: 'integrations'),
  ),
  GoRoute(
  path: AppRoutes.agents,

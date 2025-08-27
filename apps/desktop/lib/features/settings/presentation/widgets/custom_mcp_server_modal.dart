@@ -185,7 +185,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
   Widget _buildConfigurationMethodSelector(ThemeColors colors) {
     return Row(
       children: [
-        if (widget.integration != null || widget.template != null) ..[
+        if (widget.integration != null || widget.template != null) ...[
           _MethodTab(
             label: 'Structured Form',
             isSelected: configMethod == ConfigurationMethod.structured,
