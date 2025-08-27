@@ -16,12 +16,10 @@ import 'package:agent_engine_core/agent_engine_core.dart';
 import '../../../../core/services/integration_service.dart';
 import '../../../../core/services/integration_dependency_service.dart';
 import '../../../../core/design_system/components/integration_status_indicators.dart';
-import '../../../../core/services/integration_marketplace_service.dart';
 import '../../../../core/services/integration_installation_service.dart' as installation;
 import '../../../../core/services/integration_health_monitoring_service.dart' as health_monitoring;
 import '../widgets/integration_recommendations_widget.dart';
 import '../widgets/integration_dependency_dialog.dart';
-import '../widgets/integration_marketplace.dart';
 import '../widgets/integration_health_dashboard.dart';
 import '../widgets/enhanced_integrations_tab.dart';
 import '../widgets/manual_mcp_server_modal.dart';
@@ -1908,7 +1906,10 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                 child: Container(
                   width: 1000,
                   height: 700,
-                  child: IntegrationMarketplace(detectedTools: result.detections),
+                  child: Container(
+                    padding: EdgeInsets.all(24),
+                    child: Text('Integration marketplace functionality has been moved to the Integration Center. Please use the Integrations tab in the navigation.'),
+                  ),
                 ),
               ),
             );
@@ -2531,11 +2532,9 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   @override
   Widget build(BuildContext context) {
     final integrationService = ref.watch(integrationServiceProvider);
-    final marketplaceService = ref.watch(integrationMarketplaceServiceProvider);
     final healthService = ref.watch(health_monitoring.integrationHealthMonitoringServiceProvider);
     final allIntegrationsWithStatus = integrationService.getAllIntegrationsWithStatus();
     final stats = integrationService.getStats();
-    final marketplaceStats = marketplaceService.getMarketplaceStatistics();
     final healthStats = healthService.getHealthStatistics();
     
     // Filter integrations directly as IntegrationStatus objects
@@ -2568,7 +2567,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           const SizedBox(height: 24),
           
           // Enhanced Stats Overview with Marketplace and Health
-          _buildEnhancedStatsOverview(stats, marketplaceStats, healthStats),
+          _buildEnhancedStatsOverview(stats, healthStats),
           const SizedBox(height: 24),
           
           // Search, Filter and Add Row
@@ -2690,9 +2689,9 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           ),
           const SizedBox(height: 16),
           AsmblButton.primary(
-            text: 'Browse Marketplace',
-            icon: Icons.store,
-            onPressed: () => context.go(AppRoutes.marketplace),
+            text: 'Browse Integrations',
+            icon: Icons.hub,
+            onPressed: () => context.go(AppRoutes.integrationHub),
           ),
         ],
       ),
@@ -2934,7 +2933,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               
               // Marketplace Content
               Expanded(
-                child: IntegrationMarketplace(),
+                child: Container(
+                  padding: EdgeInsets.all(24),
+                  child: Text('Integration marketplace functionality has been moved to the Integration Center.'),
+                ),
               ),
             ],
           ),
@@ -3058,7 +3060,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
     }).toList();
   }
 
-  Widget _buildEnhancedStatsOverview(IntegrationStats stats, MarketplaceStatistics marketplaceStats, health_monitoring.HealthStatistics healthStats) {
+  Widget _buildEnhancedStatsOverview(IntegrationStats stats, health_monitoring.HealthStatistics healthStats) {
     return Column(
       children: [
         // Main Stats Row
@@ -3075,14 +3077,14 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             children: [
               _buildStatCard(
                 'Total Available',
-                '${marketplaceStats.available}',
+                '${stats.available}',
                 Icons.apps,
                 SemanticColors.primary,
               ),
               SizedBox(width: SpacingTokens.lg),
               _buildStatCard(
                 'Installed',
-                '${marketplaceStats.installed}',
+                '${stats.configured}',
                 Icons.check_circle,
                 SemanticColors.success,
               ),

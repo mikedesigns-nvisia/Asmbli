@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/services/theme_service.dart';
+import '../widgets/adaptive_integration_router.dart';
 
 class GeneralSettingsTab extends StatelessWidget {
   final ThemeService themeService;
@@ -59,6 +60,27 @@ class GeneralSettingsTab extends StatelessWidget {
                         Switch(value: true, onChanged: (value) {}, activeColor: Theme.of(context).colorScheme.primary),
                       ],
                     ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Integration Experience Settings
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Theme.of(context).colorScheme.outline),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Integration Experience', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 12),
+                    const IntegrationExperienceToggle(),
                   ],
                 ),
               ),

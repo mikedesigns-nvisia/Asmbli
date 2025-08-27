@@ -10,10 +10,10 @@ class AppRoutes {
  static const String settings = '/settings';
  static const String agents = '/agents';
  static const String context = '/context';
- static const String marketplace = '/marketplace';
  static const String wizard = '/wizard';
  static const String agentWizard = '/agent-wizard';
  static const String integrations = '/integrations';
+ static const String integrationHub = '/integration-hub';
  
  // Demo route (remove after video recording)
  static const String demoChat = '/demo-chat';
@@ -26,10 +26,10 @@ class AppRoutes {
  settings: 'Settings',
  agents: 'My Agents',
  context: 'Context',
- marketplace: 'Marketplace',
  wizard: 'Wizard',
  agentWizard: 'Create Agent',
  integrations: 'Add Integrations',
+ integrationHub: 'Integration Hub',
  demoChat: 'Demo Chat', // Remove after video
  };
  
@@ -46,10 +46,10 @@ class AppRoutes {
  settings,
  agents,
  context,
- marketplace,
  wizard,
  agentWizard,
  integrations,
+ integrationHub,
  demoChat, // Remove after video
  ];
 }

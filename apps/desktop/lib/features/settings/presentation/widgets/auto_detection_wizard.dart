@@ -344,7 +344,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
             height: 12,
             decoration: BoxDecoration(
               color: _getStatusColor(integration.status),
-              borderRadius: BorderRadiusTokens.xs,
+              borderRadius: BorderRadiusTokens.sm,
             ),
           ),
           SizedBox(width: SpacingTokens.md),

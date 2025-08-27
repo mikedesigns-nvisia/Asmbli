@@ -14,7 +14,6 @@ import 'features/settings/presentation/screens/modern_settings_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'features/agents/presentation/screens/agent_configuration_screen.dart';
 import 'features/context/presentation/screens/context_library_screen.dart';
-import 'features/marketplace/presentation/screens/marketplace_screen.dart';
 import 'features/agent_wizard/presentation/screens/agent_wizard_screen.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'providers/conversation_provider.dart';
@@ -27,7 +26,7 @@ import 'core/services/desktop/desktop_storage_service.dart';
 import 'core/services/api_config_service.dart';
 import 'core/services/feature_flag_service.dart';
 import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
-import 'features/settings/presentation/screens/integration_hub_screen.dart';
+import 'features/settings/presentation/screens/integration_center_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -132,7 +131,7 @@ final _router = GoRouter(
  ),
  GoRoute(
  path: AppRoutes.integrationHub,
- builder: (context, state) => const IntegrationHubScreen(),
+ builder: (context, state) => const IntegrationCenterScreen(),
  ),
  // Legacy route redirects to Integration Hub
  GoRoute(
@@ -157,10 +156,6 @@ final _router = GoRouter(
  GoRoute(
  path: AppRoutes.context,
  builder: (context, state) => const ContextLibraryScreen(),
- ),
- GoRoute(
- path: AppRoutes.marketplace,
- builder: (context, state) => const MarketplaceScreen(),
  ),
  GoRoute(
   path: AppRoutes.agentWizard,

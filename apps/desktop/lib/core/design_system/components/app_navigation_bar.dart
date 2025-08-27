@@ -76,10 +76,10 @@ class AppNavigationBar extends ConsumerWidget {
  SizedBox(width: SpacingTokens.lg),
  
  HeaderButton(
- text: 'Marketplace',
- icon: Icons.store,
- onPressed: () => context.go(AppRoutes.marketplace),
- isActive: currentRoute == AppRoutes.marketplace,
+ text: 'Integrations',
+ icon: Icons.hub,
+ onPressed: () => context.go(AppRoutes.integrationHub),
+ isActive: currentRoute == AppRoutes.integrationHub,
  ),
  SizedBox(width: SpacingTokens.lg),
  
