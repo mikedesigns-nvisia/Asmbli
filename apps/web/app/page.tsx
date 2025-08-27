@@ -148,25 +148,25 @@ export default function HomePage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-yellow-50/20 to-background">
+      <section className="py-12 sm:py-16 lg:py-20 px-4 bg-gradient-to-br from-yellow-50/20 to-background">
         <div className="container mx-auto max-w-4xl text-center">
           {/* Hero Screenshot First */}
-          <div className="mb-12">
-            <div className="max-w-5xl mx-auto px-4">
-              <div className="rounded-xl border bg-card p-1 md:p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
+          <div className="mb-8 sm:mb-12">
+            <div className="max-w-5xl mx-auto px-2 sm:px-4">
+              <div className="rounded-lg sm:rounded-xl border bg-card p-1 sm:p-2 md:p-3 shadow-xl hover:shadow-2xl sm:shadow-2xl sm:hover:shadow-3xl transition-shadow duration-300">
                 <video
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full h-auto rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[500px] md:max-h-[600px] lg:max-h-[700px]"
+                  className="w-full h-auto rounded-md sm:rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[300px] sm:max-h-[400px] md:max-h-[500px] lg:max-h-[600px] xl:max-h-[700px]"
                   aria-label="Asmbli - Professional AI Agent Platform with Your Tools and MCP Integration"
                 >
                   <source src="/hero-demo.mp4" type="video/mp4" />
                   <img 
                     src="/hero-app-screenshot.png" 
                     alt="Asmbli - Professional AI Agent Platform with Your Tools and MCP Integration"
-                    className="w-full h-auto rounded-lg"
+                    className="w-full h-auto rounded-md sm:rounded-lg"
                   />
                 </video>
               </div>
@@ -174,89 +174,89 @@ export default function HomePage() {
           </div>
 
           {/* Hero Text */}
-          <h1 className="text-5xl font-bold italic mb-6 font-display">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold italic mb-4 sm:mb-6 font-display leading-tight">
             Build and integrate custom AI agents into your workflow
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
             The only AI agent platform where integrations configure themselves automatically. 
             Connect your tools, deploy specialized agents, stay in control.
           </p>
 
           {/* Key Capabilities */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Zap className="h-6 w-6 text-amber-600" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12 max-w-4xl mx-auto px-4">
+            <div className="text-center p-4 sm:p-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold mb-2">🎯 Your Tools</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">🎯 Your Tools</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Immediately access your tools through MCP Servers. Set up your tool workflows naturally in the app.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Bot className="h-6 w-6 text-amber-600" />
+            <div className="text-center p-4 sm:p-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold mb-2">🚀 20+ Templates</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">🚀 20+ Templates</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Blockchain developer, UX designer, DevOps engineer, and more. Professional agents ready in seconds.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Shield className="h-6 w-6 text-amber-600" />
+            <div className="text-center p-4 sm:p-0 sm:col-span-2 lg:col-span-1">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold mb-2">🔒 Private & Secure</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">🔒 Private & Secure</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Your API key, your data, your agents. Everything runs locally with enterprise-grade security.
               </p>
             </div>
           </div>
 
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Link href="#beta-signup">
-              <Button size="lg" className="bg-amber-400 hover:bg-amber-500 text-amber-950">
+              <Button size="lg" className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-amber-950">
                 Get Early Access
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
             <Link href="/templates">
-              <Button size="lg" variant="outline">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto">
                 View Templates
               </Button>
             </Link>
           </div>
           
           {/* Status Bar */}
-          <div className="mt-8 flex items-center justify-center gap-6 text-sm text-muted-foreground">
-            <span className="flex items-center">
-              <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Windows Available Now
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-muted-foreground px-4">
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span className="whitespace-nowrap">Windows Available Now</span>
             </span>
-            <span className="flex items-center">
-              <span className="w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
-              macOS Coming Soon
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
+              <span className="whitespace-nowrap">macOS Coming Soon</span>
             </span>
-            <span className="flex items-center">
-              <Shield className="w-3 h-3 mr-1" />
-              100% Private
+            <span className="flex items-center gap-1">
+              <Shield className="w-3 h-3" />
+              <span className="whitespace-nowrap">100% Private</span>
             </span>
           </div>
         </div>
       </section>
 
       {/* Why Asmbli Section */}
-      <section className="py-20 px-4 bg-yellow-50/10">
+      <section className="py-12 sm:py-16 lg:py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 font-display">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 font-display">
               Why Asmbli?
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
               The professional AI agent platform that actually works in your environment
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto">
             <Card className="text-center border-2 hover:border-amber-200 transition-colors">
               <CardHeader className="pb-8 pt-8">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -306,44 +306,44 @@ export default function HomePage() {
       </section>
 
       {/* Get Started Section */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-16 lg:py-20 px-4">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-6 font-display">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 font-display">
             Get Started in 3 Steps
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-amber-800">1</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="text-center p-4 sm:p-0">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <span className="text-xl sm:text-2xl font-bold text-amber-800">1</span>
               </div>
-              <h3 className="font-semibold mb-2">Download Asmbli</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Download Asmbli</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Get the desktop app and sign in with beta access
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-amber-800">2</span>
+            <div className="text-center p-4 sm:p-0">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <span className="text-xl sm:text-2xl font-bold text-amber-800">2</span>
               </div>
-              <h3 className="font-semibold mb-2">Add Your API Key</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Add Your API Key</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Connect Claude, GPT, or Gemini. Your key, your data, your control.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-amber-800">3</span>
+            <div className="text-center p-4 sm:p-0 sm:col-span-2 lg:col-span-1">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <span className="text-xl sm:text-2xl font-bold text-amber-800">3</span>
               </div>
-              <h3 className="font-semibold mb-2">Pick an Agent & Chat</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Pick an Agent & Chat</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Choose a template or create custom. MCP integration handles the rest.
               </p>
             </div>
           </div>
           
-          <div className="mt-12">
+          <div className="mt-8 sm:mt-12 px-4">
             <Link href="#beta-signup">
-              <Button size="lg" className="bg-amber-400 hover:bg-amber-500 text-amber-950">
+              <Button size="lg" className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-amber-950">
                 Start Building Agents
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -510,21 +510,21 @@ export default function HomePage() {
             <p className="text-muted-foreground mb-6">
               Ready to get started with your own API key?
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
               <Link href="https://console.anthropic.com/api" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                   Get Anthropic API Key
                   <ExternalLink className="ml-2 h-3 w-3" />
                 </Button>
               </Link>
               <Link href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                   Get OpenAI API Key
                   <ExternalLink className="ml-2 h-3 w-3" />
                 </Button>
               </Link>
               <Link href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                   Get Google API Key
                   <ExternalLink className="ml-2 h-3 w-3" />
                 </Button>
@@ -535,17 +535,17 @@ export default function HomePage() {
       </section>
 
       {/* MCP Servers Library Section */}
-      <section className="py-20 px-4 bg-yellow-50/10">
+      <section className="py-12 sm:py-16 lg:py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4">
               MCP Servers Library
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
               Connect your agents to powerful tools and services with our curated collection of Model Context Protocol servers
             </p>
           </div>
-          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             <Card className="hover:shadow-lg transition-shadow bg-yellow-50/10 border-yellow-200/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
@@ -691,20 +691,20 @@ export default function HomePage() {
       </section>
 
       {/* Beta Signup Section */}
-      <section id="beta-signup" className="py-20 px-4 bg-gradient-to-br from-amber-50/30 to-yellow-50/30">
+      <section id="beta-signup" className="py-12 sm:py-16 lg:py-20 px-4 bg-gradient-to-br from-amber-50/30 to-yellow-50/30">
         <div className="container mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold mb-6 font-display">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 font-display">
             Join the Beta
           </h2>
-          <p className="text-lg text-muted-foreground mb-8">
+          <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 px-4">
             Get early access to Asmbli's professional AI agent platform. 
             Beta users receive priority support and exclusive features.
           </p>
           
-          <div className="bg-white rounded-xl shadow-lg p-8 border">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border mx-4 sm:mx-0">
             <BetaSignupForm />
             
-            <div className="mt-6 pt-6 border-t">
+            <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
               <p className="text-sm text-muted-foreground mb-4">
                 Already have beta access?
               </p>
@@ -717,7 +717,7 @@ export default function HomePage() {
             </div>
           </div>
           
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center text-sm text-muted-foreground">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-amber-500" />
               <span>Free beta access</span>
@@ -735,30 +735,30 @@ export default function HomePage() {
       </section>
 
       {/* Privacy Section */}
-      <section className="py-20 px-4 bg-yellow-50/10">
+      <section className="py-12 sm:py-16 lg:py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto max-w-3xl text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Shield className="h-6 w-6 text-yellow-600" />
-            <h2 className="text-2xl font-bold font-display">
+            <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
+            <h2 className="text-xl sm:text-2xl font-bold font-display">
               Your Privacy, Protected
             </h2>
           </div>
-          <p className="text-lg text-muted-foreground mb-6">
+          <p className="text-base sm:text-lg text-muted-foreground mb-6 px-4">
             We don't store your chats or user data. Your conversations with AI agents remain entirely on your device. 
             We only collect basic profile registration information needed to provide you access to the platform.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-sm text-muted-foreground">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-yellow-600" />
-              <span>No chat history stored</span>
+              <span className="whitespace-nowrap">No chat history stored</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-yellow-600" />
-              <span>No user data collection</span>
+              <span className="whitespace-nowrap">No user data collection</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-yellow-600" />
-              <span>Profile info only</span>
+              <span className="whitespace-nowrap">Profile info only</span>
             </div>
           </div>
         </div>
