@@ -8,7 +8,6 @@ import 'core/design_system/design_system.dart';
 import 'core/constants/routes.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
 import 'features/chat/presentation/screens/demo_chat_screen.dart'; // Remove after video
-import 'features/templates/presentation/screens/templates_screen.dart';
 import 'features/settings/presentation/screens/settings_screen.dart';
 import 'features/settings/presentation/screens/modern_settings_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
@@ -83,13 +82,14 @@ class AsmblDesktopApp extends ConsumerWidget {
 
  @override
  Widget build(BuildContext context, WidgetRef ref) {
- final themeMode = ref.watch(themeServiceProvider);
+ final themeState = ref.watch(themeServiceProvider);
+ final themeService = ref.read(themeServiceProvider.notifier);
  
  return MaterialApp.router(
  title: 'Asmbli - AI Agents Made Easy',
- theme: AppTheme.lightTheme,
- darkTheme: AppTheme.darkTheme,
- themeMode: themeMode,
+ theme: themeService.getLightTheme(),
+ darkTheme: themeService.getDarkTheme(),
+ themeMode: themeState.mode,
  routerConfig: _router,
  debugShowCheckedModeBanner: false,
  );
@@ -120,10 +120,6 @@ final _router = GoRouter(
  GoRoute(
  path: AppRoutes.demoChat,
  builder: (context, state) => const DemoChatScreen(),
- ),
- GoRoute(
- path: AppRoutes.templates,
- builder: (context, state) => const TemplatesScreen(),
  ),
  GoRoute(
  path: AppRoutes.settings,

@@ -111,7 +111,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  child: Column(
  children: [
  // Header
- AppNavigationBar(currentRoute: AppRoutes.templates),
+ AppNavigationBar(currentRoute: AppRoutes.context),
  
  // Main Content
  Expanded(

@@ -538,7 +538,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  // Browse Templates Button
  GestureDetector(
- onTap: () => context.go(AppRoutes.templates),
+ onTap: () => context.go(AppRoutes.context),
  child: Container(
  width: double.infinity,
  padding: const EdgeInsets.symmetric(vertical: 12),

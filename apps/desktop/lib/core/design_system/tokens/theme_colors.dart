@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import '../../../core/services/theme_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Theme-aware color provider - USE THIS INSTEAD OF SemanticColors
 class ThemeColors {
  final BuildContext context;
  final ThemeData theme;
+ final String? _colorScheme;
  
- ThemeColors(this.context) : theme = Theme.of(context);
+ ThemeColors(this.context, {String? colorScheme}) 
+   : theme = Theme.of(context), 
+     _colorScheme = colorScheme;
  
  bool get isDark => theme.brightness == Brightness.dark;
  
@@ -16,17 +21,89 @@ class ThemeColors {
  Color get surfaceSecondary => theme.colorScheme.secondary;
  
  // Enhanced background gradients that get darker towards edges
- Color get backgroundGradientStart => isDark 
- ? Color(0xFF142019) // Lighter forest center
- : Color(0xFFF8FCFA); // Lighter mint center
+ Color get backgroundGradientStart {
+ final scheme = _colorScheme ?? 'mint-green';
  
- Color get backgroundGradientMiddle => isDark 
- ? Color(0xFF0F1C14) // Main forest
- : Color(0xFFF5FBF8); // Main mint
+ if (isDark) {
+ switch (scheme) {
+ case 'cool-blue':
+ return Color(0xFF1E293B); // Darker blue center
+ case 'forest-green':
+ return Color(0xFF1F5A32); // Lighter forest center
+ case 'sunset-orange':
+ return Color(0xFF9A3412); // Lighter orange center
+ default: // mint-green
+ return Color(0xFF142019); // Lighter mint-forest center
+ }
+ } else {
+ switch (scheme) {
+ case 'cool-blue':
+ return Color(0xFFFAFCFF); // Lighter blue center
+ case 'forest-green':
+ return Color(0xFFFAFDFB); // Almost white green center
+ case 'sunset-orange':
+ return Color(0xFFFFFBF7); // Almost white orange center
+ default: // mint-green
+ return Color(0xFFF8FCFA); // Lighter mint center
+ }
+ }
+ }
  
- Color get backgroundGradientEnd => isDark 
- ? Color(0xFF0A140F) // Darker forest edges
- : const Color(0xFFE8F3ED); // Darker mint edges
+ Color get backgroundGradientMiddle {
+ final scheme = _colorScheme ?? 'mint-green';
+ 
+ if (isDark) {
+ switch (scheme) {
+ case 'cool-blue':
+ return Color(0xFF0F172A); // Main blue
+ case 'forest-green':
+ return Color(0xFF14532D); // Main forest
+ case 'sunset-orange':
+ return Color(0xFF7C2D12); // Main orange
+ default: // mint-green
+ return Color(0xFF0F1C14); // Main forest
+ }
+ } else {
+ switch (scheme) {
+ case 'cool-blue':
+ return Color(0xFFF0F9FF); // Main blue
+ case 'forest-green':
+ return Color(0xFFF0FDF4); // Main light green
+ case 'sunset-orange':
+ return Color(0xFFFFF7ED); // Main light orange
+ default: // mint-green
+ return Color(0xFFF5FBF8); // Main mint
+ }
+ }
+ }
+ 
+ Color get backgroundGradientEnd {
+ final scheme = _colorScheme ?? 'mint-green';
+ 
+ if (isDark) {
+ switch (scheme) {
+ case 'cool-blue':
+ return Color(0xFF0C1220); // Darker blue edges
+ case 'forest-green':
+ return Color(0xFF0F2419); // Darker forest edges
+ case 'sunset-orange':
+ return Color(0xFF571A08); // Darker orange edges
+ default: // mint-green
+ return Color(0xFF0A140F); // Darker forest edges
+ }
+ } else {
+ switch (scheme) {
+ case 'cool-blue':
+ return Color(0xFFE0F2FE); // Darker blue edges
+ case 'forest-green':
+ return Color(0xFFDCFCE7); // Darker green edges
+ case 'sunset-orange':
+ return Color(0xFFFED7AA); // Darker orange edges
+ default: // mint-green
+ return Color(0xFFE8F3ED); // Darker mint edges
+ }
+ }
+ }
  
  // Text colors
  Color get onSurface => theme.colorScheme.onSurface;
@@ -58,9 +135,13 @@ class ThemeColors {
  Color get focus => primary.withValues(alpha: 0.12);
  
  // Special colors
- Color get headerBackground => isDark 
- ? const Color(0x99142019) // Semi-transparent dark forest
- : const Color(0x80FFFFFF); // Semi-transparent white
+ Color get headerBackground {
+ if (isDark) {
+ return backgroundGradientStart.withValues(alpha: 0.6);
+ } else {
+ return const Color(0x80FFFFFF); // Semi-transparent white
+ }
+ }
  
  Color get headerBorder => border.withValues(alpha: 0.3);
  
@@ -68,8 +149,8 @@ class ThemeColors {
  Color get cardBorder => border.withValues(alpha: 0.5);
  
  Color get inputBackground => isDark
- ? const Color(0xFF142019)
- : const Color(0xFFD3E8DC);
+ ? backgroundGradientStart
+ : surfaceVariant;
  
  Color get mutedForeground => onSurfaceVariant;
 }

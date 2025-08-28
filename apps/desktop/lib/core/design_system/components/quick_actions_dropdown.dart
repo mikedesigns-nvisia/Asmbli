@@ -157,7 +157,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  description: 'Explore agent templates',
  onTap: () {
  _closeDropdown();
- context.go(AppRoutes.templates);
+ context.go(AppRoutes.context);
  },
  color: colors.info,
  ),

@@ -39,7 +39,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  size: 20,
  color: colors.primary,
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ SizedBox(width: 4),
  Expanded(
  child: Text(
  'Knowledge Library',
@@ -173,6 +173,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  sample: sample,
  onQuickAdd: () => _handleQuickAdd(sample),
  onPreview: () => _showPreview(sample),
+onConfigure: () => _showConfigureDialog(sample),
  );
  }).toList(),
  );
@@ -233,7 +234,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  content: Row(
  children: [
  Icon(Icons.check_circle, color: Colors.white, size: 16),
- SizedBox(width: SpacingTokens.componentSpacing),
+ SizedBox(width: 4),
  Expanded(
  child: Text(
  'Added "${sample.title}" to your context library',
@@ -276,6 +277,13 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  // This would integrate with existing context creation flow
  }
 
+ void _showConfigureDialog(SampleContext sample) {
+ showDialog(
+ context: context,
+ builder: (context) => SampleContextConfigureDialog(sample: sample),
+ );
+ }
+
  @override
  void dispose() {
  _categoryScrollController.dispose();
@@ -287,12 +295,14 @@ class SampleContextCard extends StatefulWidget {
  final SampleContext sample;
  final VoidCallback onQuickAdd;
  final VoidCallback onPreview;
+ final VoidCallback onConfigure;
 
  const SampleContextCard({
  super.key,
  required this.sample,
  required this.onQuickAdd,
  required this.onPreview,
+ required this.onConfigure,
  });
 
  @override
@@ -332,7 +342,7 @@ class _SampleContextCardState extends State<SampleContextCard> {
  color: colors.primary,
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ SizedBox(width: 4),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -412,7 +422,14 @@ class _SampleContextCardState extends State<SampleContextCard> {
  size: AsmblButtonSize.small,
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ SizedBox(width: 4),
+ AsmblButtonEnhanced.secondary(
+ text: '',
+ icon: Icons.tune,
+ onPressed: widget.onConfigure,
+ size: AsmblButtonSize.small,
+ ),
+ SizedBox(width: 4),
  AsmblButtonEnhanced.secondary(
  text: '',
  icon: Icons.visibility_outlined,
@@ -459,7 +476,7 @@ class SampleContextPreviewDialog extends StatelessWidget {
  size: 24,
  color: colors.primary,
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ SizedBox(width: 4),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -522,7 +539,7 @@ class SampleContextPreviewDialog extends StatelessWidget {
  onPressed: () => Navigator.of(context).pop(),
  size: AsmblButtonSize.medium,
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ SizedBox(width: 4),
  AsmblButtonEnhanced.accent(
  text: 'Add to Library',
  icon: Icons.add,
@@ -605,4 +622,281 @@ class SampleContext {
  required this.tags,
  required this.icon,
  });
+}
+
+class SampleContextConfigureDialog extends StatefulWidget {
+final SampleContext sample;
+
+const SampleContextConfigureDialog({
+super.key,
+required this.sample,
+});
+
+@override
+State<SampleContextConfigureDialog> createState() => _SampleContextConfigureDialogState();
+}
+
+class _SampleContextConfigureDialogState extends State<SampleContextConfigureDialog> {
+late TextEditingController _titleController;
+late TextEditingController _contentController;
+late List<String> _tags;
+late ContextType _selectedType;
+
+@override
+void initState() {
+super.initState();
+_titleController = TextEditingController(text: widget.sample.title);
+_contentController = TextEditingController(text: widget.sample.content);
+_tags = List<String>.from(widget.sample.tags);
+_selectedType = widget.sample.contextType;
+}
+
+@override
+Widget build(BuildContext context) {
+final colors = ThemeColors(context);
+
+return Dialog(
+backgroundColor: Colors.transparent,
+child: AsmblCardEnhanced.outlined(
+isInteractive: false,
+child: Container(
+width: 700,
+constraints: BoxConstraints(maxHeight: 600),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+// Header
+Row(
+children: [
+Icon(
+Icons.tune,
+size: 24,
+color: colors.primary,
+),
+SizedBox(width: 4),
+Expanded(
+child: Text(
+'Configure Context',
+style: TextStyles.pageTitle.copyWith(
+color: colors.onSurface,
+),
+),
+),
+IconButton(
+onPressed: () => Navigator.of(context).pop(),
+icon: Icon(Icons.close),
+style: IconButton.styleFrom(
+foregroundColor: colors.onSurfaceVariant,
+),
+),
+],
+),
+
+SizedBox(height: SpacingTokens.elementSpacing),
+
+// Form
+Expanded(
+child: SingleChildScrollView(
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+// Title
+Text(
+'Title',
+style: TextStyles.bodyMedium.copyWith(
+fontWeight: FontWeight.w600,
+color: colors.onSurface,
+),
+),
+SizedBox(height: SpacingTokens.iconSpacing),
+TextField(
+controller: _titleController,
+decoration: InputDecoration(
+hintText: 'Enter context title',
+border: OutlineInputBorder(
+borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+borderSide: BorderSide(color: colors.border),
+),
+filled: true,
+fillColor: colors.surface,
+),
+),
+
+SizedBox(height: SpacingTokens.componentSpacing),
+
+// Type
+Text(
+'Type',
+style: TextStyles.bodyMedium.copyWith(
+fontWeight: FontWeight.w600,
+color: colors.onSurface,
+),
+),
+SizedBox(height: SpacingTokens.iconSpacing),
+DropdownButtonFormField<ContextType>(
+value: _selectedType,
+decoration: InputDecoration(
+border: OutlineInputBorder(
+borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+borderSide: BorderSide(color: colors.border),
+),
+filled: true,
+fillColor: colors.surface,
+),
+items: ContextType.values.map((type) {
+return DropdownMenuItem(
+value: type,
+child: Text(type.displayName),
+);
+}).toList(),
+onChanged: (value) {
+if (value != null) {
+setState(() => _selectedType = value);
+}
+},
+),
+
+SizedBox(height: SpacingTokens.componentSpacing),
+
+// Content
+Text(
+'Content',
+style: TextStyles.bodyMedium.copyWith(
+fontWeight: FontWeight.w600,
+color: colors.onSurface,
+),
+),
+SizedBox(height: SpacingTokens.iconSpacing),
+TextField(
+controller: _contentController,
+decoration: InputDecoration(
+hintText: 'Enter context content',
+border: OutlineInputBorder(
+borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+borderSide: BorderSide(color: colors.border),
+),
+filled: true,
+fillColor: colors.surface,
+),
+maxLines: 8,
+minLines: 4,
+),
+
+SizedBox(height: SpacingTokens.componentSpacing),
+
+// Tags
+Text(
+'Tags',
+style: TextStyles.bodyMedium.copyWith(
+fontWeight: FontWeight.w600,
+color: colors.onSurface,
+),
+),
+SizedBox(height: SpacingTokens.iconSpacing),
+if (_tags.isNotEmpty)
+Wrap(
+spacing: SpacingTokens.iconSpacing,
+runSpacing: SpacingTokens.iconSpacing,
+children: _tags.map((tag) {
+return Chip(
+label: Text(tag),
+onDeleted: () {
+setState(() => _tags.remove(tag));
+},
+deleteIconColor: colors.onSurfaceVariant,
+backgroundColor: colors.surfaceVariant.withValues(alpha: 0.5),
+);
+}).toList(),
+),
+],
+),
+),
+),
+
+SizedBox(height: SpacingTokens.elementSpacing),
+
+// Footer
+Row(
+mainAxisAlignment: MainAxisAlignment.end,
+children: [
+AsmblButtonEnhanced.secondary(
+text: 'Cancel',
+onPressed: () => Navigator.of(context).pop(),
+size: AsmblButtonSize.medium,
+),
+SizedBox(width: 4),
+AsmblButtonEnhanced.accent(
+text: 'Add to Library',
+icon: Icons.add,
+onPressed: _handleAddToLibrary,
+size: AsmblButtonSize.medium,
+),
+],
+),
+],
+),
+),
+),
+);
+}
+
+void _handleAddToLibrary() async {
+try {
+final context = this.context;
+if (context.mounted) {
+final container = ProviderScope.containerOf(context);
+await container.read(contextRepositoryProvider).createDocument(
+title: _titleController.text,
+content: _contentController.text,
+type: _selectedType,
+tags: _tags,
+);
+
+container.invalidate(contextDocumentsProvider);
+
+if (context.mounted) {
+Navigator.of(context).pop();
+ScaffoldMessenger.of(context).showSnackBar(
+SnackBar(
+content: Row(
+children: [
+Icon(Icons.check_circle, color: Colors.white, size: 16),
+SizedBox(width: 4),
+Expanded(
+child: Text(
+'Added "${_titleController.text}" to your context library',
+style: TextStyle(fontFamily: 'Space Grotesk'),
+),
+),
+],
+),
+backgroundColor: SemanticColors.success,
+behavior: SnackBarBehavior.floating,
+duration: const Duration(seconds: 3),
+),
+);
+}
+}
+} catch (e) {
+if (mounted) {
+ScaffoldMessenger.of(context).showSnackBar(
+SnackBar(
+content: Text(
+'Failed to add context: ${e.toString()}',
+style: TextStyle(fontFamily: 'Space Grotesk'),
+),
+backgroundColor: SemanticColors.error,
+behavior: SnackBarBehavior.floating,
+),
+);
+}
+}
+}
+
+@override
+void dispose() {
+_titleController.dispose();
+_contentController.dispose();
+super.dispose();
+}
 }

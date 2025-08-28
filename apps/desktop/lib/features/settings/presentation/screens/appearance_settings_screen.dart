@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../core/services/theme_service.dart';
+import '../../../../core/theme/color_schemes.dart';
 
 class AppearanceSettingsScreen extends ConsumerStatefulWidget {
   const AppearanceSettingsScreen({super.key});
@@ -15,14 +16,15 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
   double _uiScale = 1.0;
   bool _compactMode = false;
   bool _showAnimations = true;
-  String _selectedColorScheme = 'warm-neutral';
+  String _selectedColorScheme = AppColorSchemes.mintGreen;
   String _selectedFont = 'space-grotesk';
 
   @override
   Widget build(BuildContext context) {
-    final colors = ThemeColors(context);
-    final currentThemeMode = ref.watch(themeServiceProvider);
+    final themeState = ref.watch(themeServiceProvider);
+    final colors = ThemeColors(context, colorScheme: themeState.colorScheme);
     final themeService = ref.read(themeServiceProvider.notifier);
+    final currentThemeMode = themeState.mode;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -261,7 +263,10 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
       children: schemes.map((scheme) {
         final isSelected = _selectedColorScheme == scheme.id;
         return InkWell(
-          onTap: () => setState(() => _selectedColorScheme = scheme.id),
+          onTap: () {
+            setState(() => _selectedColorScheme = scheme.id);
+            ref.read(themeServiceProvider.notifier).setColorScheme(scheme.id);
+          },
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           child: Container(
             width: 140,
@@ -645,14 +650,6 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
     final themeService = ref.read(themeServiceProvider.notifier);
     themeService.setTheme(ThemeMode.system);
   }
-}
-
-class ColorSchemeOption {
-  final String id;
-  final String name;
-  final List<Color> colors;
-
-  ColorSchemeOption(this.id, this.name, this.colors);
 }
 
 class FontOption {

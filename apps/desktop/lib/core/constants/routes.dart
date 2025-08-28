@@ -6,7 +6,6 @@ class AppRoutes {
  // Main routes
  static const String home = '/';
  static const String chat = '/chat';
- static const String templates = '/templates';
  static const String settings = '/settings';
  static const String agents = '/agents';
  static const String context = '/context';
@@ -22,7 +21,6 @@ class AppRoutes {
  static const Map<String, String> routeNames = {
  home: 'Home',
  chat: 'Chat',
- templates: 'Templates',
  settings: 'Settings',
  agents: 'My Agents',
  context: 'Context',
@@ -42,7 +40,6 @@ class AppRoutes {
  static const List<String> allRoutes = [
  home,
  chat,
- templates,
  settings,
  agents,
  context,
