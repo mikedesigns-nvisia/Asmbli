@@ -110,9 +110,9 @@ class DesktopStorageService {
  }
  }
 
- Future<Box<T>> _openBox<T>(String boxName) async {
+ Future<Box<dynamic>> _openBox<T>(String boxName) async {
  if (_hiveBoxes.containsKey(boxName)) {
-   return _hiveBoxes[boxName] as Box<T>;
+   return _hiveBoxes[boxName]!;
  }
  
  // For complex types, use dynamic boxes and handle JSON serialization ourselves
@@ -125,7 +125,7 @@ class DesktopStorageService {
  }
  
  _hiveBoxes[boxName] = box;
- return box as Box<T>;
+ return box;
  }
 
  Future<void> setPreference<T>(String key, T value) async {
@@ -197,8 +197,14 @@ class DesktopStorageService {
 
  Future<void> setHiveData<T>(String boxName, String key, T value) async {
  try {
-   final box = await _openBox<T>(boxName);
-   await box.put(key, value);
+   final box = _hiveBoxes[boxName];
+   if (box != null) {
+     await box.put(key, value);
+   } else {
+     // Try to open box if not available
+     final newBox = await _openBox<dynamic>(boxName);
+     await newBox.put(key, value);
+   }
  } catch (e) {
    print('⚠️ Failed to save to Hive box $boxName: $e (falling back to SharedPreferences)');
    // Fallback to SharedPreferences for persistence
@@ -208,12 +214,12 @@ class DesktopStorageService {
 
  T? getHiveData<T>(String boxName, String key, {T? defaultValue}) {
  try {
-   final box = _hiveBoxes[boxName] as Box<T>?;
+   final box = _hiveBoxes[boxName];
    if (box == null) {
      // Fallback to SharedPreferences
      return getPreference<T>('hive_fallback_${boxName}_$key', defaultValue: defaultValue);
    }
-   return box.get(key, defaultValue: defaultValue);
+   return box.get(key, defaultValue: defaultValue) as T?;
  } catch (e) {
    print('⚠️ Failed to read from Hive box $boxName: $e (using fallback)');
    return getPreference<T>('hive_fallback_${boxName}_$key', defaultValue: defaultValue);

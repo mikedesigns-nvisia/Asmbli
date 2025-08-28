@@ -4,13 +4,16 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../context/presentation/widgets/context_hub_widget.dart';
+import '../../../context/presentation/providers/context_provider.dart';
+import '../../../context/data/models/context_document.dart';
+import '../../../../core/services/agent_context_prompt_service.dart';
 
 class AgentConfigurationScreen extends ConsumerStatefulWidget {
- final String? agentName;
+ final String? agentId;
 
  const AgentConfigurationScreen({
  super.key,
- this.agentName,
+ this.agentId,
  });
 
  @override
@@ -108,14 +111,14 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  @override
  void initState() {
  super.initState();
- if (widget.agentName != null) {
+ if (widget.agentId != null) {
  _loadAgentData();
  }
  }
 
  void _loadAgentData() {
  // Load existing agent data
- _nameController.text = widget.agentName ?? '';
+ _nameController.text = widget.agentId ?? '';
  _descriptionController.text = 'Academic research agent with citation management';
  _systemPromptController.text = 'You are a helpful research assistant...';
  selectedMCPServers = ['Brave Search', 'Memory', 'Files'];
@@ -165,7 +168,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  ),
  SizedBox(width: SpacingTokens.componentSpacing),
  Text(
- widget.agentName != null ? 'Edit Agent' : 'Create New Agent',
+ widget.agentId != null ? 'Edit Agent' : 'Create New Agent',
  style: TextStyles.sectionTitle.copyWith(
  color: ThemeColors(context).onSurface,
  ),
@@ -177,7 +180,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  ),
  SizedBox(width: SpacingTokens.componentSpacing),
  AsmblButton.primary(
- text: widget.agentName != null ? 'Save' : 'Create',
+ text: widget.agentId != null ? 'Save' : 'Create',
  onPressed: _saveAgent,
  icon: Icons.save,
  ),
@@ -465,6 +468,12 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  basePrompt += 'You have the ability to: ${capabilities.join(', ')}.\n\n';
  }
  
+ // Add context from Knowledge Library if available
+ final agentId = widget.agentId;
+ if (agentId != null) {
+ basePrompt += _addContextToPrompt(agentId);
+ }
+ 
  // Add helpful guidelines
  basePrompt += 'Always be helpful, accurate, and aligned with your personality and tone. ';
  basePrompt += 'Ask clarifying questions when needed, and provide clear, actionable responses.';
@@ -472,10 +481,51 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  return basePrompt;
  }
 
- void _saveAgent() {
- // Generate system prompt if not in advanced mode
+ String _addContextToPrompt(String agentId) {
+ // This method will be enhanced to include context documents
+ // For now, add a placeholder section for context integration
+ String contextPrompt = '\n## Knowledge Base\n';
+ contextPrompt += 'You have access to specialized knowledge and context documents that will help you provide more accurate and relevant responses. ';
+ contextPrompt += 'Use this information to enhance your responses when relevant.\n\n';
+ 
+ // TODO: In a real implementation, we would:
+ // 1. Get context documents assigned to this agent using contextForAgentProvider
+ // 2. Add relevant excerpts or summaries to the prompt
+ // 3. Organize context by type (examples, knowledge, procedures, etc.)
+ 
+ return contextPrompt;
+ }
+
+ void _saveAgent() async {
+ // Generate enhanced system prompt if not in advanced mode
  if (!showAdvancedPrompt) {
- _systemPromptController.text = _generateSystemPrompt();
+ final contextPromptService = ref.read(agentContextPromptServiceProvider);
+ 
+ if (widget.agentId != null) {
+ // Existing agent - enhance with context
+ final enhancedPrompt = await contextPromptService.enhancePromptWithContext(
+ _generateSystemPrompt(),
+ widget.agentId!,
+ ref,
+ );
+ _systemPromptController.text = enhancedPrompt;
+ } else {
+ // New agent - use context-aware prompt creation
+ final capabilities = <String>[];
+ if (enableMemory) capabilities.add('remember our conversation history');
+ if (enableWebSearch) capabilities.add('search the web for current information');
+ if (enableCodeExecution) capabilities.add('execute code in a safe environment');
+ 
+ final contextAwarePrompt = contextPromptService.createContextAwarePrompt(
+ agentName: _nameController.text.isNotEmpty ? _nameController.text : 'AI Assistant',
+ agentDescription: _descriptionController.text,
+ personality: selectedPersonality,
+ expertise: selectedExpertise,
+ capabilities: capabilities,
+ mcpServers: [], // TODO: Get from MCP configuration
+ );
+ _systemPromptController.text = contextAwarePrompt;
+ }
  }
  
  // Save agent configuration

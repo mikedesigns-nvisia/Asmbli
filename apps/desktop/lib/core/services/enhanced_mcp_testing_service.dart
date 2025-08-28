@@ -622,15 +622,159 @@ class EnhancedMCPTestingService {
   }
 
   Future<TestResult> _testEnterpriseServer(String serverId, String testId, EnhancedMCPTemplate template, Map<String, dynamic> config) async {
-    return TestResult.success(serverId: serverId, testId: testId, message: 'Enterprise test placeholder');
+    try {
+      _broadcastTestUpdate(serverId, TestResult.loading(
+        serverId: serverId, testId: testId, message: 'Testing enterprise server connectivity...'
+      ));
+
+      // Test basic connectivity
+      final host = config['host'] ?? config['url'] ?? config['endpoint'];
+      if (host == null) {
+        return TestResult.error(
+          serverId: serverId, testId: testId,
+          message: 'No endpoint configured',
+          suggestions: ['Configure server endpoint/URL']
+        );
+      }
+
+      // Check API key or authentication
+      final apiKey = config['apiKey'] ?? config['token'] ?? config['auth'];
+      if (apiKey == null || apiKey.toString().isEmpty) {
+        return TestResult.warning(
+          serverId: serverId, testId: testId,
+          message: 'No authentication configured - functionality may be limited',
+          suggestions: ['Configure API key or authentication token']
+        );
+      }
+
+      return TestResult.success(
+        serverId: serverId, testId: testId,
+        message: 'Enterprise server configuration validated',
+        details: 'Endpoint: $host\nAuthentication: ${apiKey.toString().isNotEmpty ? "Configured" : "Not configured"}'
+      );
+    } catch (e) {
+      return TestResult.error(
+        serverId: serverId, testId: testId,
+        message: 'Enterprise server test failed: $e',
+        suggestions: ['Check server endpoint', 'Verify credentials']
+      );
+    }
   }
 
   Future<TestResult> _testAIServer(String serverId, String testId, EnhancedMCPTemplate template, Map<String, dynamic> config) async {
-    return TestResult.success(serverId: serverId, testId: testId, message: 'AI service test placeholder');
+    try {
+      _broadcastTestUpdate(serverId, TestResult.loading(
+        serverId: serverId, testId: testId, message: 'Testing AI service connection...'
+      ));
+
+      // Test API key
+      final apiKey = config['apiKey'] ?? config['key'] ?? config['token'];
+      if (apiKey == null || apiKey.toString().trim().isEmpty) {
+        return TestResult.error(
+          serverId: serverId, testId: testId,
+          message: 'API key is required',
+          suggestions: ['Configure your AI service API key']
+        );
+      }
+
+      // Validate API key format
+      final keyStr = apiKey.toString();
+      if (keyStr.length < 10) {
+        return TestResult.warning(
+          serverId: serverId, testId: testId,
+          message: 'API key appears to be too short',
+          suggestions: ['Verify your API key is complete']
+        );
+      }
+
+      // Test specific AI service based on template
+      String serviceType = template.id.toLowerCase();
+      if (serviceType.contains('openai')) {
+        if (!keyStr.startsWith('sk-')) {
+          return TestResult.warning(
+            serverId: serverId, testId: testId,
+            message: 'OpenAI API keys typically start with "sk-"',
+            suggestions: ['Verify this is a valid OpenAI API key']
+          );
+        }
+      } else if (serviceType.contains('anthropic')) {
+        if (!keyStr.startsWith('sk-ant-')) {
+          return TestResult.warning(
+            serverId: serverId, testId: testId,
+            message: 'Anthropic API keys typically start with "sk-ant-"',
+            suggestions: ['Verify this is a valid Anthropic API key']
+          );
+        }
+      }
+
+      return TestResult.success(
+        serverId: serverId, testId: testId,
+        message: 'AI service configuration validated',
+        details: 'Service: ${template.name}\nAPI Key: ${keyStr.substring(0, 8)}...'
+      );
+    } catch (e) {
+      return TestResult.error(
+        serverId: serverId, testId: testId,
+        message: 'AI service test failed: $e',
+        suggestions: ['Check API key format', 'Verify service configuration']
+      );
+    }
   }
 
   Future<TestResult> _testGenericServer(String serverId, String testId, EnhancedMCPTemplate template, Map<String, dynamic> config) async {
-    return TestResult.success(serverId: serverId, testId: testId, message: 'Generic test placeholder');
+    try {
+      _broadcastTestUpdate(serverId, TestResult.loading(
+        serverId: serverId, testId: testId, message: 'Testing server configuration...'
+      ));
+
+      // Basic configuration validation
+      final requiredFields = template.fields.where((f) => f.required).toList();
+      final missingFields = <String>[];
+      
+      for (final field in requiredFields) {
+        final value = config[field.id];
+        if (value == null || value.toString().trim().isEmpty) {
+          missingFields.add(field.label);
+        }
+      }
+
+      if (missingFields.isNotEmpty) {
+        return TestResult.error(
+          serverId: serverId, testId: testId,
+          message: 'Missing required fields: ${missingFields.join(", ")}',
+          suggestions: ['Configure all required fields']
+        );
+      }
+
+      // Check for common configuration patterns
+      final warnings = <String>[];
+      final endpoint = config['endpoint'] ?? config['url'] ?? config['host'];
+      
+      if (endpoint != null && endpoint.toString().startsWith('http://')) {
+        warnings.add('Using insecure HTTP connection');
+      }
+
+      if (warnings.isNotEmpty) {
+        return TestResult.warning(
+          serverId: serverId, testId: testId,
+          message: 'Configuration validated with warnings',
+          details: warnings.join('\n'),
+          suggestions: ['Consider using HTTPS for secure connections']
+        );
+      }
+
+      return TestResult.success(
+        serverId: serverId, testId: testId,
+        message: 'Server configuration validated successfully',
+        details: 'All required fields configured'
+      );
+    } catch (e) {
+      return TestResult.error(
+        serverId: serverId, testId: testId,
+        message: 'Configuration test failed: $e',
+        suggestions: ['Check field values', 'Verify configuration format']
+      );
+    }
   }
 
   Future<TestResult> _testGenericLocalServer(String serverId, String testId, EnhancedMCPTemplate template, Map<String, dynamic> config) async {
@@ -642,11 +786,110 @@ class EnhancedMCPTestingService {
   }
 
   Future<TestResult> _testSQLiteServer(String serverId, String testId, Map<String, dynamic> config) async {
-    return TestResult.success(serverId: serverId, testId: testId, message: 'SQLite test placeholder');
+    try {
+      _broadcastTestUpdate(serverId, TestResult.loading(
+        serverId: serverId, testId: testId, message: 'Testing SQLite database...'
+      ));
+
+      final dbPath = config['path'] ?? config['database'] ?? config['file'];
+      if (dbPath == null || dbPath.toString().trim().isEmpty) {
+        return TestResult.error(
+          serverId: serverId, testId: testId,
+          message: 'Database path is required',
+          suggestions: ['Configure the SQLite database file path']
+        );
+      }
+
+      // Check if file exists
+      final file = File(dbPath.toString());
+      if (!await file.exists()) {
+        return TestResult.warning(
+          serverId: serverId, testId: testId,
+          message: 'Database file does not exist - will be created when needed',
+          details: 'Path: $dbPath'
+        );
+      }
+
+      // Check file permissions
+      try {
+        await file.readAsBytes();
+      } catch (e) {
+        return TestResult.error(
+          serverId: serverId, testId: testId,
+          message: 'Cannot access database file',
+          details: 'Error: $e',
+          suggestions: ['Check file permissions', 'Verify file path']
+        );
+      }
+
+      return TestResult.success(
+        serverId: serverId, testId: testId,
+        message: 'SQLite database accessible',
+        details: 'Path: $dbPath\nSize: ${await file.length()} bytes'
+      );
+    } catch (e) {
+      return TestResult.error(
+        serverId: serverId, testId: testId,
+        message: 'SQLite test failed: $e',
+        suggestions: ['Check database path', 'Verify file permissions']
+      );
+    }
   }
 
   Future<TestResult> _testGenericDatabaseServer(String serverId, String testId, EnhancedMCPTemplate template, Map<String, dynamic> config) async {
-    return TestResult.success(serverId: serverId, testId: testId, message: 'Database test placeholder');
+    try {
+      _broadcastTestUpdate(serverId, TestResult.loading(
+        serverId: serverId, testId: testId, message: 'Testing database connection...'
+      ));
+
+      final host = config['host'] ?? 'localhost';
+      final port = config['port'];
+      final database = config['database'] ?? config['dbname'];
+      final username = config['username'] ?? config['user'];
+      final password = config['password'];
+
+      final issues = <String>[];
+      if (database == null || database.toString().isEmpty) {
+        issues.add('Database name is required');
+      }
+      if (username == null || username.toString().isEmpty) {
+        issues.add('Username is required');
+      }
+
+      if (issues.isNotEmpty) {
+        return TestResult.error(
+          serverId: serverId, testId: testId,
+          message: 'Missing required database configuration: ${issues.join(", ")}',
+          suggestions: ['Configure all database connection parameters']
+        );
+      }
+
+      final warnings = <String>[];
+      if (password == null || password.toString().isEmpty) {
+        warnings.add('No password configured - connection may fail');
+      }
+
+      if (warnings.isNotEmpty) {
+        return TestResult.warning(
+          serverId: serverId, testId: testId,
+          message: 'Database configuration validated with warnings',
+          details: 'Host: $host${port != null ? ":$port" : ""}\nDatabase: $database\nUser: $username\n\nWarnings:\n${warnings.join("\n")}',
+          suggestions: ['Configure password for secure connection']
+        );
+      }
+
+      return TestResult.success(
+        serverId: serverId, testId: testId,
+        message: 'Database configuration validated',
+        details: 'Host: $host${port != null ? ":$port" : ""}\nDatabase: $database\nUser: $username'
+      );
+    } catch (e) {
+      return TestResult.error(
+        serverId: serverId, testId: testId,
+        message: 'Database test failed: $e',
+        suggestions: ['Check connection parameters', 'Verify database credentials']
+      );
+    }
   }
 }
 

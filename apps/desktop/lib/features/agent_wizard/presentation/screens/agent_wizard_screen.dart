@@ -6,6 +6,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../providers/agent_provider.dart';
+import '../../../../core/services/agent_context_prompt_service.dart';
 import '../widgets/wizard_step_indicator.dart';
 import '../widgets/agent_basics_step.dart';
 import '../widgets/intelligence_config_step.dart';
@@ -14,10 +15,27 @@ import '../widgets/advanced_config_step.dart';
 import '../widgets/deploy_test_step.dart';
 import '../../models/agent_wizard_state.dart';
 
+/// Simple template class for wizard initialization
+class WizardTemplate {
+  final String name;
+  final String description;
+  final String category;
+  final List<String> mcpServers;
+  
+  const WizardTemplate({
+    required this.name,
+    required this.description, 
+    required this.category,
+    required this.mcpServers,
+  });
+}
+
 /// Comprehensive agent deployment wizard
 /// Guides users through creating custom agents from scratch
 class AgentWizardScreen extends ConsumerStatefulWidget {
-  const AgentWizardScreen({super.key});
+  final String? selectedTemplate;
+  
+  const AgentWizardScreen({super.key, this.selectedTemplate});
 
   @override
   ConsumerState<AgentWizardScreen> createState() => _AgentWizardScreenState();
@@ -44,6 +62,75 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
     super.initState();
     // Listen to wizard state changes to trigger UI updates
     _wizardState.addListener(_onWizardStateChanged);
+    
+    // Initialize template if provided
+    if (widget.selectedTemplate != null) {
+      _initializeFromTemplate(widget.selectedTemplate!);
+    }
+  }
+  
+  void _initializeFromTemplate(String templateName) {
+    // Find template by name (get templates from MyAgentsScreen)
+    final template = _findTemplateByName(templateName);
+    if (template != null) {
+      _wizardState.setAgentName(template.name);
+      _wizardState.setAgentDescription(template.description);
+      _wizardState.setAgentRole(template.category);
+      
+      // Pre-select MCP servers from template
+      for (final server in template.mcpServers) {
+        _wizardState.addMCPServer(server);
+      }
+    }
+  }
+  
+  WizardTemplate? _findTemplateByName(String name) {
+    // Create the same templates list as in MyAgentsScreen
+    final templates = _createTemplatesList();
+    final matching = templates.where((template) => template.name == name);
+    return matching.isNotEmpty ? matching.first : null;
+  }
+  
+  List<WizardTemplate> _createTemplatesList() {
+    // Simplified template list - add key templates that users would want to use
+    return [
+      WizardTemplate(
+        name: 'Research Assistant',
+        description: 'Academic research agent with citation management and fact-checking capabilities',
+        category: 'Research',
+        mcpServers: ['brave-search', 'memory', 'filesystem'],
+      ),
+      WizardTemplate(
+        name: 'Code Reviewer',
+        description: 'Automated code review with best practices and security checks',
+        category: 'Development',
+        mcpServers: ['github', 'git', 'filesystem', 'memory'],
+      ),
+      WizardTemplate(
+        name: 'Content Writer',
+        description: 'SEO-optimized content generation with tone customization',
+        category: 'Writing',
+        mcpServers: ['brave-search', 'web-fetch', 'memory', 'filesystem'],
+      ),
+      WizardTemplate(
+        name: 'Data Analyst',
+        description: 'Statistical analysis and visualization for business insights',
+        category: 'Data Analysis',
+        mcpServers: ['postgres', 'python', 'jupyter', 'memory', 'filesystem'],
+      ),
+      WizardTemplate(
+        name: 'Customer Support Bot',
+        description: 'Intelligent support agent with ticket management integration',
+        category: 'Customer Support',
+        mcpServers: ['jira', 'slack', 'zendesk', 'memory'],
+      ),
+      WizardTemplate(
+        name: 'Marketing Strategist',
+        description: 'Campaign planning and performance analysis agent',
+        category: 'Marketing',
+        mcpServers: ['brave-search', 'google-analytics', 'notion', 'memory'],
+      ),
+    ];
   }
 
   @override
@@ -1162,6 +1249,21 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   }
 
   Future<void> _saveAgentConfiguration(Map<String, dynamic> config) async {
+    // Generate context-aware system prompt
+    final contextPromptService = ref.read(agentContextPromptServiceProvider);
+    final contextAwarePrompt = contextPromptService.createContextAwarePrompt(
+      agentName: config['name'] as String,
+      agentDescription: config['description'] as String,
+      personality: _wizardState.agentRole.isNotEmpty ? _wizardState.agentRole : 'Professional',
+      expertise: config['expertise'] as String? ?? 'General',
+      capabilities: _wizardState.selectedMCPServers.map((server) => 'Use $server for enhanced functionality').toList(),
+      mcpServers: _wizardState.selectedMCPServers,
+      contextDocs: [], // Context documents from wizard state - would be loaded here
+    );
+    
+    // Update config with context-aware prompt
+    config['systemPrompt'] = contextAwarePrompt;
+    
     // Create agent instance from wizard configuration
     final agent = Agent(
       id: config['id'] as String,
@@ -1169,7 +1271,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
       description: config['description'] as String,
       capabilities: List<String>.from(config['mcpServers'] ?? []),
       configuration: {
-        'systemPrompt': config['systemPrompt'],
+        'systemPrompt': contextAwarePrompt,
         'apiProvider': config['apiProvider'],
         'modelParameters': config['modelParameters'],
         'mcpServers': config['mcpServers'],

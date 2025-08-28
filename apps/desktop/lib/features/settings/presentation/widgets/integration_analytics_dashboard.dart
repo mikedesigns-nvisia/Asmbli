@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/integration_analytics_service.dart';
+import '../../../../core/services/real_time_integration_tracker.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 
 class IntegrationAnalyticsDashboard extends ConsumerWidget {
@@ -10,6 +11,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final analyticsService = ref.watch(integrationAnalyticsServiceProvider);
+    final realTimeTracker = ref.watch(realTimeIntegrationTrackerProvider);
     final statistics = analyticsService.getStatistics();
     final insights = analyticsService.getPerformanceInsights();
     final recommendations = analyticsService.getUsageBasedRecommendations();
@@ -21,6 +23,10 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
+          SizedBox(height: SpacingTokens.xxl),
+          
+          // Real-time Status
+          _buildRealTimeStatus(realTimeTracker, usageData),
           SizedBox(height: SpacingTokens.xxl),
           
           // Statistics Overview
@@ -646,5 +652,167 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
       case IntegrationCategory.devops:
         return Icons.settings;
     }
+  }
+
+  Widget _buildRealTimeStatus(RealTimeIntegrationTracker tracker, Map<String, IntegrationUsageData> usageData) {
+    final colors = ThemeColors(context);
+    
+    return Row(
+      children: [
+        // Active Calls Monitor
+        Expanded(
+          child: AsmblCard(
+            padding: EdgeInsets.all(SpacingTokens.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: tracker.activeCallsCount > 0 ? Colors.green : colors.onSurfaceVariant,
+                      ),
+                    ),
+                    SizedBox(width: SpacingTokens.xs),
+                    Text(
+                      'Real-time Status',
+                      style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SpacingTokens.sm),
+                Text(
+                  'Active Calls: ${tracker.activeCallsCount}',
+                  style: TextStyles.bodyMedium,
+                ),
+                if (tracker.activeCallsCount > 0) ...[
+                  SizedBox(height: SpacingTokens.xs),
+                  Text(
+                    'Integrations processing requests',
+                    style: TextStyles.bodySmall.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+        SizedBox(width: SpacingTokens.lg),
+        
+        // Data Quality Indicator
+        Expanded(
+          child: AsmblCard(
+            padding: EdgeInsets.all(SpacingTokens.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      usageData.isNotEmpty ? Icons.storage : Icons.warning_outlined,
+                      color: usageData.isNotEmpty ? colors.primary : colors.onSurfaceVariant,
+                      size: 16,
+                    ),
+                    SizedBox(width: SpacingTokens.xs),
+                    Text(
+                      'Data Source',
+                      style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SpacingTokens.sm),
+                Text(
+                  usageData.isNotEmpty ? 'Real Usage Data' : 'No Data Yet',
+                  style: TextStyles.bodyMedium.copyWith(
+                    color: usageData.isNotEmpty ? colors.primary : colors.onSurfaceVariant,
+                  ),
+                ),
+                SizedBox(height: SpacingTokens.xs),
+                Text(
+                  usageData.isNotEmpty 
+                      ? 'Analytics from ${usageData.length} integrations'
+                      : 'Use integrations to see analytics',
+                  style: TextStyles.bodySmall.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(width: SpacingTokens.lg),
+        
+        // Recent Activity Indicator
+        Expanded(
+          child: AsmblCard(
+            padding: EdgeInsets.all(SpacingTokens.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.timeline, color: colors.primary, size: 16),
+                    SizedBox(width: SpacingTokens.xs),
+                    Text(
+                      'Last Activity',
+                      style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SpacingTokens.sm),
+                Builder(
+                  builder: (context) {
+                    if (usageData.isEmpty) {
+                      return Text(
+                        'No activity recorded',
+                        style: TextStyles.bodyMedium.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      );
+                    }
+                    
+                    final mostRecent = usageData.values
+                        .fold<IntegrationUsageData?>(null, (prev, current) {
+                          if (prev == null) return current;
+                          return current.lastUsed.isAfter(prev.lastUsed) ? current : prev;
+                        });
+                    
+                    if (mostRecent == null) {
+                      return Text(
+                        'No recent activity',
+                        style: TextStyles.bodyMedium.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      );
+                    }
+                    
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _formatLastUsed(mostRecent.lastUsed),
+                          style: TextStyles.bodyMedium,
+                        ),
+                        SizedBox(height: SpacingTokens.xs),
+                        Text(
+                          IntegrationRegistry.getById(mostRecent.integrationId)?.name ?? mostRecent.integrationId,
+                          style: TextStyles.bodySmall.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -703,8 +703,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  }
 
  void _useTemplate(AgentTemplate template) {
- // Navigate to chat or configuration with this template
- context.go('${AppRoutes.chat}?template=${template.name}');
+ // Navigate to agent wizard with this template pre-populated
+ context.go('${AppRoutes.agentWizard}?template=${Uri.encodeComponent(template.name)}');
  }
 
  IconData _getCategoryIcon(String category) {

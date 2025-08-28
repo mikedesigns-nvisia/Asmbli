@@ -21,7 +21,9 @@ import '../widgets/streaming_message_widget.dart';
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
 class ChatScreen extends ConsumerStatefulWidget {
- const ChatScreen({super.key});
+ final String? selectedTemplate;
+  
+  const ChatScreen({super.key, this.selectedTemplate});
 
  @override
  ConsumerState<ChatScreen> createState() => _ChatScreenState();

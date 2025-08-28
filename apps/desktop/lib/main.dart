@@ -114,7 +114,10 @@ final _router = GoRouter(
  ),
  GoRoute(
  path: AppRoutes.chat,
- builder: (context, state) => const ChatScreen(),
+ builder: (context, state) {
+   final template = state.uri.queryParameters['template'];
+   return ChatScreen(selectedTemplate: template);
+ },
  ),
  // Demo route for video recording (remove after video)
  GoRoute(
@@ -139,15 +142,15 @@ final _router = GoRouter(
  builder: (context, state) => const MyAgentsScreen(),
  ),
  GoRoute(
- path: '/agents/configure/:agentName',
+ path: '/agents/configure/:agentId',
  builder: (context, state) {
- final agentName = state.pathParameters['agentName'];
- return AgentConfigurationScreen(agentName: agentName);
+ final agentId = state.pathParameters['agentId'];
+ return AgentConfigurationScreen(agentId: agentId);
  },
  ),
  GoRoute(
  path: '/agents/configure',
- builder: (context, state) => AgentConfigurationScreen(),
+ builder: (context, state) => const AgentConfigurationScreen(),
  ),
  GoRoute(
  path: AppRoutes.context,
@@ -155,7 +158,10 @@ final _router = GoRouter(
  ),
  GoRoute(
   path: AppRoutes.agentWizard,
-  builder: (context, state) => const AgentWizardScreen(),
+  builder: (context, state) {
+    final template = state.uri.queryParameters['template'];
+    return AgentWizardScreen(selectedTemplate: template);
+  },
  ),
  ],
 );

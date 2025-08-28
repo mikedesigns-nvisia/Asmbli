@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class WizardScreen extends StatefulWidget {
  const WizardScreen({super.key});
@@ -10,6 +11,23 @@ class WizardScreen extends StatefulWidget {
 class _WizardScreenState extends State<WizardScreen> {
  int currentStep = 0;
  final PageController _pageController = PageController();
+ 
+ // Security settings
+ bool _requireApiKeyEncryption = true;
+ String _authenticationLevel = 'standard';
+ bool _enableAuditLogging = false;
+ String _privacyLevel = 'balanced';
+ 
+ // Behavior settings
+ String _personality = 'professional';
+ String _responseStyle = 'detailed';
+ double _creativityLevel = 0.7;
+ bool _enableEmojis = false;
+ 
+ // Test settings
+ final List<String> _testQueries = [];
+ bool _connectivityTestPassed = false;
+ final TextEditingController _testQueryController = TextEditingController();
 
  final List<String> stepTitles = [
  'Agent Profile',
@@ -232,30 +250,604 @@ class _WizardScreenState extends State<WizardScreen> {
  }
 
  Widget _buildSecurityStep() {
- return Padding(
- padding: const EdgeInsets.all(24),
- child: const Text('Security configuration step placeholder'),
+ final colors = ThemeColors(context);
+ 
+ return SingleChildScrollView(
+ padding: EdgeInsets.all(SpacingTokens.xxl),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Step 3: Security & Access',
+ style: TextStyles.pageTitle,
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ Text(
+ 'Configure security settings and access controls for your agent',
+ style: TextStyles.bodyMedium.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.xxl),
+
+ AsmblCard(
+ child: Padding(
+ padding: EdgeInsets.all(SpacingTokens.lg),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'API Security',
+ style: TextStyles.headingMedium,
+ ),
+ SizedBox(height: SpacingTokens.lg),
+ 
+ CheckboxListTile(
+ title: const Text('Require API Key Encryption'),
+ subtitle: const Text('Encrypt API keys in storage'),
+ value: _requireApiKeyEncryption,
+ onChanged: (value) {
+ setState(() {
+ _requireApiKeyEncryption = value ?? true;
+ });
+ },
+ ),
+ 
+ SizedBox(height: SpacingTokens.md),
+ 
+ Text(
+ 'Authentication Level',
+ style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ 
+ DropdownButtonFormField<String>(
+ value: _authenticationLevel,
+ decoration: const InputDecoration(
+ labelText: 'Authentication Level',
+ ),
+ items: const [
+ DropdownMenuItem(value: 'basic', child: Text('Basic')),
+ DropdownMenuItem(value: 'standard', child: Text('Standard')),
+ DropdownMenuItem(value: 'enhanced', child: Text('Enhanced')),
+ ],
+ onChanged: (value) {
+ if (value != null) {
+ setState(() {
+ _authenticationLevel = value;
+ });
+ }
+ },
+ ),
+ ],
+ ),
+ ),
+ ),
+ 
+ SizedBox(height: SpacingTokens.lg),
+ 
+ AsmblCard(
+ child: Padding(
+ padding: EdgeInsets.all(SpacingTokens.lg),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Privacy & Compliance',
+ style: TextStyles.headingMedium,
+ ),
+ SizedBox(height: SpacingTokens.lg),
+ 
+ CheckboxListTile(
+ title: const Text('Enable Audit Logging'),
+ subtitle: const Text('Log all agent interactions for compliance'),
+ value: _enableAuditLogging,
+ onChanged: (value) {
+ setState(() {
+ _enableAuditLogging = value ?? false;
+ });
+ },
+ ),
+ 
+ SizedBox(height: SpacingTokens.md),
+ 
+ Text(
+ 'Privacy Level',
+ style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ 
+ DropdownButtonFormField<String>(
+ value: _privacyLevel,
+ decoration: const InputDecoration(
+ labelText: 'Privacy Level',
+ ),
+ items: const [
+ DropdownMenuItem(value: 'minimal', child: Text('Minimal - Basic privacy')),
+ DropdownMenuItem(value: 'balanced', child: Text('Balanced - Standard privacy')),
+ DropdownMenuItem(value: 'strict', child: Text('Strict - Maximum privacy')),
+ ],
+ onChanged: (value) {
+ if (value != null) {
+ setState(() {
+ _privacyLevel = value;
+ });
+ }
+ },
+ ),
+ ],
+ ),
+ ),
+ ),
+ ],
+ ),
  );
  }
 
  Widget _buildBehaviorStep() {
- return Padding(
- padding: const EdgeInsets.all(24),
- child: const Text('Behavior and style configuration step placeholder'),
+ final colors = ThemeColors(context);
+ 
+ return SingleChildScrollView(
+ padding: EdgeInsets.all(SpacingTokens.xxl),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Step 4: Behavior & Style',
+ style: TextStyles.pageTitle,
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ Text(
+ 'Define how your agent communicates and behaves in conversations',
+ style: TextStyles.bodyMedium.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.xxl),
+
+ AsmblCard(
+ child: Padding(
+ padding: EdgeInsets.all(SpacingTokens.lg),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Communication Style',
+ style: TextStyles.headingMedium,
+ ),
+ SizedBox(height: SpacingTokens.lg),
+ 
+ Text(
+ 'Personality',
+ style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ 
+ DropdownButtonFormField<String>(
+ value: _personality,
+ decoration: const InputDecoration(
+ labelText: 'Agent Personality',
+ ),
+ items: const [
+ DropdownMenuItem(value: 'professional', child: Text('Professional')),
+ DropdownMenuItem(value: 'friendly', child: Text('Friendly')),
+ DropdownMenuItem(value: 'casual', child: Text('Casual')),
+ DropdownMenuItem(value: 'formal', child: Text('Formal')),
+ DropdownMenuItem(value: 'enthusiastic', child: Text('Enthusiastic')),
+ ],
+ onChanged: (value) {
+ if (value != null) {
+ setState(() {
+ _personality = value;
+ });
+ }
+ },
+ ),
+ 
+ SizedBox(height: SpacingTokens.lg),
+ 
+ Text(
+ 'Response Style',
+ style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ 
+ DropdownButtonFormField<String>(
+ value: _responseStyle,
+ decoration: const InputDecoration(
+ labelText: 'Response Length',
+ ),
+ items: const [
+ DropdownMenuItem(value: 'concise', child: Text('Concise - Brief responses')),
+ DropdownMenuItem(value: 'detailed', child: Text('Detailed - Comprehensive responses')),
+ DropdownMenuItem(value: 'adaptive', child: Text('Adaptive - Matches user style')),
+ ],
+ onChanged: (value) {
+ if (value != null) {
+ setState(() {
+ _responseStyle = value;
+ });
+ }
+ },
+ ),
+ ],
+ ),
+ ),
+ ),
+ 
+ SizedBox(height: SpacingTokens.lg),
+ 
+ AsmblCard(
+ child: Padding(
+ padding: EdgeInsets.all(SpacingTokens.lg),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Creative Settings',
+ style: TextStyles.headingMedium,
+ ),
+ SizedBox(height: SpacingTokens.lg),
+ 
+ Text(
+ 'Creativity Level: ${(_creativityLevel * 100).round()}%',
+ style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ 
+ Slider(
+ value: _creativityLevel,
+ min: 0.0,
+ max: 1.0,
+ divisions: 10,
+ onChanged: (value) {
+ setState(() {
+ _creativityLevel = value;
+ });
+ },
+ ),
+ 
+ Text(
+ _creativityLevel < 0.3 ? 'Conservative - Factual and predictable' :
+ _creativityLevel < 0.7 ? 'Balanced - Mix of creativity and accuracy' :
+ 'Creative - Original and inventive',
+ style: TextStyles.bodySmall.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ 
+ SizedBox(height: SpacingTokens.lg),
+ 
+ CheckboxListTile(
+ title: const Text('Enable Emojis'),
+ subtitle: const Text('Use emojis to enhance communication'),
+ value: _enableEmojis,
+ onChanged: (value) {
+ setState(() {
+ _enableEmojis = value ?? false;
+ });
+ },
+ ),
+ ],
+ ),
+ ),
+ ),
+ ],
+ ),
  );
  }
 
  Widget _buildTestStep() {
- return Padding(
- padding: const EdgeInsets.all(24),
- child: const Text('Test and validation step placeholder'),
+ final colors = ThemeColors(context);
+ 
+ return SingleChildScrollView(
+ padding: EdgeInsets.all(SpacingTokens.xxl),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Step 5: Test & Validate',
+ style: TextStyles.pageTitle,
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ Text(
+ 'Test your agent configuration and validate it works as expected',
+ style: TextStyles.bodyMedium.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.xxl),
+
+ AsmblCard(
+ child: Padding(
+ padding: EdgeInsets.all(SpacingTokens.lg),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Test Queries',
+ style: TextStyles.headingMedium,
+ ),
+ SizedBox(height: SpacingTokens.lg),
+ 
+ TextField(
+ controller: _testQueryController,
+ decoration: InputDecoration(
+ labelText: 'Add Test Query',
+ hintText: 'Enter a question to test your agent with',
+ suffixIcon: IconButton(
+ icon: const Icon(Icons.add),
+ onPressed: () {
+ if (_testQueryController.text.isNotEmpty) {
+ setState(() {
+ _testQueries.add(_testQueryController.text);
+ _testQueryController.clear();
+ });
+ }
+ },
+ ),
+ ),
+ ),
+ 
+ SizedBox(height: SpacingTokens.md),
+ 
+ if (_testQueries.isNotEmpty) ...[
+ Text(
+ 'Test Queries (${_testQueries.length})',
+ style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ 
+ Container(
+ constraints: const BoxConstraints(maxHeight: 200),
+ child: ListView.builder(
+ itemCount: _testQueries.length,
+ itemBuilder: (context, index) {
+ return ListTile(
+ title: Text(_testQueries[index]),
+ trailing: IconButton(
+ icon: const Icon(Icons.delete_outline),
+ onPressed: () {
+ setState(() {
+ _testQueries.removeAt(index);
+ });
+ },
+ ),
+ );
+ },
+ ),
+ ),
+ ],
+ ],
+ ),
+ ),
+ ),
+ 
+ SizedBox(height: SpacingTokens.lg),
+ 
+ AsmblCard(
+ child: Padding(
+ padding: EdgeInsets.all(SpacingTokens.lg),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Connectivity Test',
+ style: TextStyles.headingMedium,
+ ),
+ SizedBox(height: SpacingTokens.lg),
+ 
+ Row(
+ children: [
+ Icon(
+ _connectivityTestPassed ? Icons.check_circle : Icons.pending,
+ color: _connectivityTestPassed ? Colors.green : colors.onSurfaceVariant,
+ ),
+ SizedBox(width: SpacingTokens.sm),
+ Expanded(
+ child: Text(
+ _connectivityTestPassed 
+ ? 'MCP servers connectivity verified'
+ : 'Test MCP server connections',
+ style: TextStyles.bodyMedium,
+ ),
+ ),
+ ],
+ ),
+ 
+ SizedBox(height: SpacingTokens.md),
+ 
+ AsmblButton.secondary(
+ text: 'Run Connectivity Test',
+ onPressed: _runConnectivityTest,
+ ),
+ ],
+ ),
+ ),
+ ),
+ 
+ SizedBox(height: SpacingTokens.lg),
+ 
+ AsmblCard(
+ child: Padding(
+ padding: EdgeInsets.all(SpacingTokens.lg),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Configuration Summary',
+ style: TextStyles.headingMedium,
+ ),
+ SizedBox(height: SpacingTokens.lg),
+ 
+ Text('Security: $_authenticationLevel authentication'),
+ Text('Privacy: $_privacyLevel level'),
+ Text('Personality: $_personality'),
+ Text('Response Style: $_responseStyle'),
+ Text('Creativity: ${(_creativityLevel * 100).round()}%'),
+ Text('Emojis: ${_enableEmojis ? 'Enabled' : 'Disabled'}'),
+ Text('Test Queries: ${_testQueries.length} added'),
+ ],
+ ),
+ ),
+ ),
+ ],
+ ),
  );
  }
 
  Widget _buildDeployStep() {
+ final colors = ThemeColors(context);
+ 
+ return SingleChildScrollView(
+ padding: EdgeInsets.all(SpacingTokens.xxl),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Step 6: Deploy',
+ style: TextStyles.pageTitle,
+ ),
+ SizedBox(height: SpacingTokens.sm),
+ Text(
+ 'Review your configuration and deploy your agent',
+ style: TextStyles.bodyMedium.copyWith(
+ color: colors.onSurfaceVariant,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.xxl),
+
+ AsmblCard(
+ child: Padding(
+ padding: EdgeInsets.all(SpacingTokens.lg),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Row(
+ children: [
+ Icon(Icons.check_circle, color: colors.primary),
+ SizedBox(width: SpacingTokens.sm),
+ Text(
+ 'Configuration Complete',
+ style: TextStyles.headingMedium,
+ ),
+ ],
+ ),
+ SizedBox(height: SpacingTokens.lg),
+ 
+ Text(
+ 'Your agent is ready to be deployed with the following configuration:',
+ style: TextStyles.bodyMedium,
+ ),
+ SizedBox(height: SpacingTokens.md),
+ 
+ _buildConfigurationOverview(colors),
+ ],
+ ),
+ ),
+ ),
+ 
+ SizedBox(height: SpacingTokens.lg),
+ 
+ AsmblCard(
+ child: Padding(
+ padding: EdgeInsets.all(SpacingTokens.lg),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ 'Deployment Options',
+ style: TextStyles.headingMedium,
+ ),
+ SizedBox(height: SpacingTokens.lg),
+ 
+ ListTile(
+ leading: Icon(Icons.rocket_launch, color: colors.primary),
+ title: const Text('Deploy Immediately'),
+ subtitle: const Text('Start your agent right away'),
+ ),
+ 
+ SizedBox(height: SpacingTokens.sm),
+ 
+ ListTile(
+ leading: Icon(Icons.schedule, color: colors.primary),
+ title: const Text('Schedule Deployment'),
+ subtitle: const Text('Deploy at a specific time'),
+ ),
+ 
+ SizedBox(height: SpacingTokens.sm),
+ 
+ ListTile(
+ leading: Icon(Icons.save, color: colors.primary),
+ title: const Text('Save as Draft'),
+ subtitle: const Text('Save configuration for later'),
+ ),
+ ],
+ ),
+ ),
+ ),
+ ],
+ ),
+ );
+ }
+
+ void _runConnectivityTest() async {
+ setState(() {
+ _connectivityTestPassed = false;
+ });
+ 
+ // Simulate connectivity test
+ await Future.delayed(const Duration(seconds: 2));
+ 
+ setState(() {
+ _connectivityTestPassed = true;
+ });
+ }
+
+ Widget _buildConfigurationOverview(ThemeColors colors) {
+ return Container(
+ padding: EdgeInsets.all(SpacingTokens.md),
+ decoration: BoxDecoration(
+ color: colors.surface.withOpacity(0.5),
+ borderRadius: BorderRadius.circular(8),
+ border: Border.all(color: colors.border),
+ ),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ _buildOverviewItem('Security Level', _authenticationLevel),
+ _buildOverviewItem('Privacy Level', _privacyLevel),
+ _buildOverviewItem('Personality', _personality),
+ _buildOverviewItem('Response Style', _responseStyle),
+ _buildOverviewItem('Creativity', '${(_creativityLevel * 100).round()}%'),
+ _buildOverviewItem('Emojis', _enableEmojis ? 'Enabled' : 'Disabled'),
+ _buildOverviewItem('Test Queries', '${_testQueries.length} configured'),
+ _buildOverviewItem('Connectivity', _connectivityTestPassed ? 'Verified' : 'Pending'),
+ ],
+ ),
+ );
+ }
+
+ Widget _buildOverviewItem(String label, String value) {
  return Padding(
- padding: const EdgeInsets.all(24),
- child: const Text('Deployment configuration step placeholder'),
+ padding: EdgeInsets.symmetric(vertical: SpacingTokens.xs),
+ child: Row(
+ children: [
+ SizedBox(
+ width: 120,
+ child: Text(
+ '$label:',
+ style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+ ),
+ ),
+ Expanded(
+ child: Text(
+ value,
+ style: TextStyles.bodyMedium,
+ ),
+ ),
+ ],
+ ),
  );
  }
 
@@ -282,6 +874,7 @@ class _WizardScreenState extends State<WizardScreen> {
  @override
  void dispose() {
  _pageController.dispose();
+ _testQueryController.dispose();
  super.dispose();
  }
 }

@@ -4,49 +4,90 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import 'integration_service.dart';
 import 'mcp_settings_service.dart';
+import 'desktop/desktop_storage_service.dart';
 
 /// Service for tracking integration usage analytics and generating insights
 class IntegrationAnalyticsService {
   final IntegrationService _integrationService;
   final MCPSettingsService _mcpService;
+  final DesktopStorageService _storage = DesktopStorageService.instance;
   
   // Usage tracking
   final Map<String, IntegrationUsageData> _usageData = {};
   
-  // Analytics history (in a real app, this would be persisted)
-  final List<AnalyticsEvent> _events = [];
+  // Analytics history (persisted to local storage) - accessible for real-time tracking
+  final List<AnalyticsEvent> events = [];
   
   IntegrationAnalyticsService(this._integrationService, this._mcpService) {
-    _initializeMockData();
+    _initializeRealData();
   }
   
-  /// Initialize with mock analytics data for demonstration
-  void _initializeMockData() {
+  /// Initialize with real analytics data from actual integrations
+  void _initializeRealData() {
     final configured = _integrationService.getConfiguredIntegrations();
     
-    // Always generate mock data for demonstration, even if no integrations are configured
-    final demoIntegrations = ['github', 'filesystem', 'figma', 'postgresql', 'memory'];
-    final integrationsToMock = configured.isNotEmpty 
-        ? configured.where((integration) => integration.isEnabled).map((i) => i.definition.id).toList()
-        : demoIntegrations;
-    
-    for (final integrationId in integrationsToMock) {
-      _usageData[integrationId] = IntegrationUsageData(
-        integrationId: integrationId,
-        totalInvocations: _generateRandomUsage(),
-        lastUsed: DateTime.now().subtract(Duration(
-          hours: Random().nextInt(72), // Last 3 days
-        )),
-        averageResponseTime: 100 + Random().nextInt(400), // 100-500ms
-        successRate: 0.85 + (Random().nextDouble() * 0.14), // 85-99%
-        dailyUsage: _generateDailyUsage(),
-        topTools: _generateTopTools(integrationId),
-        errorCount: Random().nextInt(5),
-        totalDataTransferred: _generateDataTransfer(),
+    // Initialize usage data from actual configured integrations
+    for (final integration in configured.where((i) => i.isEnabled)) {
+      _usageData[integration.definition.id] = IntegrationUsageData(
+        integrationId: integration.definition.id,
+        totalInvocations: 0,
+        lastUsed: DateTime.now().subtract(Duration(days: 30)), // Default to 30 days ago
+        averageResponseTime: 0,
+        successRate: 1.0,
+        dailyUsage: {},
+        topTools: {},
+        errorCount: 0,
+        totalDataTransferred: 0,
       );
     }
     
-    _generateAnalyticsEvents();
+    // Load stored analytics data from persistent storage
+    _loadStoredAnalyticsData();
+  }
+
+  /// Load analytics data from persistent storage
+  Future<void> _loadStoredAnalyticsData() async {
+    try {
+      // Load usage data
+      final usageJson = await _storage.getHiveData('analytics_usage_data');
+      if (usageJson is Map<String, dynamic>) {
+        for (final entry in usageJson.entries) {
+          final data = entry.value as Map<String, dynamic>;
+          _usageData[entry.key] = IntegrationUsageData.fromJson(data);
+        }
+      }
+      
+      // Load events
+      final eventsJson = await _storage.getHiveData('analytics_events');
+      if (eventsJson is List) {
+        events.clear();
+        for (final eventData in eventsJson.cast<Map<String, dynamic>>()) {
+          events.add(AnalyticsEvent.fromJson(eventData));
+        }
+      }
+    } catch (e) {
+      print('Warning: Failed to load stored analytics data: $e');
+      // Continue with empty data if loading fails
+    }
+  }
+
+  /// Save analytics data to persistent storage
+  Future<void> saveAnalyticsData() async {
+    try {
+      // Save usage data
+      final usageJson = <String, dynamic>{};
+      for (final entry in _usageData.entries) {
+        usageJson[entry.key] = entry.value.toJson();
+      }
+      await _storage.setHiveData('analytics_usage_data', usageJson);
+      
+      // Save recent events (keep last 1000 events)
+      final recentEvents = events.length > 1000 ? events.sublist(events.length - 1000) : events;
+      final eventsJson = recentEvents.map((e) => e.toJson()).toList();
+      await _storage.setHiveData('analytics_events', eventsJson);
+    } catch (e) {
+      print('Warning: Failed to save analytics data: $e');
+    }
   }
   
   /// Record integration usage
@@ -91,7 +132,7 @@ class IntegrationAnalyticsService {
     _usageData[integrationId] = updatedUsage;
     
     // Record analytics event
-    _events.add(AnalyticsEvent(
+    events.add(AnalyticsEvent(
       timestamp: DateTime.now(),
       type: AnalyticsEventType.integrationUsed,
       integrationId: integrationId,
@@ -102,6 +143,9 @@ class IntegrationAnalyticsService {
         'dataBytes': dataBytes,
       },
     ));
+    
+    // Save data to persistent storage
+    saveAnalyticsData();
   }
   
   /// Get usage data for a specific integration
@@ -305,81 +349,10 @@ class IntegrationAnalyticsService {
   }
   
   // Helper methods
-  int _generateRandomUsage() {
-    return Random().nextInt(100) + 10; // 10-110 invocations
-  }
-  
-  Map<String, int> _generateDailyUsage() {
-    final usage = <String, int>{};
-    final now = DateTime.now();
-    
-    for (int i = 0; i < 30; i++) {
-      final date = now.subtract(Duration(days: i));
-      final key = date.toIso8601String().split('T')[0];
-      usage[key] = Random().nextInt(10); // 0-10 per day
-    }
-    
-    return usage;
-  }
-  
-  Map<String, int> _generateTopTools(String integrationId) {
-    final tools = <String, int>{};
-    
-    // Generate mock tool usage based on integration type
-    switch (integrationId) {
-      case 'github':
-        tools['list-repos'] = Random().nextInt(20) + 5;
-        tools['create-issue'] = Random().nextInt(15) + 2;
-        tools['get-pr'] = Random().nextInt(25) + 3;
-        break;
-      case 'filesystem':
-        tools['read-file'] = Random().nextInt(50) + 10;
-        tools['write-file'] = Random().nextInt(30) + 5;
-        tools['list-directory'] = Random().nextInt(40) + 8;
-        break;
-      case 'figma':
-        tools['get-files'] = Random().nextInt(30) + 8;
-        tools['get-components'] = Random().nextInt(20) + 5;
-        tools['get-styles'] = Random().nextInt(15) + 3;
-        break;
-      case 'postgresql':
-        tools['query'] = Random().nextInt(40) + 15;
-        tools['list-tables'] = Random().nextInt(10) + 2;
-        tools['get-schema'] = Random().nextInt(8) + 1;
-        break;
-      case 'memory':
-        tools['store-memory'] = Random().nextInt(35) + 10;
-        tools['recall-memory'] = Random().nextInt(45) + 12;
-        tools['search-memory'] = Random().nextInt(25) + 8;
-        break;
-      default:
-        tools['default-tool'] = Random().nextInt(30) + 5;
-        tools['secondary-tool'] = Random().nextInt(20) + 3;
-    }
-    
-    return tools;
-  }
-  
-  int _generateDataTransfer() {
-    return Random().nextInt(1024 * 1024) + 1024; // 1KB - 1MB
-  }
-  
-  void _generateAnalyticsEvents() {
-    final now = DateTime.now();
-    
-    for (int i = 0; i < 50; i++) {
-      _events.add(AnalyticsEvent(
-        timestamp: now.subtract(Duration(hours: Random().nextInt(72))),
-        type: AnalyticsEventType.values[Random().nextInt(AnalyticsEventType.values.length)],
-        integrationId: _usageData.keys.elementAt(Random().nextInt(_usageData.length)),
-        details: {'mock': true},
-      ));
-    }
-  }
-  
   int _getActiveIntegrationsForDate(DateTime date) {
-    // Mock implementation
-    return Random().nextInt(5) + 1;
+    // Count integrations that had usage on this date
+    final dateKey = date.toIso8601String().split('T')[0];
+    return _usageData.values.where((usage) => usage.dailyUsage[dateKey] != null && usage.dailyUsage[dateKey]! > 0).length;
   }
   
   List<IntegrationDefinition> _getComplementaryIntegrations(IntegrationCategory category, Set<String> configured) {
@@ -431,6 +404,34 @@ class IntegrationUsageData {
       topTools: topTools,
       errorCount: errorCount ?? this.errorCount,
       totalDataTransferred: totalDataTransferred ?? this.totalDataTransferred,
+    );
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'integrationId': integrationId,
+      'totalInvocations': totalInvocations,
+      'lastUsed': lastUsed.toIso8601String(),
+      'averageResponseTime': averageResponseTime,
+      'successRate': successRate,
+      'dailyUsage': dailyUsage,
+      'topTools': topTools,
+      'errorCount': errorCount,
+      'totalDataTransferred': totalDataTransferred,
+    };
+  }
+  
+  factory IntegrationUsageData.fromJson(Map<String, dynamic> json) {
+    return IntegrationUsageData(
+      integrationId: json['integrationId'] as String,
+      totalInvocations: json['totalInvocations'] as int? ?? 0,
+      lastUsed: DateTime.parse(json['lastUsed'] as String? ?? DateTime.now().toIso8601String()),
+      averageResponseTime: json['averageResponseTime'] as int? ?? 0,
+      successRate: (json['successRate'] as num?)?.toDouble() ?? 1.0,
+      dailyUsage: Map<String, int>.from(json['dailyUsage'] as Map? ?? {}),
+      topTools: Map<String, int>.from(json['topTools'] as Map? ?? {}),
+      errorCount: json['errorCount'] as int? ?? 0,
+      totalDataTransferred: json['totalDataTransferred'] as int? ?? 0,
     );
   }
 }
@@ -524,6 +525,27 @@ class AnalyticsEvent {
     required this.integrationId,
     required this.details,
   });
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'timestamp': timestamp.toIso8601String(),
+      'type': type.name,
+      'integrationId': integrationId,
+      'details': details,
+    };
+  }
+  
+  factory AnalyticsEvent.fromJson(Map<String, dynamic> json) {
+    return AnalyticsEvent(
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      type: AnalyticsEventType.values.firstWhere(
+        (e) => e.name == json['type'],
+        orElse: () => AnalyticsEventType.integrationUsed,
+      ),
+      integrationId: json['integrationId'] as String,
+      details: Map<String, dynamic>.from(json['details'] as Map? ?? {}),
+    );
+  }
 }
 
 enum InsightType {
