@@ -16,7 +16,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
   double _uiScale = 1.0;
   bool _compactMode = false;
   bool _showAnimations = true;
-  String _selectedColorScheme = AppColorSchemes.mintGreen;
+  String _selectedColorScheme = AppColorSchemes.warmNeutral;
   String _selectedFont = 'space-grotesk';
 
   @override

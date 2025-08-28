@@ -9,7 +9,7 @@ class ThemeState {
 
  const ThemeState({
  this.mode = ThemeMode.light,
- this.colorScheme = AppColorSchemes.mintGreen,
+ this.colorScheme = AppColorSchemes.warmNeutral,
  });
 
  ThemeState copyWith({ThemeMode? mode, String? colorScheme}) {
@@ -33,7 +33,7 @@ class ThemeService extends StateNotifier<ThemeState> {
  try {
  _box = await Hive.openBox('app_settings');
  final savedTheme = _box?.get(_themeKey, defaultValue: 'light') ?? 'light';
- final savedColorScheme = _box?.get(_colorSchemeKey, defaultValue: AppColorSchemes.mintGreen) ?? AppColorSchemes.mintGreen;
+ final savedColorScheme = _box?.get(_colorSchemeKey, defaultValue: AppColorSchemes.warmNeutral) ?? AppColorSchemes.warmNeutral;
  state = ThemeState(
  mode: _themeModeFromString(savedTheme),
  colorScheme: savedColorScheme,

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 /// Color scheme definitions for the app
 /// Each scheme contains light and dark variants
 class AppColorSchemes {
-  // Mint Green (Current Default)
-  static const String mintGreen = 'mint-green';
+  // Warm Neutral (New Default)
+  static const String warmNeutral = 'warm-neutral';
   
-  // Cool Blue (New)
+  // Cool Blue
   static const String coolBlue = 'cool-blue';
   
   // Forest Green
@@ -17,10 +17,10 @@ class AppColorSchemes {
 
   /// Get all available color scheme options for UI
   static List<ColorSchemeOption> get all => [
-    ColorSchemeOption(mintGreen, 'Mint Green', [
-      const Color(0xFF1E3B2B), // primary
-      const Color(0xFF6B9080), // accent  
-      const Color(0xFFF5FBF8), // background
+    ColorSchemeOption(warmNeutral, 'Warm Neutral', [
+      const Color(0xFF8B6F47), // primary - warm brown
+      const Color(0xFFD4B896), // accent - warm beige
+      const Color(0xFFFAF8F5), // background - cream
     ]),
     ColorSchemeOption(coolBlue, 'Cool Blue', [
       const Color(0xFF1E3A8A), // primary
@@ -28,9 +28,9 @@ class AppColorSchemes {
       const Color(0xFFF0F9FF), // background
     ]),
     ColorSchemeOption(forestGreen, 'Forest Green', [
-      const Color(0xFF14532D), // primary
-      const Color(0xFF22C55E), // accent
-      const Color(0xFFF0FDF4), // background
+      const Color(0xFF1E3B2B), // primary - moved from mint green
+      const Color(0xFF6B9080), // accent - moved from mint green
+      const Color(0xFFF5FBF8), // background - moved from mint green
     ]),
     ColorSchemeOption(sunsetOrange, 'Sunset Orange', [
       const Color(0xFF9A3412), // primary
@@ -38,6 +38,21 @@ class AppColorSchemes {
       const Color(0xFFFFF7ED), // background
     ]),
   ];
+
+  /// Get unique app background color for a specific color scheme
+  static Color getAppBackgroundColor(String schemeId, bool isDark) {
+    switch (schemeId) {
+      case coolBlue:
+        return isDark ? const Color(0xFF0F172A) : const Color(0xFFF0F9FF);
+      case forestGreen:
+        return isDark ? const Color(0xFF0F1C14) : const Color(0xFFF5FBF8);
+      case sunsetOrange:
+        return isDark ? const Color(0xFF4A2117) : const Color(0xFFFFF7ED);
+      case warmNeutral:
+      default:
+        return isDark ? const Color(0xFF2B1F14) : const Color(0xFFFAF8F5);
+    }
+  }
 
   /// Get theme data for a specific color scheme
   static ThemeData getTheme(String schemeId, bool isDark) {
@@ -48,63 +63,63 @@ class AppColorSchemes {
         return isDark ? _forestGreenDarkTheme : _forestGreenLightTheme;
       case sunsetOrange:
         return isDark ? _sunsetOrangeDarkTheme : _sunsetOrangeLightTheme;
-      case mintGreen:
+      case warmNeutral:
       default:
-        return isDark ? _mintGreenDarkTheme : _mintGreenLightTheme;
+        return isDark ? _warmNeutralDarkTheme : _warmNeutralLightTheme;
     }
   }
 
-  // MINT GREEN THEMES (Current Default)
+  // WARM NEUTRAL THEMES (New Default)
   
-  static ThemeData get _mintGreenLightTheme {
-    const background = Color(0xFFF5FBF8); // Soft mint background
-    const surface = Color(0xFFF7FCFA); // Lighter mint surface
-    const primary = Color(0xFF1E3B2B); // Deep forest green primary
-    const accent = Color(0xFF6B9080); // Sage green accent
-    const onSurface = Color(0xFF1E3B2B); // Deep forest green text
-    const onSurfaceVariant = Color(0xFF4A6B5A); // Muted forest green text
-    const border = Color(0xFFD3E8DC); // Soft mint border
+  static ThemeData get _warmNeutralLightTheme {
+    const background = Color(0xFFFAF8F5); // Warm cream background
+    const surface = Color(0xFFFCFBF9); // Lighter cream surface
+    const primary = Color(0xFF8B6F47); // Warm brown primary
+    const accent = Color(0xFFD4B896); // Warm beige accent
+    const onSurface = Color(0xFF4A3E2F); // Dark brown text
+    const onSurfaceVariant = Color(0xFF6B5D4F); // Medium brown text
+    const border = Color(0xFFE8DDD0); // Soft beige border
 
     return _buildThemeData(
       brightness: Brightness.light,
       background: background,
       surface: surface,
       primary: primary,
-      onPrimary: Color(0xFFF5FBF8),
+      onPrimary: Color(0xFFFAF8F5),
       accent: accent,
       onAccent: Colors.white,
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFFEEF6F2),
-      backgroundGradientStart: Color(0xFFF8FCFA),
-      backgroundGradientEnd: Color(0xFFE8F3ED),
+      surfaceVariant: Color(0xFFF4F0E8),
+      backgroundGradientStart: Color(0xFFFCFBF9),
+      backgroundGradientEnd: Color(0xFFF0E6D6),
     );
   }
 
-  static ThemeData get _mintGreenDarkTheme {
-    const background = Color(0xFF0F1C14); // Deep forest background
-    const surface = Color(0xFF1A2920); // Forest surface
-    const primary = Color(0xFFB8E6C8); // Bright mint accent
-    const accent = Color(0xFF8DBF9E); // Brighter sage accent
-    const onSurface = Color(0xFFF0F8F3); // Light mint
-    const onSurfaceVariant = Color(0xFFA0BDA8); // Muted mint
-    const border = Color(0xFF2B3F33);
+  static ThemeData get _warmNeutralDarkTheme {
+    const background = Color(0xFF2B1F14); // Deep warm brown background
+    const surface = Color(0xFF423126); // Slightly lighter warm brown surface for better contrast
+    const primary = Color(0xFFE6C794); // Warm cream accent
+    const accent = Color(0xFFD4B896); // Warm beige accent
+    const onSurface = Color(0xFFF5F0E8); // Light warm white
+    const onSurfaceVariant = Color(0xFFCFBFA8); // Muted warm beige
+    const border = Color(0xFF5A4738);
 
     return _buildThemeData(
       brightness: Brightness.dark,
       background: background,
       surface: surface,
       primary: primary,
-      onPrimary: Color(0xFF0F1C14),
+      onPrimary: Color(0xFF2B1F14),
       accent: accent,
-      onAccent: Color(0xFF0F1C14),
+      onAccent: Color(0xFF2B1F14),
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFF1F2F25),
-      backgroundGradientStart: Color(0xFF142019),
-      backgroundGradientEnd: Color(0xFF0A140F),
+      surfaceVariant: Color(0xFF52402D),
+      backgroundGradientStart: Color(0xFF3D2B1F),
+      backgroundGradientEnd: Color(0xFF1F1611),
     );
   }
 
@@ -143,7 +158,7 @@ class AppColorSchemes {
     const accent = Color(0xFF93C5FD); // Lighter blue accent
     const onSurface = Color(0xFFF1F5F9); // Light blue-white
     const onSurfaceVariant = Color(0xFFCBD5E1); // Muted light blue
-    const border = Color(0xFF334155);
+    const border = Color(0xFF374151);
 
     return _buildThemeData(
       brightness: Brightness.dark,
@@ -156,7 +171,7 @@ class AppColorSchemes {
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFF292E3A),
+      surfaceVariant: Color(0xFF334155),
       backgroundGradientStart: Color(0xFF1E293B),
       backgroundGradientEnd: Color(0xFF0C1220),
     );
@@ -165,13 +180,13 @@ class AppColorSchemes {
   // FOREST GREEN THEMES
 
   static ThemeData get _forestGreenLightTheme {
-    const background = Color(0xFFF0FDF4); // Very light green
-    const surface = Color(0xFFFAFDFB); // Almost white green
-    const primary = Color(0xFF14532D); // Deep forest green
-    const accent = Color(0xFF22C55E); // Bright green accent
-    const onSurface = Color(0xFF14532D); // Deep green text
-    const onSurfaceVariant = Color(0xFF365314); // Medium green text
-    const border = Color(0xFFD1FAE5); // Light green border
+    const background = Color(0xFFF5FBF8); // Soft mint background (from old mint)
+    const surface = Color(0xFFF7FCFA); // Lighter mint surface (from old mint)
+    const primary = Color(0xFF1E3B2B); // Deep forest green primary (from old mint)
+    const accent = Color(0xFF6B9080); // Sage green accent (from old mint)
+    const onSurface = Color(0xFF1E3B2B); // Deep forest green text (from old mint)
+    const onSurfaceVariant = Color(0xFF4A6B5A); // Muted forest green text (from old mint)
+    const border = Color(0xFFD3E8DC); // Soft mint border (from old mint)
 
     return _buildThemeData(
       brightness: Brightness.light,
@@ -184,35 +199,35 @@ class AppColorSchemes {
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFFF7FEF7),
-      backgroundGradientStart: Color(0xFFFAFDFB),
-      backgroundGradientEnd: Color(0xFFDCFCE7),
+      surfaceVariant: Color(0xFFEEF6F2),
+      backgroundGradientStart: Color(0xFFF8FCFA),
+      backgroundGradientEnd: Color(0xFFE8F3ED),
     );
   }
 
   static ThemeData get _forestGreenDarkTheme {
-    const background = Color(0xFF14532D); // Deep forest
-    const surface = Color(0xFF1F5A32); // Lighter forest
-    const primary = Color(0xFF4ADE80); // Bright green
-    const accent = Color(0xFF68CC8A); // Medium bright green
-    const onSurface = Color(0xFFF0FDF4); // Very light green
-    const onSurfaceVariant = Color(0xFFBBF7D0); // Light green
-    const border = Color(0xFF166534);
+    const background = Color(0xFF0F1C14); // Deep forest background (from old mint)
+    const surface = Color(0xFF1F3325); // Slightly lighter forest surface for better contrast
+    const primary = Color(0xFFB8E6C8); // Bright mint accent (from old mint)
+    const accent = Color(0xFF8DBF9E); // Brighter sage accent (from old mint)
+    const onSurface = Color(0xFFF0F8F3); // Light mint (from old mint)
+    const onSurfaceVariant = Color(0xFFA0BDA8); // Muted mint (from old mint)
+    const border = Color(0xFF334A38);
 
     return _buildThemeData(
       brightness: Brightness.dark,
       background: background,
       surface: surface,
       primary: primary,
-      onPrimary: Color(0xFF14532D),
+      onPrimary: Color(0xFF0F1C14),
       accent: accent,
-      onAccent: Color(0xFF14532D),
+      onAccent: Color(0xFF0F1C14),
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFF166534),
-      backgroundGradientStart: Color(0xFF1F5A32),
-      backgroundGradientEnd: Color(0xFF0F2419),
+      surfaceVariant: Color(0xFF253B2A),
+      backgroundGradientStart: Color(0xFF142019),
+      backgroundGradientEnd: Color(0xFF0A140F),
     );
   }
 
@@ -245,28 +260,28 @@ class AppColorSchemes {
   }
 
   static ThemeData get _sunsetOrangeDarkTheme {
-    const background = Color(0xFF7C2D12); // Deep orange-red
-    const surface = Color(0xFF9A3412); // Lighter orange-red
-    const primary = Color(0xFFFB923C); // Bright orange
-    const accent = Color(0xFFFD7C3C); // Light orange accent
-    const onSurface = Color(0xFFFFF7ED); // Very light orange
-    const onSurfaceVariant = Color(0xFFFED7AA); // Light orange
-    const border = Color(0xFFEA580C);
+    const background = Color(0xFF4A2117); // Desaturated deep orange-brown
+    const surface = Color(0xFF664029); // Lighter desaturated orange-brown surface for better contrast
+    const primary = Color(0xFFD4956B); // Desaturated warm orange
+    const accent = Color(0xFFB8845C); // Desaturated beige-orange accent
+    const onSurface = Color(0xFFF5EDE4); // Soft warm white
+    const onSurfaceVariant = Color(0xFFE6C5A6); // Desaturated light orange
+    const border = Color(0xFF7D4E35);
 
     return _buildThemeData(
       brightness: Brightness.dark,
       background: background,
       surface: surface,
       primary: primary,
-      onPrimary: Color(0xFF7C2D12),
+      onPrimary: Color(0xFF4A2117),
       accent: accent,
-      onAccent: Color(0xFF7C2D12),
+      onAccent: Color(0xFF4A2117),
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFFEA580C),
-      backgroundGradientStart: Color(0xFF9A3412),
-      backgroundGradientEnd: Color(0xFF571A08),
+      surfaceVariant: Color(0xFF7A4B33),
+      backgroundGradientStart: Color(0xFF5C2D1F),
+      backgroundGradientEnd: Color(0xFF2E1810),
     );
   }
 
