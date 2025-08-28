@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/data/mcp_server_configs.dart';
 import 'universal_integration_card.dart';
 
 /// Integration Cards Grid - Main content area showing all integration cards
@@ -196,105 +197,147 @@ class IntegrationCardsGrid extends StatelessWidget {
   }
 
   List<IntegrationCardData> _getAllIntegrations() {
-    // Sample integration data - in real app this would come from a service
-    return [
-      IntegrationCardData(
-        id: 'github',
-        name: 'GitHub',
-        description: 'Version control and collaborative development platform',
-        icon: Icons.code,
-        brandColor: Color(0xFF24292F),
-        status: IntegrationStatus.active,
-        category: 'development',
-        rating: 4.9,
-        metrics: [
-          IntegrationMetric(label: 'Repos', value: '12', icon: Icons.folder),
-          IntegrationMetric(label: 'Last sync', value: '2m ago', icon: Icons.sync),
-        ],
-      ),
-      IntegrationCardData(
-        id: 'notion',
-        name: 'Notion',
-        description: 'All-in-one workspace for notes, docs, and collaboration',
-        icon: Icons.note,
-        brandColor: Color(0xFF000000),
-        status: IntegrationStatus.configured,
-        category: 'productivity',
-        rating: 4.7,
-        metrics: [
-          IntegrationMetric(label: 'Pages', value: '89', icon: Icons.description),
-          IntegrationMetric(label: 'Updated', value: '1h ago', icon: Icons.update),
-        ],
-      ),
-      IntegrationCardData(
-        id: 'slack',
-        name: 'Slack',
-        description: 'Team communication and collaboration platform',
-        icon: Icons.chat,
-        brandColor: Color(0xFF4A154B),
-        status: IntegrationStatus.needsAttention,
-        category: 'communication',
-        rating: 4.5,
-        metrics: [
-          IntegrationMetric(label: 'Channels', value: '8', icon: Icons.tag),
-          IntegrationMetric(label: 'Messages', value: '1.2k', icon: Icons.message),
-        ],
-      ),
-      IntegrationCardData(
-        id: 'openai',
-        name: 'OpenAI',
-        description: 'Advanced AI models for natural language processing',
-        icon: Icons.psychology,
-        brandColor: Color(0xFF412991),
-        status: IntegrationStatus.active,
-        category: 'ai',
-        rating: 4.8,
-        metrics: [
-          IntegrationMetric(label: 'API calls', value: '2.3k', icon: Icons.api),
-          IntegrationMetric(label: 'Tokens', value: '45k', icon: Icons.token),
-        ],
-      ),
-      IntegrationCardData(
-        id: 'figma',
-        name: 'Figma',
-        description: 'Collaborative design and prototyping tool',
-        icon: Icons.design_services,
-        brandColor: Color(0xFFF24E1E),
-        status: IntegrationStatus.available,
-        category: 'development',
-        rating: 4.6,
-      ),
-      IntegrationCardData(
-        id: 'postgresql',
-        name: 'PostgreSQL',
-        description: 'Powerful open-source relational database system',
-        icon: Icons.storage,
-        brandColor: Color(0xFF336791),
-        status: IntegrationStatus.installing,
-        category: 'data',
-        rating: 4.4,
-      ),
-      IntegrationCardData(
-        id: 'aws',
-        name: 'AWS',
-        description: 'Amazon Web Services cloud computing platform',
-        icon: Icons.cloud,
-        brandColor: Color(0xFFFF9900),
-        status: IntegrationStatus.error,
-        category: 'development',
-        rating: 4.3,
-      ),
-      IntegrationCardData(
-        id: 'discord',
-        name: 'Discord',
-        description: 'Voice, video, and text communication platform',
-        icon: Icons.forum,
-        brandColor: Color(0xFF5865F2),
-        status: IntegrationStatus.available,
-        category: 'communication',
-        rating: 4.2,
-      ),
-    ];
+    // Load from MCP Server configuration library
+    return MCPServerLibrary.servers.map((mcpServer) {
+      return IntegrationCardData(
+        id: mcpServer.id,
+        name: mcpServer.name,
+        description: mcpServer.description,
+        icon: _getIconForServer(mcpServer),
+        brandColor: _getBrandColorForServer(mcpServer),
+        status: _getStatusForServer(mcpServer),
+        category: _getCategoryForServer(mcpServer),
+        rating: _getRatingForServer(mcpServer),
+      );
+    }).toList();
+  }
+
+  IconData _getIconForServer(MCPServerConfig server) {
+    // Map server capabilities to appropriate icons
+    if (server.capabilities.contains('git_log') || server.capabilities.contains('repository_search')) {
+      return Icons.code;
+    } else if (server.capabilities.contains('database_queries') || server.capabilities.contains('data_querying')) {
+      return Icons.storage;
+    } else if (server.capabilities.contains('web_fetching') || server.capabilities.contains('web_automation')) {
+      return Icons.web;
+    } else if (server.capabilities.contains('file_read') || server.capabilities.contains('file_operations')) {
+      return Icons.folder;
+    } else if (server.capabilities.contains('messaging') || server.capabilities.contains('channel_operations')) {
+      return Icons.chat;
+    } else if (server.capabilities.contains('payment_processing') || server.capabilities.contains('billing_monitoring')) {
+      return Icons.payment;
+    } else if (server.capabilities.contains('cloud') || server.capabilities.contains('infrastructure_as_code')) {
+      return Icons.cloud;
+    } else if (server.capabilities.contains('error_tracking') || server.capabilities.contains('security_scanning')) {
+      return Icons.security;
+    } else if (server.capabilities.contains('build_monitoring') || server.capabilities.contains('pipeline_management')) {
+      return Icons.build;
+    } else if (server.capabilities.contains('analytics') || server.capabilities.contains('data_visualization')) {
+      return Icons.analytics;
+    } else if (server.capabilities.contains('design_file_access') || server.capabilities.contains('component_data')) {
+      return Icons.design_services;
+    } else if (server.capabilities.contains('calendar_management') || server.capabilities.contains('scheduling')) {
+      return Icons.calendar_today;
+    } else {
+      return Icons.hub;
+    }
+  }
+
+  Color _getBrandColorForServer(MCPServerConfig server) {
+    // Map server names to brand colors
+    switch (server.id) {
+      case 'github': return Color(0xFF24292F);
+      case 'slack': return Color(0xFF4A154B);
+      case 'notion': return Color(0xFF000000);
+      case 'postgresql': return Color(0xFF336791);
+      case 'aws-bedrock':
+      case 'aws-cdk':
+      case 'aws-cost-analysis': return Color(0xFFFF9900);
+      case 'cloudflare': return Color(0xFFF38020);
+      case 'vercel': return Color(0xFF000000);
+      case 'netlify': return Color(0xFF00AD9F);
+      case 'stripe': return Color(0xFF635BFF);
+      case 'twilio': return Color(0xFFE1282A);
+      case 'discord': return Color(0xFF5865F2);
+      case 'figma-official': return Color(0xFFF24E1E);
+      case 'linear': return Color(0xFF5E6AD2);
+      case 'sentry': return Color(0xFF362D59);
+      case 'docker': return Color(0xFF2496ED);
+      case 'supabase': return Color(0xFF3ECF8E);
+      case 'redis': return Color(0xFFDC382D);
+      case 'zapier': return Color(0xFFFF4F00);
+      case 'box': return Color(0xFF0061D5);
+      default: return Color(0xFF6B46C1); // Default purple
+    }
+  }
+
+  IntegrationStatus _getStatusForServer(MCPServerConfig server) {
+    // Map server status to integration status
+    switch (server.status) {
+      case MCPServerStatus.stable:
+        return IntegrationStatus.available;
+      case MCPServerStatus.beta:
+        return IntegrationStatus.available;
+      case MCPServerStatus.alpha:
+        return IntegrationStatus.available;
+      case MCPServerStatus.deprecated:
+        return IntegrationStatus.error;
+      default:
+        return IntegrationStatus.available;
+    }
+  }
+
+  String _getCategoryForServer(MCPServerConfig server) {
+    // Map server types and capabilities to categories
+    if (server.type == MCPServerType.official) {
+      if (server.capabilities.any((cap) => ['git_log', 'repository_search', 'code_review'].contains(cap))) {
+        return 'development';
+      } else if (server.capabilities.any((cap) => ['database_queries', 'data_querying'].contains(cap))) {
+        return 'data';
+      } else if (server.capabilities.any((cap) => ['web_fetching', 'content_conversion'].contains(cap))) {
+        return 'web';
+      }
+    }
+    
+    // Developer tools
+    if (server.capabilities.any((cap) => ['pipeline_management', 'build_monitoring', 'error_tracking', 'security_scanning'].contains(cap))) {
+      return 'development';
+    }
+    
+    // Cloud & Infrastructure
+    if (server.capabilities.any((cap) => ['infrastructure_as_code', 'cloud', 'storage_management'].contains(cap))) {
+      return 'cloud';
+    }
+    
+    // Database & Data
+    if (server.capabilities.any((cap) => ['database_operations', 'analytics', 'data_visualization'].contains(cap))) {
+      return 'data';
+    }
+    
+    // Communication
+    if (server.capabilities.any((cap) => ['messaging', 'channel_operations', 'team_collaboration'].contains(cap))) {
+      return 'communication';
+    }
+    
+    // Business & Productivity
+    if (server.capabilities.any((cap) => ['payment_processing', 'workflow_automation', 'content_management'].contains(cap))) {
+      return 'productivity';
+    }
+    
+    return 'other';
+  }
+
+  double _getRatingForServer(MCPServerConfig server) {
+    // Generate ratings based on server type and status
+    if (server.type == MCPServerType.official) {
+      return 4.8 + (server.id.hashCode % 3) * 0.1; // 4.8-4.9 for official
+    } else if (server.status == MCPServerStatus.stable) {
+      return 4.3 + (server.id.hashCode % 5) * 0.1; // 4.3-4.7 for stable community
+    } else if (server.status == MCPServerStatus.beta) {
+      return 4.0 + (server.id.hashCode % 3) * 0.1; // 4.0-4.2 for beta
+    } else {
+      return 3.5 + (server.id.hashCode % 5) * 0.1; // 3.5-3.9 for alpha
+    }
   }
 
   void _handlePrimaryAction(IntegrationCardData integration) {

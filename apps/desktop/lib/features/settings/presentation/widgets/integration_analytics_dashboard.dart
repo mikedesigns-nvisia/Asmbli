@@ -643,6 +643,8 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
         return Icons.psychology;
       case IntegrationCategory.utilities:
         return Icons.build;
+      case IntegrationCategory.devops:
+        return Icons.settings;
     }
   }
 }

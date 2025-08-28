@@ -2845,6 +2845,8 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         return Colors.purple;
       case IntegrationCategory.aiML:
         return Colors.deepPurple;
+      case IntegrationCategory.devops:
+        return Colors.red;
     }
   }
 

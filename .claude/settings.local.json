@@ -41,7 +41,8 @@
       "Read(/C:\\c\\AgentEngine\\apps/**)",
       "Bash(flutter build:*)",
       "Bash(tar:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Read(/C:\\c\\AgentEngine\\apps/**)"
     ],
     "deny": [],
     "ask": [],

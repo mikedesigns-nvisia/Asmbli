@@ -770,6 +770,8 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         return Icons.psychology;
       case IntegrationCategory.utilities:
         return Icons.build;
+      case IntegrationCategory.devops:
+        return Icons.settings;
     }
   }
 }

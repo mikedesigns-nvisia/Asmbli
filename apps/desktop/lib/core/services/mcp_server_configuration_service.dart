@@ -74,6 +74,178 @@ class MCPServerConfigurationService {
         final airtableServer = MCPServerLibrary.getServer('airtable');
         if (airtableServer != null) servers.add(airtableServer);
         break;
+
+      // NEW SERVERS - Developer & DevOps Tools
+      case 'buildkite':
+        final server = MCPServerLibrary.getServer('buildkite');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'buildable':
+        final server = MCPServerLibrary.getServer('buildable');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'sentry':
+        final server = MCPServerLibrary.getServer('sentry');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'circleci':
+        final server = MCPServerLibrary.getServer('circleci');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'gitguardian':
+        final server = MCPServerLibrary.getServer('gitguardian');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'browser':
+      case 'browser-automation':
+        final server = MCPServerLibrary.getServer('browser-automation');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'gremlin':
+        final server = MCPServerLibrary.getServer('gremlin');
+        if (server != null) servers.add(server);
+        break;
+
+      // Cloud & Infrastructure
+      case 'aws':
+      case 'aws-bedrock':
+        final server = MCPServerLibrary.getServer('aws-bedrock');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'aws-cdk':
+        final server = MCPServerLibrary.getServer('aws-cdk');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'aws-cost':
+      case 'aws-cost-analysis':
+        final server = MCPServerLibrary.getServer('aws-cost-analysis');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'cloudflare':
+        final server = MCPServerLibrary.getServer('cloudflare');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'vercel':
+        final server = MCPServerLibrary.getServer('vercel');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'netlify':
+        final server = MCPServerLibrary.getServer('netlify');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'azure':
+        final server = MCPServerLibrary.getServer('azure');
+        if (server != null) servers.add(server);
+        break;
+
+      // Database & Data
+      case 'supabase':
+        final server = MCPServerLibrary.getServer('supabase');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'bigquery':
+        final server = MCPServerLibrary.getServer('bigquery');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'clickhouse':
+        final server = MCPServerLibrary.getServer('clickhouse');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'redis':
+        final server = MCPServerLibrary.getServer('redis');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'caldav':
+        final server = MCPServerLibrary.getServer('caldav');
+        if (server != null) servers.add(server);
+        break;
+
+      // Business & Productivity
+      case 'stripe':
+        final server = MCPServerLibrary.getServer('stripe');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'twilio':
+        final server = MCPServerLibrary.getServer('twilio');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'zapier':
+        final server = MCPServerLibrary.getServer('zapier');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'box':
+        final server = MCPServerLibrary.getServer('box');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'boost-space':
+        final server = MCPServerLibrary.getServer('boost-space');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'glean':
+        final server = MCPServerLibrary.getServer('glean');
+        if (server != null) servers.add(server);
+        break;
+
+      // Data & Analytics
+      case 'supadata':
+        final server = MCPServerLibrary.getServer('supadata');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'tako':
+        final server = MCPServerLibrary.getServer('tako');
+        if (server != null) servers.add(server);
+        break;
+
+      // Special Integrations
+      case '1mcpserver':
+      case 'mcp-server':
+        final server = MCPServerLibrary.getServer('1mcpserver');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'atlassian':
+      case 'atlassian-remote':
+        final server = MCPServerLibrary.getServer('atlassian-remote');
+        if (server != null) servers.add(server);
+        break;
+
+      // Official Reference Servers
+      case 'everything':
+        final server = MCPServerLibrary.getServer('everything');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'sequential-thinking':
+        final server = MCPServerLibrary.getServer('sequential-thinking');
+        if (server != null) servers.add(server);
+        break;
+      
+      case 'time':
+        final server = MCPServerLibrary.getServer('time');
+        if (server != null) servers.add(server);
+        break;
     }
     
     return servers;
@@ -192,6 +364,101 @@ class MCPServerConfigurationService {
         return 'Airtable API key from account settings';
       case 'AIRTABLE_BASE_ID':
         return 'ID of the Airtable base to access';
+      
+      // New server environment variables
+      case 'BUILDKITE_API_TOKEN':
+        return 'Buildkite API token with read access';
+      case 'BUILDKITE_ORG_SLUG':
+        return 'Your Buildkite organization slug';
+      case 'BUILDABLE_API_KEY':
+        return 'API key from Buildable platform';
+      case 'SENTRY_AUTH_TOKEN':
+        return 'Sentry auth token with project permissions';
+      case 'SENTRY_ORG_SLUG':
+        return 'Your Sentry organization slug';
+      case 'CIRCLE_TOKEN':
+        return 'CircleCI personal API token';
+      case 'GITGUARDIAN_API_KEY':
+        return 'GitGuardian API key from dashboard';
+      case 'GREMLIN_API_KEY':
+        return 'Gremlin API key from settings';
+      case 'GREMLIN_TEAM_ID':
+        return 'Your Gremlin team ID';
+      
+      // Cloud & Infrastructure
+      case 'AWS_ACCESS_KEY_ID':
+        return 'AWS access key ID with appropriate permissions';
+      case 'AWS_SECRET_ACCESS_KEY':
+        return 'AWS secret access key';
+      case 'AWS_REGION':
+        return 'AWS region (e.g., us-east-1)';
+      case 'CLOUDFLARE_API_TOKEN':
+        return 'Cloudflare API token with appropriate permissions';
+      case 'VERCEL_API_TOKEN':
+        return 'Vercel API token from account settings';
+      case 'NETLIFY_API_TOKEN':
+        return 'Netlify personal access token';
+      case 'AZURE_CLIENT_ID':
+        return 'Azure service principal client ID';
+      case 'AZURE_CLIENT_SECRET':
+        return 'Azure service principal client secret';
+      case 'AZURE_TENANT_ID':
+        return 'Azure tenant ID';
+      
+      // Database & Data
+      case 'SUPABASE_URL':
+        return 'Supabase project URL';
+      case 'SUPABASE_ANON_KEY':
+        return 'Supabase anon/public key';
+      case 'GOOGLE_APPLICATION_CREDENTIALS':
+        return 'Path to Google Cloud service account JSON file';
+      case 'CLICKHOUSE_URL':
+        return 'ClickHouse server URL';
+      case 'CLICKHOUSE_USER':
+        return 'ClickHouse username';
+      case 'CLICKHOUSE_PASSWORD':
+        return 'ClickHouse password';
+      case 'REDIS_URL':
+        return 'Redis connection URL';
+      case 'CALDAV_URL':
+        return 'CalDAV server URL';
+      case 'CALDAV_USERNAME':
+        return 'CalDAV username';
+      case 'CALDAV_PASSWORD':
+        return 'CalDAV password';
+      
+      // Business & Productivity
+      case 'STRIPE_SECRET_KEY':
+        return 'Stripe secret key from dashboard';
+      case 'TWILIO_ACCOUNT_SID':
+        return 'Twilio Account SID';
+      case 'TWILIO_AUTH_TOKEN':
+        return 'Twilio Auth Token';
+      case 'ZAPIER_API_KEY':
+        return 'Zapier API key from developer settings';
+      case 'BOX_CLIENT_ID':
+        return 'Box app client ID';
+      case 'BOX_CLIENT_SECRET':
+        return 'Box app client secret';
+      case 'BOX_ACCESS_TOKEN':
+        return 'Box access token';
+      case 'BOOST_SPACE_API_KEY':
+        return 'Boost.space API key';
+      case 'GLEAN_API_TOKEN':
+        return 'Glean API token from admin settings';
+      case 'GLEAN_DOMAIN':
+        return 'Your Glean domain';
+      
+      // Data & Analytics
+      case 'SUPADATA_API_KEY':
+        return 'Supadata API key';
+      case 'TAKO_API_KEY':
+        return 'Tako API key from platform';
+      
+      // Special Integrations
+      case 'ATLASSIAN_API_TOKEN':
+        return 'Atlassian API token with appropriate permissions';
+      
       default:
         return 'Required for authentication';
     }

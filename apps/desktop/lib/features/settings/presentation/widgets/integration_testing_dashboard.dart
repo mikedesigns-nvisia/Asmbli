@@ -1177,6 +1177,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
       case IntegrationCategory.databases: return Icons.storage;
       case IntegrationCategory.aiML: return Icons.psychology;
       case IntegrationCategory.utilities: return Icons.build;
+      case IntegrationCategory.devops: return Icons.settings;
     }
   }
 }

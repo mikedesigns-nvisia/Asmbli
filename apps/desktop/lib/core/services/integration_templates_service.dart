@@ -615,6 +615,271 @@ class IntegrationTemplatesService {
       ],
       supportUrl: 'https://docs.agentengine.com/templates/quick-start',
     );
+
+    // NEW ENTERPRISE TEMPLATES LEVERAGING 51 MCP SERVERS
+
+    // Cloud Infrastructure Engineer Pro
+    _templates['cloud-infrastructure-pro'] = IntegrationTemplate(
+      id: 'cloud-infrastructure-pro',
+      name: 'Cloud Infrastructure Engineer Pro',
+      description: 'Enterprise-grade cloud architect with multi-provider support, cost optimization, and infrastructure automation.',
+      author: 'AgentEngine Team',
+      version: '1.0.0',
+      createdAt: DateTime.now().subtract(Duration(days: 3)),
+      updatedAt: DateTime.now().subtract(Duration(days: 1)),
+      integrationIds: ['aws-bedrock', 'aws-cdk', 'aws-cost-analysis', 'cloudflare', 'vercel', 'netlify', 'azure', 'docker'],
+      configurations: [],
+      difficulty: 'Hard',
+      estimatedSetupTime: Duration(minutes: 45),
+      tags: ['cloud', 'infrastructure', 'aws', 'azure', 'devops', 'enterprise'],
+      category: 'Cloud & Infrastructure',
+      isOfficial: true,
+      isFeatured: true,
+      downloadCount: 320,
+      rating: 4.9,
+      reviewCount: 28,
+      screenshots: ['cloud-infra-1.png', 'cloud-infra-2.png'],
+      requirements: ['AWS Account', 'Azure Subscription', 'Cloudflare Account'],
+      changelog: [
+        ChangelogEntry(
+          version: '1.0.0',
+          date: DateTime.now().subtract(Duration(days: 3)),
+          changes: ['Initial release with multi-cloud support', 'Cost optimization features', 'Infrastructure automation'],
+        ),
+      ],
+      supportUrl: 'https://docs.agentengine.com/templates/cloud-infrastructure-pro',
+      documentationUrl: 'https://docs.agentengine.com/templates/cloud-infrastructure-pro/guide',
+    );
+
+    // E-commerce Business Intelligence Agent
+    _templates['ecommerce-bi-specialist'] = IntegrationTemplate(
+      id: 'ecommerce-bi-specialist',
+      name: 'E-commerce BI Specialist',
+      description: 'Complete business intelligence for e-commerce with payments, analytics, and customer communications.',
+      author: 'AgentEngine Team',
+      version: '1.0.0',
+      createdAt: DateTime.now().subtract(Duration(days: 5)),
+      updatedAt: DateTime.now().subtract(Duration(days: 2)),
+      integrationIds: ['stripe', 'supabase', 'bigquery', 'tako', 'twilio', 'zapier', 'supadata', 'box'],
+      configurations: [],
+      difficulty: 'Medium',
+      estimatedSetupTime: Duration(minutes: 35),
+      tags: ['ecommerce', 'business intelligence', 'analytics', 'payments', 'crm'],
+      category: 'Business & Analytics',
+      isOfficial: true,
+      isFeatured: true,
+      downloadCount: 480,
+      rating: 4.7,
+      reviewCount: 45,
+      screenshots: ['ecommerce-bi-1.png', 'ecommerce-bi-2.png', 'ecommerce-bi-3.png'],
+      requirements: ['Stripe Account', 'Supabase Project', 'BigQuery Access', 'Tako API Key'],
+      changelog: [
+        ChangelogEntry(
+          version: '1.0.0',
+          date: DateTime.now().subtract(Duration(days: 5)),
+          changes: ['Revenue analytics dashboard', 'Customer journey tracking', 'Automated reporting'],
+        ),
+      ],
+      supportUrl: 'https://docs.agentengine.com/templates/ecommerce-bi',
+      documentationUrl: 'https://docs.agentengine.com/templates/ecommerce-bi/setup',
+    );
+
+    // DevSecOps Automation Hub
+    _templates['devsecops-automation'] = IntegrationTemplate(
+      id: 'devsecops-automation',
+      name: 'DevSecOps Automation Hub',
+      description: 'Security-first CI/CD with automated scanning, monitoring, and chaos engineering.',
+      author: 'AgentEngine Team',
+      version: '1.1.0',
+      createdAt: DateTime.now().subtract(Duration(days: 7)),
+      updatedAt: DateTime.now().subtract(Duration(hours: 6)),
+      integrationIds: ['gitguardian', 'sentry', 'circleci', 'buildkite', 'gremlin', 'git', 'github'],
+      configurations: [],
+      difficulty: 'Hard',
+      estimatedSetupTime: Duration(minutes: 50),
+      tags: ['devsecops', 'security', 'ci-cd', 'automation', 'monitoring', 'chaos-engineering'],
+      category: 'Security & DevOps',
+      isOfficial: true,
+      isFeatured: true,
+      downloadCount: 560,
+      rating: 4.8,
+      reviewCount: 38,
+      screenshots: ['devsecops-1.png', 'devsecops-2.png'],
+      requirements: ['GitGuardian API Key', 'Sentry Account', 'CircleCI Token', 'GitHub Access'],
+      changelog: [
+        ChangelogEntry(
+          version: '1.1.0',
+          date: DateTime.now().subtract(Duration(hours: 6)),
+          changes: ['Added chaos engineering with Gremlin', 'Enhanced security scanning'],
+        ),
+        ChangelogEntry(
+          version: '1.0.0',
+          date: DateTime.now().subtract(Duration(days: 7)),
+          changes: ['Initial release with security automation', 'CI/CD pipeline integration'],
+        ),
+      ],
+      supportUrl: 'https://docs.agentengine.com/templates/devsecops-automation',
+    );
+
+    // Multi-Database Analytics Powerhouse
+    _templates['multi-database-analytics'] = IntegrationTemplate(
+      id: 'multi-database-analytics',
+      name: 'Multi-Database Analytics Powerhouse',
+      description: 'Advanced analytics across multiple database systems with AI-powered insights.',
+      author: 'AgentEngine Team',
+      version: '1.0.0',
+      createdAt: DateTime.now().subtract(Duration(days: 4)),
+      updatedAt: DateTime.now().subtract(Duration(days: 1)),
+      integrationIds: ['postgresql', 'bigquery', 'clickhouse', 'redis', 'supabase', 'memory', 'sequential-thinking'],
+      configurations: [],
+      difficulty: 'Hard',
+      estimatedSetupTime: Duration(minutes: 40),
+      tags: ['database', 'analytics', 'big-data', 'ai', 'multi-source'],
+      category: 'Data & Analytics',
+      isOfficial: true,
+      isFeatured: true,
+      downloadCount: 290,
+      rating: 4.6,
+      reviewCount: 22,
+      screenshots: ['multi-db-1.png', 'multi-db-2.png'],
+      requirements: ['Database Credentials', 'BigQuery Access', 'ClickHouse Server'],
+      changelog: [
+        ChangelogEntry(
+          version: '1.0.0',
+          date: DateTime.now().subtract(Duration(days: 4)),
+          changes: ['Cross-database query engine', 'AI-powered insights', 'Real-time analytics'],
+        ),
+      ],
+      supportUrl: 'https://docs.agentengine.com/templates/multi-database-analytics',
+    );
+
+    // Social Media Marketing Command Center
+    _templates['social-media-command-center'] = IntegrationTemplate(
+      id: 'social-media-command-center',
+      name: 'Social Media Marketing Command Center',
+      description: 'Complete social media management with analytics, scheduling, and multi-channel communication.',
+      author: 'AgentEngine Team',
+      version: '1.0.0',
+      createdAt: DateTime.now().subtract(Duration(days: 6)),
+      updatedAt: DateTime.now().subtract(Duration(days: 3)),
+      integrationIds: ['supadata', 'discord', 'slack', 'twilio', 'zapier', 'boost-space', 'caldav'],
+      configurations: [],
+      difficulty: 'Medium',
+      estimatedSetupTime: Duration(minutes: 30),
+      tags: ['social-media', 'marketing', 'analytics', 'automation', 'scheduling'],
+      category: 'Marketing & Communication',
+      isOfficial: true,
+      isFeatured: true,
+      downloadCount: 720,
+      rating: 4.5,
+      reviewCount: 67,
+      screenshots: ['social-media-1.png', 'social-media-2.png', 'social-media-3.png'],
+      requirements: ['Social Media Accounts', 'Supadata API', 'Discord/Slack Tokens'],
+      changelog: [
+        ChangelogEntry(
+          version: '1.0.0',
+          date: DateTime.now().subtract(Duration(days: 6)),
+          changes: ['Multi-platform scheduling', 'Engagement analytics', 'Automated responses'],
+        ),
+      ],
+      supportUrl: 'https://docs.agentengine.com/templates/social-media-command-center',
+    );
+
+    // Enterprise Security Operations Center
+    _templates['enterprise-security-ops'] = IntegrationTemplate(
+      id: 'enterprise-security-ops',
+      name: 'Enterprise Security Operations Center',
+      description: 'Comprehensive security monitoring, threat detection, and incident response.',
+      author: 'AgentEngine Team',
+      version: '1.0.0',
+      createdAt: DateTime.now().subtract(Duration(days: 8)),
+      updatedAt: DateTime.now().subtract(Duration(days: 4)),
+      integrationIds: ['gitguardian', 'sentry', 'gremlin', 'atlassian-remote', 'glean', 'sequential-thinking'],
+      configurations: [],
+      difficulty: 'Hard',
+      estimatedSetupTime: Duration(minutes: 55),
+      tags: ['security', 'operations', 'enterprise', 'monitoring', 'incident-response'],
+      category: 'Enterprise Security',
+      isOfficial: true,
+      isFeatured: true,
+      downloadCount: 180,
+      rating: 4.9,
+      reviewCount: 15,
+      screenshots: ['security-ops-1.png', 'security-ops-2.png'],
+      requirements: ['Enterprise Security Tools', 'Atlassian Access', 'Advanced Permissions'],
+      changelog: [
+        ChangelogEntry(
+          version: '1.0.0',
+          date: DateTime.now().subtract(Duration(days: 8)),
+          changes: ['Real-time threat monitoring', 'Automated incident response', 'Compliance reporting'],
+        ),
+      ],
+      supportUrl: 'https://docs.agentengine.com/templates/enterprise-security-ops',
+    );
+
+    // Customer Success Automation Agent
+    _templates['customer-success-automation'] = IntegrationTemplate(
+      id: 'customer-success-automation',
+      name: 'Customer Success Automation Agent',
+      description: 'Complete customer success platform with knowledge management and multi-channel support.',
+      author: 'AgentEngine Team',
+      version: '1.0.0',
+      createdAt: DateTime.now().subtract(Duration(days: 2)),
+      updatedAt: DateTime.now().subtract(Duration(hours: 12)),
+      integrationIds: ['buildable', 'box', 'glean', 'twilio', 'discord', 'slack', 'caldav', 'zapier'],
+      configurations: [],
+      difficulty: 'Medium',
+      estimatedSetupTime: Duration(minutes: 25),
+      tags: ['customer-success', 'automation', 'support', 'knowledge-management'],
+      category: 'Customer Success',
+      isOfficial: true,
+      isFeatured: true,
+      downloadCount: 410,
+      rating: 4.6,
+      reviewCount: 31,
+      screenshots: ['customer-success-1.png', 'customer-success-2.png'],
+      requirements: ['Customer Support Platform', 'Knowledge Base', 'Communication Channels'],
+      changelog: [
+        ChangelogEntry(
+          version: '1.0.0',
+          date: DateTime.now().subtract(Duration(days: 2)),
+          changes: ['Automated customer onboarding', 'Health score tracking', 'Multi-channel support'],
+        ),
+      ],
+      supportUrl: 'https://docs.agentengine.com/templates/customer-success-automation',
+    );
+
+    // FinTech Data Pipeline Manager
+    _templates['fintech-data-pipeline'] = IntegrationTemplate(
+      id: 'fintech-data-pipeline',
+      name: 'FinTech Data Pipeline Manager',
+      description: 'Real-time financial data processing with compliance and risk analysis.',
+      author: 'AgentEngine Team',
+      version: '1.0.0',
+      createdAt: DateTime.now().subtract(Duration(days: 1)),
+      updatedAt: DateTime.now().subtract(Duration(hours: 8)),
+      integrationIds: ['stripe', 'tako', 'bigquery', 'clickhouse', 'redis', 'aws-cost-analysis', 'sequential-thinking'],
+      configurations: [],
+      difficulty: 'Hard',
+      estimatedSetupTime: Duration(minutes: 45),
+      tags: ['fintech', 'finance', 'data-pipeline', 'compliance', 'risk-analysis'],
+      category: 'Financial Technology',
+      isOfficial: true,
+      isFeatured: true,
+      downloadCount: 95,
+      rating: 5.0,
+      reviewCount: 8,
+      screenshots: ['fintech-1.png', 'fintech-2.png', 'fintech-3.png'],
+      requirements: ['Financial Data Access', 'Compliance Framework', 'High-Performance Computing'],
+      changelog: [
+        ChangelogEntry(
+          version: '1.0.0',
+          date: DateTime.now().subtract(Duration(days: 1)),
+          changes: ['Real-time payment processing', 'Advanced risk modeling', 'Regulatory reporting'],
+        ),
+      ],
+      supportUrl: 'https://docs.agentengine.com/templates/fintech-data-pipeline',
+    );
   }
   
   void _initializeCommunityTemplates() {

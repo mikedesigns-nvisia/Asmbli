@@ -507,6 +507,168 @@ export const BEGINNER_AGENT_TEMPLATES: AgentTemplate[] = [
       primaryPurpose: ['analyzer'],
       expectedUsers: ['personal', 'team', 'company']
     }
+  },
+
+  // NEW ENTERPRISE AGENT TEMPLATES LEVERAGING 51 MCP SERVERS
+
+  {
+    id: 'cloud-infrastructure-engineer-pro',
+    name: 'Cloud Infrastructure Engineer Pro',
+    description: 'Enterprise-grade multi-cloud architect with cost optimization, security, and automation. Pre-configured with AWS, Azure, Cloudflare, and infrastructure tools.',
+    category: 'code',
+    icon: '☁️',
+    targetRole: 'power_user',
+    isPreConfigured: true,
+    config: {
+      agentName: 'Cloud Infrastructure Engineer Pro',
+      agentDescription: 'I design, deploy, and manage multi-cloud infrastructure with cost optimization, security scanning, and automated deployment pipelines across AWS, Azure, and other cloud providers.',
+      primaryPurpose: 'coder',
+      requiredMcps: ['aws-bedrock-mcp', 'aws-cdk-mcp', 'cloudflare-mcp', 'azure-mcp', 'docker-mcp'],
+      optionalMcps: ['aws-cost-analysis-mcp', 'vercel-mcp', 'netlify-mcp', 'gremlin-mcp'],
+      securitySettings: {
+        authMethod: 'oauth',
+        permissions: ['read', 'write', 'execute', 'deploy'],
+        localOnly: false
+      },
+      recommendedDeployment: ['api-server', 'cloud-deployment'],
+      specialFeatures: {
+        uploadSupport: {
+          enabled: true,
+          allowedTypes: ['.yaml', '.yml', '.tf', '.json', '.dockerfile', '.helm', '.k8s'],
+          maxFileSize: '500MB',
+          description: 'Upload infrastructure configs, Terraform files, Kubernetes manifests, and deployment scripts'
+        }
+      }
+    },
+    triggers: {
+      primaryPurpose: ['coder'],
+      technicalLevel: ['advanced'],
+      expectedUsers: ['team', 'company'],
+      customFields: {
+        cloudProvider: ['aws', 'azure', 'multi-cloud'],
+        infrastructure: ['containers', 'serverless', 'kubernetes', 'microservices']
+      }
+    }
+  },
+
+  {
+    id: 'ecommerce-bi-specialist-pro',
+    name: 'E-commerce BI Specialist Pro',
+    description: 'Complete business intelligence platform for e-commerce with payments, analytics, and customer insights. Pre-integrated with Stripe, BigQuery, and marketing tools.',
+    category: 'analysis',
+    icon: '📊',
+    targetRole: 'power_user',
+    isPreConfigured: true,
+    config: {
+      agentName: 'E-commerce BI Specialist Pro',
+      agentDescription: 'I provide comprehensive business intelligence for e-commerce operations, analyzing payments, customer behavior, marketing performance, and generating actionable insights for growth.',
+      primaryPurpose: 'analyzer',
+      requiredMcps: ['stripe-mcp', 'bigquery-mcp', 'supabase-mcp', 'tako-mcp'],
+      optionalMcps: ['twilio-mcp', 'zapier-mcp', 'supadata-mcp', 'box-mcp'],
+      securitySettings: {
+        authMethod: 'oauth',
+        permissions: ['read', 'write', 'analyze'],
+        localOnly: false
+      },
+      recommendedDeployment: ['api-server', 'dashboard'],
+      specialFeatures: {
+        uploadSupport: {
+          enabled: true,
+          allowedTypes: ['.csv', '.xlsx', '.json', '.sql', '.png', '.pdf'],
+          maxFileSize: '1GB',
+          description: 'Upload sales data, customer data, marketing reports, and analytics exports'
+        }
+      }
+    },
+    triggers: {
+      primaryPurpose: ['analyzer', 'coder'],
+      technicalLevel: ['advanced'],
+      expectedUsers: ['team', 'company'],
+      customFields: {
+        businessType: ['ecommerce', 'retail', 'marketplace', 'subscription'],
+        analyticsGoals: ['revenue-optimization', 'customer-insights', 'marketing-roi']
+      }
+    }
+  },
+
+  {
+    id: 'devsecops-automation-hub-pro',
+    name: 'DevSecOps Automation Hub Pro',
+    description: 'Security-first CI/CD platform with automated scanning, monitoring, and chaos engineering. Pre-configured with GitGuardian, Sentry, and enterprise tools.',
+    category: 'code',
+    icon: '🔒',
+    targetRole: 'power_user',
+    isPreConfigured: true,
+    config: {
+      agentName: 'DevSecOps Automation Hub Pro',
+      agentDescription: 'I implement security-first DevOps practices with automated security scanning, continuous monitoring, incident response, and chaos engineering to ensure robust, secure deployments.',
+      primaryPurpose: 'coder',
+      requiredMcps: ['gitguardian-mcp', 'sentry-mcp', 'circleci-mcp', 'git-mcp', 'github-mcp'],
+      optionalMcps: ['buildkite-mcp', 'gremlin-mcp', 'docker-mcp'],
+      securitySettings: {
+        authMethod: 'enterprise',
+        permissions: ['read', 'write', 'execute', 'security-scan'],
+        localOnly: false
+      },
+      recommendedDeployment: ['secure-server', 'enterprise-cloud'],
+      specialFeatures: {
+        uploadSupport: {
+          enabled: true,
+          allowedTypes: ['.yaml', '.yml', '.json', '.dockerfile', '.sh', '.ps1', '.tf'],
+          maxFileSize: '200MB',
+          description: 'Upload CI/CD configs, security policies, deployment scripts, and infrastructure code'
+        }
+      }
+    },
+    triggers: {
+      primaryPurpose: ['coder'],
+      technicalLevel: ['advanced'],
+      expectedUsers: ['team', 'company'],
+      customFields: {
+        securityFocus: ['devsecops', 'compliance', 'automation', 'monitoring'],
+        deploymentType: ['enterprise', 'cloud', 'hybrid']
+      }
+    }
+  },
+
+  {
+    id: 'social-media-command-center-pro',
+    name: 'Social Media Command Center Pro',
+    description: 'Complete social media management platform with analytics, automation, and multi-channel communication. Pre-integrated with Discord, Slack, and analytics tools.',
+    category: 'content',
+    icon: '📱',
+    targetRole: 'power_user',
+    isPreConfigured: true,
+    config: {
+      agentName: 'Social Media Command Center Pro',
+      agentDescription: 'I manage comprehensive social media operations across multiple platforms, providing analytics, automated scheduling, engagement tracking, and cross-platform communication management.',
+      primaryPurpose: 'content',
+      requiredMcps: ['supadata-mcp', 'discord-mcp', 'slack-mcp', 'caldav-mcp'],
+      optionalMcps: ['twilio-mcp', 'zapier-mcp', 'boost-space-mcp'],
+      securitySettings: {
+        authMethod: 'oauth',
+        permissions: ['read', 'write', 'publish'],
+        localOnly: false
+      },
+      recommendedDeployment: ['api-server', 'cloud-service'],
+      specialFeatures: {
+        uploadSupport: {
+          enabled: true,
+          allowedTypes: ['.jpg', '.png', '.gif', '.mp4', '.csv', '.json', '.txt'],
+          maxFileSize: '500MB',
+          description: 'Upload media content, analytics data, campaign assets, and content calendars'
+        }
+      }
+    },
+    triggers: {
+      primaryPurpose: ['content'],
+      technicalLevel: ['advanced'],
+      expectedUsers: ['team', 'company'],
+      customFields: {
+        contentType: ['social', 'video', 'multi-platform', 'community'],
+        marketingGoals: ['engagement', 'growth', 'community', 'brand-awareness']
+      }
+    }
   }
 ];
 
