@@ -313,5 +313,6 @@ final allApiConfigsProvider = Provider<Map<String, ApiConfig>>((ref) {
 // Provider for default API config
 final defaultApiConfigProvider = Provider<ApiConfig?>((ref) {
   final configs = ref.watch(apiConfigsProvider);
-  return configs.values.where((config) => config.isDefault).firstOrNull;
+  final defaultConfigs = configs.values.where((config) => config.isDefault);
+  return defaultConfigs.isEmpty ? null : defaultConfigs.first;
 });

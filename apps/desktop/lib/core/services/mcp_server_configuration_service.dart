@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/mcp_server_configs.dart';
+import 'context_mcp_resource_service.dart';
 
 /// Service for managing MCP server configurations and integration
 /// This bridges the gap between detected integrations and MCP server configs
@@ -246,12 +247,20 @@ class MCPServerConfigurationService {
         final server = MCPServerLibrary.getServer('time');
         if (server != null) servers.add(server);
         break;
+
+      // Continue.dev integration
+      case 'continue-dev':
+      case 'continue':
+        final server = MCPServerLibrary.getServer('continue-dev');
+        if (server != null) servers.add(server);
+        break;
     }
     
     return servers;
   }
   
   /// Get MCP server configuration ready for agent integration
+  /// Following MCP standards from Hugging Face course documentation
   static Map<String, dynamic> generateAgentMCPConfig(
     MCPServerConfig server,
     Map<String, String> userEnvVars,
@@ -259,23 +268,48 @@ class MCPServerConfigurationService {
   ) {
     final config = Map<String, dynamic>.from(server.configuration);
     
-    // Handle special cases
+    // Handle special transport cases (HTTP+SSE)
     if (server.id == 'figma-official') {
-      // Figma uses SSE transport
+      // Figma uses SSE transport as per MCP course standards
       return {
         server.id: {
           'transport': 'sse',
           'url': 'http://localhost:3845/mcp',
+          'mcpVersion': '2024-11-05',
+          'capabilities': {
+            'tools': server.capabilities.contains('design_file_access'),
+            'resources': server.capabilities.contains('component_data'),
+            'prompts': false,
+            'sampling': false,
+          }
+        }
+      };
+    }
+
+    // Handle remote servers (Atlassian)
+    if (server.id == 'atlassian-remote') {
+      return {
+        server.id: {
+          'transport': 'sse',
+          'url': 'https://mcp.atlassian.com',
+          'mcpVersion': '2024-11-05',
+          'env': userEnvVars,
+          'capabilities': {
+            'tools': true,
+            'resources': true, 
+            'prompts': true,
+            'sampling': false,
+          }
         }
       };
     }
     
-    // Handle filesystem server with custom path
+    // Handle filesystem server with custom path (stdio transport)
     if (server.id == 'filesystem' && customPath != null) {
       config['args'] = ['-y', '@modelcontextprotocol/server-filesystem', customPath];
     }
     
-    // Handle SQLite server with custom database path
+    // Handle SQLite server with custom database path (stdio transport)
     if (server.id == 'sqlite' && customPath != null) {
       config['args'] = ['-y', '@modelcontextprotocol/server-sqlite', customPath];
     }
@@ -284,8 +318,47 @@ class MCPServerConfigurationService {
     if (userEnvVars.isNotEmpty) {
       config['env'] = userEnvVars;
     }
+
+    // Add MCP protocol compliance metadata
+    config['mcpVersion'] = '2024-11-05';
+    config['transport'] = 'stdio'; // Default transport for most servers
+    
+    // Add capability mapping based on server capabilities
+    config['capabilities'] = {
+      'tools': server.capabilities.any((cap) => cap.contains('management') || cap.contains('operations') || cap.contains('tracking')),
+      'resources': server.capabilities.any((cap) => cap.contains('data') || cap.contains('file') || cap.contains('search')),
+      'prompts': server.capabilities.contains('prompts') || server.id == 'everything',
+      'sampling': server.capabilities.contains('sampling') || server.id == 'sequential-thinking',
+    };
     
     return {server.id: config};
+  }
+
+  /// Generate complete MCP configuration for an agent including context resources
+  static Future<Map<String, dynamic>> generateCompleteAgentMCPConfig(
+    String agentId,
+    List<MCPServerConfig> servers,
+    Map<String, String> userEnvVars,
+    dynamic ref, // Accept both WidgetRef and Ref
+  ) async {
+    final config = <String, dynamic>{};
+    
+    // Add all configured MCP servers
+    for (final server in servers) {
+      final serverConfig = generateAgentMCPConfig(server, userEnvVars);
+      config.addAll(serverConfig);
+    }
+    
+    // Check if agent should have context resources
+    final shouldAddContext = await ContextMCPResourceService.shouldEnableContextResources(agentId, ref);
+    
+    if (shouldAddContext) {
+      // Add context resources server configuration
+      final contextConfig = ContextMCPResourceService.generateContextResourceServerConfig(agentId);
+      config.addAll(contextConfig);
+    }
+    
+    return config;
   }
   
   /// Validate required environment variables are provided
@@ -458,6 +531,16 @@ class MCPServerConfigurationService {
       // Special Integrations
       case 'ATLASSIAN_API_TOKEN':
         return 'Atlassian API token with appropriate permissions';
+      
+      // Continue.dev environment variables
+      case 'CONTINUE_API_PROVIDER':
+        return 'AI provider (openai, claude, ollama, local)';
+      case 'CONTINUE_API_KEY':
+        return 'API key for chosen provider (not needed for Ollama/local)';
+      case 'CONTINUE_MODEL_NAME':
+        return 'Model name (e.g., gpt-4, claude-3, llama3)';
+      case 'CONTINUE_CONTEXT_LENGTH':
+        return 'Maximum context length for the model (default: 4096)';
       
       default:
         return 'Required for authentication';

@@ -207,7 +207,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                       if (integrationId == null) {
                         // fallback to search
                         final matches = IntegrationRegistry.search(name);
-                        if (matches.isNotEmpty) integrationId = matches.firstWhere((d) => d.isAvailable, orElse: () => matches.first).id;
+                        if (matches.isNotEmpty) integrationId = matches.first;
                       }
 
                       if (integrationId != null) {

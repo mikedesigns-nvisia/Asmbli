@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/services/conversation_service.dart';
-import 'package:agent_engine_core/services/implementations/service_provider.dart';
+import '../core/services/desktop/desktop_conversation_service.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import '../core/services/mcp_settings_service.dart';
 import '../core/services/agent_system_prompt_service.dart';
 
 final conversationServiceProvider = Provider<ConversationService>((ref) {
- return ServiceProvider.getConversationService();
+ return DesktopConversationService();
 });
 
 final conversationsProvider = StreamProvider<List<Conversation>>((ref) async* {

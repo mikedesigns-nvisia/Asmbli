@@ -34,6 +34,7 @@ class MCPServerConfig {
   });
 
   /// Convert to JSON format for agent configuration
+  /// Following JSON-RPC 2.0 and MCP standards from Hugging Face course
   Map<String, dynamic> toAgentConfig(Map<String, String> envVars) {
     final config = Map<String, dynamic>.from(configuration);
     
@@ -42,7 +43,17 @@ class MCPServerConfig {
       config['env'] = envVars;
     }
     
-    return {id: config};
+    // Ensure proper JSON-RPC 2.0 structure for MCP communication
+    // Based on Hugging Face MCP course standards
+    return {
+      id: {
+        ...config,
+        // Add protocol version for compatibility
+        'mcpVersion': '2024-11-05',
+        // Ensure proper initialization sequence
+        'initializeOnStart': true,
+      }
+    };
   }
 }
 
@@ -825,6 +836,24 @@ class MCPServerLibrary {
       capabilities: ['jira_integration', 'confluence_access', 'cloud_data_access', 'secure_remote_access'],
       setupInstructions: 'Create Atlassian API token with appropriate permissions',
       documentationUrl: 'https://www.atlassian.com/blog/announcements/remote-mcp-server',
+      status: MCPServerStatus.stable,
+    ),
+
+    MCPServerConfig(
+      id: 'continue-dev',
+      name: 'Continue.dev',
+      description: 'Open-source AI code assistant for IDEs with chat, autocomplete, and inline editing',
+      type: MCPServerType.community,
+      configuration: {
+        'command': 'npx',
+        'args': ['-y', '@modelcontextprotocol/server-continue-dev'],
+      },
+      requiredEnvVars: ['CONTINUE_API_PROVIDER'],
+      optionalEnvVars: ['CONTINUE_API_KEY', 'CONTINUE_MODEL_NAME', 'CONTINUE_CONTEXT_LENGTH'],
+      capabilities: ['code_completion', 'inline_editing', 'codebase_chat', 'documentation_generation', 'code_analysis'],
+      setupInstructions: 'Configure AI provider (OpenAI, Claude, Ollama, or local). For local models like Ollama, no API key required.',
+      documentationUrl: 'https://docs.continue.dev/',
+      repositoryUrl: 'https://github.com/continuedev/continue',
       status: MCPServerStatus.stable,
     ),
 

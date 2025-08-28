@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../providers/agent_provider.dart';
+import '../../../../providers/conversation_provider.dart';
 
 class AgentSelectorDropdown extends ConsumerWidget {
   const AgentSelectorDropdown({super.key});
@@ -116,10 +117,15 @@ class AgentSelectorDropdown extends ConsumerWidget {
           value: activeAgent?.id,
           isExpanded: true,
           hint: _buildDropdownHint(context),
-          onChanged: (agentId) {
+          onChanged: (agentId) async {
             if (agentId != null) {
               final selectedAgent = agents.firstWhere((agent) => agent.id == agentId);
-              ref.read(agentNotifierProvider.notifier).setActiveAgent(selectedAgent);
+              
+              // Get current conversation ID from the conversation provider
+              final conversationId = ref.read(selectedConversationIdProvider) ?? 'default';
+              
+              // Load agent with MCP installation check
+              await ref.read(agentNotifierProvider.notifier).loadAgentForConversation(selectedAgent, conversationId);
             }
           },
           selectedItemBuilder: (context) {

@@ -17,6 +17,8 @@ class DesktopStorageService {
  static DesktopStorageService? _instance;
  static SharedPreferences? _preferences;
  static final Map<String, Box> _hiveBoxes = {};
+ static bool _isInitialized = false;
+ static bool _isInitializing = false;
  
  DesktopStorageService._();
  
@@ -26,43 +28,104 @@ class DesktopStorageService {
  }
 
  Future<void> initialize() async {
+ // Prevent concurrent initialization
+ if (_isInitialized) return;
+ if (_isInitializing) {
+   // Wait for ongoing initialization to complete
+   while (_isInitializing) {
+     await Future.delayed(Duration(milliseconds: 100));
+   }
+   if (_isInitialized) return;
+ }
+ 
+ _isInitializing = true;
+ 
  try {
- _preferences = await SharedPreferences.getInstance();
- await _initializeHive();
+   _preferences = await SharedPreferences.getInstance();
+   await _initializeHive();
+   _isInitialized = true;
+   print('✅ Storage service initialized');
  } catch (e) {
- print('Storage initialization failed: $e');
- rethrow;
+   print('❌ Storage initialization failed: $e');
+   // Continue anyway with in-memory fallback
+   _isInitialized = true; // Mark as initialized to prevent retry loops
+ } finally {
+   _isInitializing = false;
  }
  }
 
  Future<void> _initializeHive() async {
- final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
- final hiveDir = Directory(path.join(appDir.path, 'storage'));
- 
- if (!await hiveDir.exists()) {
- await hiveDir.create(recursive: true);
+ try {
+   final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
+   final hiveDir = Directory(path.join(appDir.path, 'storage'));
+   
+   if (!await hiveDir.exists()) {
+     await hiveDir.create(recursive: true);
+   }
+   
+   // Clean up any stale lock files
+   await _cleanupLockFiles(hiveDir);
+   
+   await Hive.initFlutter(hiveDir.path);
+   
+   // Open boxes one by one with error handling
+   final boxNames = ['agents', 'conversations', 'templates', 'settings', 'cache', 'user_data', 'mcp_servers', 'api_keys'];
+   
+   for (final boxName in boxNames) {
+     try {
+       await _openBox(boxName);
+     } catch (e) {
+       print('⚠️ Failed to open box $boxName: $e (continuing with in-memory fallback)');
+     }
+   }
+ } catch (e) {
+   print('⚠️ Hive initialization failed: $e (using SharedPreferences fallback)');
+   throw e;
+ }
  }
  
- await Hive.initFlutter(hiveDir.path);
- 
- await _openBox('agents');
- await _openBox('conversations');
- await _openBox('templates');
- await _openBox('settings');
- await _openBox('cache');
- await _openBox('user_data');
- await _openBox('mcp_servers');
- await _openBox('api_keys');
+ /// Clean up stale lock files that might prevent Hive from opening
+ Future<void> _cleanupLockFiles(Directory hiveDir) async {
+ try {
+   final lockFiles = hiveDir.listSync()
+       .where((file) => file.path.endsWith('.lock'))
+       .cast<File>();
+       
+   for (final lockFile in lockFiles) {
+     try {
+       // Check if lock file is stale (older than 5 minutes)
+       final stat = await lockFile.stat();
+       final age = DateTime.now().difference(stat.modified);
+       
+       if (age.inMinutes > 5) {
+         await lockFile.delete();
+         print('🧹 Cleaned up stale lock file: ${lockFile.path}');
+       }
+     } catch (e) {
+       // Ignore individual file cleanup errors
+     }
+   }
+ } catch (e) {
+   // Ignore cleanup errors - they're not critical
+ }
  }
 
  Future<Box<T>> _openBox<T>(String boxName) async {
  if (_hiveBoxes.containsKey(boxName)) {
- return _hiveBoxes[boxName] as Box<T>;
+   return _hiveBoxes[boxName] as Box<T>;
  }
  
- final box = await Hive.openBox<T>(boxName);
+ // For complex types, use dynamic boxes and handle JSON serialization ourselves
+ late Box<dynamic> box;
+ try {
+   box = await Hive.openBox(boxName);
+ } catch (e) {
+   print('⚠️ Failed to open Hive box $boxName: $e');
+   throw e;
+ }
+ 
  _hiveBoxes[boxName] = box;
- return box;
+ return box as Box<T>;
  }
 
  Future<void> setPreference<T>(String key, T value) async {
@@ -133,34 +196,65 @@ class DesktopStorageService {
  }
 
  Future<void> setHiveData<T>(String boxName, String key, T value) async {
- final box = await _openBox<T>(boxName);
- await box.put(key, value);
+ try {
+   final box = await _openBox<T>(boxName);
+   await box.put(key, value);
+ } catch (e) {
+   print('⚠️ Failed to save to Hive box $boxName: $e (falling back to SharedPreferences)');
+   // Fallback to SharedPreferences for persistence
+   await setPreference('hive_fallback_${boxName}_$key', value);
+ }
  }
 
  T? getHiveData<T>(String boxName, String key, {T? defaultValue}) {
- final box = _hiveBoxes[boxName] as Box<T>?;
- if (box == null) return defaultValue;
- return box.get(key, defaultValue: defaultValue);
+ try {
+   final box = _hiveBoxes[boxName] as Box<T>?;
+   if (box == null) {
+     // Fallback to SharedPreferences
+     return getPreference<T>('hive_fallback_${boxName}_$key', defaultValue: defaultValue);
+   }
+   return box.get(key, defaultValue: defaultValue);
+ } catch (e) {
+   print('⚠️ Failed to read from Hive box $boxName: $e (using fallback)');
+   return getPreference<T>('hive_fallback_${boxName}_$key', defaultValue: defaultValue);
+ }
  }
 
  Future<void> removeHiveData(String boxName, String key) async {
- final box = _hiveBoxes[boxName];
- if (box != null) {
- await box.delete(key);
+ try {
+   final box = _hiveBoxes[boxName];
+   if (box != null) {
+     await box.delete(key);
+   }
+   // Also remove fallback data
+   await removePreference('hive_fallback_${boxName}_$key');
+ } catch (e) {
+   print('⚠️ Failed to remove from Hive box $boxName: $e');
+   // At least remove fallback data
+   await removePreference('hive_fallback_${boxName}_$key');
  }
  }
 
  Future<void> clearHiveBox(String boxName) async {
- final box = _hiveBoxes[boxName];
- if (box != null) {
- await box.clear();
+ try {
+   final box = _hiveBoxes[boxName];
+   if (box != null) {
+     await box.clear();
+   }
+ } catch (e) {
+   print('⚠️ Failed to clear Hive box $boxName: $e');
  }
  }
 
  List<String> getHiveKeys(String boxName) {
- final box = _hiveBoxes[boxName];
- if (box == null) return [];
- return box.keys.cast<String>().toList();
+ try {
+   final box = _hiveBoxes[boxName];
+   if (box == null) return [];
+   return box.keys.cast<String>().toList();
+ } catch (e) {
+   print('⚠️ Failed to get keys from Hive box $boxName: $e');
+   return [];
+ }
  }
 
  Map<String, dynamic> getAllHiveData(String boxName) {

@@ -1,11 +1,15 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import 'package:agent_engine_core/services/agent_service.dart';
-import 'package:agent_engine_core/services/implementations/memory_agent_service.dart';
+import '../core/services/desktop/desktop_agent_service.dart';
+import '../core/services/mcp_installation_service.dart';
+import '../core/services/context_mcp_resource_service.dart';
+import '../core/services/mcp_conversation_bridge_service.dart';
 
 /// Provider for the agent service
 final agentServiceProvider = Provider<AgentService>((ref) {
-  return InMemoryAgentService();
+  return DesktopAgentService();
 });
 
 /// Provider for the list of all agents
@@ -166,6 +170,161 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
 
   void setActiveAgent(Agent? agent) {
     _ref.read(activeAgentProvider.notifier).state = agent;
+  }
+
+  /// Load agent for conversation with MCP installation check and context resources
+  Future<void> loadAgentForConversation(Agent agent, String conversationId) async {
+    try {
+      // Check if MCP servers need installation
+      final shouldInstall = await MCPInstallationService.shouldInstallMCPOnAgentLoad(agent, conversationId);
+      
+      if (shouldInstall) {
+        // Get installation requirements
+        final requirements = await MCPInstallationService.checkAgentMCPRequirements(agent);
+        
+        if (requirements.isNotEmpty) {
+          // Install required MCP servers
+          final installResult = await MCPInstallationService.installMCPServers(requirements);
+          
+          if (!installResult.success) {
+            // Log installation failures but don't block agent loading
+            print('MCP installation warnings for agent ${agent.id}:');
+            installResult.failedServers.forEach((serverId, error) {
+              print('  - $serverId: $error');
+            });
+          }
+        }
+        
+        // Mark agent as used in this conversation
+        await MCPInstallationService.markAgentUsedInConversation(agent.id, conversationId);
+      }
+      
+      // Setup context resources for the agent
+      await _setupContextResourcesForAgent(agent);
+      
+      // Initialize MCP servers for the conversation
+      await _initializeMCPForConversation(agent, conversationId);
+      
+      // Set as active agent
+      setActiveAgent(agent);
+      
+    } catch (error) {
+      // Don't fail agent loading due to MCP installation issues
+      print('MCP installation check failed for agent ${agent.id}: $error');
+      setActiveAgent(agent);
+    }
+  }
+
+  /// Initialize MCP servers for conversation
+  Future<void> _initializeMCPForConversation(Agent agent, String conversationId) async {
+    try {
+      final mcpBridge = _ref.read(mcpConversationBridgeServiceProvider);
+      
+      // Get environment variables for MCP servers (from settings or default)
+      final environmentVars = await _getAgentEnvironmentVars(agent);
+      
+      // Initialize MCP session for the conversation
+      final session = await mcpBridge.initializeConversationMCP(
+        conversationId,
+        agent,
+        environmentVars,
+      );
+      
+      print('✅ MCP session initialized for agent ${agent.id} in conversation $conversationId');
+      print('   - ${session.serverProcesses.length} servers started');
+      print('   - Server IDs: ${session.serverIds.join(', ')}');
+      
+      // Setup health monitoring
+      _monitorMCPSession(session);
+      
+    } catch (e) {
+      print('⚠️ Failed to initialize MCP for conversation: $e');
+      // Don't block agent loading for MCP issues
+    }
+  }
+
+  /// Get environment variables for agent MCP servers
+  Future<Map<String, String>> _getAgentEnvironmentVars(Agent agent) async {
+    final environmentVars = <String, String>{};
+    
+    // TODO: Get environment variables from secure storage or settings
+    // For now, return empty map - servers that require env vars will fail gracefully
+    
+    return environmentVars;
+  }
+
+  /// Monitor MCP session health
+  void _monitorMCPSession(MCPConversationSession session) {
+    // Listen to server messages for debugging
+    session.messageStream.listen(
+      (message) {
+        print('📢 MCP Message from ${message.serverId}: ${message.message}');
+      },
+      onError: (error) {
+        print('❌ MCP Message stream error: $error');
+      },
+    );
+    
+    // Setup periodic health checks
+    Timer.periodic(const Duration(minutes: 1), (timer) {
+      final status = _ref.read(mcpConversationBridgeServiceProvider)
+          .getSessionStatus(session.conversationId);
+      
+      if (!status.isActive) {
+        print('⚠️ MCP session ${session.conversationId} is no longer active');
+        timer.cancel();
+      } else if (status.healthyServerCount < status.serverCount) {
+        print('⚠️ MCP session ${session.conversationId}: ${status.healthyServerCount}/${status.serverCount} servers healthy');
+      }
+    });
+  }
+
+  /// Setup context resources as MCP resources for the agent
+  Future<void> _setupContextResourcesForAgent(Agent agent) async {
+    try {
+      // Check if agent has context assigned
+      final hasContextResources = await ContextMCPResourceService.shouldEnableContextResources(agent.id, _ref);
+      
+      if (hasContextResources) {
+        // Get context resources for the agent
+        final contextResources = await ContextMCPResourceService.getAgentContextResources(agent.id, _ref);
+        
+        print('Setting up ${contextResources.length} context resources for agent ${agent.id}');
+        
+        // Update agent configuration to include context resource server
+        final updatedConfig = Map<String, dynamic>.from(agent.configuration);
+        
+        // Add context resource server to MCP servers list
+        final mcpServers = List<dynamic>.from(updatedConfig['mcpServers'] ?? []);
+        
+        // Add context resource server reference
+        final contextServerRef = {
+          'id': 'context-resources-${agent.id}',
+          'type': 'resources',
+          'resourceCount': contextResources.length,
+        };
+        
+        if (!mcpServers.any((server) => server is Map && server['id'] == contextServerRef['id'])) {
+          mcpServers.add(contextServerRef);
+          updatedConfig['mcpServers'] = mcpServers;
+        }
+        
+        // Update the agent with new configuration
+        final updatedAgent = Agent(
+          id: agent.id,
+          name: agent.name,
+          description: agent.description,
+          capabilities: agent.capabilities,
+          configuration: updatedConfig,
+          status: agent.status,
+        );
+        
+        // Update in service
+        await _agentService.updateAgent(updatedAgent);
+      }
+    } catch (e) {
+      print('Failed to setup context resources for agent ${agent.id}: $e');
+    }
   }
 }
 

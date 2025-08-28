@@ -1369,13 +1369,16 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
 
  Future<void> _handleStandardResponse(String conversationId) async {
  try {
- // Get API configuration from MCP settings
- final mcpSettingsService = ref.read(mcpSettingsServiceProvider);
+ // Get API configuration from the proper provider
  final claudeApiService = ref.read(claudeApiServiceProvider);
- final defaultApiConfig = mcpSettingsService.defaultDirectAPIConfig;
+ final defaultApiConfig = ref.read(defaultApiConfigProvider);
 
  if (defaultApiConfig == null || !defaultApiConfig.isConfigured) {
- throw Exception('No API configuration found. Please configure your API key in Settings.');
+ // Show a helpful error with direct access to API configuration
+ if (mounted) {
+   _showApiKeyConfigurationDialog();
+ }
+ throw Exception('API key required. Please configure your API key to start chatting.');
  }
 
  // Get conversation messages for context
@@ -1510,6 +1513,50 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
  conversationId: selectedConversationId,
  ),
  );
+ }
+
+ /// Show API key configuration dialog when user tries to chat without API key
+ void _showApiKeyConfigurationDialog() {
+   showDialog(
+     context: context,
+     barrierDismissible: false, // Force user to configure or cancel
+     builder: (context) => AlertDialog(
+       title: Row(
+         children: [
+           Icon(Icons.key, color: SemanticColors.primary),
+           SizedBox(width: 8),
+           Text('API Key Required'),
+         ],
+       ),
+       content: Column(
+         mainAxisSize: MainAxisSize.min,
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           Text('To start chatting with AI, you need to configure your API key.'),
+           SizedBox(height: 8),
+           Text('This enables real AI conversations with Claude or other providers.'),
+         ],
+       ),
+       actions: [
+         TextButton(
+           onPressed: () => Navigator.of(context).pop(),
+           child: Text('Later'),
+         ),
+         ElevatedButton.icon(
+           onPressed: () {
+             Navigator.of(context).pop();
+             context.push(AppRoutes.settings);
+           },
+           icon: Icon(Icons.settings),
+           label: Text('Configure API Key'),
+           style: ElevatedButton.styleFrom(
+             backgroundColor: SemanticColors.primary,
+             foregroundColor: SemanticColors.onPrimary,
+           ),
+         ),
+       ],
+     ),
+   );
  }
 }
 
