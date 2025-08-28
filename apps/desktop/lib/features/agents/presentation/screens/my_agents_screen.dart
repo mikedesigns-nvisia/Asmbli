@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
+import '../../../../providers/agent_provider.dart';
+import 'package:agent_engine_core/models/agent.dart';
 
-class MyAgentsScreen extends StatefulWidget {
+class MyAgentsScreen extends ConsumerStatefulWidget {
  const MyAgentsScreen({super.key});
 
  @override
- State<MyAgentsScreen> createState() => _MyAgentsScreenState();
+ ConsumerState<MyAgentsScreen> createState() => _MyAgentsScreenState();
 }
 
-class _MyAgentsScreenState extends State<MyAgentsScreen> {
+class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  int selectedTab = 0; // 0 = My Agents, 1 = Agent Library
  String searchQuery = '';
  String selectedCategory = 'All';
@@ -24,60 +27,6 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
  'Automation', 'Mobile', 'Real Estate', 'Legal', 'Healthcare'
  ];
 
- final List<AgentItem> agents = [
- AgentItem(
- name: 'Research Assistant',
- description: 'Academic research agent with citation management',
- category: 'Research',
- isActive: true,
- lastUsed: DateTime.now().subtract(Duration(minutes: 15)),
- totalChats: 23,
- recentChats: [
- 'Can you help me find recent papers on quantum computing?',
- 'What are the latest developments in AI research?',
- 'I need citations for my machine learning paper',
- ],
- ),
- AgentItem(
- name: 'Code Reviewer',
- description: 'Automated code review with best practices',
- category: 'Development',
- isActive: true,
- lastUsed: DateTime.now().subtract(Duration(hours: 2)),
- totalChats: 8,
- recentChats: [
- 'Please review this React component for security issues',
- 'Check my Python function for performance optimizations',
- 'What are the best practices for error handling?',
- ],
- ),
- AgentItem(
- name: 'Content Writer',
- description: 'SEO-optimized content generation',
- category: 'Writing',
- isActive: false,
- lastUsed: DateTime.now().subtract(const Duration(days: 1)),
- totalChats: 15,
- recentChats: [
- 'Write a blog post about sustainable technology',
- 'Create social media content for product launch',
- 'Help me improve this marketing copy',
- ],
- ),
- AgentItem(
- name: 'Data Analyst',
- description: 'Statistical analysis and visualization',
- category: 'Data Analysis',
- isActive: true,
- lastUsed: DateTime.now().subtract(const Duration(hours: 6)),
- totalChats: 12,
- recentChats: [
- 'Analyze customer churn patterns in our dataset',
- 'Create visualizations for quarterly report',
- 'What insights can you find in sales data?',
- ],
- ),
- ];
 
  final List<AgentTemplate> templates = [
  AgentTemplate(
@@ -551,6 +500,14 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
  }
 
  Widget _buildMyAgentsContent() {
+ final agentsAsync = ref.watch(agentsProvider);
+ 
+ return agentsAsync.when(
+ data: (agents) {
+ if (agents.isEmpty) {
+ return _buildEmptyAgentsState();
+ }
+ 
  return Column(
  children: [
  // Agents Grid
@@ -570,6 +527,59 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
  ),
  ),
  ],
+ );
+ },
+ loading: () => Center(
+ child: Column(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ CircularProgressIndicator(
+ color: ThemeColors(context).primary,
+ ),
+ SizedBox(height: SpacingTokens.componentSpacing),
+ Text(
+ 'Loading your agents...',
+ style: TextStyles.bodyMedium.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ ),
+ ],
+ ),
+ ),
+ error: (error, stack) => Center(
+ child: Column(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ Icon(
+ Icons.error_outline,
+ size: 48,
+ color: ThemeColors(context).error,
+ ),
+ SizedBox(height: SpacingTokens.componentSpacing),
+ Text(
+ 'Failed to load agents',
+ style: TextStyles.bodyLarge.copyWith(
+ color: ThemeColors(context).error,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.xs),
+ Text(
+ error.toString(),
+ style: TextStyles.bodySmall.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ textAlign: TextAlign.center,
+ ),
+ SizedBox(height: SpacingTokens.componentSpacing),
+ AsmblButton.secondary(
+ text: 'Retry',
+ onPressed: () {
+ ref.invalidate(agentsProvider);
+ },
+ ),
+ ],
+ ),
+ ),
  );
  }
 
@@ -800,10 +810,55 @@ class _MyAgentsScreenState extends State<MyAgentsScreen> {
  ),
  );
  }
+
+ Widget _buildEmptyAgentsState() {
+ return Center(
+ child: Column(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ Icon(
+ Icons.smart_toy_outlined,
+ size: 64,
+ color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
+ ),
+ SizedBox(height: SpacingTokens.componentSpacing),
+ Text(
+ 'No agents yet',
+ style: TextStyles.bodyLarge.copyWith(
+ color: ThemeColors(context).onSurface,
+ fontWeight: FontWeight.bold,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.xs),
+ Text(
+ 'Create your first AI agent to get started',
+ style: TextStyles.bodyMedium.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ textAlign: TextAlign.center,
+ ),
+ SizedBox(height: SpacingTokens.sectionSpacing),
+ AsmblButton.primary(
+ text: 'Create Agent',
+ onPressed: () {
+ context.go(AppRoutes.agentWizard);
+ },
+ ),
+ SizedBox(height: SpacingTokens.componentSpacing),
+ AsmblButton.secondary(
+ text: 'Browse Templates',
+ onPressed: () {
+ setState(() => selectedTab = 1);
+ },
+ ),
+ ],
+ ),
+ );
+ }
 }
 
 class _AgentCard extends StatelessWidget {
- final AgentItem agent;
+ final Agent agent;
 
  const _AgentCard({required this.agent});
 
@@ -812,7 +867,7 @@ class _AgentCard extends StatelessWidget {
  return AsmblCard(
  onTap: () {
  // Navigate to agent chat
- context.go('${AppRoutes.chat}?agent=${agent.name}');
+ context.go('${AppRoutes.chat}?agent=${agent.id}');
  },
  child: Padding(
  padding: EdgeInsets.all(SpacingTokens.componentSpacing),
@@ -843,7 +898,7 @@ class _AgentCard extends StatelessWidget {
  width: 6,
  height: 6,
  decoration: BoxDecoration(
- color: agent.isActive 
+ color: agent.status == AgentStatus.idle 
  ? ThemeColors(context).success 
  : ThemeColors(context).onSurfaceVariant,
  shape: BoxShape.circle,
@@ -874,7 +929,7 @@ class _AgentCard extends StatelessWidget {
  ),
  SizedBox(height: 2),
  Text(
- agent.category,
+ agent.capabilities.isNotEmpty ? agent.capabilities.first : 'General',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
  fontSize: 10,
@@ -900,7 +955,7 @@ class _AgentCard extends StatelessWidget {
  minHeight: 24,
  ),
  onPressed: () {
- context.go('/agents/configure/${agent.name}');
+ context.go('/agents/configure/${agent.id}');
  },
  tooltip: 'Edit',
  ),
@@ -955,13 +1010,13 @@ class _AgentCard extends StatelessWidget {
  Row(
  children: [
  Icon(
- Icons.chat_bubble_outline,
+ Icons.info_outline,
  size: 11,
  color: ThemeColors(context).onSurfaceVariant,
  ),
  SizedBox(width: 4),
  Text(
- 'Recent Chat',
+ 'Description',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
  fontSize: 10,
@@ -972,8 +1027,7 @@ class _AgentCard extends StatelessWidget {
  ),
  SizedBox(height: 4),
  
- // Recent chat preview
- if (agent.recentChats.isNotEmpty)
+ // Agent description
  Container(
  padding: EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
@@ -985,7 +1039,7 @@ class _AgentCard extends StatelessWidget {
  ),
  ),
  child: Text(
- agent.recentChats.first,
+ agent.description,
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurface,
  fontSize: 10,
@@ -993,26 +1047,6 @@ class _AgentCard extends StatelessWidget {
  ),
  maxLines: 2,
  overflow: TextOverflow.ellipsis,
- ),
- )
- else
- Container(
- padding: EdgeInsets.all(SpacingTokens.xs),
- decoration: BoxDecoration(
- color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.2),
- borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- border: Border.all(
- color: ThemeColors(context).border.withValues(alpha: 0.3),
- width: 0.5,
- ),
- ),
- child: Text(
- 'No recent chats',
- style: TextStyles.caption.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- fontSize: 10,
- fontStyle: FontStyle.italic,
- ),
  ),
  ),
  
@@ -1022,13 +1056,13 @@ class _AgentCard extends StatelessWidget {
  Row(
  children: [
  Icon(
- Icons.message,
+ Icons.hub,
  size: 10,
  color: ThemeColors(context).onSurfaceVariant,
  ),
  SizedBox(width: 3),
  Text(
- '${agent.totalChats}',
+ '${agent.capabilities.length} capabilities',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
  fontSize: 9,
@@ -1037,14 +1071,16 @@ class _AgentCard extends StatelessWidget {
  ),
  SizedBox(width: SpacingTokens.xs),
  Icon(
- Icons.schedule,
- size: 10,
- color: ThemeColors(context).onSurfaceVariant,
+ Icons.circle,
+ size: 8,
+ color: agent.status == AgentStatus.idle 
+ ? ThemeColors(context).success 
+ : ThemeColors(context).onSurfaceVariant,
  ),
  SizedBox(width: 3),
  Expanded(
  child: Text(
- _formatLastUsed(agent.lastUsed),
+ agent.status == AgentStatus.idle ? 'Ready' : 'Busy',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
  fontSize: 9,
@@ -1063,18 +1099,6 @@ class _AgentCard extends StatelessWidget {
  );
  }
 
- String _formatLastUsed(DateTime lastUsed) {
- final now = DateTime.now();
- final difference = now.difference(lastUsed);
- 
- if (difference.inMinutes < 60) {
- return '${difference.inMinutes}m ago';
- } else if (difference.inHours < 24) {
- return '${difference.inHours}h ago';
- } else {
- return '${difference.inDays}d ago';
- }
- }
 }
 
 class _TabButton extends StatelessWidget {
@@ -1400,22 +1424,3 @@ class AgentTemplate {
  });
 }
 
-class AgentItem {
- final String name;
- final String description;
- final String category;
- final bool isActive;
- final DateTime lastUsed;
- final int totalChats;
- final List<String> recentChats;
-
- AgentItem({
- required this.name,
- required this.description,
- required this.category,
- required this.isActive,
- required this.lastUsed,
- required this.totalChats,
- this.recentChats = const [],
- });
-}

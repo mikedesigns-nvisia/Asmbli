@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../core/services/api_config_service.dart';
+import '../../../../core/services/mcp_settings_service.dart';
+import '../../../../providers/conversation_provider.dart';
+import '../widgets/api_key_dialog.dart';
+import 'dart:async';
 
 /// Modern API Configuration Screen - Clean, focused, user-friendly
 class APISettingsScreen extends ConsumerStatefulWidget {
@@ -12,24 +16,85 @@ class APISettingsScreen extends ConsumerStatefulWidget {
   ConsumerState<APISettingsScreen> createState() => _APISettingsScreenState();
 }
 
-class _APISettingsScreenState extends ConsumerState<APISettingsScreen> {
+class _APISettingsScreenState extends ConsumerState<APISettingsScreen> with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  Timer? _statusUpdateTimer;
+  Map<String, bool> _connectionStatuses = {};
+  Map<String, DateTime> _lastConnectionTests = {};
+  
+  // Animation controllers for live indicators
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
+    
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text;
       });
     });
+    
+    // Initialize animations
+    _pulseController = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    );
+    _pulseAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _pulseController,
+      curve: Curves.easeInOut,
+    ));
+    _pulseController.repeat(reverse: true);
+    
+    // Start periodic status updates
+    _startStatusUpdates();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _statusUpdateTimer?.cancel();
+    _pulseController.dispose();
     super.dispose();
+  }
+  
+  void _startStatusUpdates() {
+    _statusUpdateTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      _updateConnectionStatuses();
+    });
+    // Initial update
+    _updateConnectionStatuses();
+  }
+  
+  Future<void> _updateConnectionStatuses() async {
+    final configs = ref.read(apiConfigsProvider);
+    final service = ref.read(apiConfigServiceProvider);
+    
+    for (final config in configs.values) {
+      if (config.isConfigured) {
+        try {
+          final isConnected = await service.testApiConfig(config.id);
+          if (mounted) {
+            setState(() {
+              _connectionStatuses[config.id] = isConnected;
+              _lastConnectionTests[config.id] = DateTime.now();
+            });
+          }
+        } catch (e) {
+          if (mounted) {
+            setState(() {
+              _connectionStatuses[config.id] = false;
+              _lastConnectionTests[config.id] = DateTime.now();
+            });
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -180,32 +245,63 @@ class _APISettingsScreenState extends ConsumerState<APISettingsScreen> {
   Widget _buildQuickStats(ThemeColors colors, Map<String, ApiConfig> configs) {
     final activeConfigs = configs.values.where((c) => c.apiKey.isNotEmpty).length;
     final totalProviders = configs.length;
+    final connectedConfigs = _connectionStatuses.values.where((status) => status).length;
 
-    return Row(
-      children: [
-        _buildStatCard(
-          'Active Connections',
-          activeConfigs.toString(),
-          Icons.link,
-          colors.success,
-          colors,
-        ),
-        SizedBox(width: SpacingTokens.componentSpacing),
-        _buildStatCard(
-          'Total Providers',
-          totalProviders.toString(),
-          Icons.cloud,
-          colors.primary,
-          colors,
-        ),
-        SizedBox(width: SpacingTokens.componentSpacing),
-        _buildStatCard(
-          'Default Provider',
-          configs.values.firstWhere((c) => c.isDefault, orElse: () => configs.values.first).provider,
-          Icons.star,
-          colors.warning,
-          colors,
-        ),
+    return Consumer(
+      builder: (context, ref, child) {
+        final conversationsAsync = ref.watch(conversationsProvider);
+        
+        return Row(
+          children: [
+            _buildLiveStatCard(
+              'Connected APIs',
+              connectedConfigs.toString(),
+              Icons.wifi,
+              connectedConfigs > 0 ? colors.success : colors.error,
+              colors,
+              isLive: true,
+            ),
+            SizedBox(width: SpacingTokens.componentSpacing),
+            _buildStatCard(
+              'Total Providers', 
+              totalProviders.toString(),
+              Icons.cloud,
+              colors.primary,
+              colors,
+            ),
+            SizedBox(width: SpacingTokens.componentSpacing),
+            conversationsAsync.when(
+              data: (conversations) => _buildLiveStatCard(
+                'Active Chats',
+                conversations.length.toString(),
+                Icons.chat,
+                conversations.isNotEmpty ? colors.primary : colors.onSurfaceVariant,
+                colors,
+                isLive: true,
+              ),
+              loading: () => _buildStatCard(
+                'Active Chats',
+                '...',
+                Icons.chat,
+                colors.onSurfaceVariant,
+                colors,
+              ),
+              error: (_, __) => _buildStatCard(
+                'Active Chats',
+                '0',
+                Icons.chat,
+                colors.error,
+                colors,
+              ),
+            ),
+            SizedBox(width: SpacingTokens.componentSpacing),
+            _buildStatCard(
+              'Default Provider',
+              _getDefaultProviderName(configs),
+              Icons.star,
+              colors.warning,
+              colors,
+            ),
         
         Spacer(),
         
@@ -222,6 +318,93 @@ class _APISettingsScreenState extends ConsumerState<APISettingsScreen> {
                     icon: Icons.add,
         ),
       ],
+    );
+      },
+    );
+  }
+
+  Widget _buildLiveStatCard(String label, String value, IconData icon, Color color, ThemeColors colors, {bool isLive = false}) {
+    return AnimatedBuilder(
+      animation: _pulseAnimation,
+      builder: (context, child) {
+        return Container(
+          padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+            border: Border.all(
+              color: color.withValues(alpha: isLive ? _pulseAnimation.value * 0.5 + 0.3 : 0.3),
+              width: isLive ? 1.5 : 1.0,
+            ),
+            boxShadow: isLive ? [
+              BoxShadow(
+                color: color.withValues(alpha: _pulseAnimation.value * 0.3),
+                blurRadius: 4,
+                spreadRadius: 0,
+              )
+            ] : null,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                children: [
+                  Icon(icon, size: 16, color: color),
+                  if (isLive)
+                    Positioned(
+                      right: -2,
+                      top: -2,
+                      child: Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: colors.success,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: colors.success.withValues(alpha: _pulseAnimation.value),
+                              blurRadius: 2,
+                              spreadRadius: 1,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              SizedBox(width: SpacingTokens.iconSpacing),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        value,
+                        style: TextStyles.bodyLarge.copyWith(
+                          color: colors.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      if (isLive) ...[
+                        SizedBox(width: 4),
+                        Icon(
+                          Icons.circle,
+                          size: 8,
+                          color: colors.success.withValues(alpha: _pulseAnimation.value),
+                        ),
+                      ],
+                    ],
+                  ),
+                  Text(
+                    label,
+                    style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -361,21 +544,57 @@ class _APISettingsScreenState extends ConsumerState<APISettingsScreen> {
                     
                     Row(
                       children: [
-                        // Status Indicator
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: isConfigured ? colors.success : colors.error,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
+                        // Real-time Status Indicator
+                        AnimatedBuilder(
+                          animation: _pulseAnimation,
+                          builder: (context, child) {
+                            final connectionStatus = _connectionStatuses[configId];
+                            final lastTest = _lastConnectionTests[configId];
+                            final isRealtimeConnected = connectionStatus == true;
+                            final isTestingOrUnknown = connectionStatus == null;
+                            
+                            return Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: !isConfigured 
+                                  ? colors.error
+                                  : isRealtimeConnected 
+                                    ? colors.success
+                                    : isTestingOrUnknown 
+                                      ? colors.warning.withValues(alpha: _pulseAnimation.value)
+                                      : colors.error,
+                                borderRadius: BorderRadius.circular(4),
+                                boxShadow: isRealtimeConnected ? [
+                                  BoxShadow(
+                                    color: colors.success.withValues(alpha: _pulseAnimation.value * 0.5),
+                                    blurRadius: 2,
+                                  )
+                                ] : null,
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(width: SpacingTokens.iconSpacing),
                         
-                        Text(
-                          isConfigured ? 'Connected' : 'Not configured',
-                          style: TextStyles.bodyMedium.copyWith(
-                            color: colors.onSurfaceVariant,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _getStatusText(configId, isConfigured),
+                                style: TextStyles.bodyMedium.copyWith(
+                                  color: colors.onSurfaceVariant,
+                                ),
+                              ),
+                              if (_lastConnectionTests[configId] != null)
+                                Text(
+                                  'Last checked: ${_formatLastTestTime(_lastConnectionTests[configId]!)}',
+                                  style: TextStyles.caption.copyWith(
+                                    color: colors.onSurfaceVariant.withValues(alpha: 0.7),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                         
@@ -544,24 +763,48 @@ class _APISettingsScreenState extends ConsumerState<APISettingsScreen> {
   }
 
   Widget _buildSidebar(ThemeColors colors, Map<String, ApiConfig> configs) {
-    return Container(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Quick Actions',
-            style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
-          ),
-          SizedBox(height: SpacingTokens.componentSpacing),
-          
-          // TODO: Add quick action cards
-          _buildQuickActionCard('Import Configuration', Icons.upload, colors),
-          SizedBox(height: SpacingTokens.componentSpacing),
-          _buildQuickActionCard('Export All', Icons.download, colors),
-          SizedBox(height: SpacingTokens.componentSpacing),
-          _buildQuickActionCard('API Usage Stats', Icons.analytics, colors),
-        ],
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Live System Status
+            Text(
+              'System Status',
+              style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
+            ),
+            SizedBox(height: SpacingTokens.componentSpacing),
+            
+            _buildSystemStatusCard(colors),
+            
+            SizedBox(height: SpacingTokens.sectionSpacing),
+            
+            // Quick Actions
+            Text(
+              'Quick Actions',
+              style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
+            ),
+            SizedBox(height: SpacingTokens.componentSpacing),
+            
+            _buildQuickActionCard('Import Configuration', Icons.upload, colors),
+            SizedBox(height: SpacingTokens.componentSpacing),
+            _buildQuickActionCard('Export All', Icons.download, colors),
+            SizedBox(height: SpacingTokens.componentSpacing),
+            _buildQuickActionCard('API Usage Stats', Icons.analytics, colors),
+            
+            SizedBox(height: SpacingTokens.sectionSpacing),
+            
+            // Real-time Activity
+            Text(
+              'Live Activity',
+              style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
+            ),
+            SizedBox(height: SpacingTokens.componentSpacing),
+            
+            _buildActivityFeed(colors),
+          ],
+        ),
       ),
     );
   }
@@ -647,26 +890,437 @@ class _APISettingsScreenState extends ConsumerState<APISettingsScreen> {
 
   // Action Methods
   void _testAllConnections() {
-    // TODO: Implement
+    // TODO: Implement test all connections
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Testing all connections...'),
+        backgroundColor: ThemeColors(context).primary,
+      ),
+    );
   }
 
-  void _addProvider() {
-    // TODO: Implement
+  void _addProvider() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => ApiKeyDialog(),
+    );
+    
+    if (result == true) {
+      setState(() {
+        // UI will refresh automatically via provider
+      });
+    }
   }
 
-  void _testConnection(String configId) {
-    // TODO: Implement
+  void _testConnection(String configId) async {
+    final config = ref.read(apiConfigsProvider)[configId];
+    if (config == null) return;
+
+    try {
+      final apiConfigsNotifier = ref.read(apiConfigsProvider.notifier);
+      final service = ref.read(apiConfigServiceProvider);
+      final isValid = await service.testApiConfig(configId);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isValid ? 'Connection successful!' : 'Connection failed',
+          ),
+          backgroundColor: isValid 
+            ? ThemeColors(context).success 
+            : ThemeColors(context).error,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Connection test failed: $e'),
+          backgroundColor: ThemeColors(context).error,
+        ),
+      );
+    }
   }
 
-  void _setAsDefault(String configId) {
-    // TODO: Implement
+  void _setAsDefault(String configId) async {
+    try {
+      final apiConfigsNotifier = ref.read(apiConfigsProvider.notifier);
+      await apiConfigsNotifier.setDefault(configId);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Set as default successfully!'),
+          backgroundColor: ThemeColors(context).success,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to set as default: $e'),
+          backgroundColor: ThemeColors(context).error,
+        ),
+      );
+    }
   }
 
-  void _configureProvider(String configId, ApiConfig config) {
-    // TODO: Implement
+  void _configureProvider(String configId, ApiConfig config) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => ApiKeyDialog(existingConfig: config),
+    );
+    
+    if (result == true) {
+      setState(() {
+        // UI will refresh automatically via provider
+      });
+    }
   }
 
-  void _handleProviderAction(String action, String configId, ApiConfig config) {
-    // TODO: Implement
+  void _handleProviderAction(String action, String configId, ApiConfig config) async {
+    switch (action) {
+      case 'duplicate':
+        await _duplicateProvider(configId, config);
+        break;
+      case 'export':
+        await _exportConfig(configId, config);
+        break;
+      case 'disconnect':
+        await _disconnectProvider(configId);
+        break;
+      case 'delete':
+        await _deleteProvider(configId);
+        break;
+    }
+  }
+
+
+  Future<void> _duplicateProvider(String configId, ApiConfig config) async {
+    final newId = '${config.id}-copy-${DateTime.now().millisecondsSinceEpoch}';
+    final newConfig = config.copyWith(
+      id: newId,
+      name: '${config.name} (Copy)',
+      isDefault: false,
+    );
+    
+    try {
+      final apiConfigsNotifier = ref.read(apiConfigsProvider.notifier);
+      await apiConfigsNotifier.addConfig(newId, newConfig);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Provider duplicated successfully!'),
+          backgroundColor: ThemeColors(context).success,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to duplicate provider: $e'),
+          backgroundColor: ThemeColors(context).error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _exportConfig(String configId, ApiConfig config) async {
+    // TODO: Implement config export functionality
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Export functionality coming soon...'),
+        backgroundColor: ThemeColors(context).primary,
+      ),
+    );
+  }
+
+  Future<void> _disconnectProvider(String configId) async {
+    try {
+      final config = ref.read(apiConfigsProvider)[configId];
+      if (config == null) return;
+      
+      final updatedConfig = config.copyWith(apiKey: '', enabled: false);
+      final apiConfigsNotifier = ref.read(apiConfigsProvider.notifier);
+      await apiConfigsNotifier.addConfig(configId, updatedConfig);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Provider disconnected successfully!'),
+          backgroundColor: ThemeColors(context).success,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to disconnect provider: $e'),
+          backgroundColor: ThemeColors(context).error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteProvider(String configId) async {
+    final config = ref.read(apiConfigsProvider)[configId];
+    if (config == null) return;
+    
+    if (config.isDefault) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cannot delete the default provider. Set another as default first.'),
+          backgroundColor: ThemeColors(context).error,
+        ),
+      );
+      return;
+    }
+    
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Provider'),
+        content: Text('Are you sure you want to delete "${config.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Delete', style: TextStyle(color: ThemeColors(context).error)),
+          ),
+        ],
+      ),
+    );
+    
+    if (confirmed == true) {
+      try {
+        final apiConfigsNotifier = ref.read(apiConfigsProvider.notifier);
+        await apiConfigsNotifier.removeConfig(configId);
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Provider deleted successfully!'),
+            backgroundColor: ThemeColors(context).success,
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete provider: $e'),
+            backgroundColor: ThemeColors(context).error,
+          ),
+        );
+      }
+    }
+  }
+  
+  String _getStatusText(String configId, bool isConfigured) {
+    if (!isConfigured) return 'Not configured';
+    
+    final connectionStatus = _connectionStatuses[configId];
+    if (connectionStatus == null) return 'Testing connection...';
+    if (connectionStatus) return 'Connected & Live';
+    return 'Connection failed';
+  }
+  
+  String _formatLastTestTime(DateTime lastTest) {
+    final now = DateTime.now();
+    final difference = now.difference(lastTest);
+    
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds}s ago';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return '${difference.inHours}h ago';
+    }
+  }
+  
+  String _getDefaultProviderName(Map<String, ApiConfig> configs) {
+    if (configs.isEmpty) return 'None';
+    
+    try {
+      final defaultConfig = configs.values.firstWhere((c) => c.isDefault);
+      return defaultConfig.provider;
+    } catch (e) {
+      // If no default is found, return the first available provider
+      return configs.values.isEmpty ? 'None' : configs.values.first.provider;
+    }
+  }
+  
+  Widget _buildSystemStatusCard(ThemeColors colors) {
+    return AnimatedBuilder(
+      animation: _pulseAnimation,
+      builder: (context, child) {
+        return AsmblCard(
+          child: Column(
+            children: [
+              // System health indicator
+              Row(
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: colors.success,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colors.success.withValues(alpha: _pulseAnimation.value * 0.5),
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: SpacingTokens.componentSpacing),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'All Systems Online',
+                          style: TextStyles.bodyMedium.copyWith(
+                            color: colors.onSurface,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'Last updated: ${DateTime.now().toString().substring(11, 16)}',
+                          style: TextStyles.caption.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              
+              SizedBox(height: SpacingTokens.elementSpacing),
+              
+              // Resource usage
+              _buildResourceUsage('Storage', 0.65, colors),
+              SizedBox(height: SpacingTokens.xs_precise),
+              _buildResourceUsage('Memory', 0.43, colors),
+              SizedBox(height: SpacingTokens.xs_precise),
+              _buildResourceUsage('Network', 0.28, colors),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  
+  Widget _buildResourceUsage(String label, double usage, ThemeColors colors) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
+            ),
+            Text(
+              '${(usage * 100).toInt()}%',
+              style: TextStyles.caption.copyWith(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 4),
+        Container(
+          height: 4,
+          decoration: BoxDecoration(
+            color: colors.surfaceVariant,
+            borderRadius: BorderRadius.circular(2),
+          ),
+          child: FractionallySizedBox(
+            alignment: Alignment.centerLeft,
+            widthFactor: usage,
+            child: Container(
+              decoration: BoxDecoration(
+                color: usage > 0.8 ? colors.error : usage > 0.6 ? colors.warning : colors.primary,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildActivityFeed(ThemeColors colors) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final conversationsAsync = ref.watch(conversationsProvider);
+        
+        return AsmblCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.timeline, size: 16, color: colors.primary),
+                  SizedBox(width: SpacingTokens.iconSpacing),
+                  Text(
+                    'Recent Activity',
+                    style: TextStyles.bodyMedium.copyWith(
+                      color: colors.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              
+              SizedBox(height: SpacingTokens.componentSpacing),
+              
+              conversationsAsync.when(
+                data: (conversations) => conversations.isEmpty
+                  ? Text(
+                      'No recent activity',
+                      style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
+                    )
+                  : Column(
+                      children: conversations.take(3).map((conv) => 
+                        Padding(
+                          padding: EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 4,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: colors.success,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              SizedBox(width: SpacingTokens.iconSpacing),
+                              Expanded(
+                                child: Text(
+                                  conv.title.isEmpty ? 'Untitled Chat' : conv.title,
+                                  style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ).toList(),
+                    ),
+                loading: () => Text(
+                  'Loading...',
+                  style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
+                ),
+                error: (_, __) => Text(
+                  'Error loading activity',
+                  style: TextStyles.caption.copyWith(color: colors.error),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

@@ -5,9 +5,14 @@ import '../../../../core/constants/routes.dart';
 import '../widgets/settings/settings_search_bar.dart';
 import '../widgets/settings/settings_category_card.dart';
 import '../widgets/settings/quick_settings_panel.dart';
+import '../../../../core/services/api_config_service.dart';
+import '../../../../providers/agent_provider.dart';
+import '../../../../providers/conversation_provider.dart';
+import '../../../../core/services/integration_service.dart';
 import 'api_settings_screen.dart';
 import 'agent_settings_screen.dart';
 import 'appearance_settings_screen.dart';
+import 'dart:async';
 
 /// Modern Settings Screen - Card-based, searchable, progressive disclosure
 /// Replaces the old tab-based interface with a cleaner, more intuitive design
@@ -18,10 +23,15 @@ class ModernSettingsScreen extends ConsumerStatefulWidget {
   ConsumerState<ModernSettingsScreen> createState() => _ModernSettingsScreenState();
 }
 
-class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen> {
+class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen> 
+    with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String? _expandedCategory;
+  
+  // Animation controllers for live indicators
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
 
   final List<SettingsCategory> _categories = [
     SettingsCategory(
@@ -97,11 +107,26 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    
+    // Initialize animations
+    _pulseController = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    );
+    _pulseAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _pulseController,
+      curve: Curves.easeInOut,
+    ));
+    _pulseController.repeat(reverse: true);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
@@ -217,27 +242,86 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen> {
   }
 
   Widget _buildQuickStats(ThemeColors colors) {
-    return Row(
-      children: [
-        _buildStatChip('3 API Keys', Icons.key, colors.primary, colors),
-        SizedBox(width: SpacingTokens.componentSpacing),
-        _buildStatChip('5 Agents', Icons.smart_toy, colors.success, colors),
-        SizedBox(width: SpacingTokens.componentSpacing),
-        _buildStatChip('12 Integrations', Icons.hub, colors.accent, colors),
+    return Consumer(
+      builder: (context, ref, child) {
+        // Get live data from providers
+        final apiConfigs = ref.watch(apiConfigsProvider);
+        final agentsAsync = ref.watch(agentsProvider);  
+        final conversationsAsync = ref.watch(conversationsProvider);
+        final integrationService = ref.watch(integrationServiceProvider);
         
-        Spacer(),
+        final apiCount = apiConfigs.length;
+        final connectedApis = apiConfigs.values.where((config) => config.isConfigured).length;
+        final integrationStats = integrationService.getStats();
         
-        // Quick Actions
-        AsmblButton.secondary(
-          text: 'Export Settings',
-          onPressed: _exportSettings,
-                  ),
-        SizedBox(width: SpacingTokens.componentSpacing),
-        AsmblButton.primary(
-          text: 'Quick Setup',
-          onPressed: _runQuickSetup,
-                  ),
-      ],
+        return Row(
+          children: [
+            // Live API Keys count with connection status
+            _buildLiveStatChip(
+              '$apiCount API Key${apiCount != 1 ? 's' : ''}',
+              '$connectedApis connected',
+              Icons.key,
+              connectedApis > 0 ? colors.primary : colors.onSurfaceVariant,
+              colors,
+              isLive: connectedApis > 0,
+            ),
+            SizedBox(width: SpacingTokens.componentSpacing),
+            
+            // Live Agents count
+            agentsAsync.when(
+              data: (agents) => _buildLiveStatChip(
+                '${agents.length} Agent${agents.length != 1 ? 's' : ''}',
+                agents.isEmpty ? 'none configured' : 'configured',
+                Icons.smart_toy,
+                colors.success,
+                colors,
+                isLive: agents.isNotEmpty,
+              ),
+              loading: () => _buildStatChip('... Agents', Icons.smart_toy, colors.onSurfaceVariant, colors),
+              error: (_, __) => _buildStatChip('0 Agents', Icons.smart_toy, colors.error, colors),
+            ),
+            SizedBox(width: SpacingTokens.componentSpacing),
+            
+            // Live Integrations count  
+            _buildLiveStatChip(
+              '${integrationStats.total} Integration${integrationStats.total != 1 ? 's' : ''}',
+              '${integrationStats.enabled} enabled',
+              Icons.hub,
+              colors.accent,
+              colors,
+              isLive: integrationStats.enabled > 0,
+            ),
+            SizedBox(width: SpacingTokens.componentSpacing),
+            
+            // Live Activity indicator
+            conversationsAsync.when(
+              data: (conversations) => _buildLiveStatChip(
+                '${conversations.length} Active Chat${conversations.length != 1 ? 's' : ''}',
+                conversations.isEmpty ? 'no activity' : 'live',
+                Icons.chat_bubble,
+                conversations.isNotEmpty ? colors.success : colors.onSurfaceVariant,
+                colors,
+                isLive: conversations.isNotEmpty,
+              ),
+              loading: () => _buildStatChip('... Chats', Icons.chat_bubble, colors.onSurfaceVariant, colors),
+              error: (_, __) => _buildStatChip('0 Chats', Icons.chat_bubble, colors.error, colors),
+            ),
+            
+            Spacer(),
+            
+            // Quick Actions  
+            AsmblButton.secondary(
+              text: 'Export Settings',
+              onPressed: _exportSettings,
+            ),
+            SizedBox(width: SpacingTokens.componentSpacing),
+            AsmblButton.primary(
+              text: 'Quick Setup',
+              onPressed: _runQuickSetup,
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -266,6 +350,86 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLiveStatChip(String label, String subtitle, IconData icon, Color color, ThemeColors colors, {bool isLive = false}) {
+    return AnimatedBuilder(
+      animation: _pulseAnimation,
+      builder: (context, child) {
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: SpacingTokens.componentSpacing,
+            vertical: SpacingTokens.iconSpacing,
+          ),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
+            border: Border.all(
+              color: color.withValues(alpha: isLive ? _pulseAnimation.value * 0.5 + 0.3 : 0.3),
+              width: isLive ? 1.5 : 1.0,
+            ),
+            boxShadow: isLive ? [
+              BoxShadow(
+                color: color.withValues(alpha: _pulseAnimation.value * 0.2),
+                blurRadius: 3,
+                spreadRadius: 0,
+              )
+            ] : null,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                children: [
+                  Icon(icon, size: 16, color: color),
+                  if (isLive)
+                    Positioned(
+                      right: -2,
+                      top: -2,
+                      child: Container(
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: colors.success,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: colors.success.withValues(alpha: _pulseAnimation.value),
+                              blurRadius: 2,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              SizedBox(width: SpacingTokens.iconSpacing),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyles.caption.copyWith(
+                      color: colors.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (subtitle.isNotEmpty)
+                    Text(
+                      subtitle,
+                      style: TextStyles.caption.copyWith(
+                        color: colors.onSurfaceVariant,
+                        fontSize: 10,
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

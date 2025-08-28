@@ -1107,8 +1107,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  }
 
  Widget _getApiAssignmentWidget() {
- final mcpSettingsService = ref.watch(mcpSettingsServiceProvider);
-final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
+ // Use the unified API config service instead of MCP settings
+ final allApiConfigs = ref.watch(apiConfigsProvider);
  final assignedApiId = agentApiAssignments[selectedAgent];
  
  if (assignedApiId == null || !allApiConfigs.containsKey(assignedApiId)) {
@@ -1186,7 +1186,8 @@ final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
  }
 
  void _showApiSelectionDialog() {
- final allApiConfigs = ref.read(mcpSettingsServiceProvider).allDirectAPIConfigs;
+ // Use the unified API config service instead of MCP settings
+ final allApiConfigs = ref.read(apiConfigsProvider);
  
  showDialog(
  context: context,
@@ -1371,8 +1372,9 @@ final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
 
  Future<void> _setAsDefault(String apiId) async {
  try {
- final mcpSettingsService = ref.read(mcpSettingsServiceProvider);
- await mcpSettingsService.setDefaultDirectAPIConfig(apiId);
+ // Use the unified API config service instead of MCP settings
+ final apiConfigsNotifier = ref.read(apiConfigsProvider.notifier);
+ await apiConfigsNotifier.setDefault(apiId);
  _showMessage('Default API key updated successfully!');
  } catch (e) {
  _showMessage('Failed to update default API key: $e', isError: true);
@@ -1381,7 +1383,8 @@ final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
 
  Future<void> _deleteApiKey(String apiId) async {
  try {
- final allApiConfigs = ref.read(mcpSettingsServiceProvider).allDirectAPIConfigs;
+ // Use the unified API config service instead of MCP settings  
+ final allApiConfigs = ref.read(apiConfigsProvider);
  final apiToDelete = allApiConfigs[apiId];
  
  if (apiToDelete == null) {
@@ -1394,8 +1397,8 @@ final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
  return;
  }
 
- final mcpSettingsService = ref.read(mcpSettingsServiceProvider);
- await mcpSettingsService.removeDirectAPIConfig(apiId);
+ final apiConfigsNotifier = ref.read(apiConfigsProvider.notifier);
+ await apiConfigsNotifier.removeConfig(apiId);
  _showMessage('API key deleted successfully!');
  } catch (e) {
  _showMessage('Failed to delete API key: $e', isError: true);
@@ -1437,7 +1440,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
  Future<void> _showAddApiKeyDialog({DirectAPIConfig? editingConfig}) async {
  await showDialog<bool>(
  context: context,
- builder: (context) => ApiKeyDialog(existingConfig: editingConfig),
+ builder: (context) => ApiKeyDialog(existingDirectConfig: editingConfig),
  );
  }
 

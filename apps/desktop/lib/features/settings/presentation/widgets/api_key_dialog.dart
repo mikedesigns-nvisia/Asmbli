@@ -7,11 +7,13 @@ import '../../../../core/services/claude_api_service.dart';
 import '../../../../core/services/api_config_service.dart';
 
 class ApiKeyDialog extends ConsumerStatefulWidget {
-  final DirectAPIConfig? existingConfig;
+  final ApiConfig? existingConfig;
+  final DirectAPIConfig? existingDirectConfig; // For backward compatibility
 
   const ApiKeyDialog({
     super.key,
     this.existingConfig,
+    this.existingDirectConfig, // For backward compatibility
   });
 
   @override
@@ -52,11 +54,26 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
   void initState() {
     super.initState();
     
-    if (widget.existingConfig != null) {
-      _nameController.text = widget.existingConfig!.name;
-      _apiKeyController.text = widget.existingConfig!.apiKey;
-      selectedProvider = widget.existingConfig!.provider;
-      selectedModel = widget.existingConfig!.model;
+    // Check for both types of existing configs
+    final config = widget.existingConfig ?? 
+        (widget.existingDirectConfig != null 
+            ? ApiConfig(
+                id: widget.existingDirectConfig!.id,
+                name: widget.existingDirectConfig!.name,
+                provider: widget.existingDirectConfig!.provider,
+                model: widget.existingDirectConfig!.model,
+                apiKey: widget.existingDirectConfig!.apiKey,
+                baseUrl: widget.existingDirectConfig!.baseUrl,
+                isDefault: widget.existingDirectConfig!.isDefault,
+                enabled: widget.existingDirectConfig!.enabled,
+              ) 
+            : null);
+    
+    if (config != null) {
+      _nameController.text = config.name;
+      _apiKeyController.text = config.apiKey;
+      selectedProvider = config.provider;
+      selectedModel = config.model;
     } else {
       _nameController.text = 'Claude 3.5 Sonnet';
     }
@@ -108,7 +125,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.existingConfig != null ? 'Edit API Configuration' : 'Add API Configuration',
+                          (widget.existingConfig != null || widget.existingDirectConfig != null) ? 'Edit API Configuration' : 'Add API Configuration',
                           style: TextStyles.pageTitle.copyWith(
                             color: theme.colorScheme.onSurface,
                           ),
@@ -204,7 +221,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                   ),
                   SizedBox(width: SpacingTokens.componentSpacing),
                   AsmblButton.primary(
-                    text: widget.existingConfig != null ? 'Update' : 'Add',
+                    text: (widget.existingConfig != null || widget.existingDirectConfig != null) ? 'Update' : 'Add',
                     onPressed: _saveApiConfig,
                   ),
                 ],
@@ -485,7 +502,22 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
       final apiConfigsNotifier = ref.read(apiConfigsProvider.notifier);
       final currentConfigs = ref.read(apiConfigsProvider);
       
-      final configId = widget.existingConfig?.id ?? 
+      // Get existing config from either source
+      final existingConfig = widget.existingConfig ?? 
+          (widget.existingDirectConfig != null 
+              ? ApiConfig(
+                  id: widget.existingDirectConfig!.id,
+                  name: widget.existingDirectConfig!.name,
+                  provider: widget.existingDirectConfig!.provider,
+                  model: widget.existingDirectConfig!.model,
+                  apiKey: widget.existingDirectConfig!.apiKey,
+                  baseUrl: widget.existingDirectConfig!.baseUrl,
+                  isDefault: widget.existingDirectConfig!.isDefault,
+                  enabled: widget.existingDirectConfig!.enabled,
+                ) 
+              : null);
+      
+      final configId = existingConfig?.id ?? 
           '${selectedProvider.toLowerCase()}-${DateTime.now().millisecondsSinceEpoch}';
       
       final config = ApiConfig(
@@ -499,7 +531,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
           : selectedProvider == 'OpenAI'
             ? 'https://api.openai.com'
             : 'https://generativelanguage.googleapis.com',
-        isDefault: widget.existingConfig?.isDefault ?? currentConfigs.isEmpty,
+        isDefault: existingConfig?.isDefault ?? currentConfigs.isEmpty,
         enabled: true,
       );
 
@@ -516,7 +548,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              widget.existingConfig != null 
+              (widget.existingConfig != null || widget.existingDirectConfig != null)
                 ? 'API configuration updated successfully!'
                 : 'API configuration added successfully!',
             ),

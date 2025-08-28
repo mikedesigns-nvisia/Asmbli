@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../core/services/mcp_settings_service.dart';
+import '../../../../core/services/api_config_service.dart';
 
 class ApiDropdown extends ConsumerStatefulWidget {
   const ApiDropdown({super.key});
@@ -18,9 +19,9 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final mcpSettingsService = ref.watch(mcpSettingsServiceProvider);
-    final allApiConfigs = mcpSettingsService.allDirectAPIConfigs;
-    final defaultApiConfig = mcpSettingsService.defaultDirectAPIConfig;
+    // Use the unified API config service instead of MCP settings
+    final allApiConfigs = ref.watch(apiConfigsProvider);
+    final defaultApiConfig = ref.watch(defaultApiConfigProvider);
     
     // Set selected API ID if not set or if current selection is invalid
     if (allApiConfigs.isEmpty) {
@@ -223,8 +224,8 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
   }
 
   void _showApiSwitchedSnackbar(String apiId) {
-    final mcpSettingsService = ref.read(mcpSettingsServiceProvider);
-    final apiConfig = mcpSettingsService.getDirectAPIConfig(apiId);
+    final allApiConfigs = ref.read(apiConfigsProvider);
+    final apiConfig = allApiConfigs[apiId];
     if (apiConfig != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
