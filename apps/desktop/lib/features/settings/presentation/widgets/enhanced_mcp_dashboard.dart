@@ -133,7 +133,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                     Text(
                       'Integration Hub',
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
+                        
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: SemanticColors.primary,
@@ -433,7 +433,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                               Text(
                                 config.name,
                                 style: TextStyle(
-                                  fontFamily: 'Space Grotesk',
+                                  
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color: Theme.of(context).colorScheme.onSurface,
@@ -575,7 +575,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                           Text(
                             recommendation.template.name,
                             style: TextStyle(
-                              fontFamily: 'Space Grotesk',
+                              
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: Theme.of(context).colorScheme.onSurface,

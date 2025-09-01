@@ -122,7 +122,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               Text(
                 'MCP UI Transformation Showcase',
                 style: TextStyle(
-                  fontFamily: 'Space Grotesk',
+                  
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
                   color: SemanticColors.primary,

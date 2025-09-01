@@ -155,7 +155,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                     Text(
                       isEdit ? 'Edit Integration' : 'Add Integration',
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
+                        
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -238,7 +238,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                     Text(
                       step.title,
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
+                        
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: isActive 
@@ -457,7 +457,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                   Text(
                     'Configuration Summary',
                     style: TextStyle(
-                      fontFamily: 'Space Grotesk',
+                      
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.onSurface,

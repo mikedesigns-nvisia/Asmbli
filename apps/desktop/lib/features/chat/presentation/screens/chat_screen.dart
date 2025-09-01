@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:agent_engine_core/models/conversation.dart' as core;
 import 'package:agent_engine_core/services/implementations/service_provider.dart';
 import '../../../../core/design_system/design_system.dart';
@@ -160,9 +162,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  Text(
  'Welcome to AgentEngine',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 20,
+ style: GoogleFonts.fustat(
+  fontSize: 20,
  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
@@ -176,9 +177,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  child: Text(
  'Select a conversation',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
+ style: GoogleFonts.fustat(
+  fontSize: 12,
  color: theme.colorScheme.onSurfaceVariant,
  ),
  ),
@@ -219,9 +219,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  EditableConversationTitle(
  conversation: conversation,
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 20,
+ style: GoogleFonts.fustat(
+  fontSize: 20,
  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
@@ -232,9 +231,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  Text(
  conversation.metadata?['agentName'] ?? 'Agent',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 13,
+ style: GoogleFonts.fustat(
+  fontSize: 13,
  color: theme.colorScheme.onSurfaceVariant,
  fontStyle: FontStyle.italic,
  ),
@@ -248,9 +246,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  child: Text(
  '${(conversation.metadata?['mcpServers'] as List?)?.length ?? 0} MCP',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 10,
+ style: GoogleFonts.fustat(
+  fontSize: 10,
  color: theme.colorScheme.onSurfaceVariant,
  fontWeight: FontWeight.w500,
  ),
@@ -284,9 +281,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  SizedBox(width: 4),
  Text(
  conversation.metadata?['apiProvider'] ?? 'Claude 3.5 Sonnet',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
+ style: GoogleFonts.fustat(
+  fontSize: 12,
  fontWeight: FontWeight.w500,
  color: _getConversationTypeColor(conversation, theme),
  ),
@@ -321,9 +317,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  SizedBox(width: 4),
  Text(
  'ACTIVE',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 9,
+ style: GoogleFonts.fustat(
+  fontSize: 9,
  fontWeight: FontWeight.w600,
  color: ThemeColors(context).success,
  ),
@@ -351,9 +346,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  SizedBox(width: 12),
  Text(
  'Loading conversation...',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 16,
+ style: GoogleFonts.fustat(
+  fontSize: 16,
  color: theme.colorScheme.onSurfaceVariant,
  ),
  ),
@@ -364,9 +358,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Text(
  'Error loading conversation',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 16,
+ style: GoogleFonts.fustat(
+  fontSize: 16,
  color: theme.colorScheme.error,
  ),
  ),
@@ -413,31 +406,33 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Row(
  children: [
- Expanded(
+ Flexible(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Text(
  'Agent Control Panel',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 16,
+ style: GoogleFonts.fustat(
+  fontSize: 16,
  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
+ overflow: TextOverflow.visible,
+ softWrap: true,
  ),
  Text(
  'What your agent sees & can access',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 11,
+ style: GoogleFonts.fustat(
+  fontSize: 11,
  color: theme.colorScheme.onSurfaceVariant,
  ),
+ overflow: TextOverflow.visible,
+ softWrap: true,
  ),
  ],
  ),
  ),
- Spacer(),
+ SizedBox(width: SpacingTokens.componentSpacing),
  IconButton(
  onPressed: () => setState(() => isSidebarCollapsed = true),
  icon: Icon(Icons.chevron_left, size: 20),
@@ -464,7 +459,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  // Agent Loader Section - Wrapped in Flexible to prevent overflow
  AgentLoaderSection(),
                   
-                  SizedBox(height: SpacingTokens.sectionSpacing),
+                  SizedBox(height: SpacingTokens.elementSpacing),
 
                   // Context Documents Section - Works for both Agent and Direct API conversations
                   ContextSidebarSection(),
@@ -489,9 +484,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  padding: EdgeInsets.only(left: 4, bottom: 6),
  child: Text(
  'API Configuration',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 11,
+ style: GoogleFonts.fustat(
+  fontSize: 11,
  fontWeight: FontWeight.w500,
  color: theme.colorScheme.onSurfaceVariant,
  ),
@@ -512,9 +506,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: Center(
  child: Text(
  'Browse Templates',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 13,
+ style: GoogleFonts.fustat(
+  fontSize: 13,
  fontWeight: FontWeight.w500,
  color: theme.colorScheme.onSurfaceVariant,
  ),
@@ -562,33 +555,55 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  borderRadius: BorderRadius.circular(8),
  border: Border.all(color: theme.colorScheme.outline),
  ),
+ child: KeyboardListener(
+ focusNode: FocusNode(),
+ onKeyEvent: (KeyEvent event) {
+ if (event is KeyDownEvent) {
+ final isEnterPressed = event.logicalKey == LogicalKeyboardKey.enter;
+ final isShiftPressed = HardwareKeyboard.instance.isShiftPressed;
+ 
+ if (isEnterPressed && isShiftPressed) {
+ // Shift+Enter: send message
+ _sendMessage();
+ return;
+ }
+ // Enter alone: let TextField handle naturally for new line
+ }
+ },
  child: TextField(
  controller: messageController,
  decoration: InputDecoration(
- hintText: 'Type your message... (Enter to send, Shift+Enter for new line)',
- hintStyle: TextStyle(
- fontFamily: 'Space Grotesk',
- color: theme.colorScheme.onSurfaceVariant,
+ hintText: 'Type your message... (Shift+Enter to send, Enter for new line)',
+ hintStyle: GoogleFonts.fustat(
+  color: theme.colorScheme.onSurfaceVariant,
  ),
  border: InputBorder.none,
  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
  ),
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- color: theme.colorScheme.onSurface,
+ style: GoogleFonts.fustat(
+  color: theme.colorScheme.onSurface,
  ),
  maxLines: 5,
  minLines: 1,
- onSubmitted: (_) => _sendMessage(),
-onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
+ keyboardType: TextInputType.multiline,
+ textInputAction: TextInputAction.newline,
+ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
+ ),
  ),
  ),
  ),
  SizedBox(width: SpacingTokens.componentSpacing),
  Container(
  decoration: BoxDecoration(
- color: theme.colorScheme.onSurfaceVariant,
+ color: messageController.text.trim().isNotEmpty && !ref.watch(isLoadingProvider)
+ ? ThemeColors(context).primary
+ : theme.colorScheme.surface,
  borderRadius: BorderRadius.circular(8),
+ border: Border.all(
+ color: messageController.text.trim().isNotEmpty && !ref.watch(isLoadingProvider)
+ ? ThemeColors(context).primary
+ : theme.colorScheme.outline,
+ ),
  ),
  child: IconButton(
  onPressed: messageController.text.trim().isNotEmpty && !ref.watch(isLoadingProvider)
@@ -600,7 +615,7 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
  height: 16,
  child: CircularProgressIndicator(
  strokeWidth: 2,
- valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.onPrimary),
+ valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
  ),
  )
  : Icon(Icons.send, size: 18),
@@ -649,9 +664,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
  // Start a Conversation
  Text(
  'Direct API Chat',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 24,
+ style: GoogleFonts.fustat(
+  fontSize: 24,
  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
@@ -662,9 +676,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
  // Description
  Text(
  'Chat directly with Claude 3.5 Sonnet.\nLoad an agent from the sidebar for enhanced\ncapabilities with system prompts and MCP servers.',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
+ style: GoogleFonts.fustat(
+  fontSize: 14,
  color: theme.colorScheme.onSurfaceVariant,
  height: 1.5,
  ),
@@ -773,16 +786,14 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
  message.content,
  style: theme.textTheme.bodyMedium?.copyWith(
  color: isUser ? colorScheme.onPrimary : colorScheme.onSurface,
- fontFamily: 'Space Grotesk',
- ),
+  ),
  ),
  SizedBox(height: 4),
  Text(
  _formatTime(message.timestamp),
  style: theme.textTheme.bodySmall?.copyWith(
  color: (isUser ? colorScheme.onPrimary : colorScheme.onSurface).withValues(alpha: 0.7),
- fontFamily: 'Space Grotesk',
- ),
+  ),
  ),
  ],
  ),
@@ -904,18 +915,16 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
                    children: [
                      Text(
                        agentName,
-                       style: TextStyle(
-                         fontFamily: 'Space Grotesk',
-                         fontSize: 14,
+                       style: GoogleFonts.fustat(
+                                                  fontSize: 14,
                          fontWeight: FontWeight.w600,
                          color: theme.colorScheme.onSurface,
                        ),
                      ),
                      Text(
                        agentType == 'agent' ? 'MCP-Enabled Agent' : 'Basic API Assistant',
-                       style: TextStyle(
-                         fontFamily: 'Space Grotesk',
-                         fontSize: 11,
+                       style: GoogleFonts.fustat(
+                                                  fontSize: 11,
                          color: theme.colorScheme.onSurfaceVariant,
                        ),
                      ),
@@ -930,9 +939,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
                  ),
                  child: Text(
                    agentType == 'agent' ? 'LIVE' : 'BASIC',
-                   style: TextStyle(
-                     fontFamily: 'Space Grotesk',
-                     fontSize: 9,
+                   style: GoogleFonts.fustat(
+                                          fontSize: 9,
                      fontWeight: FontWeight.w600,
                      color: Colors.white,
                    ),
@@ -983,9 +991,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
          // Section header
          Text(
            'Agent Resources',
-           style: TextStyle(
-             fontFamily: 'Space Grotesk',
-             fontSize: 13,
+           style: GoogleFonts.fustat(
+                          fontSize: 13,
              fontWeight: FontWeight.w600,
              color: theme.colorScheme.onSurface,
            ),
@@ -1004,9 +1011,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
            if (mcpServers.length > 4)
              Text(
                '+ ${mcpServers.length - 4} more tools',
-               style: TextStyle(
-                 fontFamily: 'Space Grotesk',
-                 fontSize: 11,
+               style: GoogleFonts.fustat(
+                                  fontSize: 11,
                  color: theme.colorScheme.onSurfaceVariant,
                  fontStyle: FontStyle.italic,
                ),
@@ -1022,9 +1028,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
            if (contextDocs.length > 3)
              Text(
                '+ ${contextDocs.length - 3} more documents',
-               style: TextStyle(
-                 fontFamily: 'Space Grotesk',
-                 fontSize: 11,
+               style: GoogleFonts.fustat(
+                                  fontSize: 11,
                  color: theme.colorScheme.onSurfaceVariant,
                  fontStyle: FontStyle.italic,
                ),
@@ -1049,9 +1054,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
          SizedBox(width: 4),
          Text(
            text,
-           style: TextStyle(
-             fontFamily: 'Space Grotesk',
-             fontSize: 10,
+           style: GoogleFonts.fustat(
+                          fontSize: 10,
              fontWeight: FontWeight.w500,
              color: color,
            ),
@@ -1068,9 +1072,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
        SizedBox(width: 6),
        Text(
          title,
-         style: TextStyle(
-           fontFamily: 'Space Grotesk',
-           fontSize: 12,
+         style: GoogleFonts.fustat(
+                      fontSize: 12,
            fontWeight: FontWeight.w500,
            color: theme.colorScheme.onSurface,
          ),
@@ -1099,18 +1102,16 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
          Expanded(
            child: Text(
              serverId,
-             style: TextStyle(
-               fontFamily: 'Space Grotesk',
-               fontSize: 11,
+             style: GoogleFonts.fustat(
+                              fontSize: 11,
                color: theme.colorScheme.onSurface,
              ),
            ),
          ),
          Text(
            status.toUpperCase(),
-           style: TextStyle(
-             fontFamily: 'Space Grotesk',
-             fontSize: 9,
+           style: GoogleFonts.fustat(
+                          fontSize: 9,
              fontWeight: FontWeight.w600,
              color: statusColor,
            ),
@@ -1130,9 +1131,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
          Expanded(
            child: Text(
              docName,
-             style: TextStyle(
-               fontFamily: 'Space Grotesk',
-               fontSize: 11,
+             style: GoogleFonts.fustat(
+                              fontSize: 11,
                color: theme.colorScheme.onSurface,
              ),
              overflow: TextOverflow.ellipsis,
@@ -1165,9 +1165,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
            SizedBox(height: SpacingTokens.componentSpacing),
            Text(
              'No conversation selected',
-             style: TextStyle(
-               fontFamily: 'Space Grotesk',
-               fontSize: 12,
+             style: GoogleFonts.fustat(
+                              fontSize: 12,
                fontWeight: FontWeight.w500,
                color: theme.colorScheme.onSurfaceVariant,
              ),
@@ -1197,9 +1196,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
            SizedBox(width: SpacingTokens.componentSpacing),
            Text(
              'Loading agent context...',
-             style: TextStyle(
-               fontFamily: 'Space Grotesk',
-               fontSize: 12,
+             style: GoogleFonts.fustat(
+                              fontSize: 12,
                color: theme.colorScheme.onSurfaceVariant,
              ),
            ),
@@ -1220,9 +1218,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
        ),
        child: Text(
          'Error loading agent context',
-         style: TextStyle(
-           fontFamily: 'Space Grotesk',
-           fontSize: 12,
+         style: GoogleFonts.fustat(
+                      fontSize: 12,
            color: Colors.red,
          ),
        ),
@@ -1443,9 +1440,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
  SizedBox(height: SpacingTokens.textSectionSpacing),
  Text(
  'Start the conversation',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 20,
+ style: GoogleFonts.fustat(
+  fontSize: 20,
  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
@@ -1453,9 +1449,8 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
  SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'Type a message below to begin this conversation.',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
+ style: GoogleFonts.fustat(
+  fontSize: 14,
  color: theme.colorScheme.onSurfaceVariant,
  height: 1.5,
  ),

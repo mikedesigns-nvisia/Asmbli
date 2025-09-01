@@ -42,7 +42,12 @@
       "Bash(flutter build:*)",
       "Bash(tar:*)",
       "Bash(sed:*)",
-      "Read(/C:\\c\\AgentEngine\\apps/**)"
+      "Read(/C:\\c\\AgentEngine\\apps/**)",
+      "Bash(find:*)",
+      "Bash(for file in ./lib/core/design_system/components/*.dart)",
+      "Bash(do if grep -q \"Space Grotesk\" \"$file\")",
+      "Bash(then echo \"Processing $file\")",
+      "Bash(fi)"
     ],
     "deny": [],
     "ask": [],
