@@ -17,7 +17,7 @@ import '../../../../core/services/api_config_service.dart';
 import '../widgets/conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/agent_deployment_section.dart';
-import '../widgets/api_dropdown.dart';
+import '../widgets/unified_model_selector.dart';
 import '../widgets/streaming_message_widget.dart';
 import '../widgets/editable_conversation_title.dart';
 import '../widgets/context_sidebar_section.dart';
@@ -491,7 +491,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  ),
- ApiDropdown(),
+ UnifiedModelSelector(),
  ],
  ),
  
