@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../data/models/context_document.dart';
@@ -238,7 +239,7 @@ onConfigure: () => _showConfigureDialog(sample),
  Expanded(
  child: Text(
  'Added "${sample.title}" to your context library',
- style: TextStyle(fontFamily: 'Space Grotesk'),
+ style: GoogleFonts.fustat(),
  ),
  ),
  ],
@@ -255,7 +256,7 @@ onConfigure: () => _showConfigureDialog(sample),
  SnackBar(
  content: Text(
  'Failed to add context: ${e.toString()}',
- style: TextStyle(fontFamily: 'Space Grotesk'),
+ style: GoogleFonts.fustat(),
  ),
  backgroundColor: SemanticColors.error,
  behavior: SnackBarBehavior.floating,
@@ -865,7 +866,7 @@ SizedBox(width: 4),
 Expanded(
 child: Text(
 'Added "${_titleController.text}" to your context library',
-style: TextStyle(fontFamily: 'Space Grotesk'),
+style: GoogleFonts.fustat(),
 ),
 ),
 ],
@@ -883,7 +884,7 @@ ScaffoldMessenger.of(context).showSnackBar(
 SnackBar(
 content: Text(
 'Failed to add context: ${e.toString()}',
-style: TextStyle(fontFamily: 'Space Grotesk'),
+style: GoogleFonts.fustat(),
 ),
 backgroundColor: SemanticColors.error,
 behavior: SnackBarBehavior.floating,

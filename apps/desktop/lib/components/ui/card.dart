@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// A card component that matches the web app's design system
-/// Uses bone/banana pudding colors and Space Grotesk typography
+/// Uses theme colors and Fustat typography
 class AsmblCard extends StatelessWidget {
  final Widget? child;
  final EdgeInsetsGeometry? padding;
@@ -151,8 +151,7 @@ class AsmblCardTitle extends StatelessWidget {
  text,
  style: style ?? Theme.of(context).textTheme.titleLarge?.copyWith(
  fontWeight: FontWeight.w600,
- fontFamily: 'Space Grotesk',
- ),
+  ),
  );
  }
 }
@@ -174,8 +173,7 @@ class AsmblCardDescription extends StatelessWidget {
  text,
  style: style ?? Theme.of(context).textTheme.bodyMedium?.copyWith(
  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
- fontFamily: 'Space Grotesk',
- ),
+  ),
  );
  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../core/services/mcp_settings_service.dart';
@@ -110,9 +111,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                currentConversation?.metadata?['type'] == 'agent' 
                  ? 'Active Agent'
                  : 'Agent Preview',
-               style: TextStyle(
-                 fontFamily: 'Space Grotesk',
-                 fontSize: 13,
+               style: GoogleFonts.fustat(
+                                  fontSize: 13,
                  fontWeight: FontWeight.w500,
                  color: currentConversation?.metadata?['type'] == 'agent'
                    ? ThemeColors(context).primary
@@ -137,29 +137,29 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          ),
          
          if (_isExpanded) ...[
-           SizedBox(height: 12),
+           SizedBox(height: SpacingTokens.componentSpacing),
            
            // Agent Selection Dropdown
            if (agents.isNotEmpty) _buildAgentDropdown(context, theme, agents, effectiveAgentId, currentConversation),
            
            // Show current conversation context if applicable
            if (currentConversation?.metadata?['type'] == 'agent') ...[
-             SizedBox(height: 12),
+             SizedBox(height: SpacingTokens.componentSpacing),
              _buildCurrentAgentInfo(theme),
            ],
            
            if (selectedAgent != null) ...[
-             SizedBox(height: 16),
+             SizedBox(height: SpacingTokens.componentSpacing),
              
              // Agent Details
              _buildAgentDetails(selectedAgent, theme, currentConversation, loadedAgentIds),
              
-             SizedBox(height: 12),
+             SizedBox(height: SpacingTokens.componentSpacing),
              
              // Quick Actions
              _buildQuickActions(context, theme, currentConversation),
            ] else if (agents.isEmpty) ...[
-             SizedBox(height: 16),
+             SizedBox(height: SpacingTokens.componentSpacing),
              _buildNoAgentsState(context, theme),
            ],
          ],
@@ -184,9 +184,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
            currentConversation?.metadata?['type'] == 'agent' 
              ? 'Current conversation agent'
              : 'Select agent to load',
-           style: TextStyle(
-             fontFamily: 'Space Grotesk',
-             fontSize: 12,
+           style: GoogleFonts.fustat(
+                          fontSize: 12,
              color: theme.colorScheme.onSurfaceVariant,
            ),
          ),
@@ -219,9 +218,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                      children: [
                        Text(
                          agent.name,
-                         style: TextStyle(
-                           fontFamily: 'Space Grotesk',
-                           fontSize: 12,
+                         style: GoogleFonts.fustat(
+                                                      fontSize: 12,
                            fontWeight: FontWeight.w500,
                            color: theme.colorScheme.onSurface,
                          ),
@@ -230,9 +228,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                        ),
                        Text(
                          agent.description,
-                         style: TextStyle(
-                           fontFamily: 'Space Grotesk',
-                           fontSize: 10,
+                         style: GoogleFonts.fustat(
+                                                      fontSize: 10,
                            color: theme.colorScheme.onSurfaceVariant,
                          ),
                          maxLines: 1,
@@ -276,9 +273,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          Expanded(
            child: Text(
              'Viewing agent from current conversation',
-             style: TextStyle(
-               fontFamily: 'Space Grotesk',
-               fontSize: 11,
+             style: GoogleFonts.fustat(
+                              fontSize: 11,
                color: ThemeColors(context).primary,
                fontWeight: FontWeight.w500,
              ),
@@ -310,9 +306,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
            children: [
              Text(
                agent.name,
-               style: TextStyle(
-                 fontFamily: 'Space Grotesk',
-                 fontSize: 14,
+               style: GoogleFonts.fustat(
+                                  fontSize: 14,
                  fontWeight: FontWeight.w600,
                  color: theme.colorScheme.onSurface,
                ),
@@ -320,9 +315,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
              SizedBox(height: 4),
              Text(
                agent.description,
-               style: TextStyle(
-                 fontFamily: 'Space Grotesk',
-                 fontSize: 12,
+               style: GoogleFonts.fustat(
+                                  fontSize: 12,
                  color: theme.colorScheme.onSurfaceVariant,
                ),
              ),
@@ -339,7 +333,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          ),
        ),
        
-       SizedBox(height: 12),
+       SizedBox(height: SpacingTokens.componentSpacing),
        
        // Load Button
        if (currentConversation?.metadata?['type'] != 'agent') 
@@ -367,9 +361,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
            SizedBox(width: 8),
            Text(
              'Agent Loaded',
-             style: TextStyle(
-               fontFamily: 'Space Grotesk',
-               fontSize: 13,
+             style: GoogleFonts.fustat(
+                              fontSize: 13,
                fontWeight: FontWeight.w600,
                color: ThemeColors(context).success,
              ),
@@ -402,9 +395,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
            SizedBox(width: 12),
            Text(
              'Loading Agent...',
-             style: TextStyle(
-               fontFamily: 'Space Grotesk',
-               fontSize: 13,
+             style: GoogleFonts.fustat(
+                              fontSize: 13,
                fontWeight: FontWeight.w600,
                color: ThemeColors(context).primary,
              ),
@@ -437,9 +429,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          SizedBox(width: 8),
          Text(
            'Currently Active',
-           style: TextStyle(
-             fontFamily: 'Space Grotesk',
-             fontSize: 13,
+           style: GoogleFonts.fustat(
+                          fontSize: 13,
              fontWeight: FontWeight.w600,
              color: ThemeColors(context).primary,
            ),
@@ -463,9 +454,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          SizedBox(width: 4),
          Text(
            text,
-           style: TextStyle(
-             fontFamily: 'Space Grotesk',
-             fontSize: 10,
+           style: GoogleFonts.fustat(
+                          fontSize: 10,
              fontWeight: FontWeight.w500,
              color: color,
            ),
@@ -495,9 +485,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                child: Center(
                  child: Text(
                    'Switch Agent',
-                   style: TextStyle(
-                     fontFamily: 'Space Grotesk',
-                     fontSize: 11,
+                   style: GoogleFonts.fustat(
+                                          fontSize: 11,
                      color: ThemeColors(context).primary,
                      fontWeight: FontWeight.w600,
                    ),
@@ -520,9 +509,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                child: Center(
                  child: Text(
                    'My Agents',
-                   style: TextStyle(
-                     fontFamily: 'Space Grotesk',
-                     fontSize: 11,
+                   style: GoogleFonts.fustat(
+                                          fontSize: 11,
                      color: theme.colorScheme.onSurfaceVariant,
                    ),
                  ),
@@ -548,9 +536,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                child: Center(
                  child: Text(
                    'My Agents',
-                   style: TextStyle(
-                     fontFamily: 'Space Grotesk',
-                     fontSize: 11,
+                   style: GoogleFonts.fustat(
+                                          fontSize: 11,
                      color: theme.colorScheme.onSurfaceVariant,
                    ),
                  ),
@@ -572,9 +559,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                child: Center(
                  child: Text(
                    'Create New',
-                   style: TextStyle(
-                     fontFamily: 'Space Grotesk',
-                     fontSize: 11,
+                   style: GoogleFonts.fustat(
+                                          fontSize: 11,
                      color: theme.colorScheme.onSurfaceVariant,
                    ),
                  ),
@@ -606,9 +592,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          SizedBox(height: 8),
          Text(
            'No agents available',
-           style: TextStyle(
-             fontFamily: 'Space Grotesk',
-             fontSize: 14,
+           style: GoogleFonts.fustat(
+                          fontSize: 14,
              fontWeight: FontWeight.w600,
              color: theme.colorScheme.onSurface,
            ),
@@ -616,14 +601,13 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          SizedBox(width: 4),
          Text(
            'Create your first agent to get started',
-           style: TextStyle(
-             fontFamily: 'Space Grotesk',
-             fontSize: 12,
+           style: GoogleFonts.fustat(
+                          fontSize: 12,
              color: theme.colorScheme.onSurfaceVariant,
            ),
            textAlign: TextAlign.center,
          ),
-         SizedBox(height: 12),
+         SizedBox(height: SpacingTokens.componentSpacing),
          AsmblButton.primary(
            text: 'Create Agent',
            onPressed: () => context.go(AppRoutes.wizard),
@@ -644,16 +628,15 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
              SizedBox(width: SpacingTokens.iconSpacing),
              Text(
                'Loading Agents...',
-               style: TextStyle(
-                 fontFamily: 'Space Grotesk',
-                 fontSize: 13,
+               style: GoogleFonts.fustat(
+                                  fontSize: 13,
                  fontWeight: FontWeight.w500,
                  color: theme.colorScheme.onSurfaceVariant,
                ),
              ),
            ],
          ),
-         SizedBox(height: 12),
+         SizedBox(height: SpacingTokens.componentSpacing),
          Center(
            child: CircularProgressIndicator(
              color: ThemeColors(context).primary,
@@ -676,9 +659,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
              SizedBox(width: SpacingTokens.iconSpacing),
              Text(
                'Error Loading Agents',
-               style: TextStyle(
-                 fontFamily: 'Space Grotesk',
-                 fontSize: 13,
+               style: GoogleFonts.fustat(
+                                  fontSize: 13,
                  fontWeight: FontWeight.w500,
                  color: ThemeColors(context).error,
                ),
@@ -688,9 +670,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          SizedBox(height: 8),
          Text(
            error.toString(),
-           style: TextStyle(
-             fontFamily: 'Space Grotesk',
-             fontSize: 11,
+           style: GoogleFonts.fustat(
+                          fontSize: 11,
              color: theme.colorScheme.onSurfaceVariant,
            ),
          ),
@@ -756,7 +737,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                SizedBox(width: 8),
                Text(
                  '${agent.name} is now active!',
-                 style: TextStyle(fontFamily: 'Space Grotesk'),
+                 style: GoogleFonts.fustat(),
                ),
              ],
            ),
@@ -772,7 +753,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          SnackBar(
            content: Text(
              'Failed to load agent: $e',
-             style: TextStyle(fontFamily: 'Space Grotesk'),
+             style: GoogleFonts.fustat(),
            ),
            backgroundColor: ThemeColors(context).error,
            behavior: SnackBarBehavior.floating,

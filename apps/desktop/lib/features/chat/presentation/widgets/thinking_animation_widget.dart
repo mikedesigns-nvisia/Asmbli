@@ -93,7 +93,7 @@ class _ThinkingAnimationWidgetState extends State<ThinkingAnimationWidget>
                 Text(
                   'Thinking',
                   style: TextStyle(
-                    fontFamily: 'Space Grotesk',
+                    
                     fontSize: 14,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     fontWeight: FontWeight.w500,
@@ -123,7 +123,7 @@ class _ThinkingAnimationWidgetState extends State<ThinkingAnimationWidget>
                           child: Text(
                             '•',
                             style: TextStyle(
-                              fontFamily: 'Space Grotesk',
+                              
                               fontSize: 14,
                               color: ThemeColors(context).primary.withValues(alpha: opacity),
                               fontWeight: FontWeight.w500,
@@ -290,7 +290,7 @@ class _ThinkingBubbleWidgetState extends State<ThinkingBubbleWidget>
                           Text(
                             'Claude is thinking',
                             style: TextStyle(
-                              fontFamily: 'Space Grotesk',
+                              
                               fontSize: 15,
                               color: theme.colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
@@ -324,7 +324,7 @@ class _ThinkingBubbleWidgetState extends State<ThinkingBubbleWidget>
                                       child: Text(
                                         '•',
                                         style: TextStyle(
-                                          fontFamily: 'Space Grotesk',
+                                          
                                           fontSize: 16,
                                           color: ThemeColors(context).primary.withValues(alpha: opacity),
                                           fontWeight: FontWeight.w900,
@@ -342,7 +342,7 @@ class _ThinkingBubbleWidgetState extends State<ThinkingBubbleWidget>
                       Text(
                         'Processing your request',
                         style: TextStyle(
-                          fontFamily: 'Space Grotesk',
+                          
                           fontSize: 12,
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           fontWeight: FontWeight.w400,

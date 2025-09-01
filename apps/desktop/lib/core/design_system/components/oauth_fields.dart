@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import '../design_system.dart';
 import 'mcp_field_types.dart';
@@ -60,8 +61,7 @@ class OAuthField extends MCPField {
                         Text(
                           provider.displayName,
                           style: TextStyle(
-                            fontFamily: 'Space Grotesk',
-                            fontWeight: FontWeight.w600,
+                                                        fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
                         ),
@@ -110,8 +110,7 @@ class OAuthField extends MCPField {
         Text(
           label,
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 14,
+                        fontSize: 14,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -245,8 +244,7 @@ class OAuthField extends MCPField {
         Text(
           'Permissions',
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w500,
             fontSize: 13,
           ),
         ),
@@ -354,8 +352,7 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
         Text(
           widget.label,
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 14,
+                        fontSize: 14,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),

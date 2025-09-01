@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../../../core/design_system/design_system.dart';
@@ -91,7 +92,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  SizedBox(width: 8),
  Text(
  'Document "${document.title}" created and added to context',
- style: TextStyle(fontFamily: 'Space Grotesk'),
+ style: GoogleFonts.fustat(),
  ),
  ],
  ),
@@ -570,7 +571,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  _isAgentConversation
  ? '${_selectedDocuments.length} documents added to $_agentName'
  : '${_selectedDocuments.length} documents added to context',
- style: TextStyle(fontFamily: 'Space Grotesk'),
+ style: GoogleFonts.fustat(),
  ),
  ],
  ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/conversation.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../providers/conversation_provider.dart';
 
@@ -81,9 +82,8 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
               child: Text(
                 widget.conversation.title,
                 style: widget.style ??
-                    TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontSize: 20,
+                    GoogleFonts.fustat(
+                                            fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: theme.colorScheme.onSurface,
                     ),
@@ -121,9 +121,8 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
               controller: _controller,
               focusNode: _focusNode,
               style: widget.style ??
-                  TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 20,
+                  GoogleFonts.fustat(
+                                        fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.onSurface,
                   ),
@@ -134,9 +133,8 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
                   vertical: 8,
                 ),
                 hintText: 'Enter conversation title',
-                hintStyle: TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 20,
+                hintStyle: GoogleFonts.fustat(
+                                    fontSize: 20,
                   fontWeight: FontWeight.w400,
                   color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
@@ -277,7 +275,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
                 SizedBox(width: 8),
                 Text(
                   'Conversation renamed to "$newTitle"',
-                  style: TextStyle(fontFamily: 'Space Grotesk'),
+                  style: GoogleFonts.fustat(),
                 ),
               ],
             ),
@@ -307,7 +305,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
               Expanded(
                 child: Text(
                   message,
-                  style: TextStyle(fontFamily: 'Space Grotesk'),
+                  style: GoogleFonts.fustat(),
                 ),
               ),
             ],

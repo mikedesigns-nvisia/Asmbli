@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import '../design_system.dart';
 import '../../services/desktop/file_system_service.dart';
@@ -109,8 +110,7 @@ class PathPickerField extends MCPField {
         Text(
           label,
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 14,
+                        fontSize: 14,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -315,8 +315,7 @@ class ApiTokenField extends MCPField {
         Text(
           label,
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 14,
+                        fontSize: 14,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -516,8 +515,7 @@ class SelectField extends MCPField {
         Text(
           label,
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 14,
+                        fontSize: 14,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -629,8 +627,7 @@ class DatabaseConnectionField extends MCPField {
                   Text(
                     'Connection Builder',
                     style: TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
                   ),
@@ -667,8 +664,7 @@ class DatabaseConnectionField extends MCPField {
         Text(
           label,
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 14,
+                        fontSize: 14,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),

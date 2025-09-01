@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import '../design_system.dart';
 import '../../services/enhanced_mcp_testing_service.dart';
@@ -96,8 +97,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                     Text(
                       'Connection Test',
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 16,
+                                                fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -763,8 +763,7 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
               Text(
                 'Integration Health',
                 style: TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 14,
+                                    fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),

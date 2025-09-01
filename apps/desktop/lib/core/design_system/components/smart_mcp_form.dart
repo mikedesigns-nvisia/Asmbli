@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../design_system.dart';
 import 'mcp_field_types.dart';
 import 'oauth_fields.dart';
@@ -119,8 +120,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                     Text(
                       widget.template.name,
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontWeight: FontWeight.w600,
+                                                fontWeight: FontWeight.w600,
                         fontSize: 18,
                         color: widget.template.brandColor ?? SemanticColors.primary,
                       ),
@@ -258,8 +258,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
               Text(
                 'Prerequisites',
                 style: TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w500,
                   fontSize: 13,
                   color: Colors.orange,
                 ),
@@ -412,8 +411,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
               Text(
                 field.label,
                 style: TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 14,
+                                    fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
@@ -537,8 +535,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
         Text(
           'Advanced Options',
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 16,
+                        fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -573,8 +570,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
               Text(
                 'Setup Instructions',
                 style: TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w500,
                   fontSize: 13,
                   color: SemanticColors.primary,
                 ),

@@ -50,6 +50,7 @@ dependencies:
   fluent_ui: ^4.7.7  # Windows Fluent Design
   macos_ui: ^2.0.0   # macOS Design System
   yaru: ^1.2.0       # Ubuntu/Linux Design
+  google_fonts: ^6.1.0  # Google Fonts integration
 
 dev_dependencies:
   flutter_test:

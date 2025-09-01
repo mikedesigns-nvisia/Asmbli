@@ -138,7 +138,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
               Text(
                 'Topics',
                 style: TextStyle(
-                  fontFamily: 'Space Grotesk',
+                  
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: theme.colorScheme.onSurfaceVariant,
@@ -240,7 +240,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                         Text(
                           topic.name,
                           style: TextStyle(
-                            fontFamily: 'Space Grotesk',
+                            
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: theme.colorScheme.onSurface,
@@ -251,7 +251,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                           Text(
                             topic.description!,
                             style: TextStyle(
-                              fontFamily: 'Space Grotesk',
+                              
                               fontSize: 11,
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -271,7 +271,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                     child: Text(
                       '${conversations.length}',
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
+                        
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: topic.color,
@@ -336,7 +336,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
           Text(
             'No conversations in ${topic.name}',
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 12,
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -399,7 +399,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                   Text(
                     conversation.title,
                     style: TextStyle(
-                      fontFamily: 'Space Grotesk',
+                      
                       fontSize: 12,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                       color: isSelected ? topic.color : theme.colorScheme.onSurface,
@@ -419,7 +419,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                       Text(
                         '${conversation.messages.length} msgs',
                         style: TextStyle(
-                          fontFamily: 'Space Grotesk',
+                          
                           fontSize: 10,
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -428,7 +428,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                       Text(
                         _formatDate(conversation.createdAt),
                         style: TextStyle(
-                          fontFamily: 'Space Grotesk',
+                          
                           fontSize: 10,
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -458,7 +458,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
               Text(
                 'Create New Topic',
                 style: TextStyle(
-                  fontFamily: 'Space Grotesk',
+                  
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: theme.colorScheme.onSurface,

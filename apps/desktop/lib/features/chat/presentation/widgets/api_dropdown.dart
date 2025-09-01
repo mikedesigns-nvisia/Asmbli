@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
@@ -65,7 +66,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                       Text(
                         'Loading API configs...',
                         style: TextStyle(
-                          fontFamily: 'Space Grotesk',
+                          
                           fontSize: 12,
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -99,7 +100,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                         child: Text(
                           apiConfig.name,
                           style: TextStyle(
-                            fontFamily: 'Space Grotesk',
+                            
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: theme.colorScheme.onSurface,
@@ -119,7 +120,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                           child: Text(
                             'DEFAULT',
                             style: TextStyle(
-                              fontFamily: 'Space Grotesk',
+                              
                               fontSize: 8,
                               fontWeight: FontWeight.w600,
                               color: ThemeColors(context).primary,
@@ -136,7 +137,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                           child: Text(
                             'NO KEY',
                             style: TextStyle(
-                              fontFamily: 'Space Grotesk',
+                              
                               fontSize: 8,
                               fontWeight: FontWeight.w600,
                               color: ThemeColors(context).error,
@@ -173,7 +174,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                     Text(
                       'Add New API Key',
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
+                        
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: ThemeColors(context).primary,
@@ -200,7 +201,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                     Text(
                       'API Settings',
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
+                        
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: theme.colorScheme.onSurfaceVariant,
@@ -245,7 +246,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
               SizedBox(width: 8),
               Text(
                 'Switched to ${apiConfig.name}',
-                style: TextStyle(fontFamily: 'Space Grotesk'),
+                style: GoogleFonts.fustat(),
               ),
             ],
           ),

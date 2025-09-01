@@ -120,7 +120,7 @@ class ConversationList extends ConsumerWidget {
  Text(
  'Loading conversations...',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  color: ThemeColors(context).onSurfaceVariant,
  ),
  ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../design_system.dart';
 import '../../models/enhanced_mcp_template.dart';
 
@@ -107,8 +108,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         Text(
           'Choose Integration',
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 20,
+                        fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -234,8 +234,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
             Text(
               'Recommended for you',
               style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 14,
+                                fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: SemanticColors.primary,
               ),
@@ -337,8 +336,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
               Text(
                 template.name,
                 style: TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 16,
+                                    fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
@@ -455,8 +453,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                     Text(
                       template.name,
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 13,
+                                                fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: isRecommended 
                           ? SemanticColors.primary 

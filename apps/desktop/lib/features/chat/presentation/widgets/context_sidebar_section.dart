@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
@@ -59,7 +60,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
           _buildSectionHeader(theme, currentConversation),
           
           if (_isExpanded) ...[
-            SizedBox(height: 12),
+            SizedBox(height: SpacingTokens.componentSpacing),
             
             // Agent Context (Built-in from agent configuration)
             if (currentConversation?.metadata?['type'] == 'agent') ...[
@@ -101,9 +102,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         Expanded(
           child: Text(
             'Context Documents',
-            style: TextStyle(
-              fontFamily: 'Space Grotesk',
-              fontSize: 13,
+            style: GoogleFonts.fustat(
+                            fontSize: 13,
               fontWeight: FontWeight.w600,
               color: hasContext ? ThemeColors(context).primary : theme.colorScheme.onSurfaceVariant,
             ),
@@ -120,9 +120,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             ),
             child: Text(
               '${((currentConversation?.metadata?['contextDocuments'] as List?)?.length ?? 0) + _sessionContextIds.length}',
-              style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 10,
+              style: GoogleFonts.fustat(
+                                fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: ThemeColors(context).primary,
               ),
@@ -173,9 +172,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 Expanded(
                   child: Text(
                     '$agentName Context',
-                    style: TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontSize: 12,
+                    style: GoogleFonts.fustat(
+                                            fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: theme.colorScheme.onSurface,
                     ),
@@ -186,9 +184,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             SizedBox(height: 6),
             Text(
               'No built-in context documents configured',
-              style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 11,
+              style: GoogleFonts.fustat(
+                                fontSize: 11,
                 color: theme.colorScheme.onSurfaceVariant,
                 fontStyle: FontStyle.italic,
               ),
@@ -224,18 +221,16 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   children: [
                     Text(
                       '$agentName Context',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 12,
+                      style: GoogleFonts.fustat(
+                                                fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
                     Text(
                       'Built-in agent knowledge',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 10,
+                      style: GoogleFonts.fustat(
+                                                fontSize: 10,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -250,9 +245,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 ),
                 child: Text(
                   '${agentContextDocs.length}',
-                  style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 10,
+                  style: GoogleFonts.fustat(
+                                        fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: ThemeColors(context).primary,
                   ),
@@ -283,9 +277,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   Expanded(
                     child: Text(
                       doc.toString(),
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 11,
+                      style: GoogleFonts.fustat(
+                                                fontSize: 11,
                         color: theme.colorScheme.onSurface,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -301,9 +294,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               padding: const EdgeInsets.only(left: 18, top: 2),
               child: Text(
                 '+ ${agentContextDocs.length - 3} more documents',
-                style: TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 10,
+                style: GoogleFonts.fustat(
+                                    fontSize: 10,
                   color: theme.colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
                 ),
@@ -337,9 +329,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 Expanded(
                   child: Text(
                     'Session Context',
-                    style: TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontSize: 12,
+                    style: GoogleFonts.fustat(
+                                            fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: theme.colorScheme.onSurface,
                     ),
@@ -352,9 +343,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               conversation?.metadata?['type'] == 'agent' 
                   ? 'Add extra documents for this conversation'
                   : 'Add context documents to enhance AI understanding',
-              style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 11,
+              style: GoogleFonts.fustat(
+                                fontSize: 11,
                 color: theme.colorScheme.onSurfaceVariant,
                 fontStyle: FontStyle.italic,
               ),
@@ -390,18 +380,16 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   children: [
                     Text(
                       'Session Context',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 12,
+                      style: GoogleFonts.fustat(
+                                                fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
                     Text(
                       'Temporary for this conversation',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 10,
+                      style: GoogleFonts.fustat(
+                                                fontSize: 10,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -410,9 +398,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               ),
               Text(
                 '(${_sessionContextIds.length})',
-                style: TextStyle(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 11,
+                style: GoogleFonts.fustat(
+                                    fontSize: 11,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
@@ -454,9 +441,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   Expanded(
                     child: Text(
                       context.title,
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 11,
+                      style: GoogleFonts.fustat(
+                                                fontSize: 11,
                         color: theme.colorScheme.onSurface,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -509,9 +495,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 SizedBox(width: SpacingTokens.iconSpacing),
                 Text(
                   _showContextBrowser ? 'Hide Context Library' : 'Add Context',
-                  style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 13,
+                  style: GoogleFonts.fustat(
+                                        fontSize: 13,
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -553,9 +538,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       SizedBox(width: 6),
                       Text(
                         'Upload',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 11,
+                        style: GoogleFonts.fustat(
+                                                    fontSize: 11,
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
@@ -586,9 +570,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       SizedBox(width: 6),
                       Text(
                         'Browse',
-                        style: TextStyle(
-                          fontFamily: 'Space Grotesk',
-                          fontSize: 11,
+                        style: GoogleFonts.fustat(
+                                                    fontSize: 11,
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
@@ -631,9 +614,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 SizedBox(width: 8),
                 Text(
                   'Context Library',
-                  style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontSize: 13,
+                  style: GoogleFonts.fustat(
+                                        fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.onSurface,
                   ),
@@ -673,9 +655,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         children: [
           Text(
             category.displayName,
-            style: TextStyle(
-              fontFamily: 'Space Grotesk',
-              fontSize: 11,
+            style: GoogleFonts.fustat(
+                            fontSize: 11,
               fontWeight: FontWeight.w600,
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -712,9 +693,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       Expanded(
                         child: Text(
                           ctx.title,
-                          style: TextStyle(
-                            fontFamily: 'Space Grotesk',
-                            fontSize: 10,
+                          style: GoogleFonts.fustat(
+                                                        fontSize: 10,
                             color: isAdded 
                                 ? ThemeColors(context).success
                                 : theme.colorScheme.onSurface,
@@ -749,7 +729,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             SizedBox(width: 8),
             Text(
               'Added "$contextId" to session context',
-              style: TextStyle(fontFamily: 'Space Grotesk'),
+              style: GoogleFonts.fustat(),
             ),
           ],
         ),
@@ -773,7 +753,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             SizedBox(width: 8),
             Text(
               'Removed "$contextId" from session context',
-              style: TextStyle(fontFamily: 'Space Grotesk'),
+              style: GoogleFonts.fustat(),
             ),
           ],
         ),

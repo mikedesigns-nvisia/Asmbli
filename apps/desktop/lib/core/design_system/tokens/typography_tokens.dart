@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-// Typography tokens based on your existing Space Grotesk usage
+// Typography tokens using Google Fonts Fustat
 class TypographyTokens {
- static const String fontFamily = 'Space Grotesk';
+ static String get fontFamily => GoogleFonts.fustat().fontFamily!;
  
  // Font Weights (from your existing usage)
  static const FontWeight regular = FontWeight.w400;
@@ -11,111 +12,98 @@ class TypographyTokens {
  static const FontWeight bold = FontWeight.w700;
 }
 
-// Text styles matching your existing patterns
+// Text styles using Google Fonts Fustat
 class TextStyles {
  // Brand Title (your "Asmbli" style)
- static const TextStyle brandTitle = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 20,
- fontWeight: TypographyTokens.bold,
- fontStyle: FontStyle.italic,
- letterSpacing: -0.5,
+ static TextStyle get brandTitle => GoogleFonts.fustat(
+   fontSize: 20,
+   fontWeight: TypographyTokens.bold,
+   fontStyle: FontStyle.italic,
+   letterSpacing: -0.5,
  );
  
  // Page Headers
- static const TextStyle pageTitle = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 32,
- fontWeight: TypographyTokens.bold,
- letterSpacing: -0.5,
+ static TextStyle get pageTitle => GoogleFonts.fustat(
+   fontSize: 32,
+   fontWeight: TypographyTokens.bold,
+   letterSpacing: -0.5,
  );
  
- static const TextStyle sectionTitle = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 24,
- fontWeight: TypographyTokens.semiBold,
+ static TextStyle get sectionTitle => GoogleFonts.fustat(
+   fontSize: 24,
+   fontWeight: TypographyTokens.semiBold,
  );
  
- static const TextStyle cardTitle = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 18,
- fontWeight: TypographyTokens.semiBold,
+ static TextStyle get cardTitle => GoogleFonts.fustat(
+   fontSize: 18,
+   fontWeight: TypographyTokens.semiBold,
  );
  
  // Body Text
- static const TextStyle bodyLarge = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 16,
- fontWeight: TypographyTokens.regular,
- letterSpacing: 0.5,
+ static TextStyle get bodyLarge => GoogleFonts.fustat(
+   fontSize: 16,
+   fontWeight: TypographyTokens.regular,
+   letterSpacing: 0.5,
  );
  
- static const TextStyle bodyMedium = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 14,
- fontWeight: TypographyTokens.regular,
- letterSpacing: 0.25,
+ static TextStyle get bodyMedium => GoogleFonts.fustat(
+   fontSize: 14,
+   fontWeight: TypographyTokens.regular,
+   letterSpacing: 0.25,
  );
  
- static const TextStyle bodySmall = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 12,
- fontWeight: TypographyTokens.regular,
- letterSpacing: 0.4,
+ static TextStyle get bodySmall => GoogleFonts.fustat(
+   fontSize: 12,
+   fontWeight: TypographyTokens.regular,
+   letterSpacing: 0.4,
  );
  
  // Button Text (your existing button style)
- static const TextStyle button = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 14,
- fontWeight: TypographyTokens.medium,
+ static TextStyle get button => GoogleFonts.fustat(
+   fontSize: 14,
+   fontWeight: TypographyTokens.medium,
  );
  
  // Navigation Button
- static const TextStyle navButton = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 14,
- fontWeight: TypographyTokens.medium,
+ static TextStyle get navButton => GoogleFonts.fustat(
+   fontSize: 14,
+   fontWeight: TypographyTokens.medium,
  );
  
  // Labels
- static const TextStyle labelLarge = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 14,
- fontWeight: TypographyTokens.medium,
- letterSpacing: 0.1,
+ static TextStyle get labelLarge => GoogleFonts.fustat(
+   fontSize: 14,
+   fontWeight: TypographyTokens.medium,
+   letterSpacing: 0.1,
  );
  
- static const TextStyle labelMedium = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 12,
- fontWeight: TypographyTokens.medium,
- letterSpacing: 0.5,
+ static TextStyle get labelMedium => GoogleFonts.fustat(
+   fontSize: 12,
+   fontWeight: TypographyTokens.medium,
+   letterSpacing: 0.5,
  );
  
- static const TextStyle labelSmall = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 11,
- fontWeight: TypographyTokens.medium,
- letterSpacing: 0.5,
+ static TextStyle get labelSmall => GoogleFonts.fustat(
+   fontSize: 11,
+   fontWeight: TypographyTokens.medium,
+   letterSpacing: 0.5,
  );
  
  // Caption/Helper Text
- static const TextStyle caption = TextStyle(
- fontFamily: TypographyTokens.fontFamily,
- fontSize: 11,
- fontWeight: TypographyTokens.medium,
- letterSpacing: 0.5,
+ static TextStyle get caption => GoogleFonts.fustat(
+   fontSize: 11,
+   fontWeight: TypographyTokens.medium,
+   letterSpacing: 0.5,
  );
  
  // Additional title styles for compatibility
- static const TextStyle titleLarge = pageTitle;
- static const TextStyle titleMedium = cardTitle;
- static const TextStyle titleSmall = labelLarge;
+ static TextStyle get titleLarge => pageTitle;
+ static TextStyle get titleMedium => cardTitle;
+ static TextStyle get titleSmall => labelLarge;
  
  // Headline styles for compatibility
- static const TextStyle headlineLarge = pageTitle;
- static const TextStyle headlineMedium = sectionTitle;
- static const TextStyle headlineSmall = cardTitle;
- static const TextStyle headingMedium = cardTitle;
+ static TextStyle get headlineLarge => pageTitle;
+ static TextStyle get headlineMedium => sectionTitle;
+ static TextStyle get headlineSmall => cardTitle;
+ static TextStyle get headingMedium => cardTitle;
 }

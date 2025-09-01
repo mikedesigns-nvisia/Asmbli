@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../tabs/api_configuration_tab.dart';
@@ -277,7 +278,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  'Back to Chat',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
@@ -294,7 +295,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  'Settings',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 24,
  fontWeight: FontWeight.bold,
  color: Theme.of(context).colorScheme.onSurface,
@@ -320,12 +321,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  labelColor: Theme.of(context).colorScheme.primary,
  unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
  labelStyle: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  fontWeight: FontWeight.w600,
  ),
  unselectedLabelStyle: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  fontWeight: FontWeight.w500,
  ),
@@ -446,7 +447,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  'Manage your API keys for different providers and models.',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
@@ -473,7 +474,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  'No API Keys Configured',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 16,
  fontWeight: FontWeight.w500,
  color: Theme.of(context).colorScheme.onSurface,
@@ -483,7 +484,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  'Add your first API key to start using the app with real AI models.',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
@@ -548,7 +549,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  apiConfig.name,
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 16,
  fontWeight: FontWeight.w600,
  color: Theme.of(context).colorScheme.onSurface,
@@ -566,7 +567,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'DEFAULT',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 10,
  fontWeight: FontWeight.w600,
  color: Theme.of(context).colorScheme.primary,
@@ -580,7 +581,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  '${apiConfig.provider} - ${apiConfig.model}',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
@@ -606,7 +607,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'Set Default',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 10,
  fontWeight: FontWeight.w500,
  color: Theme.of(context).colorScheme.primary,
@@ -627,7 +628,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'Edit',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 10,
  fontWeight: FontWeight.w500,
  color: ThemeColors(context).primary,
@@ -648,7 +649,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'Delete',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 10,
  fontWeight: FontWeight.w500,
  color: ThemeColors(context).error,
@@ -704,7 +705,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'Your API keys are stored locally and encrypted. They are never transmitted to our servers.',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 13,
  color: Theme.of(context).colorScheme.onSurface,
  ),
@@ -796,7 +797,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  agents.firstWhere((a) => a.name == selectedAgent).description,
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  color: Theme.of(context).colorScheme.onSurface,
  ),
@@ -825,7 +826,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  'API:',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 12,
  fontWeight: FontWeight.w500,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -848,7 +849,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'Change',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 10,
  fontWeight: FontWeight.w500,
  color: Theme.of(context).colorScheme.primary,
@@ -880,7 +881,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  server,
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 10,
  fontWeight: FontWeight.w500,
  color: Theme.of(context).colorScheme.primary,
@@ -907,7 +908,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  'Template: $selectedTemplate',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  fontWeight: FontWeight.w500,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -926,14 +927,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  decoration: InputDecoration(
  hintText: 'Enter system prompt for this agent template...',
  hintStyle: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
  border: InputBorder.none,
  contentPadding: EdgeInsets.all(16),
  ),
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  color: Theme.of(context).colorScheme.onSurface,
  height: 1.5,
@@ -958,7 +959,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'Reset to Default',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  ),
  ),
@@ -980,7 +981,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'Save Prompt',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  fontWeight: FontWeight.w500,
  ),
@@ -1047,7 +1048,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'Enable notifications',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  color: Theme.of(context).colorScheme.onSurface,
  ),
@@ -1079,7 +1080,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  'Version 1.0.0',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  color: Theme.of(context).colorScheme.onSurface,
  ),
@@ -1136,7 +1137,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  'Not Configured',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 10,
  fontWeight: FontWeight.w500,
  color: Colors.orange,
@@ -1174,7 +1175,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  '${apiConfig.provider} (${apiConfig.model})',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 10,
  fontWeight: FontWeight.w500,
  color: apiConfig.isConfigured ? ThemeColors(context).success : ThemeColors(context).error,
@@ -1200,7 +1201,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  title: Text(
  'Select API for ${selectedAgent}',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 18,
  fontWeight: FontWeight.w600,
  color: Theme.of(context).colorScheme.onSurface,
@@ -1253,7 +1254,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Text(
  apiConfig.name,
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontWeight: FontWeight.w500,
  color: Theme.of(context).colorScheme.onSurface,
  ),
@@ -1270,7 +1271,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'DEFAULT',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 8,
  fontWeight: FontWeight.w600,
  color: Theme.of(context).colorScheme.primary,
@@ -1283,7 +1284,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  subtitle: Text(
  '${apiConfig.provider} - ${apiConfig.model}',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 12,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
@@ -1329,7 +1330,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  label: Text(
  'Add New API Configuration',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  color: Theme.of(context).colorScheme.primary,
  fontWeight: FontWeight.w500,
  ),
@@ -1359,7 +1360,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Text(
  'Cancel',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 14,
  ),
  ),
@@ -1449,7 +1450,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
  SnackBar(
  content: Text(
  message,
- style: TextStyle(fontFamily: 'Space Grotesk'),
+ style: GoogleFonts.fustat(),
  ),
  backgroundColor: isError ? ThemeColors(context).error : ThemeColors(context).success,
  behavior: SnackBarBehavior.floating,
@@ -1481,7 +1482,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                         Text(
                           'Configure Model Context Protocol (MCP) servers that provide tools and capabilities to your agents.',
                           style: TextStyle(
-                            fontFamily: 'Space Grotesk',
+                            
                             fontSize: 14,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -1543,7 +1544,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                         Text(
                           'Real-time health monitoring and auto-reconnection for MCP servers.',
                           style: TextStyle(
-                            fontFamily: 'Space Grotesk',
+                            
                             fontSize: 14,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -1567,7 +1568,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                         Text(
                           'Documents available to all agents as context. These will be injected into MCP sessions.',
                           style: TextStyle(
-                            fontFamily: 'Space Grotesk',
+                            
                             fontSize: 14,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -1605,7 +1606,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                               Text(
                                 'No global context documents configured',
                                 style: TextStyle(
-                                  fontFamily: 'Space Grotesk',
+                                  
                                   fontSize: 13,
                                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   fontStyle: FontStyle.italic,
@@ -1649,7 +1650,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
           Text(
             'No MCP Servers Configured',
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurface,
@@ -1659,7 +1660,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
           Text(
             'Add MCP servers to provide tools and capabilities to your agents.\nServers can offer file system access, web search, databases, and more.',
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 14,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               height: 1.5,
@@ -2066,7 +2067,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                           child: Text(
                             config.name,
                             style: TextStyle(
-                              fontFamily: 'Space Grotesk',
+                              
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: Theme.of(context).colorScheme.onSurface,
@@ -2089,7 +2090,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                     Text(
                       config.description,
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
+                        
                         fontSize: 13,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -2179,7 +2180,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                         child: Text(
                           'Environment: ${config.env!.keys.join(', ')}',
                           style: TextStyle(
-                            fontFamily: 'Space Grotesk',
+                            
                             fontSize: 12,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
@@ -2234,7 +2235,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
           Text(
             text,
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 10,
               fontWeight: FontWeight.w500,
               color: color,
@@ -2290,13 +2291,13 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
         title: Text(
           'Delete MCP Server',
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
+            
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
           'Are you sure you want to delete this MCP server? This action cannot be undone.',
-          style: TextStyle(fontFamily: 'Space Grotesk'),
+          style: GoogleFonts.fustat(),
         ),
         actions: [
           TextButton(
@@ -2358,7 +2359,7 @@ class _SettingsSection extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurface,
@@ -2391,7 +2392,7 @@ class _FormField extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
+            
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
@@ -2402,7 +2403,7 @@ class _FormField extends StatelessWidget {
           Text(
             helpText!,
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 12,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -2552,7 +2553,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           Text(
             'Integrations',
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface,
@@ -2562,7 +2563,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           Text(
             'Configure and manage your integrations. Click on any integration to set it up or modify its settings.',
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 14,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -2675,7 +2676,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           Text(
             'No configured integrations',
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 20,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurface,
@@ -2685,7 +2686,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           Text(
             'Visit the Marketplace to add integrations to your agents.',
             style: TextStyle(
-              fontFamily: 'Space Grotesk',
+              
               fontSize: 14,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -3130,7 +3131,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                     Text(
                       '${healthStats.healthPercentage.toStringAsFixed(0)}% Healthy',
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
+                        
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: healthStats.isHealthy ? Colors.green : Colors.orange,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../design_system.dart';
 import 'mcp_field_types.dart';
 
@@ -59,8 +60,7 @@ class ServiceDetectionField extends MCPField {
                     child: Text(
                       'Auto-Detect ${serviceType.displayName}',
                       style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontWeight: FontWeight.w500,
+                                                fontWeight: FontWeight.w500,
                         fontSize: 14,
                       ),
                     ),
@@ -108,8 +108,7 @@ class ServiceDetectionField extends MCPField {
         Text(
           label,
           style: TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontSize: 14,
+                        fontSize: 14,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -415,8 +414,7 @@ class _PortScannerFieldState extends State<PortScannerField> {
             Text(
               widget.label,
               style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 14,
+                                fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -456,8 +454,7 @@ class _PortScannerFieldState extends State<PortScannerField> {
                 Text(
                   'Detected Services',
                   style: TextStyle(
-                    fontFamily: 'Space Grotesk',
-                    fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w500,
                     fontSize: 13,
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 enum AsmblButtonVariant {
  primary, // Default - banana pudding primary color
@@ -14,7 +15,7 @@ enum AsmblButtonSize {
 }
 
 /// A button component that matches the web app's design system
-/// Uses banana pudding colors and Space Grotesk typography
+/// Uses theme colors and Fustat typography
 class AsmblButton extends StatelessWidget {
  final String? text;
  final Widget? child;
@@ -96,10 +97,9 @@ class AsmblButton extends StatelessWidget {
  rowChildren.add(
  child ?? Text(
  text!,
- style: TextStyle(
+ style: GoogleFonts.fustat(
  fontSize: fontSize,
  fontWeight: FontWeight.w500,
- fontFamily: 'Space Grotesk',
  color: foregroundColor,
  ),
  ),

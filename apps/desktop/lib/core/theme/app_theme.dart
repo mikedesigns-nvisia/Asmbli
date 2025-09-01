@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
  // Mint (Light) and Forest (Dark) Theme Colors with Enhanced Gradients
@@ -65,8 +66,7 @@ class AppTheme {
  foregroundColor: lightForeground,
  surfaceTintColor: Colors.transparent,
  titleTextStyle: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 24,
+  fontSize: 24,
  fontWeight: FontWeight.bold,
  fontStyle: FontStyle.italic,
  color: lightForeground,
@@ -97,8 +97,7 @@ class AppTheme {
  ),
  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
  textStyle: TextStyle(
- fontFamily: 'Space Grotesk',
- fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w500,
  fontSize: 14,
  ),
  ),
@@ -115,8 +114,7 @@ class AppTheme {
  ),
  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
  textStyle: TextStyle(
- fontFamily: 'Space Grotesk',
- fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w500,
  fontSize: 14,
  ),
  ),
@@ -125,9 +123,8 @@ class AppTheme {
  textButtonTheme: TextButtonThemeData(
  style: TextButton.styleFrom(
  foregroundColor: lightForeground,
- textStyle: const TextStyle(
- fontFamily: 'Space Grotesk',
- fontWeight: FontWeight.w500,
+ textStyle: GoogleFonts.fustat(
+  fontWeight: FontWeight.w500,
  fontSize: 14,
  ),
  ),
@@ -152,106 +149,90 @@ class AppTheme {
  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
  ),
  
- // Typography - Space Grotesk throughout
- fontFamily: 'Space Grotesk',
- textTheme: TextTheme(
+ // Typography - Fustat throughout
+  textTheme: TextTheme(
  displayLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 57,
+  fontSize: 57,
  fontWeight: FontWeight.w400,
  letterSpacing: -0.25,
  color: lightForeground,
  ),
  displayMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 45,
+  fontSize: 45,
  fontWeight: FontWeight.w400,
  color: lightForeground,
  ),
  displaySmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 36,
+  fontSize: 36,
  fontWeight: FontWeight.w400,
  color: lightForeground,
  ),
  headlineLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 32,
+  fontSize: 32,
  fontWeight: FontWeight.w700,
  letterSpacing: -0.5,
  color: lightForeground,
  ),
  headlineMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 28,
+  fontSize: 28,
  fontWeight: FontWeight.w600,
  letterSpacing: -0.25,
  color: lightForeground,
  ),
  headlineSmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 24,
+  fontSize: 24,
  fontWeight: FontWeight.w600,
  color: lightForeground,
  ),
  titleLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 22,
+  fontSize: 22,
  fontWeight: FontWeight.w500,
  color: lightForeground,
  ),
  titleMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 16,
+  fontSize: 16,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.15,
  color: lightForeground,
  ),
  titleSmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
+  fontSize: 14,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.1,
  color: lightForeground,
  ),
  bodyLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 16,
+  fontSize: 16,
  fontWeight: FontWeight.w400,
  letterSpacing: 0.5,
  color: lightForeground,
  ),
  bodyMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
+  fontSize: 14,
  fontWeight: FontWeight.w400,
  letterSpacing: 0.25,
  color: lightMutedForeground,
  ),
  bodySmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
+  fontSize: 12,
  fontWeight: FontWeight.w400,
  letterSpacing: 0.4,
  color: lightMutedForeground,
  ),
  labelLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
+  fontSize: 14,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.1,
  color: lightForeground,
  ),
  labelMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
+  fontSize: 12,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.5,
  color: lightMutedForeground,
  ),
  labelSmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 11,
+  fontSize: 11,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.5,
  color: lightMutedForeground,
@@ -291,8 +272,7 @@ class AppTheme {
  foregroundColor: darkForeground,
  surfaceTintColor: Colors.transparent,
  titleTextStyle: const TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 24,
+  fontSize: 24,
  fontWeight: FontWeight.bold,
  fontStyle: FontStyle.italic,
  color: darkForeground,
@@ -322,9 +302,8 @@ class AppTheme {
  borderRadius: BorderRadius.circular(8),
  ),
  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
- textStyle: const TextStyle(
- fontFamily: 'Space Grotesk',
- fontWeight: FontWeight.w500,
+ textStyle: GoogleFonts.fustat(
+  fontWeight: FontWeight.w500,
  fontSize: 14,
  ),
  ),
@@ -340,9 +319,8 @@ class AppTheme {
  borderRadius: BorderRadius.circular(8),
  ),
  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
- textStyle: const TextStyle(
- fontFamily: 'Space Grotesk',
- fontWeight: FontWeight.w500,
+ textStyle: GoogleFonts.fustat(
+  fontWeight: FontWeight.w500,
  fontSize: 14,
  ),
  ),
@@ -351,9 +329,8 @@ class AppTheme {
  textButtonTheme: TextButtonThemeData(
  style: TextButton.styleFrom(
  foregroundColor: darkForeground,
- textStyle: const TextStyle(
- fontFamily: 'Space Grotesk',
- fontWeight: FontWeight.w500,
+ textStyle: GoogleFonts.fustat(
+  fontWeight: FontWeight.w500,
  fontSize: 14,
  ),
  ),
@@ -378,106 +355,90 @@ class AppTheme {
  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
  ),
  
- // Typography - Space Grotesk throughout
- fontFamily: 'Space Grotesk',
- textTheme: TextTheme(
+ // Typography - Fustat throughout
+  textTheme: TextTheme(
  displayLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 57,
+  fontSize: 57,
  fontWeight: FontWeight.w400,
  letterSpacing: -0.25,
  color: darkForeground,
  ),
  displayMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 45,
+  fontSize: 45,
  fontWeight: FontWeight.w400,
  color: darkForeground,
  ),
  displaySmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 36,
+  fontSize: 36,
  fontWeight: FontWeight.w400,
  color: darkForeground,
  ),
  headlineLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 32,
+  fontSize: 32,
  fontWeight: FontWeight.w700,
  letterSpacing: -0.5,
  color: darkForeground,
  ),
  headlineMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 28,
+  fontSize: 28,
  fontWeight: FontWeight.w600,
  letterSpacing: -0.25,
  color: darkForeground,
  ),
  headlineSmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 24,
+  fontSize: 24,
  fontWeight: FontWeight.w600,
  color: darkForeground,
  ),
  titleLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 22,
+  fontSize: 22,
  fontWeight: FontWeight.w500,
  color: darkForeground,
  ),
  titleMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 16,
+  fontSize: 16,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.15,
  color: darkForeground,
  ),
  titleSmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
+  fontSize: 14,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.1,
  color: darkForeground,
  ),
  bodyLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 16,
+  fontSize: 16,
  fontWeight: FontWeight.w400,
  letterSpacing: 0.5,
  color: darkForeground,
  ),
  bodyMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
+  fontSize: 14,
  fontWeight: FontWeight.w400,
  letterSpacing: 0.25,
  color: const Color(0xFFA0BDA8),
  ),
  bodySmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
+  fontSize: 12,
  fontWeight: FontWeight.w400,
  letterSpacing: 0.4,
  color: const Color(0xFFA0BDA8),
  ),
  labelLarge: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 14,
+  fontSize: 14,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.1,
  color: darkForeground,
  ),
  labelMedium: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 12,
+  fontSize: 12,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.5,
  color: const Color(0xFFA0BDA8),
  ),
  labelSmall: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 11,
+  fontSize: 11,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.5,
  color: const Color(0xFFA0BDA8),

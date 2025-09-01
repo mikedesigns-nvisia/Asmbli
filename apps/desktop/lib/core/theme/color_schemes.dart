@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Color scheme definitions for the app
 /// Each scheme contains light and dark variants
@@ -334,8 +335,7 @@ class AppColorSchemes {
         foregroundColor: onSurface,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: TextStyle(
-          fontFamily: 'Space Grotesk',
-          fontSize: 24,
+                    fontSize: 24,
           fontWeight: FontWeight.bold,
           fontStyle: FontStyle.italic,
           color: onSurface,
@@ -365,9 +365,8 @@ class AppColorSchemes {
             borderRadius: BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          textStyle: const TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontWeight: FontWeight.w500,
+          textStyle: GoogleFonts.fustat(
+                        fontWeight: FontWeight.w500,
             fontSize: 14,
           ),
         ),
@@ -383,9 +382,8 @@ class AppColorSchemes {
             borderRadius: BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          textStyle: const TextStyle(
-            fontFamily: 'Space Grotesk',
-            fontWeight: FontWeight.w500,
+          textStyle: GoogleFonts.fustat(
+                        fontWeight: FontWeight.w500,
             fontSize: 14,
           ),
         ),
@@ -411,8 +409,7 @@ class AppColorSchemes {
       ),
 
       // Typography
-      fontFamily: 'Space Grotesk',
-      textTheme: _buildTextTheme(onSurface, onSurfaceVariant),
+            textTheme: _buildTextTheme(onSurface, onSurfaceVariant),
     );
   }
 
@@ -420,102 +417,87 @@ class AppColorSchemes {
   static TextTheme _buildTextTheme(Color onSurface, Color onSurfaceVariant) {
     return TextTheme(
       displayLarge: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 57,
+                fontSize: 57,
         fontWeight: FontWeight.w400,
         letterSpacing: -0.25,
         color: onSurface,
       ),
       displayMedium: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 45,
+                fontSize: 45,
         fontWeight: FontWeight.w400,
         color: onSurface,
       ),
       displaySmall: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 36,
+                fontSize: 36,
         fontWeight: FontWeight.w400,
         color: onSurface,
       ),
       headlineLarge: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 32,
+                fontSize: 32,
         fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
         color: onSurface,
       ),
       headlineMedium: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 28,
+                fontSize: 28,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.25,
         color: onSurface,
       ),
       headlineSmall: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 24,
+                fontSize: 24,
         fontWeight: FontWeight.w600,
         color: onSurface,
       ),
       titleLarge: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 22,
+                fontSize: 22,
         fontWeight: FontWeight.w500,
         color: onSurface,
       ),
       titleMedium: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 16,
+                fontSize: 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.15,
         color: onSurface,
       ),
       titleSmall: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 14,
+                fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1,
         color: onSurface,
       ),
       bodyLarge: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 16,
+                fontSize: 16,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.5,
         color: onSurface,
       ),
       bodyMedium: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 14,
+                fontSize: 14,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.25,
         color: onSurfaceVariant,
       ),
       bodySmall: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 12,
+                fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.4,
         color: onSurfaceVariant,
       ),
       labelLarge: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 14,
+                fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1,
         color: onSurface,
       ),
       labelMedium: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 12,
+                fontSize: 12,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.5,
         color: onSurfaceVariant,
       ),
       labelSmall: TextStyle(
-        fontFamily: 'Space Grotesk',
-        fontSize: 11,
+                fontSize: 11,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.5,
         color: onSurfaceVariant,

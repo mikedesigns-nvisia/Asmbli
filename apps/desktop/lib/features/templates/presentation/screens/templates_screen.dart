@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/design_system/design_system.dart';
@@ -124,7 +125,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  Text(
  'Agent Templates',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 32,
  fontWeight: FontWeight.bold,
  color: AppTheme.lightForeground,
@@ -134,7 +135,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  Text(
  'Start with a pre-built template and customize it to your needs',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 16,
  color: AppTheme.lightMutedForeground,
  ),
@@ -159,7 +160,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  decoration: InputDecoration(
  hintText: 'Search templates...',
  hintStyle: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  color: AppTheme.lightMutedForeground,
  ),
  prefixIcon: Icon(
@@ -169,7 +170,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  border: InputBorder.none,
  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
  ),
- style: TextStyle(fontFamily: 'Space Grotesk'),
+ style: GoogleFonts.fustat(),
  ),
  ),
  ),
@@ -187,7 +188,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  value: selectedCategory,
  onChanged: (value) => setState(() => selectedCategory = value!),
  underline: SizedBox(),
- style: TextStyle(fontFamily: 'Space Grotesk', color: AppTheme.lightForeground),
+ style: TextStyle( color: AppTheme.lightForeground),
  items: categories.map((category) {
  return DropdownMenuItem(
  value: category,
@@ -302,7 +303,7 @@ class _TemplateCard extends StatelessWidget {
  child: Text(
  template.category,
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 11,
  fontWeight: FontWeight.w500,
  color: AppTheme.lightForeground,
@@ -323,7 +324,7 @@ class _TemplateCard extends StatelessWidget {
  Text(
  template.name,
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 18,
  fontWeight: FontWeight.w600,
  color: AppTheme.lightForeground,
@@ -333,7 +334,7 @@ class _TemplateCard extends StatelessWidget {
  Text(
  template.description,
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 13,
  color: AppTheme.lightMutedForeground,
  height: 1.4,
@@ -355,7 +356,7 @@ class _TemplateCard extends StatelessWidget {
  child: Text(
  tag,
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 10,
  color: AppTheme.lightMutedForeground,
  ),
@@ -373,7 +374,7 @@ class _TemplateCard extends StatelessWidget {
  Text(
  'MCP Servers',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 11,
  fontWeight: FontWeight.w500,
  color: AppTheme.lightMutedForeground,
@@ -406,7 +407,7 @@ class _TemplateCard extends StatelessWidget {
  Text(
  server,
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 9,
  fontWeight: FontWeight.w500,
  color: AppTheme.lightPrimary,
@@ -441,7 +442,7 @@ class _TemplateCard extends StatelessWidget {
  Text(
  'MCP Stack',
  style: TextStyle(
- fontFamily: 'Space Grotesk',
+ 
  fontSize: 11,
  color: AppTheme.lightMutedForeground,
  ),
@@ -467,7 +468,7 @@ class _TemplateCard extends StatelessWidget {
  'Use Template',
  style: TextStyle(
  color: AppTheme.lightPrimaryForeground,
- fontFamily: 'Space Grotesk',
+ 
  fontWeight: FontWeight.w500,
  fontSize: 14,
  ),

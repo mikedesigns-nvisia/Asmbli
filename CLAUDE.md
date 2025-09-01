@@ -54,7 +54,7 @@ SpacingTokens.xxl                  // Instead of EdgeInsets.all(24)
 - **Border Radius**: `BorderRadiusTokens.xl` (12px for cards)
 
 ### Typography
-- **Font**: Space Grotesk throughout
+- **Font**: Fustat (Google Fonts) throughout
 - **Brand Title**: `TextStyles.brandTitle` (bold italic)
 - **Page Titles**: `TextStyles.pageTitle`
 - **Body Text**: `TextStyles.bodyMedium`
