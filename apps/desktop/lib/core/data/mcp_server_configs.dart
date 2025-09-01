@@ -1,8 +1,10 @@
-/// MCP Server Configuration Library
-/// 
-/// This file contains curated MCP server configurations from official and
-/// community sources. Each configuration includes setup instructions,
-/// authentication requirements, and JSON config examples.
+// MCP Server Configuration Library
+// 
+// This file contains curated MCP server configurations from official and
+// community sources. Each configuration includes setup instructions,
+// authentication requirements, and JSON config examples.
+
+library;
 
 class MCPServerConfig {
   final String id;

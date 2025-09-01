@@ -49,7 +49,7 @@ class IntegrationAnalyticsService {
   Future<void> _loadStoredAnalyticsData() async {
     try {
       // Load usage data
-      final usageJson = await _storage.getHiveData('analytics_usage_data');
+      final usageJson = _storage.getHiveData('analytics', 'usage_data');
       if (usageJson is Map<String, dynamic>) {
         for (final entry in usageJson.entries) {
           final data = entry.value as Map<String, dynamic>;
@@ -58,7 +58,7 @@ class IntegrationAnalyticsService {
       }
       
       // Load events
-      final eventsJson = await _storage.getHiveData('analytics_events');
+      final eventsJson = _storage.getHiveData('analytics', 'events');
       if (eventsJson is List) {
         events.clear();
         for (final eventData in eventsJson.cast<Map<String, dynamic>>()) {
@@ -79,12 +79,12 @@ class IntegrationAnalyticsService {
       for (final entry in _usageData.entries) {
         usageJson[entry.key] = entry.value.toJson();
       }
-      await _storage.setHiveData('analytics_usage_data', usageJson);
+      await _storage.setHiveData('analytics', 'usage_data', usageJson);
       
       // Save recent events (keep last 1000 events)
       final recentEvents = events.length > 1000 ? events.sublist(events.length - 1000) : events;
       final eventsJson = recentEvents.map((e) => e.toJson()).toList();
-      await _storage.setHiveData('analytics_events', eventsJson);
+      await _storage.setHiveData('analytics', 'events', eventsJson);
     } catch (e) {
       print('Warning: Failed to save analytics data: $e');
     }

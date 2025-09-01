@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import '../models/enhanced_mcp_template.dart';
 
 /// Intelligent MCP recommendation engine
@@ -290,12 +291,12 @@ class IntelligentMCPRecommendations {
             relevanceScore: 0.80,
             category: RecommendationCategory.recommended,
           ),
-          recommendations.add(MCPRecommendation(
+          MCPRecommendation(
             template: EnhancedMCPTemplates.filesystem,
             reason: 'Access course materials and student files',
             relevanceScore: 0.75,
             category: RecommendationCategory.useful,
-          )),
+          ),
         ]);
         break;
     }

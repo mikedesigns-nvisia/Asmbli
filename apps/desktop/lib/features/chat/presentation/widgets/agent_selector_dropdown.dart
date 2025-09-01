@@ -185,13 +185,13 @@ class AgentSelectorDropdown extends ConsumerWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: _getAgentColor(agent).withValues(alpha: 0.1),
+              color: _getAgentColor(context, agent).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Icon(
               _getAgentIcon(agent),
               size: 12,
-              color: _getAgentColor(agent),
+              color: _getAgentColor(context, agent),
             ),
           ),
           SizedBox(width: SpacingTokens.xs),
@@ -256,13 +256,13 @@ class AgentSelectorDropdown extends ConsumerWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: _getAgentColor(agent).withValues(alpha: 0.1),
+                color: _getAgentColor(context, agent).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Icon(
                 _getAgentIcon(agent),
                 size: 16,
-                color: _getAgentColor(agent),
+                color: _getAgentColor(context, agent),
               ),
             ),
             SizedBox(width: SpacingTokens.sm),
@@ -342,7 +342,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
     );
   }
 
-  Color _getAgentColor(Agent agent) {
+  Color _getAgentColor(BuildContext context, Agent agent) {
     switch (agent.id) {
       case 'research-assistant':
         return const Color(0xFF4CAF50); // Green

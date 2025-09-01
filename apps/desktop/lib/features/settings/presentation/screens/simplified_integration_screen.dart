@@ -33,7 +33,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
               // Main content
               Expanded(
                 child: Padding(
-                  padding: SpacingTokens.xxl,
+                  padding: EdgeInsets.all(SpacingTokens.xxl),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -78,7 +78,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
 
   Widget _buildAutoDetectCard(BuildContext context) {
     return Container(
-      padding: SpacingTokens.xxl,
+      padding: EdgeInsets.all(SpacingTokens.xxl),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -86,16 +86,16 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             SemanticColors.primary.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadiusTokens.xl,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
         border: Border.all(color: SemanticColors.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
           Container(
-            padding: SpacingTokens.lg,
+            padding: EdgeInsets.all(SpacingTokens.lg),
             decoration: BoxDecoration(
               color: SemanticColors.primary,
-              borderRadius: BorderRadiusTokens.full,
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
             ),
             child: Icon(
               Icons.auto_fix_high,
@@ -205,22 +205,22 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
   Widget _buildCategoryCard(BuildContext context, CategoryItem category) {
     return InkWell(
       onTap: () => _showCategoryDetection(context, category.name),
-      borderRadius: BorderRadiusTokens.lg,
+      borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
       child: Container(
-        padding: SpacingTokens.lg,
+        padding: EdgeInsets.all(SpacingTokens.lg),
         decoration: BoxDecoration(
           color: SemanticColors.surface,
-          borderRadius: BorderRadiusTokens.lg,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           border: Border.all(color: SemanticColors.border),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: SpacingTokens.md,
+              padding: EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: category.color.withValues(alpha: 0.1),
-                borderRadius: BorderRadiusTokens.md,
+                borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               ),
               child: Icon(
                 category.icon,
@@ -252,7 +252,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
               ),
               decoration: BoxDecoration(
                 color: SemanticColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadiusTokens.sm,
+                borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,

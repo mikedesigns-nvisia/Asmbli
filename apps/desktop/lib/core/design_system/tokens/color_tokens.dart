@@ -16,6 +16,7 @@ class ColorTokens {
  // Text Colors
  static const Color foreground = Color(0xFF1E3B2B); // Deep forest green text
  static const Color mutedForeground = Color(0xFF4A6B5A); // Muted forest green text
+ static const Color foregroundVariant = Color(0xFF4A6B5A); // Variant forest green text
  
  // Primary (Deep Forest Green)
  static const Color primary = Color(0xFF1E3B2B); // Primary action color

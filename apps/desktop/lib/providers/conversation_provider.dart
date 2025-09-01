@@ -249,3 +249,12 @@ final selectedAgentPreviewProvider = StateProvider<String?>((ref) => null);
 
 // Global provider for loaded agent IDs
 final loadedAgentIdsProvider = StateProvider<Set<String>>((ref) => {});
+
+// Update conversation provider
+final updateConversationProvider = Provider.autoDispose((ref) {
+  final service = ref.read(conversationServiceProvider);
+  
+  return (String conversationId, Conversation updatedConversation) async {
+    return await service.updateConversation(updatedConversation);
+  };
+});

@@ -16,8 +16,9 @@ import '../widgets/conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/agent_deployment_section.dart';
 import '../widgets/api_dropdown.dart';
-import '../widgets/add_context_modal.dart';
 import '../widgets/streaming_message_widget.dart';
+import '../widgets/editable_conversation_title.dart';
+import '../widgets/context_sidebar_section.dart';
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
 class ChatScreen extends ConsumerStatefulWidget {
@@ -216,8 +217,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
- Text(
- conversation.title,
+ EditableConversationTitle(
+ conversation: conversation,
  style: TextStyle(
  fontFamily: 'Space Grotesk',
  fontSize: 20,
@@ -462,15 +463,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  // Agent Loader Section - Wrapped in Flexible to prevent overflow
  AgentLoaderSection(),
+                  
+                  SizedBox(height: SpacingTokens.sectionSpacing),
+
+                  // Context Documents Section - Works for both Agent and Direct API conversations
+                  ContextSidebarSection(),
  
  SizedBox(height: SpacingTokens.sectionSpacing),
  
- // Agent Tools & Context
+ // Agent Tools & MCP Status (Only shown for agent conversations)
  _buildAgentToolsContext(context),
  
  SizedBox(height: SpacingTokens.sectionSpacing),
  
- // Bottom Actions
+ // API Configuration Section - Separated from Context
  Padding(
  padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
  child: Column(
@@ -482,7 +488,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Padding(
  padding: EdgeInsets.only(left: 4, bottom: 6),
  child: Text(
- 'API Provider',
+ 'API Configuration',
  style: TextStyle(
  fontFamily: 'Space Grotesk',
  fontSize: 11,
@@ -493,47 +499,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ApiDropdown(),
  ],
- ),
- 
- SizedBox(height: 12),
- 
- // Add Context Button
- InkWell(
- onTap: () => _showAddContextModal(context),
- borderRadius: BorderRadius.circular(6),
- child: Container(
- width: double.infinity,
- padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
- decoration: BoxDecoration(
- border: Border.all(color: theme.colorScheme.outline),
- borderRadius: BorderRadius.circular(6),
- color: theme.colorScheme.surface.withValues(alpha: 0.8),
- ),
- child: Row(
- children: [
- Icon(
- Icons.library_add,
- size: 16,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- SizedBox(width: SpacingTokens.iconSpacing),
- Text(
- 'Add Context',
- style: TextStyle(
- fontFamily: 'Space Grotesk',
- fontSize: 13,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- ),
- Spacer(),
- Icon(
- Icons.add,
- size: 14,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- ],
- ),
- ),
  ),
  
  SizedBox(height: SpacingTokens.componentSpacing),
@@ -1506,18 +1471,7 @@ onChanged: (value) => setState(() {}), // Trigger rebuild for send button state
  return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
  }
 
- void _showAddContextModal(BuildContext context) {
- final selectedConversationId = ref.read(selectedConversationIdProvider);
- showDialog(
- context: context,
- barrierDismissible: true,
- builder: (context) => AddContextModal(
- conversationId: selectedConversationId,
- ),
- );
- }
-
- /// Show API key configuration dialog when user tries to chat without API key
+  /// Show API key configuration dialog when user tries to chat without API key
  void _showApiKeyConfigurationDialog() {
    showDialog(
      context: context,

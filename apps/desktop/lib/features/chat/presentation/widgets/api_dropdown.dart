@@ -32,14 +32,11 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
     
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: SpacingTokens.componentSpacing, 
-        vertical: SpacingTokens.xs
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        border: Border.all(color: SemanticColors.border),
-        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        color: SemanticColors.surface.withValues(alpha: 0.8),
+        border: Border.all(color: theme.colorScheme.outline),
+        borderRadius: BorderRadius.circular(6),
+        color: theme.colorScheme.surface.withValues(alpha: 0.8),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -48,7 +45,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
           icon: Icon(
             Icons.keyboard_arrow_down,
             size: 16,
-            color: SemanticColors.onSurfaceVariant,
+            color: theme.colorScheme.onSurfaceVariant,
           ),
           items: [
             // Show loading or empty state if no configs
@@ -67,8 +64,10 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                       const SizedBox(width: 8),
                       Text(
                         'Loading API configs...',
-                        style: TextStyles.caption.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
+                        style: TextStyle(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 12,
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -85,20 +84,25 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                   height: 32,
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.api,
-                        size: 14,
-                        color: apiConfig.isConfigured 
-                          ? SemanticColors.success 
-                          : SemanticColors.onSurfaceVariant,
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: apiConfig.isConfigured 
+                            ? ThemeColors(context).success 
+                            : theme.colorScheme.onSurfaceVariant,
+                          shape: BoxShape.circle,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           apiConfig.name,
-                          style: TextStyles.caption.copyWith(
+                          style: TextStyle(
+                            fontFamily: 'Space Grotesk',
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: SemanticColors.onSurface,
+                            color: theme.colorScheme.onSurface,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -109,15 +113,16 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                           decoration: BoxDecoration(
-                            color: SemanticColors.primary.withValues(alpha: 0.1),
+                            color: ThemeColors(context).primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(3),
                           ),
                           child: Text(
                             'DEFAULT',
-                            style: TextStyles.labelSmall.copyWith(
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
                               fontSize: 8,
                               fontWeight: FontWeight.w600,
-                              color: SemanticColors.primary,
+                              color: ThemeColors(context).primary,
                             ),
                           ),
                         ),
@@ -125,15 +130,16 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                           decoration: BoxDecoration(
-                            color: SemanticColors.error.withValues(alpha: 0.1),
+                            color: ThemeColors(context).error.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(3),
                           ),
                           child: Text(
                             'NO KEY',
-                            style: TextStyles.labelSmall.copyWith(
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
                               fontSize: 8,
                               fontWeight: FontWeight.w600,
-                              color: SemanticColors.error,
+                              color: ThemeColors(context).error,
                             ),
                           ),
                         ),
@@ -161,14 +167,16 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                     Icon(
                       Icons.add_circle_outline,
                       size: 16,
-                      color: SemanticColors.primary,
+                      color: ThemeColors(context).primary,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Add New API Key',
-                      style: TextStyles.caption.copyWith(
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: SemanticColors.primary,
+                        color: ThemeColors(context).primary,
                       ),
                     ),
                   ],
@@ -186,14 +194,16 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                     Icon(
                       Icons.settings,
                       size: 16,
-                      color: SemanticColors.onSurfaceVariant,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'API Settings',
-                      style: TextStyles.caption.copyWith(
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: SemanticColors.onSurfaceVariant,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -235,11 +245,11 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
               SizedBox(width: 8),
               Text(
                 'Switched to ${apiConfig.name}',
-                style: TextStyles.bodyMedium,
+                style: TextStyle(fontFamily: 'Space Grotesk'),
               ),
             ],
           ),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: ThemeColors(context).success,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 2),
         ),

@@ -112,4 +112,10 @@ class TextStyles {
  static const TextStyle titleLarge = pageTitle;
  static const TextStyle titleMedium = cardTitle;
  static const TextStyle titleSmall = labelLarge;
+ 
+ // Headline styles for compatibility
+ static const TextStyle headlineLarge = pageTitle;
+ static const TextStyle headlineMedium = sectionTitle;
+ static const TextStyle headlineSmall = cardTitle;
+ static const TextStyle headingMedium = cardTitle;
 }

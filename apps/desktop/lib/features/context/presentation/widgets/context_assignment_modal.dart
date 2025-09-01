@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../providers/context_provider.dart';
 import '../../data/models/context_document.dart';
+import '../../data/repositories/context_repository.dart';
 
 class ContextAssignmentModal extends ConsumerStatefulWidget {
  final String agentId;

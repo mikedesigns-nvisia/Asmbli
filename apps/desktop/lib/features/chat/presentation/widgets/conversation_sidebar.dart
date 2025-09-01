@@ -5,6 +5,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../providers/conversation_provider.dart';
 import 'conversation_list.dart';
 import 'conversation_archive_modal.dart';
+import 'topic_management_section.dart';
 
 class ConversationSidebar extends ConsumerStatefulWidget {
  const ConversationSidebar({super.key});
@@ -15,7 +16,7 @@ class ConversationSidebar extends ConsumerStatefulWidget {
 
 class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  bool isCollapsed = false;
- int _selectedTab = 0; // 0: Conversations, 1: Agent Context
+ int _selectedTab = 0; // 0: Topics, 1: All Conversations
 
  @override
  Widget build(BuildContext context) {
@@ -97,7 +98,9 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  
  // Conversation List
  Expanded(
- child: ConversationList(),
+ child: _selectedTab == 0 
+              ? TopicManagementSection()
+              : ConversationList(),
  ),
  
  // Footer with additional actions

@@ -275,7 +275,8 @@ class IntegrationHubNotifier extends StateNotifier<IntegrationHubState> {
   }
 
   Future<MarketplaceStatistics> _loadMarketplaceStatistics() async {
-    return Future.value(_marketplaceService.getMarketplaceStatistics());
+    final stats = _marketplaceService.getMarketplaceStatistics();
+    return stats;
   }
 
   Future<void> _refreshIntegrations() async {

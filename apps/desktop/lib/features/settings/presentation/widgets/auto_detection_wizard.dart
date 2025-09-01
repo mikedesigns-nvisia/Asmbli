@@ -35,7 +35,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
         height: 500,
         decoration: BoxDecoration(
           color: SemanticColors.surface,
-          borderRadius: BorderRadiusTokens.xl,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
           border: Border.all(color: SemanticColors.border),
         ),
         child: Column(
@@ -51,7 +51,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
 
   Widget _buildHeader() {
     return Container(
-      padding: SpacingTokens.headerPadding,
+      padding: EdgeInsets.all(SpacingTokens.headerPadding),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: SemanticColors.border)),
       ),
@@ -91,15 +91,15 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
 
   Widget _buildReadyStep() {
     return Padding(
-      padding: SpacingTokens.xxl,
+      padding: EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: SpacingTokens.xxl,
+            padding: EdgeInsets.all(SpacingTokens.xxl),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadiusTokens.lg,
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
             child: Icon(
               Icons.search,
@@ -149,7 +149,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: SemanticColors.background,
-        borderRadius: BorderRadiusTokens.lg,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         border: Border.all(color: SemanticColors.border),
       ),
       child: Column(
@@ -170,7 +170,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
               ),
               decoration: BoxDecoration(
                 color: SemanticColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadiusTokens.sm,
+                borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Text(
                 category,
@@ -187,7 +187,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
 
   Widget _buildDetectingStep() {
     return Padding(
-      padding: SpacingTokens.xxl,
+      padding: EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -257,7 +257,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadiusTokens.lg,
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -331,10 +331,10 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
   Widget _buildIntegrationCard(IntegrationDetection integration) {
     return Container(
       margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-      padding: SpacingTokens.md,
+      padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: SemanticColors.surface,
-        borderRadius: BorderRadiusTokens.md,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(color: SemanticColors.border),
       ),
       child: Row(

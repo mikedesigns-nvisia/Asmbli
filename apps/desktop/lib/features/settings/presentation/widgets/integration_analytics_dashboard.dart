@@ -26,7 +26,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
           SizedBox(height: SpacingTokens.xxl),
           
           // Real-time Status
-          _buildRealTimeStatus(realTimeTracker, usageData),
+          _buildRealTimeStatus(context, realTimeTracker, usageData),
           SizedBox(height: SpacingTokens.xxl),
           
           // Statistics Overview
@@ -654,7 +654,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
     }
   }
 
-  Widget _buildRealTimeStatus(RealTimeIntegrationTracker tracker, Map<String, IntegrationUsageData> usageData) {
+  Widget _buildRealTimeStatus(BuildContext context, RealTimeIntegrationTracker tracker, Map<String, IntegrationUsageData> usageData) {
     final colors = ThemeColors(context);
     
     return Row(

@@ -13,6 +13,7 @@ class AppRoutes {
  static const String agentWizard = '/agent-wizard';
  static const String integrations = '/integrations';
  static const String integrationHub = '/integration-hub';
+ static const String marketplace = '/marketplace';
  
  // Demo route (remove after video recording)
  static const String demoChat = '/demo-chat';
@@ -28,6 +29,7 @@ class AppRoutes {
  agentWizard: 'Create Agent',
  integrations: 'Add Integrations',
  integrationHub: 'Integration Hub',
+ marketplace: 'Marketplace',
  demoChat: 'Demo Chat', // Remove after video
  };
  
@@ -47,6 +49,7 @@ class AppRoutes {
  agentWizard,
  integrations,
  integrationHub,
+ marketplace,
  demoChat, // Remove after video
  ];
 }

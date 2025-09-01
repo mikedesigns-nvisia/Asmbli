@@ -78,12 +78,14 @@ class AgentContextPromptService {
         return 'Knowledge Base';
       case ContextType.examples:
         return 'Examples & Templates';
-      case ContextType.procedures:
-        return 'Procedures & Guidelines';
-      case ContextType.faq:
-        return 'Frequently Asked Questions';
-      case ContextType.reference:
-        return 'Reference Materials';
+      case ContextType.guidelines:
+        return 'Guidelines & Procedures';
+      case ContextType.documentation:
+        return 'Documentation';
+      case ContextType.codebase:
+        return 'Codebase';
+      case ContextType.custom:
+        return 'Custom';
     }
   }
 
@@ -92,8 +94,8 @@ class AgentContextPromptService {
     final buffer = StringBuffer();
     
     buffer.writeln('\n**${doc.title}**');
-    if (doc.description.isNotEmpty) {
-      buffer.writeln('${doc.description}');
+    if (doc.metadata.containsKey('description') && doc.metadata['description'].toString().isNotEmpty) {
+      buffer.writeln('${doc.metadata['description']}');
     }
     
     // Include content summary or key excerpts
