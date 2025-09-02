@@ -713,7 +713,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
        agentName: agent.name,
        systemPrompt: agent.configuration['systemPrompt']?.toString() ?? 
          'You are a helpful AI assistant named ${agent.name}. ${agent.description}',
-       apiProvider: agent.configuration['model']?.toString() ?? 'Claude 3.5 Sonnet',
+       apiProvider: agent.configuration['model']?.toString() ?? 'Default Model',
        mcpServers: mcpServers,
        mcpServerConfigs: {}, // Will be populated from settings
        contextDocuments: [], // Can be added later

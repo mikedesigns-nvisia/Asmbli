@@ -16,7 +16,7 @@ class ConversationSidebar extends ConsumerStatefulWidget {
 
 class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  bool isCollapsed = false;
- int _selectedTab = 0; // 0: Topics, 1: All Conversations
+ bool _showTopicsSection = false;
 
  @override
  Widget build(BuildContext context) {
@@ -82,6 +82,13 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  fontWeight: FontWeight.w600,
  fontSize: 14,
  ),
+ ),
+ SizedBox(width: SpacingTokens.iconSpacing),
+ // New Chat Button
+ AsmblButton.primary(
+ text: 'New Chat',
+ icon: Icons.add,
+ onPressed: _startNewChat,
  ),
  Spacer(),
  IconButton(
@@ -150,5 +157,28 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  context: context,
  builder: (context) => const ConversationArchiveModal(),
  );
+ }
+
+ void _startNewChat() async {
+ try {
+ // Create a new conversation
+ final createConversation = ref.read(createConversationProvider);
+ final conversation = await createConversation(title: 'Let\'s Talk');
+ 
+ // Set as selected conversation
+ ref.read(selectedConversationIdProvider.notifier).state = conversation.id;
+ 
+ // Refresh conversations list
+ ref.invalidate(conversationsProvider);
+ } catch (e) {
+ if (mounted) {
+ ScaffoldMessenger.of(context).showSnackBar(
+ SnackBar(
+ content: Text('Failed to create new chat: $e'),
+ backgroundColor: ThemeColors(context).error,
+ ),
+ );
+ }
+ }
  }
 }

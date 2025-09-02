@@ -15,36 +15,30 @@ class UnifiedModelSelector extends ConsumerStatefulWidget {
 }
 
 class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
-  String? _selectedModelId;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final allModels = ref.watch(allModelConfigsProvider);
-    final defaultModel = ref.watch(defaultModelConfigProvider);
+    final selectedModel = ref.watch(selectedModelProvider);
     
     // Separate models by type
     final localModels = allModels.values.where((m) => m.isLocal).toList();
     final apiModels = allModels.values.where((m) => m.isApi).toList();
     
-    // Set selected model ID if not set or invalid
-    if (allModels.isEmpty) {
-      _selectedModelId = '__loading__';
-    } else if (_selectedModelId == null || !allModels.containsKey(_selectedModelId)) {
-      _selectedModelId = defaultModel?.id;
-    }
+    // Get selected model ID
+    final selectedModelId = allModels.isEmpty ? '__loading__' : selectedModel?.id;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildModelDropdown(theme, localModels, apiModels),
-        if (_selectedModelId != null && _selectedModelId != '__loading__')
+        _buildModelDropdown(theme, localModels, apiModels, selectedModelId),
+        if (selectedModelId != null && selectedModelId != '__loading__')
           _buildModelInfoPanel(_getSelectedModel(allModels)),
       ],
     );
   }
 
-  Widget _buildModelDropdown(ThemeData theme, List<ModelConfig> localModels, List<ModelConfig> apiModels) {
+  Widget _buildModelDropdown(ThemeData theme, List<ModelConfig> localModels, List<ModelConfig> apiModels, String? selectedModelId) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -55,7 +49,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: _selectedModelId,
+          value: selectedModelId,
           isExpanded: true,
           icon: Icon(
             Icons.keyboard_arrow_down,
@@ -526,8 +520,8 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
   }
 
   ModelConfig? _getSelectedModel(Map<String, ModelConfig> allModels) {
-    if (_selectedModelId == null) return null;
-    return allModels[_selectedModelId];
+    final selectedModel = ref.read(selectedModelProvider);
+    return selectedModel;
   }
 
   void _onModelChanged(String? value) async {
@@ -545,9 +539,12 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
         break;
       default:
         if (!value.startsWith('__')) {
-          setState(() {
-            _selectedModelId = value;
-          });
+          // Find the model and update the provider
+          final allModels = ref.read(allModelConfigsProvider);
+          final model = allModels[value];
+          if (model != null) {
+            ref.read(selectedModelProvider.notifier).state = model;
+          }
           _showModelSwitchedSnackbar(value);
           
           // Set as default model

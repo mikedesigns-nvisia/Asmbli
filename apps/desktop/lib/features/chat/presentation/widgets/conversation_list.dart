@@ -22,24 +22,19 @@ class ConversationList extends ConsumerWidget {
  children: [
  Row(
  children: [
+ Icon(
+ Icons.chat_bubble_outline,
+ size: 16,
+ color: ThemeColors(context).onSurface,
+ ),
+ SizedBox(width: SpacingTokens.iconSpacing),
  Text(
- 'New Conversation',
+ 'All Conversations',
  style: TextStyles.bodyMedium.copyWith(
  color: ThemeColors(context).onSurface,
  fontWeight: FontWeight.w600,
  fontSize: 14,
  ),
- ),
- Spacer(),
- IconButton(
- onPressed: () => _createNewConversation(ref),
- icon: Icon(Icons.add, size: 18),
- style: IconButton.styleFrom(
- backgroundColor: ThemeColors(context).primary.withValues(alpha: 0.1),
- foregroundColor: ThemeColors(context).primary,
- padding: EdgeInsets.all(SpacingTokens.sm),
- ),
- tooltip: 'New Conversations',
  ),
  ],
  ),
@@ -78,29 +73,55 @@ class ConversationList extends ConsumerWidget {
  }
 
  Widget _buildEmptyState(BuildContext context) {
+ return Consumer(
+ builder: (context, ref, _) {
+ return _buildEmptyStateContent(context, ref);
+ },
+ );
+ }
+
+ Widget _buildEmptyStateContent(BuildContext context, WidgetRef ref) {
  return Center(
  child: Column(
  mainAxisAlignment: MainAxisAlignment.center,
  children: [
- Icon(
- Icons.chat_bubble_outline,
- size: 48,
- color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
+ Container(
+ width: 80,
+ height: 80,
+ decoration: BoxDecoration(
+ color: ThemeColors(context).primary.withValues(alpha: 0.1),
+ borderRadius: BorderRadius.circular(40),
+ border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.2)),
  ),
- SizedBox(height: SpacingTokens.lg),
+ child: Icon(
+ Icons.chat_bubble_outline,
+ size: 40,
+ color: ThemeColors(context).primary,
+ ),
+ ),
+ SizedBox(height: SpacingTokens.xl),
  Text(
- 'No conversations yet',
+ 'Start Your First Conversation',
  style: TextStyles.bodyMedium.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
+ color: ThemeColors(context).onSurface,
+ fontWeight: FontWeight.w600,
+ fontSize: 16,
  ),
  ),
  SizedBox(height: SpacingTokens.sm),
  Text(
- 'Create your first conversation to get started',
+ 'Chat directly with AI or organize\nconversations with topics later',
  style: TextStyles.bodySmall.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
+ height: 1.5,
  ),
  textAlign: TextAlign.center,
+ ),
+ SizedBox(height: SpacingTokens.xl),
+ AsmblButton.primary(
+ text: 'Start New Chat',
+ icon: Icons.add_comment,
+ onPressed: () => _createNewConversation(ref),
  ),
  ],
  ),
@@ -464,10 +485,10 @@ class _ConversationItem extends ConsumerWidget {
  ),
  ],
  ),
- if (_getApiProvider() != null) ...[
+ if (_getProviderDisplayText() != null) ...[
  SizedBox(height: 4),
  Text(
- 'API: ${_getApiProvider()}',
+ _getProviderDisplayText()!,
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
  fontSize: 10,
@@ -586,7 +607,39 @@ class _ConversationItem extends ConsumerWidget {
  }
 
  String? _getApiProvider() {
- return conversation.metadata?['apiProvider'] as String?;
+ // First try to get from stored conversation metadata
+ final storedModelName = conversation.metadata?['defaultModelName'] as String?;
+ final modelType = conversation.metadata?['modelType'] as String?;
+ final provider = conversation.metadata?['defaultModelProvider'] as String?;
+
+ if (modelType == 'local' && storedModelName != null) {
+   return 'Local';
+ } else if (provider != null) {
+   return provider;
+ } else if (storedModelName != null) {
+   return storedModelName;
+ } else {
+   // Fallback to legacy apiProvider field
+   return conversation.metadata?['apiProvider'] as String?;
+ }
+ }
+
+ String? _getProviderDisplayText() {
+   final storedModelName = conversation.metadata?['defaultModelName'] as String?;
+   final modelType = conversation.metadata?['modelType'] as String?;
+   final provider = conversation.metadata?['defaultModelProvider'] as String?;
+   
+   if (modelType == 'local' && storedModelName != null) {
+     return 'Local';
+   } else if (provider != null) {
+     return provider;
+   } else if (storedModelName != null) {
+     return storedModelName;
+   } else {
+     // Fallback to legacy apiProvider field
+     final legacyProvider = conversation.metadata?['apiProvider'] as String?;
+     return legacyProvider;
+   }
  }
 
  String _formatDate(DateTime date) {

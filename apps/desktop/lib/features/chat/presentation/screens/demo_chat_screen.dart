@@ -352,7 +352,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                 children: [
                   Icon(Icons.api, size: 16, color: SemanticColors.primary),
                   SizedBox(width: SpacingTokens.sm),
-                  Text('Claude 3.5 Sonnet', style: TextStyles.bodySmall),
+                  Text('AI Assistant', style: TextStyles.bodySmall),
                 ],
               ),
             ),
@@ -434,7 +434,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
               children: [
                 Icon(Icons.api, size: 12, color: SemanticColors.primary),
                 SizedBox(width: 4),
-                Text('Claude 3.5 Sonnet', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: SemanticColors.primary)),
+                Text('AI Assistant', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: SemanticColors.primary)),
               ],
             ),
           ),

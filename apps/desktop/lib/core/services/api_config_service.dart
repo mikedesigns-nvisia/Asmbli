@@ -17,6 +17,15 @@ class ApiConfigService {
     try {
       await _storageService.initialize();
       await _loadApiConfigs();
+      
+      // Check for and remove hardcoded Claude 3.5 Sonnet entries
+      final hasHardcodedEntries = _apiConfigs.values.any((config) => 
+        config.name == 'Claude 3.5 Sonnet');
+      
+      if (hasHardcodedEntries) {
+        print('🔄 Detected hardcoded entries, resetting API configurations...');
+        await resetToDefaults();
+      }
     } catch (e) {
       print('Error initializing API config service: $e');
       await _createDefaultConfig();
@@ -133,7 +142,7 @@ class ApiConfigService {
   Future<void> _createDefaultConfig() async {
     const defaultConfig = ApiConfig(
       id: 'anthropic-default',
-      name: 'Claude 3.5 Sonnet',
+      name: 'Default API Model',
       provider: 'Anthropic',
       model: 'claude-3-5-sonnet-20241022',
       apiKey: '', // Will be set by user
@@ -145,6 +154,14 @@ class ApiConfigService {
     _apiConfigs[defaultConfig.id] = defaultConfig;
     _defaultApiConfigId = defaultConfig.id;
     await _saveApiConfigs();
+  }
+
+  /// Reset all API configurations to defaults (removes hardcoded entries)
+  Future<void> resetToDefaults() async {
+    _apiConfigs.clear();
+    _defaultApiConfigId = null;
+    await _createDefaultConfig();
+    print('✅ API configurations reset to defaults');
   }
 }
 
@@ -261,7 +278,7 @@ class ApiConfigsNotifier extends StateNotifier<Map<String, ApiConfig>> {
       // Create a default configuration if loading fails
       final defaultConfig = ApiConfig(
         id: 'anthropic-default',
-        name: 'Claude 3.5 Sonnet',
+        name: 'Default API Model',
         provider: 'Anthropic',
         model: 'claude-3-5-sonnet-20241022',
         apiKey: '',

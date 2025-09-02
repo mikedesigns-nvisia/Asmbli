@@ -75,7 +75,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
       selectedProvider = config.provider;
       selectedModel = config.model;
     } else {
-      _nameController.text = 'Claude 3.5 Sonnet';
+      _nameController.text = 'Default API Model';
     }
   }
 

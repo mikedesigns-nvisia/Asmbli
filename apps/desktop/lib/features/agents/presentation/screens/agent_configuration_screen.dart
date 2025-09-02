@@ -25,7 +25,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  final _descriptionController = TextEditingController();
  final _systemPromptController = TextEditingController();
  
- String selectedModel = 'Claude 3.5 Sonnet';
+ String selectedModel = 'Default API Model';
  String selectedCategory = 'Research';
  double temperature = 0.7;
  int maxTokens = 2048;
@@ -42,7 +42,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  List<String> selectedMCPServers = [];
  
  final List<String> availableModels = [
- 'Claude 3.5 Sonnet',
+ 'Default API Model',
  'Claude 3.5 Haiku',
  'Claude 3 Opus',
  'Claude 3 Sonnet',

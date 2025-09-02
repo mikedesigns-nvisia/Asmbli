@@ -9,6 +9,12 @@ import '../models/model_config.dart';
 import 'desktop/desktop_service_provider.dart';
 
 /// Service for managing embedded Ollama instance and local models
+/// 
+/// STANDARD APPROACH FOR OLLAMA MODELS:
+/// - Uses DYNAMIC naming based on actual Ollama API parameter_size
+/// - NO hardcoded model names or capabilities
+/// - Automatically handles any model installed in Ollama
+/// - Scales to support new models without code changes
 class OllamaService {
   final DesktopServiceProvider _desktopService;
   Process? _ollamaProcess;
@@ -26,8 +32,10 @@ class OllamaService {
   Future<bool> get isAvailable async {
     try {
       final response = await _dio.get('/api/version');
+      print('DEBUG: Ollama available check - status: ${response.statusCode}');
       return response.statusCode == 200;
     } catch (e) {
+      print('DEBUG: Ollama not available - error: $e');
       return false;
     }
   }
@@ -193,23 +201,31 @@ class OllamaService {
   /// Get list of installed models
   Future<List<ModelConfig>> getInstalledModels() async {
     try {
+      print('DEBUG: Calling /api/tags to get installed models');
       final response = await _dio.get('/api/tags');
       final data = response.data as Map<String, dynamic>;
       final models = data['models'] as List<dynamic>? ?? [];
+      
+      print('DEBUG: Found ${models.length} installed models in Ollama');
       
       return models.map<ModelConfig>((modelData) {
         final model = modelData as Map<String, dynamic>;
         final name = model['name'] as String;
         final sizeBytes = model['size'] as int? ?? 0;
+        final details = model['details'] as Map<String, dynamic>? ?? {};
+        final parameterSize = details['parameter_size'] as String? ?? '';
         
-        return ModelConfig.localModel(
+        final modelConfig = ModelConfig.localModel(
           id: 'local_${name.replaceAll(':', '_')}',
-          name: _formatModelName(name),
+          name: _formatModelNameWithParams(name, parameterSize),
           ollamaModelId: name,
           status: ModelStatus.ready,
           modelSize: sizeBytes,
           capabilities: _getModelCapabilities(name),
         );
+        
+        print('DEBUG: Created model config - id: ${modelConfig.id}, name: ${modelConfig.name}, ollamaId: ${modelConfig.ollamaModelId}');
+        return modelConfig;
       }).toList();
     } catch (e) {
       print('Failed to get installed models: $e');
@@ -388,40 +404,113 @@ class OllamaService {
     return [];
   }
 
-  /// Format model name for display
-  String _formatModelName(String ollamaName) {
-    // Convert ollama model names to display names
-    final name = ollamaName.split(':').first;
+  /// Format model name for display using actual parameter information from Ollama
+  /// This is the STANDARD method for all Ollama models - completely dynamic
+  String _formatModelNameWithParams(String ollamaName, String parameterSize) {
+    final baseName = ollamaName.split(':').first;
+    final tag = ollamaName.contains(':') ? ollamaName.split(':').last : 'latest';
     
-    switch (name.toLowerCase()) {
-      case 'qwq':
-        return 'QwQ ${ollamaName.contains('32b') ? '32B' : 'Unknown'}';
-      case 'gemma2':
-        return 'Gemma 2 ${ollamaName.contains('27b') ? '27B' : 'Unknown'}';
-      case 'gpt-oss':
-        return 'GPT-OSS ${ollamaName.contains('20b') ? '20B' : ollamaName.contains('120b') ? '120B' : 'Unknown'}';
-      case 'deepseek-coder':
-        return 'DeepSeek Coder ${ollamaName.contains('6.7b') ? '6.7B' : 'Unknown'}';
+    // Convert base name to human-readable format
+    // Split on hyphens/underscores and capitalize each word
+    final displayName = baseName
+        .replaceAll('_', '-')  // Normalize underscores to hyphens
+        .split('-')
+        .map((word) => _capitalizeWord(word))
+        .join(' ');
+    
+    // Add parameter size if available (e.g., "7B", "13B", "70B")
+    if (parameterSize.isNotEmpty) {
+      return '$displayName $parameterSize';
+    }
+    
+    // Add tag if it's not "latest" and we don't have parameter size
+    if (tag != 'latest') {
+      return '$displayName ($tag)';
+    }
+    
+    return displayName;
+  }
+  
+  /// Capitalize a word with special handling for common model name patterns
+  String _capitalizeWord(String word) {
+    if (word.isEmpty) return word;
+    
+    // Handle special cases for common model naming patterns
+    switch (word.toLowerCase()) {
+      case 'llm':
+        return 'LLM';
+      case 'gpt':
+        return 'GPT';
+      case 'ai':
+        return 'AI';
+      case 'oss':
+        return 'OSS';
+      case 'api':
+        return 'API';
+      case 'ui':
+        return 'UI';
+      case 'cli':
+        return 'CLI';
+      case 'nlp':
+        return 'NLP';
+      case 'ml':
+        return 'ML';
       default:
-        return name.toUpperCase();
+        // Standard capitalization
+        return word[0].toUpperCase() + word.substring(1).toLowerCase();
     }
   }
 
-  /// Get model capabilities based on model name
+  /// Get model capabilities based on model name patterns
+  /// This is the STANDARD method for all Ollama models - completely dynamic
   List<String> _getModelCapabilities(String ollamaName) {
     final name = ollamaName.toLowerCase();
+    final capabilities = <String>[];
     
-    if (name.contains('qwq')) {
-      return ['reasoning', 'thinking', 'math'];
-    } else if (name.contains('gemma')) {
-      return ['chat', 'reasoning', 'general'];
-    } else if (name.contains('gpt-oss')) {
-      return ['reasoning', 'code', 'general'];
-    } else if (name.contains('coder')) {
-      return ['code', 'programming', 'instruct'];
-    } else {
-      return ['general'];
+    // Reasoning/thinking models
+    if (name.contains('qwq') || name.contains('reasoning') || name.contains('think')) {
+      capabilities.addAll(['reasoning', 'thinking', 'math']);
     }
+    
+    // Code-focused models
+    if (name.contains('code') || name.contains('coder') || name.contains('programming') ||
+        name.contains('dev') || name.contains('instruct')) {
+      capabilities.addAll(['code', 'programming', 'instruct']);
+    }
+    
+    // Math/science models
+    if (name.contains('math') || name.contains('science') || name.contains('research')) {
+      capabilities.addAll(['math', 'research', 'analysis']);
+    }
+    
+    // Chat/conversation models
+    if (name.contains('chat') || name.contains('conversation') || name.contains('assistant')) {
+      capabilities.addAll(['chat', 'conversation']);
+    }
+    
+    // Large general-purpose models (usually good at multiple tasks)
+    if (name.contains('llama') || name.contains('gemma') || name.contains('gpt') ||
+        name.contains('mistral') || name.contains('qwen')) {
+      capabilities.addAll(['general', 'reasoning', 'chat']);
+    }
+    
+    // Multimodal models
+    if (name.contains('vision') || name.contains('multimodal') || name.contains('visual')) {
+      capabilities.addAll(['multimodal', 'vision', 'image']);
+    }
+    
+    // Language-specific models
+    if (name.contains('translate') || name.contains('multilingual')) {
+      capabilities.addAll(['translation', 'multilingual']);
+    }
+    
+    // If no specific capabilities detected, default to general
+    if (capabilities.isEmpty) {
+      capabilities.add('general');
+    }
+    
+    // Remove duplicates and return
+    return capabilities.toSet().toList();
   }
 
   /// Try to use system-installed Ollama as fallback

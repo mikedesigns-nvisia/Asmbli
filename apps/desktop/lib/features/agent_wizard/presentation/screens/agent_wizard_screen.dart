@@ -522,7 +522,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
           children: [
             _buildModelOption('OpenAI GPT-4', 'Most capable, best for complex tasks', Icons.psychology),
             SizedBox(height: SpacingTokens.lg),
-            _buildModelOption('Claude 3.5 Sonnet', 'Excellent reasoning and coding', Icons.auto_awesome),
+            _buildModelOption('Default API Model', 'Configurable AI assistant', Icons.auto_awesome),
             SizedBox(height: SpacingTokens.lg), 
             _buildModelOption('Local Model', 'Run privately on your machine', Icons.computer),
           ],

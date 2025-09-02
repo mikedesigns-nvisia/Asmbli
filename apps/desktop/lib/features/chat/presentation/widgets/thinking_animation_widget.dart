@@ -288,7 +288,7 @@ class _ThinkingBubbleWidgetState extends State<ThinkingBubbleWidget>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Claude is thinking',
+                            'thinking...',
                             style: TextStyle(
                               
                               fontSize: 15,

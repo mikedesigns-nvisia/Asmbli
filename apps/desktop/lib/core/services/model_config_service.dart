@@ -23,6 +23,8 @@ class ModelConfigService extends ApiConfigService {
   Future<void> initialize() async {
     if (_isInitialized) return;
     
+    print('DEBUG: ModelConfigService.initialize() called');
+    
     // Initialize base API config service
     await super.initialize();
     
@@ -32,14 +34,18 @@ class ModelConfigService extends ApiConfigService {
     
     // Initialize Ollama service
     try {
+      print('DEBUG: Initializing Ollama service...');
       await _ollamaService.initialize();
+      print('DEBUG: Ollama service initialized, calling sync...');
       await _syncWithOllama();
+      print('DEBUG: Ollama sync completed');
     } catch (e) {
       print('Failed to initialize Ollama service: $e');
       // Continue without local models
     }
     
     _isInitialized = true;
+    print('DEBUG: ModelConfigService initialization complete');
   }
 
   /// Migrate existing ApiConfigs to ModelConfigs
@@ -94,10 +100,29 @@ class ModelConfigService extends ApiConfigService {
 
   /// Get default model configuration
   ModelConfig? get defaultModelConfig {
+    // First check if there's a default local model set
+    final defaultLocalId = _storageService.getPreference<String>('default_local_model');
+    if (defaultLocalId != null) {
+      final localModel = getModelConfig(defaultLocalId);
+      if (localModel != null && localModel.isConfigured) {
+        return localModel;
+      }
+    }
+    
+    // Fallback to API default
     final defaultId = super.defaultApiConfigId;
     if (defaultId != null) {
       return getModelConfig(defaultId);
     }
+    
+    // Final fallback: any ready local model
+    final readyLocalModels = localModelConfigs.values
+        .where((model) => model.status == ModelStatus.ready)
+        .toList();
+    if (readyLocalModels.isNotEmpty) {
+      return readyLocalModels.first;
+    }
+    
     return null;
   }
 
@@ -242,6 +267,7 @@ class ModelConfigService extends ApiConfigService {
   Future<void> _syncWithOllama() async {
     try {
       final installedModels = await _ollamaService.getInstalledModels();
+      print('DEBUG: Ollama installed models: ${installedModels.map((m) => '${m.name} (${m.ollamaModelId})').join(', ')}');
       
       for (final installedModel in installedModels) {
         // Update existing local model or add new one
@@ -251,12 +277,14 @@ class ModelConfigService extends ApiConfigService {
             
         if (existingModel != null) {
           // Update status to ready
+          print('DEBUG: Updating existing model ${existingModel.name} to ready');
           _localModels[existingModel.id] = existingModel.copyWith(
             status: ModelStatus.ready,
             modelSize: installedModel.modelSize,
           );
         } else {
           // Add newly discovered model
+          print('DEBUG: Adding new discovered model ${installedModel.name}');
           _localModels[installedModel.id] = installedModel;
         }
       }
@@ -335,6 +363,14 @@ class ModelConfigService extends ApiConfigService {
     return allModelConfigs.values
         .where((model) => model.isConfigured)
         .toList();
+  }
+
+  /// Reset all configurations to defaults (removes hardcoded entries)
+  Future<void> resetToDefaults() async {
+    await super.resetToDefaults();
+    _localModels.clear();
+    await _saveLocalModels();
+    print('✅ All model configurations reset to defaults');
   }
 }
 
@@ -474,4 +510,11 @@ final availableModelConfigsProvider = Provider<Map<String, ModelConfig>>((ref) {
 final readyModelConfigsProvider = Provider<List<ModelConfig>>((ref) {
   final service = ref.watch(modelConfigServiceProvider);
   return service.getReadyModels();
+});
+
+// Provider for currently selected model (for chat)
+final selectedModelProvider = StateProvider<ModelConfig?>((ref) {
+  // Default to the default model config
+  final defaultModel = ref.watch(defaultModelConfigProvider);
+  return defaultModel;
 });

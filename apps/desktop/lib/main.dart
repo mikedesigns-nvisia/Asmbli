@@ -27,6 +27,7 @@ import 'core/services/feature_flag_service.dart';
 import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
 import 'features/settings/presentation/screens/integration_center_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'core/services/desktop/hive_cleanup_service.dart';
 
 void main() async {
  WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,30 @@ void main() async {
  try {
  await DesktopServiceProvider.instance.initialize();
  // Desktop services initialized successfully
+ 
+ // Check and clean database if needed
+ print('🔍 Checking database health...');
+ try {
+   final health = await HiveCleanupService.checkBoxHealth();
+   if (!(health['isHealthy'] as bool? ?? false)) {
+     final corruptedCount = health['corruptedEntries'] as int? ?? 0;
+     final typeIssues = health['typeIssues'] as int? ?? 0;
+     print('⚠️ Database issues detected: $corruptedCount corrupted, $typeIssues type issues');
+     
+     print('🧹 Running database cleanup...');
+     final cleaned = await HiveCleanupService.cleanupConversationsBox();
+     if (cleaned) {
+       print('✅ Database cleanup completed successfully');
+     } else {
+       print('❌ Database cleanup failed');
+     }
+   } else {
+     print('✅ Database is healthy');
+   }
+ } catch (cleanupError) {
+   print('⚠️ Database cleanup check failed: $cleanupError');
+ }
+ 
  } catch (e) {
  // Desktop services initialization failed - using fallback
  // Fallback to legacy storage
@@ -470,7 +495,7 @@ class _ConversationItem extends StatelessWidget {
  ),
  SizedBox(height: SpacingTokens.xs_precise),
  Text(
- isAgentConversation ? 'Agent Chat' : 'Direct API Chat',
+ _getConversationTypeDescription(conversation),
  style: TextStyles.caption.copyWith(
  color: colors.onSurfaceVariant,
  ),
@@ -505,6 +530,34 @@ class _ConversationItem extends StatelessWidget {
  return '${difference.inDays}d ago';
  } else {
  return '${dateTime.day}/${dateTime.month}';
+ }
+ }
+
+ String _getConversationTypeDescription(Conversation conversation) {
+ final agentType = conversation.metadata?['type'] as String?;
+ 
+ switch (agentType) {
+ case 'agent':
+ return 'Agent Chat';
+ case 'default_api':
+ case 'direct_chat':
+ // Check if conversation has stored model information
+ final storedModelName = conversation.metadata?['defaultModelName'] as String?;
+ final modelType = conversation.metadata?['modelType'] as String?;
+ final provider = conversation.metadata?['defaultModelProvider'] as String?;
+ 
+ if (storedModelName != null && storedModelName.isNotEmpty) {
+ if (modelType == 'local') {
+ return 'Local $storedModelName';
+ } else if (provider != null) {
+ return '$provider Chat';
+ } else {
+ return '$storedModelName Chat';
+ }
+ }
+ return 'AI Chat';
+ default:
+ return 'Chat Session';
  }
  }
 }

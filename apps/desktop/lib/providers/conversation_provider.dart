@@ -5,6 +5,8 @@ import 'package:agent_engine_core/models/conversation.dart';
 import '../core/services/mcp_settings_service.dart';
 import '../core/services/agent_system_prompt_service.dart';
 import '../core/services/model_config_service.dart';
+import '../core/services/desktop/hive_cleanup_service.dart';
+import '../core/models/model_config.dart';
 
 final conversationServiceProvider = Provider<ConversationService>((ref) {
  return DesktopConversationService();
@@ -54,12 +56,35 @@ final createConversationProvider = Provider.autoDispose((ref) {
  final service = ref.read(conversationServiceProvider);
  
  return ({required String title, Map<String, dynamic>? metadata}) async {
+ // Get the default model configuration to store with conversation
+ final defaultModel = ref.read(defaultModelConfigProvider);
+ 
+ // Merge provided metadata with default model information
+ final conversationMetadata = {
+   'type': 'direct_chat',
+   'createdAt': DateTime.now().toIso8601String(),
+   'version': '1.0.0',
+   'generator': 'AgentEngine Direct Chat',
+   ...?metadata, // Spread provided metadata (can override above values)
+ };
+ 
+ // Add default model info if available
+ if (defaultModel != null) {
+   conversationMetadata.addAll({
+     'defaultModelId': defaultModel.id,
+     'defaultModelName': defaultModel.name,
+     'defaultModelProvider': defaultModel.provider,
+     'modelType': defaultModel.isLocal ? 'local' : 'api',
+     'modelConfigured': defaultModel.isConfigured,
+   });
+ }
+ 
  final conversation = Conversation(
  id: DateTime.now().millisecondsSinceEpoch.toString(),
  title: title,
  messages: [],
  createdAt: DateTime.now(),
- metadata: metadata,
+ metadata: conversationMetadata,
  );
  
  return await service.createConversation(conversation);
@@ -162,14 +187,14 @@ final getOrCreateDefaultConversationProvider = Provider.autoDispose((ref) {
  // Create new default API conversation if none exists
  final defaultMetadata = {
  'type': 'default_api',
- 'apiProvider': ref.read(defaultModelConfigProvider)?.name ?? 'No AI Model',
- 'description': 'Direct API chat without agent',
+ 'apiProvider': _getProviderName(ref),
+ 'description': 'LLM chat without agent',
  'createdAt': DateTime.now().toIso8601String(),
  };
  
  final conversation = Conversation(
  id: DateTime.now().millisecondsSinceEpoch.toString(),
- title: 'Direct API Chat',
+ title: 'Let\'s Talk',
  messages: [],
  createdAt: DateTime.now(),
  metadata: defaultMetadata,
@@ -197,7 +222,56 @@ final sendMessageProvider = Provider.autoDispose((ref) {
 
 final isLoadingProvider = StateProvider<bool>((ref) => false);
 
+// Provider to get the model configuration for a conversation
+final conversationModelConfigProvider = Provider.family<ModelConfig?, String>((ref, conversationId) {
+  final conversationAsync = ref.watch(conversationProvider(conversationId));
+  final modelConfigService = ref.read(modelConfigServiceProvider);
+  
+  return conversationAsync.maybeWhen(
+    data: (conversation) {
+      final metadata = conversation.metadata;
+      
+      // Try to get stored model from conversation metadata
+      final storedModelId = metadata?['defaultModelId'] as String?;
+      if (storedModelId != null) {
+        final storedModel = modelConfigService.getModelConfig(storedModelId);
+        if (storedModel != null && storedModel.isConfigured) {
+          return storedModel;
+        }
+      }
+      
+      // Fallback to current default model
+      return modelConfigService.defaultModelConfig;
+    },
+    orElse: () => null,
+  );
+});
+
+// Provider for currently selected conversation ID
 final selectedConversationIdProvider = StateProvider<String?>((ref) => null);
+
+// Provider to check if we need to run database cleanup
+final databaseHealthProvider = FutureProvider<bool>((ref) async {
+  try {
+    final health = await HiveCleanupService.checkBoxHealth();
+    return health['isHealthy'] as bool? ?? false;
+  } catch (e) {
+    // If we can't check health, assume it needs cleanup
+    return false;
+  }
+});
+
+// Provider to run database cleanup
+final runDatabaseCleanupProvider = Provider<Future<bool> Function()>((ref) {
+  return () async {
+    try {
+      return await HiveCleanupService.cleanupConversationsBox();
+    } catch (e) {
+      print('Failed to run database cleanup: $e');
+      return false;
+    }
+  };
+});
 
 // Archive/Unarchive conversation
 final archiveConversationProvider = Provider.autoDispose((ref) {
@@ -259,3 +333,16 @@ final updateConversationProvider = Provider.autoDispose((ref) {
     return await service.updateConversation(updatedConversation);
   };
 });
+
+/// Helper function to get provider name for conversation metadata
+String _getProviderName(Ref ref) {
+  final defaultModel = ref.read(defaultModelConfigProvider);
+  if (defaultModel != null) {
+    if (defaultModel.isLocal) {
+      return 'Local ${defaultModel.name}';
+    } else {
+      return defaultModel.provider;
+    }
+  }
+  return 'LLM';
+}

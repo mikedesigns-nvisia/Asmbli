@@ -17,7 +17,7 @@ import '../../../../core/services/api_config_service.dart';
 import '../../../../core/services/llm/unified_llm_service.dart';
 import '../../../../core/services/llm/llm_provider.dart';
 import '../../../../core/services/model_config_service.dart';
-import '../widgets/conversation_sidebar.dart';
+import '../widgets/improved_conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/agent_deployment_section.dart';
 import '../widgets/unified_model_selector.dart';
@@ -143,7 +143,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  
  // Right Sidebar for Conversations
- const ConversationSidebar(),
+ const ImprovedConversationSidebar(),
  ],
  ),
  ),
@@ -164,7 +164,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: Row(
  children: [
  Text(
- 'Welcome to AgentEngine',
+ 'Let\'s Talk',
  style: GoogleFonts.fustat(
   fontSize: 20,
  fontWeight: FontWeight.w600,
@@ -277,13 +277,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  mainAxisSize: MainAxisSize.min,
  children: [
  Icon(
- Icons.api,
+ _getConversationIcon(conversation),
  size: 12,
  color: _getConversationTypeColor(conversation, theme),
  ),
  SizedBox(width: 4),
  Text(
- conversation.metadata?['apiProvider'] ?? (ref.read(defaultModelConfigProvider)?.name ?? 'No AI Model'),
+ _getConversationBadgeText(conversation),
  style: GoogleFonts.fustat(
   fontSize: 12,
  fontWeight: FontWeight.w500,
@@ -371,12 +371,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  }
 
  Color _getConversationTypeColor(core.Conversation conversation, ThemeData theme) {
- final type = conversation.metadata?['type'] as String?;
+ final metadata = conversation.metadata;
+ final type = metadata?['type'] as String?;
+ final modelType = metadata?['modelType'] as String?;
+ 
  switch (type) {
  case 'agent':
  return ThemeColors(context).primary;
  case 'default_api':
- return theme.colorScheme.onSurfaceVariant;
+ case 'direct_chat':
+   // Use different colors for local vs API models
+   if (modelType == 'local') {
+     return ThemeColors(context).accent; // Use accent color for local models
+   } else {
+     return theme.colorScheme.onSurfaceVariant; // API models
+   }
  default:
  return theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7);
  }
@@ -391,6 +400,55 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  return Icons.api;
  default:
  return Icons.chat;
+ }
+ }
+
+ /// Get appropriate icon for conversation badge based on model type
+ IconData _getConversationIcon(core.Conversation conversation) {
+ final metadata = conversation.metadata;
+ final modelType = metadata?['modelType'] as String?;
+ final type = metadata?['type'] as String?;
+ 
+ if (type == 'agent') {
+   return Icons.smart_toy;
+ }
+ 
+ if (modelType == 'local') {
+   return Icons.storage; // Local storage icon for local models
+ } else {
+   return Icons.cloud; // Cloud icon for API models
+ }
+ }
+
+ /// Get contextual text for conversation badge
+ String _getConversationBadgeText(core.Conversation conversation) {
+ final metadata = conversation.metadata;
+ final modelType = metadata?['modelType'] as String?;
+ final modelName = metadata?['defaultModelName'] as String?;
+ final provider = metadata?['defaultModelProvider'] as String?;
+ final type = metadata?['type'] as String?;
+ 
+ if (type == 'agent') {
+   return 'Agent';
+ }
+ 
+ if (modelType == 'local' && modelName != null) {
+   return 'Local';
+ } else if (provider != null) {
+   return provider;
+ } else if (modelName != null) {
+   return modelName;
+ } else {
+   // Fallback to current selected model
+   final selectedModel = ref.read(selectedModelProvider);
+   if (selectedModel != null) {
+     if (selectedModel.isLocal) {
+       return 'Local';
+     } else {
+       return selectedModel.provider;
+     }
+   }
+   return 'LLM';
  }
  }
 
@@ -474,7 +532,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  SizedBox(height: SpacingTokens.sectionSpacing),
  
- // API Configuration Section - Separated from Context
+ // LLM Provider Section - Separated from Context
  Padding(
  padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
  child: Column(
@@ -486,7 +544,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Padding(
  padding: EdgeInsets.only(left: 4, bottom: 6),
  child: Text(
- 'API Configuration',
+ 'LLM Provider',
  style: GoogleFonts.fustat(
   fontSize: 11,
  fontWeight: FontWeight.w500,
@@ -666,7 +724,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  // Start a Conversation
  Text(
- 'Direct API Chat',
+ 'LLM Chat',
  style: GoogleFonts.fustat(
   fontSize: 24,
  fontWeight: FontWeight.w600,
@@ -678,7 +736,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  // Description
  Text(
- 'Chat directly with ${ref.read(defaultModelConfigProvider)?.name ?? 'your AI assistant'}.\nLoad an agent from the sidebar for enhanced\ncapabilities with system prompts and MCP servers.',
+ 'Chat directly with ${ref.read(defaultModelConfigProvider)?.name ?? 'your AI assistant'}.\nAdd context documents for better help, or load an agent\nfrom the sidebar for enhanced capabilities.',
  style: GoogleFonts.fustat(
   fontSize: 14,
  color: theme.colorScheme.onSurfaceVariant,
@@ -869,7 +927,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  }
 
  Widget _buildAgentContextCard(core.Conversation conversation, ThemeData theme) {
-   final agentName = conversation.metadata?['agentName'] ?? 'Default API';
+   final agentName = _getDisplayName(conversation);
    final agentType = conversation.metadata?['type'] ?? 'default_api';
    final mcpServers = conversation.metadata?['mcpServers'] as List<dynamic>? ?? [];
    final contextDocs = conversation.metadata?['contextDocuments'] as List<dynamic>? ?? [];
@@ -925,7 +983,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                        ),
                      ),
                      Text(
-                       agentType == 'agent' ? 'MCP-Enabled Agent' : 'Basic API Assistant',
+                       _getConversationDescription(conversation),
                        style: GoogleFonts.fustat(
                                                   fontSize: 11,
                          color: theme.colorScheme.onSurfaceVariant,
@@ -1338,14 +1396,38 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  try {
  // Get unified LLM service and selected model
  final unifiedLLMService = ref.read(unifiedLLMServiceProvider);
- final selectedModel = ref.read(defaultModelConfigProvider);
+ final selectedModel = ref.read(selectedModelProvider);
 
- if (selectedModel == null || !selectedModel.isConfigured) {
- // Show a helpful error with direct access to model configuration
- if (mounted) {
-   _showApiKeyConfigurationDialog();
+ // Check if model is configured - different logic for local vs API models
+ print('DEBUG: Selected model: ${selectedModel?.name}, isLocal: ${selectedModel?.isLocal}, isConfigured: ${selectedModel?.isConfigured}, status: ${selectedModel?.status}');
+ 
+ if (selectedModel == null) {
+   if (mounted) {
+     _showApiKeyConfigurationDialog();
+   }
+   throw Exception('No model selected. Please select an AI model to start chatting.');
  }
- throw Exception('Model configuration required. Please configure your AI model to start chatting.');
+ 
+ if (!selectedModel.isConfigured) {
+   if (selectedModel.isLocal) {
+     // For local models, try to make them ready if Ollama is available
+     if (mounted) {
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(
+           content: Text('Local model "${selectedModel.name}" is not ready. Status: ${selectedModel.status}.\n\nTo fix:\n1. Install Ollama from ollama.ai\n2. Run: ollama pull ${selectedModel.ollamaModelId ?? selectedModel.name.toLowerCase()}'),
+           backgroundColor: ThemeColors(context).error,
+           duration: Duration(seconds: 6),
+         ),
+       );
+     }
+     throw Exception('Local model not ready. Status: ${selectedModel.status}. Please install Ollama and run: ollama pull ${selectedModel.ollamaModelId ?? selectedModel.name.toLowerCase()}');
+   } else {
+     // For API models, show API key configuration
+     if (mounted) {
+       _showApiKeyConfigurationDialog();
+     }
+     throw Exception('API model not configured. Please configure your API key to start chatting.');
+   }
  }
 
  // Get conversation messages for context
@@ -1448,7 +1530,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  SizedBox(height: SpacingTokens.textSectionSpacing),
  Text(
- 'Start the conversation',
+ 'Let\'s Talk',
  style: GoogleFonts.fustat(
   fontSize: 20,
  fontWeight: FontWeight.w600,
@@ -1473,6 +1555,99 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  String _formatTime(DateTime time) {
  return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+ }
+
+ /// Get display name for conversation - shows the actual conversation title or appropriate default
+ String _getDisplayName(core.Conversation conversation) {
+ final agentType = conversation.metadata?['type'] as String?;
+ final agentName = conversation.metadata?['agentName'] as String?;
+ 
+ // For agent conversations, prefer agent name
+ if (agentType == 'agent' && agentName != null && agentName.isNotEmpty) {
+ return agentName;
+ }
+ 
+ // For non-agent conversations, use the conversation title if it's meaningful
+ if (conversation.title.isNotEmpty && 
+ conversation.title != 'Let\'s Talk' && 
+ conversation.title != 'New Chat' &&
+ !conversation.title.startsWith('New Conversation')) {
+ return conversation.title;
+ }
+ 
+ // Fallback based on conversation type
+ switch (agentType) {
+ case 'agent':
+ return agentName ?? 'Agent Assistant';
+ case 'default_api':
+ case 'direct_chat':
+ // Check if conversation has stored model information
+ final storedModelName = conversation.metadata?['defaultModelName'] as String?;
+ final modelType = conversation.metadata?['modelType'] as String?;
+ if (storedModelName != null && storedModelName.isNotEmpty) {
+ if (modelType == 'local') {
+ return 'Local $storedModelName';
+ } else {
+ final provider = conversation.metadata?['defaultModelProvider'] as String?;
+ return provider != null ? '$provider Chat' : '$storedModelName Chat';
+ }
+ }
+
+ // Fallback to current selected model if no stored model
+ final selectedModel = ref.read(selectedModelProvider);
+ if (selectedModel != null) {
+ return selectedModel.isLocal 
+ ? 'Local ${selectedModel.name}'
+ : '${selectedModel.provider} Chat';
+ }
+ return 'AI Assistant';
+ default:
+ return 'Chat Session';
+ }
+ }
+
+ /// Get description for conversation based on its type and current model
+ String _getConversationDescription(core.Conversation conversation) {
+ final agentType = conversation.metadata?['type'] as String?;
+ final selectedModel = ref.read(selectedModelProvider);
+ 
+ switch (agentType) {
+ case 'agent':
+ final mcpServers = conversation.metadata?['mcpServers'] as List<dynamic>? ?? [];
+ return mcpServers.isNotEmpty 
+ ? 'MCP-Enabled Agent with ${mcpServers.length} tool(s)'
+ : 'Custom Agent Assistant';
+ 
+ case 'default_api':
+ case 'direct_chat':
+ // Check if conversation has stored model information
+ final storedModelName = conversation.metadata?['defaultModelName'] as String?;
+ final modelType = conversation.metadata?['modelType'] as String?;
+ final provider = conversation.metadata?['defaultModelProvider'] as String?;
+ 
+ if (storedModelName != null && storedModelName.isNotEmpty) {
+ if (modelType == 'local') {
+ return 'Local model via Ollama';
+ } else if (provider != null) {
+ return 'API model via $provider';
+ } else {
+ return 'API-based assistant';
+ }
+ }
+ 
+ // Fallback to current selected model
+ if (selectedModel != null) {
+ if (selectedModel.isLocal) {
+ return 'Local model via Ollama';
+ } else {
+ return 'API model via ${selectedModel.provider}';
+ }
+ }
+ return 'AI Assistant';
+ 
+ default:
+ return 'Chat Session';
+ }
  }
 
   /// Show API key configuration dialog when user tries to chat without API key

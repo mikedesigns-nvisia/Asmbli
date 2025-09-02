@@ -198,12 +198,31 @@ class DesktopStorageService {
  Future<void> setHiveData<T>(String boxName, String key, T value) async {
  try {
    final box = _hiveBoxes[boxName];
+   
+   // Convert complex objects to JSON string to avoid Hive adapter issues
+   dynamic storageValue;
+   if (value is Map<String, dynamic>) {
+     storageValue = json.encode(value);
+   } else if (value is List) {
+     storageValue = json.encode(value);
+   } else if (value is String || value is num || value is bool || value == null) {
+     storageValue = value;
+   } else {
+     // For any other type, try to convert to JSON string
+     try {
+       storageValue = json.encode(value);
+     } catch (e) {
+       // If JSON encoding fails, convert to string
+       storageValue = value.toString();
+     }
+   }
+   
    if (box != null) {
-     await box.put(key, value);
+     await box.put(key, storageValue);
    } else {
      // Try to open box if not available
      final newBox = await _openBox<dynamic>(boxName);
-     await newBox.put(key, value);
+     await newBox.put(key, storageValue);
    }
  } catch (e) {
    print('⚠️ Failed to save to Hive box $boxName: $e (falling back to SharedPreferences)');
@@ -219,7 +238,31 @@ class DesktopStorageService {
      // Fallback to SharedPreferences
      return getPreference<T>('hive_fallback_${boxName}_$key', defaultValue: defaultValue);
    }
-   return box.get(key, defaultValue: defaultValue) as T?;
+   
+   final rawValue = box.get(key, defaultValue: defaultValue);
+   if (rawValue == null) return null;
+   
+   // Handle JSON string decoding for complex objects
+   if (T.toString().contains('Map<String, dynamic>') && rawValue is String) {
+     try {
+       return json.decode(rawValue) as T?;
+     } catch (e) {
+       print('⚠️ Failed to decode JSON from Hive: $e');
+       return defaultValue;
+     }
+   }
+   
+   // Handle List decoding
+   if (T.toString().startsWith('List') && rawValue is String) {
+     try {
+       return json.decode(rawValue) as T?;
+     } catch (e) {
+       print('⚠️ Failed to decode List JSON from Hive: $e');
+       return defaultValue;
+     }
+   }
+   
+   return rawValue as T?;
  } catch (e) {
    print('⚠️ Failed to read from Hive box $boxName: $e (using fallback)');
    return getPreference<T>('hive_fallback_${boxName}_$key', defaultValue: defaultValue);

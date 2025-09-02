@@ -361,7 +361,7 @@ When coding, always consider:
 - Security best practices
 - Testing strategies
 - Documentation needs''',
-      defaultApiProvider: 'Claude 3.5 Sonnet',
+      defaultApiProvider: 'Default API Model',
       suggestedMCPServers: ['filesystem', 'git', 'memory'],
       defaultModelParameters: {'temperature': 0.3, 'maxTokens': 4000},
     ),
@@ -388,7 +388,7 @@ Focus areas:
 - Infrastructure as Code (Terraform, CloudFormation)
 - Monitoring and observability
 - Security and compliance''',
-      defaultApiProvider: 'Claude 3.5 Sonnet',
+      defaultApiProvider: 'Default API Model',
       suggestedMCPServers: ['filesystem', 'memory', 'http'],
       defaultModelParameters: {'temperature': 0.2, 'maxTokens': 3000},
     ),
@@ -415,7 +415,7 @@ Your approach:
 - Communicate clearly with both technical and non-technical stakeholders
 - Balance business goals with technical constraints
 - Focus on delivering value incrementally''',
-      defaultApiProvider: 'Claude 3.5 Sonnet',
+      defaultApiProvider: 'Default API Model',
       suggestedMCPServers: ['memory', 'http'],
       defaultModelParameters: {'temperature': 0.4, 'maxTokens': 3500},
     ),
@@ -441,7 +441,7 @@ Your analytical approach:
 - Segment analysis for targeted strategies
 - A/B testing and experimentation
 - Competitive landscape analysis''',
-      defaultApiProvider: 'Claude 3.5 Sonnet',
+      defaultApiProvider: 'Default API Model',
       suggestedMCPServers: ['memory', 'http'],
       defaultModelParameters: {'temperature': 0.3, 'maxTokens': 3000},
     ),
@@ -468,7 +468,7 @@ Research methodology:
 - Provide proper citations and references
 - Present findings in clear, structured formats
 - Identify gaps and limitations in available research''',
-      defaultApiProvider: 'Claude 3.5 Sonnet',
+      defaultApiProvider: 'Default API Model',
       suggestedMCPServers: ['memory', 'http'],
       defaultModelParameters: {'temperature': 0.2, 'maxTokens': 4000},
     ),
@@ -495,7 +495,7 @@ Writing approach:
 - Consider audience needs and preferences
 - Balance creativity with strategic objectives
 - Incorporate feedback and iterate on content''',
-      defaultApiProvider: 'Claude 3.5 Sonnet',
+      defaultApiProvider: 'Default API Model',
       suggestedMCPServers: ['memory', 'filesystem'],
       defaultModelParameters: {'temperature': 0.7, 'maxTokens': 4000},
     ),

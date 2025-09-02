@@ -249,11 +249,13 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
     
     try {
       // Update conversation title
+      print('DEBUG: Attempting to update conversation title from "${widget.conversation.title}" to "$newTitle"');
       final updateConversation = ref.read(updateConversationProvider);
       await updateConversation(
         widget.conversation.id,
         widget.conversation.copyWith(title: newTitle),
       );
+      print('DEBUG: Conversation title update succeeded');
       
       // Refresh the conversation data
       ref.invalidate(conversationProvider(widget.conversation.id));
@@ -287,10 +289,11 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
       }
       
     } catch (e) {
+      print('DEBUG: Conversation title update failed: $e');
       setState(() {
         _isSaving = false;
       });
-      _showError('Failed to save title: ${e.toString()}');
+      _showError('Failed to save title: ${e.toString()}\n\nTip: Try creating a new conversation if this persists.');
     }
   }
 

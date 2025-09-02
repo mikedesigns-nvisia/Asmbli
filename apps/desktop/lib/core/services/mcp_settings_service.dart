@@ -239,7 +239,7 @@ class MCPSettingsService {
   Future<void> _createDefaultDirectAPIConfig() async {
     final defaultConfig = DirectAPIConfig(
       id: 'anthropic-default',
-      name: 'Claude 3.5 Sonnet',
+      name: 'Default API Model',
       provider: 'Anthropic',
       model: 'claude-3-5-sonnet-20241022',
       apiKey: '',

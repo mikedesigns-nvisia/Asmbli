@@ -111,7 +111,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
 
   Widget _buildApiProviderSection(BuildContext context) {
     final availableProviders = [
-      'Claude 3.5 Sonnet',
+      'Default API Model',
       'Claude 3 Haiku',
       'GPT-4',
       'GPT-3.5 Turbo',
@@ -204,7 +204,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
     Color chipColor;
     
     switch (provider) {
-      case 'Claude 3.5 Sonnet':
+      case 'Default API Model':
         description = 'Most capable model with excellent reasoning, coding, and creative writing abilities. Best for complex tasks.';
         chipColor = ThemeColors(context).success;
         break;
