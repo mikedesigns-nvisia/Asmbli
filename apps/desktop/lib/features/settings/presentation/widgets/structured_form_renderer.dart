@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:agent_engine_core/agent_engine_core.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/mcp_template_service.dart';
 
@@ -181,7 +180,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: widget.configFields.map<Widget>((field) {
           return Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.sectionSpacing),
+            padding: const EdgeInsets.only(bottom: SpacingTokens.sectionSpacing),
             child: _buildFieldWidget(field, colors),
           );
         }).toList(),
@@ -222,7 +221,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildFieldLabel(field, colors),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         Container(
           decoration: BoxDecoration(
             color: widget.isEnabled ? colors.surfaceVariant : colors.surfaceVariant.withValues(alpha: 0.5),
@@ -237,14 +236,14 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
             decoration: InputDecoration(
               hintText: _getFieldPlaceholder(field),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
             ),
             style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
             keyboardType: _getKeyboardType(_getFieldType(field)),
           ),
         ),
         if (error != null) ...[
-          SizedBox(height: SpacingTokens.xs_precise),
+          const SizedBox(height: SpacingTokens.xs_precise),
           Text(
             error,
             style: TextStyles.caption.copyWith(color: colors.error),
@@ -263,7 +262,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildFieldLabel(field, colors),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         Container(
           decoration: BoxDecoration(
             color: widget.isEnabled ? colors.surfaceVariant : colors.surfaceVariant.withValues(alpha: 0.5),
@@ -279,7 +278,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
             decoration: InputDecoration(
               hintText: _getFieldPlaceholder(field),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               suffixIcon: Icon(
                 Icons.key,
                 color: colors.primary,
@@ -289,7 +288,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
           ),
         ),
         if (error != null) ...[
-          SizedBox(height: SpacingTokens.xs_precise),
+          const SizedBox(height: SpacingTokens.xs_precise),
           Text(
             error,
             style: TextStyles.caption.copyWith(color: colors.error),
@@ -318,7 +317,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
               } : null,
               activeColor: colors.primary,
             ),
-            SizedBox(width: SpacingTokens.iconSpacing),
+            const SizedBox(width: SpacingTokens.iconSpacing),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +330,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
                     ),
                   ),
                   if (_getFieldDescription(field).isNotEmpty) ...[
-                    SizedBox(height: SpacingTokens.xs_precise),
+                    const SizedBox(height: SpacingTokens.xs_precise),
                     Text(
                       _getFieldDescription(field),
                       style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
@@ -356,7 +355,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildFieldLabel(field, colors),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         Container(
           decoration: BoxDecoration(
             color: widget.isEnabled ? colors.surfaceVariant : colors.surfaceVariant.withValues(alpha: 0.5),
@@ -366,10 +365,10 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
             ),
           ),
           child: DropdownButtonFormField<dynamic>(
-            value: value,
+            initialValue: value,
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               hintText: _getFieldPlaceholder(field),
             ),
             items: options.map<DropdownMenuItem<dynamic>>((option) {
@@ -393,7 +392,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
           ),
         ),
         if (error != null) ...[
-          SizedBox(height: SpacingTokens.xs_precise),
+          const SizedBox(height: SpacingTokens.xs_precise),
           Text(
             error,
             style: TextStyles.caption.copyWith(color: colors.error),
@@ -420,7 +419,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
               ),
             ),
             if (isRequired) ...[
-              SizedBox(width: SpacingTokens.xs_precise),
+              const SizedBox(width: SpacingTokens.xs_precise),
               Text(
                 '*',
                 style: TextStyles.bodyMedium.copyWith(color: colors.error),
@@ -429,7 +428,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
           ],
         ),
         if (description.isNotEmpty) ...[
-          SizedBox(height: SpacingTokens.xs_precise),
+          const SizedBox(height: SpacingTokens.xs_precise),
           Text(
             description,
             style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
@@ -570,9 +569,9 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildFieldLabel(field, colors),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         Container(
-          padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+          padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           decoration: BoxDecoration(
             color: colors.primary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -584,14 +583,14 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
               Row(
                 children: [
                   Icon(Icons.info_outline, color: colors.primary, size: 16),
-                  SizedBox(width: SpacingTokens.iconSpacing),
+                  const SizedBox(width: SpacingTokens.iconSpacing),
                   Text(
                     'Unknown field type: $fieldType',
                     style: TextStyles.caption.copyWith(color: colors.primary),
                   ),
                 ],
               ),
-              SizedBox(height: SpacingTokens.iconSpacing),
+              const SizedBox(height: SpacingTokens.iconSpacing),
               Text(
                 'This field type is not supported by the structured form. Please use JSON configuration mode to set this field manually.',
                 style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),

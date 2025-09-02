@@ -7,7 +7,6 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../core/services/api_config_service.dart';
 import '../../../../core/services/desktop/desktop_storage_service.dart';
-import '../../../../core/services/desktop/desktop_service_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -23,7 +22,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   String? _errorMessage;
 
   final Map<String, ProviderInfo> _providers = {
-    'anthropic': ProviderInfo(
+    'anthropic': const ProviderInfo(
       name: 'Claude (Anthropic)',
       icon: Icons.psychology,
       apiUrl: 'https://console.anthropic.com/account/keys',
@@ -31,7 +30,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       models: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229'],
       baseUrl: 'https://api.anthropic.com',
     ),
-    'openai': ProviderInfo(
+    'openai': const ProviderInfo(
       name: 'OpenAI',
       icon: Icons.auto_awesome,
       apiUrl: 'https://platform.openai.com/api-keys',
@@ -39,7 +38,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       models: ['gpt-4-turbo-preview', 'gpt-3.5-turbo'],
       baseUrl: 'https://api.openai.com/v1',
     ),
-    'google': ProviderInfo(
+    'google': const ProviderInfo(
       name: 'Google Gemini',
       icon: Icons.star,
       apiUrl: 'https://makersuite.google.com/app/apikey',
@@ -142,9 +141,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+              padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
               child: Container(
-                constraints: BoxConstraints(maxWidth: 600),
+                constraints: const BoxConstraints(maxWidth: 600),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -154,7 +153,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       size: 64,
                       color: colors.primary,
                     ),
-                    SizedBox(height: SpacingTokens.xl),
+                    const SizedBox(height: SpacingTokens.xl),
                     Text(
                       'Welcome to Asmbli',
                       style: TextStyles.pageTitle.copyWith(
@@ -163,7 +162,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         fontSize: 32,
                       ),
                     ),
-                    SizedBox(height: SpacingTokens.md),
+                    const SizedBox(height: SpacingTokens.md),
                     Text(
                       'Let\'s get you started with your AI assistant',
                       style: TextStyles.bodyLarge.copyWith(
@@ -172,12 +171,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       textAlign: TextAlign.center,
                     ),
                     
-                    SizedBox(height: SpacingTokens.sectionSpacing),
+                    const SizedBox(height: SpacingTokens.sectionSpacing),
 
                     // Main Card
                     AsmblCard(
                       child: Padding(
-                        padding: EdgeInsets.all(SpacingTokens.xl),
+                        padding: const EdgeInsets.all(SpacingTokens.xl),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -185,7 +184,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                     horizontal: SpacingTokens.sm,
                                     vertical: SpacingTokens.xs,
                                   ),
@@ -204,7 +203,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               ],
                             ),
                             
-                            SizedBox(height: SpacingTokens.lg),
+                            const SizedBox(height: SpacingTokens.lg),
                             
                             Text(
                               'Connect Your AI Provider',
@@ -214,11 +213,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               ),
                             ),
                             
-                            SizedBox(height: SpacingTokens.md),
+                            const SizedBox(height: SpacingTokens.md),
                             
                             // Privacy message
                             Container(
-                              padding: EdgeInsets.all(SpacingTokens.md),
+                              padding: const EdgeInsets.all(SpacingTokens.md),
                               decoration: BoxDecoration(
                                 color: colors.success.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12),
@@ -233,7 +232,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                     size: 20,
                                     color: colors.success,
                                   ),
-                                  SizedBox(width: SpacingTokens.sm),
+                                  const SizedBox(width: SpacingTokens.sm),
                                   Expanded(
                                     child: Text(
                                       'Your API key stays on your device. We never store or transmit it to our servers.',
@@ -246,7 +245,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               ),
                             ),
                             
-                            SizedBox(height: SpacingTokens.lg),
+                            const SizedBox(height: SpacingTokens.lg),
                             
                             // Provider Selection
                             Text(
@@ -255,7 +254,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 color: colors.onSurface,
                               ),
                             ),
-                            SizedBox(height: SpacingTokens.sm),
+                            const SizedBox(height: SpacingTokens.sm),
                             
                             Row(
                               children: _providers.entries.map((entry) {
@@ -275,7 +274,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                       },
                                       borderRadius: BorderRadius.circular(12),
                                       child: Container(
-                                        padding: EdgeInsets.all(SpacingTokens.md),
+                                        padding: const EdgeInsets.all(SpacingTokens.md),
                                         decoration: BoxDecoration(
                                           color: isSelected 
                                             ? colors.primary.withValues(alpha: 0.1)
@@ -297,7 +296,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                                 ? colors.primary 
                                                 : colors.onSurfaceVariant,
                                             ),
-                                            SizedBox(height: SpacingTokens.xs),
+                                            const SizedBox(height: SpacingTokens.xs),
                                             Text(
                                               entry.value.name.split(' ').first,
                                               style: TextStyles.caption.copyWith(
@@ -319,7 +318,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               }).toList(),
                             ),
                             
-                            SizedBox(height: SpacingTokens.lg),
+                            const SizedBox(height: SpacingTokens.lg),
                             
                             // API Key Input
                             Text(
@@ -328,7 +327,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 color: colors.onSurface,
                               ),
                             ),
-                            SizedBox(height: SpacingTokens.sm),
+                            const SizedBox(height: SpacingTokens.sm),
                             
                             TextField(
                               controller: _apiKeyController,
@@ -360,7 +359,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 ),
                                 errorText: _errorMessage,
                                 suffixIcon: IconButton(
-                                  icon: Icon(Icons.paste, size: 20),
+                                  icon: const Icon(Icons.paste, size: 20),
                                   onPressed: () async {
                                     final data = await Clipboard.getData('text/plain');
                                     if (data?.text != null) {
@@ -371,31 +370,31 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               ),
                             ),
                             
-                            SizedBox(height: SpacingTokens.sm),
+                            const SizedBox(height: SpacingTokens.sm),
                             
                             // Get API Key Link
                             TextButton.icon(
                               onPressed: () => _launchUrl(provider.apiUrl),
-                              icon: Icon(Icons.open_in_new, size: 16),
+                              icon: const Icon(Icons.open_in_new, size: 16),
                               label: Text('Get your ${provider.name} API key'),
                               style: TextButton.styleFrom(
                                 foregroundColor: colors.primary,
                               ),
                             ),
                             
-                            SizedBox(height: SpacingTokens.xl),
+                            const SizedBox(height: SpacingTokens.xl),
                             
                             // Action Buttons
                             Row(
                               children: [
                                 TextButton(
                                   onPressed: _isValidating ? null : _skipForNow,
-                                  child: Text('Skip for now'),
                                   style: TextButton.styleFrom(
                                     foregroundColor: colors.onSurfaceVariant,
                                   ),
+                                  child: const Text('Skip for now'),
                                 ),
-                                SizedBox(width: SpacingTokens.md),
+                                const SizedBox(width: SpacingTokens.md),
                                 Expanded(
                                   child: AsmblButton.primary(
                                     text: _isValidating ? 'Saving...' : 'Continue',

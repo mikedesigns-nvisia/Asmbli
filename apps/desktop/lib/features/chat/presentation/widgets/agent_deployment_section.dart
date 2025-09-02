@@ -4,10 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
-import '../../../../core/services/mcp_settings_service.dart';
-import '../../../settings/presentation/widgets/mcp_health_status_widget.dart';
 import '../../../../providers/conversation_provider.dart';
 import '../../../../providers/agent_provider.dart';
+import '../../../../core/services/model_config_service.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import 'package:agent_engine_core/models/agent.dart';
 
@@ -106,7 +105,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                size: 16,
                color: theme.colorScheme.onSurfaceVariant,
              ),
-             SizedBox(width: SpacingTokens.iconSpacing),
+             const SizedBox(width: SpacingTokens.iconSpacing),
              Text(
                currentConversation?.metadata?['type'] == 'agent' 
                  ? 'Active Agent'
@@ -119,7 +118,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                    : theme.colorScheme.onSurfaceVariant,
                ),
              ),
-             Spacer(),
+             const Spacer(),
              IconButton(
                onPressed: () => setState(() => _isExpanded = !_isExpanded),
                icon: Icon(
@@ -129,7 +128,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                ),
                style: IconButton.styleFrom(
                  foregroundColor: theme.colorScheme.onSurfaceVariant,
-                 minimumSize: Size(24, 24),
+                 minimumSize: const Size(24, 24),
                  padding: EdgeInsets.zero,
                ),
              ),
@@ -137,29 +136,29 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          ),
          
          if (_isExpanded) ...[
-           SizedBox(height: SpacingTokens.componentSpacing),
+           const SizedBox(height: SpacingTokens.componentSpacing),
            
            // Agent Selection Dropdown
            if (agents.isNotEmpty) _buildAgentDropdown(context, theme, agents, effectiveAgentId, currentConversation),
            
            // Show current conversation context if applicable
            if (currentConversation?.metadata?['type'] == 'agent') ...[
-             SizedBox(height: SpacingTokens.componentSpacing),
+             const SizedBox(height: SpacingTokens.componentSpacing),
              _buildCurrentAgentInfo(theme),
            ],
            
            if (selectedAgent != null) ...[
-             SizedBox(height: SpacingTokens.componentSpacing),
+             const SizedBox(height: SpacingTokens.componentSpacing),
              
              // Agent Details
              _buildAgentDetails(selectedAgent, theme, currentConversation, loadedAgentIds),
              
-             SizedBox(height: SpacingTokens.componentSpacing),
+             const SizedBox(height: SpacingTokens.componentSpacing),
              
              // Quick Actions
              _buildQuickActions(context, theme, currentConversation),
            ] else if (agents.isEmpty) ...[
-             SizedBox(height: SpacingTokens.componentSpacing),
+             const SizedBox(height: SpacingTokens.componentSpacing),
              _buildNoAgentsState(context, theme),
            ],
          ],
@@ -210,7 +209,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                      shape: BoxShape.circle,
                    ),
                  ),
-                 SizedBox(width: 8),
+                 const SizedBox(width: 8),
                  Expanded(
                    child: Column(
                      crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +268,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
            size: 14,
            color: ThemeColors(context).primary,
          ),
-         SizedBox(width: 8),
+         const SizedBox(width: 8),
          Expanded(
            child: Text(
              'Viewing agent from current conversation',
@@ -312,7 +311,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                  color: theme.colorScheme.onSurface,
                ),
              ),
-             SizedBox(height: 4),
+             const SizedBox(height: 4),
              Text(
                agent.description,
                style: GoogleFonts.fustat(
@@ -320,7 +319,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                  color: theme.colorScheme.onSurfaceVariant,
                ),
              ),
-             SizedBox(height: 8),
+             const SizedBox(height: 8),
              Wrap(
                spacing: 4,
                children: [
@@ -333,7 +332,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          ),
        ),
        
-       SizedBox(height: SpacingTokens.componentSpacing),
+       const SizedBox(height: SpacingTokens.componentSpacing),
        
        // Load Button
        if (currentConversation?.metadata?['type'] != 'agent') 
@@ -358,7 +357,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          mainAxisAlignment: MainAxisAlignment.center,
          children: [
            Icon(Icons.check_circle, size: 18, color: ThemeColors(context).success),
-           SizedBox(width: 8),
+           const SizedBox(width: 8),
            Text(
              'Agent Loaded',
              style: GoogleFonts.fustat(
@@ -392,7 +391,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                valueColor: AlwaysStoppedAnimation<Color>(ThemeColors(context).primary),
              ),
            ),
-           SizedBox(width: 12),
+           const SizedBox(width: 12),
            Text(
              'Loading Agent...',
              style: GoogleFonts.fustat(
@@ -426,7 +425,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
        mainAxisAlignment: MainAxisAlignment.center,
        children: [
          Icon(Icons.chat, size: 18, color: ThemeColors(context).primary),
-         SizedBox(width: 8),
+         const SizedBox(width: 8),
          Text(
            'Currently Active',
            style: GoogleFonts.fustat(
@@ -442,7 +441,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
 
  Widget _buildCapabilityChip(String text, IconData icon, Color color, ThemeData theme) {
    return Container(
-     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
      decoration: BoxDecoration(
        color: color.withValues(alpha: 0.1),
        borderRadius: BorderRadius.circular(12),
@@ -451,7 +450,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
        mainAxisSize: MainAxisSize.min,
        children: [
          Icon(icon, size: 12, color: color),
-         SizedBox(width: 4),
+         const SizedBox(width: 4),
          Text(
            text,
            style: GoogleFonts.fustat(
@@ -495,7 +494,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
              ),
            ),
          ),
-         SizedBox(width: 8),
+         const SizedBox(width: 8),
          Expanded(
            child: GestureDetector(
              onTap: () => context.go(AppRoutes.agents),
@@ -545,7 +544,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
              ),
            ),
          ),
-         SizedBox(width: 8),
+         const SizedBox(width: 8),
          Expanded(
            child: GestureDetector(
              onTap: () => context.go(AppRoutes.wizard),
@@ -589,7 +588,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
            size: 32,
            color: theme.colorScheme.onSurfaceVariant,
          ),
-         SizedBox(height: 8),
+         const SizedBox(height: 8),
          Text(
            'No agents available',
            style: GoogleFonts.fustat(
@@ -598,7 +597,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
              color: theme.colorScheme.onSurface,
            ),
          ),
-         SizedBox(width: 4),
+         const SizedBox(width: 4),
          Text(
            'Create your first agent to get started',
            style: GoogleFonts.fustat(
@@ -607,7 +606,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
            ),
            textAlign: TextAlign.center,
          ),
-         SizedBox(height: SpacingTokens.componentSpacing),
+         const SizedBox(height: SpacingTokens.componentSpacing),
          AsmblButton.primary(
            text: 'Create Agent',
            onPressed: () => context.go(AppRoutes.wizard),
@@ -625,7 +624,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          Row(
            children: [
              Icon(Icons.smart_toy, size: 16, color: theme.colorScheme.onSurfaceVariant),
-             SizedBox(width: SpacingTokens.iconSpacing),
+             const SizedBox(width: SpacingTokens.iconSpacing),
              Text(
                'Loading Agents...',
                style: GoogleFonts.fustat(
@@ -636,7 +635,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
              ),
            ],
          ),
-         SizedBox(height: SpacingTokens.componentSpacing),
+         const SizedBox(height: SpacingTokens.componentSpacing),
          Center(
            child: CircularProgressIndicator(
              color: ThemeColors(context).primary,
@@ -656,7 +655,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          Row(
            children: [
              Icon(Icons.error_outline, size: 16, color: ThemeColors(context).error),
-             SizedBox(width: SpacingTokens.iconSpacing),
+             const SizedBox(width: SpacingTokens.iconSpacing),
              Text(
                'Error Loading Agents',
                style: GoogleFonts.fustat(
@@ -667,7 +666,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
              ),
            ],
          ),
-         SizedBox(height: 8),
+         const SizedBox(height: 8),
          Text(
            error.toString(),
            style: GoogleFonts.fustat(
@@ -681,7 +680,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
  }
 
  Agent _createEmptyAgent() {
-   return Agent(
+   return const Agent(
      id: 'empty',
      name: 'No Agent Selected',
      description: 'Select an agent from the dropdown above',
@@ -698,25 +697,37 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
    
    try {
      // Add some loading delay for UX
-     await Future.delayed(Duration(milliseconds: 1000));
+     await Future.delayed(const Duration(milliseconds: 1000));
+     
+     // Debug: Print agent configuration type
+     print('Agent configuration type: ${agent.configuration.runtimeType}');
+     print('Agent configuration: ${agent.configuration}');
      
      // Create new conversation with agent configuration
      final createAgentConversation = ref.read(createAgentConversationProvider);
      
      // Convert agent configuration to expected format
-     final mcpServers = (agent.configuration['mcpServers'] as List<dynamic>?)
-         ?.map((server) => server.toString())
-         .toList() ?? [];
+     final mcpServersRaw = agent.configuration['mcpServers'];
+     final mcpServers = <String>[];
+     if (mcpServersRaw is List) {
+       for (final server in mcpServersRaw) {
+         mcpServers.add(server.toString());
+       }
+     }
+     
+     // Get the current selected model or default model for the agent conversation
+     final defaultModel = ref.read(defaultModelConfigProvider);
+     final modelProvider = defaultModel?.name ?? 'Local Model';
      
      final conversation = await createAgentConversation(
        agentId: agent.id,
        agentName: agent.name,
        systemPrompt: agent.configuration['systemPrompt']?.toString() ?? 
          'You are a helpful AI assistant named ${agent.name}. ${agent.description}',
-       apiProvider: agent.configuration['model']?.toString() ?? 'Default Model',
+       apiProvider: modelProvider,
        mcpServers: mcpServers,
-       mcpServerConfigs: {}, // Will be populated from settings
-       contextDocuments: [], // Can be added later
+       mcpServerConfigs: <String, dynamic>{}, // Will be populated from settings
+       contextDocuments: <String>[], // Can be added later
      );
      
      // Switch to the new agent conversation
@@ -733,8 +744,8 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          SnackBar(
            content: Row(
              children: [
-               Icon(Icons.auto_awesome, color: Colors.white, size: 16),
-               SizedBox(width: 8),
+               const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
+               const SizedBox(width: 8),
                Text(
                  '${agent.name} is now active!',
                  style: GoogleFonts.fustat(),

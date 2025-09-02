@@ -50,7 +50,7 @@ class ContextFilterBar extends StatelessWidget {
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  borderSide: BorderSide(color: colors.primary),
  ),
- contentPadding: EdgeInsets.symmetric(
+ contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.lg,
  vertical: SpacingTokens.md,
  ),
@@ -60,12 +60,12 @@ class ContextFilterBar extends StatelessWidget {
  ),
  ),
 
- SizedBox(width: SpacingTokens.lg),
+ const SizedBox(width: SpacingTokens.lg),
 
  // Type Filter Dropdown
  Expanded(
  child: DropdownButtonFormField<ContextType?>(
- value: selectedType,
+ initialValue: selectedType,
  decoration: InputDecoration(
  labelText: 'Filter by type',
  labelStyle: TextStyles.bodyMedium.copyWith(
@@ -85,7 +85,7 @@ class ContextFilterBar extends StatelessWidget {
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  borderSide: BorderSide(color: colors.primary),
  ),
- contentPadding: EdgeInsets.symmetric(
+ contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.lg,
  vertical: SpacingTokens.md,
  ),
@@ -118,7 +118,7 @@ class ContextFilterBar extends StatelessWidget {
  ),
  ),
 
- SizedBox(width: SpacingTokens.lg),
+ const SizedBox(width: SpacingTokens.lg),
 
  // Clear Filters Button (if any filters are active)
  if (selectedType != null || searchQuery.isNotEmpty)

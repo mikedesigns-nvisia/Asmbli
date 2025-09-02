@@ -266,7 +266,7 @@ class MCPTemplateService {
   // Hard-coded templates (in production, these would come from the TypeScript layer)
   static final List<MCPServerTemplate> _coreTemplates = [
     // Filesystem Template
-    MCPServerTemplate(
+    const MCPServerTemplate(
       id: 'filesystem-template',
       name: 'Filesystem Access',
       description: 'Read, write, and manage files and directories on your local system',
@@ -337,7 +337,7 @@ class MCPTemplateService {
     ),
 
     // GitHub Template
-    MCPServerTemplate(
+    const MCPServerTemplate(
       id: 'github-template',
       name: 'GitHub Integration',
       description: 'Access GitHub repositories, issues, pull requests, and more',
@@ -410,7 +410,7 @@ class MCPTemplateService {
     ),
 
     // Memory Template
-    MCPServerTemplate(
+    const MCPServerTemplate(
       id: 'memory-template',
       name: 'Memory Storage',
       description: 'Persistent memory for storing and recalling information across conversations',
@@ -490,7 +490,7 @@ class MCPTemplateService {
     ),
 
     // Web Search Template
-    MCPServerTemplate(
+    const MCPServerTemplate(
       id: 'search-template',
       name: 'Web Search',
       description: 'Search the web using Brave Search API for current information',
@@ -627,7 +627,7 @@ class MCPTemplateService {
   TemplateValidationResult validateTemplateConfig(String templateId, Map<String, dynamic> config) {
     final template = getTemplate(templateId);
     if (template == null) {
-      return TemplateValidationResult(
+      return const TemplateValidationResult(
         valid: false,
         errors: [
           TemplateValidationError(

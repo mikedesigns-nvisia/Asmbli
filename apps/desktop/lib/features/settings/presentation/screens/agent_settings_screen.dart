@@ -84,7 +84,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
         ),
         child: Column(
           children: [
-            AppNavigationBar(currentRoute: AppRoutes.settings),
+            const AppNavigationBar(currentRoute: AppRoutes.settings),
             _buildHeader(colors),
             Expanded(
               child: Row(
@@ -93,7 +93,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                   Expanded(
                     flex: 3,
                     child: agentsAsync.when(
-                      loading: () => Center(child: CircularProgressIndicator()),
+                      loading: () => const Center(child: CircularProgressIndicator()),
                       error: (error, stack) => _buildErrorState(colors, error.toString()),
                       data: (agents) => _buildMainContent(colors, _getFilteredAgents(agents)),
                     ),
@@ -109,7 +109,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
 
   Widget _buildHeader(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       decoration: BoxDecoration(
         color: colors.surface.withValues(alpha: 0.8),
         border: Border(
@@ -124,7 +124,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                 onPressed: () => Navigator.of(context).pop(),
                 icon: Icon(Icons.arrow_back, color: colors.onSurface),
               ),
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +133,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                       'AI Agents',
                       style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
                     ),
-                    SizedBox(height: SpacingTokens.xs_precise),
+                    const SizedBox(height: SpacingTokens.xs_precise),
                     Text(
                       'Manage your AI agents and system prompts',
                       style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
@@ -148,13 +148,13 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           Row(
             children: [
               Expanded(
                 child: Container(
                   height: 44,
-                  padding: EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
+                  padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
                   decoration: BoxDecoration(
                     color: colors.surface,
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
@@ -163,7 +163,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                   child: Row(
                     children: [
                       Icon(Icons.search, color: colors.onSurfaceVariant, size: 20),
-                      SizedBox(width: SpacingTokens.componentSpacing),
+                      const SizedBox(width: SpacingTokens.componentSpacing),
                       Expanded(
                         child: TextField(
                           controller: _searchController,
@@ -181,7 +181,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                   ),
                 ),
               ),
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               _buildFilterChips(colors),
             ],
           ),
@@ -201,7 +201,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
       children: filters.map((filter) {
         final isSelected = _selectedFilter == filter.$1;
         return Padding(
-          padding: EdgeInsets.only(right: SpacingTokens.iconSpacing),
+          padding: const EdgeInsets.only(right: SpacingTokens.iconSpacing),
           child: FilterChip(
             label: Text('${filter.$2} (${filter.$3})'),
             selected: isSelected,
@@ -231,7 +231,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     }
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -239,9 +239,9 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
             'Agents (${agents.length})',
             style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
           ),
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           ...agents.map((agent) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+            padding: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
             child: _buildAgentCard(agent, colors),
           )),
         ],
@@ -252,14 +252,14 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
   Widget _buildAgentCard(Agent agent, ThemeColors colors) {
     return AsmblCard(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
                   decoration: BoxDecoration(
                     color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -270,7 +270,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                     size: 24,
                   ),
                 ),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,9 +284,9 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(width: SpacingTokens.iconSpacing),
+                          const SizedBox(width: SpacingTokens.iconSpacing),
                           Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: SpacingTokens.iconSpacing,
                               vertical: 2,
                             ),
@@ -305,7 +305,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: SpacingTokens.xs_precise),
+                      const SizedBox(height: SpacingTokens.xs_precise),
                       Text(
                         agent.description,
                         style: TextStyles.bodyMedium.copyWith(
@@ -318,10 +318,10 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                 PopupMenuButton<String>(
                   onSelected: (value) => _handleAgentAction(agent, value),
                   itemBuilder: (context) => [
-                    PopupMenuItem(value: 'edit', child: Text('Edit Agent')),
-                    PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
-                    PopupMenuItem(value: 'export', child: Text('Export Config')),
-                    PopupMenuDivider(),
+                    const PopupMenuItem(value: 'edit', child: Text('Edit Agent')),
+                    const PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
+                    const PopupMenuItem(value: 'export', child: Text('Export Config')),
+                    const PopupMenuDivider(),
                     PopupMenuItem(
                       value: 'delete', 
                       child: Text('Delete', style: TextStyle(color: colors.error)),
@@ -330,9 +330,9 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                 ),
               ],
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Container(
-              padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               decoration: BoxDecoration(
                 color: colors.surfaceVariant.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -347,7 +347,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(height: SpacingTokens.xs_precise),
+                  const SizedBox(height: SpacingTokens.xs_precise),
                   Text(
                     (agent.configuration['systemPrompt']?.toString().length ?? 0) > 100 
                       ? '${agent.configuration['systemPrompt']?.toString().substring(0, 100)}...'
@@ -359,15 +359,15 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                 ],
               ),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Row(
               children: [
                 _buildAgentStat('Model', agent.configuration['model']?.toString() ?? 'Not configured', Icons.psychology, colors),
-                SizedBox(width: SpacingTokens.sectionSpacing),
+                const SizedBox(width: SpacingTokens.sectionSpacing),
                 _buildAgentStat('Capabilities', '${agent.capabilities.length} items', Icons.bar_chart, colors),
-                SizedBox(width: SpacingTokens.sectionSpacing),
+                const SizedBox(width: SpacingTokens.sectionSpacing),
                 _buildAgentStat('Status', _getAgentStatusText(agent.status), Icons.schedule, colors),
-                Spacer(),
+                const Spacer(),
                 Switch(
                   value: agent.status != AgentStatus.paused && agent.status != AgentStatus.error,
                   onChanged: (value) => _toggleAgent(agent, value),
@@ -385,7 +385,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 16, color: colors.onSurfaceVariant),
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -416,7 +416,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
   Widget _buildEmptyState(ThemeColors colors) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.xxl),
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -425,18 +425,18 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
               size: 64,
               color: colors.onSurfaceVariant.withValues(alpha: 0.5),
             ),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(
               'No agents found',
               style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Try adjusting your search terms or create a new agent',
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             AsmblButton.primary(
               text: 'Create First Agent',
               icon: Icons.add,
@@ -455,12 +455,12 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Create New Agent'),
-        content: Text('Agent creation functionality coming soon!'),
+        title: const Text('Create New Agent'),
+        content: const Text('Agent creation functionality coming soon!'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Got it'),
+            child: const Text('Got it'),
           ),
         ],
       ),
@@ -477,7 +477,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Got it'),
+            child: const Text('Got it'),
           ),
         ],
       ),
@@ -521,7 +521,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
   Widget _buildErrorState(ThemeColors colors, String error) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.xxl),
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -530,18 +530,18 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
               size: 64,
               color: colors.error,
             ),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(
               'Error Loading Agents',
               style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               error,
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             AsmblButton.primary(
               text: 'Retry',
               icon: Icons.refresh,

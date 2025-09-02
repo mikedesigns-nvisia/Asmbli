@@ -170,7 +170,7 @@ class IntegrationTemplatesService {
       throw TemplateException('Template not found: $templateId');
     }
     
-    return JsonEncoder.withIndent('  ').convert(template.toJson());
+    return const JsonEncoder.withIndent('  ').convert(template.toJson());
   }
   
   /// Apply template to configure integrations
@@ -331,7 +331,7 @@ class IntegrationTemplatesService {
           category: integration.category.displayName,
           isAvailable: integration.isAvailable,
           difficulty: integration.difficulty,
-          estimatedSetupTime: Duration(minutes: 5), // Default estimate
+          estimatedSetupTime: const Duration(minutes: 5), // Default estimate
           configurationPreview: _generateConfigPreview(config),
         ));
       }
@@ -404,7 +404,7 @@ class IntegrationTemplatesService {
     
     // In a real implementation, this would submit to a backend service
     // For now, we'll simulate the submission process
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     
     return submission;
   }
@@ -448,14 +448,14 @@ class IntegrationTemplatesService {
       id: 'dev-workflow',
       name: 'Complete Development Workflow',
       description: 'A comprehensive setup for software development with Git, GitHub, filesystem access, and terminal capabilities.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.2.0',
-      createdAt: DateTime.now().subtract(Duration(days: 30)),
-      updatedAt: DateTime.now().subtract(Duration(days: 5)),
+      createdAt: DateTime.now().subtract(const Duration(days: 30)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 5)),
       integrationIds: ['git', 'github', 'filesystem', 'terminal'],
       configurations: [],
       difficulty: 'Medium',
-      estimatedSetupTime: Duration(minutes: 20),
+      estimatedSetupTime: const Duration(minutes: 20),
       tags: ['development', 'git', 'github', 'workflow'],
       category: 'Development',
       isOfficial: true,
@@ -468,12 +468,12 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.2.0',
-          date: DateTime.now().subtract(Duration(days: 5)),
+          date: DateTime.now().subtract(const Duration(days: 5)),
           changes: ['Added terminal integration', 'Improved GitHub configuration'],
         ),
         ChangelogEntry(
           version: '1.1.0',
-          date: DateTime.now().subtract(Duration(days: 15)),
+          date: DateTime.now().subtract(const Duration(days: 15)),
           changes: ['Enhanced filesystem access', 'Bug fixes'],
         ),
       ],
@@ -486,14 +486,14 @@ class IntegrationTemplatesService {
       id: 'data-analysis',
       name: 'Data Analysis Suite',
       description: 'Perfect setup for data analysis with database connections, memory management, and web search capabilities.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 20)),
-      updatedAt: DateTime.now().subtract(Duration(days: 10)),
+      createdAt: DateTime.now().subtract(const Duration(days: 20)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 10)),
       integrationIds: ['postgresql', 'memory', 'web-search', 'filesystem'],
       configurations: [],
       difficulty: 'Hard',
-      estimatedSetupTime: Duration(minutes: 35),
+      estimatedSetupTime: const Duration(minutes: 35),
       tags: ['data', 'analysis', 'database', 'research'],
       category: 'Data & Analytics',
       isOfficial: true,
@@ -506,7 +506,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 20)),
+          date: DateTime.now().subtract(const Duration(days: 20)),
           changes: ['Initial release'],
         ),
       ],
@@ -519,14 +519,14 @@ class IntegrationTemplatesService {
       id: 'content-creation',
       name: 'Content Creator\'s Toolkit',
       description: 'All-in-one setup for content creators with Notion, Slack, web search, and file management.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.1.0',
-      createdAt: DateTime.now().subtract(Duration(days: 25)),
-      updatedAt: DateTime.now().subtract(Duration(days: 8)),
+      createdAt: DateTime.now().subtract(const Duration(days: 25)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 8)),
       integrationIds: ['notion', 'slack', 'web-search', 'filesystem'],
       configurations: [],
       difficulty: 'Easy',
-      estimatedSetupTime: Duration(minutes: 15),
+      estimatedSetupTime: const Duration(minutes: 15),
       tags: ['content', 'creation', 'notion', 'slack', 'productivity'],
       category: 'Productivity',
       isOfficial: true,
@@ -539,7 +539,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.1.0',
-          date: DateTime.now().subtract(Duration(days: 8)),
+          date: DateTime.now().subtract(const Duration(days: 8)),
           changes: ['Added Slack integration', 'Improved Notion setup'],
         ),
       ],
@@ -551,14 +551,14 @@ class IntegrationTemplatesService {
       id: 'ai-research',
       name: 'AI Research Assistant',
       description: 'Advanced template for AI research with memory management, sequential thinking, and web search.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '2.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 35)),
-      updatedAt: DateTime.now().subtract(Duration(days: 2)),
+      createdAt: DateTime.now().subtract(const Duration(days: 35)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 2)),
       integrationIds: ['memory', 'sequential-thinking', 'web-search', 'filesystem'],
       configurations: [],
       difficulty: 'Hard',
-      estimatedSetupTime: Duration(minutes: 25),
+      estimatedSetupTime: const Duration(minutes: 25),
       tags: ['ai', 'research', 'memory', 'thinking', 'advanced'],
       category: 'AI & Research',
       isOfficial: true,
@@ -571,12 +571,12 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '2.0.0',
-          date: DateTime.now().subtract(Duration(days: 2)),
+          date: DateTime.now().subtract(const Duration(days: 2)),
           changes: ['Major update with sequential thinking', 'Enhanced memory management'],
         ),
         ChangelogEntry(
           version: '1.5.0',
-          date: DateTime.now().subtract(Duration(days: 12)),
+          date: DateTime.now().subtract(const Duration(days: 12)),
           changes: ['Improved research capabilities', 'Better web search integration'],
         ),
       ],
@@ -589,14 +589,14 @@ class IntegrationTemplatesService {
       id: 'quick-start',
       name: 'Quick Start Essentials',
       description: 'Basic template to get started quickly with essential integrations.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 10)),
-      updatedAt: DateTime.now().subtract(Duration(days: 10)),
+      createdAt: DateTime.now().subtract(const Duration(days: 10)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 10)),
       integrationIds: ['filesystem', 'web-search', 'time'],
       configurations: [],
       difficulty: 'Easy',
-      estimatedSetupTime: Duration(minutes: 10),
+      estimatedSetupTime: const Duration(minutes: 10),
       tags: ['beginner', 'essential', 'quick-start', 'basic'],
       category: 'Getting Started',
       isOfficial: true,
@@ -609,7 +609,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 10)),
+          date: DateTime.now().subtract(const Duration(days: 10)),
           changes: ['Initial release with essential integrations'],
         ),
       ],
@@ -623,14 +623,14 @@ class IntegrationTemplatesService {
       id: 'cloud-infrastructure-pro',
       name: 'Cloud Infrastructure Engineer Pro',
       description: 'Enterprise-grade cloud architect with multi-provider support, cost optimization, and infrastructure automation.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 3)),
-      updatedAt: DateTime.now().subtract(Duration(days: 1)),
+      createdAt: DateTime.now().subtract(const Duration(days: 3)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 1)),
       integrationIds: ['aws-bedrock', 'aws-cdk', 'aws-cost-analysis', 'cloudflare', 'vercel', 'netlify', 'azure', 'docker'],
       configurations: [],
       difficulty: 'Hard',
-      estimatedSetupTime: Duration(minutes: 45),
+      estimatedSetupTime: const Duration(minutes: 45),
       tags: ['cloud', 'infrastructure', 'aws', 'azure', 'devops', 'enterprise'],
       category: 'Cloud & Infrastructure',
       isOfficial: true,
@@ -643,7 +643,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 3)),
+          date: DateTime.now().subtract(const Duration(days: 3)),
           changes: ['Initial release with multi-cloud support', 'Cost optimization features', 'Infrastructure automation'],
         ),
       ],
@@ -656,14 +656,14 @@ class IntegrationTemplatesService {
       id: 'ecommerce-bi-specialist',
       name: 'E-commerce BI Specialist',
       description: 'Complete business intelligence for e-commerce with payments, analytics, and customer communications.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 5)),
-      updatedAt: DateTime.now().subtract(Duration(days: 2)),
+      createdAt: DateTime.now().subtract(const Duration(days: 5)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 2)),
       integrationIds: ['stripe', 'supabase', 'bigquery', 'tako', 'twilio', 'zapier', 'supadata', 'box'],
       configurations: [],
       difficulty: 'Medium',
-      estimatedSetupTime: Duration(minutes: 35),
+      estimatedSetupTime: const Duration(minutes: 35),
       tags: ['ecommerce', 'business intelligence', 'analytics', 'payments', 'crm'],
       category: 'Business & Analytics',
       isOfficial: true,
@@ -676,7 +676,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 5)),
+          date: DateTime.now().subtract(const Duration(days: 5)),
           changes: ['Revenue analytics dashboard', 'Customer journey tracking', 'Automated reporting'],
         ),
       ],
@@ -689,14 +689,14 @@ class IntegrationTemplatesService {
       id: 'devsecops-automation',
       name: 'DevSecOps Automation Hub',
       description: 'Security-first CI/CD with automated scanning, monitoring, and chaos engineering.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.1.0',
-      createdAt: DateTime.now().subtract(Duration(days: 7)),
-      updatedAt: DateTime.now().subtract(Duration(hours: 6)),
+      createdAt: DateTime.now().subtract(const Duration(days: 7)),
+      updatedAt: DateTime.now().subtract(const Duration(hours: 6)),
       integrationIds: ['gitguardian', 'sentry', 'circleci', 'buildkite', 'gremlin', 'git', 'github'],
       configurations: [],
       difficulty: 'Hard',
-      estimatedSetupTime: Duration(minutes: 50),
+      estimatedSetupTime: const Duration(minutes: 50),
       tags: ['devsecops', 'security', 'ci-cd', 'automation', 'monitoring', 'chaos-engineering'],
       category: 'Security & DevOps',
       isOfficial: true,
@@ -709,12 +709,12 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.1.0',
-          date: DateTime.now().subtract(Duration(hours: 6)),
+          date: DateTime.now().subtract(const Duration(hours: 6)),
           changes: ['Added chaos engineering with Gremlin', 'Enhanced security scanning'],
         ),
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 7)),
+          date: DateTime.now().subtract(const Duration(days: 7)),
           changes: ['Initial release with security automation', 'CI/CD pipeline integration'],
         ),
       ],
@@ -726,14 +726,14 @@ class IntegrationTemplatesService {
       id: 'multi-database-analytics',
       name: 'Multi-Database Analytics Powerhouse',
       description: 'Advanced analytics across multiple database systems with AI-powered insights.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 4)),
-      updatedAt: DateTime.now().subtract(Duration(days: 1)),
+      createdAt: DateTime.now().subtract(const Duration(days: 4)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 1)),
       integrationIds: ['postgresql', 'bigquery', 'clickhouse', 'redis', 'supabase', 'memory', 'sequential-thinking'],
       configurations: [],
       difficulty: 'Hard',
-      estimatedSetupTime: Duration(minutes: 40),
+      estimatedSetupTime: const Duration(minutes: 40),
       tags: ['database', 'analytics', 'big-data', 'ai', 'multi-source'],
       category: 'Data & Analytics',
       isOfficial: true,
@@ -746,7 +746,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 4)),
+          date: DateTime.now().subtract(const Duration(days: 4)),
           changes: ['Cross-database query engine', 'AI-powered insights', 'Real-time analytics'],
         ),
       ],
@@ -758,14 +758,14 @@ class IntegrationTemplatesService {
       id: 'social-media-command-center',
       name: 'Social Media Marketing Command Center',
       description: 'Complete social media management with analytics, scheduling, and multi-channel communication.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 6)),
-      updatedAt: DateTime.now().subtract(Duration(days: 3)),
+      createdAt: DateTime.now().subtract(const Duration(days: 6)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 3)),
       integrationIds: ['supadata', 'discord', 'slack', 'twilio', 'zapier', 'boost-space', 'caldav'],
       configurations: [],
       difficulty: 'Medium',
-      estimatedSetupTime: Duration(minutes: 30),
+      estimatedSetupTime: const Duration(minutes: 30),
       tags: ['social-media', 'marketing', 'analytics', 'automation', 'scheduling'],
       category: 'Marketing & Communication',
       isOfficial: true,
@@ -778,7 +778,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 6)),
+          date: DateTime.now().subtract(const Duration(days: 6)),
           changes: ['Multi-platform scheduling', 'Engagement analytics', 'Automated responses'],
         ),
       ],
@@ -790,14 +790,14 @@ class IntegrationTemplatesService {
       id: 'enterprise-security-ops',
       name: 'Enterprise Security Operations Center',
       description: 'Comprehensive security monitoring, threat detection, and incident response.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 8)),
-      updatedAt: DateTime.now().subtract(Duration(days: 4)),
+      createdAt: DateTime.now().subtract(const Duration(days: 8)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 4)),
       integrationIds: ['gitguardian', 'sentry', 'gremlin', 'atlassian-remote', 'glean', 'sequential-thinking'],
       configurations: [],
       difficulty: 'Hard',
-      estimatedSetupTime: Duration(minutes: 55),
+      estimatedSetupTime: const Duration(minutes: 55),
       tags: ['security', 'operations', 'enterprise', 'monitoring', 'incident-response'],
       category: 'Enterprise Security',
       isOfficial: true,
@@ -810,7 +810,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 8)),
+          date: DateTime.now().subtract(const Duration(days: 8)),
           changes: ['Real-time threat monitoring', 'Automated incident response', 'Compliance reporting'],
         ),
       ],
@@ -822,14 +822,14 @@ class IntegrationTemplatesService {
       id: 'customer-success-automation',
       name: 'Customer Success Automation Agent',
       description: 'Complete customer success platform with knowledge management and multi-channel support.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 2)),
-      updatedAt: DateTime.now().subtract(Duration(hours: 12)),
+      createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      updatedAt: DateTime.now().subtract(const Duration(hours: 12)),
       integrationIds: ['buildable', 'box', 'glean', 'twilio', 'discord', 'slack', 'caldav', 'zapier'],
       configurations: [],
       difficulty: 'Medium',
-      estimatedSetupTime: Duration(minutes: 25),
+      estimatedSetupTime: const Duration(minutes: 25),
       tags: ['customer-success', 'automation', 'support', 'knowledge-management'],
       category: 'Customer Success',
       isOfficial: true,
@@ -842,7 +842,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 2)),
+          date: DateTime.now().subtract(const Duration(days: 2)),
           changes: ['Automated customer onboarding', 'Health score tracking', 'Multi-channel support'],
         ),
       ],
@@ -854,14 +854,14 @@ class IntegrationTemplatesService {
       id: 'fintech-data-pipeline',
       name: 'FinTech Data Pipeline Manager',
       description: 'Real-time financial data processing with compliance and risk analysis.',
-      author: 'AgentEngine Team',
+      author: 'Asmbli Team',
       version: '1.0.0',
-      createdAt: DateTime.now().subtract(Duration(days: 1)),
-      updatedAt: DateTime.now().subtract(Duration(hours: 8)),
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      updatedAt: DateTime.now().subtract(const Duration(hours: 8)),
       integrationIds: ['stripe', 'tako', 'bigquery', 'clickhouse', 'redis', 'aws-cost-analysis', 'sequential-thinking'],
       configurations: [],
       difficulty: 'Hard',
-      estimatedSetupTime: Duration(minutes: 45),
+      estimatedSetupTime: const Duration(minutes: 45),
       tags: ['fintech', 'finance', 'data-pipeline', 'compliance', 'risk-analysis'],
       category: 'Financial Technology',
       isOfficial: true,
@@ -874,7 +874,7 @@ class IntegrationTemplatesService {
       changelog: [
         ChangelogEntry(
           version: '1.0.0',
-          date: DateTime.now().subtract(Duration(days: 1)),
+          date: DateTime.now().subtract(const Duration(days: 1)),
           changes: ['Real-time payment processing', 'Advanced risk modeling', 'Regulatory reporting'],
         ),
       ],
@@ -898,7 +898,7 @@ class IntegrationTemplatesService {
         difficulty: 'Hard',
         tags: ['devops', 'ci-cd', 'automation'],
         isVerified: true,
-        createdAt: DateTime.now().subtract(Duration(days: 15)),
+        createdAt: DateTime.now().subtract(const Duration(days: 15)),
       ),
       CommunityTemplate(
         id: 'community-ecommerce',
@@ -913,7 +913,7 @@ class IntegrationTemplatesService {
         difficulty: 'Medium',
         tags: ['ecommerce', 'analytics', 'metrics'],
         isVerified: false,
-        createdAt: DateTime.now().subtract(Duration(days: 8)),
+        createdAt: DateTime.now().subtract(const Duration(days: 8)),
       ),
       CommunityTemplate(
         id: 'community-social-media',
@@ -928,7 +928,7 @@ class IntegrationTemplatesService {
         difficulty: 'Medium',
         tags: ['social', 'media', 'management'],
         isVerified: true,
-        createdAt: DateTime.now().subtract(Duration(days: 22)),
+        createdAt: DateTime.now().subtract(const Duration(days: 22)),
       ),
     ]);
   }
@@ -976,7 +976,7 @@ class IntegrationTemplatesService {
   Future<void> _applyIntegrationConfiguration(IntegrationConfiguration config) async {
     // In a real implementation, this would apply the configuration to the integration service
     // For now, we'll simulate the process
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
     
     // This would typically involve:
     // 1. Converting IntegrationConfiguration back to MCPServerConfig
@@ -1007,7 +1007,7 @@ class IntegrationTemplatesService {
       }
     }
     
-    return JsonEncoder.withIndent('  ').convert(preview);
+    return const JsonEncoder.withIndent('  ').convert(preview);
   }
   
   String _generateTemplateId() {

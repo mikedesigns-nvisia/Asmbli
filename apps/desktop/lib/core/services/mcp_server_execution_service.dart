@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import '../data/mcp_server_configs.dart';
-import 'mcp_server_configuration_service.dart';
 import 'desktop/desktop_storage_service.dart';
 
 /// Service for executing and managing MCP server processes
@@ -189,7 +188,7 @@ class MCPServerExecutionService {
         },
       });
       
-      print('✅ MCP server ${server.id} initialized: ${initResponse}');
+      print('✅ MCP server ${server.id} initialized: $initResponse');
       
       // Send initialized notification
       await sendMCPNotification(server.id, 'notifications/initialized', {});

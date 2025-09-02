@@ -88,8 +88,8 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  SnackBar(
  content: Row(
  children: [
- Icon(Icons.check_circle, color: Colors.white, size: 16),
- SizedBox(width: 8),
+ const Icon(Icons.check_circle, color: Colors.white, size: 16),
+ const SizedBox(width: 8),
  Text(
  'Document "${document.title}" created and added to context',
  style: GoogleFonts.fustat(),
@@ -116,16 +116,16 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  isInteractive: false,
  child: Container(
  width: 500,
- constraints: BoxConstraints(maxHeight: 600),
+ constraints: const BoxConstraints(maxHeight: 600),
  child: Column(
  mainAxisSize: MainAxisSize.min,
  children: [
  // Header
  Container(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  decoration: BoxDecoration(
  color: ThemeColors(context).surface,
- borderRadius: BorderRadius.only(
+ borderRadius: const BorderRadius.only(
  topLeft: Radius.circular(BorderRadiusTokens.xl),
  topRight: Radius.circular(BorderRadiusTokens.xl),
  ),
@@ -140,7 +140,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  size: 20,
  color: ThemeColors(context).primary,
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +153,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: 2),
+ const SizedBox(height: 2),
  Text(
  _isAgentConversation
  ? 'Upload documents to enhance agent knowledge'
@@ -167,7 +167,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  ),
  IconButton(
  onPressed: () => Navigator.of(context).pop(),
- icon: Icon(Icons.close, size: 20),
+ icon: const Icon(Icons.close, size: 20),
  style: IconButton.styleFrom(
  foregroundColor: ThemeColors(context).onSurfaceVariant,
  ),
@@ -179,7 +179,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  // Content
  Flexible(
  child: SingleChildScrollView(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -187,7 +187,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  GestureDetector(
  onTap: _isUploading ? null : _pickFiles,
  child: AsmblCard(
- padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.sectionSpacing),
  isInteractive: !_isUploading,
  child: Column(
  children: [
@@ -196,7 +196,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  size: 48,
  color: ThemeColors(context).primary,
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  Text(
  'Click to browse or drag and drop',
  style: TextStyles.bodyMedium.copyWith(
@@ -204,7 +204,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  color: ThemeColors(context).onSurface,
  ),
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Text(
  'PDF, TXT, MD, JSON, CSV (max 10MB each)',
  style: TextStyles.bodySmall.copyWith(
@@ -217,7 +217,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  ),
  
  if (_selectedDocuments.isNotEmpty) ...[
- SizedBox(height: SpacingTokens.textSectionSpacing),
+ const SizedBox(height: SpacingTokens.textSectionSpacing),
  
  // Selected documents
  Text(
@@ -226,7 +226,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  ..._selectedDocuments.map((doc) {
  return Padding(
@@ -244,7 +244,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  size: 20,
  color: ThemeColors(context).primary,
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,12 +300,12 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  ),
  ),
  );
- }).toList(),
+ }),
  ],
  
  // Show existing context documents if agent conversation
  if (_isAgentConversation && _existingContextDocuments.isNotEmpty) ...[
- SizedBox(height: SpacingTokens.textSectionSpacing),
+ const SizedBox(height: SpacingTokens.textSectionSpacing),
  
  Text(
  'Existing Agent Context (${_existingContextDocuments.length})',
@@ -313,7 +313,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  Container(
  width: double.infinity,
@@ -337,7 +337,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  size: 14,
  color: ThemeColors(context).success,
  ),
- SizedBox(width: 6),
+ const SizedBox(width: 6),
  Expanded(
  child: Text(
  doc,
@@ -355,7 +355,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  ),
  ],
  
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  
  // Context type selection
  Text(
@@ -364,7 +364,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  Wrap(
  spacing: 8,
@@ -383,10 +383,10 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  
  // Footer
  Container(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  decoration: BoxDecoration(
  color: ThemeColors(context).surface,
- borderRadius: BorderRadius.only(
+ borderRadius: const BorderRadius.only(
  bottomLeft: Radius.circular(BorderRadiusTokens.xl),
  bottomRight: Radius.circular(BorderRadiusTokens.xl),
  ),
@@ -411,7 +411,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  text: 'Cancel',
  onPressed: () => Navigator.of(context).pop(),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  AsmblButton.primary(
  text: _isUploading 
  ? 'Processing...' 
@@ -460,7 +460,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  size: 14,
  color: isSelected ? ThemeColors(context).primary : ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: 6),
+ const SizedBox(width: 6),
  Text(
  label,
  style: TextStyles.bodySmall.copyWith(
@@ -565,8 +565,8 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  SnackBar(
  content: Row(
  children: [
- Icon(Icons.check_circle, color: Colors.white, size: 16),
- SizedBox(width: 8),
+ const Icon(Icons.check_circle, color: Colors.white, size: 16),
+ const SizedBox(width: 8),
  Text(
  _isAgentConversation
  ? '${_selectedDocuments.length} documents added to $_agentName'

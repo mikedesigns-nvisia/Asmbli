@@ -18,25 +18,25 @@ class AppColorSchemes {
 
   /// Get all available color scheme options for UI
   static List<ColorSchemeOption> get all => [
-    ColorSchemeOption(warmNeutral, 'Warm Neutral', [
-      const Color(0xFF8B6F47), // primary - warm brown
-      const Color(0xFFD4B896), // accent - warm beige
-      const Color(0xFFFAF8F5), // background - cream
+    const ColorSchemeOption(warmNeutral, 'Warm Neutral', [
+      Color(0xFF8B6F47), // primary - warm brown
+      Color(0xFFD4B896), // accent - warm beige
+      Color(0xFFFAF8F5), // background - cream
     ]),
-    ColorSchemeOption(coolBlue, 'Cool Blue', [
-      const Color(0xFF1E3A8A), // primary
-      const Color(0xFF3B82F6), // accent
-      const Color(0xFFF0F9FF), // background
+    const ColorSchemeOption(coolBlue, 'Cool Blue', [
+      Color(0xFF1E3A8A), // primary
+      Color(0xFF3B82F6), // accent
+      Color(0xFFF0F9FF), // background
     ]),
-    ColorSchemeOption(forestGreen, 'Forest Green', [
-      const Color(0xFF1E3B2B), // primary - moved from mint green
-      const Color(0xFF6B9080), // accent - moved from mint green
-      const Color(0xFFF5FBF8), // background - moved from mint green
+    const ColorSchemeOption(forestGreen, 'Forest Green', [
+      Color(0xFF1E3B2B), // primary - moved from mint green
+      Color(0xFF6B9080), // accent - moved from mint green
+      Color(0xFFF5FBF8), // background - moved from mint green
     ]),
-    ColorSchemeOption(sunsetOrange, 'Sunset Orange', [
-      const Color(0xFF9A3412), // primary
-      const Color(0xFFF97316), // accent
-      const Color(0xFFFFF7ED), // background
+    const ColorSchemeOption(sunsetOrange, 'Sunset Orange', [
+      Color(0xFF9A3412), // primary
+      Color(0xFFF97316), // accent
+      Color(0xFFFFF7ED), // background
     ]),
   ];
 
@@ -86,15 +86,15 @@ class AppColorSchemes {
       background: background,
       surface: surface,
       primary: primary,
-      onPrimary: Color(0xFFFAF8F5),
+      onPrimary: const Color(0xFFFAF8F5),
       accent: accent,
       onAccent: Colors.white,
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFFF4F0E8),
-      backgroundGradientStart: Color(0xFFFCFBF9),
-      backgroundGradientEnd: Color(0xFFF0E6D6),
+      surfaceVariant: const Color(0xFFF4F0E8),
+      backgroundGradientStart: const Color(0xFFFCFBF9),
+      backgroundGradientEnd: const Color(0xFFF0E6D6),
     );
   }
 
@@ -112,15 +112,15 @@ class AppColorSchemes {
       background: background,
       surface: surface,
       primary: primary,
-      onPrimary: Color(0xFF2B1F14),
+      onPrimary: const Color(0xFF2B1F14),
       accent: accent,
-      onAccent: Color(0xFF2B1F14),
+      onAccent: const Color(0xFF2B1F14),
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFF52402D),
-      backgroundGradientStart: Color(0xFF3D2B1F),
-      backgroundGradientEnd: Color(0xFF1F1611),
+      surfaceVariant: const Color(0xFF52402D),
+      backgroundGradientStart: const Color(0xFF3D2B1F),
+      backgroundGradientEnd: const Color(0xFF1F1611),
     );
   }
 
@@ -146,9 +146,9 @@ class AppColorSchemes {
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFFF1F5F9),
-      backgroundGradientStart: Color(0xFFFAFCFF),
-      backgroundGradientEnd: Color(0xFFE0F2FE),
+      surfaceVariant: const Color(0xFFF1F5F9),
+      backgroundGradientStart: const Color(0xFFFAFCFF),
+      backgroundGradientEnd: const Color(0xFFE0F2FE),
     );
   }
 
@@ -166,15 +166,15 @@ class AppColorSchemes {
       background: background,
       surface: surface,
       primary: primary,
-      onPrimary: Color(0xFF0F172A),
+      onPrimary: const Color(0xFF0F172A),
       accent: accent,
-      onAccent: Color(0xFF0F172A),
+      onAccent: const Color(0xFF0F172A),
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFF334155),
-      backgroundGradientStart: Color(0xFF1E293B),
-      backgroundGradientEnd: Color(0xFF0C1220),
+      surfaceVariant: const Color(0xFF334155),
+      backgroundGradientStart: const Color(0xFF1E293B),
+      backgroundGradientEnd: const Color(0xFF0C1220),
     );
   }
 
@@ -200,9 +200,9 @@ class AppColorSchemes {
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFFEEF6F2),
-      backgroundGradientStart: Color(0xFFF8FCFA),
-      backgroundGradientEnd: Color(0xFFE8F3ED),
+      surfaceVariant: const Color(0xFFEEF6F2),
+      backgroundGradientStart: const Color(0xFFF8FCFA),
+      backgroundGradientEnd: const Color(0xFFE8F3ED),
     );
   }
 
@@ -220,15 +220,15 @@ class AppColorSchemes {
       background: background,
       surface: surface,
       primary: primary,
-      onPrimary: Color(0xFF0F1C14),
+      onPrimary: const Color(0xFF0F1C14),
       accent: accent,
-      onAccent: Color(0xFF0F1C14),
+      onAccent: const Color(0xFF0F1C14),
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFF253B2A),
-      backgroundGradientStart: Color(0xFF142019),
-      backgroundGradientEnd: Color(0xFF0A140F),
+      surfaceVariant: const Color(0xFF253B2A),
+      backgroundGradientStart: const Color(0xFF142019),
+      backgroundGradientEnd: const Color(0xFF0A140F),
     );
   }
 
@@ -254,9 +254,9 @@ class AppColorSchemes {
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFFFEF3C7),
-      backgroundGradientStart: Color(0xFFFFFBF7),
-      backgroundGradientEnd: Color(0xFFFED7AA),
+      surfaceVariant: const Color(0xFFFEF3C7),
+      backgroundGradientStart: const Color(0xFFFFFBF7),
+      backgroundGradientEnd: const Color(0xFFFED7AA),
     );
   }
 
@@ -274,15 +274,15 @@ class AppColorSchemes {
       background: background,
       surface: surface,
       primary: primary,
-      onPrimary: Color(0xFF4A2117),
+      onPrimary: const Color(0xFF4A2117),
       accent: accent,
-      onAccent: Color(0xFF4A2117),
+      onAccent: const Color(0xFF4A2117),
       onSurface: onSurface,
       onSurfaceVariant: onSurfaceVariant,
       border: border,
-      surfaceVariant: Color(0xFF7A4B33),
-      backgroundGradientStart: Color(0xFF5C2D1F),
-      backgroundGradientEnd: Color(0xFF2E1810),
+      surfaceVariant: const Color(0xFF7A4B33),
+      backgroundGradientStart: const Color(0xFF5C2D1F),
+      backgroundGradientEnd: const Color(0xFF2E1810),
     );
   }
 

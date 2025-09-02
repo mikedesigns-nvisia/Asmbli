@@ -1,8 +1,6 @@
 // Desktop service integrations for agent_engine_core
 // Commented out until agent_engine_core package is available and properly configured
 
-import 'desktop_storage_service.dart';
-import 'file_system_service.dart';
 
 // TODO: Uncomment when agent_engine_core is available
 /*

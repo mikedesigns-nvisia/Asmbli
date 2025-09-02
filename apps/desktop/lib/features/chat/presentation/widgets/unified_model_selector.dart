@@ -61,11 +61,11 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
             if (localModels.isEmpty && apiModels.isEmpty)
               DropdownMenuItem<String>(
                 value: '__loading__',
-                child: Container(
+                child: SizedBox(
                   height: 32,
                   child: Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 14,
                         height: 14,
                         child: CircularProgressIndicator(strokeWidth: 2),
@@ -137,7 +137,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
   List<DropdownMenuItem<String>> _buildLocalModelItems(List<ModelConfig> localModels) {
     return localModels.map((model) => DropdownMenuItem<String>(
       value: model.id,
-      child: Container(
+      child: SizedBox(
         height: 32,
         child: Row(
           children: [
@@ -161,7 +161,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
                   if (model.status == ModelStatus.downloading && model.downloadProgress != null)
                     Text(
                       '${(model.downloadProgress! * 100).toInt()}%',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 10,
                         color: Colors.orange,
                       ),
@@ -194,7 +194,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
   List<DropdownMenuItem<String>> _buildApiModelItems(List<ModelConfig> apiModels) {
     return apiModels.map((model) => DropdownMenuItem<String>(
       value: model.id,
-      child: Container(
+      child: SizedBox(
         height: 32,
         child: Row(
           children: [
@@ -288,17 +288,17 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
   }
 
   DropdownMenuItem<String> _buildDivider() {
-    return DropdownMenuItem<String>(
+    return const DropdownMenuItem<String>(
       enabled: false,
       value: '__divider__',
-      child: const Divider(height: 1),
+      child: Divider(height: 1),
     );
   }
 
   DropdownMenuItem<String> _buildActionItem(String title, IconData icon, String value) {
     return DropdownMenuItem<String>(
       value: value,
-      child: Container(
+      child: SizedBox(
         height: 32,
         child: Row(
           children: [
@@ -353,7 +353,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               const SizedBox(width: 6),
               Text(
                 model.isLocal ? 'Running Locally' : 'Using API',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -403,7 +403,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               color: Colors.orange.withOpacity(0.2),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(
+            child: const Text(
               'DOWNLOADING',
               style: TextStyle(
                 fontSize: 9,
@@ -419,7 +419,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               color: Colors.grey.withOpacity(0.2),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(
+            child: const Text(
               'SETUP NEEDED',
               style: TextStyle(
                 fontSize: 9,
@@ -494,7 +494,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               ),
             ),
           if (model.isLocal && model.status == ModelStatus.downloading) ...[
-            SizedBox(
+            const SizedBox(
               width: 12,
               height: 12,
               child: CircularProgressIndicator(strokeWidth: 2),
@@ -504,7 +504,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               model.downloadProgress != null 
                 ? 'Downloading... ${(model.downloadProgress! * 100).toInt()}%'
                 : 'Downloading...',
-              style: TextStyle(fontSize: 11),
+              style: const TextStyle(fontSize: 11),
             ),
           ],
           if (model.isApi && !model.isConfigured)
@@ -605,7 +605,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white, size: 16),
+              const Icon(Icons.check_circle, color: Colors.white, size: 16),
               const SizedBox(width: 8),
               Text('Switched to ${model.name}'),
             ],

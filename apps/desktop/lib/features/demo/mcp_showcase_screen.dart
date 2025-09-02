@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/design_system/components/enhanced_template_browser.dart';
-import '../../core/design_system/components/smart_mcp_form.dart';
 import '../../core/design_system/components/mcp_testing_widgets.dart';
 import '../../core/models/enhanced_mcp_template.dart';
 import '../../core/services/enhanced_mcp_testing_service.dart';
@@ -22,7 +21,7 @@ class MCPShowcaseScreen extends ConsumerStatefulWidget {
 class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen> 
     with TickerProviderStateMixin {
   late TabController _tabController;
-  int _currentDemoStep = 0;
+  final int _currentDemoStep = 0;
   String _selectedRole = 'Developer';
   EnhancedMCPTemplate? _selectedTemplate;
   final _testingService = EnhancedMCPTestingService();
@@ -92,7 +91,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
 
   Widget _buildHeroHeader(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -110,7 +109,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
       ),
       child: Column(
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
@@ -130,7 +129,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             'From Command-Line Complexity to Consumer-Grade Simplicity',
             style: TextStyle(
@@ -138,7 +137,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -149,7 +148,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                 value: '80% Faster',
                 color: SemanticColors.success,
               ),
-              SizedBox(width: 24),
+              const SizedBox(width: 24),
               _buildMetricCard(
                 context,
                 icon: Icons.check_circle,
@@ -157,7 +156,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                 value: '95%',
                 color: SemanticColors.primary,
               ),
-              SizedBox(width: 24),
+              const SizedBox(width: 24),
               _buildMetricCard(
                 context,
                 icon: Icons.integration_instructions,
@@ -165,7 +164,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                 value: '42+',
                 color: Colors.orange,
               ),
-              SizedBox(width: 24),
+              const SizedBox(width: 24),
               _buildMetricCard(
                 context,
                 icon: Icons.sentiment_very_satisfied,
@@ -188,7 +187,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     required Color color,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
@@ -199,7 +198,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             value,
             style: TextStyle(
@@ -222,7 +221,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
 
   Widget _buildDemoTabs(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
@@ -230,7 +229,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
         ),
         child: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(icon: Icon(Icons.compare), text: 'Before vs After'),
             Tab(icon: Icon(Icons.auto_fix_high), text: 'Live Wizard'),
             Tab(icon: Icon(Icons.apps), text: 'Template Browser'),
@@ -250,7 +249,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
 
   Widget _buildBeforeAfterComparison(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32),
       child: Column(
         children: [
           Text(
@@ -261,7 +260,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           
           // PostgreSQL Example
           _buildComparisonCard(
@@ -270,19 +269,19 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             before: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('❌ Install uvx globally:'),
+                const Text('❌ Install uvx globally:'),
                 _buildCodeBlock('npm install -g @modelcontextprotocol/uvx'),
-                SizedBox(height: 8),
-                Text('❌ Type connection string:'),
+                const SizedBox(height: 8),
+                const Text('❌ Type connection string:'),
                 _buildCodeBlock('postgresql://user:password@localhost:5432/database'),
-                SizedBox(height: 8),
-                Text('❌ Configure SSL manually'),
-                Text('❌ Test with command line'),
-                Text('⏱️ Time: 10+ minutes'),
-                Text('📊 Success rate: 45%'),
+                const SizedBox(height: 8),
+                const Text('❌ Configure SSL manually'),
+                const Text('❌ Test with command line'),
+                const Text('⏱️ Time: 10+ minutes'),
+                const Text('📊 Success rate: 45%'),
               ],
             ),
-            after: Column(
+            after: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('✅ Click "Add Integration"'),
@@ -296,13 +295,13 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             ),
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
           // GitHub Example
           _buildComparisonCard(
             context,
             title: 'GitHub Integration',
-            before: Column(
+            before: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('❌ Go to GitHub.com → Settings'),
@@ -314,7 +313,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                 Text('⏱️ Time: 5+ minutes'),
               ],
             ),
-            after: Column(
+            after: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('✅ Select "GitHub" template'),
@@ -327,7 +326,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             ),
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
           // Filesystem Example
           _buildComparisonCard(
@@ -336,15 +335,15 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             before: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('❌ Type path manually:'),
+                const Text('❌ Type path manually:'),
                 _buildCodeBlock('C:\\Users\\John\\Documents\\MyProject'),
-                SizedBox(height: 8),
-                Text('❌ Configure permissions in JSON'),
-                Text('❌ Set file filters manually'),
-                Text('❌ No preview of accessible files'),
+                const SizedBox(height: 8),
+                const Text('❌ Configure permissions in JSON'),
+                const Text('❌ Set file filters manually'),
+                const Text('❌ No preview of accessible files'),
               ],
             ),
-            after: Column(
+            after: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('✅ Click "Browse Folders"'),
@@ -378,14 +377,14 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: SemanticColors.primary,
@@ -393,7 +392,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -402,12 +401,12 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: SemanticColors.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Text(
+                        child: const Text(
                           'BEFORE (Manual)',
                           style: TextStyle(
                             fontSize: 12,
@@ -416,7 +415,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                           ),
                         ),
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       DefaultTextStyle(
                         style: TextStyle(
                           fontSize: 13,
@@ -431,7 +430,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                 Container(
                   width: 1,
                   height: 200,
-                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                 ),
                 Expanded(
@@ -439,12 +438,12 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: SemanticColors.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Text(
+                        child: const Text(
                           'AFTER (User-Friendly)',
                           style: TextStyle(
                             fontSize: 12,
@@ -453,7 +452,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                           ),
                         ),
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       DefaultTextStyle(
                         style: TextStyle(
                           fontSize: 13,
@@ -475,15 +474,15 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
 
   Widget _buildCodeBlock(String code) {
     return Container(
-      margin: EdgeInsets.only(top: 4),
-      padding: EdgeInsets.all(8),
+      margin: const EdgeInsets.only(top: 4),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         code,
-        style: TextStyle(
+        style: const TextStyle(
           fontFamily: 'JetBrains Mono',
           fontSize: 11,
           color: Colors.green,
@@ -505,7 +504,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             'See how easy it is to add any integration',
             style: TextStyle(
@@ -513,7 +512,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           AsmblButton.primary(
             text: 'Launch Setup Wizard',
             icon: Icons.rocket_launch,
@@ -526,7 +525,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               );
             },
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Text(
             'Choose your role to see personalized recommendations:',
             style: TextStyle(
@@ -534,7 +533,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             children: _roles.map((role) {
@@ -556,7 +555,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
 
   Widget _buildTemplateBrowserDemo(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32),
       child: Column(
         children: [
           Text(
@@ -567,7 +566,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Browse 42+ integrations with smart filtering and search',
             style: TextStyle(
@@ -575,7 +574,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Expanded(
             child: EnhancedTemplateBrowser(
               userRole: _selectedRole,
@@ -603,7 +602,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     );
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32),
       child: Column(
         children: [
           Text(
@@ -614,7 +613,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Get personalized integration suggestions based on your role',
             style: TextStyle(
@@ -622,9 +621,9 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -634,11 +633,11 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             ),
             child: Row(
               children: [
-                Icon(Icons.person, color: SemanticColors.primary),
-                SizedBox(width: 12),
+                const Icon(Icons.person, color: SemanticColors.primary),
+                const SizedBox(width: 12),
                 Text(
                   'Current Role: $_selectedRole',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: SemanticColors.primary,
@@ -647,7 +646,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               ],
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           ...recommendations.map((rec) => _buildRecommendationCard(context, rec)),
         ],
       ),
@@ -656,8 +655,8 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
 
   Widget _buildRecommendationCard(BuildContext context, MCPRecommendation recommendation) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: recommendation.category.color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
@@ -680,7 +679,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               size: 24,
             ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -695,9 +694,9 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: recommendation.category.color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
@@ -713,7 +712,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                     ),
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   recommendation.reason,
                   style: TextStyle(
@@ -721,13 +720,13 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: recommendation.relevanceScore,
                   backgroundColor: Colors.grey.withValues(alpha: 0.2),
                   valueColor: AlwaysStoppedAnimation(recommendation.category.color),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Relevance: ${(recommendation.relevanceScore * 100).toInt()}%',
                   style: TextStyle(
@@ -745,7 +744,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
 
   Widget _buildTestingDemo(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32),
       child: Column(
         children: [
           Text(
@@ -756,7 +755,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Watch live validation and troubleshooting in action',
             style: TextStyle(
@@ -764,10 +763,10 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           
           // Demo test for filesystem
-          MCPConnectionTester(
+          const MCPConnectionTester(
             serverId: 'demo-filesystem',
             template: EnhancedMCPTemplates.filesystem,
             config: {
@@ -777,10 +776,10 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             autoStart: false,
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
           // Demo test for GitHub
-          MCPConnectionTester(
+          const MCPConnectionTester(
             serverId: 'demo-github',
             template: EnhancedMCPTemplates.github,
             config: {
@@ -795,7 +794,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
 
   Widget _buildDashboardDemo(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32),
       child: EnhancedMCPDashboard(
         agentRole: _selectedRole,
         agentDescription: 'Demo agent for $_selectedRole',

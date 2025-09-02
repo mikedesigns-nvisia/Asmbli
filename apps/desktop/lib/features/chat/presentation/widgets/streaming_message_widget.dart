@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:agent_engine_core/models/conversation.dart' as core;
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/services/mcp_bridge_service.dart';
 
 /// Represents a streaming message state
 class StreamingMessageState {
@@ -204,7 +202,7 @@ class StreamingMessageWidget extends ConsumerWidget {
         children: [
           if (!isUser) ...[
             _buildAvatar(context, isUser),
-            SizedBox(width: SpacingTokens.md),
+            const SizedBox(width: SpacingTokens.md),
           ],
           
           Flexible(
@@ -234,7 +232,7 @@ class StreamingMessageWidget extends ConsumerWidget {
           ),
           
           if (isUser) ...[
-            SizedBox(width: SpacingTokens.md),
+            const SizedBox(width: SpacingTokens.md),
             _buildAvatar(context, isUser),
           ],
         ],
@@ -263,7 +261,7 @@ class StreamingMessageWidget extends ConsumerWidget {
     
     return Container(
       constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: isUser 
           ? ThemeColors(context).primary.withValues(alpha: 0.1)
@@ -301,7 +299,7 @@ class StreamingMessageWidget extends ConsumerWidget {
           ),
           // Streaming cursor
           if (!state.isComplete)
-            WidgetSpan(
+            const WidgetSpan(
               child: AnimatedStreamingCursor(),
             ),
         ],
@@ -311,7 +309,7 @@ class StreamingMessageWidget extends ConsumerWidget {
 
   Widget _buildToolResults(BuildContext context, List<MCPToolResult> toolResults) {
     return Container(
-      margin: EdgeInsets.only(top: SpacingTokens.sm),
+      margin: const EdgeInsets.only(top: SpacingTokens.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -322,7 +320,7 @@ class StreamingMessageWidget extends ConsumerWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           ...toolResults.map((result) => _buildSingleToolResult(context, result)),
         ],
       ),
@@ -331,8 +329,8 @@ class StreamingMessageWidget extends ConsumerWidget {
 
   Widget _buildSingleToolResult(BuildContext context, MCPToolResult result) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.xs),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: result.success 
           ? ThemeColors(context).success.withValues(alpha: 0.1)
@@ -356,7 +354,7 @@ class StreamingMessageWidget extends ConsumerWidget {
                   ? ThemeColors(context).success
                   : ThemeColors(context).error,
               ),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 '${result.serverId}/${result.toolName}',
                 style: TextStyles.caption.copyWith(
@@ -364,7 +362,7 @@ class StreamingMessageWidget extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Text(
                 _formatTimestamp(result.timestamp),
                 style: TextStyles.caption.copyWith(
@@ -374,7 +372,7 @@ class StreamingMessageWidget extends ConsumerWidget {
             ],
           ),
           if (result.success && result.result != null) ...[
-            SizedBox(height: SpacingTokens.xs),
+            const SizedBox(height: SpacingTokens.xs),
             Text(
               _formatToolResult(result.result),
               style: TextStyles.caption.copyWith(
@@ -385,7 +383,7 @@ class StreamingMessageWidget extends ConsumerWidget {
             ),
           ],
           if (!result.success && result.error != null) ...[
-            SizedBox(height: SpacingTokens.xs),
+            const SizedBox(height: SpacingTokens.xs),
             Text(
               result.error!,
               style: TextStyles.caption.copyWith(
@@ -400,7 +398,7 @@ class StreamingMessageWidget extends ConsumerWidget {
 
   Widget _buildResourceData(BuildContext context, List<MCPResourceData> resourceData) {
     return Container(
-      margin: EdgeInsets.only(top: SpacingTokens.sm),
+      margin: const EdgeInsets.only(top: SpacingTokens.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -411,7 +409,7 @@ class StreamingMessageWidget extends ConsumerWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           ...resourceData.map((data) => _buildSingleResourceData(context, data)),
         ],
       ),
@@ -420,8 +418,8 @@ class StreamingMessageWidget extends ConsumerWidget {
 
   Widget _buildSingleResourceData(BuildContext context, MCPResourceData data) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.xs),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -437,7 +435,7 @@ class StreamingMessageWidget extends ConsumerWidget {
                 size: 16,
                 color: ThemeColors(context).onSurfaceVariant,
               ),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Expanded(
                 child: Text(
                   '${data.serverId}: ${data.resourceUri}',
@@ -451,7 +449,7 @@ class StreamingMessageWidget extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Text(
             data.content.length > 200 ? '${data.content.substring(0, 200)}...' : data.content,
             style: TextStyles.caption.copyWith(
@@ -467,7 +465,7 @@ class StreamingMessageWidget extends ConsumerWidget {
 
   Widget _buildStreamingStatus(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: SpacingTokens.xs),
+      margin: const EdgeInsets.only(top: SpacingTokens.xs),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -479,7 +477,7 @@ class StreamingMessageWidget extends ConsumerWidget {
               strokeWidth: 2,
             ),
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Text(
             'Processing with MCP servers...',
             style: TextStyles.caption.copyWith(
@@ -494,8 +492,8 @@ class StreamingMessageWidget extends ConsumerWidget {
 
   Widget _buildErrorDisplay(BuildContext context, String error) {
     return Container(
-      margin: EdgeInsets.only(top: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(top: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: ThemeColors(context).error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -508,7 +506,7 @@ class StreamingMessageWidget extends ConsumerWidget {
             size: 16,
             color: ThemeColors(context).error,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Expanded(
             child: Text(
               error,
@@ -524,8 +522,8 @@ class StreamingMessageWidget extends ConsumerWidget {
 
   Widget _buildMetadata(BuildContext context, Map<String, dynamic> metadata) {
     return Container(
-      margin: EdgeInsets.only(top: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.xs),
+      margin: const EdgeInsets.only(top: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.xs),
       decoration: BoxDecoration(
         color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -539,7 +537,7 @@ class StreamingMessageWidget extends ConsumerWidget {
               size: 12,
               color: ThemeColors(context).onSurfaceVariant,
             ),
-            SizedBox(width: SpacingTokens.xs),
+            const SizedBox(width: SpacingTokens.xs),
             Text(
               '${metadata['toolsUsed'].length} tools',
               style: TextStyles.caption.copyWith(
@@ -547,7 +545,7 @@ class StreamingMessageWidget extends ConsumerWidget {
                 fontSize: 10,
               ),
             ),
-            SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: SpacingTokens.sm),
           ],
           if (metadata['processingTime'] != null) ...[
             Icon(
@@ -555,7 +553,7 @@ class StreamingMessageWidget extends ConsumerWidget {
               size: 12,
               color: ThemeColors(context).onSurfaceVariant,
             ),
-            SizedBox(width: SpacingTokens.xs),
+            const SizedBox(width: SpacingTokens.xs),
             Text(
               '${metadata['processingTime']}ms',
               style: TextStyles.caption.copyWith(
@@ -595,6 +593,8 @@ class StreamingMessageWidget extends ConsumerWidget {
 
 /// Animated cursor for streaming text
 class AnimatedStreamingCursor extends StatefulWidget {
+  const AnimatedStreamingCursor({super.key});
+
   @override
   _AnimatedStreamingCursorState createState() => _AnimatedStreamingCursorState();
 }
@@ -608,7 +608,7 @@ class _AnimatedStreamingCursorState extends State<AnimatedStreamingCursor>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
@@ -629,7 +629,7 @@ class _AnimatedStreamingCursorState extends State<AnimatedStreamingCursor>
         return Container(
           width: 2,
           height: 16,
-          margin: EdgeInsets.only(left: 2),
+          margin: const EdgeInsets.only(left: 2),
           decoration: BoxDecoration(
             color: ThemeColors(context).primary.withValues(alpha: _animation.value),
             borderRadius: BorderRadius.circular(1),

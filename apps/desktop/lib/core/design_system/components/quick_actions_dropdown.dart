@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
-import 'asmbli_card_enhanced.dart';
 import '../../../features/chat/presentation/widgets/add_context_modal.dart';
 import '../../constants/routes.dart';
 
@@ -67,7 +66,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  child: CompositedTransformFollower(
  link: _layerLink,
  showWhenUnlinked: false,
- offset: Offset(-260, 40),
+ offset: const Offset(-260, 40),
  child: Material(
  elevation: 8,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
@@ -82,14 +81,14 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  width: 1,
  ),
  ),
- padding: EdgeInsets.all(SpacingTokens.cardPadding),
+ padding: const EdgeInsets.all(SpacingTokens.cardPadding),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  mainAxisSize: MainAxisSize.min,
  children: [
  // Header
  Container(
- padding: EdgeInsets.only(
+ padding: const EdgeInsets.only(
  bottom: SpacingTokens.componentSpacing,
  ),
  decoration: BoxDecoration(
@@ -103,7 +102,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  child: Row(
  children: [
  Container(
- padding: EdgeInsets.all(SpacingTokens.xs),
+ padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
  color: colors.primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -114,7 +113,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  color: colors.primary,
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Text(
  'Quick Actions',
  style: TextStyles.sectionTitle.copyWith(
@@ -126,13 +125,13 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Actions
  _buildDropdownAction(
- icon: Icons.add,
- title: 'New Chat',
- description: 'Start a conversation',
+ icon: Icons.chat_bubble_outline,
+ title: 'Open Chat',
+ description: 'Go to chat interface',
  onTap: () {
  _closeDropdown();
  context.go(AppRoutes.chat);
@@ -152,20 +151,20 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  ),
  
  _buildDropdownAction(
- icon: Icons.library_books,
- title: 'Browse Templates',
- description: 'Explore agent templates',
+ icon: Icons.hub,
+ title: 'Integrations',
+ description: 'Manage MCP servers',
  onTap: () {
  _closeDropdown();
- context.go(AppRoutes.context);
+ context.go(AppRoutes.integrationHub);
  },
  color: colors.info,
  ),
  
  _buildDropdownAction(
- icon: Icons.school,
- title: 'Manage Knowledge',
- description: 'Browse context library',
+ icon: Icons.library_books,
+ title: 'Context Library',
+ description: 'Browse knowledge base',
  onTap: () {
  _closeDropdown();
  context.go(AppRoutes.context);
@@ -186,7 +185,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  
  Container(
  height: 1,
- margin: EdgeInsets.symmetric(
+ margin: const EdgeInsets.symmetric(
  vertical: SpacingTokens.componentSpacing,
  ),
  decoration: BoxDecoration(
@@ -227,7 +226,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  final colors = ThemeColors(context);
  
  return Padding(
- padding: EdgeInsets.symmetric(vertical: SpacingTokens.xs_precise),
+ padding: const EdgeInsets.symmetric(vertical: SpacingTokens.xs_precise),
  child: Material(
  color: Colors.transparent,
  child: InkWell(
@@ -236,7 +235,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  hoverColor: color.withValues(alpha: 0.05),
  splashColor: color.withValues(alpha: 0.15),
  child: Container(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
  border: Border.all(
@@ -247,7 +246,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  child: Row(
  children: [
  Container(
- padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
  color: color.withValues(alpha: 0.12),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -258,7 +257,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  color: color,
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +269,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.xs_precise),
+ const SizedBox(height: SpacingTokens.xs_precise),
  Text(
  description,
  style: TextStyles.caption.copyWith(
@@ -281,7 +280,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  ),
  ),
  Container(
- padding: EdgeInsets.all(SpacingTokens.xs_precise),
+ padding: const EdgeInsets.all(SpacingTokens.xs_precise),
  child: Icon(
  Icons.arrow_forward_ios,
  size: 12,
@@ -317,9 +316,9 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  hoverColor: colors.primary.withValues(alpha: 0.04),
  splashColor: colors.primary.withValues(alpha: 0.12),
  child: AnimatedContainer(
- duration: Duration(milliseconds: 200),
+ duration: const Duration(milliseconds: 200),
  curve: Curves.easeInOut,
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.iconSpacing,
  ),
@@ -339,7 +338,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  BoxShadow(
  color: colors.primary.withValues(alpha: 0.1),
  blurRadius: 4,
- offset: Offset(0, 2),
+ offset: const Offset(0, 2),
  ),
  ]
  : null,
@@ -348,9 +347,9 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  mainAxisSize: MainAxisSize.min,
  children: [
  AnimatedContainer(
- duration: Duration(milliseconds: 200),
+ duration: const Duration(milliseconds: 200),
  curve: Curves.easeInOut,
- padding: EdgeInsets.all(SpacingTokens.xs),
+ padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
  color: (_isOpen ? colors.primary : colors.onSurfaceVariant).withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -361,7 +360,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  color: _isOpen ? colors.primary : colors.onSurfaceVariant,
  ),
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  Text(
  'Quick Actions',
  style: TextStyles.bodyMedium.copyWith(
@@ -369,10 +368,10 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  fontWeight: _isOpen ? FontWeight.w600 : FontWeight.w500,
  ),
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  AnimatedRotation(
  turns: _isOpen ? 0.5 : 0,
- duration: Duration(milliseconds: 200),
+ duration: const Duration(milliseconds: 200),
  curve: Curves.easeInOut,
  child: Icon(
  Icons.expand_more,

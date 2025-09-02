@@ -33,7 +33,7 @@ class DesktopStorageService {
  if (_isInitializing) {
    // Wait for ongoing initialization to complete
    while (_isInitializing) {
-     await Future.delayed(Duration(milliseconds: 100));
+     await Future.delayed(const Duration(milliseconds: 100));
    }
    if (_isInitialized) return;
  }
@@ -80,7 +80,7 @@ class DesktopStorageService {
    }
  } catch (e) {
    print('⚠️ Hive initialization failed: $e (using SharedPreferences fallback)');
-   throw e;
+   rethrow;
  }
  }
  
@@ -121,7 +121,7 @@ class DesktopStorageService {
    box = await Hive.openBox(boxName);
  } catch (e) {
    print('⚠️ Failed to open Hive box $boxName: $e');
-   throw e;
+   rethrow;
  }
  
  _hiveBoxes[boxName] = box;

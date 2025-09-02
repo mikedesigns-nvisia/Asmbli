@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import 'integration_service.dart';
@@ -107,7 +105,7 @@ class IntegrationDocumentationService {
           integrationId: entry.key,
           title: integration.name,
           excerpt: integration.description,
-          relevanceScore: _calculateRelevance(queryLower, integration.name + ' ' + integration.description),
+          relevanceScore: _calculateRelevance(queryLower, '${integration.name} ${integration.description}'),
         ));
       }
       
@@ -150,7 +148,7 @@ class IntegrationDocumentationService {
             integrationId: entry.key,
             title: article.title,
             excerpt: _extractExcerpt(article.content, queryLower),
-            relevanceScore: _calculateRelevance(queryLower, article.title + ' ' + article.content),
+            relevanceScore: _calculateRelevance(queryLower, '${article.title} ${article.content}'),
           ));
         }
       }
@@ -165,35 +163,35 @@ class IntegrationDocumentationService {
   /// Get popular help topics
   List<PopularTopic> getPopularTopics() {
     return [
-      PopularTopic(
+      const PopularTopic(
         title: 'Getting Started with Integrations',
         description: 'Learn how to set up your first integration',
         category: 'Getting Started',
         viewCount: 1250,
         helpfulVotes: 89,
       ),
-      PopularTopic(
+      const PopularTopic(
         title: 'Configuring API Authentication',
         description: 'Set up API keys and authentication for cloud integrations',
         category: 'Configuration',
         viewCount: 980,
         helpfulVotes: 76,
       ),
-      PopularTopic(
+      const PopularTopic(
         title: 'Troubleshooting Connection Issues',
         description: 'Common solutions for integration connectivity problems',
         category: 'Troubleshooting',
         viewCount: 850,
         helpfulVotes: 65,
       ),
-      PopularTopic(
+      const PopularTopic(
         title: 'Understanding Integration Dependencies',
         description: 'How integration dependencies work and how to manage them',
         category: 'Advanced',
         viewCount: 620,
         helpfulVotes: 48,
       ),
-      PopularTopic(
+      const PopularTopic(
         title: 'Performance Optimization Tips',
         description: 'Best practices for optimizing integration performance',
         category: 'Optimization',
@@ -285,7 +283,7 @@ class IntegrationDocumentationService {
     
     // Add warnings based on integration type
     if (integration.category == IntegrationCategory.cloudAPIs) {
-      help.add(ContextualHelp(
+      help.add(const ContextualHelp(
         title: 'API Rate Limits',
         content: 'This integration connects to external APIs which may have rate limits. '
                 'Monitor your usage to avoid hitting these limits.',
@@ -336,7 +334,7 @@ class IntegrationDocumentationService {
       category: 'Setup',
       tags: ['setup', 'configuration', integration.category.name],
       difficulty: integration.difficulty,
-      estimatedReadTime: Duration(minutes: 5),
+      estimatedReadTime: const Duration(minutes: 5),
       lastUpdated: DateTime.now(),
       helpfulVotes: 0,
       viewCount: 0,
@@ -350,7 +348,7 @@ class IntegrationDocumentationService {
       category: 'Configuration',
       tags: ['configuration', 'settings', integration.category.name],
       difficulty: integration.difficulty,
-      estimatedReadTime: Duration(minutes: 3),
+      estimatedReadTime: const Duration(minutes: 3),
       lastUpdated: DateTime.now(),
       helpfulVotes: 0,
       viewCount: 0,
@@ -364,7 +362,7 @@ class IntegrationDocumentationService {
       category: 'Troubleshooting',
       tags: ['troubleshooting', 'issues', 'problems'],
       difficulty: 'Medium',
-      estimatedReadTime: Duration(minutes: 4),
+      estimatedReadTime: const Duration(minutes: 4),
       lastUpdated: DateTime.now(),
       helpfulVotes: 0,
       viewCount: 0,
@@ -556,13 +554,13 @@ This integration is classified as "${integration.difficulty}" difficulty and ${i
   Duration _getEstimatedSetupTime(IntegrationDefinition integration) {
     switch (integration.difficulty) {
       case 'Easy':
-        return Duration(minutes: 5);
+        return const Duration(minutes: 5);
       case 'Medium':
-        return Duration(minutes: 15);
+        return const Duration(minutes: 15);
       case 'Hard':
-        return Duration(minutes: 30);
+        return const Duration(minutes: 30);
       default:
-        return Duration(minutes: 10);
+        return const Duration(minutes: 10);
     }
   }
   
@@ -574,7 +572,7 @@ This integration is classified as "${integration.difficulty}" difficulty and ${i
         title: 'Set up $prereq',
         description: 'Ensure $prereq is properly configured and accessible',
         isRequired: true,
-        estimatedTime: Duration(minutes: 5),
+        estimatedTime: const Duration(minutes: 5),
       ));
     }
     
@@ -626,12 +624,12 @@ This integration is classified as "${integration.difficulty}" difficulty and ${i
     
     if (integration.category == IntegrationCategory.cloudAPIs) {
       issues.addAll([
-        CommonIssue(
+        const CommonIssue(
           title: 'Authentication Failed',
           description: 'API credentials are invalid or expired',
           solution: 'Verify your API key is correct and has not expired. Check the service documentation for proper credential format.',
         ),
-        CommonIssue(
+        const CommonIssue(
           title: 'Rate Limit Exceeded',
           description: 'Too many requests sent to the API',
           solution: 'Wait for the rate limit to reset or upgrade your service plan for higher limits.',
@@ -639,7 +637,7 @@ This integration is classified as "${integration.difficulty}" difficulty and ${i
       ]);
     }
     
-    issues.add(CommonIssue(
+    issues.add(const CommonIssue(
       title: 'Connection Timeout',
       description: 'Unable to establish connection within timeout period',
       solution: 'Check your internet connection and verify the service is accessible. Try increasing the timeout value.',
@@ -879,12 +877,12 @@ When reporting issues, include:
   // Additional helper methods...
   String _extractExcerpt(String content, String query) {
     final index = content.toLowerCase().indexOf(query);
-    if (index == -1) return content.substring(0, 150) + '...';
+    if (index == -1) return '${content.substring(0, 150)}...';
     
     final start = (index - 50).clamp(0, content.length);
     final end = (index + query.length + 50).clamp(0, content.length);
     
-    return content.substring(start, end) + '...';
+    return '${content.substring(start, end)}...';
   }
   
   double _calculateRelevance(String query, String content) {
@@ -943,19 +941,19 @@ When reporting issues, include:
   
   List<DiagnosticStep> _getDiagnosticSteps(IntegrationDefinition integration) {
     return [
-      DiagnosticStep(
+      const DiagnosticStep(
         step: 1,
         title: 'Check Integration Status',
         description: 'Verify the integration is enabled and configured',
         command: 'Check the integration dashboard for status indicators',
       ),
-      DiagnosticStep(
+      const DiagnosticStep(
         step: 2,
         title: 'Test Connection',
         description: 'Run a connection test to verify basic connectivity',
         command: 'Use the Testing tab to run connectivity tests',
       ),
-      DiagnosticStep(
+      const DiagnosticStep(
         step: 3,
         title: 'Review Logs',
         description: 'Check recent logs for error messages',
@@ -972,13 +970,13 @@ When reporting issues, include:
         type: 'Documentation',
         url: '#',
       ),
-      SupportResource(
+      const SupportResource(
         title: 'Community Forum',
         description: 'Get help from the community',
         type: 'Community',
         url: '#',
       ),
-      SupportResource(
+      const SupportResource(
         title: 'Contact Support',
         description: 'Direct support for complex issues',
         type: 'Support',

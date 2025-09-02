@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../design_system.dart';
 import 'mcp_field_types.dart';
 
@@ -36,11 +35,11 @@ class ServiceDetectionField extends MCPField {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(context),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -55,18 +54,18 @@ class ServiceDetectionField extends MCPField {
                     color: SemanticColors.primary,
                     size: 20,
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'Auto-Detect ${serviceType.displayName}',
-                      style: TextStyle(
+                      style: const TextStyle(
                                                 fontWeight: FontWeight.w500,
                         fontSize: 14,
                       ),
                     ),
                   ),
                   if (isScanning) ...[
-                    SizedBox(
+                    const SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
@@ -83,13 +82,13 @@ class ServiceDetectionField extends MCPField {
                   ],
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildServiceList(context),
             ],
           ),
         ),
         if (description != null) ...[
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             description!,
             style: TextStyle(
@@ -114,8 +113,8 @@ class ServiceDetectionField extends MCPField {
           ),
         ),
         if (this.required) ...[
-          SizedBox(width: 4),
-          Text(
+          const SizedBox(width: 4),
+          const Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
@@ -130,14 +129,14 @@ class ServiceDetectionField extends MCPField {
 
   Widget _buildServiceList(BuildContext context) {
     if (isScanning) {
-      return Container(
+      return SizedBox(
         height: 100,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 8),
+              const CircularProgressIndicator(),
+              const SizedBox(height: 8),
               Text(
                 'Scanning for ${serviceType.displayName} services...',
                 style: TextStyle(
@@ -153,7 +152,7 @@ class ServiceDetectionField extends MCPField {
 
     if (detectedServices.isEmpty) {
       return Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             Icon(
@@ -161,7 +160,7 @@ class ServiceDetectionField extends MCPField {
               size: 32,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'No ${serviceType.displayName} services detected',
               style: TextStyle(
@@ -170,7 +169,7 @@ class ServiceDetectionField extends MCPField {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               _getInstallationHint(),
               style: TextStyle(
@@ -188,14 +187,14 @@ class ServiceDetectionField extends MCPField {
       children: detectedServices.map((service) {
         final isSelected = selectedService?.id == service.id;
         return Container(
-          margin: EdgeInsets.only(bottom: 8),
+          margin: const EdgeInsets.only(bottom: 8),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(6),
               onTap: () => onServiceSelected?.call(service),
               child: Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isSelected 
                     ? SemanticColors.primary.withValues(alpha: 0.1)
@@ -222,7 +221,7 @@ class ServiceDetectionField extends MCPField {
                         color: _getStatusColor(service.status),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,9 +238,9 @@ class ServiceDetectionField extends MCPField {
                                     : Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: _getStatusColor(service.status).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
@@ -277,7 +276,7 @@ class ServiceDetectionField extends MCPField {
                       ),
                     ),
                     if (isSelected) ...[
-                      Icon(
+                      const Icon(
                         Icons.check_circle,
                         color: SemanticColors.primary,
                         size: 20,
@@ -368,7 +367,7 @@ class ServiceDetectionField extends MCPField {
     );
     
     // This would implement actual connection testing
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -419,7 +418,7 @@ class _PortScannerFieldState extends State<PortScannerField> {
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             AsmblButton.secondary(
               text: _isScanning ? 'Scanning...' : 'Scan Ports',
               icon: _isScanning ? Icons.hourglass_empty : Icons.scanner,
@@ -428,7 +427,7 @@ class _PortScannerFieldState extends State<PortScannerField> {
           ],
         ),
         if (widget.description != null) ...[
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             widget.description!,
             style: TextStyle(
@@ -437,12 +436,12 @@ class _PortScannerFieldState extends State<PortScannerField> {
             ),
           ),
         ],
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         if (_detectedPorts.isNotEmpty) ...[
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -451,14 +450,14 @@ class _PortScannerFieldState extends State<PortScannerField> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Detected Services',
                   style: TextStyle(
                                         fontWeight: FontWeight.w500,
                     fontSize: 13,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 ..._detectedPorts.map((port) => _buildPortRow(context, port)),
               ],
             ),
@@ -470,8 +469,8 @@ class _PortScannerFieldState extends State<PortScannerField> {
 
   Widget _buildPortRow(BuildContext context, DetectedPort port) {
     return Container(
-      margin: EdgeInsets.only(bottom: 4),
-      padding: EdgeInsets.all(8),
+      margin: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(4),
@@ -483,16 +482,16 @@ class _PortScannerFieldState extends State<PortScannerField> {
             size: 8,
             color: port.isOpen ? SemanticColors.success : SemanticColors.error,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
             'Port ${port.port}',
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'JetBrains Mono',
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
             port.serviceName ?? 'Unknown Service',
             style: TextStyle(
@@ -500,7 +499,7 @@ class _PortScannerFieldState extends State<PortScannerField> {
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Text(
             port.isOpen ? 'Open' : 'Closed',
             style: TextStyle(
@@ -518,7 +517,7 @@ class _PortScannerFieldState extends State<PortScannerField> {
     setState(() => _isScanning = true);
 
     // Simulate port scanning
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
 
     final detectedPorts = widget.commonPorts.map((port) {
       // Simulate detection results

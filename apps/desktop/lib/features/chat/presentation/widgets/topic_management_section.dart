@@ -49,7 +49,7 @@ final defaultTopics = [
     description: 'General conversations',
     icon: Icons.chat,
     color: Colors.grey,
-    createdAt: DateTime.now().subtract(Duration(days: 30)),
+    createdAt: DateTime.now().subtract(const Duration(days: 30)),
   ),
   Topic(
     id: 'work',
@@ -57,7 +57,7 @@ final defaultTopics = [
     description: 'Work-related discussions',
     icon: Icons.work,
     color: Colors.blue,
-    createdAt: DateTime.now().subtract(Duration(days: 20)),
+    createdAt: DateTime.now().subtract(const Duration(days: 20)),
   ),
   Topic(
     id: 'research',
@@ -65,7 +65,7 @@ final defaultTopics = [
     description: 'Research and learning',
     icon: Icons.science,
     color: Colors.green,
-    createdAt: DateTime.now().subtract(Duration(days: 15)),
+    createdAt: DateTime.now().subtract(const Duration(days: 15)),
   ),
   Topic(
     id: 'personal',
@@ -73,7 +73,7 @@ final defaultTopics = [
     description: 'Personal conversations',
     icon: Icons.person,
     color: Colors.purple,
-    createdAt: DateTime.now().subtract(Duration(days: 10)),
+    createdAt: DateTime.now().subtract(const Duration(days: 10)),
   ),
 ];
 
@@ -104,8 +104,8 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
   bool _showCreateTopicDialog = false;
   final TextEditingController _topicNameController = TextEditingController();
   final TextEditingController _topicDescriptionController = TextEditingController();
-  IconData _selectedIcon = Icons.folder;
-  Color _selectedColor = Colors.blue;
+  final IconData _selectedIcon = Icons.folder;
+  final Color _selectedColor = Colors.blue;
   
   @override
   void dispose() {
@@ -124,10 +124,10 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: SpacingTokens.lg),
+        const SizedBox(height: SpacingTokens.lg),
         // Topics Header
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
+          padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
           child: Row(
             children: [
               Icon(
@@ -135,7 +135,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                 size: 16,
                 color: theme.colorScheme.onSurfaceVariant,
               ),
-              SizedBox(width: SpacingTokens.iconSpacing),
+              const SizedBox(width: SpacingTokens.iconSpacing),
               Text(
                 'Topics',
                 style: TextStyle(
@@ -145,14 +145,14 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               IconButton(
                 onPressed: () => _showCreateTopic(),
-                icon: Icon(Icons.add, size: 16),
+                icon: const Icon(Icons.add, size: 16),
                 style: IconButton.styleFrom(
                   foregroundColor: ThemeColors(context).primary,
-                  padding: EdgeInsets.all(4),
-                  minimumSize: Size(24, 24),
+                  padding: const EdgeInsets.all(4),
+                  minimumSize: const Size(24, 24),
                 ),
                 tooltip: 'Create Topic',
               ),
@@ -160,12 +160,12 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
           ),
         ),
         
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         // Topics List
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
+            padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
             itemCount: topics.length,
             itemBuilder: (context, index) {
               final topic = topics[index];
@@ -199,7 +199,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
     final theme = Theme.of(context);
     
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(6),
@@ -211,11 +211,11 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
           InkWell(
             onTap: () => _toggleTopic(topic.id),
             borderRadius: BorderRadius.vertical(
-              top: Radius.circular(6),
-              bottom: isExpanded ? Radius.zero : Radius.circular(6),
+              top: const Radius.circular(6),
+              bottom: isExpanded ? Radius.zero : const Radius.circular(6),
             ),
             child: Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
                   Container(
@@ -232,7 +232,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                       color: topic.color,
                     ),
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                   
                   Expanded(
                     child: Column(
@@ -248,7 +248,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                           ),
                         ),
                         if (topic.description != null) ...[
-                          SizedBox(height: 2),
+                          const SizedBox(height: 2),
                           Text(
                             topic.description!,
                             style: TextStyle(
@@ -264,7 +264,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                   
                   // Conversation count
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: topic.color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -280,7 +280,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                     ),
                   ),
                   
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   
                   // Expand/collapse icon
                   Icon(
@@ -325,7 +325,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
     final theme = Theme.of(context);
     
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Icon(
@@ -333,7 +333,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
             size: 32,
             color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'No conversations in ${topic.name}',
             style: TextStyle(
@@ -342,16 +342,16 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           ElevatedButton.icon(
             onPressed: () => _createConversationInTopic(topic.id),
-            icon: Icon(Icons.add, size: 16),
-            label: Text('Start Conversation'),
+            icon: const Icon(Icons.add, size: 16),
+            label: const Text('Start Conversation'),
             style: ElevatedButton.styleFrom(
               backgroundColor: topic.color.withValues(alpha: 0.1),
               foregroundColor: topic.color,
               elevation: 0,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             ),
           ),
         ],
@@ -371,7 +371,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
       onTap: () => _selectConversation(conversation.id),
       onLongPress: () => _showConversationOptions(conversation, topic),
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected 
               ? topic.color.withValues(alpha: 0.1) 
@@ -391,7 +391,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                 shape: BoxShape.circle,
               ),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             
             Expanded(
               child: Column(
@@ -408,7 +408,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Row(
                     children: [
                       Icon(
@@ -416,7 +416,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                         size: 10,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         '${conversation.messages.length} msgs',
                         style: TextStyle(
@@ -425,7 +425,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(
                         _formatDate(conversation.createdAt),
                         style: TextStyle(
@@ -451,7 +451,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
       child: Dialog(
         child: Container(
           width: 400,
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -465,26 +465,26 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               
               TextField(
                 controller: _topicNameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Topic Name',
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               
               TextField(
                 controller: _topicDescriptionController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Description (Optional)',
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 2,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               
               Row(
                 children: [
@@ -494,7 +494,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                       onPressed: () => _cancelCreateTopic(),
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: AsmblButton.primary(
                       text: 'Create',
@@ -583,21 +583,21 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Conversation Options'),
+        title: const Text('Conversation Options'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.drive_file_move),
-              title: Text('Move to Different Topic'),
+              leading: const Icon(Icons.drive_file_move),
+              title: const Text('Move to Different Topic'),
               onTap: () {
                 Navigator.pop(context);
                 _showMoveConversationDialog(conversation);
               },
             ),
             ListTile(
-              leading: Icon(Icons.archive),
-              title: Text('Archive Conversation'),
+              leading: const Icon(Icons.archive),
+              title: const Text('Archive Conversation'),
               onTap: () {
                 Navigator.pop(context);
                 _archiveConversation(conversation.id);
@@ -614,7 +614,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Move to Topic'),
+        title: const Text('Move to Topic'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: topics.map((topic) => ListTile(

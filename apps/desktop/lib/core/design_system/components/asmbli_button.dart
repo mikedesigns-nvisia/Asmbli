@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../tokens/color_tokens.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
@@ -93,7 +92,7 @@ class _AsmblButtonState extends State<AsmblButton> {
  size: 16,
  color: foregroundColor,
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  ],
  Text(
  widget.text,
@@ -119,9 +118,9 @@ class _AsmblButtonState extends State<AsmblButton> {
  splashColor: Colors.transparent,
  highlightColor: Colors.transparent,
  child: AnimatedContainer(
- duration: Duration(milliseconds: 150),
+ duration: const Duration(milliseconds: 150),
  width: widget.isFullWidth ? double.infinity : null,
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.buttonPadding,
  vertical: SpacingTokens.buttonPaddingVertical,
  ),

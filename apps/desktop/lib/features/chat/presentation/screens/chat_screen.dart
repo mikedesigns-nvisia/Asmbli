@@ -4,23 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agent_engine_core/models/conversation.dart' as core;
-import 'package:agent_engine_core/services/implementations/service_provider.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/tokens/theme_colors.dart';
-import '../../../../core/design_system/components/app_navigation_bar.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
 import '../../../../core/services/mcp_bridge_service.dart';
 import '../../../../core/services/mcp_settings_service.dart';
-import '../../../../core/services/claude_api_service.dart';
-import '../../../../core/services/api_config_service.dart';
 import '../../../../core/services/llm/unified_llm_service.dart';
 import '../../../../core/services/llm/llm_provider.dart';
 import '../../../../core/services/model_config_service.dart';
+import '../../../../core/models/model_config.dart';
+import '../../../../core/services/agent_context_prompt_service.dart';
 import '../widgets/improved_conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/agent_deployment_section.dart';
-import '../widgets/unified_model_selector.dart';
 import '../widgets/streaming_message_widget.dart';
 import '../widgets/editable_conversation_title.dart';
 import '../widgets/context_sidebar_section.dart';
@@ -50,28 +46,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  // TODO: Implement ServiceProvider
  // ServiceProvider.configure(useInMemory: true);
  // await ServiceProvider.initialize();
- 
- // Initialize default API conversation after services are ready
- WidgetsBinding.instance.addPostFrameCallback((_) {
- _initializeDefaultConversation();
- });
  } catch (e) {
  print('Service initialization failed: $e');
- }
- }
-
- Future<void> _initializeDefaultConversation() async {
- try {
- final getOrCreateDefault = ref.read(getOrCreateDefaultConversationProvider);
- final defaultConversation = await getOrCreateDefault();
- 
- // Set as selected conversation if no conversation is currently selected
- final currentSelection = ref.read(selectedConversationIdProvider);
- if (currentSelection == null) {
- ref.read(selectedConversationIdProvider.notifier).state = defaultConversation.id;
- }
- } catch (e) {
- print('Failed to initialize default conversation: $e');
  }
  }
 
@@ -100,7 +76,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: Column(
  children: [
  // Header
- AppNavigationBar(currentRoute: AppRoutes.chat),
+ const AppNavigationBar(currentRoute: AppRoutes.chat),
  
  // Main Content
  Expanded(
@@ -108,7 +84,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  // Sidebar
  AnimatedContainer(
- duration: Duration(milliseconds: 300),
+ duration: const Duration(milliseconds: 300),
  width: isSidebarCollapsed ? 0 : 280,
  child: isSidebarCollapsed ? null : _buildSidebar(context),
  ),
@@ -123,10 +99,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  child: Column(
  children: [
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  IconButton(
  onPressed: () => setState(() => isSidebarCollapsed = false),
- icon: Icon(Icons.chevron_right, size: 20),
+ icon: const Icon(Icons.chevron_right, size: 20),
  style: IconButton.styleFrom(
  backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
  foregroundColor: theme.colorScheme.onSurfaceVariant,
@@ -160,7 +136,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  if (selectedConversationId == null) {
  // No conversation selected - show default
  return Container(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Row(
  children: [
  Text(
@@ -171,11 +147,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  color: theme.colorScheme.onSurface,
  ),
  ),
- Spacer(),
+ const Spacer(),
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
- color: theme.colorScheme.surfaceVariant,
+ color: theme.colorScheme.surfaceContainerHighest,
  borderRadius: BorderRadius.circular(12),
  ),
  child: Text(
@@ -197,7 +173,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final isDefaultApi = conversation.metadata?['type'] == 'default_api';
  
  return Container(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Row(
  children: [
  // Conversation type icon
@@ -213,7 +189,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  color: _getConversationTypeColor(conversation, theme),
  ),
  ),
- SizedBox(width: 12),
+ const SizedBox(width: 12),
  
  // Conversation title and info
  Expanded(
@@ -229,7 +205,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  if (isAgent) ...[
- SizedBox(height: 2),
+ const SizedBox(height: 2),
  Row(
  children: [
  Text(
@@ -240,11 +216,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  fontStyle: FontStyle.italic,
  ),
  ),
- SizedBox(width: 8),
+ const SizedBox(width: 8),
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
  decoration: BoxDecoration(
- color: theme.colorScheme.surfaceVariant,
+ color: theme.colorScheme.surfaceContainerHighest,
  borderRadius: BorderRadius.circular(4),
  ),
  child: Text(
@@ -281,7 +257,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  size: 12,
  color: _getConversationTypeColor(conversation, theme),
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Text(
  _getConversationBadgeText(conversation),
  style: GoogleFonts.fustat(
@@ -296,7 +272,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  // Agent status indicator for agent conversations
  if (isAgent) ...[
- SizedBox(width: 8),
+ const SizedBox(width: 8),
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
  decoration: BoxDecoration(
@@ -317,7 +293,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  shape: BoxShape.circle,
  ),
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Text(
  'ACTIVE',
  style: GoogleFonts.fustat(
@@ -335,7 +311,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  );
  },
  loading: () => Container(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Row(
  children: [
  SizedBox(
@@ -346,7 +322,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
  ),
  ),
- SizedBox(width: 12),
+ const SizedBox(width: 12),
  Text(
  'Loading conversation...',
  style: GoogleFonts.fustat(
@@ -358,7 +334,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  error: (error, stack) => Container(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Text(
  'Error loading conversation',
  style: GoogleFonts.fustat(
@@ -368,6 +344,228 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  );
+ }
+
+
+ /// Build Model Selector for sidebar - no default model references
+ Widget _buildModelSelector(BuildContext context) {
+   final theme = Theme.of(context);
+   final modelConfigService = ref.watch(modelConfigServiceProvider);
+   final selectedConversationId = ref.watch(selectedConversationIdProvider);
+   
+   // Use conversation-specific model or fallback to global
+   final selectedModel = selectedConversationId != null
+       ? ref.watch(conversationModelProvider(selectedConversationId))
+       : ref.watch(selectedModelProvider);
+   
+   // Get all configured models (both local and API)
+   final configuredModels = modelConfigService.allModelConfigs.values
+       .where((model) => model.isConfigured)
+       .toList();
+       
+   return Padding(
+     padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     child: Column(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children: [
+         // Section Header
+         Padding(
+           padding: const EdgeInsets.only(left: 4, bottom: 8),
+           child: Text(
+             selectedModel?.isLocal == true ? 'Local Model' : 'Cloud Model',
+             style: GoogleFonts.fustat(
+               fontSize: 11,
+               fontWeight: FontWeight.w500,
+               color: theme.colorScheme.onSurfaceVariant,
+             ),
+           ),
+         ),
+         
+         // Model Selection Card
+         AsmblCard(
+           child: Container(
+             width: double.infinity,
+             padding: const EdgeInsets.all(SpacingTokens.md),
+             child: configuredModels.isEmpty
+                 ? _buildNoModelsState(context)
+                 : _buildModelDropdown(context, configuredModels, selectedModel),
+           ),
+         ),
+       ],
+     ),
+   );
+ }
+ 
+ /// Build no models configured state
+ Widget _buildNoModelsState(BuildContext context) {
+   final theme = Theme.of(context);
+   return Column(
+     children: [
+       Icon(
+         Icons.model_training_outlined,
+         size: 32,
+         color: theme.colorScheme.onSurfaceVariant,
+       ),
+       const SizedBox(height: SpacingTokens.sm),
+       Text(
+         'No Models Configured',
+         style: TextStyles.bodyMedium.copyWith(
+           color: theme.colorScheme.onSurface,
+           fontWeight: FontWeight.w500,
+         ),
+       ),
+       const SizedBox(height: SpacingTokens.xs),
+       Text(
+         'Add AI models in Settings',
+         style: TextStyles.bodySmall.copyWith(
+           color: theme.colorScheme.onSurfaceVariant,
+         ),
+         textAlign: TextAlign.center,
+       ),
+     ],
+   );
+ }
+ 
+ /// Build model dropdown
+ Widget _buildModelDropdown(BuildContext context, List<ModelConfig> models, ModelConfig? selectedModel) {
+   final theme = Theme.of(context);
+   
+   return Column(
+     crossAxisAlignment: CrossAxisAlignment.start,
+     children: [
+       // Current Selection Display
+       if (false && selectedModel != null) ...[
+         Row(
+           children: [
+             Icon(
+               selectedModel.isLocal ? Icons.computer : Icons.cloud,
+               size: 16,
+               color: selectedModel.isLocal
+                   ? ThemeColors(context).accent
+                   : ThemeColors(context).primary,
+             ),
+             const SizedBox(width: SpacingTokens.xs),
+             Expanded(
+               child: Text(
+                 selectedModel.name,
+                 style: TextStyles.bodyMedium.copyWith(
+                   color: theme.colorScheme.onSurface,
+                   fontWeight: FontWeight.w500,
+                 ),
+               ),
+             ),
+             if (selectedModel.isLocal)
+               Container(
+                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                 decoration: BoxDecoration(
+                   color: ThemeColors(context).accent.withOpacity(0.1),
+                   borderRadius: BorderRadius.circular(4),
+                 ),
+                 child: Text(
+                   'LOCAL',
+                   style: TextStyle(
+                     fontSize: 8,
+                     fontWeight: FontWeight.w600,
+                     color: ThemeColors(context).accent,
+                   ),
+                 ),
+               ),
+           ],
+         ),
+         const SizedBox(height: SpacingTokens.sm),
+       ] else if (false) ...[
+         Text(
+           'Select a model to chat',
+           style: TextStyles.bodyMedium.copyWith(
+             color: theme.colorScheme.onSurfaceVariant,
+           ),
+         ),
+         const SizedBox(height: SpacingTokens.sm),
+       ],
+       
+       // Dropdown
+       DropdownButtonFormField<String>(
+         initialValue: selectedModel?.id,
+         decoration: InputDecoration(
+           contentPadding: const EdgeInsets.symmetric(
+             horizontal: SpacingTokens.sm,
+             vertical: SpacingTokens.xs,
+           ),
+           border: OutlineInputBorder(
+             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+             borderSide: BorderSide(color: theme.colorScheme.outline),
+           ),
+           focusedBorder: OutlineInputBorder(
+             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+             borderSide: BorderSide(color: ThemeColors(context).primary),
+           ),
+         ),
+         hint: Text(
+           'Choose model...',
+           style: TextStyles.bodyMedium.copyWith(
+             color: theme.colorScheme.onSurfaceVariant,
+           ),
+         ),
+         isExpanded: true,
+         items: models.map((model) => DropdownMenuItem<String>(
+           value: model.id,
+           child: Row(
+             children: [
+               Icon(
+                 model.isLocal ? Icons.computer : Icons.cloud,
+                 size: 14,
+                 color: model.isLocal
+                     ? ThemeColors(context).accent
+                     : ThemeColors(context).primary,
+               ),
+               const SizedBox(width: SpacingTokens.xs),
+               Expanded(
+                 child: Text(
+                   model.name,
+                   style: TextStyles.bodySmall.copyWith(
+                     color: theme.colorScheme.onSurface,
+                   ),
+                 ),
+               ),
+               if (model.isLocal) ...[
+                 const SizedBox(width: SpacingTokens.xs),
+                 Text(
+                   'LOCAL',
+                   style: TextStyle(
+                     fontSize: 7,
+                     fontWeight: FontWeight.w600,
+                     color: ThemeColors(context).accent,
+                   ),
+                 ),
+               ] else if (model.provider.isNotEmpty) ...[
+                 const SizedBox(width: SpacingTokens.xs),
+                 Text(
+                   model.provider.toUpperCase(),
+                   style: TextStyle(
+                     fontSize: 7,
+                     fontWeight: FontWeight.w600,
+                     color: ThemeColors(context).primary,
+                   ),
+                 ),
+               ],
+             ],
+           ),
+         )).toList(),
+         onChanged: (String? modelId) {
+           final currentConversationId = ref.read(selectedConversationIdProvider);
+           if (modelId != null && currentConversationId != null) {
+             final service = ref.read(modelConfigServiceProvider);
+             final model = service.allModelConfigs[modelId];
+             if (model != null) {
+               // Set model for specific conversation
+               final setConversationModel = ref.read(setConversationModelProvider);
+               setConversationModel(currentConversationId, model);
+             }
+           }
+         },
+       ),
+     ],
+   );
  }
 
  Color _getConversationTypeColor(core.Conversation conversation, ThemeData theme) {
@@ -393,11 +591,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
  IconData _getConversationTypeIcon(core.Conversation conversation) {
  final type = conversation.metadata?['type'] as String?;
+ final selectedModel = ref.read(conversationModelProvider(conversation.id)) 
+     ?? ref.read(selectedModelProvider);
+ 
  switch (type) {
  case 'agent':
  return Icons.smart_toy;
  case 'default_api':
- return Icons.api;
+ case 'direct_chat':
+ // Show appropriate icon based on current selected model
+ if (selectedModel?.isLocal == true) {
+ return Icons.computer; // Local model icon
+ } else {
+ return Icons.cloud; // Cloud/API model icon
+ }
  default:
  return Icons.chat;
  }
@@ -423,32 +630,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  /// Get contextual text for conversation badge
  String _getConversationBadgeText(core.Conversation conversation) {
  final metadata = conversation.metadata;
- final modelType = metadata?['modelType'] as String?;
- final modelName = metadata?['defaultModelName'] as String?;
- final provider = metadata?['defaultModelProvider'] as String?;
  final type = metadata?['type'] as String?;
  
  if (type == 'agent') {
    return 'Agent';
  }
  
- if (modelType == 'local' && modelName != null) {
-   return 'Local';
- } else if (provider != null) {
-   return provider;
- } else if (modelName != null) {
-   return modelName;
+ // Show model type based on current selected model
+ final selectedModel = ref.read(selectedModelProvider);
+ if (selectedModel?.isLocal == true) {
+ return 'Local';
  } else {
-   // Fallback to current selected model
-   final selectedModel = ref.read(selectedModelProvider);
-   if (selectedModel != null) {
-     if (selectedModel.isLocal) {
-       return 'Local';
-     } else {
-       return selectedModel.provider;
-     }
-   }
-   return 'LLM';
+ return 'Cloud';
  }
  }
 
@@ -464,7 +657,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  // Sidebar Header (fixed)
  Padding(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Row(
  children: [
  Flexible(
@@ -493,10 +686,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ],
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  IconButton(
  onPressed: () => setState(() => isSidebarCollapsed = true),
- icon: Icon(Icons.chevron_left, size: 20),
+ icon: const Icon(Icons.chevron_left, size: 20),
  style: IconButton.styleFrom(
  foregroundColor: theme.colorScheme.onSurfaceVariant,
  ),
@@ -508,77 +701,33 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  // Scrollable content
  Expanded(
  child: SingleChildScrollView(
- padding: EdgeInsets.only(bottom: SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.only(bottom: SpacingTokens.elementSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  // Active Agent Context
  _buildActiveAgentContext(context),
  
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
+ 
+ // Model Selection Section - Right below AI Assistant
+ _buildModelSelector(context),
+ 
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  
  // Agent Loader Section - Wrapped in Flexible to prevent overflow
- AgentLoaderSection(),
+ const AgentLoaderSection(),
                   
-                  SizedBox(height: SpacingTokens.elementSpacing),
+                  const SizedBox(height: SpacingTokens.elementSpacing),
 
                   // Context Documents Section - Works for both Agent and Direct API conversations
-                  ContextSidebarSection(),
+                  const ContextSidebarSection(),
  
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  
  // Agent Tools & MCP Status (Only shown for agent conversations)
  _buildAgentToolsContext(context),
  
- SizedBox(height: SpacingTokens.sectionSpacing),
- 
- // LLM Provider Section - Separated from Context
- Padding(
- padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
- child: Column(
- children: [
- // API Dropdown
- Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- children: [
- Padding(
- padding: EdgeInsets.only(left: 4, bottom: 6),
- child: Text(
- 'LLM Provider',
- style: GoogleFonts.fustat(
-  fontSize: 11,
- fontWeight: FontWeight.w500,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- ),
- ),
- UnifiedModelSelector(),
- ],
- ),
- 
- SizedBox(height: SpacingTokens.componentSpacing),
- 
- // Browse Templates Button
- GestureDetector(
- onTap: () => context.go(AppRoutes.context),
- child: Container(
- width: double.infinity,
- padding: const EdgeInsets.symmetric(vertical: 12),
- child: Center(
- child: Text(
- 'Browse Templates',
- style: GoogleFonts.fustat(
-  fontSize: 13,
- fontWeight: FontWeight.w500,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- ),
- ),
- ),
- ),
- ],
- ),
- ),
  ],
  ),
  ),
@@ -591,13 +740,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Widget _buildChatArea(BuildContext context) {
  final theme = Theme.of(context);
  return Container(
- decoration: BoxDecoration(
+ decoration: const BoxDecoration(
  color: Colors.transparent,
  ),
  child: Column(
  children: [
  // Chat Header - shows current conversation/agent
  _buildChatHeader(theme),
+ 
  
  // Messages Area or Empty State
  Expanded(
@@ -606,7 +756,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  // Input Area
  Container(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Row(
  children: [
  Expanded(
@@ -653,7 +803,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Container(
  decoration: BoxDecoration(
  color: messageController.text.trim().isNotEmpty && !ref.watch(isLoadingProvider)
@@ -671,7 +821,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ? _sendMessage
  : null,
  icon: ref.watch(isLoadingProvider) 
- ? SizedBox(
+ ? const SizedBox(
  width: 16,
  height: 16,
  child: CircularProgressIndicator(
@@ -679,7 +829,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
  ),
  )
- : Icon(Icons.send, size: 18),
+ : const Icon(Icons.send, size: 18),
  style: IconButton.styleFrom(
  foregroundColor: messageController.text.trim().isNotEmpty && !ref.watch(isLoadingProvider)
 ? Colors.white
@@ -700,7 +850,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final theme = Theme.of(context);
  return Center(
  child: Container(
- constraints: BoxConstraints(maxWidth: 400),
+ constraints: const BoxConstraints(maxWidth: 400),
  child: Column(
  mainAxisAlignment: MainAxisAlignment.center,
  children: [
@@ -709,7 +859,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  width: 64,
  height: 64,
  decoration: BoxDecoration(
- color: theme.colorScheme.surfaceVariant,
+ color: theme.colorScheme.surfaceContainerHighest,
  borderRadius: BorderRadius.circular(16),
  border: Border.all(color: theme.colorScheme.outline),
  ),
@@ -720,7 +870,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.textSectionSpacing),
+ const SizedBox(height: SpacingTokens.textSectionSpacing),
  
  // Start a Conversation
  Text(
@@ -732,7 +882,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Description
  Text(
@@ -785,7 +935,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  if (isAgentConversation) {
  return Container(
  margin: const EdgeInsets.symmetric(vertical: 8),
- child: StreamingMessageWidget(
+ child: const StreamingMessageWidget(
  messageId: 'streaming-temp',
  role: 'assistant',
  ),
@@ -828,7 +978,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  color: colorScheme.onPrimary,
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  ],
  Expanded(
  child: Container(
@@ -849,7 +999,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  color: isUser ? colorScheme.onPrimary : colorScheme.onSurface,
   ),
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Text(
  _formatTime(message.timestamp),
  style: theme.textTheme.bodySmall?.copyWith(
@@ -861,7 +1011,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  if (isUser) ...[
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  CircleAvatar(
  radius: 16,
  backgroundColor: colorScheme.surface,
@@ -933,9 +1083,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
    final contextDocs = conversation.metadata?['contextDocuments'] as List<dynamic>? ?? [];
    
    return Padding(
-     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
      child: Container(
-       padding: EdgeInsets.all(SpacingTokens.cardPadding),
+       padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
          color: agentType == 'agent' 
            ? theme.colorScheme.primary.withValues(alpha: 0.08)
@@ -954,7 +1104,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
            Row(
              children: [
                Container(
-                 padding: EdgeInsets.all(8),
+                 padding: const EdgeInsets.all(8),
                  decoration: BoxDecoration(
                    color: agentType == 'agent'
                      ? theme.colorScheme.primary.withValues(alpha: 0.1)
@@ -969,7 +1119,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                      : theme.colorScheme.onSurfaceVariant,
                  ),
                ),
-               SizedBox(width: SpacingTokens.componentSpacing),
+               const SizedBox(width: SpacingTokens.componentSpacing),
                Expanded(
                  child: Column(
                    crossAxisAlignment: CrossAxisAlignment.start,
@@ -993,7 +1143,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                  ),
                ),
                Container(
-                 padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                  decoration: BoxDecoration(
                    color: agentType == 'agent' ? Colors.green : Colors.orange,
                    borderRadius: BorderRadius.circular(4),
@@ -1011,7 +1161,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
            ),
            
            // Agent capabilities summary
-           SizedBox(height: SpacingTokens.componentSpacing),
+           const SizedBox(height: SpacingTokens.componentSpacing),
            Row(
              children: [
                _buildCapabilityChip(
@@ -1020,7 +1170,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                  mcpServers.isNotEmpty ? Colors.green : theme.colorScheme.onSurfaceVariant,
                  theme,
                ),
-               SizedBox(width: SpacingTokens.componentSpacing),
+               const SizedBox(width: SpacingTokens.componentSpacing),
                _buildCapabilityChip(
                  '${contextDocs.length} Docs',
                  Icons.description,
@@ -1045,7 +1195,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
    }
    
    return Padding(
-     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
      child: Column(
        crossAxisAlignment: CrossAxisAlignment.start,
        children: [
@@ -1058,12 +1208,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
              color: theme.colorScheme.onSurface,
            ),
          ),
-         SizedBox(height: SpacingTokens.componentSpacing),
+         const SizedBox(height: SpacingTokens.componentSpacing),
          
          // MCP Tools
          if (mcpServers.isNotEmpty) ...[
            _buildSectionTitle('Active Tools (${mcpServers.length})', Icons.extension, theme),
-           SizedBox(height: SpacingTokens.iconSpacing),
+           const SizedBox(height: SpacingTokens.iconSpacing),
            ...mcpServers.take(4).map((serverId) {
              final config = mcpConfigs[serverId] as Map<String, dynamic>?;
              final status = config?['status'] ?? 'connected';
@@ -1078,13 +1228,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                  fontStyle: FontStyle.italic,
                ),
              ),
-           SizedBox(height: SpacingTokens.componentSpacing),
+           const SizedBox(height: SpacingTokens.componentSpacing),
          ],
          
          // Context Documents
          if (contextDocs.isNotEmpty) ...[
            _buildSectionTitle('Context Documents (${contextDocs.length})', Icons.description, theme),
-           SizedBox(height: SpacingTokens.iconSpacing),
+           const SizedBox(height: SpacingTokens.iconSpacing),
            ...contextDocs.take(3).map((doc) => _buildContextDocItem(doc.toString(), theme)),
            if (contextDocs.length > 3)
              Text(
@@ -1103,7 +1253,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
  Widget _buildCapabilityChip(String text, IconData icon, Color color, ThemeData theme) {
    return Container(
-     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
      decoration: BoxDecoration(
        color: color.withValues(alpha: 0.1),
        borderRadius: BorderRadius.circular(12),
@@ -1112,7 +1262,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        mainAxisSize: MainAxisSize.min,
        children: [
          Icon(icon, size: 12, color: color),
-         SizedBox(width: 4),
+         const SizedBox(width: 4),
          Text(
            text,
            style: GoogleFonts.fustat(
@@ -1130,7 +1280,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
    return Row(
      children: [
        Icon(icon, size: 14, color: theme.colorScheme.primary),
-       SizedBox(width: 6),
+       const SizedBox(width: 6),
        Text(
          title,
          style: GoogleFonts.fustat(
@@ -1148,7 +1298,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       status == 'error' ? Colors.red : Colors.orange;
    
    return Padding(
-     padding: EdgeInsets.only(bottom: 6),
+     padding: const EdgeInsets.only(bottom: 6),
      child: Row(
        children: [
          Container(
@@ -1159,7 +1309,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
              shape: BoxShape.circle,
            ),
          ),
-         SizedBox(width: 8),
+         const SizedBox(width: 8),
          Expanded(
            child: Text(
              serverId,
@@ -1184,11 +1334,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
  Widget _buildContextDocItem(String docName, ThemeData theme) {
    return Padding(
-     padding: EdgeInsets.only(bottom: 6),
+     padding: const EdgeInsets.only(bottom: 6),
      child: Row(
        children: [
          Icon(Icons.description, size: 12, color: theme.colorScheme.primary),
-         SizedBox(width: 8),
+         const SizedBox(width: 8),
          Expanded(
            child: Text(
              docName,
@@ -1206,9 +1356,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
  Widget _buildNoActiveAgentCard(ThemeData theme) {
    return Padding(
-     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
      child: Container(
-       padding: EdgeInsets.all(SpacingTokens.cardPadding),
+       padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
          color: theme.colorScheme.surface.withValues(alpha: 0.5),
          borderRadius: BorderRadius.circular(12),
@@ -1223,7 +1373,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
              size: 32,
              color: theme.colorScheme.onSurfaceVariant,
            ),
-           SizedBox(height: SpacingTokens.componentSpacing),
+           const SizedBox(height: SpacingTokens.componentSpacing),
            Text(
              'No conversation selected',
              style: GoogleFonts.fustat(
@@ -1240,21 +1390,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
  Widget _buildLoadingAgentCard(ThemeData theme) {
    return Padding(
-     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
      child: Container(
-       padding: EdgeInsets.all(SpacingTokens.cardPadding),
+       padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
          color: theme.colorScheme.surface.withValues(alpha: 0.5),
          borderRadius: BorderRadius.circular(12),
        ),
        child: Row(
          children: [
-           SizedBox(
+           const SizedBox(
              width: 16,
              height: 16,
              child: CircularProgressIndicator(strokeWidth: 2),
            ),
-           SizedBox(width: SpacingTokens.componentSpacing),
+           const SizedBox(width: SpacingTokens.componentSpacing),
            Text(
              'Loading agent context...',
              style: GoogleFonts.fustat(
@@ -1270,9 +1420,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
  Widget _buildErrorAgentCard(ThemeData theme) {
    return Padding(
-     padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+     padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
      child: Container(
-       padding: EdgeInsets.all(SpacingTokens.cardPadding),
+       padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
          color: Colors.red.withValues(alpha: 0.1),
          borderRadius: BorderRadius.circular(12),
@@ -1292,7 +1442,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final selectedConversationId = ref.read(selectedConversationIdProvider);
  if (messageController.text.trim().isEmpty || 
  ref.read(isLoadingProvider) || 
- selectedConversationId == null) return;
+ selectedConversationId == null) {
+   return;
+ }
 
  try {
  ref.read(isLoadingProvider.notifier).state = true;
@@ -1311,10 +1463,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final isAgentConversation = conversation.metadata?['type'] == 'agent';
  
  if (isAgentConversation) {
- // Use MCP bridge for agent conversations
- final settingsService = ref.read(mcpSettingsServiceProvider);
- final mcpBridge = MCPBridgeService(settingsService);
- await _handleMCPResponse(mcpBridge, selectedConversationId, messageContent, conversation);
+ // Simple direct response for agent conversations (bypass MCP for now)
+ await _handleAgentDirectResponse(selectedConversationId, messageContent, conversation);
  } else {
  // Standard API response for non-agent conversations
  await _handleStandardResponse(selectedConversationId);
@@ -1334,7 +1484,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  }
  }
 
- Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationId, String userMessage, core.Conversation conversation) async {
+ Future<void> _handleAgentDirectResponse(String conversationId, String userMessage, core.Conversation conversation) async {
+  // For now, just use the same logic as standard response
+  // The agent's system prompt is already stored in the conversation metadata
+  // and will be used by the LLM service automatically
+  await _handleStandardResponse(conversationId);
+}
+
+Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationId, String userMessage, core.Conversation conversation) async {
  try {
  // Create streaming message with MCP metadata
  final streamingMessage = core.Message(
@@ -1357,7 +1514,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  // Process message through MCP bridge
  final enabledServers = (conversation.metadata?['mcpServers'] as List<dynamic>?)
  ?.map((server) => server['id'] as String)
- ?.toList() ?? <String>[];
+ .toList() ?? <String>[];
  
  final response = await mcpBridge.processMessage(
  conversationId: conversationId,
@@ -1367,6 +1524,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  );
 
  // Update message with final content and MCP interaction data
+ print('DEBUG: MCP response content: "${response.response}"');
+ print('DEBUG: MCP response length: ${response.response.length}');
+ 
  final finalMessage = core.Message(
  id: streamingMessage.id,
  content: response.response,
@@ -1394,9 +1554,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
  Future<void> _handleStandardResponse(String conversationId) async {
  try {
- // Get unified LLM service and selected model
+ // Get unified LLM service and conversation-specific model
  final unifiedLLMService = ref.read(unifiedLLMServiceProvider);
- final selectedModel = ref.read(selectedModelProvider);
+ final selectedModel = ref.read(conversationModelProvider(conversationId)) 
+     ?? ref.read(selectedModelProvider);
 
  // Check if model is configured - different logic for local vs API models
  print('DEBUG: Selected model: ${selectedModel?.name}, isLocal: ${selectedModel?.isLocal}, isConfigured: ${selectedModel?.isConfigured}, status: ${selectedModel?.status}');
@@ -1416,7 +1577,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
          SnackBar(
            content: Text('Local model "${selectedModel.name}" is not ready. Status: ${selectedModel.status}.\n\nTo fix:\n1. Install Ollama from ollama.ai\n2. Run: ollama pull ${selectedModel.ollamaModelId ?? selectedModel.name.toLowerCase()}'),
            backgroundColor: ThemeColors(context).error,
-           duration: Duration(seconds: 6),
+           duration: const Duration(seconds: 6),
          ),
        );
      }
@@ -1447,17 +1608,94 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final lastUserMessage = conversationHistory.removeLast();
  final userMessage = lastUserMessage['content'] as String;
 
- // Get conversation details to check for system prompt
+ // Get conversation details to check for enhanced context and MCP integration
  final conversation = await ref.read(conversationProvider(conversationId).future);
- final systemPrompt = conversation.metadata?['systemPrompt'] as String?;
+ 
+ // Enhanced system prompt with context integration for non-agent conversations
+ String enhancedSystemPrompt;
+ final baseSystemPrompt = conversation.metadata?['systemPrompt'] as String?;
+ 
+ // Check for global context documents and MCP servers from settings
+ final mcpService = ref.read(mcpSettingsServiceProvider);
+ final globalContextDocs = mcpService.globalContextDocuments;
+ final globalMcpServers = mcpService.getAllMCPServers()
+     .where((server) => server.enabled)
+     .map((server) => server.id)
+     .toList();
+ 
+ if (globalContextDocs.isNotEmpty || globalMcpServers.isNotEmpty) {
+   // Use context prompt service to enhance the system prompt
+   final contextService = ref.read(agentContextPromptServiceProvider);
+   final contextInstructions = globalContextDocs.isNotEmpty 
+     ? '\n\n## Available Context\nYou have access to context documents that may be relevant to user questions.'
+     : '';
+   final mcpInstructions = globalMcpServers.isNotEmpty
+     ? contextService.generateMCPContextInstructions(globalMcpServers)
+     : '';
+     
+   enhancedSystemPrompt = (baseSystemPrompt ?? 'You are a helpful AI assistant.') + 
+                          contextInstructions + mcpInstructions;
+ } else {
+   enhancedSystemPrompt = baseSystemPrompt ?? 'You are a helpful AI assistant.';
+ }
 
- // Create chat context
+ // Create enhanced chat context with MCP and context awareness
  final chatContext = ChatContext(
  messages: conversationHistory,
- systemPrompt: systemPrompt,
+ systemPrompt: enhancedSystemPrompt,
+ metadata: {
+   'hasGlobalContext': globalContextDocs.isNotEmpty,
+   'hasGlobalMCP': globalMcpServers.isNotEmpty,
+   'globalMcpServers': globalMcpServers,
+   'globalContextDocs': globalContextDocs,
+ },
  );
 
- // Call unified LLM service
+ // For non-agent conversations with global MCP servers, try to use MCP bridge
+ if (globalMcpServers.isNotEmpty) {
+   print('🔗 Standard conversation using global MCP servers: $globalMcpServers');
+   try {
+     final mcpBridge = MCPBridgeService(mcpService);
+     final mcpResponse = await mcpBridge.processMessage(
+       conversationId: conversationId,
+       message: userMessage,
+       enabledServerIds: globalMcpServers,
+       conversationMetadata: {
+         ...conversation.metadata ?? {},
+         'mcpServers': globalMcpServers.map((id) => {'id': id}).toList(),
+         'contextDocuments': globalContextDocs,
+         'type': 'standard_with_mcp',
+       },
+     );
+     
+     // Create assistant message with MCP response
+     final assistantMessage = core.Message(
+       id: DateTime.now().millisecondsSinceEpoch.toString(),
+       content: mcpResponse.response,
+       role: core.MessageRole.assistant,
+       timestamp: DateTime.now(),
+       metadata: {
+         'modelUsed': selectedModel.id,
+         'responseType': 'mcp_enhanced',
+         'mcpServersUsed': globalMcpServers,
+         'mcpServersActuallyUsed': mcpResponse.usedServers,
+         'hasGlobalContext': globalContextDocs.isNotEmpty,
+         'mcpLatency': mcpResponse.latency,
+         'mcpMetadata': mcpResponse.metadata,
+       },
+     );
+     
+     await service.addMessage(conversationId, assistantMessage);
+     ref.invalidate(messagesProvider(conversationId));
+     return;
+     
+   } catch (mcpError) {
+     print('⚠️ MCP processing failed for standard conversation, falling back to direct LLM: $mcpError');
+     // Fall through to direct LLM call
+   }
+ }
+
+ // Direct LLM call (fallback or when no global MCP servers)
  final response = await unifiedLLMService.chat(
  message: userMessage,
  modelId: selectedModel.id,
@@ -1472,6 +1710,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  timestamp: DateTime.now(),
  metadata: {
  'modelUsed': response.modelUsed,
+ 'responseType': 'direct_llm',
+ 'enhancedPrompt': enhancedSystemPrompt != baseSystemPrompt,
+ 'hasGlobalContext': globalContextDocs.isNotEmpty,
  'modelType': selectedModel.type.name,
  'modelProvider': selectedModel.provider,
  'tokenUsage': response.usage != null ? {
@@ -1510,7 +1751,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final theme = Theme.of(context);
  return Center(
  child: Container(
- constraints: BoxConstraints(maxWidth: 400),
+ constraints: const BoxConstraints(maxWidth: 400),
  child: Column(
  mainAxisAlignment: MainAxisAlignment.center,
  children: [
@@ -1518,7 +1759,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  width: 64,
  height: 64,
  decoration: BoxDecoration(
- color: theme.colorScheme.surfaceVariant,
+ color: theme.colorScheme.surfaceContainerHighest,
  borderRadius: BorderRadius.circular(16),
  border: Border.all(color: theme.colorScheme.outline),
  ),
@@ -1528,7 +1769,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  color: theme.colorScheme.onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.textSectionSpacing),
+ const SizedBox(height: SpacingTokens.textSectionSpacing),
  Text(
  'Let\'s Talk',
  style: GoogleFonts.fustat(
@@ -1537,7 +1778,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  color: theme.colorScheme.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'Type a message below to begin this conversation.',
  style: GoogleFonts.fustat(
@@ -1581,25 +1822,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  return agentName ?? 'Agent Assistant';
  case 'default_api':
  case 'direct_chat':
- // Check if conversation has stored model information
- final storedModelName = conversation.metadata?['defaultModelName'] as String?;
- final modelType = conversation.metadata?['modelType'] as String?;
- if (storedModelName != null && storedModelName.isNotEmpty) {
- if (modelType == 'local') {
- return 'Local $storedModelName';
- } else {
- final provider = conversation.metadata?['defaultModelProvider'] as String?;
- return provider != null ? '$provider Chat' : '$storedModelName Chat';
- }
- }
-
- // Fallback to current selected model if no stored model
- final selectedModel = ref.read(selectedModelProvider);
- if (selectedModel != null) {
- return selectedModel.isLocal 
- ? 'Local ${selectedModel.name}'
- : '${selectedModel.provider} Chat';
- }
  return 'AI Assistant';
  default:
  return 'Chat Session';
@@ -1620,30 +1842,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  case 'default_api':
  case 'direct_chat':
- // Check if conversation has stored model information
- final storedModelName = conversation.metadata?['defaultModelName'] as String?;
- final modelType = conversation.metadata?['modelType'] as String?;
- final provider = conversation.metadata?['defaultModelProvider'] as String?;
- 
- if (storedModelName != null && storedModelName.isNotEmpty) {
- if (modelType == 'local') {
- return 'Local model via Ollama';
- } else if (provider != null) {
- return 'API model via $provider';
- } else {
- return 'API-based assistant';
- }
- }
- 
- // Fallback to current selected model
- if (selectedModel != null) {
- if (selectedModel.isLocal) {
- return 'Local model via Ollama';
- } else {
- return 'API model via ${selectedModel.provider}';
- }
- }
- return 'AI Assistant';
+ return 'Direct AI conversation';
  
  default:
  return 'Chat Session';
@@ -1656,14 +1855,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
      context: context,
      barrierDismissible: false, // Force user to configure or cancel
      builder: (context) => AlertDialog(
-       title: Row(
+       title: const Row(
          children: [
            Icon(Icons.key, color: SemanticColors.primary),
            SizedBox(width: 8),
            Text('API Key Required'),
          ],
        ),
-       content: Column(
+       content: const Column(
          mainAxisSize: MainAxisSize.min,
          crossAxisAlignment: CrossAxisAlignment.start,
          children: [
@@ -1675,15 +1874,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        actions: [
          TextButton(
            onPressed: () => Navigator.of(context).pop(),
-           child: Text('Later'),
+           child: const Text('Later'),
          ),
          ElevatedButton.icon(
            onPressed: () {
              Navigator.of(context).pop();
              context.push(AppRoutes.settings);
            },
-           icon: Icon(Icons.settings),
-           label: Text('Configure API Key'),
+           icon: const Icon(Icons.settings),
+           label: const Text('Configure API Key'),
            style: ElevatedButton.styleFrom(
              backgroundColor: SemanticColors.primary,
              foregroundColor: SemanticColors.onPrimary,

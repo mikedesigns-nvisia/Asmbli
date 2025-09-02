@@ -16,11 +16,11 @@ class ConversationList extends ConsumerWidget {
  final selectedConversationId = ref.watch(selectedConversationIdProvider);
  
  return Container(
- padding: EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
+ padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  Row(
  children: [
  Icon(
@@ -28,7 +28,7 @@ class ConversationList extends ConsumerWidget {
  size: 16,
  color: ThemeColors(context).onSurface,
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  Text(
  'All Conversations',
  style: TextStyles.bodyMedium.copyWith(
@@ -39,7 +39,7 @@ class ConversationList extends ConsumerWidget {
  ),
  ],
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  Expanded(
  child: conversationsAsync.when(
  data: (conversations) {
@@ -100,7 +100,7 @@ class ConversationList extends ConsumerWidget {
  color: ThemeColors(context).primary,
  ),
  ),
- SizedBox(height: SpacingTokens.xl),
+ const SizedBox(height: SpacingTokens.xl),
  Text(
  'Start Your First Conversation',
  style: TextStyles.bodyMedium.copyWith(
@@ -109,7 +109,7 @@ class ConversationList extends ConsumerWidget {
  fontSize: 16,
  ),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  Text(
  'Chat directly with AI or organize\nconversations with topics later',
  style: TextStyles.bodySmall.copyWith(
@@ -118,7 +118,7 @@ class ConversationList extends ConsumerWidget {
  ),
  textAlign: TextAlign.center,
  ),
- SizedBox(height: SpacingTokens.xl),
+ const SizedBox(height: SpacingTokens.xl),
  AsmblButton.primary(
  text: 'Start New Chat',
  icon: Icons.add_comment,
@@ -138,7 +138,7 @@ class ConversationList extends ConsumerWidget {
  color: ThemeColors(context).primary,
  strokeWidth: 2,
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  Text(
  'Loading conversations...',
  style: TextStyle(
@@ -212,7 +212,7 @@ class _ConversationItem extends ConsumerWidget {
  @override
  Widget build(BuildContext context, WidgetRef ref) {
  return Container(
- margin: EdgeInsets.only(bottom: SpacingTokens.sm),
+ margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
  child: Material(
  color: Colors.transparent,
  child: InkWell(
@@ -222,7 +222,7 @@ class _ConversationItem extends ConsumerWidget {
  hoverColor: ThemeColors(context).primary.withValues(alpha: 0.04),
  splashColor: ThemeColors(context).primary.withValues(alpha: 0.12),
  child: Container(
- padding: EdgeInsets.all(SpacingTokens.md),
+ padding: const EdgeInsets.all(SpacingTokens.md),
  decoration: BoxDecoration(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  border: isSelected 
@@ -276,20 +276,20 @@ class _ConversationItem extends ConsumerWidget {
  width: 32,
  height: 32,
  decoration: BoxDecoration(
- color: _getAgentColor(agent).withValues(alpha: 0.1),
+ color: _getAgentColor(agent, context).withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  border: Border.all(
- color: _getAgentColor(agent).withValues(alpha: 0.3),
+ color: _getAgentColor(agent, context).withValues(alpha: 0.3),
  width: 1,
  ),
  ),
  child: Icon(
  _getAgentIcon(agent),
  size: 16,
- color: _getAgentColor(agent),
+ color: _getAgentColor(agent, context),
  ),
  ),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,20 +297,20 @@ class _ConversationItem extends ConsumerWidget {
  Row(
  children: [
  Container(
- padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+ padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
  decoration: BoxDecoration(
- color: _getAgentColor(agent),
+ color: _getAgentColor(agent, context),
  borderRadius: BorderRadius.circular(4),
  ),
  child: Row(
  mainAxisSize: MainAxisSize.min,
  children: [
- Icon(
+ const Icon(
  Icons.smart_toy,
  size: 8,
  color: Colors.white,
  ),
- SizedBox(width: 2),
+ const SizedBox(width: 2),
  Text(
  'AGENT',
  style: TextStyles.caption.copyWith(
@@ -322,7 +322,7 @@ class _ConversationItem extends ConsumerWidget {
  ],
  ),
  ),
- Spacer(),
+ const Spacer(),
  if (agent.status == AgentStatus.active) ...[
  Container(
  width: 8,
@@ -352,7 +352,7 @@ class _ConversationItem extends ConsumerWidget {
  ],
  ),
  
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  
  // Conversation Title (if different from agent name)
  if (conversation.title != agent.name && conversation.title.isNotEmpty) ...[
@@ -365,7 +365,7 @@ class _ConversationItem extends ConsumerWidget {
  maxLines: 1,
  overflow: TextOverflow.ellipsis,
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  ],
  
  // Agent capabilities (show top 2)
@@ -373,16 +373,16 @@ class _ConversationItem extends ConsumerWidget {
  Row(
  children: [
  ...agent.capabilities.take(2).map((capability) => Container(
- margin: EdgeInsets.only(right: 4),
- padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+ margin: const EdgeInsets.only(right: 4),
+ padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
  decoration: BoxDecoration(
- color: _getAgentColor(agent).withValues(alpha: 0.1),
+ color: _getAgentColor(agent, context).withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Text(
  capability,
  style: TextStyles.caption.copyWith(
- color: _getAgentColor(agent),
+ color: _getAgentColor(agent, context),
  fontSize: 9,
  ),
  ),
@@ -396,7 +396,7 @@ class _ConversationItem extends ConsumerWidget {
  ),
  ),
  ],
- Spacer(),
+ const Spacer(),
  Text(
  _formatDate(conversation.createdAt),
  style: TextStyles.caption.copyWith(
@@ -414,14 +414,14 @@ class _ConversationItem extends ConsumerWidget {
  size: 12,
  color: ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: SpacingTokens.xs),
+ const SizedBox(width: SpacingTokens.xs),
  Text(
  '${conversation.messages.length} messages',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
  ),
  ),
- Spacer(),
+ const Spacer(),
  Text(
  _formatDate(conversation.createdAt),
  style: TextStyles.caption.copyWith(
@@ -445,7 +445,7 @@ class _ConversationItem extends ConsumerWidget {
  children: [
  // Agent/API type indicator
  Container(
- padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+ padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
  decoration: BoxDecoration(
  color: _getTypeColor(context),
  borderRadius: BorderRadius.circular(4),
@@ -458,7 +458,7 @@ class _ConversationItem extends ConsumerWidget {
  size: 10,
  color: Colors.white,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Text(
  _getTypeLabel(),
  style: TextStyles.caption.copyWith(
@@ -470,7 +470,7 @@ class _ConversationItem extends ConsumerWidget {
  ],
  ),
  ),
- SizedBox(width: 8),
+ const SizedBox(width: 8),
  Expanded(
  child: Text(
  conversation.title,
@@ -487,7 +487,7 @@ class _ConversationItem extends ConsumerWidget {
  ],
  ),
  if (_getProviderDisplayText() != null) ...[
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Text(
  _getProviderDisplayText()!,
  style: TextStyles.caption.copyWith(
@@ -498,7 +498,7 @@ class _ConversationItem extends ConsumerWidget {
  overflow: TextOverflow.ellipsis,
  ),
  ],
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Row(
  children: [
  Icon(
@@ -506,14 +506,14 @@ class _ConversationItem extends ConsumerWidget {
  size: 12,
  color: ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: SpacingTokens.xs),
+ const SizedBox(width: SpacingTokens.xs),
  Text(
  '${conversation.messages.length} messages',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
  ),
  ),
- Spacer(),
+ const Spacer(),
  Text(
  _formatDate(conversation.createdAt),
  style: TextStyles.caption.copyWith(
@@ -662,16 +662,17 @@ class _ConversationItem extends ConsumerWidget {
  return conversation.metadata?['agentId'] as String?;
  }
 
- Color _getAgentColor(Agent agent) {
+ Color _getAgentColor(Agent agent, BuildContext context) {
+ final colors = ThemeColors(context);
  switch (agent.id) {
  case 'research-assistant':
- return const Color(0xFF4CAF50); // Green
+ return colors.success; // Use theme success color
  case 'code-helper':
- return const Color(0xFF2196F3); // Blue
+ return colors.primary; // Use theme primary color
  case 'data-analyst':
- return const Color(0xFFFF9800); // Orange
+ return colors.accent; // Use theme accent color
  default:
- return const Color(0xFF3D3328); // Default primary color
+ return colors.primary; // Default theme primary color
  }
  }
 

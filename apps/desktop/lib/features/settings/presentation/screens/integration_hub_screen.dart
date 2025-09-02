@@ -72,7 +72,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
         child: Column(
           children: [
             // App Navigation Bar
-            AppNavigationBar(currentRoute: AppRoutes.integrationHub),
+            const AppNavigationBar(currentRoute: AppRoutes.integrationHub),
             
             // Header with navigation and controls
             _buildHeader(colors),
@@ -100,7 +100,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
 
   Widget _buildHeader(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       decoration: BoxDecoration(
         color: colors.surface.withValues(alpha: 0.9),
         border: Border(
@@ -119,7 +119,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
             tooltip: 'Back to Settings',
           ),
           
-          SizedBox(width: SpacingTokens.componentSpacing),
+          const SizedBox(width: SpacingTokens.componentSpacing),
           
           // Title and subtitle
           Expanded(
@@ -130,7 +130,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
                   'Integrations Hub',
                   style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
                 ),
-                SizedBox(height: SpacingTokens.xs_precise),
+                const SizedBox(height: SpacingTokens.xs_precise),
                 Text(
                   'Connect your tools and services to enhance your AI agents',
                   style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
@@ -154,7 +154,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
                 ),
               ),
               
-              SizedBox(width: SpacingTokens.iconSpacing),
+              const SizedBox(width: SpacingTokens.iconSpacing),
               
               // Advanced panel toggle
               Tooltip(
@@ -168,7 +168,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
                 ),
               ),
               
-              SizedBox(width: SpacingTokens.iconSpacing),
+              const SizedBox(width: SpacingTokens.iconSpacing),
               
               // Help button
               IconButton(
@@ -185,7 +185,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
 
   Widget _buildMainContent(ThemeColors colors) {
     return Padding(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         children: [
           // Quick Actions Bar
@@ -197,7 +197,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
             isExpertMode: _isExpertMode,
           ),
           
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           // Status Overview (collapsible)
           StatusOverview(
@@ -205,12 +205,12 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
             showDetailed: _isExpertMode,
           ),
           
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           // Search and Filter Bar
           _buildSearchAndFilter(colors),
           
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // Main Integration Grid
           Expanded(
@@ -254,18 +254,18 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
                     )
                   : null,
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+                contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               ),
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
             ),
           ),
         ),
         
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         
         // Category filter dropdown
         Container(
-          padding: EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
+          padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
           decoration: BoxDecoration(
             color: colors.surfaceVariant,
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -293,7 +293,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
           ),
         ),
         
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         
         // Filter button for advanced options
         IconButton(
@@ -365,8 +365,8 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Integrations Help'),
-        content: Column(
+        title: const Text('Integrations Help'),
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -381,7 +381,7 @@ class _IntegrationHubScreenState extends ConsumerState<IntegrationHubScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Got it'),
+            child: const Text('Got it'),
           ),
         ],
       ),

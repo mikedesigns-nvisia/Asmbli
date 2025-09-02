@@ -25,7 +25,7 @@ class QuickActionsBar extends ConsumerWidget {
     final colors = ThemeColors(context);
     
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
@@ -34,7 +34,7 @@ class QuickActionsBar extends ConsumerWidget {
           BoxShadow(
             color: colors.primary.withValues(alpha: 0.1),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -54,7 +54,7 @@ class QuickActionsBar extends ConsumerWidget {
                 ),
               ),
               
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               
               // Auto Detection - One-click discovery
               Expanded(
@@ -66,7 +66,7 @@ class QuickActionsBar extends ConsumerWidget {
                 ),
               ),
               
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               
               // Smart Suggestions - AI-powered recommendations
               Expanded(
@@ -80,7 +80,7 @@ class QuickActionsBar extends ConsumerWidget {
               
               // Expert Mode Actions
               if (isExpertMode) ...[
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 
                 Expanded(
                   child: _QuickActionButton(
@@ -96,7 +96,7 @@ class QuickActionsBar extends ConsumerWidget {
           
           // Secondary Actions Row (Expert Mode)
           if (isExpertMode) ...[
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             _buildSecondaryActions(colors, ref),
           ],
         ],
@@ -114,7 +114,7 @@ class QuickActionsBar extends ConsumerWidget {
           onPressed: () => _showBulkActions(ref),
         ),
         
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         
         // Health Check
         _SecondaryActionButton(
@@ -123,7 +123,7 @@ class QuickActionsBar extends ConsumerWidget {
           onPressed: () => _runHealthCheck(ref),
         ),
         
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         
         // Export/Backup
         _SecondaryActionButton(
@@ -132,7 +132,7 @@ class QuickActionsBar extends ConsumerWidget {
           onPressed: () => _exportConfiguration(ref),
         ),
         
-        Spacer(),
+        const Spacer(),
         
         // Quick Stats
         _buildQuickStats(colors, ref),
@@ -149,7 +149,7 @@ class QuickActionsBar extends ConsumerWidget {
           value: '12',
           color: colors.success ?? colors.primary,
         ),
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         _StatChip(
           label: 'Issues',
           value: '2',
@@ -198,7 +198,7 @@ class _QuickActionButton extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         child: Container(
-          padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+          padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           decoration: BoxDecoration(
             color: isPrimary 
               ? colors.primary.withValues(alpha: 0.1)
@@ -214,7 +214,7 @@ class _QuickActionButton extends StatelessWidget {
             children: [
               // Icon
               Container(
-                padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                 decoration: BoxDecoration(
                   color: isPrimary 
                     ? colors.primary
@@ -230,7 +230,7 @@ class _QuickActionButton extends StatelessWidget {
                 ),
               ),
               
-              SizedBox(height: SpacingTokens.iconSpacing),
+              const SizedBox(height: SpacingTokens.iconSpacing),
               
               // Label
               Text(
@@ -242,7 +242,7 @@ class _QuickActionButton extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               
-              SizedBox(height: SpacingTokens.xs_precise),
+              const SizedBox(height: SpacingTokens.xs_precise),
               
               // Description
               Text(
@@ -284,7 +284,7 @@ class _SecondaryActionButton extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: SpacingTokens.componentSpacing,
             vertical: SpacingTokens.iconSpacing,
           ),
@@ -296,7 +296,7 @@ class _SecondaryActionButton extends StatelessWidget {
                 size: 16,
                 color: colors.onSurfaceVariant,
               ),
-              SizedBox(width: SpacingTokens.xs_precise),
+              const SizedBox(width: SpacingTokens.xs_precise),
               Text(
                 label,
                 style: TextStyles.caption.copyWith(
@@ -328,7 +328,7 @@ class _StatChip extends StatelessWidget {
     final colors = ThemeColors(context);
     
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.iconSpacing,
         vertical: SpacingTokens.xs_precise,
       ),
@@ -346,7 +346,7 @@ class _StatChip extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(width: SpacingTokens.xs_precise),
+          const SizedBox(width: SpacingTokens.xs_precise),
           Text(
             label,
             style: TextStyles.caption.copyWith(

@@ -38,7 +38,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
 
   Widget _buildLoadingState(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -50,7 +50,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
               valueColor: AlwaysStoppedAnimation<Color>(ThemeColors(context).primary),
             ),
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Text(
             'Checking health...',
             style: TextStyles.bodySmall.copyWith(
@@ -64,7 +64,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
 
   Widget _buildErrorState(BuildContext context, Object error) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -73,7 +73,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
             size: 16,
             color: ThemeColors(context).error,
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Text(
             'Health check failed',
             style: TextStyles.bodySmall.copyWith(
@@ -87,7 +87,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
 
   Widget _buildUnknownState(BuildContext context, String serverId) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -96,7 +96,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
             size: 16,
             color: ThemeColors(context).onSurfaceVariant,
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Text(
             'Unknown status',
             style: TextStyles.bodySmall.copyWith(
@@ -121,7 +121,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
           Row(
             children: [
               _buildStatusIndicator(context, health.status),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,14 +144,14 @@ class MCPHealthStatusWidget extends ConsumerWidget {
           ),
           
           if (showDetails) ...[
-            SizedBox(height: SpacingTokens.md),
+            const SizedBox(height: SpacingTokens.md),
             _buildDetailedMetrics(context, health),
           ],
 
           if (health.errorMessage != null) ...[
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
             Container(
-              padding: EdgeInsets.all(SpacingTokens.sm),
+              padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
                 color: ThemeColors(context).error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -166,7 +166,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
                     size: 16,
                     color: ThemeColors(context).error,
                   ),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: Text(
                       health.errorMessage!,
@@ -189,7 +189,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildStatusIndicator(context, health.status),
-        SizedBox(width: SpacingTokens.xs),
+        const SizedBox(width: SpacingTokens.xs),
         Text(
           '${health.responseTimeMs}ms',
           style: TextStyles.bodySmall.copyWith(
@@ -203,7 +203,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
   Widget _buildAllServersHealth(BuildContext context, Map<String, MCPServerHealth> healthMap) {
     if (healthMap.isEmpty) {
       return Container(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Center(
           child: Text(
             'No MCP servers configured',
@@ -224,12 +224,12 @@ class MCPHealthStatusWidget extends ConsumerWidget {
         // Summary header
         _buildHealthSummary(context, healthMap.values.toList()),
         
-        SizedBox(height: SpacingTokens.lg),
+        const SizedBox(height: SpacingTokens.lg),
         
         // Individual server health
         ...sortedEntries.map((entry) => 
           Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.sm),
+            padding: const EdgeInsets.only(bottom: SpacingTokens.sm),
             child: _buildServerHealth(context, entry.value),
           )
         ),
@@ -257,7 +257,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
               ThemeColors(context).primary,
             ),
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           Expanded(
             child: _buildSummaryMetric(
               context,
@@ -267,7 +267,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
               ThemeColors(context).success,
             ),
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           Expanded(
             child: _buildSummaryMetric(
               context,
@@ -277,7 +277,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
               ThemeColors(context).error,
             ),
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           Expanded(
             child: _buildSummaryMetric(
               context,
@@ -296,7 +296,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
     return Column(
       children: [
         Icon(icon, color: color, size: 24),
-        SizedBox(height: SpacingTokens.xs),
+        const SizedBox(height: SpacingTokens.xs),
         Text(
           value,
           style: TextStyles.cardTitle.copyWith(color: color),
@@ -317,7 +317,7 @@ class MCPHealthStatusWidget extends ConsumerWidget {
     final icon = _getStatusIcon(status);
 
     return Container(
-      padding: EdgeInsets.all(4),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         shape: BoxShape.circle,

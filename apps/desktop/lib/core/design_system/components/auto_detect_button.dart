@@ -39,16 +39,16 @@ class AutoDetectButton extends ConsumerWidget {
           onTap: () => _showAutoDetection(context),
           borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                const Icon(
                   Icons.auto_fix_high,
                   size: 18,
                   color: SemanticColors.primary,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   'Auto-Detect',
                   style: TextStyles.labelMedium.copyWith(
@@ -65,7 +65,7 @@ class AutoDetectButton extends ConsumerWidget {
 
   Widget _buildFullButton(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -84,27 +84,27 @@ class AutoDetectButton extends ConsumerWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: SemanticColors.primary,
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.auto_fix_high,
                   color: SemanticColors.surface,
                   size: 20,
                 ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       specificIntegration != null
-                          ? 'Auto-Detect ${specificIntegration}'
+                          ? 'Auto-Detect $specificIntegration'
                           : 'Auto-Detect Configuration',
-                      style: TextStyle(
+                      style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                         color: SemanticColors.primary,
@@ -121,7 +121,7 @@ class AutoDetectButton extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           AsmblButton.primary(
             text: 'Start Detection',
             onPressed: () => _showAutoDetection(context),
@@ -184,7 +184,7 @@ class AutoDetectFormField extends ConsumerWidget {
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         TextFormField(
           initialValue: value,
           onChanged: onChanged,
@@ -194,15 +194,15 @@ class AutoDetectFormField extends ConsumerWidget {
             fillColor: SemanticColors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: SemanticColors.border),
+              borderSide: const BorderSide(color: SemanticColors.border),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: SemanticColors.border),
+              borderSide: const BorderSide(color: SemanticColors.border),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: SemanticColors.primary),
+              borderSide: const BorderSide(color: SemanticColors.primary),
             ),
           ),
         ),

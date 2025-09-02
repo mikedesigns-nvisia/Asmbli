@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
 import 'package:agent_engine_core/agent_engine_core.dart';
@@ -313,7 +312,7 @@ class IntegrationBackupService {
             affectedIntegrations: [],
           ),
         ],
-        metadata: BackupMetadata(
+        metadata: const BackupMetadata(
           exportedBy: 'Unknown',
           platform: 'Unknown',
           agentEngineVersion: 'Unknown',
@@ -359,7 +358,7 @@ class IntegrationBackupService {
       ),
     );
     
-    return JsonEncoder.withIndent('  ').convert(template.toJson());
+    return const JsonEncoder.withIndent('  ').convert(template.toJson());
   }
   
   // Private helper methods

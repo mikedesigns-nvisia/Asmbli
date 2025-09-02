@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import 'integration_service.dart';
@@ -21,7 +20,7 @@ class IntegrationDependencyService {
     // Define dependencies between integrations
     
     // GitHub depends on Git
-    _dependencies['github'] = IntegrationDependency(
+    _dependencies['github'] = const IntegrationDependency(
       integrationId: 'github',
       requires: ['git'],
       optionalRequires: ['filesystem'],
@@ -30,7 +29,7 @@ class IntegrationDependencyService {
     );
     
     // Figma may benefit from filesystem for exports
-    _dependencies['figma'] = IntegrationDependency(
+    _dependencies['figma'] = const IntegrationDependency(
       integrationId: 'figma',
       requires: [],
       optionalRequires: ['filesystem'],
@@ -39,7 +38,7 @@ class IntegrationDependencyService {
     );
     
     // Slack can integrate with other services
-    _dependencies['slack'] = IntegrationDependency(
+    _dependencies['slack'] = const IntegrationDependency(
       integrationId: 'slack',
       requires: [],
       optionalRequires: ['github', 'linear', 'notion'],
@@ -48,7 +47,7 @@ class IntegrationDependencyService {
     );
     
     // Notion can sync with other tools
-    _dependencies['notion'] = IntegrationDependency(
+    _dependencies['notion'] = const IntegrationDependency(
       integrationId: 'notion',
       requires: [],
       optionalRequires: ['github', 'linear', 'slack'],
@@ -57,7 +56,7 @@ class IntegrationDependencyService {
     );
     
     // Linear project management
-    _dependencies['linear'] = IntegrationDependency(
+    _dependencies['linear'] = const IntegrationDependency(
       integrationId: 'linear',
       requires: [],
       optionalRequires: ['github', 'slack', 'notion'],
@@ -66,7 +65,7 @@ class IntegrationDependencyService {
     );
     
     // Database integrations
-    _dependencies['postgresql'] = IntegrationDependency(
+    _dependencies['postgresql'] = const IntegrationDependency(
       integrationId: 'postgresql',
       requires: [],
       optionalRequires: [],
@@ -74,7 +73,7 @@ class IntegrationDependencyService {
       setupOrder: 1,
     );
     
-    _dependencies['mysql'] = IntegrationDependency(
+    _dependencies['mysql'] = const IntegrationDependency(
       integrationId: 'mysql',
       requires: [],
       optionalRequires: [],
@@ -82,7 +81,7 @@ class IntegrationDependencyService {
       setupOrder: 1,
     );
     
-    _dependencies['mongodb'] = IntegrationDependency(
+    _dependencies['mongodb'] = const IntegrationDependency(
       integrationId: 'mongodb',
       requires: [],
       optionalRequires: [],
@@ -91,7 +90,7 @@ class IntegrationDependencyService {
     );
     
     // Memory/AI integrations
-    _dependencies['memory'] = IntegrationDependency(
+    _dependencies['memory'] = const IntegrationDependency(
       integrationId: 'memory',
       requires: [],
       optionalRequires: ['filesystem'],
@@ -99,7 +98,7 @@ class IntegrationDependencyService {
       setupOrder: 1,
     );
     
-    _dependencies['sequential-thinking'] = IntegrationDependency(
+    _dependencies['sequential-thinking'] = const IntegrationDependency(
       integrationId: 'sequential-thinking',
       requires: [],
       optionalRequires: ['memory'],
@@ -108,7 +107,7 @@ class IntegrationDependencyService {
     );
     
     // Local services
-    _dependencies['filesystem'] = IntegrationDependency(
+    _dependencies['filesystem'] = const IntegrationDependency(
       integrationId: 'filesystem',
       requires: [],
       optionalRequires: [],
@@ -116,7 +115,7 @@ class IntegrationDependencyService {
       setupOrder: 0, // Base service, should be set up first
     );
     
-    _dependencies['git'] = IntegrationDependency(
+    _dependencies['git'] = const IntegrationDependency(
       integrationId: 'git',
       requires: [],
       optionalRequires: ['filesystem'],
@@ -124,7 +123,7 @@ class IntegrationDependencyService {
       setupOrder: 1,
     );
     
-    _dependencies['terminal'] = IntegrationDependency(
+    _dependencies['terminal'] = const IntegrationDependency(
       integrationId: 'terminal',
       requires: [],
       optionalRequires: ['filesystem'],
@@ -133,7 +132,7 @@ class IntegrationDependencyService {
     );
     
     // Utility services
-    _dependencies['web-search'] = IntegrationDependency(
+    _dependencies['web-search'] = const IntegrationDependency(
       integrationId: 'web-search',
       requires: [],
       optionalRequires: [],
@@ -141,7 +140,7 @@ class IntegrationDependencyService {
       setupOrder: 2,
     );
     
-    _dependencies['http-client'] = IntegrationDependency(
+    _dependencies['http-client'] = const IntegrationDependency(
       integrationId: 'http-client',
       requires: [],
       optionalRequires: [],
@@ -149,7 +148,7 @@ class IntegrationDependencyService {
       setupOrder: 2,
     );
     
-    _dependencies['calendar'] = IntegrationDependency(
+    _dependencies['calendar'] = const IntegrationDependency(
       integrationId: 'calendar',
       requires: [],
       optionalRequires: ['notion', 'slack'],
@@ -157,7 +156,7 @@ class IntegrationDependencyService {
       setupOrder: 3,
     );
     
-    _dependencies['time'] = IntegrationDependency(
+    _dependencies['time'] = const IntegrationDependency(
       integrationId: 'time',
       requires: [],
       optionalRequires: [],
@@ -176,7 +175,7 @@ class IntegrationDependencyService {
     final dependency = _dependencies[integrationId];
     if (dependency == null) {
       // No dependencies defined, assume OK
-      return DependencyCheckResult(
+      return const DependencyCheckResult(
         canInstall: true,
         missingRequired: [],
         missingOptional: [],

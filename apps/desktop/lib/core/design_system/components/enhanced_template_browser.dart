@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../design_system.dart';
 import '../../models/enhanced_mcp_template.dart';
 
@@ -80,17 +79,17 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         // Header and search
         _buildHeader(context),
         
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
         
         // Filters
         _buildFilters(context),
         
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
         
         // Quick recommendations
         if (widget.recommendedTags != null || widget.userRole != null) ...[
           _buildRecommendations(context),
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
         ],
         
         // Template grid
@@ -113,7 +112,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           'Connect your agent to external services and tools',
           style: TextStyle(
@@ -121,16 +120,16 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         // Search bar
         TextField(
           decoration: InputDecoration(
             hintText: 'Search integrations...',
-            prefixIcon: Icon(Icons.search),
+            prefixIcon: const Icon(Icons.search),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           onChanged: (value) {
             setState(() => _searchQuery = value);
@@ -166,7 +165,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         // Recommended toggle
         FilterChip(
           selected: _showRecommendedOnly,
-          label: Row(
+          label: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.star, size: 14),
@@ -190,7 +189,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     required ValueChanged<String?> onChanged,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         border: Border.all(
           color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -200,17 +199,17 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
       child: DropdownButton<String>(
         value: value,
         onChanged: onChanged,
-        underline: SizedBox.shrink(),
+        underline: const SizedBox.shrink(),
         items: items.map((item) => DropdownMenuItem(
           value: item,
           child: Text(
             item,
-            style: TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 12),
           ),
         )).toList(),
         hint: Text(
           label,
-          style: TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12),
         ),
       ),
     );
@@ -218,12 +217,12 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
 
   Widget _buildRecommendations(BuildContext context) {
     final recommendations = _getRecommendationsForUser();
-    if (recommendations.isEmpty) return SizedBox.shrink();
+    if (recommendations.isEmpty) return const SizedBox.shrink();
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        const Row(
           children: [
             Icon(
               Icons.auto_awesome,
@@ -241,8 +240,8 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
             ),
           ],
         ),
-        SizedBox(height: 8),
-        Container(
+        const SizedBox(height: 8),
+        SizedBox(
           height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -251,7 +250,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
               final template = recommendations[index];
               return Container(
                 width: 200,
-                margin: EdgeInsets.only(right: 12),
+                margin: const EdgeInsets.only(right: 12),
                 child: _buildCompactTemplateCard(context, template, isRecommended: true),
               );
             },
@@ -289,7 +288,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         borderRadius: BorderRadius.circular(12),
         onTap: () => widget.onTemplateSelected?.call(template),
         child: Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(12),
@@ -316,13 +315,13 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                       size: 20,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       if (template.isPopular) _buildPopularBadge(),
                       if (template.isRecommended) ...[
-                        if (template.isPopular) SizedBox(height: 2),
+                        if (template.isPopular) const SizedBox(height: 2),
                         _buildRecommendedBadge(),
                       ],
                     ],
@@ -330,7 +329,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                 ],
               ),
               
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               
               // Title and category
               Text(
@@ -344,7 +343,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                 overflow: TextOverflow.ellipsis,
               ),
               
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               
               Row(
                 children: [
@@ -356,12 +355,12 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   _buildDifficultyBadge(template.difficulty),
                 ],
               ),
               
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               
               // Description
               Expanded(
@@ -377,7 +376,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                 ),
               ),
               
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               
               // Capabilities
               if (template.capabilities.isNotEmpty) ...[
@@ -386,9 +385,9 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                   runSpacing: 4,
                   children: template.capabilities.take(2).map((capability) {
                     return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.5),
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -417,7 +416,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         borderRadius: BorderRadius.circular(8),
         onTap: () => widget.onTemplateSelected?.call(template),
         child: Container(
-          padding: EdgeInsets.all(12),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isRecommended 
               ? SemanticColors.primary.withValues(alpha: 0.1)
@@ -444,7 +443,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                   size: 16,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -494,7 +493,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
             size: 64,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             'No integrations found',
             style: TextStyle(
@@ -503,7 +502,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Try adjusting your search or filters',
             style: TextStyle(
@@ -511,7 +510,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           AsmblButton.secondary(
             text: 'Clear Filters',
             icon: Icons.clear,
@@ -531,12 +530,12 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
 
   Widget _buildPopularBadge() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
         color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
@@ -560,12 +559,12 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
 
   Widget _buildRecommendedBadge() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
         color: SemanticColors.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Text(
+      child: const Text(
         'Recommended',
         style: TextStyle(
           fontSize: 8,
@@ -593,7 +592,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       decoration: BoxDecoration(
         color: badgeColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(3),

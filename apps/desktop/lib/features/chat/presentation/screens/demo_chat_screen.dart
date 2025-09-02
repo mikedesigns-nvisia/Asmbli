@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/components/app_navigation_bar.dart';
 import '../../../../core/constants/routes.dart';
 
 /// High-fidelity demo chat screen for video recording
@@ -29,12 +28,12 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     DemoMessage(
       role: 'user',
       content: 'Help me analyze our Q3 sales data and create a comprehensive report with insights and recommendations',
-      timestamp: DateTime.now().subtract(Duration(minutes: 5)),
+      timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
     ),
     DemoMessage(
       role: 'assistant',
       content: 'I\'ll help you analyze your Q3 sales data and create a comprehensive report. Let me break this down into steps:\n\n1. **Data Collection** - Gathering sales data from multiple sources\n2. **Analysis** - Processing metrics, trends, and patterns\n3. **Visualization** - Creating charts and graphs\n4. **Insights** - Identifying key findings\n5. **Recommendations** - Strategic suggestions',
-      timestamp: DateTime.now().subtract(Duration(minutes: 4, seconds: 45)),
+      timestamp: DateTime.now().subtract(const Duration(minutes: 4, seconds: 45)),
       mcpSteps: [
         MCPStep(
           type: 'database_query',
@@ -62,7 +61,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     DemoMessage(
       role: 'assistant',
       content: 'Perfect! I\'ve analyzed your Q3 sales data. Here are the key insights:\n\n📈 **Performance Summary:**\n• Total Revenue: \$2.4M (+18% vs Q2)\n• Units Sold: 8,450 (+12% vs Q2)\n• Average Deal Size: \$284 (+5% vs Q2)\n\n🎯 **Top Performers:**\n• Product A: \$890K revenue (37% of total)\n• West Region: \$1.1M (best performing region)\n• Enterprise segment: +45% growth\n\n⚠️ **Areas for Attention:**\n• SMB segment declined 8%\n• East region underperforming (-5%)\n• Customer acquisition cost increased 12%\n\n📋 **Recommendations:**\n1. Expand Product A marketing in East region\n2. Review SMB pricing strategy\n3. Optimize lead qualification process\n4. Launch targeted campaigns for Q4\n\nWould you like me to create detailed visualizations or dive deeper into any specific area?',
-      timestamp: DateTime.now().subtract(Duration(minutes: 3, seconds: 30)),
+      timestamp: DateTime.now().subtract(const Duration(minutes: 3, seconds: 30)),
       mcpSteps: [
         MCPStep(
           type: 'chart_generation',
@@ -95,12 +94,12 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     DemoMessage(
       role: 'user',
       content: 'This is excellent! Can you also schedule a meeting with the sales team to discuss these findings and send the report to key stakeholders?',
-      timestamp: DateTime.now().subtract(Duration(minutes: 1, seconds: 15)),
+      timestamp: DateTime.now().subtract(const Duration(minutes: 1, seconds: 15)),
     ),
     DemoMessage(
       role: 'assistant',
       content: 'Absolutely! I\'ll take care of both tasks for you.',
-      timestamp: DateTime.now().subtract(Duration(seconds: 30)),
+      timestamp: DateTime.now().subtract(const Duration(seconds: 30)),
       isTyping: true,
       isDynamic: true,
     ),
@@ -110,17 +109,17 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
   void initState() {
     super.initState();
     _typingController = AnimationController(
-      duration: Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat();
     
     _workflowController = AnimationController(
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
       vsync: this,
     );
     
     _notificationController = AnimationController(
-      duration: Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
     
@@ -130,14 +129,14 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
   
   void _startDemoProgression() {
     // Auto-progress through workflow steps
-    Timer.periodic(Duration(seconds: 3), (timer) {
+    Timer.periodic(const Duration(seconds: 3), (timer) {
       if (mounted && currentWorkflowStep < 2) {
         setState(() {
           currentWorkflowStep++;
           if (currentWorkflowStep == 2) {
             showCompletionNotification = true;
             _notificationController.forward().then((_) {
-              Timer(Duration(seconds: 3), () {
+              Timer(const Duration(seconds: 3), () {
                 if (mounted) {
                   _notificationController.reverse();
                 }
@@ -198,7 +197,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
               child: Column(
                 children: [
                   // Header
-                  AppNavigationBar(currentRoute: AppRoutes.demoChat),
+                  const AppNavigationBar(currentRoute: AppRoutes.demoChat),
                   
                   // Main Content
                   Expanded(
@@ -242,7 +241,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
         children: [
           // Sidebar Header
           Padding(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -260,23 +259,23 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
           
           // Active Agent Card
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
+            padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
             child: AsmblCard(
-              padding: EdgeInsets.all(SpacingTokens.lg),
+              padding: const EdgeInsets.all(SpacingTokens.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: SemanticColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Icon(Icons.psychology, size: 16, color: SemanticColors.primary),
+                        child: const Icon(Icons.psychology, size: 16, color: SemanticColors.primary),
                       ),
-                      SizedBox(width: SpacingTokens.sm),
+                      const SizedBox(width: SpacingTokens.sm),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -287,20 +286,20 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                         decoration: BoxDecoration(
                           color: SemanticColors.success,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Text('LIVE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Colors.white)),
+                        child: const Text('LIVE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Colors.white)),
                       ),
                     ],
                   ),
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   Row(
                     children: [
                       _buildCapabilityChip('7 Tools', Icons.extension, SemanticColors.success),
-                      SizedBox(width: SpacingTokens.sm),
+                      const SizedBox(width: SpacingTokens.sm),
                       _buildCapabilityChip('3 Docs', Icons.description, SemanticColors.primary),
                     ],
                   ),
@@ -309,22 +308,22 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Active Tools
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
+            padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(Icons.extension, size: 14, color: SemanticColors.primary),
-                    SizedBox(width: 6),
+                    const Icon(Icons.extension, size: 14, color: SemanticColors.primary),
+                    const SizedBox(width: 6),
                     Text('Active Tools (7)', style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500)),
                   ],
                 ),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 _buildToolItem('Sales Database', 'connected', SemanticColors.success),
                 _buildToolItem('Excel Processor', 'connected', SemanticColors.success),  
                 _buildToolItem('Chart Generator', 'connected', SemanticColors.success),
@@ -336,13 +335,13 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
             ),
           ),
           
-          Spacer(),
+          const Spacer(),
           
           // API Provider
           Padding(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Container(
-              padding: EdgeInsets.all(SpacingTokens.sm),
+              padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
                 color: SemanticColors.surface,
                 borderRadius: BorderRadius.circular(8),
@@ -350,8 +349,8 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
               ),
               child: Row(
                 children: [
-                  Icon(Icons.api, size: 16, color: SemanticColors.primary),
-                  SizedBox(width: SpacingTokens.sm),
+                  const Icon(Icons.api, size: 16, color: SemanticColors.primary),
+                  const SizedBox(width: SpacingTokens.sm),
                   Text('AI Assistant', style: TextStyles.bodySmall),
                 ],
               ),
@@ -373,7 +372,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
           // Messages
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsets.all(SpacingTokens.lg),
+              padding: const EdgeInsets.all(SpacingTokens.lg),
               itemCount: _demoMessages.length,
               itemBuilder: (context, index) => _buildDemoMessage(_demoMessages[index]),
             ),
@@ -388,18 +387,18 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
 
   Widget _buildDemoChatHeader() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(6),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.psychology, size: 18, color: SemanticColors.primary),
+            child: const Icon(Icons.psychology, size: 18, color: SemanticColors.primary),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -408,14 +407,14 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                 Row(
                   children: [
                     Text('Sales Analytics Agent', style: TextStyles.caption.copyWith(color: SemanticColors.onSurfaceVariant, fontStyle: FontStyle.italic)),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
                         color: SemanticColors.surface,
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Text('7 MCP', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: SemanticColors.onSurfaceVariant)),
+                      child: const Text('7 MCP', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: SemanticColors.onSurfaceVariant)),
                     ),
                   ],
                 ),
@@ -423,13 +422,13 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: SemanticColors.primary.withValues(alpha: 0.3)),
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.api, size: 12, color: SemanticColors.primary),
@@ -438,9 +437,9 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
               ],
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
               color: SemanticColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -449,9 +448,9 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(width: 6, height: 6, decoration: BoxDecoration(color: SemanticColors.success, shape: BoxShape.circle)),
-                SizedBox(width: 4),
-                Text('ACTIVE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: SemanticColors.success)),
+                Container(width: 6, height: 6, decoration: const BoxDecoration(color: SemanticColors.success, shape: BoxShape.circle)),
+                const SizedBox(width: 4),
+                const Text('ACTIVE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: SemanticColors.success)),
               ],
             ),
           ),
@@ -464,17 +463,17 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     final isUser = message.role == 'user';
     
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) ...[
-            CircleAvatar(
+            const CircleAvatar(
               radius: 16,
               backgroundColor: SemanticColors.primary,
               child: Icon(Icons.smart_toy, size: 20, color: Colors.white),
             ),
-            SizedBox(width: SpacingTokens.lg),
+            const SizedBox(width: SpacingTokens.lg),
           ],
           Expanded(
             child: Column(
@@ -482,7 +481,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
               children: [
                 // Message content
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.lg),
+                  padding: const EdgeInsets.all(SpacingTokens.lg),
                   decoration: BoxDecoration(
                     color: isUser ? SemanticColors.primary : SemanticColors.surface,
                     borderRadius: BorderRadius.circular(8),
@@ -501,7 +500,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                           ),
                         ),
                       ],
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         _formatTime(message.timestamp),
                         style: TextStyles.caption.copyWith(
@@ -514,21 +513,21 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                 
                 // MCP Steps
                 if (message.mcpSteps.isNotEmpty || message.isDynamic) ...[
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   _buildMCPSteps(message.isDynamic ? _getDynamicMCPSteps() : message.mcpSteps),
                 ],
                 
                 // Attachments
                 if (message.attachments.isNotEmpty) ...[
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   _buildAttachments(message.attachments),
                 ],
               ],
             ),
           ),
           if (isUser) ...[
-            SizedBox(width: SpacingTokens.lg),
-            CircleAvatar(
+            const SizedBox(width: SpacingTokens.lg),
+            const CircleAvatar(
               radius: 16,
               backgroundColor: SemanticColors.surface,
               child: Icon(Icons.person, size: 20, color: SemanticColors.onSurface),
@@ -541,7 +540,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
 
   Widget _buildMCPSteps(List<MCPStep> steps) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: SemanticColors.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
@@ -552,12 +551,12 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome, size: 14, color: SemanticColors.primary),
-              SizedBox(width: 6),
+              const Icon(Icons.auto_awesome, size: 14, color: SemanticColors.primary),
+              const SizedBox(width: 6),
               Text('Agent Workflow', style: TextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: SemanticColors.primary)),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           ...steps.map((step) => _buildMCPStep(step)),
         ],
       ),
@@ -590,13 +589,13 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     }
     
     return Padding(
-      padding: EdgeInsets.only(bottom: SpacingTokens.xs),
+      padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
       child: Row(
         children: [
           statusWidget,
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Icon(step.icon, size: 16, color: SemanticColors.onSurfaceVariant),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -614,8 +613,8 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
   Widget _buildAttachments(List<MessageAttachment> attachments) {
     return Column(
       children: attachments.map((attachment) => Container(
-        margin: EdgeInsets.only(bottom: SpacingTokens.xs),
-        padding: EdgeInsets.all(SpacingTokens.sm),
+        margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
+        padding: const EdgeInsets.all(SpacingTokens.sm),
         decoration: BoxDecoration(
           color: SemanticColors.surface,
           borderRadius: BorderRadius.circular(8),
@@ -630,7 +629,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
               size: 20,
               color: SemanticColors.primary,
             ),
-            SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: SpacingTokens.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -642,7 +641,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
             ),
             IconButton(
               onPressed: () {},
-              icon: Icon(Icons.download, size: 16),
+              icon: const Icon(Icons.download, size: 16),
               style: IconButton.styleFrom(
                 backgroundColor: SemanticColors.primary.withValues(alpha: 0.1),
                 foregroundColor: SemanticColors.primary,
@@ -658,7 +657,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     return Row(
       children: [
         Text('Agent is working', style: TextStyles.bodyMedium.copyWith(color: SemanticColors.onSurfaceVariant)),
-        SizedBox(width: SpacingTokens.sm),
+        const SizedBox(width: SpacingTokens.sm),
         AnimatedBuilder(
           animation: _typingController,
           builder: (context, child) {
@@ -672,13 +671,13 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                   ),
                 );
                 return Container(
-                  margin: EdgeInsets.only(right: 2),
+                  margin: const EdgeInsets.only(right: 2),
                   child: Opacity(
                     opacity: animation.value,
                     child: Container(
                       width: 4,
                       height: 4,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: SemanticColors.primary,
                         shape: BoxShape.circle,
                       ),
@@ -695,7 +694,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
 
   Widget _buildDemoInputArea() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Row(
         children: [
           Expanded(
@@ -710,13 +709,13 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                   hintText: 'Agent is processing your request...',
                   hintStyle: TextStyles.bodyMedium.copyWith(color: SemanticColors.onSurfaceVariant),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
                 enabled: false,
               ),
             ),
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           Container(
             decoration: BoxDecoration(
               color: SemanticColors.onSurfaceVariant.withValues(alpha: 0.3),
@@ -724,7 +723,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
             ),
             child: IconButton(
               onPressed: null,
-              icon: SizedBox(
+              icon: const SizedBox(
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(
@@ -733,7 +732,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                 ),
               ),
               style: IconButton.styleFrom(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
               ),
             ),
           ),
@@ -753,12 +752,12 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Text('Recent Conversations', style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600)),
           ),
           Expanded(
             child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: SpacingTokens.sm),
+              padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm),
               children: [
                 _buildConversationItem('Sales Analytics Workflow', 'Active', true),
                 _buildConversationItem('Q2 Financial Review', '2 hours ago', false),
@@ -775,8 +774,8 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
 
   Widget _buildConversationItem(String title, String subtitle, bool isActive) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.xs),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: isActive ? SemanticColors.primary.withValues(alpha: 0.1) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
@@ -803,7 +802,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
 
   Widget _buildCapabilityChip(String text, IconData icon, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -812,7 +811,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 12, color: color),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(text, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: color)),
         ],
       ),
@@ -821,7 +820,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
 
   Widget _buildToolItem(String name, String status, Color statusColor) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         children: [
           Container(
@@ -829,7 +828,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
             height: 6,
             decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(name, style: TextStyles.caption),
           ),
@@ -855,7 +854,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
               opacity: _notificationController.value,
               child: Container(
                 width: 320,
-                padding: EdgeInsets.all(SpacingTokens.lg),
+                padding: const EdgeInsets.all(SpacingTokens.lg),
                 decoration: BoxDecoration(
                   color: SemanticColors.success.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(12),
@@ -863,7 +862,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 10,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -872,8 +871,8 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.check_circle, color: Colors.white, size: 20),
-                        SizedBox(width: SpacingTokens.sm),
+                        const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                        const SizedBox(width: SpacingTokens.sm),
                         Text(
                           'Workflow Completed!',
                           style: TextStyles.bodyLarge.copyWith(
@@ -883,7 +882,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                         ),
                       ],
                     ),
-                    SizedBox(height: SpacingTokens.sm),
+                    const SizedBox(height: SpacingTokens.sm),
                     Text(
                       '✓ Meeting scheduled with sales team\n✓ Report sent to stakeholders\n✓ Calendar invites dispatched',
                       style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.9)),

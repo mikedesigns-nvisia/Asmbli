@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/integration_health_monitoring_service.dart' as monitoring;
-import '../../../../core/design_system/components/integration_status_indicators.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 
 /// Comprehensive health monitoring dashboard for integrations
@@ -66,18 +65,18 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
           // Header
           _buildHeader(context, statistics),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Health Overview Cards
           _buildHealthOverview(context, statistics),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Integrations Needing Attention
           if (integrationsNeedingAttention.isNotEmpty)
             _buildAttentionSection(context, integrationsNeedingAttention),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Integration Health Grid
           _buildHealthGrid(context, currentHealth),
@@ -88,7 +87,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
   
   Widget _buildHeader(BuildContext context, monitoring.HealthStatistics stats) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: SemanticColors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -96,7 +95,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -125,7 +124,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             },
           ),
           
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           
           // Title and summary
           Expanded(
@@ -136,7 +135,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                   'Integration Health Monitor',
                   style: TextStyles.pageTitle,
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   stats.overallStatus,
                   style: TextStyles.bodyMedium.copyWith(
@@ -184,7 +183,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             stats.total,
           ),
         ),
-        SizedBox(width: SpacingTokens.md),
+        const SizedBox(width: SpacingTokens.md),
         Expanded(
           child: _buildHealthCard(
             'Unhealthy',
@@ -194,7 +193,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             stats.total,
           ),
         ),
-        SizedBox(width: SpacingTokens.md),
+        const SizedBox(width: SpacingTokens.md),
         Expanded(
           child: _buildHealthCard(
             'Error',
@@ -204,7 +203,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             stats.total,
           ),
         ),
-        SizedBox(width: SpacingTokens.md),
+        const SizedBox(width: SpacingTokens.md),
         Expanded(
           child: _buildHealthCard(
             'Disabled',
@@ -228,7 +227,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     final percentage = total > 0 ? (count / total) * 100 : 0.0;
     
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: SemanticColors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -243,7 +242,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
           Row(
             children: [
               Icon(icon, size: 20, color: color),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 label,
                 style: TextStyles.bodySmall.copyWith(
@@ -252,7 +251,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
             count.toString(),
             style: TextStyle(
@@ -261,14 +260,14 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
               color: color,
             ),
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           LinearProgressIndicator(
             value: percentage / 100,
             backgroundColor: color.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 4,
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Text(
             '${percentage.toStringAsFixed(0)}% of total',
             style: TextStyles.caption.copyWith(
@@ -282,7 +281,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
   
   Widget _buildAttentionSection(BuildContext context, List<monitoring.IntegrationHealth> integrationsNeedingAttention) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: SemanticColors.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -295,12 +294,12 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.warning,
                 color: SemanticColors.warning,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Integrations Needing Attention (${integrationsNeedingAttention.length})',
                 style: TextStyles.bodyMedium.copyWith(
@@ -310,10 +309,10 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           ...integrationsNeedingAttention.take(3).map((health) {
             return Padding(
-              padding: EdgeInsets.only(bottom: SpacingTokens.xs),
+              padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
               child: Row(
                 children: [
                   Icon(
@@ -321,7 +320,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                     size: 16,
                     color: _getStatusColorFromHealthStatus(health.status),
                   ),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: Text(
                       '${health.integrationId}: ${health.message}',
@@ -339,7 +338,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -356,14 +355,14 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
               size: 64,
               color: SemanticColors.onSurfaceVariant.withValues(alpha: 0.5),
             ),
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             Text(
               'No integrations being monitored',
               style: TextStyles.bodyLarge.copyWith(
                 color: SemanticColors.onSurfaceVariant,
               ),
             ),
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
             Text(
               'Configure integrations to start monitoring their health',
               style: TextStyles.bodyMedium.copyWith(
@@ -377,9 +376,9 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     
     return GridView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.all(SpacingTokens.md),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(SpacingTokens.md),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: SpacingTokens.md,
         mainAxisSpacing: SpacingTokens.md,
@@ -392,7 +391,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
         final health = entry.value;
         final integration = IntegrationRegistry.getById(integrationId);
         
-        if (integration == null) return SizedBox.shrink();
+        if (integration == null) return const SizedBox.shrink();
         
         return _buildHealthMonitorCard(integration, health);
       },
@@ -408,7 +407,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
         onTap: () => _showHealthDetails(integration, health),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         child: Padding(
-          padding: EdgeInsets.all(SpacingTokens.md),
+          padding: const EdgeInsets.all(SpacingTokens.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -428,7 +427,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                       color: integration.brandColor ?? SemanticColors.primary,
                     ),
                   ),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: Text(
                       integration.name,
@@ -450,7 +449,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                 ],
               ),
               
-              SizedBox(height: SpacingTokens.sm),
+              const SizedBox(height: SpacingTokens.sm),
               
               // Status message
               Text(
@@ -462,7 +461,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                 overflow: TextOverflow.ellipsis,
               ),
               
-              Spacer(),
+              const Spacer(),
               
               // Details row
               Row(
@@ -471,12 +470,12 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                   if (health.latencyMs != null)
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.speed,
                           size: 12,
                           color: SemanticColors.onSurfaceVariant,
                         ),
-                        SizedBox(width: 2),
+                        const SizedBox(width: 2),
                         Text(
                           '${health.latencyMs}ms',
                           style: TextStyles.caption.copyWith(
@@ -634,7 +633,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
     return Dialog(
       child: Container(
         width: 600,
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -654,7 +653,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                     color: integration.brandColor ?? SemanticColors.primary,
                   ),
                 ),
-                SizedBox(width: SpacingTokens.md),
+                const SizedBox(width: SpacingTokens.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -674,16 +673,16 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: Icon(Icons.close),
+                  icon: const Icon(Icons.close),
                 ),
               ],
             ),
             
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             
             // Current Status
             Container(
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: _getStatusColor(health.status).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -697,7 +696,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                     _getStatusIcon(health.status),
                     color: _getStatusColor(health.status),
                   ),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -709,13 +708,12 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                             color: _getStatusColor(health.status),
                           ),
                         ),
-                        if (health.message != null)
-                          Text(
-                            health.message!,
-                            style: TextStyles.bodyMedium.copyWith(
-                              color: SemanticColors.onSurfaceVariant,
-                            ),
+                        Text(
+                          health.message,
+                          style: TextStyles.bodyMedium.copyWith(
+                            color: SemanticColors.onSurfaceVariant,
                           ),
+                        ),
                       ],
                     ),
                   ),
@@ -723,7 +721,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
               ),
             ),
             
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             
             // Details
             if (health.details != null) ...[
@@ -733,9 +731,9 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: SpacingTokens.sm),
+              const SizedBox(height: SpacingTokens.sm),
               ...health.details!.entries.map((entry) => Padding(
-                padding: EdgeInsets.only(bottom: SpacingTokens.xs),
+                padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
                 child: Row(
                   children: [
                     Text(
@@ -744,7 +742,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                         color: SemanticColors.onSurfaceVariant,
                       ),
                     ),
-                    SizedBox(width: SpacingTokens.sm),
+                    const SizedBox(width: SpacingTokens.sm),
                     Text(
                       entry.value.toString(),
                       style: TextStyles.bodyMedium.copyWith(
@@ -755,7 +753,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                 ),
               )),
               
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
             ],
             
             // Actions

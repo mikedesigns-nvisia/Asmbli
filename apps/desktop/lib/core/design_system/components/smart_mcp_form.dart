@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../design_system.dart';
 import 'mcp_field_types.dart';
 import 'oauth_fields.dart';
@@ -58,12 +57,12 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
           // Template header with branding
           _buildTemplateHeader(context),
           
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           // Prerequisites check
           if (widget.template.prerequisites.isNotEmpty) ...[
             _buildPrerequisites(context),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
           ],
           
           // Auto-generated form fields
@@ -71,13 +70,13 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
           
           // Advanced options
           if (widget.showAdvanced) ...[
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             _buildAdvancedOptions(context),
           ],
           
           // Setup instructions
           if (widget.template.setupInstructions.isNotEmpty) ...[
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             _buildSetupInstructions(context),
           ],
         ],
@@ -87,7 +86,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
 
   Widget _buildTemplateHeader(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: (widget.template.brandColor ?? SemanticColors.primary).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
@@ -110,7 +109,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
               size: 24,
             ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,10 +124,10 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                         color: widget.template.brandColor ?? SemanticColors.primary,
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     _buildDifficultyBadge(context),
                     if (widget.template.isPopular) ...[
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       _buildPopularBadge(context),
                     ],
                   ],
@@ -141,13 +140,13 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                   ),
                 ),
                 if (widget.template.capabilities.isNotEmpty) ...[
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Wrap(
                     spacing: 4,
                     runSpacing: 4,
                     children: widget.template.capabilities.take(4).map((capability) {
                       return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(4),
@@ -189,7 +188,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: badgeColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
@@ -207,12 +206,12 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
 
   Widget _buildPopularBadge(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: SemanticColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
@@ -236,7 +235,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
 
   Widget _buildPrerequisites(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
@@ -247,7 +246,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.info_outline,
@@ -265,19 +264,19 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           ...widget.template.prerequisites.map((prereq) {
             return Padding(
-              padding: EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 4),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.check_circle_outline,
                     size: 12,
                     color: Colors.orange,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       prereq,
@@ -290,7 +289,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -352,7 +351,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
     return Column(
       children: [
         fieldWidget,
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
       ],
     );
   }
@@ -401,9 +400,9 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
         Switch(
           value: _values[field.id] ?? field.defaultValue ?? false,
           onChanged: (value) => _updateValue(field.id, value),
-          activeColor: SemanticColors.success,
+          activeThumbColor: SemanticColors.success,
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,7 +475,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
 
   Widget _buildOAuthField(MCPFieldDefinition field) {
     final provider = field.options['provider'] as OAuthProvider?;
-    if (provider == null) return SizedBox.shrink();
+    if (provider == null) return const SizedBox.shrink();
     
     return OAuthField(
       label: field.label,
@@ -504,7 +503,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
 
   Widget _buildServiceDetectionField(MCPFieldDefinition field) {
     final serviceType = field.options['serviceType'] as ServiceType?;
-    if (serviceType == null) return SizedBox.shrink();
+    if (serviceType == null) return const SizedBox.shrink();
     
     return ServiceDetectionField(
       label: field.label,
@@ -517,7 +516,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
 
   Widget _buildPermissionScopeField(MCPFieldDefinition field) {
     final provider = field.options['provider'] as OAuthProvider?;
-    if (provider == null) return SizedBox.shrink();
+    if (provider == null) return const SizedBox.shrink();
     
     return PermissionScopeField(
       label: field.label,
@@ -540,7 +539,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         // Add advanced configuration options here
       ],
     );
@@ -548,7 +547,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
 
   Widget _buildSetupInstructions(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: SemanticColors.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
@@ -559,7 +558,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.help_outline,
@@ -577,10 +576,10 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           ...widget.template.setupInstructions.map((instruction) {
             return Container(
-              margin: EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 12),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -594,7 +593,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                     child: Center(
                       child: Text(
                         instruction.step.toString(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 10,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -602,14 +601,14 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           instruction.title,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
                           ),
@@ -622,14 +621,14 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                           ),
                         ),
                         if (instruction.actionUrl != null) ...[
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           TextButton(
                             onPressed: () {
                               // Open URL
                             },
                             child: Text(
                               instruction.actionText ?? 'Learn More',
-                              style: TextStyle(fontSize: 10),
+                              style: const TextStyle(fontSize: 10),
                             ),
                           ),
                         ],
@@ -639,7 +638,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

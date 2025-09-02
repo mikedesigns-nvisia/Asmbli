@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:agent_engine_core/models/conversation.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../providers/conversation_provider.dart';
 import 'conversation_list.dart';
@@ -16,8 +15,8 @@ class ConversationSidebar extends ConsumerStatefulWidget {
 
 class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  bool isCollapsed = false;
- bool _showTopicsSection = false;
- int _selectedTab = 1; // 0 for topics, 1 for conversations
+ final bool _showTopicsSection = false;
+ final int _selectedTab = 1; // 0 for topics, 1 for conversations
 
  @override
  Widget build(BuildContext context) {
@@ -35,10 +34,10 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  ),
  child: Column(
  children: [
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  IconButton(
  onPressed: () => setState(() => isCollapsed = false),
- icon: Icon(Icons.chevron_left, size: 20),
+ icon: const Icon(Icons.chevron_left, size: 20),
  style: IconButton.styleFrom(
  backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.8),
  foregroundColor: ThemeColors(context).onSurfaceVariant,
@@ -52,7 +51,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
 
  // Main sidebar content
  AnimatedContainer(
- duration: Duration(milliseconds: 300),
+ duration: const Duration(milliseconds: 300),
  width: isCollapsed ? 0 : 320,
  child: isCollapsed ? null : _buildSidebarContent(),
  ),
@@ -73,7 +72,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  children: [
  // Header
  Container(
- padding: EdgeInsets.all(SpacingTokens.cardPadding),
+ padding: const EdgeInsets.all(SpacingTokens.cardPadding),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -88,10 +87,10 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  fontSize: 14,
  ),
  ),
- Spacer(),
+ const Spacer(),
  IconButton(
  onPressed: () => setState(() => isCollapsed = true),
- icon: Icon(Icons.chevron_right, size: 20),
+ icon: const Icon(Icons.chevron_right, size: 20),
  style: IconButton.styleFrom(
  foregroundColor: ThemeColors(context).onSurfaceVariant,
  ),
@@ -99,7 +98,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  ),
  ],
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  // New Chat Button on its own row
  AsmblButton.primary(
  text: 'New Chat',
@@ -114,13 +113,13 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  // Conversation List
  Expanded(
  child: _selectedTab == 0 
-              ? TopicManagementSection()
-              : ConversationList(),
+              ? const TopicManagementSection()
+              : const ConversationList(),
  ),
  
  // Footer with additional actions
  Container(
- padding: EdgeInsets.all(SpacingTokens.cardPadding),
+ padding: const EdgeInsets.all(SpacingTokens.cardPadding),
  decoration: BoxDecoration(
  border: Border(
  top: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
@@ -135,7 +134,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  onPressed: () => _showArchiveModal(context),
  isFullWidth: true,
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  
  // Export conversations button
  AsmblButton.secondary(
@@ -144,7 +143,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  onPressed: () {
  // Show export dialog
  ScaffoldMessenger.of(context).showSnackBar(
- SnackBar(
+ const SnackBar(
  content: Text('Export feature coming soon'),
  duration: Duration(seconds: 2),
  ),

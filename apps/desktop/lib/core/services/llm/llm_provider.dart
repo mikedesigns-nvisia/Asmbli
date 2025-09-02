@@ -38,6 +38,24 @@ class ChatContext {
       metadata: metadata ?? this.metadata,
     );
   }
+
+  /// Check if context has MCP capabilities available
+  bool get hasMCPCapabilities => 
+    metadata['hasGlobalMCP'] == true || 
+    (metadata['globalMcpServers'] as List<dynamic>?)?.isNotEmpty == true;
+
+  /// Get available MCP servers
+  List<String> get mcpServers => 
+    (metadata['globalMcpServers'] as List<dynamic>?)?.cast<String>() ?? [];
+
+  /// Check if context has global context documents
+  bool get hasContextDocuments => 
+    metadata['hasGlobalContext'] == true ||
+    (metadata['globalContextDocs'] as List<dynamic>?)?.isNotEmpty == true;
+
+  /// Get available context documents  
+  List<String> get contextDocuments =>
+    (metadata['globalContextDocs'] as List<dynamic>?)?.cast<String>() ?? [];
 }
 
 /// Response from LLM providers

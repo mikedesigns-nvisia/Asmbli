@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 /// Service that manages system prompt generation with MCP agent identity
 class AgentSystemPromptService {

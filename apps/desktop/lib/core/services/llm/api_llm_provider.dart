@@ -71,7 +71,22 @@ class ApiLLMProvider extends LLMProvider {
         maxTokens: 4096,
       );
 
-      return LLMResponse.fromClaudeResponse(response);
+      final llmResponse = LLMResponse.fromClaudeResponse(response);
+      
+      // Enhance metadata with context information
+      return LLMResponse(
+        content: llmResponse.content,
+        modelUsed: llmResponse.modelUsed,
+        usage: llmResponse.usage,
+        metadata: {
+          ...llmResponse.metadata,
+          'provider': 'api',
+          'hasMCPCapabilities': context.hasMCPCapabilities,
+          'hasContextDocuments': context.hasContextDocuments,
+          'mcpServersAvailable': context.mcpServers,
+          'contextDocumentsCount': context.contextDocuments.length,
+        },
+      );
     } catch (e) {
       if (e is ClaudeApiException) {
         throw LLMProviderException(

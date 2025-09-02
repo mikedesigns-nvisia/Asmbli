@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/services.dart';
 import '../design_system.dart';
 import '../../services/desktop/file_system_service.dart';
 
@@ -58,7 +56,7 @@ class PathPickerField extends MCPField {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(context),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         Row(
           children: [
             Expanded(
@@ -78,7 +76,7 @@ class PathPickerField extends MCPField {
                 validator: validator ?? (this.required ? _defaultValidator : null),
               ),
             ),
-            SizedBox(width: SpacingTokens.componentSpacing),
+            const SizedBox(width: SpacingTokens.componentSpacing),
             AsmblButton.secondary(
               text: 'Browse',
               icon: Icons.folder,
@@ -87,7 +85,7 @@ class PathPickerField extends MCPField {
           ],
         ),
         if (description != null) ...[
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             description!,
             style: TextStyle(
@@ -97,7 +95,7 @@ class PathPickerField extends MCPField {
           ),
         ],
         if (showPreview && value != null && value!.isNotEmpty) ...[
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           _buildPathPreview(context),
         ],
       ],
@@ -116,8 +114,8 @@ class PathPickerField extends MCPField {
           ),
         ),
         if (this.required) ...[
-          SizedBox(width: 4),
-          Text(
+          const SizedBox(width: 4),
+          const Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
@@ -132,9 +130,9 @@ class PathPickerField extends MCPField {
 
   Widget _buildPathPreview(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
           color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -147,7 +145,7 @@ class PathPickerField extends MCPField {
             size: 16,
             color: SemanticColors.primary,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               value!,
@@ -160,10 +158,10 @@ class PathPickerField extends MCPField {
           ),
           IconButton(
             onPressed: () => _openInExplorer(context),
-            icon: Icon(Icons.open_in_new, size: 14),
+            icon: const Icon(Icons.open_in_new, size: 14),
             tooltip: 'Open in Explorer',
             style: IconButton.styleFrom(
-              minimumSize: Size(24, 24),
+              minimumSize: const Size(24, 24),
               foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -251,7 +249,7 @@ class ApiTokenField extends MCPField {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(context),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         Row(
           children: [
             Expanded(
@@ -262,7 +260,7 @@ class ApiTokenField extends MCPField {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  prefixIcon: Icon(
+                  prefixIcon: const Icon(
                     Icons.key,
                     color: SemanticColors.primary,
                   ),
@@ -274,7 +272,7 @@ class ApiTokenField extends MCPField {
               ),
             ),
             if (onValidate != null) ...[
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               AsmblButton.secondary(
                 text: 'Test',
                 icon: Icons.check_circle_outline,
@@ -284,7 +282,7 @@ class ApiTokenField extends MCPField {
           ],
         ),
         if (description != null || tokenFormat != null) ...[
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           if (tokenFormat != null)
             Text(
               'Format: $tokenFormat',
@@ -295,7 +293,7 @@ class ApiTokenField extends MCPField {
               ),
             ),
           if (description != null) ...[
-            if (tokenFormat != null) SizedBox(height: 2),
+            if (tokenFormat != null) const SizedBox(height: 2),
             Text(
               description!,
               style: TextStyle(
@@ -321,8 +319,8 @@ class ApiTokenField extends MCPField {
           ),
         ),
         if (this.required) ...[
-          SizedBox(width: 4),
-          Text(
+          const SizedBox(width: 4),
+          const Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
@@ -332,7 +330,7 @@ class ApiTokenField extends MCPField {
           ),
         ],
         if (isSecret) ...[
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Icon(
             Icons.lock_outline,
             size: 14,
@@ -345,7 +343,7 @@ class ApiTokenField extends MCPField {
 
   Widget? _buildValidationIcon() {
     // This would be connected to actual validation state
-    return Icon(
+    return const Icon(
       Icons.check_circle,
       color: SemanticColors.success,
       size: 20,
@@ -430,15 +428,15 @@ class SelectField extends MCPField {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(context),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           decoration: InputDecoration(
             hintText: placeholder ?? 'Select ${label.toLowerCase()}...',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            prefixIcon: Icon(
+            prefixIcon: const Icon(
               Icons.arrow_drop_down,
               color: SemanticColors.primary,
             ),
@@ -450,13 +448,13 @@ class SelectField extends MCPField {
                 children: [
                   if (option.icon != null) ...[
                     Icon(option.icon, size: 16),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                   ],
                   Expanded(child: Text(option.label)),
                   if (option.badge != null) ...[
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: option.badgeColor ?? SemanticColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
@@ -475,7 +473,7 @@ class SelectField extends MCPField {
               ),
             )),
             if (allowCustom)
-              DropdownMenuItem<String>(
+              const DropdownMenuItem<String>(
                 value: '__custom__',
                 child: Row(
                   children: [
@@ -496,7 +494,7 @@ class SelectField extends MCPField {
           validator: validator ?? (this.required ? _defaultValidator : null),
         ),
         if (description != null) ...[
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             description!,
             style: TextStyle(
@@ -521,8 +519,8 @@ class SelectField extends MCPField {
           ),
         ),
         if (this.required) ...[
-          SizedBox(width: 4),
-          Text(
+          const SizedBox(width: 4),
+          const Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
@@ -544,7 +542,7 @@ class SelectField extends MCPField {
         title: Text('Custom $label'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Enter custom value...',
             border: OutlineInputBorder(),
           ),
@@ -552,7 +550,7 @@ class SelectField extends MCPField {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -562,7 +560,7 @@ class SelectField extends MCPField {
               }
               Navigator.of(context).pop();
             },
-            child: Text('Set'),
+            child: const Text('Set'),
           ),
         ],
       ),
@@ -604,11 +602,11 @@ class DatabaseConnectionField extends MCPField {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(context),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -623,15 +621,15 @@ class DatabaseConnectionField extends MCPField {
                     color: SemanticColors.primary,
                     size: 20,
                   ),
-                  SizedBox(width: 8),
-                  Text(
+                  const SizedBox(width: 8),
+                  const Text(
                     'Connection Builder',
                     style: TextStyle(
                                             fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   AsmblButton.secondary(
                     text: 'Test Connection',
                     icon: Icons.play_arrow,
@@ -639,13 +637,13 @@ class DatabaseConnectionField extends MCPField {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildConnectionFields(context),
             ],
           ),
         ),
         if (description != null) ...[
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             description!,
             style: TextStyle(
@@ -670,8 +668,8 @@ class DatabaseConnectionField extends MCPField {
           ),
         ),
         if (this.required) ...[
-          SizedBox(width: 4),
-          Text(
+          const SizedBox(width: 4),
+          const Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
@@ -709,7 +707,7 @@ class DatabaseConnectionField extends MCPField {
                 ),
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             SizedBox(
               width: 100,
               child: TextFormField(
@@ -722,7 +720,7 @@ class DatabaseConnectionField extends MCPField {
             ),
           ],
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
@@ -734,7 +732,7 @@ class DatabaseConnectionField extends MCPField {
                 ),
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: TextFormField(
                 decoration: InputDecoration(
@@ -746,13 +744,13 @@ class DatabaseConnectionField extends MCPField {
             ),
           ],
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         TextFormField(
           decoration: InputDecoration(
             labelText: 'Password',
             hintText: 'Enter password...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
-            suffixIcon: Icon(Icons.visibility_off),
+            suffixIcon: const Icon(Icons.visibility_off),
           ),
           obscureText: true,
         ),
@@ -765,7 +763,7 @@ class DatabaseConnectionField extends MCPField {
       label: 'Database File',
       placeholder: 'Choose SQLite database file...',
       isDirectory: false,
-      allowedExtensions: ['db', 'sqlite', 'sqlite3'],
+      allowedExtensions: const ['db', 'sqlite', 'sqlite3'],
       showPreview: true,
       onChanged: onChanged,
     );

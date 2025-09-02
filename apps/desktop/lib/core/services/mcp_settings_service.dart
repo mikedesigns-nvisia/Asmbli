@@ -103,7 +103,7 @@ class MCPSettingsService {
 
     try {
       // TODO: Implement actual MCP connection test via bridge service
-      await Future.delayed(Duration(seconds: 2)); // Simulate connection test
+      await Future.delayed(const Duration(seconds: 2)); // Simulate connection test
       
       // Mock validation based on server type
       bool isValid = await _validateServerCredentials(config);
@@ -381,7 +381,7 @@ class MCPSettingsService {
       _serverStatuses[serverId] = MCPServerStatus(
         serverId: serverId,
         isConnected: false,
-        lastChecked: DateTime.now().subtract(Duration(hours: 1)),
+        lastChecked: DateTime.now().subtract(const Duration(hours: 1)),
         status: ConnectionStatus.disconnected,
         message: 'Not tested',
       );

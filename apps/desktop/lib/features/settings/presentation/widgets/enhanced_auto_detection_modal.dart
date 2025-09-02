@@ -22,42 +22,42 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
   String _selectedCategory = 'all';
 
   final List<DetectionCategory> _categories = [
-    DetectionCategory(
+    const DetectionCategory(
       id: 'all',
       name: 'All Integrations',
       icon: Icons.dashboard,
       description: 'Detect everything at once',
       color: Colors.purple,
     ),
-    DetectionCategory(
+    const DetectionCategory(
       id: 'development',
       name: 'Development Tools',
       icon: Icons.code,
       description: 'VS Code, Git, GitHub CLI',
       color: Colors.blue,
     ),
-    DetectionCategory(
+    const DetectionCategory(
       id: 'browsers',
       name: 'Web Browsers',
       icon: Icons.web,
       description: 'Chrome, Brave, Firefox, Edge',
       color: Colors.orange,
     ),
-    DetectionCategory(
+    const DetectionCategory(
       id: 'databases',
       name: 'Databases',
       icon: Icons.storage,
       description: 'PostgreSQL, MySQL, MongoDB',
       color: Colors.green,
     ),
-    DetectionCategory(
+    const DetectionCategory(
       id: 'communication',
       name: 'Communication',
       icon: Icons.chat_bubble,
       description: 'Slack, Discord, Teams',
       color: Colors.pink,
     ),
-    DetectionCategory(
+    const DetectionCategory(
       id: 'cloud',
       name: 'Cloud Services',
       icon: Icons.cloud,
@@ -81,7 +81,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
-              offset: Offset(0, 10),
+              offset: const Offset(0, 10),
             ),
           ],
         ),
@@ -90,7 +90,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             // Sidebar
             Container(
               width: 250,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: SemanticColors.background,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16),
@@ -126,8 +126,8 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
   Widget _buildSidebarHeader() {
     return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(20),
+      decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: SemanticColors.border)),
       ),
       child: Column(
@@ -136,19 +136,19 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: SemanticColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.auto_fix_high,
                   color: SemanticColors.primary,
                   size: 24,
                 ),
               ),
-              SizedBox(width: 12),
-              Text(
+              const SizedBox(width: 12),
+              const Text(
                 'Auto-Detection',
                 style: TextStyle(
                   fontSize: 18,
@@ -165,7 +165,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
   Widget _buildSidebarContent() {
     return ListView(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
         // Steps/Navigation
         _buildSidebarSection('DETECTION STEPS'),
@@ -196,7 +196,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
           enabled: _detectionResult != null,
         ),
         
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         
         // Categories filter (visible in results)
         if (_detectionResult != null) ...[
@@ -209,10 +209,10 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
   Widget _buildSidebarSection(String title) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
       child: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.bold,
           letterSpacing: 0.5,
@@ -224,7 +224,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
   Widget _buildSidebarItem(String label, IconData icon, bool isActive, VoidCallback onTap, {bool enabled = true}) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       decoration: BoxDecoration(
         color: isActive ? SemanticColors.primary.withValues(alpha: 0.1) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
@@ -251,7 +251,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
         ),
         onTap: enabled ? onTap : null,
         dense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
       ),
     );
   }
@@ -259,7 +259,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
   Widget _buildCategoryFilterItem(DetectionCategory category) {
     final isSelected = _selectedCategory == category.id;
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       decoration: BoxDecoration(
         color: isSelected ? category.color.withValues(alpha: 0.1) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
@@ -279,15 +279,15 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
         ),
         onTap: () => setState(() => _selectedCategory = category.id),
         dense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
       ),
     );
   }
 
   Widget _buildSidebarFooter() {
     return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: SemanticColors.border)),
       ),
       child: Column(
@@ -295,7 +295,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
         children: [
           if (_detectionResult != null) ...[
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -304,11 +304,11 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.check_circle, color: Colors.green, size: 16),
-                  SizedBox(width: 8),
+                  const Icon(Icons.check_circle, color: Colors.green, size: 16),
+                  const SizedBox(width: 8),
                   Text(
                     '${_detectionResult!.totalFound} Tools Found',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: Colors.green,
@@ -325,10 +325,10 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
   Widget _buildMainHeader() {
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: SemanticColors.background.withValues(alpha: 0.5),
-        border: Border(bottom: BorderSide(color: SemanticColors.border)),
+        border: const Border(bottom: BorderSide(color: SemanticColors.border)),
       ),
       child: Row(
         children: [
@@ -338,16 +338,16 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
               children: [
                 Text(
                   _getStepTitle(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: SemanticColors.onSurface,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   _getStepDescription(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: SemanticColors.onSurfaceVariant,
                   ),
@@ -357,7 +357,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
           ),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
             style: IconButton.styleFrom(
               foregroundColor: SemanticColors.onSurfaceVariant,
             ),
@@ -384,7 +384,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
   Widget _buildOverviewContent() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32),
       child: Column(
         children: [
           const SizedBox(height: 20),
@@ -400,14 +400,14 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
               ),
               borderRadius: BorderRadius.circular(40),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.rocket_launch,
               size: 40,
               color: SemanticColors.primary,
             ),
           ),
           const SizedBox(height: 24),
-          Text(
+          const Text(
             'Welcome to Auto-Detection',
             style: TextStyle(
               fontSize: 22,
@@ -416,8 +416,8 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             ),
           ),
           const SizedBox(height: 12),
-          Text(
-            'We\'ll automatically scan your system for installed tools and services,\nthen configure them for seamless integration with AgentEngine.',
+          const Text(
+            'We\'ll automatically scan your system for installed tools and services,\nthen configure them for seamless integration with Asmbli.',
             style: TextStyle(
               fontSize: 14,
               color: SemanticColors.onSurfaceVariant,
@@ -456,7 +456,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             const SizedBox(height: 8),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: SemanticColors.onSurface,
@@ -466,7 +466,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 10,
                 color: SemanticColors.onSurfaceVariant,
               ),
@@ -480,11 +480,11 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
   Widget _buildCategoriesContent() {
     return Padding(
-      padding: EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Choose what to detect',
             style: TextStyle(
               fontSize: 20,
@@ -492,18 +492,18 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
               color: SemanticColors.onSurface,
             ),
           ),
-          SizedBox(height: 8),
-          Text(
+          const SizedBox(height: 8),
+          const Text(
             'Select specific categories or detect everything at once',
             style: TextStyle(
               fontSize: 14,
               color: SemanticColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Expanded(
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 2.2,
                 crossAxisSpacing: 16,
@@ -517,7 +517,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                   onTap: () => setState(() => _selectedCategory = category.id),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: isSelected 
                         ? category.color.withValues(alpha: 0.1)
@@ -534,7 +534,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                       children: [
                         const SizedBox(height: 12),
                         Container(
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: category.color.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
@@ -558,7 +558,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                         const SizedBox(height: 4),
                         Text(
                           category.description,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 10,
                             color: SemanticColors.onSurfaceVariant,
                           ),
@@ -578,12 +578,12 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
   }
 
   Widget _buildDetectingContent() {
-    return Padding(
+    return const Padding(
       padding: EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
+          SizedBox(
             width: 120,
             height: 120,
             child: Stack(
@@ -619,7 +619,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             ),
           ),
           SizedBox(height: 32),
-          Container(
+          SizedBox(
             width: 400,
             child: LinearProgressIndicator(
               backgroundColor: SemanticColors.border,
@@ -633,7 +633,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
   }
 
   Widget _buildResultsContent() {
-    if (_detectionResult == null) return SizedBox();
+    if (_detectionResult == null) return const SizedBox();
 
     // Filter results based on selected category
     final filteredResults = _selectedCategory == 'all' 
@@ -654,7 +654,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
       children: [
         // Summary cards
         Container(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           color: SemanticColors.background.withValues(alpha: 0.5),
           child: Row(
             children: [
@@ -664,14 +664,14 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                 Icons.search,
                 Colors.blue,
               )),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(child: _buildSummaryCard(
                 'Found & Ready',
                 _detectionResult!.totalFound.toString(),
                 Icons.check_circle,
                 Colors.green,
               )),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(child: _buildSummaryCard(
                 'Not Found',
                 (_detectionResult!.detections.length - _detectionResult!.totalFound).toString(),
@@ -685,13 +685,13 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
         // Results list
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             itemCount: filteredResults.length,
             itemBuilder: (context, index) {
               final entry = filteredResults[index];
               final isFound = entry.value;
               return Container(
-                margin: EdgeInsets.only(bottom: 12),
+                margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
                   color: isFound 
                     ? Colors.green.withValues(alpha: 0.05)
@@ -705,7 +705,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                   ),
                 ),
                 child: ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   leading: Container(
                     width: 48,
                     height: 48,
@@ -723,7 +723,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                   ),
                   title: Text(
                     entry.key,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: SemanticColors.onSurface,
@@ -731,13 +731,13 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                   ),
                   subtitle: Text(
                     isFound ? 'Detected and ready to use' : 'Not detected on this system',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
                       color: SemanticColors.onSurfaceVariant,
                     ),
                   ),
                   trailing: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     decoration: BoxDecoration(
                       color: isFound 
                         ? Colors.green.withValues(alpha: 0.15)
@@ -764,7 +764,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
   Widget _buildSummaryCard(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -773,7 +773,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
       child: Row(
         children: [
           Icon(icon, color: color, size: 24),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -788,7 +788,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                 ),
                 Text(
                   label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     color: SemanticColors.onSurfaceVariant,
                   ),
@@ -803,10 +803,10 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
   Widget _buildMainFooter() {
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: SemanticColors.background.withValues(alpha: 0.5),
-        border: Border(top: BorderSide(color: SemanticColors.border)),
+        border: const Border(top: BorderSide(color: SemanticColors.border)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -817,7 +817,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
               children: _getProgressSteps(),
             )
           else
-            SizedBox(),
+            const SizedBox(),
           
           // Action buttons
           Row(
@@ -825,12 +825,12 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
               if (_currentStep != 'overview' && _currentStep != 'detecting')
                 TextButton(
                   onPressed: _goToPreviousStep,
-                  child: Text('Back'),
                   style: TextButton.styleFrom(
                     foregroundColor: SemanticColors.onSurfaceVariant,
                   ),
+                  child: const Text('Back'),
                 ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               if (_currentStep == 'results')
                 AsmblButton.secondary(
                   text: 'Scan Again',
@@ -841,7 +841,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                     });
                   },
                 ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               AsmblButton.primary(
                 text: _getActionButtonText(),
                 onPressed: _isDetecting ? null : _handleActionButton,
@@ -873,7 +873,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             ),
             child: Center(
               child: isCompleted
-                ? Icon(Icons.check, size: 14, color: Colors.white)
+                ? const Icon(Icons.check, size: 14, color: Colors.white)
                 : Text(
                     '${index + 1}',
                     style: TextStyle(
@@ -988,13 +988,13 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
 
     try {
       // Simulate longer detection for better UX
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
       
       final detectionService = ref.read(simpleDetectionServiceProvider);
       _detectionResult = await detectionService.detectBasicTools();
       
       // Add a small delay before showing results
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
       
       setState(() {
         _currentStep = 'results';

@@ -105,7 +105,7 @@ class _IntegrationGridState extends ConsumerState<IntegrationGrid> {
         children: [
           // Section header
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               bottom: SpacingTokens.componentSpacing,
               top: SpacingTokens.sectionSpacing,
             ),
@@ -118,14 +118,14 @@ class _IntegrationGridState extends ConsumerState<IntegrationGrid> {
                     color: colors.primary,
                   ),
                 if (isPriority)
-                  SizedBox(width: SpacingTokens.iconSpacing),
+                  const SizedBox(width: SpacingTokens.iconSpacing),
                 Text(
                   title,
                   style: TextStyles.sectionTitle.copyWith(
                     color: isPriority ? colors.primary : colors.onSurface,
                   ),
                 ),
-                SizedBox(width: SpacingTokens.iconSpacing),
+                const SizedBox(width: SpacingTokens.iconSpacing),
                 Text(
                   '(${integrations.length})',
                   style: TextStyles.caption.copyWith(
@@ -150,7 +150,7 @@ class _IntegrationGridState extends ConsumerState<IntegrationGrid> {
         
         return GridView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
             childAspectRatio: _calculateAspectRatio(crossAxisCount),
@@ -208,7 +208,7 @@ class _IntegrationGridState extends ConsumerState<IntegrationGrid> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(SpacingTokens.xxl),
+            padding: const EdgeInsets.all(SpacingTokens.xxl),
             decoration: BoxDecoration(
               color: colors.surfaceVariant.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
@@ -220,14 +220,14 @@ class _IntegrationGridState extends ConsumerState<IntegrationGrid> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           Text(
             title,
             style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
           ),
           
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           Text(
             message,
@@ -238,7 +238,7 @@ class _IntegrationGridState extends ConsumerState<IntegrationGrid> {
           ),
           
           if (actionButton != null) ...[
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             actionButton,
           ],
         ],

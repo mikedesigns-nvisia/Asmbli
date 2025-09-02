@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
-import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/api_config_service.dart';
 
 class ApiDropdown extends ConsumerStatefulWidget {
@@ -53,11 +52,11 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
             if (allApiConfigs.isEmpty) 
               DropdownMenuItem<String>(
                 value: '__loading__',
-                child: Container(
+                child: SizedBox(
                   height: 32,
                   child: Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 14,
                         height: 14,
                         child: CircularProgressIndicator(strokeWidth: 2),
@@ -81,7 +80,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
               final apiConfig = entry.value;
               return DropdownMenuItem<String>(
                 value: apiConfig.id,
-                child: Container(
+                child: SizedBox(
                   height: 32,
                   child: Row(
                     children: [
@@ -148,20 +147,20 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
                   ),
                 ),
               );
-            }).toList(),
+            }),
             
             // Divider
             if (allApiConfigs.isNotEmpty)
-              DropdownMenuItem<String>(
+              const DropdownMenuItem<String>(
                 enabled: false,
                 value: '__divider__',
-                child: const Divider(height: 1),
+                child: Divider(height: 1),
               ),
             
             // Add new API key option
             DropdownMenuItem<String>(
               value: '__add_new__',
-              child: Container(
+              child: SizedBox(
                 height: 32,
                 child: Row(
                   children: [
@@ -188,7 +187,7 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
             // Settings option
             DropdownMenuItem<String>(
               value: '__settings__',
-              child: Container(
+              child: SizedBox(
                 height: 32,
                 child: Row(
                   children: [
@@ -242,8 +241,8 @@ class _ApiDropdownState extends ConsumerState<ApiDropdown> {
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white, size: 16),
-              SizedBox(width: 8),
+              const Icon(Icons.check_circle, color: Colors.white, size: 16),
+              const SizedBox(width: 8),
               Text(
                 'Switched to ${apiConfig.name}',
                 style: GoogleFonts.fustat(),

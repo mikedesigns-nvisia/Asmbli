@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/services/theme_service.dart';
 
 // Theme-aware color provider - USE THIS INSTEAD OF SemanticColors
 class ThemeColors {
@@ -53,7 +52,7 @@ class ThemeColors {
  // Background colors
  Color get background => theme.scaffoldBackgroundColor;
  Color get surface => theme.colorScheme.surface;
- Color get surfaceVariant => theme.colorScheme.surfaceVariant;
+ Color get surfaceVariant => theme.colorScheme.surfaceContainerHighest;
  Color get surfaceSecondary => theme.colorScheme.secondary;
  
  // Enhanced background gradients that get darker towards edges
@@ -63,24 +62,24 @@ class ThemeColors {
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
- return Color(0xFF1E293B); // Darker blue center
+ return const Color(0xFF1E293B); // Darker blue center
  case 'forest-green':
- return Color(0xFF142019); // Lighter forest center (from old mint)
+ return const Color(0xFF142019); // Lighter forest center (from old mint)
  case 'sunset-orange':
- return Color(0xFF5C2D1F); // Desaturated orange center
+ return const Color(0xFF5C2D1F); // Desaturated orange center
  default: // warm-neutral
- return Color(0xFF3D2B1F); // Warm brown center
+ return const Color(0xFF3D2B1F); // Warm brown center
  }
  } else {
  switch (scheme) {
  case 'cool-blue':
- return Color(0xFFFAFCFF); // Lighter blue center
+ return const Color(0xFFFAFCFF); // Lighter blue center
  case 'forest-green':
- return Color(0xFFF8FCFA); // Lighter mint center (from old mint)
+ return const Color(0xFFF8FCFA); // Lighter mint center (from old mint)
  case 'sunset-orange':
- return Color(0xFFFFFBF7); // Almost white orange center
+ return const Color(0xFFFFFBF7); // Almost white orange center
  default: // warm-neutral
- return Color(0xFFFCFBF9); // Lighter cream center
+ return const Color(0xFFFCFBF9); // Lighter cream center
  }
  }
  }
@@ -91,24 +90,24 @@ class ThemeColors {
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
- return Color(0xFF0F172A); // Main blue
+ return const Color(0xFF0F172A); // Main blue
  case 'forest-green':
- return Color(0xFF0F1C14); // Main forest (from old mint)
+ return const Color(0xFF0F1C14); // Main forest (from old mint)
  case 'sunset-orange':
- return Color(0xFF4A2117); // Main desaturated orange
+ return const Color(0xFF4A2117); // Main desaturated orange
  default: // warm-neutral
- return Color(0xFF2B1F14); // Main warm brown
+ return const Color(0xFF2B1F14); // Main warm brown
  }
  } else {
  switch (scheme) {
  case 'cool-blue':
- return Color(0xFFF0F9FF); // Main blue
+ return const Color(0xFFF0F9FF); // Main blue
  case 'forest-green':
- return Color(0xFFF5FBF8); // Main mint (from old mint)
+ return const Color(0xFFF5FBF8); // Main mint (from old mint)
  case 'sunset-orange':
- return Color(0xFFFFF7ED); // Main light orange
+ return const Color(0xFFFFF7ED); // Main light orange
  default: // warm-neutral
- return Color(0xFFFAF8F5); // Main warm cream
+ return const Color(0xFFFAF8F5); // Main warm cream
  }
  }
  }
@@ -119,24 +118,24 @@ class ThemeColors {
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
- return Color(0xFF0C1220); // Darker blue edges
+ return const Color(0xFF0C1220); // Darker blue edges
  case 'forest-green':
- return Color(0xFF0A140F); // Darker forest edges (from old mint)
+ return const Color(0xFF0A140F); // Darker forest edges (from old mint)
  case 'sunset-orange':
- return Color(0xFF2E1810); // Darker desaturated orange edges
+ return const Color(0xFF2E1810); // Darker desaturated orange edges
  default: // warm-neutral
- return Color(0xFF1F1611); // Darker warm brown edges
+ return const Color(0xFF1F1611); // Darker warm brown edges
  }
  } else {
  switch (scheme) {
  case 'cool-blue':
- return Color(0xFFE0F2FE); // Darker blue edges
+ return const Color(0xFFE0F2FE); // Darker blue edges
  case 'forest-green':
- return Color(0xFFE8F3ED); // Darker mint edges (from old mint)
+ return const Color(0xFFE8F3ED); // Darker mint edges (from old mint)
  case 'sunset-orange':
- return Color(0xFFFED7AA); // Darker orange edges
+ return const Color(0xFFFED7AA); // Darker orange edges
  default: // warm-neutral
- return Color(0xFFF0E6D6); // Darker cream edges
+ return const Color(0xFFF0E6D6); // Darker cream edges
  }
  }
  }
@@ -144,7 +143,7 @@ class ThemeColors {
  // Text colors
  Color get onSurface => theme.colorScheme.onSurface;
  Color get onSurfaceVariant => theme.colorScheme.onSurfaceVariant;
- Color get onBackground => theme.colorScheme.onBackground;
+ Color get onBackground => theme.colorScheme.onSurface;
  Color get onSurfaceSecondary => theme.colorScheme.onSurfaceVariant;
  
  // Primary colors
@@ -177,13 +176,13 @@ class ThemeColors {
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
- return Color(0xFF1E293B).withValues(alpha: 0.90); // Blue navigation background
+ return const Color(0xFF1E293B).withValues(alpha: 0.90); // Blue navigation background
  case 'forest-green':
- return Color(0xFF1F3325).withValues(alpha: 0.90); // Forest navigation background 
+ return const Color(0xFF1F3325).withValues(alpha: 0.90); // Forest navigation background 
  case 'sunset-orange':
- return Color(0xFF664029).withValues(alpha: 0.90); // Warm orange navigation background
+ return const Color(0xFF664029).withValues(alpha: 0.90); // Warm orange navigation background
  default: // warm-neutral
- return Color(0xFF423126).withValues(alpha: 0.90); // Warm brown navigation background
+ return const Color(0xFF423126).withValues(alpha: 0.90); // Warm brown navigation background
  }
  } else {
  return const Color(0x80FFFFFF); // Semi-transparent white

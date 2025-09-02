@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:agent_engine_core/models/agent.dart';
-import '../lib/core/services/mcp_server_execution_service.dart';
-import '../lib/core/services/mcp_installation_service.dart';
-import '../lib/core/services/mcp_conversation_bridge_service.dart';
-import '../lib/core/services/mcp_server_configuration_service.dart';
-import '../lib/core/data/mcp_server_configs.dart';
+import 'package:agentengine_desktop/core/services/mcp_server_execution_service.dart';
+import 'package:agentengine_desktop/core/services/mcp_installation_service.dart';
+import 'package:agentengine_desktop/core/services/mcp_conversation_bridge_service.dart';
+import 'package:agentengine_desktop/core/services/mcp_server_configuration_service.dart';
+import 'package:agentengine_desktop/core/data/mcp_server_configs.dart';
 
 void main() {
   group('MCP Server Execution Tests', () {
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('MCP Server Library has servers configured', () {
-      final servers = MCPServerLibrary.servers;
+      const servers = MCPServerLibrary.servers;
       expect(servers.isNotEmpty, true, reason: 'MCP server library should have servers configured');
       
       // Check for essential servers
@@ -34,7 +34,7 @@ void main() {
     });
 
     test('Can create test agent with MCP servers', () {
-      final testAgent = Agent(
+      const testAgent = Agent(
         id: 'test-mcp-agent',
         name: 'Test MCP Agent',
         description: 'Agent for testing MCP server integration',
@@ -53,7 +53,7 @@ void main() {
     });
 
     test('Can check MCP installation requirements', () async {
-      final testAgent = Agent(
+      const testAgent = Agent(
         id: 'test-installation-agent',
         name: 'Test Installation Agent',
         description: 'Agent for testing MCP installation detection',

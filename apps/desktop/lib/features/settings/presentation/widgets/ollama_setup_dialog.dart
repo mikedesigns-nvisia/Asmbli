@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/tokens/theme_colors.dart';
 import '../../../../core/services/desktop/desktop_service_provider.dart';
 
 /// Dialog to help users set up Ollama for local LLM functionality
@@ -40,7 +39,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
       title: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -51,7 +50,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
               size: 24,
             ),
           ),
-          SizedBox(width: SpacingTokens.componentSpacing),
+          const SizedBox(width: SpacingTokens.componentSpacing),
           Text(
             'Set Up Local Models',
             style: GoogleFonts.fustat(
@@ -76,7 +75,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
               ),
             ),
             
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             
             // Step 1
             _buildStep(
@@ -89,7 +88,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
               colors: colors,
             ),
             
-            SizedBox(height: SpacingTokens.elementSpacing),
+            const SizedBox(height: SpacingTokens.elementSpacing),
             
             // Step 2
             _buildStep(
@@ -100,16 +99,16 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
               colors: colors,
             ),
             
-            SizedBox(height: SpacingTokens.elementSpacing),
+            const SizedBox(height: SpacingTokens.elementSpacing),
             
             // Step 3 - Enhanced for non-technical users
             _buildVerificationStep(theme, colors),
             
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             
             // Info box
             Container(
-              padding: EdgeInsets.all(SpacingTokens.cardPadding),
+              padding: const EdgeInsets.all(SpacingTokens.cardPadding),
               decoration: BoxDecoration(
                 color: colors.primary.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -124,7 +123,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                     color: colors.primary,
                     size: 20,
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,9 +136,9 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                             color: colors.primary,
                           ),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
-                          'Restart AgentEngine and visit Settings > Local Models to download AI models.',
+                          'Restart Asmbli and visit Settings > Local Models to download AI models.',
                           style: GoogleFonts.fustat(
                             fontSize: 12,
                             color: theme.colorScheme.onSurface,
@@ -187,7 +186,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
           ),
           child: Center(
             child: _installationStatus == 'success' 
-              ? Icon(Icons.check, color: Colors.white, size: 16)
+              ? const Icon(Icons.check, color: Colors.white, size: 16)
               : Text(
                   '3',
                   style: GoogleFonts.fustat(
@@ -199,7 +198,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
           ),
         ),
         
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         
         // Step content
         Expanded(
@@ -214,12 +213,12 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               
               if (_installationStatus == 'success') ...[
                 // Success state
                 Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -227,8 +226,8 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.check_circle, color: Colors.green, size: 20),
-                      SizedBox(width: 8),
+                      const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      const SizedBox(width: 8),
                       Text(
                         'Ollama is installed and ready!',
                         style: GoogleFonts.fustat(
@@ -243,7 +242,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
               ] else if (_installationStatus == 'not_found') ...[
                 // Not found state
                 Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -254,8 +253,8 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.warning, color: Colors.orange, size: 20),
-                          SizedBox(width: 8),
+                          const Icon(Icons.warning, color: Colors.orange, size: 20),
+                          const SizedBox(width: 8),
                           Text(
                             'Ollama not found',
                             style: GoogleFonts.fustat(
@@ -266,7 +265,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'Please complete the installation steps above, then check again.',
                         style: GoogleFonts.fustat(
@@ -288,7 +287,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                 ),
               ],
               
-              SizedBox(height: SpacingTokens.componentSpacing),
+              const SizedBox(height: SpacingTokens.componentSpacing),
               
               // Action buttons
               Wrap(
@@ -326,9 +325,9 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
               
               // Manual terminal instructions (expandable)
               if (_showTerminalInstructions) ...[
-                SizedBox(height: SpacingTokens.componentSpacing),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainer,
                     borderRadius: BorderRadius.circular(8),
@@ -345,7 +344,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                           color: theme.colorScheme.onSurface,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       _buildTerminalInstructions(theme, colors),
                     ],
                   ),
@@ -382,9 +381,9 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.black.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(4),
@@ -446,7 +445,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
           ),
         ),
         
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         
         // Step content
         Expanded(
@@ -461,7 +460,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 description,
                 style: GoogleFonts.fustat(
@@ -470,7 +469,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                 ),
               ),
               if (actionText != null && onAction != null) ...[
-                SizedBox(height: SpacingTokens.componentSpacing),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 TextButton(
                   onPressed: onAction,
                   child: Text(

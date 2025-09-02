@@ -8,10 +8,9 @@ import '../../../../core/services/api_config_service.dart';
 import '../../../../providers/agent_provider.dart';
 import '../../../../providers/conversation_provider.dart';
 import '../../../../core/services/integration_service.dart';
-import 'llm_configuration_screen.dart';
 import 'agent_settings_screen.dart';
 import 'appearance_settings_screen.dart';
-import 'dart:async';
+import 'llm_configuration_screen.dart';
 
 /// Modern Settings Screen - Card-based, searchable, progressive disclosure
 /// Replaces the old tab-based interface with a cleaner, more intuitive design
@@ -107,7 +106,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
     
     // Initialize animations
     _pulseController = AnimationController(
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
       vsync: this,
     );
     _pulseAnimation = Tween<double>(
@@ -154,7 +153,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
         child: Column(
           children: [
             // App Navigation
-            AppNavigationBar(currentRoute: AppRoutes.settings),
+            const AppNavigationBar(currentRoute: AppRoutes.settings),
             
             // Settings Header & Search
             _buildHeader(colors),
@@ -179,7 +178,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
 
   Widget _buildHeader(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       decoration: BoxDecoration(
         color: colors.surface.withValues(alpha: 0.8),
         border: Border(
@@ -199,16 +198,16 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
                       'Settings',
                       style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
                     ),
-                    SizedBox(height: SpacingTokens.xs_precise),
+                    const SizedBox(height: SpacingTokens.xs_precise),
                     Text(
-                      'Customize your AgentEngine experience',
+                      'Customize your Asmbli experience',
                       style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
                     ),
                   ],
                 ),
               ),
               
-              SizedBox(width: SpacingTokens.sectionSpacing),
+              const SizedBox(width: SpacingTokens.sectionSpacing),
               
               // Search Bar
               SizedBox(
@@ -223,7 +222,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
           
           // Quick Stats
           if (_searchQuery.isEmpty) ...[
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             _buildQuickStats(colors),
           ],
         ],
@@ -255,7 +254,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
               colors,
               isLive: connectedApis > 0,
             ),
-            SizedBox(width: SpacingTokens.componentSpacing),
+            const SizedBox(width: SpacingTokens.componentSpacing),
             
             // Live Agents count
             agentsAsync.when(
@@ -270,7 +269,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
               loading: () => _buildStatChip('... Agents', Icons.smart_toy, colors.onSurfaceVariant, colors),
               error: (_, __) => _buildStatChip('0 Agents', Icons.smart_toy, colors.error, colors),
             ),
-            SizedBox(width: SpacingTokens.componentSpacing),
+            const SizedBox(width: SpacingTokens.componentSpacing),
             
             // Live Integrations count  
             _buildLiveStatChip(
@@ -281,7 +280,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
               colors,
               isLive: integrationStats.enabled > 0,
             ),
-            SizedBox(width: SpacingTokens.componentSpacing),
+            const SizedBox(width: SpacingTokens.componentSpacing),
             
             // Live Activity indicator
             conversationsAsync.when(
@@ -297,7 +296,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
               error: (_, __) => _buildStatChip('0 Chats', Icons.chat_bubble, colors.error, colors),
             ),
             
-            Spacer(),
+            const Spacer(),
           ],
         );
       },
@@ -306,7 +305,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
 
   Widget _buildStatChip(String label, IconData icon, Color color, ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.componentSpacing,
         vertical: SpacingTokens.iconSpacing,
       ),
@@ -319,7 +318,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 16, color: color),
-          SizedBox(width: SpacingTokens.iconSpacing),
+          const SizedBox(width: SpacingTokens.iconSpacing),
           Text(
             label,
             style: TextStyles.caption.copyWith(
@@ -337,7 +336,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
       animation: _pulseAnimation,
       builder: (context, child) {
         return Container(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: SpacingTokens.componentSpacing,
             vertical: SpacingTokens.iconSpacing,
           ),
@@ -383,7 +382,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
                     ),
                 ],
               ),
-              SizedBox(width: SpacingTokens.iconSpacing),
+              const SizedBox(width: SpacingTokens.iconSpacing),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -418,7 +417,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
     }
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -428,12 +427,12 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
               'Search Results (${categories.length})',
               style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
           ],
           
           // Category Cards
           ...categories.map((category) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+            padding: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
             child: SettingsCategoryCard(
               category: category,
               isExpanded: _expandedCategory == category.id,
@@ -444,11 +443,11 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
           
           // Advanced Settings Toggle
           if (_searchQuery.isEmpty && !_categories.any((c) => c.isAdvanced && _shouldShowCategory(c))) ...[
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             _buildAdvancedToggle(colors),
           ],
           
-          SizedBox(height: SpacingTokens.xxl), // Bottom padding
+          const SizedBox(height: SpacingTokens.xxl), // Bottom padding
         ],
       ),
     );
@@ -457,7 +456,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
   Widget _buildEmptySearchState(ThemeColors colors) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.xxl),
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -466,18 +465,18 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
               size: 64,
               color: colors.onSurfaceVariant.withValues(alpha: 0.5),
             ),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(
               'No settings found',
               style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Try adjusting your search terms or browse categories below',
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             AsmblButton.secondary(
               text: 'Clear Search',
               onPressed: () {
@@ -499,7 +498,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
             Icons.engineering,
             color: colors.onSurfaceVariant,
           ),
-          SizedBox(width: SpacingTokens.componentSpacing),
+          const SizedBox(width: SpacingTokens.componentSpacing),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -607,7 +606,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Got it'),
+            child: const Text('Got it'),
           ),
         ],
       ),
@@ -618,21 +617,21 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('About AgentEngine'),
-        content: Column(
+        title: const Text('About Asmbli'),
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Version: 1.0.0'),
             Text('Build: Desktop'),
             SizedBox(height: 16),
-            Text('AgentEngine makes AI agents easy to create, manage, and deploy.'),
+            Text('Asmbli makes AI agents easy to create, manage, and deploy.'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Close'),
+            child: const Text('Close'),
           ),
         ],
       ),

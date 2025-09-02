@@ -67,6 +67,10 @@ class LocalLLMProvider extends LLMProvider {
         metadata: {
           'provider': 'local',
           'modelName': _modelConfig.name,
+          'hasMCPCapabilities': context.hasMCPCapabilities,
+          'hasContextDocuments': context.hasContextDocuments,
+          'mcpServersAvailable': context.mcpServers,
+          'contextDocumentsCount': context.contextDocuments.length,
         },
       );
     } catch (e) {

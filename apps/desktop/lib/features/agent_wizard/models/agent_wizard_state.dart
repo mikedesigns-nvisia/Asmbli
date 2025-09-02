@@ -297,7 +297,7 @@ class AgentWizardState extends ChangeNotifier {
     // Generate a unique ID based on name and timestamp
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final nameHash = _agentName.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '-');
-    return '${nameHash}-$timestamp';
+    return '$nameHash-$timestamp';
   }
 }
 

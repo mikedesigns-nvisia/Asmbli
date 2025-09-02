@@ -31,7 +31,7 @@ class ContextDocumentCard extends StatelessWidget {
  mainAxisAlignment: MainAxisAlignment.spaceBetween,
  children: [
  Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.sm,
  vertical: SpacingTokens.xs,
  ),
@@ -59,7 +59,7 @@ class ContextDocumentCard extends StatelessWidget {
  child: Row(
  children: [
  Icon(Icons.edit, size: 16, color: colors.onSurface),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  Text('Edit', style: TextStyles.bodyMedium),
  ],
  ),
@@ -69,7 +69,7 @@ class ContextDocumentCard extends StatelessWidget {
  child: Row(
  children: [
  Icon(Icons.person_add, size: 16, color: colors.onSurface),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  Text('Assign to Agent', style: TextStyles.bodyMedium),
  ],
  ),
@@ -79,7 +79,7 @@ class ContextDocumentCard extends StatelessWidget {
  child: Row(
  children: [
  Icon(Icons.delete, size: 16, color: colors.error),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  Text(
  'Delete',
  style: TextStyles.bodyMedium.copyWith(color: colors.error),
@@ -93,7 +93,7 @@ class ContextDocumentCard extends StatelessWidget {
  ],
  ),
 
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
 
  // Title
  Text(
@@ -106,12 +106,12 @@ class ContextDocumentCard extends StatelessWidget {
  textAlign: TextAlign.center,
  ),
 
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
 
  // Content preview
  Expanded(
  child: Padding(
- padding: EdgeInsets.symmetric(horizontal: SpacingTokens.sm),
+ padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm),
  child: Text(
  document.content,
  style: TextStyles.bodySmall.copyWith(
@@ -124,7 +124,7 @@ class ContextDocumentCard extends StatelessWidget {
  ),
  ),
 
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
 
  // Tags
  if (document.tags.isNotEmpty) ...[
@@ -134,7 +134,7 @@ class ContextDocumentCard extends StatelessWidget {
  alignment: WrapAlignment.center,
  children: document.tags.take(3).map((tag) {
  return Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.sm,
  vertical: SpacingTokens.xs,
  ),
@@ -151,7 +151,7 @@ class ContextDocumentCard extends StatelessWidget {
  );
  }).toList(),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  ],
 
  // Footer with timestamp
@@ -165,7 +165,7 @@ class ContextDocumentCard extends StatelessWidget {
  ),
  ),
  if (document.isActive) ...[
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  Container(
  width: 6,
  height: 6,
@@ -233,7 +233,7 @@ class ContextDocumentCard extends StatelessWidget {
  actions: [
  TextButton(
  onPressed: () => Navigator.of(context).pop(),
- child: Text('Cancel'),
+ child: const Text('Cancel'),
  ),
  ],
  ),
@@ -260,7 +260,7 @@ class ContextDocumentCard extends StatelessWidget {
  actions: [
  TextButton(
  onPressed: () => Navigator.of(context).pop(),
- child: Text('Cancel'),
+ child: const Text('Cancel'),
  ),
  TextButton(
  onPressed: () {

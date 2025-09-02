@@ -24,25 +24,25 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
   late TabController _tabController;
 
   final List<AdvancedTab> _tabs = [
-    AdvancedTab(
+    const AdvancedTab(
       id: 'health',
       label: 'Health',
       icon: Icons.health_and_safety,
       tooltip: 'System health monitoring',
     ),
-    AdvancedTab(
+    const AdvancedTab(
       id: 'analytics',
       label: 'Analytics',
       icon: Icons.analytics,
       tooltip: 'Usage analytics and insights',
     ),
-    AdvancedTab(
+    const AdvancedTab(
       id: 'testing',
       label: 'Testing',
       icon: Icons.bug_report,
       tooltip: 'Integration testing tools',
     ),
-    AdvancedTab(
+    const AdvancedTab(
       id: 'system',
       label: 'System',
       icon: Icons.settings_system_daydream,
@@ -88,7 +88,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
 
   Widget _buildHeader(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(color: colors.border, width: 1),
@@ -97,7 +97,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+            padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
             decoration: BoxDecoration(
               color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -109,7 +109,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
             ),
           ),
           
-          SizedBox(width: SpacingTokens.componentSpacing),
+          const SizedBox(width: SpacingTokens.componentSpacing),
           
           Expanded(
             child: Column(
@@ -119,7 +119,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
                   'Advanced Tools',
                   style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
                 ),
-                SizedBox(height: SpacingTokens.xs_precise),
+                const SizedBox(height: SpacingTokens.xs_precise),
                 Text(
                   'Expert-level management and monitoring',
                   style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
@@ -180,21 +180,21 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
   }
 
   Widget _buildHealthTab(ThemeColors colors) {
-    return Padding(
+    return const Padding(
       padding: EdgeInsets.all(SpacingTokens.lg),
       child: IntegrationHealthDashboard(),
     );
   }
 
   Widget _buildAnalyticsTab(ThemeColors colors) {
-    return Padding(
+    return const Padding(
       padding: EdgeInsets.all(SpacingTokens.lg),
       child: IntegrationAnalyticsDashboard(),
     );
   }
 
   Widget _buildTestingTab(ThemeColors colors) {
-    return Padding(
+    return const Padding(
       padding: EdgeInsets.all(SpacingTokens.lg),
       child: IntegrationTestingDashboard(),
     );
@@ -202,7 +202,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
 
   Widget _buildSystemTab(ThemeColors colors) {
     return Padding(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: _buildSystemControls(colors),
     );
   }
@@ -220,7 +220,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
             child: _buildSystemInfo(colors),
           ),
           
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           // Configuration Management
           _buildSystemSection(
@@ -230,7 +230,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
             child: _buildConfigurationControls(colors),
           ),
           
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           // Maintenance Tools
           _buildSystemSection(
@@ -240,7 +240,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
             child: _buildMaintenanceTools(colors),
           ),
           
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           // Debug Tools
           _buildSystemSection(
@@ -269,11 +269,11 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Row(
               children: [
                 Icon(icon, size: 20, color: colors.primary),
-                SizedBox(width: SpacingTokens.iconSpacing),
+                const SizedBox(width: SpacingTokens.iconSpacing),
                 Text(
                   title,
                   style: TextStyles.bodyLarge.copyWith(
@@ -285,7 +285,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: SpacingTokens.lg,
               right: SpacingTokens.lg,
               bottom: SpacingTokens.lg,
@@ -321,7 +321,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
           colors: colors,
         ),
         
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         
         _ControlButton(
           icon: Icons.restore,
@@ -331,7 +331,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
           colors: colors,
         ),
         
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         
         _ControlButton(
           icon: Icons.refresh,
@@ -356,7 +356,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
           colors: colors,
         ),
         
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         
         _ControlButton(
           icon: Icons.sync,
@@ -366,7 +366,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
           colors: colors,
         ),
         
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         
         _ControlButton(
           icon: Icons.healing,
@@ -390,7 +390,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
           colors: colors,
         ),
         
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         
         _ControlButton(
           icon: Icons.description,
@@ -400,7 +400,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
           colors: colors,
         ),
         
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         
         _ControlButton(
           icon: Icons.code,
@@ -436,7 +436,7 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
+      padding: const EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -486,7 +486,7 @@ class _ControlButton extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         child: Container(
-          padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+          padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           decoration: BoxDecoration(
             border: Border.all(
               color: isDestructive 
@@ -498,7 +498,7 @@ class _ControlButton extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                 decoration: BoxDecoration(
                   color: iconColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -506,7 +506,7 @@ class _ControlButton extends StatelessWidget {
                 child: Icon(icon, size: 16, color: iconColor),
               ),
               
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               
               Expanded(
                 child: Column(
@@ -519,7 +519,7 @@ class _ControlButton extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: SpacingTokens.xs_precise),
+                    const SizedBox(height: SpacingTokens.xs_precise),
                     Text(
                       description,
                       style: TextStyles.caption.copyWith(

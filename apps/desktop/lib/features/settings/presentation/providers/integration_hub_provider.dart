@@ -87,7 +87,7 @@ class IntegrationHubNotifier extends StateNotifier<IntegrationHubState> {
   }
 
   static MarketplaceStatistics _createInitialMarketplaceStats() {
-    return MarketplaceStatistics(
+    return const MarketplaceStatistics(
       totalIntegrations: 0,
       featuredIntegrations: [],
       popularIntegrations: [],

@@ -112,7 +112,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  child: Column(
  children: [
  // Header
- AppNavigationBar(currentRoute: AppRoutes.context),
+ const AppNavigationBar(currentRoute: AppRoutes.context),
  
  // Main Content
  Expanded(
@@ -122,7 +122,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  // Page Title & Description
- Text(
+ const Text(
  'Agent Templates',
  style: TextStyle(
  
@@ -131,8 +131,8 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  color: AppTheme.lightForeground,
  ),
  ),
- SizedBox(height: 8),
- Text(
+ const SizedBox(height: 8),
+ const Text(
  'Start with a pre-built template and customize it to your needs',
  style: TextStyle(
  
@@ -141,7 +141,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  ),
  ),
  
- SizedBox(height: 32),
+ const SizedBox(height: 32),
  
  // Search and Filter Row
  Row(
@@ -157,7 +157,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  ),
  child: TextField(
  onChanged: (value) => setState(() => searchQuery = value),
- decoration: InputDecoration(
+ decoration: const InputDecoration(
  hintText: 'Search templates...',
  hintStyle: TextStyle(
  
@@ -168,13 +168,13 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  color: AppTheme.lightMutedForeground,
  ),
  border: InputBorder.none,
- contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+ contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
  ),
  style: GoogleFonts.fustat(),
  ),
  ),
  ),
- SizedBox(width: 16),
+ const SizedBox(width: 16),
  
  // Category Filter
  Container(
@@ -187,8 +187,8 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  child: DropdownButton<String>(
  value: selectedCategory,
  onChanged: (value) => setState(() => selectedCategory = value!),
- underline: SizedBox(),
- style: TextStyle( color: AppTheme.lightForeground),
+ underline: const SizedBox(),
+ style: const TextStyle( color: AppTheme.lightForeground),
  items: categories.map((category) {
  return DropdownMenuItem(
  value: category,
@@ -200,12 +200,12 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  ],
  ),
  
- SizedBox(height: 32),
+ const SizedBox(height: 32),
  
  // Templates Grid
  GridView.builder(
  shrinkWrap: true,
- physics: NeverScrollableScrollPhysics(),
+ physics: const NeverScrollableScrollPhysics(),
  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
  crossAxisCount: 3,
  crossAxisSpacing: 20,
@@ -293,7 +293,7 @@ class _TemplateCard extends StatelessWidget {
  color: AppTheme.lightForeground,
  ),
  ),
- Spacer(),
+ const Spacer(),
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
@@ -302,7 +302,7 @@ class _TemplateCard extends StatelessWidget {
  ),
  child: Text(
  template.category,
- style: TextStyle(
+ style: const TextStyle(
  
  fontSize: 11,
  fontWeight: FontWeight.w500,
@@ -317,30 +317,30 @@ class _TemplateCard extends StatelessWidget {
  // Template name and description
  Expanded(
  child: Padding(
- padding: EdgeInsets.symmetric(horizontal: 20),
+ padding: const EdgeInsets.symmetric(horizontal: 20),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Text(
  template.name,
- style: TextStyle(
+ style: const TextStyle(
  
  fontSize: 18,
  fontWeight: FontWeight.w600,
  color: AppTheme.lightForeground,
  ),
  ),
- SizedBox(height: 8),
+ const SizedBox(height: 8),
  Text(
  template.description,
- style: TextStyle(
+ style: const TextStyle(
  
  fontSize: 13,
  color: AppTheme.lightMutedForeground,
  height: 1.4,
  ),
  ),
- SizedBox(height: 16),
+ const SizedBox(height: 16),
  
  // Tags
  Wrap(
@@ -355,7 +355,7 @@ class _TemplateCard extends StatelessWidget {
  ),
  child: Text(
  tag,
- style: TextStyle(
+ style: const TextStyle(
  
  fontSize: 10,
  color: AppTheme.lightMutedForeground,
@@ -365,13 +365,13 @@ class _TemplateCard extends StatelessWidget {
  }).toList(),
  ),
  
- SizedBox(height: 12),
+ const SizedBox(height: 12),
  
  // MCP Servers
  Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
- Text(
+ const Text(
  'MCP Servers',
  style: TextStyle(
  
@@ -380,7 +380,7 @@ class _TemplateCard extends StatelessWidget {
  color: AppTheme.lightMutedForeground,
  ),
  ),
- SizedBox(height: 6),
+ const SizedBox(height: 6),
  Wrap(
  spacing: 6,
  runSpacing: 6,
@@ -403,10 +403,10 @@ class _TemplateCard extends StatelessWidget {
  size: 12,
  color: AppTheme.lightPrimary,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Text(
  server,
- style: TextStyle(
+ style: const TextStyle(
  
  fontSize: 9,
  fontWeight: FontWeight.w500,
@@ -427,11 +427,11 @@ class _TemplateCard extends StatelessWidget {
  
  // MCP Stack indicator and Use Template button
  Padding(
- padding: EdgeInsets.all(20),
+ padding: const EdgeInsets.all(20),
  child: Column(
  children: [
  if (template.mcpStack) ...[
- Row(
+ const Row(
  children: [
  Icon(
  Icons.verified,
@@ -449,7 +449,7 @@ class _TemplateCard extends StatelessWidget {
  ),
  ],
  ),
- SizedBox(height: 12),
+ const SizedBox(height: 12),
  ],
  
  GestureDetector(
@@ -461,7 +461,7 @@ class _TemplateCard extends StatelessWidget {
  color: AppTheme.lightPrimary,
  borderRadius: BorderRadius.circular(6),
  ),
- child: Row(
+ child: const Row(
  mainAxisAlignment: MainAxisAlignment.center,
  children: [
  Text(

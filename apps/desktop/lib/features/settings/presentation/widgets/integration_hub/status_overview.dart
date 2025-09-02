@@ -16,7 +16,7 @@ class StatusOverview extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = ThemeColors(context);
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(8),
@@ -28,7 +28,7 @@ class StatusOverview extends StatelessWidget {
             'Status Overview',
             style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Integration status monitoring temporarily disabled',
             style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),

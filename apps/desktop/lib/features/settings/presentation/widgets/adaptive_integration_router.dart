@@ -23,7 +23,7 @@ class AdaptiveIntegrationRouter extends ConsumerWidget {
     
     if (isHubEnabled) {
       // Default: New Integration Hub (unified experience)
-      return IntegrationHubScreen();
+      return const IntegrationHubScreen();
     } else {
       // Fallback: Legacy settings screen (for users who explicitly opt out)
       return SettingsScreen(initialTab: initialTab ?? 'integrations');
@@ -46,11 +46,11 @@ class IntegrationHubMigrationBanner extends ConsumerWidget {
     final isHubEnabled = ref.watch(integrationHubEnabledProvider);
     
     // Show deprecation notice if using legacy interface
-    if (isHubEnabled) return SizedBox.shrink();
+    if (isHubEnabled) return const SizedBox.shrink();
     
     return Container(
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.errorContainer,
         borderRadius: BorderRadius.circular(8),
@@ -65,7 +65,7 @@ class IntegrationHubMigrationBanner extends ConsumerWidget {
             color: Theme.of(context).colorScheme.error,
             size: 20,
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +77,7 @@ class IntegrationHubMigrationBanner extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'You\'re using the old integration interface. Switch to the new Integration Hub for a better experience.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -87,15 +87,15 @@ class IntegrationHubMigrationBanner extends ConsumerWidget {
               ],
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           TextButton(
             onPressed: () => _enableIntegrationHub(ref, context),
-            child: Text('Switch to Hub'),
+            child: const Text('Switch to Hub'),
           ),
           if (onDismiss != null)
             IconButton(
               onPressed: onDismiss,
-              icon: Icon(Icons.close, size: 18),
+              icon: const Icon(Icons.close, size: 18),
               tooltip: 'Dismiss',
             ),
         ],
@@ -114,7 +114,7 @@ class IntegrationHubMigrationBanner extends ConsumerWidget {
         // Show success snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Integration Hub enabled! You can switch back in Settings > Advanced.'),
+            content: const Text('Integration Hub enabled! You can switch back in Settings > Advanced.'),
             action: SnackBarAction(
               label: 'Got it',
               onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
@@ -146,12 +146,12 @@ class IntegrationExperienceToggle extends ConsumerWidget {
           'Integration Experience',
           style: Theme.of(context).textTheme.titleMedium,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         
         // Hub toggle
         SwitchListTile(
-          title: Text('Use Integration Hub'),
-          subtitle: Text('Modern unified interface (recommended - now default)'),
+          title: const Text('Use Integration Hub'),
+          subtitle: const Text('Modern unified interface (recommended - now default)'),
           value: isHubEnabled,
           onChanged: (_) => ref.read(featureFlagProvider.notifier).toggleIntegrationHub(),
         ),
@@ -159,28 +159,28 @@ class IntegrationExperienceToggle extends ConsumerWidget {
         if (isHubEnabled) ...[
           // Expert mode default
           SwitchListTile(
-            title: Text('Expert Mode by Default'),
-            subtitle: Text('Show advanced controls and technical details'),
+            title: const Text('Expert Mode by Default'),
+            subtitle: const Text('Show advanced controls and technical details'),
             value: isExpertDefault,
             onChanged: (_) => ref.read(featureFlagProvider.notifier).toggleExpertMode(),
           ),
           
           // Advanced panel
           SwitchListTile(
-            title: Text('Enable Advanced Tools'),
-            subtitle: Text('Health monitoring, analytics, and system controls'),
+            title: const Text('Enable Advanced Tools'),
+            subtitle: const Text('Health monitoring, analytics, and system controls'),
             value: isAdvancedEnabled,
             onChanged: (_) => ref.read(featureFlagProvider.notifier).toggleAdvancedPanel(),
           ),
         ],
         
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         
         // Reset button
         OutlinedButton.icon(
           onPressed: () => _resetToDefaults(ref, context),
-          icon: Icon(Icons.refresh),
-          label: Text('Reset to Defaults'),
+          icon: const Icon(Icons.refresh),
+          label: const Text('Reset to Defaults'),
         ),
       ],
     );
@@ -190,22 +190,22 @@ class IntegrationExperienceToggle extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Reset Integration Experience?'),
-        content: Text('This will restore the default integration interface and clear your preferences.'),
+        title: const Text('Reset Integration Experience?'),
+        content: const Text('This will restore the default integration interface and clear your preferences.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
               ref.read(featureFlagProvider.notifier).resetFlags();
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Integration experience reset to defaults')),
+                const SnackBar(content: Text('Integration experience reset to defaults')),
               );
             },
-            child: Text('Reset'),
+            child: const Text('Reset'),
           ),
         ],
       ),

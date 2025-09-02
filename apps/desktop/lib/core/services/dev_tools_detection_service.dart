@@ -60,7 +60,7 @@ class DevToolsDetectionService {
       );
     }
     
-    return DetectionResult(
+    return const DetectionResult(
       found: false,
       confidence: DetectionConfidence.none,
       message: 'VS Code not found. Please install it from https://code.visualstudio.com',
@@ -137,7 +137,7 @@ class DevToolsDetectionService {
       }
     }
     
-    return DetectionResult(
+    return const DetectionResult(
       found: false,
       confidence: DetectionConfidence.none,
       message: 'Git not found. Please install Git from https://git-scm.com',
@@ -229,7 +229,7 @@ class DevToolsDetectionService {
       // gh command not found
     }
     
-    return DetectionResult(
+    return const DetectionResult(
       found: false,
       confidence: DetectionConfidence.none,
       message: 'GitHub CLI not found. Install it for better GitHub integration',

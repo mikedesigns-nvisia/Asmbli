@@ -39,20 +39,20 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     final filteredIntegrations = _filterIntegrations(allIntegrationsWithStatus);
     
     return Padding(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.detectedTools != null && widget.detectedTools!.isNotEmpty) ...[
             _buildDetectedToolsBanner(widget.detectedTools!),
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
           ],
           _buildHeader(),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Marketplace Stats Overview
           _buildMarketplaceStats(marketplaceStats, healthStats),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           
           // Main content with sidebar
           Expanded(
@@ -61,7 +61,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               children: [
                 // Sidebar
                 _buildSidebar(allIntegrationsWithStatus),
-                SizedBox(width: SpacingTokens.xxl),
+                const SizedBox(width: SpacingTokens.xxl),
                 
                 // Main content
                 Expanded(
@@ -81,19 +81,19 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
       children: [
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.store,
               color: SemanticColors.primary,
               size: 28,
             ),
-            SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: SpacingTokens.sm),
             Text(
               'Integration Marketplace',
               style: TextStyles.pageTitle,
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.xs),
+        const SizedBox(height: SpacingTokens.xs),
         Text(
           'Discover and install powerful integrations to enhance your agents',
           style: TextStyles.bodyMedium.copyWith(
@@ -106,10 +106,10 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
 
   Widget _buildDetectedToolsBanner(Map<String, bool> detected) {
     final found = detected.entries.where((e) => e.value).map((e) => e.key).toList();
-    if (found.isEmpty) return SizedBox();
+    if (found.isEmpty) return const SizedBox();
 
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Row(
         children: [
           Expanded(
@@ -120,7 +120,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                   'We found ${found.length} tools on your system',
                   style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(height: SpacingTokens.xs),
+                const SizedBox(height: SpacingTokens.xs),
                 Text(
                   'Quick actions: configure detected tools or browse other integrations',
                   style: TextStyles.bodyMedium.copyWith(color: SemanticColors.onSurfaceVariant),
@@ -128,7 +128,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               ],
             ),
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           Column(
             children: [
               Row(
@@ -142,7 +142,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                       });
                     },
                   ),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   AsmblButton.primary(
                     text: 'Install Selected',
                     onPressed: () => _showConfigureDetectedDialog(detected),
@@ -165,8 +165,8 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('Configure Detected Tools'),
-              content: Container(
+              title: const Text('Configure Detected Tools'),
+              content: SizedBox(
                 width: 520,
                 height: 360,
                 child: Column(
@@ -182,7 +182,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                         }).toList(),
                       ),
                     ),
-                    SizedBox(height: SpacingTokens.sm),
+                    const SizedBox(height: SpacingTokens.sm),
                     Text(
                       'Selected items will be auto-configured where we have an integration match.',
                       style: TextStyles.bodySmall.copyWith(color: SemanticColors.onSurfaceVariant),
@@ -193,7 +193,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
                 AsmblButton.primary(
                   text: 'Install Selected',
@@ -248,10 +248,10 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
       };
     }
     
-    return Container(
+    return SizedBox(
       width: 280,
       child: AsmblCard(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -259,7 +259,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               'Categories',
               style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             
             // All category
             _buildSidebarCategoryItem(
@@ -270,7 +270,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               _selectedCategory == 'All',
               () => setState(() => _selectedCategory = 'All'),
             ),
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
             
             // Individual categories
             ...IntegrationCategory.values.map((category) {
@@ -278,7 +278,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               final isSelected = _selectedCategory == category.displayName;
               
               return Padding(
-                padding: EdgeInsets.only(bottom: SpacingTokens.sm),
+                padding: const EdgeInsets.only(bottom: SpacingTokens.sm),
                 child: _buildSidebarCategoryItem(
                   category.displayName,
                   _getCategoryIcon(category),
@@ -288,7 +288,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                   () => setState(() => _selectedCategory = category.displayName),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -306,7 +306,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(SpacingTokens.sm),
+        padding: const EdgeInsets.all(SpacingTokens.sm),
         decoration: BoxDecoration(
           color: isSelected 
               ? SemanticColors.primary.withValues(alpha: 0.1)
@@ -323,7 +323,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               color: isSelected ? SemanticColors.primary : SemanticColors.onSurface,
               size: 18,
             ),
-            SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: SpacingTokens.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,7 +363,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
 
   Widget _buildMarketplaceStats(MarketplaceStatistics marketplaceStats, HealthStatistics healthStats) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: SemanticColors.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -379,21 +379,21 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
             Icons.apps,
             SemanticColors.primary,
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
             'Installed',
             '${marketplaceStats.installed}',
             Icons.check_circle,
             SemanticColors.success,
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
             'Popular',
             '${marketplaceStats.popular}',
             Icons.star,
             SemanticColors.warning,
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
             'Recommended',
             '${marketplaceStats.recommended}',
@@ -407,7 +407,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
 
   Widget _buildStatCard(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -416,7 +416,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: color, size: 20),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Text(
             value,
             style: TextStyles.bodyLarge.copyWith(
@@ -451,7 +451,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               'Available Integrations (${integrations.length})',
               style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
             ),
-            Row(
+            const Row(
               children: [
                 Icon(Icons.grid_view, size: 16),
                 SizedBox(width: SpacingTokens.xs),
@@ -460,12 +460,12 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.lg),
+        const SizedBox(height: SpacingTokens.lg),
         
         GridView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
             childAspectRatio: 0.8,
             crossAxisSpacing: SpacingTokens.lg,
@@ -494,7 +494,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
       }
     }
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -502,12 +502,12 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           Row(
             children: [
               _buildIntegrationIcon(status.definition),
-              Spacer(),
+              const Spacer(),
               if (status.isConfigured)
-                Icon(Icons.check_circle, color: SemanticColors.success, size: 16),
+                const Icon(Icons.check_circle, color: SemanticColors.success, size: 16),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           // Name and category
           Text(
@@ -522,7 +522,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               color: SemanticColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           // Description
           Expanded(
@@ -533,7 +533,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           // Badges
           Wrap(
@@ -552,7 +552,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                 IntegrationStatusIndicators.prerequisitesIndicator(status.definition.prerequisites),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           // Action button
           Row(
@@ -566,10 +566,10 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                 ),
               ),
               if (matchedByDetection) ...[
-                SizedBox(width: SpacingTokens.sm),
+                const SizedBox(width: SpacingTokens.sm),
                 TextButton(
                   onPressed: status.isConfigured ? () => _handleConfigure(status) : () => _handleInstall(status),
-                  child: Text('Configure'),
+                  child: const Text('Configure'),
                 ),
               ],
             ],
@@ -583,24 +583,24 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     return Center(
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.apps,
             size: 64,
             color: SemanticColors.onSurfaceVariant,
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           Text(
             'No integrations in this category',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Text(
             'Try selecting a different category',
             style: TextStyles.bodyMedium.copyWith(
               color: SemanticColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           AsmblButton.secondary(
             text: 'Show All',
             onPressed: () {

@@ -33,7 +33,6 @@ class AsmblCardEnhanced extends StatefulWidget {
  double? borderRadius,
  }) {
  return AsmblCardEnhanced(
- child: child,
  onTap: onTap,
  isInteractive: isInteractive,
  variant: AsmblCardVariant.elevated,
@@ -41,6 +40,7 @@ class AsmblCardEnhanced extends StatefulWidget {
  hasElevation: true,
  padding: padding,
  borderRadius: borderRadius,
+ child: child,
  );
  }
 
@@ -52,7 +52,6 @@ class AsmblCardEnhanced extends StatefulWidget {
  double? borderRadius,
  }) {
  return AsmblCardEnhanced(
- child: child,
  onTap: onTap,
  isInteractive: isInteractive,
  variant: AsmblCardVariant.accent,
@@ -60,6 +59,7 @@ class AsmblCardEnhanced extends StatefulWidget {
  hasElevation: false,
  padding: padding,
  borderRadius: borderRadius,
+ child: child,
  );
  }
 
@@ -71,7 +71,6 @@ class AsmblCardEnhanced extends StatefulWidget {
  double? borderRadius,
  }) {
  return AsmblCardEnhanced(
- child: child,
  onTap: onTap,
  isInteractive: isInteractive,
  variant: AsmblCardVariant.outlined,
@@ -79,6 +78,7 @@ class AsmblCardEnhanced extends StatefulWidget {
  hasElevation: false,
  padding: padding,
  borderRadius: borderRadius,
+ child: child,
  );
  }
 
@@ -97,7 +97,7 @@ class _AsmblCardEnhancedState extends State<AsmblCardEnhanced>
  void initState() {
  super.initState();
  _animationController = AnimationController(
- duration: Duration(milliseconds: 150),
+ duration: const Duration(milliseconds: 150),
  vsync: this,
  );
  _scaleAnimation = Tween<double>(
@@ -121,9 +121,9 @@ class _AsmblCardEnhancedState extends State<AsmblCardEnhanced>
  final isClickable = widget.onTap != null && widget.isInteractive;
 
  Widget cardContent = AnimatedContainer(
- duration: Duration(milliseconds: 200),
+ duration: const Duration(milliseconds: 200),
  curve: Curves.easeInOut,
- padding: widget.padding ?? EdgeInsets.all(SpacingTokens.lg),
+ padding: widget.padding ?? const EdgeInsets.all(SpacingTokens.lg),
  decoration: BoxDecoration(
  color: _getBackgroundColor(colors),
  borderRadius: BorderRadius.circular(

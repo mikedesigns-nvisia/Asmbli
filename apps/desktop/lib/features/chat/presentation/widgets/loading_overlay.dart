@@ -37,20 +37,20 @@ class MessageLoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: SpacingTokens.sm),
+      margin: const EdgeInsets.symmetric(vertical: SpacingTokens.sm),
       child: Row(
         children: [
           // Claude avatar
           CircleAvatar(
             radius: 16,
             backgroundColor: ThemeColors(context).primary,
-            child: Icon(
+            child: const Icon(
               Icons.psychology_outlined,
               size: 18,
               color: Colors.white,
             ),
           ),
-          SizedBox(width: SpacingTokens.md),
+          const SizedBox(width: SpacingTokens.md),
           // Beautiful thinking animation
           const ThinkingBubbleWidget(),
         ],
@@ -82,7 +82,7 @@ class ErrorMessage extends StatelessWidget {
                 color: ThemeColors(context).error,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Error',
                 style: TextStyles.cardTitle.copyWith(
@@ -91,7 +91,7 @@ class ErrorMessage extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
             message,
             style: TextStyles.bodyMedium.copyWith(
@@ -99,7 +99,7 @@ class ErrorMessage extends StatelessWidget {
             ),
           ),
           if (onRetry != null) ...[
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             AsmblButton.secondary(
               text: 'Retry',
               icon: Icons.refresh,

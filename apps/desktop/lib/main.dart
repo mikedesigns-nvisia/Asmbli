@@ -3,12 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'core/theme/app_theme.dart';
 import 'core/design_system/design_system.dart';
 import 'core/constants/routes.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
+import 'features/chat/presentation/screens/modern_chat_screen_v2.dart';
 import 'features/chat/presentation/screens/demo_chat_screen.dart'; // Remove after video
-import 'features/settings/presentation/screens/settings_screen.dart';
 import 'features/settings/presentation/screens/modern_settings_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'features/agents/presentation/screens/agent_configuration_screen.dart';
@@ -75,7 +74,7 @@ void main() async {
  if (DesktopServiceProvider.instance.isDesktop) {
  try {
  await DesktopServiceProvider.instance.windowManager.configureWindow(
- DesktopWindowOptions(
+ const DesktopWindowOptions(
  size: Size(1400, 900),
  minimumSize: Size(1000, 700),
  center: true,
@@ -97,7 +96,7 @@ void main() async {
  overrides: [
  featureFlagServiceProvider.overrideWithValue(FeatureFlagService(prefs)),
  ],
- child: AsmblDesktopApp(),
+ child: const AsmblDesktopApp(),
  ),
  );
 }
@@ -135,7 +134,7 @@ final _router = GoRouter(
  ),
  GoRoute(
  path: AppRoutes.home,
- builder: (context, state) => HomeScreen(),
+ builder: (context, state) => const HomeScreen(),
  ),
  GoRoute(
  path: AppRoutes.chat,
@@ -143,6 +142,10 @@ final _router = GoRouter(
    final template = state.uri.queryParameters['template'];
    return ChatScreen(selectedTemplate: template);
  },
+ ),
+ GoRoute(
+ path: AppRoutes.chatV2,
+ builder: (context, state) => const ModernChatScreenV2(),
  ),
  // Demo route for video recording (remove after video)
  GoRoute(
@@ -209,7 +212,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  Future<void> _checkOnboarding() async {
    try {
      // Small delay to ensure storage is initialized
-     await Future.delayed(Duration(milliseconds: 100));
+     await Future.delayed(const Duration(milliseconds: 100));
      
      final storage = DesktopStorageService.instance;
      final onboardingCompleted = storage.getPreference<bool>('onboarding_completed') ?? false;
@@ -250,12 +253,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  child: Column(
  children: [
  // App Header
- AppNavigationBar(currentRoute: AppRoutes.home),
+ const AppNavigationBar(currentRoute: AppRoutes.home),
  
  // Main Dashboard Content
  Expanded(
  child: SingleChildScrollView(
- padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+ padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -266,7 +269,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  'Manage your AI agents, conversations, and knowledge base',
  style: TextStyles.bodyLarge.copyWith(
@@ -274,7 +277,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  
  /* Consumer build - onboarding button removed
  TextButton.icon(
@@ -300,7 +303,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  onTap: () => context.go(AppRoutes.chat),
  ),
  ),
- SizedBox(width: SpacingTokens.elementSpacing),
+ const SizedBox(width: SpacingTokens.elementSpacing),
  Expanded(
  child: _QuickActionCard(
  icon: Icons.build,
@@ -312,10 +315,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  ],
  ),
  
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  
  // Main Content - Recent Conversations
- _RecentConversationsSection(),
+ const _RecentConversationsSection(),
  ],
  ),
  ),
@@ -354,7 +357,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  size: 32,
  color: colors.onSurfaceVariant.withValues(alpha: 0.5),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  'No conversations yet',
  style: TextStyles.bodyMedium.copyWith(
@@ -368,7 +371,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  return Column(
  children: [
  ...recentConversations.map((conversation) => Padding(
- padding: EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
+ padding: const EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
  child: _ConversationItem(
  conversation: conversation,
  onTap: () {
@@ -378,7 +381,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  ),
  )),
  if (conversations.length > 5) ...[
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  '+${conversations.length - 5} more conversations',
  style: TextStyles.caption.copyWith(
@@ -386,7 +389,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  ),
  ),
  ],
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  AsmblButtonEnhanced.outline(
  text: 'View All Chats',
  icon: Icons.forum,
@@ -396,7 +399,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  ],
  );
  },
- loading: () => Center(
+ loading: () => const Center(
  child: SizedBox(
  width: 20,
  height: 20,
@@ -410,14 +413,14 @@ class _RecentConversationsSection extends ConsumerWidget {
  size: 32,
  color: colors.error,
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  'Failed to load conversations',
  style: TextStyles.bodyMedium.copyWith(
  color: colors.error,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  AsmblButtonEnhanced.secondary(
  text: 'Retry',
  icon: Icons.refresh,
@@ -455,14 +458,14 @@ class _ConversationItem extends StatelessWidget {
  hoverColor: colors.primary.withValues(alpha: 0.04),
  splashColor: colors.primary.withValues(alpha: 0.12),
  child: Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  vertical: SpacingTokens.componentSpacing,
  horizontal: SpacingTokens.xs_precise,
  ),
  child: Row(
  children: [
  Container(
- padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
  color: isAgentConversation 
  ? colors.primary.withValues(alpha: 0.1)
@@ -477,7 +480,7 @@ class _ConversationItem extends StatelessWidget {
  : colors.onSurfaceVariant,
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -493,7 +496,7 @@ class _ConversationItem extends StatelessWidget {
  maxLines: 1,
  overflow: TextOverflow.ellipsis,
  ),
- SizedBox(height: SpacingTokens.xs_precise),
+ const SizedBox(height: SpacingTokens.xs_precise),
  Text(
  _getConversationTypeDescription(conversation),
  style: TextStyles.caption.copyWith(
@@ -587,7 +590,7 @@ class _QuickActionCard extends StatelessWidget {
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Container(
- padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
  color: ThemeColors(context).primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -598,14 +601,14 @@ class _QuickActionCard extends StatelessWidget {
  color: ThemeColors(context).primary,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  title,
  style: TextStyles.cardTitle.copyWith(
  color: ThemeColors(context).onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  description,
  style: TextStyles.bodySmall.copyWith(
@@ -641,7 +644,7 @@ class _DashboardSectionEnhanced extends StatelessWidget {
  color: ThemeColors(context).onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  child,
  ],
  ),

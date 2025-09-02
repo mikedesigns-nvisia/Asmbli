@@ -7,7 +7,6 @@ import '../../../../core/design_system/components/mcp_testing_widgets.dart';
 import 'enhanced_auto_detection_modal.dart';
 import '../../../../core/models/enhanced_mcp_template.dart';
 import '../../../../core/services/mcp_settings_service.dart';
-import '../../../../core/services/enhanced_mcp_testing_service.dart';
 
 /// Enhanced MCP server setup wizard with template browser and smart forms
 /// Provides a complete user-friendly experience for all MCP integrations
@@ -38,17 +37,17 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
   bool _isLoading = false;
 
   final List<WizardStep> _steps = [
-    WizardStep(
+    const WizardStep(
       title: 'Choose Integration',
       description: 'Select the service you want to connect',
       icon: Icons.apps,
     ),
-    WizardStep(
+    const WizardStep(
       title: 'Configure Settings',
       description: 'Set up your integration preferences',
       icon: Icons.settings,
     ),
-    WizardStep(
+    const WizardStep(
       title: 'Test & Complete',
       description: 'Verify connection and finish setup',
       icon: Icons.check_circle,
@@ -107,7 +106,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
               Expanded(
                 child: PageView(
                   controller: _pageController,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   onPageChanged: (index) => setState(() => _currentStep = index),
                   children: [
                     _buildTemplateBrowserStep(context),
@@ -128,7 +127,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
 
   Widget _buildHeader(BuildContext context, bool isEdit) {
     return Container(
-      padding: EdgeInsets.fromLTRB(24, 24, 24, 16),
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface.withValues(alpha: 0.9),
         border: Border(
@@ -142,12 +141,12 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.integration_instructions,
                 size: 28,
                 color: SemanticColors.primary,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,7 +172,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
               ),
               IconButton(
                 onPressed: () => Navigator.of(context).pop(),
-                icon: Icon(Icons.close),
+                icon: const Icon(Icons.close),
                 style: IconButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -181,7 +180,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             ],
           ),
           
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           
           // Progress indicator
           _buildProgressIndicator(context),
@@ -213,7 +212,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                       ? SemanticColors.success
                       : isActive 
                         ? SemanticColors.primary 
-                        : Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.5),
+                        : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
@@ -228,7 +227,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                 ),
               ),
               
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               
               // Step info
               Expanded(
@@ -261,7 +260,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
               
               // Connector line
               if (index < _steps.length - 1) ...[
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Container(
                     height: 2,
@@ -280,13 +279,13 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
 
   Widget _buildTemplateBrowserStep(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Auto-detect option at top
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -301,9 +300,9 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             ),
             child: Row(
               children: [
-                Icon(Icons.auto_fix_high, color: SemanticColors.primary),
-                SizedBox(width: 12),
-                Expanded(
+                const Icon(Icons.auto_fix_high, color: SemanticColors.primary),
+                const SizedBox(width: 12),
+                const Expanded(
                   child: Text(
                     'Auto-Detect All Integrations',
                     style: TextStyle(
@@ -319,7 +318,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                     Navigator.of(context).pop();
                     showDialog(
                       context: context,
-                      builder: (context) => EnhancedAutoDetectionModal(),
+                      builder: (context) => const EnhancedAutoDetectionModal(),
                     );
                   },
                 ),
@@ -327,14 +326,14 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             ),
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
           // Divider with "OR CHOOSE MANUALLY" text
           Row(
             children: [
-              Expanded(child: Divider(color: SemanticColors.border)),
+              const Expanded(child: Divider(color: SemanticColors.border)),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'OR CHOOSE MANUALLY',
                   style: TextStyles.labelSmall.copyWith(
@@ -342,11 +341,11 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                   ),
                 ),
               ),
-              Expanded(child: Divider(color: SemanticColors.border)),
+              const Expanded(child: Divider(color: SemanticColors.border)),
             ],
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
           // Template browser
           Expanded(
@@ -377,7 +376,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
               size: 64,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'No template selected',
               style: TextStyle(
@@ -386,7 +385,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'Please go back and choose an integration',
               style: TextStyle(
@@ -400,7 +399,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     }
 
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       child: SmartMCPForm(
         template: _selectedTemplate!,
         initialValues: _formValues,
@@ -417,13 +416,13 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
 
   Widget _buildTestingStep(BuildContext context) {
     if (_selectedTemplate == null) {
-      return Center(
+      return const Center(
         child: Text('No template selected'),
       );
     }
 
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       child: Column(
         children: [
           // Connection tester with real-time feedback
@@ -438,12 +437,12 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             },
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
           // Summary card
           if (!_isLoading && _selectedTemplate != null) ...[
             Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(12),
@@ -463,7 +462,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   
                   // Template info
                   Row(
@@ -481,14 +480,14 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                           size: 20,
                         ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               _selectedTemplate!.name,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 14,
                               ),
@@ -506,7 +505,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                     ],
                   ),
                   
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   
                   // Configured fields summary
                   Text(
@@ -517,18 +516,18 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   ..._formValues.entries.where((entry) => entry.value != null && entry.value.toString().isNotEmpty).map((entry) {
                     return Padding(
-                      padding: EdgeInsets.only(bottom: 4),
+                      padding: const EdgeInsets.only(bottom: 4),
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.check_circle_outline,
                             size: 14,
                             color: SemanticColors.success,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
                             _getFieldDisplayName(entry.key),
                             style: TextStyle(
@@ -539,7 +538,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -551,7 +550,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
 
   Widget _buildNavigation(BuildContext context, bool isEdit) {
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface.withValues(alpha: 0.9),
         border: Border(
@@ -571,7 +570,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
               onPressed: _isLoading ? null : _previousStep,
             )
           else
-            SizedBox.shrink(),
+            const SizedBox.shrink(),
           
           // Next/Complete button
           AsmblButton.primary(
@@ -643,7 +642,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     if (_currentStep < _steps.length - 1) {
       setState(() => _currentStep++);
       _pageController.nextPage(
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
@@ -653,7 +652,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     if (_currentStep > 0) {
       setState(() => _currentStep--);
       _pageController.previousPage(
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
@@ -663,7 +662,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     setState(() => _currentStep = step);
     _pageController.animateToPage(
       step,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
   }
@@ -691,7 +690,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     
     try {
       // Simulate testing connection
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
       
       final serverId = widget.serverId ?? 
           _selectedTemplate!.name.toLowerCase().replaceAll(' ', '-');
@@ -713,7 +712,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
       await mcpService.saveSettings();
 
       if (mounted) {
-        await Future.delayed(Duration(seconds: 1)); // Show success state
+        await Future.delayed(const Duration(seconds: 1)); // Show success state
         Navigator.of(context).pop(true);
       }
     } catch (e) {

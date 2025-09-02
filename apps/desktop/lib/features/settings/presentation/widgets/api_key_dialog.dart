@@ -5,15 +5,19 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/claude_api_service.dart';
 import '../../../../core/services/api_config_service.dart';
+import '../../../../core/models/model_config.dart';
+import '../../../../core/services/model_config_service.dart';
 
 class ApiKeyDialog extends ConsumerStatefulWidget {
   final ApiConfig? existingConfig;
   final DirectAPIConfig? existingDirectConfig; // For backward compatibility
+  final ModelConfig? existingModelConfig; // New model config support
 
   const ApiKeyDialog({
     super.key,
     this.existingConfig,
     this.existingDirectConfig, // For backward compatibility
+    this.existingModelConfig,
   });
 
   @override
@@ -54,28 +58,37 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
   void initState() {
     super.initState();
     
-    // Check for both types of existing configs
-    final config = widget.existingConfig ?? 
-        (widget.existingDirectConfig != null 
-            ? ApiConfig(
-                id: widget.existingDirectConfig!.id,
-                name: widget.existingDirectConfig!.name,
-                provider: widget.existingDirectConfig!.provider,
-                model: widget.existingDirectConfig!.model,
-                apiKey: widget.existingDirectConfig!.apiKey,
-                baseUrl: widget.existingDirectConfig!.baseUrl,
-                isDefault: widget.existingDirectConfig!.isDefault,
-                enabled: widget.existingDirectConfig!.enabled,
-              ) 
-            : null);
-    
-    if (config != null) {
-      _nameController.text = config.name;
-      _apiKeyController.text = config.apiKey;
-      selectedProvider = config.provider;
-      selectedModel = config.model;
+    // Check for all types of existing configs, prioritize ModelConfig
+    if (widget.existingModelConfig != null) {
+      final modelConfig = widget.existingModelConfig!;
+      _nameController.text = modelConfig.name;
+      _apiKeyController.text = modelConfig.apiKey ?? '';
+      selectedProvider = modelConfig.provider;
+      selectedModel = modelConfig.model;
     } else {
-      _nameController.text = 'Default API Model';
+      // Fallback to legacy config types
+      final config = widget.existingConfig ?? 
+          (widget.existingDirectConfig != null 
+              ? ApiConfig(
+                  id: widget.existingDirectConfig!.id,
+                  name: widget.existingDirectConfig!.name,
+                  provider: widget.existingDirectConfig!.provider,
+                  model: widget.existingDirectConfig!.model,
+                  apiKey: widget.existingDirectConfig!.apiKey,
+                  baseUrl: widget.existingDirectConfig!.baseUrl,
+                  isDefault: widget.existingDirectConfig!.isDefault,
+                  enabled: widget.existingDirectConfig!.enabled,
+                ) 
+              : null);
+      
+      if (config != null) {
+        _nameController.text = config.name;
+        _apiKeyController.text = config.apiKey;
+        selectedProvider = config.provider;
+        selectedModel = config.model;
+      } else {
+        _nameController.text = 'Default API Model';
+      }
     }
   }
 
@@ -97,7 +110,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
       ),
       child: Container(
         width: 520,
-        padding: EdgeInsets.all(SpacingTokens.xxl),
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
         child: Form(
           key: _formKey,
           child: Column(
@@ -113,13 +126,13 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                       color: SemanticColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.api,
                       color: SemanticColors.primary,
                       size: 24,
                     ),
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +143,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                             color: theme.colorScheme.onSurface,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           'Configure your API key to enable real AI conversations',
                           style: TextStyles.bodyMedium.copyWith(
@@ -142,7 +155,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.close),
+                    icon: const Icon(Icons.close),
                     style: IconButton.styleFrom(
                       foregroundColor: theme.colorScheme.onSurfaceVariant,
                       overlayColor: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
@@ -151,7 +164,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                 ],
               ),
               
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               
               // Configuration Name
               _buildTextField(
@@ -166,7 +179,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                 },
               ),
               
-              SizedBox(height: SpacingTokens.elementSpacing),
+              const SizedBox(height: SpacingTokens.elementSpacing),
               
               // Provider Selection
               _buildDropdown(
@@ -183,7 +196,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                 },
               ),
               
-              SizedBox(height: SpacingTokens.elementSpacing),
+              const SizedBox(height: SpacingTokens.elementSpacing),
               
               // Model Selection
               _buildDropdown(
@@ -199,17 +212,17 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                 },
               ),
               
-              SizedBox(height: SpacingTokens.elementSpacing),
+              const SizedBox(height: SpacingTokens.elementSpacing),
               
               // API Key
               _buildApiKeyField(),
               
-              SizedBox(height: SpacingTokens.componentSpacing),
+              const SizedBox(height: SpacingTokens.componentSpacing),
               
               // Test Connection
               _buildTestConnection(),
               
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               
               // Action buttons
               Row(
@@ -219,7 +232,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                     text: 'Cancel',
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                   AsmblButton.primary(
                     text: (widget.existingConfig != null || widget.existingDirectConfig != null) ? 'Update' : 'Add',
                     onPressed: _saveApiConfig,
@@ -252,7 +265,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
             color: theme.colorScheme.onSurface,
           ),
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         TextFormField(
           controller: controller,
           obscureText: obscureText,
@@ -270,7 +283,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              borderSide: BorderSide(color: SemanticColors.primary, width: 2),
+              borderSide: const BorderSide(color: SemanticColors.primary, width: 2),
             ),
             filled: true,
             fillColor: theme.colorScheme.surface,
@@ -300,9 +313,9 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
             color: theme.colorScheme.onSurface,
           ),
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           items: items.map((item) {
             return DropdownMenuItem(
               value: item,
@@ -321,7 +334,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              borderSide: BorderSide(color: SemanticColors.primary, width: 2),
+              borderSide: const BorderSide(color: SemanticColors.primary, width: 2),
             ),
             filled: true,
             fillColor: theme.colorScheme.surface,
@@ -358,7 +371,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
           ),
           IconButton(
             onPressed: _pasteFromClipboard,
-            icon: Icon(Icons.paste),
+            icon: const Icon(Icons.paste),
             tooltip: 'Paste from clipboard',
             style: IconButton.styleFrom(
               overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
@@ -373,9 +386,9 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
     final theme = Theme.of(context);
     
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+      padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: _isTestSuccessful 
@@ -400,13 +413,13 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                   ),
                 )
               else if (_isTestSuccessful)
-                Icon(Icons.check_circle, color: SemanticColors.success, size: 16)
+                const Icon(Icons.check_circle, color: SemanticColors.success, size: 16)
               else if (_testError != null)
-                Icon(Icons.error, color: SemanticColors.error, size: 16)
+                const Icon(Icons.error, color: SemanticColors.error, size: 16)
               else
                 Icon(Icons.info_outline, color: theme.colorScheme.onSurfaceVariant, size: 16),
               
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               
               Text(
                 _isTesting 
@@ -425,7 +438,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                 ),
               ),
               
-              Spacer(),
+              const Spacer(),
               
               AsmblButtonEnhanced.secondary(
                 text: 'Test Connection',
@@ -436,7 +449,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
           ),
           
           if (_testError != null) ...[
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               _testError!,
               style: TextStyles.bodySmall.copyWith(
@@ -499,47 +512,46 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
     }
 
     try {
-      final apiConfigsNotifier = ref.read(apiConfigsProvider.notifier);
-      final currentConfigs = ref.read(apiConfigsProvider);
+      final modelConfigsNotifier = ref.read(modelConfigsProvider.notifier);
+      final currentConfigs = ref.read(modelConfigsProvider);
       
-      // Get existing config from either source
-      final existingConfig = widget.existingConfig ?? 
-          (widget.existingDirectConfig != null 
-              ? ApiConfig(
-                  id: widget.existingDirectConfig!.id,
-                  name: widget.existingDirectConfig!.name,
-                  provider: widget.existingDirectConfig!.provider,
-                  model: widget.existingDirectConfig!.model,
-                  apiKey: widget.existingDirectConfig!.apiKey,
-                  baseUrl: widget.existingDirectConfig!.baseUrl,
-                  isDefault: widget.existingDirectConfig!.isDefault,
-                  enabled: widget.existingDirectConfig!.enabled,
-                ) 
-              : null);
+      // Get existing config ID from any source
+      String? existingId;
+      if (widget.existingModelConfig != null) {
+        existingId = widget.existingModelConfig!.id;
+      } else if (widget.existingConfig != null) {
+        existingId = widget.existingConfig!.id;
+      } else if (widget.existingDirectConfig != null) {
+        existingId = widget.existingDirectConfig!.id;
+      }
       
-      final configId = existingConfig?.id ?? 
+      final configId = existingId ?? 
           '${selectedProvider.toLowerCase()}-${DateTime.now().millisecondsSinceEpoch}';
       
-      final config = ApiConfig(
+      final modelConfig = ModelConfig(
         id: configId,
         name: _nameController.text.trim(),
         provider: selectedProvider,
         model: selectedModel,
+        type: ModelType.api,
         apiKey: _apiKeyController.text.trim(),
         baseUrl: selectedProvider == 'Anthropic' 
           ? 'https://api.anthropic.com'
           : selectedProvider == 'OpenAI'
             ? 'https://api.openai.com'
             : 'https://generativelanguage.googleapis.com',
-        isDefault: existingConfig?.isDefault ?? currentConfigs.isEmpty,
+        isDefault: widget.existingModelConfig?.isDefault ?? 
+                   widget.existingConfig?.isDefault ?? 
+                   currentConfigs.isEmpty,
         enabled: true,
+        status: ModelStatus.ready, // API models are ready once configured
       );
 
-      await apiConfigsNotifier.addConfig(configId, config);
+      await modelConfigsNotifier.addModel(modelConfig);
       
       // Set as default if it's the first one
       if (currentConfigs.isEmpty) {
-        await apiConfigsNotifier.setDefault(configId);
+        await modelConfigsNotifier.setDefault(configId);
       }
 
       if (mounted) {
@@ -548,9 +560,9 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              (widget.existingConfig != null || widget.existingDirectConfig != null)
-                ? 'API configuration updated successfully!'
-                : 'API configuration added successfully!',
+              (widget.existingModelConfig != null || widget.existingConfig != null || widget.existingDirectConfig != null)
+                ? 'AI model updated successfully!'
+                : 'AI model added successfully!',
             ),
             backgroundColor: SemanticColors.success,
           ),
@@ -560,7 +572,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to save API configuration: $e'),
+            content: Text('Failed to save AI model: $e'),
             backgroundColor: SemanticColors.error,
           ),
         );

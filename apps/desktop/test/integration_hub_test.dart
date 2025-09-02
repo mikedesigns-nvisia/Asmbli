@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
-import '../lib/core/services/feature_flag_service.dart';
-import '../lib/features/settings/presentation/widgets/adaptive_integration_router.dart';
+import 'package:agentengine_desktop/core/services/feature_flag_service.dart';
+import 'package:agentengine_desktop/features/settings/presentation/widgets/adaptive_integration_router.dart';
 
 void main() {
   group('Integration Hub Feature Flags', () {
@@ -96,7 +96,7 @@ void main() {
           overrides: [
             featureFlagServiceProvider.overrideWithValue(FeatureFlagService(prefs)),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: AdaptiveIntegrationRouter(),
           ),
         ),
@@ -118,7 +118,7 @@ void main() {
           overrides: [
             featureFlagServiceProvider.overrideWithValue(FeatureFlagService(prefs)),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: AdaptiveIntegrationRouter(initialTab: 'integrations'),
           ),
         ),

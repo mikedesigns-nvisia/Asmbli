@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
@@ -207,11 +206,11 @@ class IntegrationTestingService {
       testType: TestType.connectivity,
       priority: RecommendationPriority.high,
       reason: 'Verify basic connection to ${integration.name}',
-      estimatedDuration: Duration(seconds: 10),
+      estimatedDuration: const Duration(seconds: 10),
     ));
     
     // Authentication tests
-    recommendations.add(TestRecommendation(
+    recommendations.add(const TestRecommendation(
       testType: TestType.authentication,
       priority: RecommendationPriority.high,
       reason: 'Validate authentication credentials',
@@ -222,13 +221,13 @@ class IntegrationTestingService {
     switch (integration.category) {
       case IntegrationCategory.databases:
         recommendations.addAll([
-          TestRecommendation(
+          const TestRecommendation(
             testType: TestType.dataIntegrity,
             priority: RecommendationPriority.medium,
             reason: 'Test database operations and data consistency',
             estimatedDuration: Duration(seconds: 30),
           ),
-          TestRecommendation(
+          const TestRecommendation(
             testType: TestType.performance,
             priority: RecommendationPriority.medium,
             reason: 'Benchmark database query performance',
@@ -239,13 +238,13 @@ class IntegrationTestingService {
         
       case IntegrationCategory.cloudAPIs:
         recommendations.addAll([
-          TestRecommendation(
+          const TestRecommendation(
             testType: TestType.rateLimiting,
             priority: RecommendationPriority.medium,
             reason: 'Test API rate limits and error handling',
             estimatedDuration: Duration(seconds: 45),
           ),
-          TestRecommendation(
+          const TestRecommendation(
             testType: TestType.errorHandling,
             priority: RecommendationPriority.medium,
             reason: 'Validate error response handling',
@@ -256,13 +255,13 @@ class IntegrationTestingService {
         
       case IntegrationCategory.local:
         recommendations.addAll([
-          TestRecommendation(
+          const TestRecommendation(
             testType: TestType.fileSystem,
             priority: RecommendationPriority.medium,
             reason: 'Test file system access and permissions',
             estimatedDuration: Duration(seconds: 15),
           ),
-          TestRecommendation(
+          const TestRecommendation(
             testType: TestType.security,
             priority: RecommendationPriority.high,
             reason: 'Validate local security constraints',
@@ -272,7 +271,7 @@ class IntegrationTestingService {
         break;
         
       default:
-        recommendations.add(TestRecommendation(
+        recommendations.add(const TestRecommendation(
           testType: TestType.functional,
           priority: RecommendationPriority.medium,
           reason: 'Test core functionality',
@@ -744,7 +743,7 @@ class IntegrationTestingService {
     final results = <double>[];
     
     for (int i = 0; i < iterations; i++) {
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       results.add((Random().nextInt(100) + 10).toDouble()); // MB
     }
     

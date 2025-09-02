@@ -2,12 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
-import 'package:agent_engine_core/models/conversation.dart';
-import '../data/mcp_server_configs.dart';
 import 'mcp_server_execution_service.dart';
-import 'mcp_server_configuration_service.dart';
 import 'context_resource_server.dart';
-import 'context_mcp_resource_service.dart';
 
 /// Service that bridges MCP server execution with conversation flow
 /// Handles resource serving, tool execution, and context integration

@@ -842,7 +842,7 @@ class UniversalDetectionService {
         setupCommand: 'Open Figma → Preferences → Enable "Dev Mode MCP Server"',
       );
     } else if (mcpServerRunning && !desktopInstalled) {
-      return DetectedIntegration(
+      return const DetectedIntegration(
         id: 'figma',
         name: 'Figma MCP Server',
         status: DetectionStatus.ready,
@@ -857,7 +857,7 @@ class UniversalDetectionService {
     }
     
     // Fallback: API-based integration
-    return DetectedIntegration(
+    return const DetectedIntegration(
       id: 'figma',
       name: 'Figma (API)',
       status: DetectionStatus.needsAuth,
@@ -870,7 +870,7 @@ class UniversalDetectionService {
     if (Platform.isMacOS) {
       const sketchPath = '/Applications/Sketch.app/Contents/MacOS/Sketch';
       if (await File(sketchPath).exists()) {
-        return DetectedIntegration(
+        return const DetectedIntegration(
           id: 'sketch',
           name: 'Sketch',
           status: DetectionStatus.ready,
@@ -948,7 +948,7 @@ class UniversalDetectionService {
     }
     
     // Notion primarily works via API
-    return DetectedIntegration(
+    return const DetectedIntegration(
       id: 'notion',
       name: 'Notion (API)',
       status: DetectionStatus.needsAuth,
@@ -1053,7 +1053,7 @@ class UniversalDetectionService {
     }
     
     // Return API-based config
-    return DetectedIntegration(
+    return const DetectedIntegration(
       id: 'jira',
       name: 'Jira (API)',
       status: DetectionStatus.needsAuth,
@@ -1064,7 +1064,7 @@ class UniversalDetectionService {
   
   Future<DetectedIntegration?> _detectLinear() async {
     // Linear is primarily API-based
-    return DetectedIntegration(
+    return const DetectedIntegration(
       id: 'linear',
       name: 'Linear',
       status: DetectionStatus.needsAuth,
@@ -1081,7 +1081,7 @@ class UniversalDetectionService {
     // OpenAI
     final openaiKey = Platform.environment['OPENAI_API_KEY'];
     if (openaiKey != null && openaiKey.isNotEmpty) {
-      integrations.add(DetectedIntegration(
+      integrations.add(const DetectedIntegration(
         id: 'openai',
         name: 'OpenAI',
         status: DetectionStatus.ready,
@@ -1093,7 +1093,7 @@ class UniversalDetectionService {
     // Anthropic
     final anthropicKey = Platform.environment['ANTHROPIC_API_KEY'];
     if (anthropicKey != null && anthropicKey.isNotEmpty) {
-      integrations.add(DetectedIntegration(
+      integrations.add(const DetectedIntegration(
         id: 'anthropic',
         name: 'Anthropic',
         status: DetectionStatus.ready,
@@ -1105,7 +1105,7 @@ class UniversalDetectionService {
     // Hugging Face
     final hfToken = Platform.environment['HF_TOKEN'] ?? Platform.environment['HUGGING_FACE_HUB_TOKEN'];
     if (hfToken != null && hfToken.isNotEmpty) {
-      integrations.add(DetectedIntegration(
+      integrations.add(const DetectedIntegration(
         id: 'huggingface',
         name: 'Hugging Face',
         status: DetectionStatus.ready,

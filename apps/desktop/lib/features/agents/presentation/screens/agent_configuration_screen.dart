@@ -4,9 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../context/presentation/widgets/context_hub_widget.dart';
-import '../../../context/presentation/providers/context_provider.dart';
-import '../../../context/data/models/context_document.dart';
 import '../../../../core/services/agent_context_prompt_service.dart';
+import '../../../../core/services/model_config_service.dart';
+import '../../../../providers/agent_provider.dart';
+import 'package:agent_engine_core/models/agent.dart';
 
 class AgentConfigurationScreen extends ConsumerStatefulWidget {
  final String? agentId;
@@ -40,22 +41,8 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  bool showAdvancedPrompt = false;
  
  List<String> selectedMCPServers = [];
+ Agent? currentAgent;
  
- final List<String> availableModels = [
- 'Default API Model',
- 'Claude 3.5 Haiku',
- 'Claude 3 Opus',
- 'Claude 3 Sonnet',
- 'Claude 3 Haiku',
- 'GPT-4o',
- 'GPT-4o Mini',
- 'GPT-4 Turbo',
- 'GPT-4',
- 'GPT-3.5 Turbo',
- 'Gemini 1.5 Pro',
- 'Gemini 1.5 Flash',
- 'Gemini Pro',
- ];
  
  final List<String> categories = [
  'Research',
@@ -126,6 +113,10 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
 
  @override
  Widget build(BuildContext context) {
+   // Get available models from model config service
+   final modelConfigs = ref.watch(allModelConfigsProvider);
+   final availableModels = ['Default Model', ...modelConfigs.values.where((m) => m.isConfigured).map((m) => m.name).toList()];
+
  return Scaffold(
  body: Container(
  decoration: BoxDecoration(
@@ -145,7 +136,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  children: [
  // Compact Header
  Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.headerPadding, 
  vertical: SpacingTokens.elementSpacing,
  ),
@@ -164,21 +155,21 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  icon: Icon(Icons.arrow_back, color: ThemeColors(context).onSurface),
  onPressed: () => context.go(AppRoutes.agents),
  padding: EdgeInsets.zero,
- constraints: BoxConstraints(),
+ constraints: const BoxConstraints(),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Text(
  widget.agentId != null ? 'Edit Agent' : 'Create New Agent',
  style: TextStyles.sectionTitle.copyWith(
  color: ThemeColors(context).onSurface,
  ),
  ),
- Spacer(),
+ const Spacer(),
  AsmblButton.secondary(
  text: 'Cancel',
  onPressed: () => context.go(AppRoutes.agents),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  AsmblButton.primary(
  text: widget.agentId != null ? 'Save' : 'Create',
  onPressed: _saveAgent,
@@ -197,7 +188,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  Expanded(
  flex: 3,
  child: Container(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: SingleChildScrollView(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,12 +198,12 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
- _CompactSectionHeader(
+ const _CompactSectionHeader(
  title: 'Tell us about your agent', 
  icon: Icons.info_outline,
  tooltip: 'Give your agent a name, choose its specialty, and describe what you want it to help you with.',
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Row(
  children: [
  Expanded(
@@ -223,7 +214,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  placeholder: 'e.g., Research Assistant, Code Helper',
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: _DropdownField(
  label: 'What type of work will it do?',
@@ -234,7 +225,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  ),
  ],
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  _FormField(
  label: 'What should your agent be great at?',
  controller: _descriptionController,
@@ -245,31 +236,31 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  ),
  ),
  
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  // Model Configuration - Vertical Layout
  AsmblCard(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
- _CompactSectionHeader(
+ const _CompactSectionHeader(
  title: "Choose your agent's brain", 
  icon: Icons.tune,
  tooltip: 'Select the AI model and configure how creative or focused your agent should be when responding.',
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _DropdownField(
  label: 'Which AI model should power your agent?',
  value: selectedModel,
  items: availableModels,
  onChanged: (value) => setState(() => selectedModel = value!),
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  _CreativitySlider(
  value: temperature,
  onChanged: (value) => setState(() => temperature = value),
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  _ResponseLengthSlider(
  value: maxTokens.toDouble(),
  onChanged: (value) => setState(() => maxTokens = value.toInt()),
@@ -278,7 +269,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  ),
  ),
  
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  // Guided Agent Personality Configuration
  AsmblCard(
@@ -314,17 +305,17 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  right: BorderSide(color: ThemeColors(context).border, width: 1),
  ),
  ),
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  // Superpowers Section
- _CompactSectionHeader(
+ const _CompactSectionHeader(
  title: 'Add Actions', 
  icon: Icons.auto_awesome,
  tooltip: 'Enable built-in capabilities like memory, web search, and code execution to give your agent superpowers.',
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Column(
  children: [
  _CapabilityToggle(
@@ -333,14 +324,14 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  value: enableMemory,
  onChanged: (value) => setState(() => enableMemory = value),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  _CapabilityToggle(
  label: 'Search the web',
  icon: Icons.search,
  value: enableWebSearch,
  onChanged: (value) => setState(() => enableWebSearch = value),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  _CapabilityToggle(
  label: 'Run code safely',
  icon: Icons.terminal,
@@ -350,15 +341,15 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  ],
  ),
  
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  
  // Tools Section
- _CompactSectionHeader(
+ const _CompactSectionHeader(
  title: 'Connect helpful tools', 
  icon: Icons.build_circle_outlined,
  tooltip: 'Connect external tools and services (MCP servers) to extend your agent with specialized functions like file access, databases, and APIs.',
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  
  // Setup Guide Button
  if (selectedMCPServers.isEmpty) 
@@ -367,7 +358,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  )
  else
  Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.sm,
  vertical: SpacingTokens.xs,
  ),
@@ -383,12 +374,12 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  ),
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  Expanded(
  child: ListView.separated(
  itemCount: availableMCPServers.length,
- separatorBuilder: (_, __) => SizedBox(height: 2),
+ separatorBuilder: (_, __) => const SizedBox(height: 2),
  itemBuilder: (context, index) {
  final server = availableMCPServers[index];
  final isSelected = selectedMCPServers.contains(server.name);
@@ -419,8 +410,8 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  decoration: BoxDecoration(
  color: ThemeColors(context).surface.withValues(alpha: 0.3),
  ),
- padding: EdgeInsets.all(SpacingTokens.lg),
- child: Column(
+ padding: const EdgeInsets.all(SpacingTokens.lg),
+ child: const Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  _CompactSectionHeader(
@@ -529,8 +520,85 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  }
  
  // Save agent configuration
- // For now, just navigate back
- context.go(AppRoutes.agents);
+ try {
+   final agentNotifier = ref.read(agentNotifierProvider.notifier);
+   
+   if (currentAgent != null) {
+     // Update existing agent
+     final updatedAgent = Agent(
+       id: currentAgent!.id,
+       name: _nameController.text,
+       description: _descriptionController.text,
+       capabilities: _getCapabilitiesFromCategory(selectedCategory),
+       configuration: {
+         'systemPrompt': _systemPromptController.text,
+         'temperature': temperature,
+         'maxTokens': maxTokens,
+         'category': selectedCategory,
+         'selectedModel': selectedModel,
+         'mcpServers': selectedMCPServers,
+         'enableMemory': enableMemory,
+         'enableWebSearch': enableWebSearch,
+         'enableCodeExecution': enableCodeExecution,
+       },
+       status: currentAgent!.status,
+     );
+     
+     await agentNotifier.updateAgent(updatedAgent);
+   } else {
+     // Create new agent
+     final newAgent = Agent(
+       id: 'agent_${DateTime.now().millisecondsSinceEpoch}',
+       name: _nameController.text,
+       description: _descriptionController.text,
+       capabilities: _getCapabilitiesFromCategory(selectedCategory),
+       configuration: {
+         'systemPrompt': _systemPromptController.text,
+         'temperature': temperature,
+         'maxTokens': maxTokens,
+         'category': selectedCategory,
+         'selectedModel': selectedModel,
+         'mcpServers': selectedMCPServers,
+         'enableMemory': enableMemory,
+         'enableWebSearch': enableWebSearch,
+         'enableCodeExecution': enableCodeExecution,
+       },
+     );
+     
+     await agentNotifier.createAgent(newAgent);
+   }
+   
+   if (mounted) {
+     context.go(AppRoutes.agents);
+   }
+ } catch (e) {
+   print('Error saving agent: $e');
+   // Show error to user
+   if (mounted) {
+     ScaffoldMessenger.of(context).showSnackBar(
+       SnackBar(content: Text('Error saving agent: $e')),
+     );
+   }
+ }
+}
+
+List<String> _getCapabilitiesFromCategory(String category) {
+ switch (category) {
+   case 'Research':
+     return ['research', 'analysis', 'citation', 'fact-checking'];
+   case 'Development':
+     return ['coding', 'debugging', 'code-review', 'testing'];
+   case 'Writing':
+     return ['content-creation', 'editing', 'seo', 'copywriting'];
+   case 'Data Analysis':
+     return ['data-analysis', 'visualization', 'statistics', 'reporting'];
+   case 'Customer Support':
+     return ['customer-service', 'troubleshooting', 'communication', 'ticket-management'];
+   case 'Marketing':
+     return ['marketing', 'campaigns', 'analytics', 'strategy'];
+   default:
+     return ['general-assistance', 'problem-solving', 'communication'];
+ }
  }
 
  void _showMCPSetupDialog() {
@@ -585,7 +653,7 @@ class _CompactSectionHeader extends StatelessWidget {
  size: 18,
  color: ThemeColors(context).primary,
  ),
- SizedBox(width: SpacingTokens.xs),
+ const SizedBox(width: SpacingTokens.xs),
  Expanded(
  child: Text(
  title,
@@ -597,7 +665,7 @@ class _CompactSectionHeader extends StatelessWidget {
  ),
  ),
  if (tooltip != null) ...[
- SizedBox(width: SpacingTokens.xs),
+ const SizedBox(width: SpacingTokens.xs),
  Tooltip(
  message: tooltip!,
  child: Icon(
@@ -626,8 +694,8 @@ class _CompactSliderField extends StatelessWidget {
  required this.value,
  required this.min,
  required this.max,
- this.divisions,
  required this.onChanged,
+ this.divisions,
  this.displayValue,
  });
 
@@ -647,7 +715,7 @@ class _CompactSliderField extends StatelessWidget {
  ),
  ),
  Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.xs,
  vertical: 2,
  ),
@@ -665,7 +733,7 @@ class _CompactSliderField extends StatelessWidget {
  ),
  ],
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  SizedBox(
  height: 20,
  child: Slider(
@@ -701,7 +769,7 @@ class _CapabilityToggle extends StatelessWidget {
  return GestureDetector(
  onTap: () => onChanged(!value),
  child: Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.xs,
  ),
@@ -726,7 +794,7 @@ class _CapabilityToggle extends StatelessWidget {
  ? ThemeColors(context).primary 
  : ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: 6),
+ const SizedBox(width: 6),
  Text(
  label,
  style: TextStyles.bodySmall.copyWith(
@@ -759,7 +827,7 @@ class _CompactMCPServerItem extends StatelessWidget {
  return GestureDetector(
  onTap: onToggle,
  child: Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.xs,
  ),
@@ -789,7 +857,7 @@ class _CompactMCPServerItem extends StatelessWidget {
  shape: BoxShape.circle,
  ),
  ),
- SizedBox(width: SpacingTokens.xs),
+ const SizedBox(width: SpacingTokens.xs),
  Icon(
  server.icon,
  size: 16,
@@ -797,7 +865,7 @@ class _CompactMCPServerItem extends StatelessWidget {
  ? ThemeColors(context).primary 
  : ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: SpacingTokens.xs),
+ const SizedBox(width: SpacingTokens.xs),
  Expanded(
  child: Text(
  server.name,
@@ -815,7 +883,7 @@ class _CompactMCPServerItem extends StatelessWidget {
  ),
  // Show description when selected
  if (isSelected) ...[
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Padding(
  padding: const EdgeInsets.only(left: 20), // Align with text
  child: Text(
@@ -862,7 +930,7 @@ class _FormField extends StatelessWidget {
  fontWeight: FontWeight.w500,
  ),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  ],
  TextField(
  controller: controller,
@@ -896,7 +964,7 @@ class _FormField extends StatelessWidget {
  width: 2,
  ),
  ),
- contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  ),
  ),
  ],
@@ -929,9 +997,9 @@ class _DropdownField extends StatelessWidget {
  fontWeight: FontWeight.w500,
  ),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Container(
- padding: EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  color: ThemeColors(context).surface,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -943,7 +1011,7 @@ class _DropdownField extends StatelessWidget {
  value: value,
  onChanged: onChanged,
  isExpanded: true,
- underline: SizedBox(),
+ underline: const SizedBox(),
  style: TextStyles.bodyMedium.copyWith(
  color: ThemeColors(context).onSurface,
  ),
@@ -974,8 +1042,8 @@ class _SliderField extends StatelessWidget {
  required this.value,
  required this.min,
  required this.max,
- this.divisions,
  required this.onChanged,
+ this.divisions,
  this.displayValue,
  });
 
@@ -995,7 +1063,7 @@ class _SliderField extends StatelessWidget {
  ),
  ),
  Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.sm,
  vertical: SpacingTokens.xs,
  ),
@@ -1043,7 +1111,7 @@ class _SwitchField extends StatelessWidget {
  @override
  Widget build(BuildContext context) {
  return Padding(
- padding: EdgeInsets.symmetric(vertical: SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.symmetric(vertical: SpacingTokens.componentSpacing),
  child: Row(
  children: [
  Expanded(
@@ -1069,7 +1137,7 @@ class _SwitchField extends StatelessWidget {
  Switch(
  value: value,
  onChanged: onChanged,
- activeColor: ThemeColors(context).primary,
+ activeThumbColor: ThemeColors(context).primary,
  ),
  ],
  ),
@@ -1116,7 +1184,7 @@ class _GuidedPersonalityConfig extends StatelessWidget {
  Row(
  mainAxisAlignment: MainAxisAlignment.spaceBetween,
  children: [
- Expanded(
+ const Expanded(
  child: _CompactSectionHeader(
  title: 'Teach your agent how to behave', 
  icon: Icons.psychology,
@@ -1138,14 +1206,14 @@ class _GuidedPersonalityConfig extends StatelessWidget {
  ),
  ),
  style: TextButton.styleFrom(
- padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+ padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  minimumSize: Size.zero,
  ),
  ),
  ],
  ),
  
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  if (!showAdvancedPrompt) ...[
  // Guided Configuration
@@ -1162,7 +1230,7 @@ class _GuidedPersonalityConfig extends StatelessWidget {
  onChanged: (value) => onPersonalityChanged(value!),
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: _DropdownField(
  label: 'How should it communicate?',
@@ -1173,7 +1241,7 @@ class _GuidedPersonalityConfig extends StatelessWidget {
  ),
  ],
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  _DropdownField(
  label: 'What should it be an expert in?',
  value: selectedExpertise,
@@ -1181,11 +1249,11 @@ class _GuidedPersonalityConfig extends StatelessWidget {
  onChanged: (value) => onExpertiseChanged(value!),
  ),
  
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Preview hint
  Container(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  color: colors.primary.withValues(alpha: 0.05),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1198,7 +1266,7 @@ class _GuidedPersonalityConfig extends StatelessWidget {
  size: 16,
  color: colors.primary.withValues(alpha: 0.7),
  ),
- SizedBox(width: SpacingTokens.xs),
+ const SizedBox(width: SpacingTokens.xs),
  Expanded(
  child: Text(
  "We'll create the perfect instructions for your agent based on these choices",
@@ -1224,7 +1292,7 @@ class _GuidedPersonalityConfig extends StatelessWidget {
  fontWeight: FontWeight.w500,
  ),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  _FormField(
  label: '',
  controller: systemPromptController,
@@ -1272,7 +1340,7 @@ class _CreativitySlider extends StatelessWidget {
  ),
  ),
  Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.xs,
  vertical: 2,
  ),
@@ -1290,7 +1358,7 @@ class _CreativitySlider extends StatelessWidget {
  ),
  ],
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Column(
  children: [
  SizedBox(
@@ -1363,7 +1431,7 @@ class _ResponseLengthSlider extends StatelessWidget {
  ),
  ),
  Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.xs,
  vertical: 2,
  ),
@@ -1381,7 +1449,7 @@ class _ResponseLengthSlider extends StatelessWidget {
  ),
  ],
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Column(
  children: [
  SizedBox(
@@ -1506,7 +1574,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  isInteractive: false,
  child: Container(
  width: 700,
- constraints: BoxConstraints(maxHeight: 600),
+ constraints: const BoxConstraints(maxHeight: 600),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -1518,7 +1586,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  size: 24,
  color: colors.primary,
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -1540,7 +1608,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  ),
  IconButton(
  onPressed: () => Navigator.of(context).pop(),
- icon: Icon(Icons.close),
+ icon: const Icon(Icons.close),
  style: IconButton.styleFrom(
  foregroundColor: colors.onSurfaceVariant,
  ),
@@ -1548,11 +1616,11 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  ],
  ),
  
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  // Platform Selection
  Container(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  color: colors.surfaceVariant.withValues(alpha: 0.3),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1567,7 +1635,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Row(
  children: _platforms.entries.map((entry) {
  final platform = entry.value;
@@ -1575,11 +1643,11 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  
  return Expanded(
  child: Padding(
- padding: EdgeInsets.only(right: SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.only(right: SpacingTokens.componentSpacing),
  child: GestureDetector(
  onTap: () => setState(() => _selectedPlatform = entry.key),
  child: Container(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  color: isSelected 
  ? colors.primary.withValues(alpha: 0.1)
@@ -1594,9 +1662,9 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  children: [
  Text(
  platform['icon']!,
- style: TextStyle(fontSize: 24),
+ style: const TextStyle(fontSize: 24),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Text(
  platform['name']!,
  style: TextStyles.bodySmall.copyWith(
@@ -1604,7 +1672,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  color: isSelected ? colors.primary : colors.onSurface,
  ),
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Text(
  platform['difficulty']!,
  style: TextStyles.caption.copyWith(
@@ -1623,7 +1691,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  ),
  ),
  
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  // Setup Instructions
  Expanded(
@@ -1632,7 +1700,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  ),
  ),
  
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  // Footer
  Row(
@@ -1643,7 +1711,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  onPressed: () => Navigator.of(context).pop(),
  size: AsmblButtonSize.medium,
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  AsmblButtonEnhanced.accent(
  text: 'Open Documentation',
  icon: Icons.open_in_new,
@@ -1692,7 +1760,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  '• Verify installation: Open terminal and run "python --version"'
  ],
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _buildStepCard(
  colors,
  '2',
@@ -1704,7 +1772,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  '• Restart your terminal after installation'
  ],
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _buildStepCard(
  colors,
  '3',
@@ -1717,7 +1785,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  '• Run: uv add "mcp[cli]" httpx'
  ],
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _buildStepCard(
  colors,
  '4',
@@ -1749,7 +1817,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  '• Check version in Help → About'
  ],
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _buildStepCard(
  colors,
  '2',
@@ -1762,7 +1830,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  '• Install desired MCP servers from the marketplace'
  ],
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _buildStepCard(
  colors,
  '3',
@@ -1784,7 +1852,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Container(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  color: colors.primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1795,7 +1863,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  Row(
  children: [
  Icon(Icons.warning_amber, color: colors.primary, size: 20),
- SizedBox(width: SpacingTokens.xs),
+ const SizedBox(width: SpacingTokens.xs),
  Text(
  'Advanced Setup Required',
  style: TextStyles.bodyMedium.copyWith(
@@ -1805,7 +1873,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  ),
  ],
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Text(
  'Custom integration requires programming knowledge and API configuration.',
  style: TextStyles.bodySmall.copyWith(
@@ -1815,7 +1883,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  ],
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _buildStepCard(
  colors,
  '1',
@@ -1827,7 +1895,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  '• Handle authentication and communication protocols',
  ],
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _buildStepCard(
  colors,
  '2',
@@ -1839,7 +1907,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  '• Set up authentication and security measures',
  ],
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _buildStepCard(
  colors,
  '3',
@@ -1857,7 +1925,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
 
  Widget _buildStepCard(ThemeColors colors, String stepNumber, String title, String description, List<String> instructions) {
  return Container(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  color: colors.surface,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1885,7 +1953,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  ),
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -1908,7 +1976,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  ),
  ],
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  ...instructions.map((instruction) => Padding(
  padding: const EdgeInsets.only(left: 40, bottom: 4),
  child: Text(

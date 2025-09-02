@@ -367,13 +367,13 @@ class IntegrationInstallationService {
         
         case IntegrationFieldType.directory:
           if (!await Directory(value.toString()).exists()) {
-            errors.add('${field.label} directory does not exist: ${value}');
+            errors.add('${field.label} directory does not exist: $value');
           }
           break;
         
         case IntegrationFieldType.file:
           if (!await File(value.toString()).exists()) {
-            errors.add('${field.label} file does not exist: ${value}');
+            errors.add('${field.label} file does not exist: $value');
           }
           break;
         

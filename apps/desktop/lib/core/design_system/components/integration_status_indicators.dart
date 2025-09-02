@@ -14,7 +14,7 @@ class IntegrationStatusIndicators {
 
     if (compact) {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
           color: colors.background,
           borderRadius: BorderRadius.circular(4),
@@ -23,7 +23,7 @@ class IntegrationStatusIndicators {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 10, color: colors.foreground),
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
             Text(
               text,
               style: TextStyle(
@@ -38,7 +38,7 @@ class IntegrationStatusIndicators {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: SpacingTokens.xs, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.xs, vertical: 4),
       decoration: BoxDecoration(
         color: colors.background,
         borderRadius: BorderRadius.circular(6),
@@ -48,7 +48,7 @@ class IntegrationStatusIndicators {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 14, color: colors.foreground),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Text(
             text,
             style: TextStyle(
@@ -65,7 +65,7 @@ class IntegrationStatusIndicators {
   /// Availability indicator for integrations not yet implemented
   static Widget availabilityIndicator(IntegrationDefinition definition) {
     if (definition.isAvailable) {
-      return Row(
+      return const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
@@ -86,7 +86,7 @@ class IntegrationStatusIndicators {
       );
     }
 
-    return Row(
+    return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
@@ -113,7 +113,7 @@ class IntegrationStatusIndicators {
     final icon = _getDifficultyIcon(difficulty);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: colors.background,
         borderRadius: BorderRadius.circular(4),
@@ -123,7 +123,7 @@ class IntegrationStatusIndicators {
         children: [
           if (showIcon) ...[
             Icon(icon, size: 10, color: colors.foreground),
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
           ],
           Text(
             difficulty,
@@ -140,12 +140,12 @@ class IntegrationStatusIndicators {
 
   /// Prerequisites indicator showing setup requirements
   static Widget prerequisitesIndicator(List<String> prerequisites) {
-    if (prerequisites.isEmpty) return SizedBox.shrink();
+    if (prerequisites.isEmpty) return const SizedBox.shrink();
 
     return Tooltip(
       message: 'Prerequisites:\n${prerequisites.map((p) => '• $p').join('\n')}',
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
           color: SemanticColors.warning.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(4),
@@ -157,15 +157,15 @@ class IntegrationStatusIndicators {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            const Icon(
               Icons.info_outline,
               size: 10,
               color: SemanticColors.warning,
             ),
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
             Text(
               '${prerequisites.length} req',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 9,
                 fontWeight: FontWeight.w500,
                 color: SemanticColors.warning,
@@ -179,7 +179,7 @@ class IntegrationStatusIndicators {
 
   /// Capabilities tags showing what the integration can do
   static Widget capabilitiesPreview(List<String> capabilities, {int maxShow = 3}) {
-    if (capabilities.isEmpty) return SizedBox.shrink();
+    if (capabilities.isEmpty) return const SizedBox.shrink();
 
     final displayCapabilities = capabilities.take(maxShow).toList();
     final hasMore = capabilities.length > maxShow;
@@ -190,14 +190,14 @@ class IntegrationStatusIndicators {
       children: [
         ...displayCapabilities.map((capability) => 
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(3),
             ),
             child: Text(
               capability,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 8,
                 color: SemanticColors.primary,
                 fontWeight: FontWeight.w500,
@@ -207,14 +207,14 @@ class IntegrationStatusIndicators {
         ),
         if (hasMore)
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             decoration: BoxDecoration(
               color: SemanticColors.onSurfaceVariant.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(3),
             ),
             child: Text(
               '+${capabilities.length - maxShow}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 8,
                 color: SemanticColors.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
@@ -254,13 +254,13 @@ class IntegrationStatusIndicators {
     return Row(
       children: [
         statusBadge(status, compact: true),
-        SizedBox(width: SpacingTokens.xs),
+        const SizedBox(width: SpacingTokens.xs),
         availabilityIndicator(status.definition),
-        SizedBox(width: SpacingTokens.xs),
+        const SizedBox(width: SpacingTokens.xs),
         difficultyBadge(status.definition.difficulty, showIcon: false),
-        SizedBox(width: SpacingTokens.xs),
+        const SizedBox(width: SpacingTokens.xs),
         prerequisitesIndicator(status.definition.prerequisites),
-        Spacer(),
+        const Spacer(),
         if (status.isConfigured && status.mcpConfig != null)
           healthIndicator(IntegrationHealth(
             status: IntegrationHealthStatus.healthy,

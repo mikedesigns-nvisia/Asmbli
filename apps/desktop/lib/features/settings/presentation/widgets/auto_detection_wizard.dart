@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/universal_detection_service.dart';
-import '../../../../core/services/dev_tools_detection_service.dart';
-import '../../../../core/services/browser_detection_service.dart';
 
 // Import the IntegrationStatus and related types
 typedef IntegrationDetection = Map<String, dynamic>;
@@ -51,18 +49,18 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
 
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.headerPadding),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(SpacingTokens.headerPadding),
+      decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: SemanticColors.border)),
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.auto_fix_high,
             color: SemanticColors.primary,
             size: 24,
           ),
-          SizedBox(width: SpacingTokens.md),
+          const SizedBox(width: SpacingTokens.md),
           Text(
             widget.specificIntegration != null
                 ? 'Auto-Detect ${widget.specificIntegration}'
@@ -72,7 +70,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
           const Spacer(),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.close, color: SemanticColors.onSurfaceVariant),
+            icon: const Icon(Icons.close, color: SemanticColors.onSurfaceVariant),
           ),
         ],
       ),
@@ -91,29 +89,29 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
 
   Widget _buildReadyStep() {
     return Padding(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(SpacingTokens.xxl),
+            padding: const EdgeInsets.all(SpacingTokens.xxl),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.search,
               size: 64,
               color: SemanticColors.primary,
             ),
           ),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           Text(
             'Automatic Integration Detection',
             style: TextStyles.headlineMedium,
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           Text(
             widget.specificIntegration != null
                 ? 'We\'ll automatically detect and configure ${widget.specificIntegration} on your system.'
@@ -123,7 +121,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           _buildDetectionPreview(),
         ],
       ),
@@ -146,7 +144,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
           ];
 
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: SemanticColors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -159,12 +157,12 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
             'Detection Categories:',
             style: TextStyles.labelMedium,
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Wrap(
             spacing: SpacingTokens.sm,
             runSpacing: SpacingTokens.sm,
             children: categories.map((category) => Container(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: SpacingTokens.md,
                 vertical: SpacingTokens.xs,
               ),
@@ -187,11 +185,11 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
 
   Widget _buildDetectingStep() {
     return Padding(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
+          const SizedBox(
             width: 80,
             height: 80,
             child: CircularProgressIndicator(
@@ -199,20 +197,20 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
               valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
             ),
           ),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           Text(
             'Scanning System...',
             style: TextStyles.headlineMedium,
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           Text(
             'Detecting installed tools and services',
             style: TextStyles.bodyMedium.copyWith(
               color: SemanticColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: SpacingTokens.xxl),
-          LinearProgressIndicator(
+          const SizedBox(height: SpacingTokens.xxl),
+          const LinearProgressIndicator(
             backgroundColor: SemanticColors.border,
             valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
           ),
@@ -226,13 +224,13 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
 
     // Simplified for demo - extract from detection result
     final foundIntegrations = <IntegrationInstance>[
-      IntegrationInstance(
+      const IntegrationInstance(
         name: 'VS Code',
         status: IntegrationStatus.ready,
         path: 'C:\\Users\\Mike\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe',
         confidence: 95,
       ),
-      IntegrationInstance(
+      const IntegrationInstance(
         name: 'Git',
         status: IntegrationStatus.ready,
         path: 'git',
@@ -240,7 +238,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
       ),
     ];
     final needsSetupIntegrations = <IntegrationInstance>[
-      IntegrationInstance(
+      const IntegrationInstance(
         name: 'GitHub CLI',
         status: IntegrationStatus.needsAuth,
         confidence: 70,
@@ -248,13 +246,13 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
     ];
 
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           // Summary stats
           Container(
-            margin: EdgeInsets.only(bottom: SpacingTokens.lg),
-            padding: EdgeInsets.all(16),
+            margin: const EdgeInsets.only(bottom: SpacingTokens.lg),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -276,7 +274,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
                 children: [
                   if (foundIntegrations.isNotEmpty) ...[
                     _buildResultSection('Ready to Use', foundIntegrations, Icons.check_circle, Colors.green),
-                    SizedBox(height: SpacingTokens.lg),
+                    const SizedBox(height: SpacingTokens.lg),
                   ],
                   if (needsSetupIntegrations.isNotEmpty) ...[
                     _buildResultSection('Needs Configuration', needsSetupIntegrations, Icons.settings, Colors.orange),
@@ -294,7 +292,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
     return Column(
       children: [
         Icon(icon, color: SemanticColors.primary, size: 28),
-        SizedBox(height: SpacingTokens.xs),
+        const SizedBox(height: SpacingTokens.xs),
         Text(
           value.toString(),
           style: TextStyles.headlineSmall.copyWith(
@@ -318,20 +316,20 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
         Row(
           children: [
             Icon(icon, color: color, size: 20),
-            SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: SpacingTokens.sm),
             Text(title, style: TextStyles.titleMedium),
           ],
         ),
-        SizedBox(height: SpacingTokens.md),
-        ...integrations.map((integration) => _buildIntegrationCard(integration)).toList(),
+        const SizedBox(height: SpacingTokens.md),
+        ...integrations.map((integration) => _buildIntegrationCard(integration)),
       ],
     );
   }
 
   Widget _buildIntegrationCard(IntegrationDetection integration) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.md),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: SemanticColors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -347,7 +345,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
               borderRadius: BorderRadiusTokens.sm,
             ),
           ),
-          SizedBox(width: SpacingTokens.md),
+          const SizedBox(width: SpacingTokens.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,8 +392,8 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
 
   Widget _buildFooter() {
     return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: SemanticColors.border)),
       ),
       child: Row(
@@ -406,7 +404,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
               text: 'Cancel',
               onPressed: () => Navigator.of(context).pop(),
             ),
-            SizedBox(width: SpacingTokens.md),
+            const SizedBox(width: SpacingTokens.md),
             AsmblButton.primary(
               text: 'Start Detection',
               onPressed: _startDetection,
@@ -419,7 +417,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
                 _detectionResult = null;
               }),
             ),
-            SizedBox(width: SpacingTokens.md),
+            const SizedBox(width: SpacingTokens.md),
             AsmblButton.primary(
               text: 'Complete',
               onPressed: () {

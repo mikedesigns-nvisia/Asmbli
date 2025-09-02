@@ -15,8 +15,8 @@ class CollapsibleStatusPanel extends StatelessWidget {
     final colors = ThemeColors(context);
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: SpacingTokens.pageHorizontal),
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: colors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -25,7 +25,7 @@ class CollapsibleStatusPanel extends StatelessWidget {
           BoxShadow(
             color: colors.onSurface.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -42,7 +42,7 @@ class CollapsibleStatusPanel extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               IconButton(
                 onPressed: onCollapse,
                 icon: Icon(Icons.close, color: colors.onSurfaceVariant),
@@ -51,7 +51,7 @@ class CollapsibleStatusPanel extends StatelessWidget {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // Status Summary
           Row(
@@ -64,7 +64,7 @@ class CollapsibleStatusPanel extends StatelessWidget {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // Quick Actions
           Row(
@@ -74,7 +74,7 @@ class CollapsibleStatusPanel extends StatelessWidget {
                 icon: Icons.visibility,
                 onPressed: _viewDetails,
               ),
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               AsmblButton.secondary(
                 text: 'Fix Issues',
                 icon: Icons.build,
@@ -93,7 +93,7 @@ class CollapsibleStatusPanel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: color, size: 20),
-          SizedBox(width: SpacingTokens.iconSpacing),
+          const SizedBox(width: SpacingTokens.iconSpacing),
           Flexible(
             child: Text(
               label,
@@ -112,7 +112,7 @@ class CollapsibleStatusPanel extends StatelessWidget {
     return Container(
       width: 1,
       height: 24,
-      margin: EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
+      margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
       color: colors.border,
     );
   }

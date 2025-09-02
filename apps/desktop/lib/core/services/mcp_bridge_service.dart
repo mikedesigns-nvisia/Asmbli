@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:agent_engine_core/models/conversation.dart';
 import 'mcp_settings_service.dart';
 import 'integration_health_monitoring_service.dart';
 
@@ -52,7 +49,7 @@ class MCPBridgeService {
     Map<String, dynamic>? conversationMetadata,
   }) async {
     if (!_isInitialized) {
-      throw MCPBridgeException('MCP bridge not initialized');
+      throw const MCPBridgeException('MCP bridge not initialized');
     }
 
     try {
@@ -86,8 +83,10 @@ class MCPBridgeService {
         }
       }
       
+      print('DEBUG: Raw MCP response: $response');
       return MCPResponse.fromJson(response);
     } catch (e) {
+      print('DEBUG: MCP Bridge error: $e');
       throw MCPBridgeException('Failed to process message: $e');
     }
   }
@@ -100,7 +99,7 @@ class MCPBridgeService {
     Map<String, dynamic>? conversationMetadata,
   }) async* {
     if (!_isInitialized) {
-      throw MCPBridgeException('MCP bridge not initialized');
+      throw const MCPBridgeException('MCP bridge not initialized');
     }
 
     final streamId = 'stream_${DateTime.now().millisecondsSinceEpoch}';
@@ -142,7 +141,7 @@ class MCPBridgeService {
   /// Reinitialize a specific MCP server connection
   Future<void> reinitializeServer(String serverId) async {
     if (!_isInitialized) {
-      throw MCPBridgeException('MCP bridge not initialized');
+      throw const MCPBridgeException('MCP bridge not initialized');
     }
 
     try {
@@ -165,7 +164,7 @@ class MCPBridgeService {
   /// Test connection to MCP server
   Future<MCPServerConnectionResult> testServerConnection(String serverId) async {
     if (!_isInitialized) {
-      throw MCPBridgeException('MCP bridge not initialized');
+      throw const MCPBridgeException('MCP bridge not initialized');
     }
 
     try {
@@ -211,7 +210,7 @@ class MCPBridgeService {
     required List<ContextDocument> documents,
   }) async {
     if (!_isInitialized) {
-      throw MCPBridgeException('MCP bridge not initialized');
+      throw const MCPBridgeException('MCP bridge not initialized');
     }
 
     try {
@@ -231,7 +230,7 @@ class MCPBridgeService {
     List<String> serverIds,
   ) async {
     if (!_isInitialized) {
-      throw MCPBridgeException('MCP bridge not initialized');
+      throw const MCPBridgeException('MCP bridge not initialized');
     }
 
     try {
@@ -262,7 +261,7 @@ class MCPBridgeService {
     
     for (final completer in _pendingRequests.values) {
       if (!completer.isCompleted) {
-        completer.completeError(MCPBridgeException('Service disposed'));
+        completer.completeError(const MCPBridgeException('Service disposed'));
       }
     }
     _pendingRequests.clear();
@@ -313,10 +312,11 @@ class MCPBridgeService {
   }
 
   void _handleEvent(Map<String, dynamic> event) {
-    final type = event['type'] as String?;
-    final data = event['data'] as Map<String, dynamic>?;
+    try {
+      final type = event['type'] as String?;
+      final data = event['data'] as Map<String, dynamic>?;
 
-    if (type == null || data == null) return;
+      if (type == null || data == null) return;
 
     switch (type) {
       case 'messageResponse':
@@ -355,6 +355,9 @@ class MCPBridgeService {
 
       default:
         print('Unknown MCP bridge event type: $type');
+    }
+    } catch (e) {
+      print('MCP response error: $e');
     }
   }
 }

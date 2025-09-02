@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/services.dart';
 import '../design_system.dart';
 import 'mcp_field_types.dart';
 
@@ -37,9 +35,9 @@ class OAuthField extends MCPField {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(context),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: _getStatusColor(context).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
@@ -53,14 +51,14 @@ class OAuthField extends MCPField {
               Row(
                 children: [
                   _buildProviderIcon(),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           provider.displayName,
-                          style: TextStyle(
+                          style: const TextStyle(
                                                         fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
@@ -80,18 +78,18 @@ class OAuthField extends MCPField {
                 ],
               ),
               if (status == OAuthStatus.authenticated && value != null) ...[
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 _buildAccountInfo(context),
               ],
               if (showScopeSelector) ...[
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 _buildScopeSelector(context),
               ],
             ],
           ),
         ),
         if (description != null) ...[
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             description!,
             style: TextStyle(
@@ -116,8 +114,8 @@ class OAuthField extends MCPField {
           ),
         ),
         if (this.required) ...[
-          SizedBox(width: 4),
-          Text(
+          const SizedBox(width: 4),
+          const Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
@@ -155,7 +153,7 @@ class OAuthField extends MCPField {
           onPressed: onAuthenticate,
         );
       case OAuthStatus.authenticating:
-        return AsmblButton.secondary(
+        return const AsmblButton.secondary(
           text: 'Connecting...',
           icon: Icons.hourglass_empty,
           onPressed: null,
@@ -177,7 +175,7 @@ class OAuthField extends MCPField {
 
   Widget _buildAccountInfo(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(6),
@@ -192,21 +190,21 @@ class OAuthField extends MCPField {
             backgroundColor: provider.brandColor,
             child: Text(
               _getAccountInitials(),
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   _getAccountName(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 13,
                   ),
@@ -224,7 +222,7 @@ class OAuthField extends MCPField {
           if (onRevoke != null)
             TextButton(
               onPressed: onRevoke,
-              child: Text(
+              child: const Text(
                 'Disconnect',
                 style: TextStyle(
                   fontSize: 11,
@@ -241,14 +239,14 @@ class OAuthField extends MCPField {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Permissions',
           style: TextStyle(
                         fontWeight: FontWeight.w500,
             fontSize: 13,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -258,7 +256,7 @@ class OAuthField extends MCPField {
               selected: isSelected,
               label: Text(
                 scope.displayName,
-                style: TextStyle(fontSize: 11),
+                style: const TextStyle(fontSize: 11),
               ),
               onSelected: (selected) {
                 // Handle scope selection
@@ -358,7 +356,7 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
           ),
         ),
         if (widget.description != null) ...[
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             widget.description!,
             style: TextStyle(
@@ -367,11 +365,11 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
             ),
           ),
         ],
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -381,14 +379,14 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
             children: widget.provider.availableScopes.map((scope) {
               final isSelected = _selectedScopes.contains(scope.id);
               return Container(
-                margin: EdgeInsets.only(bottom: 8),
+                margin: const EdgeInsets.only(bottom: 8),
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(6),
                     onTap: () => _toggleScope(scope.id),
                     child: Container(
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: isSelected 
                           ? widget.provider.brandColor.withValues(alpha: 0.1)
@@ -408,7 +406,7 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
                               ? widget.provider.brandColor 
                               : Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,14 +432,14 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
                             ),
                           ),
                           if (scope.isRequired) ...[
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: SemanticColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Required',
                                 style: TextStyle(
                                   fontSize: 9,

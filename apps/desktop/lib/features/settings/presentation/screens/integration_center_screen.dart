@@ -62,7 +62,7 @@ class _IntegrationCenterScreenState extends ConsumerState<IntegrationCenterScree
         child: Column(
           children: [
             // App Navigation
-            AppNavigationBar(currentRoute: AppRoutes.integrationHub),
+            const AppNavigationBar(currentRoute: AppRoutes.integrationHub),
             
             // Header - Clean and minimal
             _buildHeader(colors),
@@ -89,7 +89,7 @@ class _IntegrationCenterScreenState extends ConsumerState<IntegrationCenterScree
 
   Widget _buildHeader(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       decoration: BoxDecoration(
         color: colors.surface.withValues(alpha: 0.8),
         border: Border(
@@ -109,7 +109,7 @@ class _IntegrationCenterScreenState extends ConsumerState<IntegrationCenterScree
                       'Integration Center',
                       style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
                     ),
-                    SizedBox(height: SpacingTokens.xs_precise),
+                    const SizedBox(height: SpacingTokens.xs_precise),
                     Text(
                       'Configure and discover integrations',
                       style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
@@ -126,7 +126,7 @@ class _IntegrationCenterScreenState extends ConsumerState<IntegrationCenterScree
                 () => setState(() => _showStatusPanel = !_showStatusPanel),
                 colors,
               ),
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               _buildToggleButton(
                 'Featured',
                 Icons.star,
@@ -137,7 +137,7 @@ class _IntegrationCenterScreenState extends ConsumerState<IntegrationCenterScree
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           // Search and Filters Row
           Row(
@@ -151,7 +151,7 @@ class _IntegrationCenterScreenState extends ConsumerState<IntegrationCenterScree
                 ),
               ),
               
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               
               // Category Filters
               Expanded(
@@ -193,7 +193,7 @@ class _IntegrationCenterScreenState extends ConsumerState<IntegrationCenterScree
           onTap: onPressed,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           child: Padding(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: SpacingTokens.componentSpacing,
               vertical: SpacingTokens.iconSpacing,
             ),
@@ -205,7 +205,7 @@ class _IntegrationCenterScreenState extends ConsumerState<IntegrationCenterScree
                   size: 16,
                   color: isActive ? colors.primary : colors.onSurfaceVariant,
                 ),
-                SizedBox(width: SpacingTokens.iconSpacing),
+                const SizedBox(width: SpacingTokens.iconSpacing),
                 Text(
                   label,
                   style: TextStyles.caption.copyWith(

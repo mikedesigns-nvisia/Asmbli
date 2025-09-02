@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/services.dart';
 import '../design_system.dart';
 import '../../services/enhanced_mcp_testing_service.dart';
 import '../../models/enhanced_mcp_template.dart';
@@ -40,7 +38,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
   void initState() {
     super.initState();
     _pulseController = AnimationController(
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat();
 
@@ -74,7 +72,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12),
@@ -89,7 +87,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
           Row(
             children: [
               _buildStatusIcon(),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +120,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
             ],
           ),
           
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           
           // Test content
           _buildTestContent(context),
@@ -143,7 +141,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               color: SemanticColors.primary.withValues(alpha: 0.1 + (_pulseController.value * 0.1)),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Center(
+            child: const Center(
               child: SizedBox(
                 width: 20,
                 height: 20,
@@ -181,7 +179,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.5),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Icon(
@@ -215,7 +213,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           'Click "Test Connection" to verify your configuration',
           style: TextStyle(
@@ -223,7 +221,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         _buildTestChecklist(context),
       ],
     );
@@ -235,18 +233,18 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
       children: [
         Text(
           _currentResult!.message,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: SemanticColors.primary,
           ),
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         LinearProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(SemanticColors.primary),
+          valueColor: const AlwaysStoppedAnimation(SemanticColors.primary),
           backgroundColor: SemanticColors.primary.withValues(alpha: 0.1),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           'This may take a few moments...',
           style: TextStyle(
@@ -273,7 +271,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               color: statusColor,
               size: 16,
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 result.message,
@@ -289,9 +287,9 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
 
         // Details
         if (result.details != null && result.details!.isNotEmpty) ...[
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: statusColor.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(6),
@@ -312,30 +310,30 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
 
         // Metadata (for successful connections)
         if (result.isSuccess && result.metadata.isNotEmpty) ...[
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           _buildMetadataDisplay(context, result.metadata),
         ],
 
         // Suggestions for errors/warnings
         if (result.suggestions.isNotEmpty) ...[
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           _buildSuggestions(context, result.suggestions, result.status),
         ],
 
         // Error details
         if (result.error != null && result.error!.isNotEmpty) ...[
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           ExpansionTile(
-            title: Text(
+            title: const Text(
               'Technical Details',
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
             ),
             children: [
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -368,12 +366,12 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         ...requiredFields.map((field) {
           final hasValue = widget.config[field.id] != null && 
                           widget.config[field.id].toString().isNotEmpty;
           return Padding(
-            padding: EdgeInsets.only(bottom: 4),
+            padding: const EdgeInsets.only(bottom: 4),
             child: Row(
               children: [
                 Icon(
@@ -381,7 +379,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                   size: 14,
                   color: hasValue ? SemanticColors.success : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   field.label,
                   style: TextStyle(
@@ -392,8 +390,8 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               ],
             ),
           );
-        }).toList(),
-        SizedBox(height: 8),
+        }),
+        const SizedBox(height: 8),
         Row(
           children: [
             Icon(
@@ -401,7 +399,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               size: 14,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
               'Network connectivity',
               style: TextStyle(
@@ -417,7 +415,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
 
   Widget _buildMetadataDisplay(BuildContext context, Map<String, dynamic> metadata) {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: SemanticColors.success.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(6),
@@ -428,7 +426,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Connection Details:',
             style: TextStyle(
               fontSize: 11,
@@ -436,10 +434,10 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               color: SemanticColors.success,
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           ...metadata.entries.map((entry) {
             return Padding(
-              padding: EdgeInsets.only(bottom: 2),
+              padding: const EdgeInsets.only(bottom: 2),
               child: Text(
                 '${_formatMetadataKey(entry.key)}: ${_formatMetadataValue(entry.value)}',
                 style: TextStyle(
@@ -449,7 +447,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -459,7 +457,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     final color = _getStatusColor(status);
     
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(6),
@@ -477,7 +475,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                 size: 14,
                 color: color,
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               Text(
                 'Suggestions:',
                 style: TextStyle(
@@ -488,10 +486,10 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               ),
             ],
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           ...suggestions.map((suggestion) {
             return Padding(
-              padding: EdgeInsets.only(bottom: 2),
+              padding: const EdgeInsets.only(bottom: 2),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -515,7 +513,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -605,7 +603,7 @@ class MCPConnectionStatus extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(4),
@@ -617,7 +615,7 @@ class MCPConnectionStatus extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, size: 12, color: color),
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               Text(
                 _getStatusText(testResult!.status),
                 style: TextStyle(
@@ -635,9 +633,9 @@ class MCPConnectionStatus extends StatelessWidget {
 
   Widget _buildUntestedStatus(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -648,7 +646,7 @@ class MCPConnectionStatus extends StatelessWidget {
             size: 12,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
             'Untested',
             style: TextStyle(
@@ -741,7 +739,7 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
         .length;
 
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(8),
@@ -754,12 +752,12 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.health_and_safety,
                 size: 20,
                 color: SemanticColors.primary,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 'Integration Health',
                 style: TextStyle(
@@ -768,7 +766,7 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Text(
                 '$connectedServers/$totalServers',
                 style: TextStyle(
@@ -781,7 +779,7 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           LinearProgressIndicator(
             value: totalServers > 0 ? connectedServers / totalServers : 0,
             valueColor: AlwaysStoppedAnimation(
@@ -791,7 +789,7 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
             ),
             backgroundColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Last updated: ${DateTime.now().toString().substring(11, 16)}',
             style: TextStyle(

@@ -19,7 +19,7 @@ class MCPServersTab extends ConsumerWidget {
 
     return Card(
       elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.6),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -43,7 +43,7 @@ class MCPServersTab extends ConsumerWidget {
               child: asyncServers.when(
                 data: (servers) {
                   if (servers.isEmpty) {
-                    return Center(child: Text('No MCP servers configured. Add one to get started.'));
+                    return const Center(child: Text('No MCP servers configured. Add one to get started.'));
                   }
                   return ListView.separated(
                     itemCount: servers.length,
@@ -251,7 +251,7 @@ class _ServerCardState extends State<_ServerCard> {
                 final status = snap.data;
                 final healthy = status?.healthy ?? false;
                 final color = snap.connectionState == ConnectionState.waiting ? Colors.grey : (healthy ? Colors.green : Colors.red);
-                return CircleAvatar(radius: 18, backgroundColor: color, child: Icon(Icons.storage, color: Colors.white, size: 18));
+                return CircleAvatar(radius: 18, backgroundColor: color, child: const Icon(Icons.storage, color: Colors.white, size: 18));
               },
             ),
             const SizedBox(width: 12),
@@ -269,7 +269,7 @@ class _ServerCardState extends State<_ServerCard> {
                           if (snap.connectionState == ConnectionState.waiting) return const SizedBox();
                           return Wrap(
                             spacing: 6,
-                            children: caps.map((c) => Chip(label: Text(c, style: TextStyle(fontSize: 12)))).toList(),
+                            children: caps.map((c) => Chip(label: Text(c, style: const TextStyle(fontSize: 12)))).toList(),
                           );
                         },
                       ),
@@ -280,10 +280,10 @@ class _ServerCardState extends State<_ServerCard> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.background.withOpacity(0.03),
+                      color: Theme.of(context).colorScheme.surface.withOpacity(0.03),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: SelectableText(cfgPreview, style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: Theme.of(context).colorScheme.onBackground)),
+                    child: SelectableText(cfgPreview, style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: Theme.of(context).colorScheme.onSurface)),
                   ),
                   const SizedBox(height: 6),
                   FutureBuilder<adapter.MCPServerStatus?>(
@@ -316,7 +316,7 @@ class _ServerCardState extends State<_ServerCard> {
                             });
                             final status = await _statusFut;
                             final msg = status?.message ?? (status?.healthy == true ? 'OK' : 'No response');
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Test result: ${msg}')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Test result: $msg')));
                           } catch (_) {
                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Test failed')));
                           } finally {
@@ -337,9 +337,9 @@ class _ServerCardState extends State<_ServerCard> {
                       OutlinedButton.icon(
                         onPressed: () async {
                           final confirm = await showDialog<bool>(context: context, builder: (ctx) => AlertDialog(
-                            title: Text('Remove server?'),
+                            title: const Text('Remove server?'),
                             content: Text('Remove "${widget.id}" from MCP servers?'),
-                            actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text('Cancel')), TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text('Remove'))],
+                            actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')), TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Remove'))],
                           ));
                           if (confirm == true) widget.onRemove();
                         },

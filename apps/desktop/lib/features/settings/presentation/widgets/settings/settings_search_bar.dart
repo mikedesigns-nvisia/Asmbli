@@ -71,7 +71,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
               BoxShadow(
                 color: colors.primary.withValues(alpha: 0.1),
                 blurRadius: 8,
-                offset: Offset(0, 2),
+                offset: const Offset(0, 2),
               ),
             ] : null,
           ),
@@ -103,7 +103,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
                       )
                     : null,
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(
+              contentPadding: const EdgeInsets.symmetric(
                 horizontal: SpacingTokens.componentSpacing,
                 vertical: SpacingTokens.componentSpacing,
               ),
@@ -113,7 +113,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
         
         // Quick Search Suggestions (when focused and empty)
         if (_isFocused && widget.controller.text.isEmpty) ...[
-          SizedBox(height: SpacingTokens.iconSpacing),
+          const SizedBox(height: SpacingTokens.iconSpacing),
           _buildQuickSuggestions(colors),
         ],
       ],
@@ -122,7 +122,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
 
   Widget _buildQuickSuggestions(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+      padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -131,7 +131,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
           BoxShadow(
             color: colors.onSurface.withValues(alpha: 0.1),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -145,7 +145,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: SpacingTokens.iconSpacing),
+          const SizedBox(height: SpacingTokens.iconSpacing),
           
           Wrap(
             spacing: SpacingTokens.iconSpacing,
@@ -165,7 +165,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
         _focusNode.unfocus();
       },
       child: Container(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: SpacingTokens.componentSpacing,
           vertical: SpacingTokens.iconSpacing,
         ),
@@ -182,7 +182,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
               size: 12,
               color: colors.onSurfaceVariant,
             ),
-            SizedBox(width: SpacingTokens.xs_precise),
+            const SizedBox(width: SpacingTokens.xs_precise),
             Text(
               text,
               style: TextStyles.caption.copyWith(

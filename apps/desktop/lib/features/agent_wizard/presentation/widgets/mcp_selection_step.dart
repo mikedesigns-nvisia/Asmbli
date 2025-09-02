@@ -32,7 +32,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
     final healthData = ref.watch(mcpServerHealthProvider);
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 1000),
@@ -42,23 +42,23 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
               // Step title and description
               _buildStepHeader(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Smart recommendations based on agent type
               if (_showRecommendations) ...[
                 _buildRecommendationsSection(context),
-                SizedBox(height: SpacingTokens.xxl),
+                const SizedBox(height: SpacingTokens.xxl),
               ],
               
               // Selected MCP servers overview
               _buildSelectedServersSection(context, healthData),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Available MCP servers with health status
               _buildAvailableServersSection(context, mcpSettingsService, healthData),
               
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
               
               // Add new MCP server section
               _buildAddServerSection(context),
@@ -77,7 +77,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
           'MCP Server Selection',
           style: TextStyles.pageTitle,
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         Text(
           'Choose MCP servers to give your agent additional capabilities like file access, web search, or integration with external services.',
           style: TextStyles.bodyMedium.copyWith(
@@ -106,19 +106,19 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Recommended for Your Agent',
                 style: TextStyles.cardTitle,
               ),
-              Spacer(),
+              const Spacer(),
               IconButton(
                 onPressed: () {
                   setState(() {
                     _showRecommendations = false;
                   });
                 },
-                icon: Icon(Icons.close, size: 18),
+                icon: const Icon(Icons.close, size: 18),
                 style: IconButton.styleFrom(
                   foregroundColor: ThemeColors(context).onSurfaceVariant,
                 ),
@@ -126,7 +126,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Based on your agent type, we recommend these MCP servers:',
@@ -135,7 +135,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           Wrap(
             spacing: SpacingTokens.sm,
@@ -146,7 +146,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
               return GestureDetector(
                 onTap: () => _toggleServerSelection(serverId),
                 child: Container(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: SpacingTokens.md,
                     vertical: SpacingTokens.sm,
                   ),
@@ -172,7 +172,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                             ? ThemeColors(context).primary
                             : ThemeColors(context).onSurfaceVariant,
                       ),
-                      SizedBox(width: SpacingTokens.xs),
+                      const SizedBox(width: SpacingTokens.xs),
                       Text(
                         _getServerDisplayName(serverId),
                         style: TextStyles.bodySmall.copyWith(
@@ -190,7 +190,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
           ),
           
           if (recommendations.any((id) => !widget.wizardState.selectedMCPServers.contains(id))) ...[
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             AsmblButton.secondary(
               text: 'Add All Recommended',
               icon: Icons.add,
@@ -223,14 +223,14 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                 color: ThemeColors(context).success,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Selected MCP Servers',
                 style: TextStyles.cardTitle,
               ),
-              Spacer(),
+              const Spacer(),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -246,7 +246,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           if (selectedServers.isEmpty) ...[
             Center(
@@ -257,7 +257,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                     size: 48,
                     color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
                   ),
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   Text(
                     'No MCP servers selected',
                     style: TextStyles.bodyMedium.copyWith(
@@ -279,7 +279,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
             Column(
               children: selectedServers.map((serverId) {
                 return Container(
-                  margin: EdgeInsets.only(bottom: SpacingTokens.sm),
+                  margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
                   child: _buildSelectedServerCard(context, serverId, healthData),
                 );
               }).toList(),
@@ -292,7 +292,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
 
   Widget _buildSelectedServerCard(BuildContext context, String serverId, AsyncValue<Map<String, MCPServerHealth>> healthData) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -309,7 +309,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                   color: ThemeColors(context).primary,
                   size: 20,
                 ),
-                SizedBox(width: SpacingTokens.sm),
+                const SizedBox(width: SpacingTokens.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,7 +342,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                 compact: true,
               );
             },
-            loading: () => Container(
+            loading: () => SizedBox(
               width: 16,
               height: 16,
               child: CircularProgressIndicator(
@@ -357,12 +357,12 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
             ),
           ),
           
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           
           // Remove button
           IconButton(
             onPressed: () => _toggleServerSelection(serverId),
-            icon: Icon(Icons.remove_circle_outline),
+            icon: const Icon(Icons.remove_circle_outline),
             style: IconButton.styleFrom(
               foregroundColor: ThemeColors(context).error,
             ),
@@ -389,18 +389,18 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Available MCP Servers',
                 style: TextStyles.cardTitle,
               ),
-              Spacer(),
+              const Spacer(),
               // Category filter
               _buildCategoryFilter(context, availableServers),
             ],
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           if (availableServers.isEmpty) ...[
             Center(
@@ -411,7 +411,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                     size: 48,
                     color: ThemeColors(context).success.withValues(alpha: 0.5),
                   ),
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   Text(
                     'All configured servers selected',
                     style: TextStyles.bodyMedium.copyWith(
@@ -455,7 +455,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
     return GestureDetector(
       onTap: () => _toggleServerSelection(serverId),
       child: Container(
-        padding: EdgeInsets.all(SpacingTokens.md),
+        padding: const EdgeInsets.all(SpacingTokens.md),
         decoration: BoxDecoration(
           color: ThemeColors(context).surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -470,7 +470,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
               size: 20,
             ),
             
-            SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: SpacingTokens.sm),
             
             // Server info
             Expanded(
@@ -486,16 +486,16 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (config.description != null) ...[
-                    Text(
-                      config.description!,
-                      style: TextStyles.bodySmall.copyWith(
-                        color: ThemeColors(context).onSurfaceVariant,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  ...[
+                  Text(
+                    config.description,
+                    style: TextStyles.bodySmall.copyWith(
+                      color: ThemeColors(context).onSurfaceVariant,
                     ),
-                  ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
                 ],
               ),
             ),
@@ -509,7 +509,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                   compact: true,
                 );
               },
-              loading: () => Container(
+              loading: () => SizedBox(
                 width: 12,
                 height: 12,
                 child: CircularProgressIndicator(
@@ -533,7 +533,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
     final categories = ['All', 'Development', 'Productivity', 'Integration', 'Other'];
     
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: 4),
       decoration: BoxDecoration(
         color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -574,7 +574,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Add New MCP Server',
                 style: TextStyles.cardTitle,
@@ -582,7 +582,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Don\'t see the server you need? Add a new MCP server configuration.',
@@ -591,7 +591,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           Row(
             children: [
@@ -600,7 +600,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                 icon: Icons.add,
                 onPressed: () => _showAddServerDialog(),
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               AsmblButton.secondary(
                 text: 'Browse Templates',
                 icon: Icons.dashboard_outlined,
@@ -707,7 +707,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
   void _showAddServerDialog() {
     showDialog(
       context: context,
-      builder: (context) => MCPServerDialog(),
+      builder: (context) => const MCPServerDialog(),
     );
   }
 
@@ -716,8 +716,8 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Server Templates'),
-        content: Text('Server template browser would go here'),
+        title: const Text('Server Templates'),
+        content: const Text('Server template browser would go here'),
         actions: [
           AsmblButton.secondary(
             text: 'Close',

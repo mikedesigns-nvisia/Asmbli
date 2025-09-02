@@ -42,7 +42,7 @@ class _WizardScreenState extends State<WizardScreen> {
  Widget build(BuildContext context) {
  return Scaffold(
  appBar: AppBar(
- title: Text('Agent Configuration Wizard'),
+ title: const Text('Agent Configuration Wizard'),
  bottom: PreferredSize(
  preferredSize: const Size.fromHeight(60),
  child: Container(
@@ -72,7 +72,7 @@ class _WizardScreenState extends State<WizardScreen> {
  ),
  ),
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Text(
  stepTitles[i],
  style: Theme.of(context).textTheme.bodySmall,
@@ -132,7 +132,7 @@ class _WizardScreenState extends State<WizardScreen> {
  ElevatedButton(
  onPressed: () {
  _pageController.previousPage(
- duration: Duration(milliseconds: 300),
+ duration: const Duration(milliseconds: 300),
  curve: Curves.easeInOut,
  );
  },
@@ -140,7 +140,7 @@ class _WizardScreenState extends State<WizardScreen> {
  backgroundColor: Colors.grey.shade200,
  foregroundColor: Colors.grey.shade800,
  ),
- child: Text('Previous'),
+ child: const Text('Previous'),
  )
  else
  const SizedBox(),
@@ -149,7 +149,7 @@ class _WizardScreenState extends State<WizardScreen> {
  onPressed: () {
  if (currentStep < stepTitles.length - 1) {
  _pageController.nextPage(
- duration: Duration(milliseconds: 300),
+ duration: const Duration(milliseconds: 300),
  curve: Curves.easeInOut,
  );
  } else {
@@ -179,42 +179,42 @@ class _WizardScreenState extends State<WizardScreen> {
  'Step 1: Agent Profile',
  style: Theme.of(context).textTheme.headlineMedium,
  ),
- SizedBox(height: 8),
+ const SizedBox(height: 8),
  Text(
 				"Define your agent's basic information and primary purpose",
  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
  color: Colors.grey.shade600,
  ),
  ),
- SizedBox(height: 32),
+ const SizedBox(height: 32),
  
- TextField(
+ const TextField(
  decoration: InputDecoration(
  labelText: 'Agent Name',
  hintText: 'e.g., Research Assistant',
  ),
  ),
- SizedBox(height: 16),
+ const SizedBox(height: 16),
  
- TextField(
- decoration: const InputDecoration(
+ const TextField(
+ decoration: InputDecoration(
  labelText: 'Description',
  hintText: 'Brief description of what this agent does',
  ),
  maxLines: 3,
  ),
- SizedBox(height: 16),
+ const SizedBox(height: 16),
  
  DropdownButtonFormField<String>(
  decoration: const InputDecoration(
  labelText: 'Primary Purpose',
  ),
  items: const [
- DropdownMenuItem(value: 'research', child: const Text('Research & Analysis')),
- DropdownMenuItem(value: 'writing', child: const Text('Content Writing')),
- DropdownMenuItem(value: 'development', child: const Text('Software Development')),
- DropdownMenuItem(value: 'support', child: const Text('Customer Support')),
- DropdownMenuItem(value: 'general', child: const Text('General Assistant')),
+ DropdownMenuItem(value: 'research', child: Text('Research & Analysis')),
+ DropdownMenuItem(value: 'writing', child: Text('Content Writing')),
+ DropdownMenuItem(value: 'development', child: Text('Software Development')),
+ DropdownMenuItem(value: 'support', child: Text('Customer Support')),
+ DropdownMenuItem(value: 'general', child: Text('General Assistant')),
  ],
  onChanged: (value) {},
  ),
@@ -233,14 +233,14 @@ class _WizardScreenState extends State<WizardScreen> {
  'Step 2: MCP Servers',
  style: Theme.of(context).textTheme.headlineMedium,
  ),
- SizedBox(height: 8),
+ const SizedBox(height: 8),
  Text(
  'Select which Model Context Protocol servers your agent should connect to',
  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
  color: Colors.grey.shade600,
  ),
  ),
- SizedBox(height: 32),
+ const SizedBox(height: 32),
  
  // This would show available MCP servers with checkboxes
  const Text('Available MCP servers will be listed here with configuration options.'),
@@ -253,7 +253,7 @@ class _WizardScreenState extends State<WizardScreen> {
  final colors = ThemeColors(context);
  
  return SingleChildScrollView(
- padding: EdgeInsets.all(SpacingTokens.xxl),
+ padding: const EdgeInsets.all(SpacingTokens.xxl),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -261,18 +261,18 @@ class _WizardScreenState extends State<WizardScreen> {
  'Step 3: Security & Access',
  style: TextStyles.pageTitle,
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  Text(
  'Configure security settings and access controls for your agent',
  style: TextStyles.bodyMedium.copyWith(
  color: colors.onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.xxl),
+ const SizedBox(height: SpacingTokens.xxl),
 
  AsmblCard(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -280,7 +280,7 @@ class _WizardScreenState extends State<WizardScreen> {
  'API Security',
  style: TextStyles.headingMedium,
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  CheckboxListTile(
  title: const Text('Require API Key Encryption'),
@@ -293,16 +293,16 @@ class _WizardScreenState extends State<WizardScreen> {
  },
  ),
  
- SizedBox(height: SpacingTokens.md),
+ const SizedBox(height: SpacingTokens.md),
  
  Text(
  'Authentication Level',
  style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  DropdownButtonFormField<String>(
- value: _authenticationLevel,
+ initialValue: _authenticationLevel,
  decoration: const InputDecoration(
  labelText: 'Authentication Level',
  ),
@@ -324,11 +324,11 @@ class _WizardScreenState extends State<WizardScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  AsmblCard(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -336,7 +336,7 @@ class _WizardScreenState extends State<WizardScreen> {
  'Privacy & Compliance',
  style: TextStyles.headingMedium,
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  CheckboxListTile(
  title: const Text('Enable Audit Logging'),
@@ -349,16 +349,16 @@ class _WizardScreenState extends State<WizardScreen> {
  },
  ),
  
- SizedBox(height: SpacingTokens.md),
+ const SizedBox(height: SpacingTokens.md),
  
  Text(
  'Privacy Level',
  style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  DropdownButtonFormField<String>(
- value: _privacyLevel,
+ initialValue: _privacyLevel,
  decoration: const InputDecoration(
  labelText: 'Privacy Level',
  ),
@@ -388,7 +388,7 @@ class _WizardScreenState extends State<WizardScreen> {
  final colors = ThemeColors(context);
  
  return SingleChildScrollView(
- padding: EdgeInsets.all(SpacingTokens.xxl),
+ padding: const EdgeInsets.all(SpacingTokens.xxl),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -396,18 +396,18 @@ class _WizardScreenState extends State<WizardScreen> {
  'Step 4: Behavior & Style',
  style: TextStyles.pageTitle,
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  Text(
  'Define how your agent communicates and behaves in conversations',
  style: TextStyles.bodyMedium.copyWith(
  color: colors.onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.xxl),
+ const SizedBox(height: SpacingTokens.xxl),
 
  AsmblCard(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -415,16 +415,16 @@ class _WizardScreenState extends State<WizardScreen> {
  'Communication Style',
  style: TextStyles.headingMedium,
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  Text(
  'Personality',
  style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  DropdownButtonFormField<String>(
- value: _personality,
+ initialValue: _personality,
  decoration: const InputDecoration(
  labelText: 'Agent Personality',
  ),
@@ -444,16 +444,16 @@ class _WizardScreenState extends State<WizardScreen> {
  },
  ),
  
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  Text(
  'Response Style',
  style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  DropdownButtonFormField<String>(
- value: _responseStyle,
+ initialValue: _responseStyle,
  decoration: const InputDecoration(
  labelText: 'Response Length',
  ),
@@ -475,11 +475,11 @@ class _WizardScreenState extends State<WizardScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  AsmblCard(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -487,13 +487,13 @@ class _WizardScreenState extends State<WizardScreen> {
  'Creative Settings',
  style: TextStyles.headingMedium,
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  Text(
  'Creativity Level: ${(_creativityLevel * 100).round()}%',
  style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  Slider(
  value: _creativityLevel,
@@ -516,7 +516,7 @@ class _WizardScreenState extends State<WizardScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  CheckboxListTile(
  title: const Text('Enable Emojis'),
@@ -541,7 +541,7 @@ class _WizardScreenState extends State<WizardScreen> {
  final colors = ThemeColors(context);
  
  return SingleChildScrollView(
- padding: EdgeInsets.all(SpacingTokens.xxl),
+ padding: const EdgeInsets.all(SpacingTokens.xxl),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -549,18 +549,18 @@ class _WizardScreenState extends State<WizardScreen> {
  'Step 5: Test & Validate',
  style: TextStyles.pageTitle,
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  Text(
  'Test your agent configuration and validate it works as expected',
  style: TextStyles.bodyMedium.copyWith(
  color: colors.onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.xxl),
+ const SizedBox(height: SpacingTokens.xxl),
 
  AsmblCard(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -568,7 +568,7 @@ class _WizardScreenState extends State<WizardScreen> {
  'Test Queries',
  style: TextStyles.headingMedium,
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  TextField(
  controller: _testQueryController,
@@ -589,14 +589,14 @@ class _WizardScreenState extends State<WizardScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.md),
+ const SizedBox(height: SpacingTokens.md),
  
  if (_testQueries.isNotEmpty) ...[
  Text(
  'Test Queries (${_testQueries.length})',
  style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  Container(
  constraints: const BoxConstraints(maxHeight: 200),
@@ -623,11 +623,11 @@ class _WizardScreenState extends State<WizardScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  AsmblCard(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -635,7 +635,7 @@ class _WizardScreenState extends State<WizardScreen> {
  'Connectivity Test',
  style: TextStyles.headingMedium,
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  Row(
  children: [
@@ -643,7 +643,7 @@ class _WizardScreenState extends State<WizardScreen> {
  _connectivityTestPassed ? Icons.check_circle : Icons.pending,
  color: _connectivityTestPassed ? Colors.green : colors.onSurfaceVariant,
  ),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  Expanded(
  child: Text(
  _connectivityTestPassed 
@@ -655,7 +655,7 @@ class _WizardScreenState extends State<WizardScreen> {
  ],
  ),
  
- SizedBox(height: SpacingTokens.md),
+ const SizedBox(height: SpacingTokens.md),
  
  AsmblButton.secondary(
  text: 'Run Connectivity Test',
@@ -666,11 +666,11 @@ class _WizardScreenState extends State<WizardScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  AsmblCard(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -678,7 +678,7 @@ class _WizardScreenState extends State<WizardScreen> {
  'Configuration Summary',
  style: TextStyles.headingMedium,
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  Text('Security: $_authenticationLevel authentication'),
  Text('Privacy: $_privacyLevel level'),
@@ -700,7 +700,7 @@ class _WizardScreenState extends State<WizardScreen> {
  final colors = ThemeColors(context);
  
  return SingleChildScrollView(
- padding: EdgeInsets.all(SpacingTokens.xxl),
+ padding: const EdgeInsets.all(SpacingTokens.xxl),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -708,38 +708,38 @@ class _WizardScreenState extends State<WizardScreen> {
  'Step 6: Deploy',
  style: TextStyles.pageTitle,
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  Text(
  'Review your configuration and deploy your agent',
  style: TextStyles.bodyMedium.copyWith(
  color: colors.onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.xxl),
+ const SizedBox(height: SpacingTokens.xxl),
 
  AsmblCard(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Row(
  children: [
  Icon(Icons.check_circle, color: colors.primary),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  Text(
  'Configuration Complete',
  style: TextStyles.headingMedium,
  ),
  ],
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  Text(
  'Your agent is ready to be deployed with the following configuration:',
  style: TextStyles.bodyMedium,
  ),
- SizedBox(height: SpacingTokens.md),
+ const SizedBox(height: SpacingTokens.md),
  
  _buildConfigurationOverview(colors),
  ],
@@ -747,11 +747,11 @@ class _WizardScreenState extends State<WizardScreen> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  AsmblCard(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.lg),
+ padding: const EdgeInsets.all(SpacingTokens.lg),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -759,7 +759,7 @@ class _WizardScreenState extends State<WizardScreen> {
  'Deployment Options',
  style: TextStyles.headingMedium,
  ),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  
  ListTile(
  leading: Icon(Icons.rocket_launch, color: colors.primary),
@@ -767,7 +767,7 @@ class _WizardScreenState extends State<WizardScreen> {
  subtitle: const Text('Start your agent right away'),
  ),
  
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  ListTile(
  leading: Icon(Icons.schedule, color: colors.primary),
@@ -775,7 +775,7 @@ class _WizardScreenState extends State<WizardScreen> {
  subtitle: const Text('Deploy at a specific time'),
  ),
  
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  ListTile(
  leading: Icon(Icons.save, color: colors.primary),
@@ -806,7 +806,7 @@ class _WizardScreenState extends State<WizardScreen> {
 
  Widget _buildConfigurationOverview(ThemeColors colors) {
  return Container(
- padding: EdgeInsets.all(SpacingTokens.md),
+ padding: const EdgeInsets.all(SpacingTokens.md),
  decoration: BoxDecoration(
  color: colors.surface.withOpacity(0.5),
  borderRadius: BorderRadius.circular(8),
@@ -830,7 +830,7 @@ class _WizardScreenState extends State<WizardScreen> {
 
  Widget _buildOverviewItem(String label, String value) {
  return Padding(
- padding: EdgeInsets.symmetric(vertical: SpacingTokens.xs),
+ padding: const EdgeInsets.symmetric(vertical: SpacingTokens.xs),
  child: Row(
  children: [
  SizedBox(
@@ -856,7 +856,7 @@ class _WizardScreenState extends State<WizardScreen> {
  showDialog(
  context: context,
  builder: (context) => AlertDialog(
- title: Text('Agent Deployed Successfully'),
+ title: const Text('Agent Deployed Successfully'),
  content: const Text('Your agent has been configured and is ready to use.'),
  actions: [
  TextButton(

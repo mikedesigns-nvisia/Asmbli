@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../tokens/color_tokens.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
@@ -45,8 +44,8 @@ class _HeaderButtonState extends State<HeaderButton> {
  splashColor: Colors.transparent,
  highlightColor: Colors.transparent,
  child: AnimatedContainer(
- duration: Duration(milliseconds: 150),
- padding: EdgeInsets.symmetric(
+ duration: const Duration(milliseconds: 150),
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.md,
  vertical: SpacingTokens.sm,
  ),
@@ -74,7 +73,7 @@ class _HeaderButtonState extends State<HeaderButton> {
  ? colors.accent
  : colors.onSurfaceVariant,
  ),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  Text(
  widget.text,
  style: TextStyles.navButton.copyWith(

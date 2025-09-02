@@ -64,7 +64,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -74,12 +74,12 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
               // Step title and description
               _buildStepHeader(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Template selection (optional)
               _buildTemplateSection(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Agent basic information form
               _buildBasicInfoForm(context),
@@ -98,7 +98,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
           'Agent Basics',
           style: TextStyles.pageTitle,
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         Text(
           'Start by giving your agent a name, description, and role. You can use a template for quick setup or create from scratch.',
           style: TextStyles.bodyMedium.copyWith(
@@ -121,12 +121,12 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Quick Start Templates',
                 style: TextStyles.cardTitle,
               ),
-              Spacer(),
+              const Spacer(),
               if (_selectedTemplateId != null)
                 AsmblButton.secondary(
                   text: 'Clear Template',
@@ -135,7 +135,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Choose a template to pre-fill settings, or skip to create from scratch.',
@@ -144,7 +144,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Template grid
           _buildTemplateGrid(context),
@@ -171,7 +171,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
             
             Wrap(
               spacing: SpacingTokens.sm,
@@ -183,7 +183,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
                   onTap: () => _selectTemplate(template.id),
                   child: Container(
                     width: 240,
-                    padding: EdgeInsets.all(SpacingTokens.md),
+                    padding: const EdgeInsets.all(SpacingTokens.md),
                     decoration: BoxDecoration(
                       color: isSelected 
                           ? ThemeColors(context).primary.withValues(alpha: 0.1)
@@ -221,7 +221,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
                               ),
                           ],
                         ),
-                        SizedBox(height: SpacingTokens.xs),
+                        const SizedBox(height: SpacingTokens.xs),
                         Text(
                           template.description,
                           style: TextStyles.bodySmall.copyWith(
@@ -238,7 +238,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             ),
             
             if (category != categories.last)
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
           ],
         );
       }).toList(),
@@ -255,7 +255,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             style: TextStyles.cardTitle,
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Agent Name
           _buildFormField(
@@ -269,7 +269,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             required: true,
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Agent Description
           _buildFormField(
@@ -284,7 +284,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             required: true,
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Agent Role
           _buildFormField(
@@ -297,7 +297,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             },
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Validation feedback
           _buildValidationFeedback(context),
@@ -326,7 +326,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
               ),
             ),
             if (required) ...[
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 '*',
                 style: TextStyles.bodyMedium.copyWith(
@@ -336,7 +336,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             ],
           ],
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         TextField(
           controller: controller,
           onChanged: onChanged,
@@ -360,7 +360,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             ),
             filled: true,
             fillColor: ThemeColors(context).inputBackground,
-            contentPadding: EdgeInsets.symmetric(
+            contentPadding: const EdgeInsets.symmetric(
               horizontal: SpacingTokens.md,
               vertical: SpacingTokens.md,
             ),
@@ -382,7 +382,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             color: ThemeColors(context).success,
             size: 16,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Text(
             'Agent basics complete',
             style: TextStyles.bodySmall.copyWith(
@@ -399,7 +399,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
             color: ThemeColors(context).onSurfaceVariant,
             size: 16,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Text(
             'Please fill in the required fields to continue',
             style: TextStyles.bodySmall.copyWith(

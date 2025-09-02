@@ -29,7 +29,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
   Widget _buildLoadingSkeleton(BuildContext context) {
     return Container(
       height: 40,
-      margin: EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
+      margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
       decoration: BoxDecoration(
         color: SemanticColors.surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -51,8 +51,8 @@ class AgentSelectorDropdown extends ConsumerWidget {
 
   Widget _buildErrorState(BuildContext context, Object error) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: SemanticColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -60,12 +60,12 @@ class AgentSelectorDropdown extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.error_outline,
             size: 16,
             color: SemanticColors.error,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Expanded(
             child: Text(
               'Failed to load agents',
@@ -81,8 +81,8 @@ class AgentSelectorDropdown extends ConsumerWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: SemanticColors.surfaceVariant.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -90,12 +90,12 @@ class AgentSelectorDropdown extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.smart_toy_outlined,
             size: 16,
             color: SemanticColors.onSurfaceVariant,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Expanded(
             child: Text(
               'No agents available',
@@ -111,7 +111,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
 
   Widget _buildAgentDropdown(BuildContext context, WidgetRef ref, List<Agent> agents, Agent? activeAgent) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
+      margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: activeAgent?.id,
@@ -145,18 +145,18 @@ class AgentSelectorDropdown extends ConsumerWidget {
 
   Widget _buildDropdownHint(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.sm,
         vertical: SpacingTokens.xs,
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.smart_toy_outlined,
             size: 16,
             color: SemanticColors.onSurfaceVariant,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Text(
             'Select an agent',
             style: TextStyles.bodySmall.copyWith(
@@ -170,7 +170,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
 
   Widget _buildSelectedItem(BuildContext context, Agent agent) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.sm,
         vertical: SpacingTokens.xs,
       ),
@@ -194,7 +194,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
               color: _getAgentColor(context, agent),
             ),
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,7 +210,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (agent.status == AgentStatus.active) ...[
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Row(
                     children: [
                       Container(
@@ -221,7 +221,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         'Active',
                         style: TextStyles.caption.copyWith(
@@ -235,7 +235,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
               ],
             ),
           ),
-          Icon(
+          const Icon(
             Icons.keyboard_arrow_down,
             size: 16,
             color: SemanticColors.onSurfaceVariant,
@@ -249,7 +249,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
     return DropdownMenuItem<String>(
       value: agent.id,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: SpacingTokens.xs),
+        padding: const EdgeInsets.symmetric(vertical: SpacingTokens.xs),
         child: Row(
           children: [
             Container(
@@ -265,7 +265,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
                 color: _getAgentColor(context, agent),
               ),
             ),
-            SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: SpacingTokens.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,7 +295,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
                       ],
                     ],
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
                     agent.description,
                     style: TextStyles.bodySmall.copyWith(
@@ -304,12 +304,12 @@ class AgentSelectorDropdown extends ConsumerWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       ...agent.capabilities.take(3).map((capability) => Container(
-                        margin: EdgeInsets.only(right: 4),
-                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        margin: const EdgeInsets.only(right: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: ThemeColors(context).primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),

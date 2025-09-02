@@ -7,10 +7,10 @@ class AgentsScreen extends StatelessWidget {
  Widget build(BuildContext context) {
  return Scaffold(
  appBar: AppBar(
- title: Text('My Agents'),
+ title: const Text('My Agents'),
  actions: [
  IconButton(
- icon: Icon(Icons.add),
+ icon: const Icon(Icons.add),
  onPressed: () {
  // Create new agent
  },
@@ -22,7 +22,7 @@ class AgentsScreen extends StatelessWidget {
  child: Column(
  children: [
  // Stats cards
- Row(
+ const Row(
  children: [
  Expanded(
  child: _StatsCard(
@@ -50,7 +50,7 @@ class AgentsScreen extends StatelessWidget {
  ],
  ),
  
- SizedBox(height: 24),
+ const SizedBox(height: 24),
  
  // Agents list
  Expanded(
@@ -107,7 +107,7 @@ class _StatsCard extends StatelessWidget {
  size: 32,
  color: theme.colorScheme.primary,
  ),
- SizedBox(height: 8),
+ const SizedBox(height: 8),
  Text(
  value,
  style: theme.textTheme.headlineSmall,
@@ -166,14 +166,14 @@ class _AgentListItem extends StatelessWidget {
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Text(description),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Row(
  children: [
  Text(
  'Last used: ${_formatDate(lastUsed)}',
  style: theme.textTheme.bodySmall,
  ),
- SizedBox(width: 16),
+ const SizedBox(width: 16),
  Text(
  '$messageCount messages',
  style: theme.textTheme.bodySmall,
@@ -184,11 +184,11 @@ class _AgentListItem extends StatelessWidget {
  ),
  trailing: PopupMenuButton(
  itemBuilder: (context) => [
- PopupMenuItem(
+ const PopupMenuItem(
  value: 'edit',
  child: ListTile(
  leading: Icon(Icons.edit),
- title: const Text('Edit'),
+ title: Text('Edit'),
  contentPadding: EdgeInsets.zero,
  ),
  ),
@@ -196,7 +196,7 @@ class _AgentListItem extends StatelessWidget {
  value: 'duplicate',
  child: ListTile(
  leading: Icon(Icons.copy),
- title: const Text('Duplicate'),
+ title: Text('Duplicate'),
  contentPadding: EdgeInsets.zero,
  ),
  ),
@@ -204,7 +204,7 @@ class _AgentListItem extends StatelessWidget {
  value: 'export',
  child: ListTile(
  leading: Icon(Icons.file_download),
- title: const Text('Export'),
+ title: Text('Export'),
  contentPadding: EdgeInsets.zero,
  ),
  ),
@@ -212,7 +212,7 @@ class _AgentListItem extends StatelessWidget {
  value: 'delete',
  child: ListTile(
  leading: Icon(Icons.delete, color: Colors.red),
- title: const Text('Delete', style: TextStyle(color: Colors.red)),
+ title: Text('Delete', style: TextStyle(color: Colors.red)),
  contentPadding: EdgeInsets.zero,
  ),
  ),

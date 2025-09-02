@@ -25,14 +25,14 @@ class IntegrationCardsGrid extends StatelessWidget {
     }
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Results Header
           if (searchQuery.isNotEmpty || selectedCategory != 'all')
             Padding(
-              padding: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+              padding: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
               child: Text(
                 _buildResultsText(filteredIntegrations.length),
                 style: TextStyles.bodyLarge.copyWith(
@@ -49,7 +49,7 @@ class IntegrationCardsGrid extends StatelessWidget {
               
               return GridView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
                   childAspectRatio: 1.4, // Width/Height ratio for cards
@@ -72,7 +72,7 @@ class IntegrationCardsGrid extends StatelessWidget {
           // Load More Button (if more integrations available)
           if (_hasMoreIntegrations())
             Padding(
-              padding: EdgeInsets.only(top: SpacingTokens.sectionSpacing),
+              padding: const EdgeInsets.only(top: SpacingTokens.sectionSpacing),
               child: Center(
                 child: AsmblButton.secondary(
                   text: 'Show more integrations',
@@ -92,7 +92,7 @@ class IntegrationCardsGrid extends StatelessWidget {
     
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.xxl),
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -101,7 +101,7 @@ class IntegrationCardsGrid extends StatelessWidget {
               size: 64,
               color: colors.onSurfaceVariant.withValues(alpha: 0.5),
             ),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(
               isSearching 
                 ? 'No integrations found'
@@ -110,7 +110,7 @@ class IntegrationCardsGrid extends StatelessWidget {
                   : 'No integrations available',
               style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               isSearching
                 ? 'Try different search terms or browse categories'
@@ -121,7 +121,7 @@ class IntegrationCardsGrid extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             if (isSearching || isFiltering) ...[
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               AsmblButton.secondary(
                 text: isSearching ? 'Clear search' : 'Show all categories',
                 onPressed: _clearFilters,
@@ -246,28 +246,28 @@ class IntegrationCardsGrid extends StatelessWidget {
   Color _getBrandColorForServer(MCPServerConfig server) {
     // Map server names to brand colors
     switch (server.id) {
-      case 'github': return Color(0xFF24292F);
-      case 'slack': return Color(0xFF4A154B);
-      case 'notion': return Color(0xFF000000);
-      case 'postgresql': return Color(0xFF336791);
+      case 'github': return const Color(0xFF24292F);
+      case 'slack': return const Color(0xFF4A154B);
+      case 'notion': return const Color(0xFF000000);
+      case 'postgresql': return const Color(0xFF336791);
       case 'aws-bedrock':
       case 'aws-cdk':
-      case 'aws-cost-analysis': return Color(0xFFFF9900);
-      case 'cloudflare': return Color(0xFFF38020);
-      case 'vercel': return Color(0xFF000000);
-      case 'netlify': return Color(0xFF00AD9F);
-      case 'stripe': return Color(0xFF635BFF);
-      case 'twilio': return Color(0xFFE1282A);
-      case 'discord': return Color(0xFF5865F2);
-      case 'figma-official': return Color(0xFFF24E1E);
-      case 'linear': return Color(0xFF5E6AD2);
-      case 'sentry': return Color(0xFF362D59);
-      case 'docker': return Color(0xFF2496ED);
-      case 'supabase': return Color(0xFF3ECF8E);
-      case 'redis': return Color(0xFFDC382D);
-      case 'zapier': return Color(0xFFFF4F00);
-      case 'box': return Color(0xFF0061D5);
-      default: return Color(0xFF6B46C1); // Default purple
+      case 'aws-cost-analysis': return const Color(0xFFFF9900);
+      case 'cloudflare': return const Color(0xFFF38020);
+      case 'vercel': return const Color(0xFF000000);
+      case 'netlify': return const Color(0xFF00AD9F);
+      case 'stripe': return const Color(0xFF635BFF);
+      case 'twilio': return const Color(0xFFE1282A);
+      case 'discord': return const Color(0xFF5865F2);
+      case 'figma-official': return const Color(0xFFF24E1E);
+      case 'linear': return const Color(0xFF5E6AD2);
+      case 'sentry': return const Color(0xFF362D59);
+      case 'docker': return const Color(0xFF2496ED);
+      case 'supabase': return const Color(0xFF3ECF8E);
+      case 'redis': return const Color(0xFFDC382D);
+      case 'zapier': return const Color(0xFFFF4F00);
+      case 'box': return const Color(0xFF0061D5);
+      default: return const Color(0xFF6B46C1); // Default purple
     }
   }
 

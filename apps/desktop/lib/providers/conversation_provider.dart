@@ -59,12 +59,26 @@ final createConversationProvider = Provider.autoDispose((ref) {
  // Get the default model configuration to store with conversation
  final defaultModel = ref.read(defaultModelConfigProvider);
  
+ // Get global MCP and context settings
+ final mcpService = ref.read(mcpSettingsServiceProvider);
+ final globalContextDocs = mcpService.globalContextDocuments;
+ final globalMcpServers = mcpService.getAllMCPServers()
+     .where((server) => server.enabled)
+     .map((server) => server.id)
+     .toList();
+ 
  // Merge provided metadata with default model information
  final conversationMetadata = {
    'type': 'direct_chat',
    'createdAt': DateTime.now().toIso8601String(),
    'version': '1.0.0',
    'generator': 'AgentEngine Direct Chat',
+   'hasGlobalMCP': globalMcpServers.isNotEmpty,
+   'hasGlobalContext': globalContextDocs.isNotEmpty,
+   'globalMcpServers': globalMcpServers,
+   'globalContextDocuments': globalContextDocs,
+   'mcpEnabled': globalMcpServers.isNotEmpty,
+   'contextEnabled': globalContextDocs.isNotEmpty,
    ...?metadata, // Spread provided metadata (can override above values)
  };
  
@@ -113,10 +127,12 @@ final createAgentConversationProvider = Provider.autoDispose((ref) {
  for (final serverId in mcpServers) {
  final globalConfig = mcpService.getMCPServer(serverId);
  if (globalConfig != null) {
- enhancedMcpConfigs[serverId] = globalConfig.toJson();
+ final configJson = globalConfig.toJson();
+ enhancedMcpConfigs[serverId] = Map<String, dynamic>.from(configJson);
  } else {
  // Fallback to provided config
- enhancedMcpConfigs[serverId] = mcpServerConfigs[serverId] ?? {};
+ final fallbackConfig = mcpServerConfigs[serverId] ?? <String, dynamic>{};
+ enhancedMcpConfigs[serverId] = Map<String, dynamic>.from(fallbackConfig);
  }
  }
  
@@ -182,14 +198,55 @@ final getOrCreateDefaultConversationProvider = Provider.autoDispose((ref) {
  orElse: () => throw Exception('No default conversation found'),
  );
  
+ // Check if existing conversation needs modelType metadata update
+ final selectedModel = ref.read(selectedModelProvider) ?? ref.read(defaultModelConfigProvider);
+ final expectedModelType = selectedModel?.isLocal == true ? 'local' : 'api';
+ 
+ if (defaultConversation.metadata?['modelType'] != expectedModelType) {
+ // Update the conversation with proper modelType metadata
+ final updatedMetadata = Map<String, dynamic>.from(defaultConversation.metadata ?? {});
+ updatedMetadata['modelType'] = expectedModelType;
+ 
+ final updatedConversation = Conversation(
+ id: defaultConversation.id,
+ title: defaultConversation.title,
+ messages: defaultConversation.messages,
+ createdAt: defaultConversation.createdAt,
+ status: defaultConversation.status,
+ lastModified: DateTime.now(),
+ metadata: updatedMetadata,
+ );
+ 
+ await service.updateConversation(updatedConversation);
+ return updatedConversation;
+ }
+ 
  return defaultConversation;
  } catch (e) {
- // Create new default API conversation if none exists
+ // Create new default API conversation if none exists with global MCP/context support
+ final mcpService = ref.read(mcpSettingsServiceProvider);
+ final globalContextDocs = mcpService.globalContextDocuments;
+ final globalMcpServers = mcpService.getAllMCPServers()
+     .where((server) => server.enabled)
+     .map((server) => server.id)
+     .toList();
+ 
+ // Get currently selected model to set proper metadata
+ final selectedModel = ref.read(selectedModelProvider) ?? ref.read(defaultModelConfigProvider);
+ final modelType = selectedModel?.isLocal == true ? 'local' : 'api';
+ 
  final defaultMetadata = {
  'type': 'default_api',
+ 'modelType': modelType,
  'apiProvider': _getProviderName(ref),
  'description': 'LLM chat without agent',
  'createdAt': DateTime.now().toIso8601String(),
+ 'hasGlobalMCP': globalMcpServers.isNotEmpty,
+ 'hasGlobalContext': globalContextDocs.isNotEmpty,
+ 'globalMcpServers': globalMcpServers,
+ 'globalContextDocuments': globalContextDocs,
+ 'mcpEnabled': globalMcpServers.isNotEmpty,
+ 'contextEnabled': globalContextDocs.isNotEmpty,
  };
  
  final conversation = Conversation(
@@ -331,6 +388,73 @@ final updateConversationProvider = Provider.autoDispose((ref) {
   
   return (String conversationId, Conversation updatedConversation) async {
     return await service.updateConversation(updatedConversation);
+  };
+});
+
+// Provider for conversation-specific model selection
+final conversationModelProvider = StateProvider.family<ModelConfig?, String>((ref, conversationId) {
+  // Get the conversation and check its stored model
+  final conversationAsync = ref.watch(conversationProvider(conversationId));
+  
+  return conversationAsync.maybeWhen(
+    data: (conversation) {
+      final metadata = conversation.metadata;
+      final modelConfigService = ref.read(modelConfigServiceProvider);
+      
+      // Check if conversation has a stored selected model
+      final selectedModelId = metadata?['selectedModelId'] as String?;
+      if (selectedModelId != null) {
+        final storedModel = modelConfigService.getModelConfig(selectedModelId);
+        if (storedModel != null && storedModel.isConfigured) {
+          return storedModel;
+        }
+      }
+      
+      // Check for default model stored at conversation creation
+      final defaultModelId = metadata?['defaultModelId'] as String?;
+      if (defaultModelId != null) {
+        final defaultModel = modelConfigService.getModelConfig(defaultModelId);
+        if (defaultModel != null && defaultModel.isConfigured) {
+          return defaultModel;
+        }
+      }
+      
+      // Fallback to system default
+      return modelConfigService.defaultModelConfig;
+    },
+    orElse: () => ref.read(defaultModelConfigProvider),
+  );
+});
+
+// Provider to update conversation's selected model
+final setConversationModelProvider = Provider.autoDispose((ref) {
+  final service = ref.read(conversationServiceProvider);
+  
+  return (String conversationId, ModelConfig model) async {
+    try {
+      final conversation = await service.getConversation(conversationId);
+      final updatedMetadata = Map<String, dynamic>.from(conversation.metadata ?? {});
+      
+      // Store the selected model ID
+      updatedMetadata['selectedModelId'] = model.id;
+      updatedMetadata['selectedModelName'] = model.name;
+      updatedMetadata['selectedModelProvider'] = model.provider;
+      updatedMetadata['modelSelectionTimestamp'] = DateTime.now().toIso8601String();
+      
+      final updatedConversation = conversation.copyWith(
+        metadata: updatedMetadata,
+        lastModified: DateTime.now(),
+      );
+      
+      await service.updateConversation(updatedConversation);
+      
+      // Update the conversation-specific provider
+      ref.read(conversationModelProvider(conversationId).notifier).state = model;
+      
+    } catch (e) {
+      print('Failed to update conversation model: $e');
+      rethrow;
+    }
   };
 });
 

@@ -25,18 +25,18 @@ class IntegrationDependencyDialog extends ConsumerWidget {
       ),
       child: Container(
         width: 500,
-        padding: EdgeInsets.all(SpacingTokens.xxl),
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(),
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             if (isRemoving) 
               _buildRemovalContent(dependencyService)
             else
               _buildInstallationContent(dependencyService),
-            SizedBox(height: SpacingTokens.xxl),
+            const SizedBox(height: SpacingTokens.xxl),
             _buildActions(context),
           ],
         ),
@@ -55,7 +55,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
           '$action ${integration?.name ?? integrationId}',
           style: TextStyles.cardTitle,
         ),
-        SizedBox(height: SpacingTokens.xs),
+        const SizedBox(height: SpacingTokens.xs),
         Text(
           isRemoving 
             ? 'Review dependencies that will be affected'
@@ -81,7 +81,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
             const Color(0xFFD32F2F),
             'These integrations must be installed first:',
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
         ],
         if (depCheck.conflicts.isNotEmpty) ...[
           _buildDependencySection(
@@ -90,7 +90,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
             const Color(0xFFFF9800),
             'These integrations conflict and should be disabled:',
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
         ],
         if (depCheck.missingOptional.isNotEmpty) ...[
           _buildDependencySection(
@@ -99,7 +99,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
             const Color(0xFF3D3328),
             'These integrations would enhance functionality:',
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
         ],
         if (depCheck.canInstall && depCheck.missingRequired.isEmpty && depCheck.conflicts.isEmpty)
           _buildSuccessMessage(),
@@ -120,7 +120,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
             const Color(0xFFD32F2F),
             'These integrations directly depend on this one:',
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
         ],
         if (affected.allAffected.length > affected.directDependents.length) ...[
           _buildDependencySection(
@@ -129,7 +129,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
             const Color(0xFFD32F2F), // Error color
             'These integrations may also be affected:',
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
         ],
         if (affected.directDependents.isEmpty)
           _buildSuccessMessage(isRemoval: true),
@@ -144,7 +144,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
     String description,
   ) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -155,7 +155,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
                 color: color,
                 size: 16,
               ),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 title,
                 style: TextStyles.bodyLarge.copyWith(
@@ -165,12 +165,12 @@ class IntegrationDependencyDialog extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
             description,
             style: TextStyles.bodyMedium,
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           ...integrationIds.map((id) => _buildIntegrationItem(id)),
         ],
       ),
@@ -181,32 +181,32 @@ class IntegrationDependencyDialog extends ConsumerWidget {
     final integration = IntegrationRegistry.getById(integrationId);
     
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: SpacingTokens.xs),
+      padding: const EdgeInsets.symmetric(vertical: SpacingTokens.xs),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.integration_instructions,
             size: 14,
-            color: const Color(0xFF736B5F),
+            color: Color(0xFF736B5F),
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Text(
             integration?.name ?? integrationId,
             style: TextStyles.bodyMedium,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: const Color(0xFF736B5F).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               integration?.category.name.toUpperCase() ?? 'UNKNOWN',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 8,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF736B5F),
+                color: Color(0xFF736B5F),
               ),
             ),
           ),
@@ -217,15 +217,15 @@ class IntegrationDependencyDialog extends ConsumerWidget {
 
   Widget _buildSuccessMessage({bool isRemoval = false}) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.check_circle,
-            color: const Color(0xFF4CAF50),
+            color: Color(0xFF4CAF50),
             size: 16,
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Expanded(
             child: Text(
               isRemoval 
@@ -249,7 +249,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
           text: 'Cancel',
           onPressed: () => Navigator.of(context).pop(false),
         ),
-        SizedBox(width: SpacingTokens.sm),
+        const SizedBox(width: SpacingTokens.sm),
         AsmblButton.primary(
           text: isRemoving ? 'Remove' : 'Install',
           onPressed: () => Navigator.of(context).pop(true),

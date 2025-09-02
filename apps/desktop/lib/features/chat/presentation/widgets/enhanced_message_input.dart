@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 
@@ -50,13 +49,13 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
     final theme = Theme.of(context);
     
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+      padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
       child: Column(
         children: [
           // Character count indicator (shown when typing)
           if (_isComposing && widget.messageController.text.length > 100)
             Container(
-              margin: EdgeInsets.only(bottom: SpacingTokens.xs),
+              margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
               alignment: Alignment.centerRight,
               child: Text(
                 '${widget.messageController.text.length} characters',
@@ -94,7 +93,7 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
                         fontSize: 13,
                       ),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: SpacingTokens.lg,
                         vertical: SpacingTokens.md,
                       ),
@@ -137,11 +136,11 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
                 ),
               ),
               
-              SizedBox(width: SpacingTokens.md),
+              const SizedBox(width: SpacingTokens.md),
               
               // Send button with enhanced states
               AnimatedContainer(
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
                   gradient: _canSend
                     ? LinearGradient(
@@ -162,7 +161,7 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
                         BoxShadow(
                           color: ThemeColors(context).primary.withValues(alpha: 0.3),
                           blurRadius: 8,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ]
                     : null,
@@ -173,9 +172,9 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     onTap: _canSend ? widget.onSendMessage : null,
                     child: Container(
-                      padding: EdgeInsets.all(SpacingTokens.md),
+                      padding: const EdgeInsets.all(SpacingTokens.md),
                       child: widget.isLoading
-                        ? SizedBox(
+                        ? const SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
@@ -200,7 +199,7 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
           // Helpful shortcuts info (shown when focused)
           if (_isComposing)
             Container(
-              margin: EdgeInsets.only(top: SpacingTokens.xs),
+              margin: const EdgeInsets.only(top: SpacingTokens.xs),
               child: Row(
                 children: [
                   Icon(
@@ -208,7 +207,7 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
                     size: 12,
                     color: ThemeColors(context).onSurfaceVariant,
                   ),
-                  SizedBox(width: SpacingTokens.xs),
+                  const SizedBox(width: SpacingTokens.xs),
                   Text(
                     'Press Enter to send • Shift+Enter for new line',
                     style: TextStyles.caption.copyWith(

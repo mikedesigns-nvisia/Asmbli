@@ -25,13 +25,13 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
   bool _isSaving = false;
   late TextEditingController _controller;
   late FocusNode _focusNode;
-  String _originalTitle = '';
+  String _displayTitle = '';
   
   @override
   void initState() {
     super.initState();
-    _originalTitle = widget.conversation.title;
-    _controller = TextEditingController(text: _originalTitle);
+    _displayTitle = widget.conversation.title;
+    _controller = TextEditingController(text: _displayTitle);
     _focusNode = FocusNode();
   }
   
@@ -43,22 +43,11 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
   }
   
   @override
-  void didUpdateWidget(EditableConversationTitle oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.conversation.title != oldWidget.conversation.title) {
-      _originalTitle = widget.conversation.title;
-      if (!_isEditing) {
-        _controller.text = _originalTitle;
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
     if (_isEditing) {
-      return _buildEditingMode(theme);
+      return _buildEditMode(theme);
     } else {
       return _buildDisplayMode(theme);
     }
@@ -68,22 +57,19 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
     return GestureDetector(
       onTap: _startEditing,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(
-            color: Colors.transparent,
-            width: 1,
-          ),
+          border: Border.all(color: Colors.transparent, width: 1),
         ),
         child: Row(
           children: [
             Expanded(
               child: Text(
-                widget.conversation.title,
+                _displayTitle,
                 style: widget.style ??
                     GoogleFonts.fustat(
-                                            fontSize: 20,
+                      fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: theme.colorScheme.onSurface,
                     ),
@@ -91,8 +77,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(width: 8),
-            // Edit hint icon
+            const SizedBox(width: 8),
             Icon(
               Icons.edit,
               size: 16,
@@ -104,7 +89,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
     );
   }
 
-  Widget _buildEditingMode(ThemeData theme) {
+  Widget _buildEditMode(ThemeData theme) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
@@ -122,7 +107,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
               focusNode: _focusNode,
               style: widget.style ??
                   GoogleFonts.fustat(
-                                        fontSize: 20,
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.onSurface,
                   ),
@@ -134,7 +119,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
                 ),
                 hintText: 'Enter conversation title',
                 hintStyle: GoogleFonts.fustat(
-                                    fontSize: 20,
+                  fontSize: 20,
                   fontWeight: FontWeight.w400,
                   color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
@@ -142,7 +127,6 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
               maxLines: 1,
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _saveTitle(),
-              onTapOutside: (_) => _cancelEditing(),
             ),
           ),
           
@@ -150,44 +134,48 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
           Row(
             children: [
               // Save button
-              IconButton(
-                onPressed: _isSaving ? null : _saveTitle,
-                icon: _isSaving
-                    ? SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            ThemeColors(context).success,
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(4),
+                  onTap: _isSaving ? null : _saveTitle,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _isSaving
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                ThemeColors(context).success,
+                              ),
+                            ),
+                          )
+                        : Icon(
+                            Icons.check,
+                            size: 18,
+                            color: ThemeColors(context).success,
                           ),
-                        ),
-                      )
-                    : Icon(
-                        Icons.check,
-                        size: 18,
-                        color: ThemeColors(context).success,
-                      ),
-                style: IconButton.styleFrom(
-                  minimumSize: Size(32, 32),
-                  padding: EdgeInsets.all(4),
+                  ),
                 ),
-                tooltip: 'Save',
               ),
               
               // Cancel button
-              IconButton(
-                onPressed: _isSaving ? null : _cancelEditing,
-                icon: Icon(
-                  Icons.close,
-                  size: 18,
-                  color: theme.colorScheme.onSurfaceVariant,
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(4),
+                  onTap: _isSaving ? null : _cancelEditing,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.close,
+                      size: 18,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
-                style: IconButton.styleFrom(
-                  minimumSize: Size(32, 32),
-                  padding: EdgeInsets.all(4),
-                ),
-                tooltip: 'Cancel',
               ),
             ],
           ),
@@ -201,8 +189,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
     
     setState(() {
       _isEditing = true;
-      _controller.text = widget.conversation.title;
-      _originalTitle = widget.conversation.title;
+      _controller.text = _displayTitle;
     });
     
     // Focus and select all text
@@ -220,7 +207,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
     
     setState(() {
       _isEditing = false;
-      _controller.text = _originalTitle;
+      _controller.text = _displayTitle; // Reset to current title
     });
   }
 
@@ -231,11 +218,11 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
     
     // Validate title
     if (newTitle.isEmpty) {
-      _showError('Title cannot be empty');
+      _showMessage('Title cannot be empty', isError: true);
       return;
     }
     
-    if (newTitle == _originalTitle) {
+    if (newTitle == _displayTitle) {
       // No change, just exit editing mode
       setState(() {
         _isEditing = false;
@@ -248,75 +235,69 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
     });
     
     try {
-      // Update conversation title
-      print('DEBUG: Attempting to update conversation title from "${widget.conversation.title}" to "$newTitle"');
-      final updateConversation = ref.read(updateConversationProvider);
-      await updateConversation(
-        widget.conversation.id,
-        widget.conversation.copyWith(title: newTitle),
+      // Get the conversation service directly
+      final conversationService = ref.read(conversationServiceProvider);
+      
+      // Create updated conversation
+      final updatedConversation = widget.conversation.copyWith(
+        title: newTitle,
+        lastModified: DateTime.now(),
       );
-      print('DEBUG: Conversation title update succeeded');
       
-      // Refresh the conversation data
-      ref.invalidate(conversationProvider(widget.conversation.id));
-      ref.invalidate(conversationsProvider);
+      // Save the conversation
+      await conversationService.updateConversation(updatedConversation);
       
+      // Update local state immediately
       setState(() {
         _isEditing = false;
         _isSaving = false;
-        _originalTitle = newTitle;
+        _displayTitle = newTitle; // Update displayed title immediately
+      });
+      
+      // Force refresh providers after a short delay
+      Future.delayed(const Duration(milliseconds: 100), () {
+        ref.invalidate(conversationProvider(widget.conversation.id));
+        ref.invalidate(conversationsProvider);
       });
       
       // Show success feedback
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white, size: 16),
-                SizedBox(width: 8),
-                Text(
-                  'Conversation renamed to "$newTitle"',
-                  style: GoogleFonts.fustat(),
-                ),
-              ],
-            ),
-            backgroundColor: ThemeColors(context).success,
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
+      _showMessage('Conversation renamed successfully', isError: false);
       
     } catch (e) {
-      print('DEBUG: Conversation title update failed: $e');
       setState(() {
         _isSaving = false;
       });
-      _showError('Failed to save title: ${e.toString()}\n\nTip: Try creating a new conversation if this persists.');
+      _showMessage('Failed to save title: ${e.toString()}', isError: true);
     }
   }
 
-  void _showError(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.error, color: Colors.white, size: 16),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  message,
-                  style: GoogleFonts.fustat(),
-                ),
+  void _showMessage(String message, {required bool isError}) {
+    if (!mounted) return;
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              isError ? Icons.error : Icons.check_circle,
+              color: Colors.white,
+              size: 16,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                message,
+                style: GoogleFonts.fustat(),
               ),
-            ],
-          ),
-          backgroundColor: ThemeColors(context).error,
-          behavior: SnackBarBehavior.floating,
+            ),
+          ],
         ),
-      );
-    }
+        backgroundColor: isError
+            ? ThemeColors(context).error
+            : ThemeColors(context).success,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 }

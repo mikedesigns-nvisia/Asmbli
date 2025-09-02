@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
-import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../providers/agent_provider.dart';
 import '../../../../core/services/agent_context_prompt_service.dart';
 import '../widgets/wizard_step_indicator.dart';
@@ -94,37 +93,37 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   List<WizardTemplate> _createTemplatesList() {
     // Simplified template list - add key templates that users would want to use
     return [
-      WizardTemplate(
+      const WizardTemplate(
         name: 'Research Assistant',
         description: 'Academic research agent with citation management and fact-checking capabilities',
         category: 'Research',
         mcpServers: ['brave-search', 'memory', 'filesystem'],
       ),
-      WizardTemplate(
+      const WizardTemplate(
         name: 'Code Reviewer',
         description: 'Automated code review with best practices and security checks',
         category: 'Development',
         mcpServers: ['github', 'git', 'filesystem', 'memory'],
       ),
-      WizardTemplate(
+      const WizardTemplate(
         name: 'Content Writer',
         description: 'SEO-optimized content generation with tone customization',
         category: 'Writing',
         mcpServers: ['brave-search', 'web-fetch', 'memory', 'filesystem'],
       ),
-      WizardTemplate(
+      const WizardTemplate(
         name: 'Data Analyst',
         description: 'Statistical analysis and visualization for business insights',
         category: 'Data Analysis',
         mcpServers: ['postgres', 'python', 'jupyter', 'memory', 'filesystem'],
       ),
-      WizardTemplate(
+      const WizardTemplate(
         name: 'Customer Support Bot',
         description: 'Intelligent support agent with ticket management integration',
         category: 'Customer Support',
         mcpServers: ['jira', 'slack', 'zendesk', 'memory'],
       ),
-      WizardTemplate(
+      const WizardTemplate(
         name: 'Marketing Strategist',
         description: 'Campaign planning and performance analysis agent',
         category: 'Marketing',
@@ -142,8 +141,6 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -161,12 +158,12 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              // Simple header with back button only
-              _buildSimpleHeader(context),
+              // Header with back button
+              _buildComingSoonHeader(context),
               
-              // Main wizard content - Typeform style
+              // Coming Soon content
               Expanded(
-                child: _buildWizardContent(context),
+                child: _buildComingSoonContent(context),
               ),
             ],
           ),
@@ -175,9 +172,9 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
     );
   }
 
-  Widget _buildSimpleHeader(BuildContext context) {
+  Widget _buildComingSoonHeader(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.xxl,
         vertical: SpacingTokens.lg,
       ),
@@ -192,11 +189,124 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             ),
             style: IconButton.styleFrom(
               backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.8),
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
             ),
           ),
           
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
+          
+          // Title
+          Text(
+            'Agent Builder',
+            style: TextStyles.pageTitle.copyWith(
+              color: ThemeColors(context).onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComingSoonContent(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
+        child: AsmblCard(
+          child: Padding(
+            padding: const EdgeInsets.all(SpacingTokens.xxl * 2),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Coming Soon Icon
+                Container(
+                  padding: const EdgeInsets.all(SpacingTokens.xl),
+                  decoration: BoxDecoration(
+                    color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
+                  ),
+                  child: Icon(
+                    Icons.construction,
+                    size: 64,
+                    color: ThemeColors(context).primary,
+                  ),
+                ),
+                
+                const SizedBox(height: SpacingTokens.xxl),
+                
+                // Coming Soon Title
+                Text(
+                  'Agent Builder Coming Soon',
+                  style: TextStyles.pageTitle.copyWith(
+                    color: ThemeColors(context).onSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: SpacingTokens.lg),
+                
+                // Description
+                Text(
+                  'We\'re working on an intuitive drag-and-drop agent builder.\nIn the meantime, create agents using our pre-built templates!',
+                  style: TextStyles.bodyLarge.copyWith(
+                    color: ThemeColors(context).onSurfaceVariant,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: SpacingTokens.xxl),
+                
+                // Call to action buttons
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AsmblButtonEnhanced.primary(
+                      text: 'View Templates',
+                      icon: Icons.library_books,
+                      onPressed: () => context.go(AppRoutes.agents),
+                      size: AsmblButtonSize.medium,
+                    ),
+                    
+                    const SizedBox(width: SpacingTokens.lg),
+                    
+                    AsmblButtonEnhanced.secondary(
+                      text: 'Start Chat',
+                      icon: Icons.chat_bubble_outline,
+                      onPressed: () => context.go(AppRoutes.chat),
+                      size: AsmblButtonSize.medium,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSimpleHeader(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: SpacingTokens.xxl,
+        vertical: SpacingTokens.lg,
+      ),
+      child: Row(
+        children: [
+          // Back button
+          IconButton(
+            onPressed: () => context.go(AppRoutes.home),
+            icon: Icon(
+              Icons.arrow_back,
+              color: ThemeColors(context).onSurface,
+            ),
+            style: IconButton.styleFrom(
+              backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.8),
+              padding: const EdgeInsets.all(SpacingTokens.md),
+            ),
+          ),
+          
+          const SizedBox(width: SpacingTokens.lg),
           
           // Title
           Text(
@@ -206,7 +316,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             ),
           ),
           
-          Spacer(),
+          const Spacer(),
           
           // Advanced Editor Button (optional)
           TextButton.icon(
@@ -233,7 +343,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
 
   Widget _buildHeader(BuildContext context, ThemeData theme) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: ThemeColors(context).headerBackground,
         border: Border(
@@ -259,7 +369,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 ),
               ),
               
-              SizedBox(width: SpacingTokens.md),
+              const SizedBox(width: SpacingTokens.md),
               
               // Title
               Expanded(
@@ -291,7 +401,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Progress indicator
           WizardStepIndicator(
@@ -311,7 +421,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   }
 
   Widget _buildWizardContent(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: double.infinity,
       width: double.infinity,
       child: Column(
@@ -323,13 +433,13 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
           Expanded(
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: SpacingTokens.xxl * 2,
                 vertical: SpacingTokens.xl,
               ),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(
+                  constraints: const BoxConstraints(
                     maxWidth: 800, // Centered content with max width
                   ),
                   child: _buildTypeformStep(context),
@@ -348,7 +458,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   Widget _buildTypeformProgress(BuildContext context) {
     final progress = (_currentStep + 1) / _totalSteps;
     
-    return Container(
+    return SizedBox(
       height: 4,
       child: LinearProgressIndicator(
         value: progress,
@@ -370,11 +480,11 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
     ];
     
     return AnimatedSwitcher(
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       transitionBuilder: (Widget child, Animation<double> animation) {
         return SlideTransition(
           position: animation.drive(
-            Tween(begin: Offset(1.0, 0.0), end: Offset.zero)
+            Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
               .chain(CurveTween(curve: Curves.easeInOut)),
           ),
           child: child,
@@ -390,7 +500,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   Widget _buildTypeformNavigation(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface,
         border: Border(
@@ -410,7 +520,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
               onPressed: _goToPreviousStep,
             )
           else
-            SizedBox(width: 100), // Maintain spacing
+            const SizedBox(width: 100), // Maintain spacing
             
           // Step indicator
           Text(
@@ -459,14 +569,14 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: SpacingTokens.md),
+        const SizedBox(height: SpacingTokens.md),
         Text(
           'Give your agent a name and describe what it does',
           style: TextStyles.bodyLarge.copyWith(
             color: ThemeColors(context).onSurfaceVariant,
           ),
         ),
-        SizedBox(height: SpacingTokens.xxl),
+        const SizedBox(height: SpacingTokens.xxl),
         
         // Agent Name Field
         _buildTypeformField(
@@ -479,7 +589,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
           icon: Icons.smart_toy,
         ),
         
-        SizedBox(height: SpacingTokens.xl),
+        const SizedBox(height: SpacingTokens.xl),
         
         // Agent Description Field  
         _buildTypeformField(
@@ -508,22 +618,22 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: SpacingTokens.md),
+        const SizedBox(height: SpacingTokens.md),
         Text(
           'Select the AI model that will power your agent',
           style: TextStyles.bodyLarge.copyWith(
             color: ThemeColors(context).onSurfaceVariant,
           ),
         ),
-        SizedBox(height: SpacingTokens.xxl),
+        const SizedBox(height: SpacingTokens.xxl),
         
         // Model selection cards
         Column(
           children: [
             _buildModelOption('OpenAI GPT-4', 'Most capable, best for complex tasks', Icons.psychology),
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             _buildModelOption('Default API Model', 'Configurable AI assistant', Icons.auto_awesome),
-            SizedBox(height: SpacingTokens.lg), 
+            const SizedBox(height: SpacingTokens.lg), 
             _buildModelOption('Local Model', 'Run privately on your machine', Icons.computer),
           ],
         ),
@@ -543,30 +653,30 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: SpacingTokens.md),
+        const SizedBox(height: SpacingTokens.md),
         Text(
           'MCP servers give your agent access to tools and data sources',
           style: TextStyles.bodyLarge.copyWith(
             color: ThemeColors(context).onSurfaceVariant,
           ),
         ),
-        SizedBox(height: SpacingTokens.xxl),
+        const SizedBox(height: SpacingTokens.xxl),
         
         Text(
           'Popular integrations:',
           style: TextStyles.sectionTitle,
         ),
-        SizedBox(height: SpacingTokens.lg),
+        const SizedBox(height: SpacingTokens.lg),
         
         // Quick MCP server options
         Column(
           children: [
             _buildMCPOption('GitHub', 'Access repositories and issues', Icons.code),
-            SizedBox(height: SpacingTokens.md),
+            const SizedBox(height: SpacingTokens.md),
             _buildMCPOption('File System', 'Read and write local files', Icons.folder),
-            SizedBox(height: SpacingTokens.md),
+            const SizedBox(height: SpacingTokens.md),
             _buildMCPOption('Web Search', 'Search the internet', Icons.search),
-            SizedBox(height: SpacingTokens.md),
+            const SizedBox(height: SpacingTokens.md),
             _buildMCPOption('Database', 'Connect to PostgreSQL/SQLite', Icons.storage),
           ],
         ),
@@ -586,18 +696,18 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: SpacingTokens.md),
+        const SizedBox(height: SpacingTokens.md),
         Text(
           'Configure API keys and environment variables',
           style: TextStyles.bodyLarge.copyWith(
             color: ThemeColors(context).onSurfaceVariant,
           ),
         ),
-        SizedBox(height: SpacingTokens.xxl),
+        const SizedBox(height: SpacingTokens.xxl),
         
         // Environment variables count
         Container(
-          padding: EdgeInsets.all(SpacingTokens.lg),
+          padding: const EdgeInsets.all(SpacingTokens.lg),
           decoration: BoxDecoration(
             color: ThemeColors(context).primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -608,18 +718,18 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(SpacingTokens.md),
+                padding: const EdgeInsets.all(SpacingTokens.md),
                 decoration: BoxDecoration(
                   color: ThemeColors(context).primary,
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.key,
                   color: Colors.white,
                   size: 24,
                 ),
               ),
-              SizedBox(width: SpacingTokens.lg),
+              const SizedBox(width: SpacingTokens.lg),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -666,14 +776,14 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: SpacingTokens.md),
+        const SizedBox(height: SpacingTokens.md),
         Text(
           'Review your agent configuration and deploy when ready',
           style: TextStyles.bodyLarge.copyWith(
             color: ThemeColors(context).onSurfaceVariant,
           ),
         ),
-        SizedBox(height: SpacingTokens.xxl),
+        const SizedBox(height: SpacingTokens.xxl),
         
         // Agent summary card
         AsmblCard(
@@ -683,7 +793,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
               Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(SpacingTokens.md),
+                    padding: const EdgeInsets.all(SpacingTokens.md),
                     decoration: BoxDecoration(
                       color: ThemeColors(context).primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -694,7 +804,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                       size: 32,
                     ),
                   ),
-                  SizedBox(width: SpacingTokens.lg),
+                  const SizedBox(width: SpacingTokens.lg),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -717,7 +827,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 ],
               ),
               
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
               
               // Configuration summary
               _buildSummaryRow('AI Model', _wizardState.selectedApiProvider.isNotEmpty ? _wizardState.selectedApiProvider : 'Not selected'),
@@ -737,12 +847,12 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         // Current step info
         _buildCurrentStepInfo(context),
         
-        SizedBox(height: SpacingTokens.xxl),
+        const SizedBox(height: SpacingTokens.xxl),
         
         // Step overview
         _buildStepOverview(context),
         
-        SizedBox(height: SpacingTokens.xxl),
+        const SizedBox(height: SpacingTokens.xxl),
         
         // Progress summary
         _buildProgressSummary(context),
@@ -831,7 +941,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 'Step ${_currentStep + 1} of $_totalSteps',
                 style: TextStyles.cardTitle,
               ),
-              Spacer(),
+              const Spacer(),
               Text(
                 stepTitles[_currentStep],
                 style: TextStyles.bodyMedium.copyWith(
@@ -842,7 +952,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Progress bar
           Container(
@@ -863,7 +973,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           
           // Step dots
           Row(
@@ -884,7 +994,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: isCompleted
-                    ? Icon(
+                    ? const Icon(
                         Icons.check,
                         size: 8,
                         color: Colors.white,
@@ -938,7 +1048,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                   ),
                 ),
               ),
-              SizedBox(width: SpacingTokens.md),
+              const SizedBox(width: SpacingTokens.md),
               Expanded(
                 child: Text(
                   stepTitles[_currentStep],
@@ -948,7 +1058,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           
           Text(
             stepDescriptions[_currentStep],
@@ -979,7 +1089,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             style: TextStyles.cardTitle,
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...List.generate(stepTitles.length, (index) {
             final isCompleted = index < _currentStep;
@@ -987,7 +1097,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             final isPending = index > _currentStep;
             
             return Container(
-              margin: EdgeInsets.only(bottom: SpacingTokens.sm),
+              margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
               child: Row(
                 children: [
                   Container(
@@ -1003,7 +1113,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                     ),
                     child: Center(
                       child: isCompleted
-                          ? Icon(
+                          ? const Icon(
                               Icons.check,
                               size: 12,
                               color: Colors.white,
@@ -1021,7 +1131,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                     ),
                   ),
                   
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   
                   Expanded(
                     child: Text(
@@ -1053,16 +1163,16 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             style: TextStyles.cardTitle,
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           if (_wizardState.agentName.isNotEmpty) ...[
             _buildSummaryItem(context, 'Name', _wizardState.agentName),
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
           ],
           
           if (_wizardState.selectedApiProvider.isNotEmpty) ...[
             _buildSummaryItem(context, 'AI Model', _wizardState.selectedApiProvider),
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
           ],
           
           _buildSummaryItem(
@@ -1071,7 +1181,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             '${_wizardState.environmentVariables.length} configured'
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           _buildSummaryItem(
             context,
@@ -1110,7 +1220,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
 
   Widget _buildNavigationControls(BuildContext context, ThemeData theme) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface.withValues(alpha: 0.9),
         border: Border(
@@ -1131,7 +1241,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
           else
             const SizedBox(width: 120), // Spacer to maintain layout
           
-          Spacer(),
+          const Spacer(),
           
           // Step info
           Text(
@@ -1141,7 +1251,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             ),
           ),
           
-          Spacer(),
+          const Spacer(),
           
           // Next/Deploy button
           _buildNextButton(),
@@ -1318,7 +1428,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
               style: TextStyles.bodyMedium,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             Text(
               'You can now start a conversation or continue editing in the advanced editor.',
               style: TextStyles.bodySmall.copyWith(
@@ -1401,7 +1511,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
             ],
             Text(
               label,
@@ -1411,7 +1521,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.md),
+        const SizedBox(height: SpacingTokens.md),
         TextFormField(
           initialValue: initialValue,
           onChanged: onChanged,
@@ -1438,7 +1548,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 width: 2,
               ),
             ),
-            contentPadding: EdgeInsets.all(SpacingTokens.lg),
+            contentPadding: const EdgeInsets.all(SpacingTokens.lg),
             filled: true,
             fillColor: ThemeColors(context).surface,
           ),
@@ -1460,7 +1570,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         setState(() {});
       },
       child: Container(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         decoration: BoxDecoration(
           color: isSelected 
               ? ThemeColors(context).primary.withValues(alpha: 0.1)
@@ -1476,7 +1586,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: isSelected 
                     ? ThemeColors(context).primary
@@ -1491,7 +1601,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 size: 24,
               ),
             ),
-            SizedBox(width: SpacingTokens.lg),
+            const SizedBox(width: SpacingTokens.lg),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1538,7 +1648,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         setState(() {});
       },
       child: Container(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         decoration: BoxDecoration(
           color: isEnabled 
               ? ThemeColors(context).primary.withValues(alpha: 0.1)
@@ -1554,7 +1664,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: isEnabled 
                     ? ThemeColors(context).primary
@@ -1569,7 +1679,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 size: 20,
               ),
             ),
-            SizedBox(width: SpacingTokens.lg),
+            const SizedBox(width: SpacingTokens.lg),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1602,7 +1712,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 }
                 setState(() {});
               },
-              activeColor: ThemeColors(context).primary,
+              activeThumbColor: ThemeColors(context).primary,
             ),
           ],
         ),
@@ -1612,7 +1722,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
 
   Widget _buildSummaryRow(String label, String value) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: SpacingTokens.sm),
+      padding: const EdgeInsets.symmetric(vertical: SpacingTokens.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1644,8 +1754,8 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Environment Variables'),
-        content: Text('This would open the enhanced environment variable configuration screen we created earlier.'),
+        title: const Text('Environment Variables'),
+        content: const Text('This would open the enhanced environment variable configuration screen we created earlier.'),
         actions: [
           AsmblButton.primary(
             text: 'OK',

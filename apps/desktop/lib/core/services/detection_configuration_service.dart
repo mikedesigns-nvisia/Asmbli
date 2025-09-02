@@ -301,7 +301,7 @@ class DetectionConfigurationService {
   /// Get integration template for a tool
   IntegrationTemplate? _getIntegrationTemplate(String toolName) {
     final templates = {
-      'vs code': IntegrationTemplate(
+      'vs code': const IntegrationTemplate(
         id: 'vscode',
         name: 'VS Code',
         description: 'Visual Studio Code integration for file editing and project management',
@@ -310,7 +310,7 @@ class DetectionConfigurationService {
         env: {},
         category: 'development',
       ),
-      'git': IntegrationTemplate(
+      'git': const IntegrationTemplate(
         id: 'git',
         name: 'Git',
         description: 'Git version control integration',
@@ -319,7 +319,7 @@ class DetectionConfigurationService {
         env: {},
         category: 'development',
       ),
-      'github cli': IntegrationTemplate(
+      'github cli': const IntegrationTemplate(
         id: 'github',
         name: 'GitHub CLI',
         description: 'GitHub repository management',
@@ -328,7 +328,7 @@ class DetectionConfigurationService {
         env: {},
         category: 'development',
       ),
-      'node.js': IntegrationTemplate(
+      'node.js': const IntegrationTemplate(
         id: 'nodejs',
         name: 'Node.js',
         description: 'Node.js runtime and package management',
@@ -337,7 +337,7 @@ class DetectionConfigurationService {
         env: {},
         category: 'development',
       ),
-      'python': IntegrationTemplate(
+      'python': const IntegrationTemplate(
         id: 'python',
         name: 'Python',
         description: 'Python interpreter and package management',
@@ -346,7 +346,7 @@ class DetectionConfigurationService {
         env: {},
         category: 'development',
       ),
-      'docker': IntegrationTemplate(
+      'docker': const IntegrationTemplate(
         id: 'docker',
         name: 'Docker',
         description: 'Docker container management',
@@ -355,7 +355,7 @@ class DetectionConfigurationService {
         env: {},
         category: 'development',
       ),
-      'brave browser': IntegrationTemplate(
+      'brave browser': const IntegrationTemplate(
         id: 'brave',
         name: 'Brave Browser',
         description: 'Brave browser automation and bookmarks',
@@ -364,7 +364,7 @@ class DetectionConfigurationService {
         env: {},
         category: 'browsers',
       ),
-      'chrome': IntegrationTemplate(
+      'chrome': const IntegrationTemplate(
         id: 'chrome',
         name: 'Google Chrome',
         description: 'Chrome browser automation and bookmarks',
@@ -373,7 +373,7 @@ class DetectionConfigurationService {
         env: {},
         category: 'browsers',
       ),
-      'firefox': IntegrationTemplate(
+      'firefox': const IntegrationTemplate(
         id: 'firefox',
         name: 'Mozilla Firefox',
         description: 'Firefox browser automation and bookmarks',

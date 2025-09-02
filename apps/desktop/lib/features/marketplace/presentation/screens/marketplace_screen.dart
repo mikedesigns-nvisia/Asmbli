@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/components/app_navigation_bar.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../settings/presentation/widgets/integration_marketplace.dart';
 
@@ -24,7 +23,7 @@ class MarketplaceScreen extends ConsumerWidget {
             stops: const [0.0, 0.6, 1.0],
           ),
         ),
-        child: SafeArea(
+        child: const SafeArea(
           child: Column(
             children: [
               // App Navigation Bar

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../tokens/color_tokens.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
@@ -30,7 +29,7 @@ class AsmblDropdown<T> extends StatelessWidget {
  final colors = ThemeColors(context);
  
  return Container(
- padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+ padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
  decoration: BoxDecoration(
  border: Border.all(color: colors.border),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -211,7 +210,7 @@ class _AsmblSearchableDropdownState<T> extends State<AsmblSearchableDropdown<T>>
  BoxShadow(
  color: colors.onSurface.withValues(alpha: 0.1),
  blurRadius: 8,
- offset: Offset(0, 4),
+ offset: const Offset(0, 4),
  ),
  ],
  ),
@@ -251,7 +250,7 @@ class _AsmblSearchableDropdownState<T> extends State<AsmblSearchableDropdown<T>>
  
  // Items list
  Container(
- constraints: BoxConstraints(maxHeight: 200),
+ constraints: const BoxConstraints(maxHeight: 200),
  child: ListView.builder(
  shrinkWrap: true,
  itemCount: filteredItems.length,

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/services/mcp_settings_service.dart';
-import '../../../../core/services/mcp_health_monitor.dart';
 import '../../../settings/presentation/widgets/mcp_health_status_widget.dart';
 import '../../models/agent_wizard_state.dart';
 
@@ -41,7 +39,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 900),
@@ -51,27 +49,27 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
               // Step title and description
               _buildStepHeader(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Agent summary
               _buildAgentSummary(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Validation results
               _buildValidationSection(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // MCP server health check
               _buildHealthCheckSection(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Test conversation section
               _buildTestSection(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Deployment section
               _buildDeploymentSection(context),
@@ -90,7 +88,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
           'Deploy & Test',
           style: TextStyles.pageTitle,
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         Text(
           'Review your agent configuration, run validation checks, and test your agent before deployment.',
           style: TextStyles.bodyMedium.copyWith(
@@ -113,7 +111,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Agent Summary',
                 style: TextStyles.cardTitle,
@@ -121,11 +119,11 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Agent overview
           Container(
-            padding: EdgeInsets.all(SpacingTokens.md),
+            padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
               color: ThemeColors(context).primary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -145,9 +143,9 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                 ),
                 
                 if (widget.wizardState.agentRole.isNotEmpty) ...[
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: ThemeColors(context).primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -162,7 +160,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                   ),
                 ],
                 
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 
                 Text(
                   widget.wizardState.agentDescription,
@@ -172,7 +170,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Configuration details
           Row(
@@ -185,7 +183,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                   Icons.psychology,
                 ),
               ),
-              SizedBox(width: SpacingTokens.md),
+              const SizedBox(width: SpacingTokens.md),
               Expanded(
                 child: _buildSummaryMetric(
                   context,
@@ -197,7 +195,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Row(
             children: [
@@ -209,7 +207,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                   Icons.settings,
                 ),
               ),
-              SizedBox(width: SpacingTokens.md),
+              const SizedBox(width: SpacingTokens.md),
               Expanded(
                 child: _buildSummaryMetric(
                   context,
@@ -227,7 +225,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
 
   Widget _buildSummaryMetric(BuildContext context, String label, String value, IconData icon) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -240,7 +238,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             size: 16,
             color: ThemeColors(context).onSurfaceVariant,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,12 +277,12 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                 color: overallValid ? ThemeColors(context).success : ThemeColors(context).warning,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Validation Results',
                 style: TextStyles.cardTitle,
               ),
-              Spacer(),
+              const Spacer(),
               if (_hasRunValidation)
                 AsmblButton.secondary(
                   text: 'Re-validate',
@@ -294,7 +292,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           if (!_hasRunValidation) ...[
             Center(
@@ -303,7 +301,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                   CircularProgressIndicator(
                     color: ThemeColors(context).primary,
                   ),
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   Text(
                     'Running validation checks...',
                     style: TextStyles.bodyMedium.copyWith(
@@ -316,7 +314,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
           ] else ...[
             // Validation summary
             Container(
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: overallValid 
                     ? ThemeColors(context).success.withValues(alpha: 0.1)
@@ -334,7 +332,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                     overallValid ? Icons.check_circle : Icons.warning,
                     color: overallValid ? ThemeColors(context).success : ThemeColors(context).warning,
                   ),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,7 +373,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ),
             
             if (_showValidationDetails) ...[
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
               _buildValidationDetails(context),
             ],
           ],
@@ -390,8 +388,8 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
         final result = entry.value;
         
         return Container(
-          margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-          padding: EdgeInsets.all(SpacingTokens.sm),
+          margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+          padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
             color: ThemeColors(context).surface,
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -404,7 +402,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                 size: 16,
                 color: result.isValid ? ThemeColors(context).success : ThemeColors(context).error,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,7 +447,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'MCP Server Health Check',
                 style: TextStyles.cardTitle,
@@ -457,7 +455,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Checking the health of selected MCP servers to ensure they\'re ready for your agent.',
@@ -466,13 +464,13 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Health status for selected servers
           Column(
             children: widget.wizardState.selectedMCPServers.map((serverId) {
               return Container(
-                margin: EdgeInsets.only(bottom: SpacingTokens.sm),
+                margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
                 child: MCPHealthStatusWidget(
                   serverId: serverId,
                   showDetails: false,
@@ -497,7 +495,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Test Your Agent',
                 style: TextStyles.cardTitle,
@@ -505,7 +503,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Test your agent with a sample conversation to ensure everything works correctly.',
@@ -514,7 +512,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           if (_testConversationId == null) ...[
             Center(
@@ -525,7 +523,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                     size: 48,
                     color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
                   ),
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   Text(
                     'Start a test conversation',
                     style: TextStyles.bodyMedium.copyWith(
@@ -539,7 +537,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: SpacingTokens.lg),
+                  const SizedBox(height: SpacingTokens.lg),
                   AsmblButton.secondary(
                     text: _isTesting ? 'Starting Test...' : 'Start Test Conversation',
                     icon: _isTesting ? null : Icons.chat,
@@ -551,7 +549,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
           ] else ...[
             // Test conversation active
             Container(
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: ThemeColors(context).success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -569,7 +567,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                         color: ThemeColors(context).success,
                         size: 20,
                       ),
-                      SizedBox(width: SpacingTokens.sm),
+                      const SizedBox(width: SpacingTokens.sm),
                       Text(
                         'Test Conversation Active',
                         style: TextStyles.bodyMedium.copyWith(
@@ -580,7 +578,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                     ],
                   ),
                   
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   
                   Text(
                     'Your agent is ready for testing. You can now deploy it or continue testing.',
@@ -589,7 +587,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                     ),
                   ),
                   
-                  SizedBox(height: SpacingTokens.md),
+                  const SizedBox(height: SpacingTokens.md),
                   
                   Row(
                     children: [
@@ -598,7 +596,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                         icon: Icons.open_in_new,
                         onPressed: () => _openTestConversation(),
                       ),
-                      SizedBox(width: SpacingTokens.sm),
+                      const SizedBox(width: SpacingTokens.sm),
                       AsmblButton.secondary(
                         text: 'End Test',
                         icon: Icons.close,
@@ -631,7 +629,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Ready for Deployment',
                 style: TextStyles.cardTitle,
@@ -639,11 +637,11 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           if (!canDeploy) ...[
             Container(
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: ThemeColors(context).warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -657,7 +655,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                     Icons.warning,
                     color: ThemeColors(context).warning,
                   ),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -683,7 +681,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ),
           ] else ...[
             Container(
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: ThemeColors(context).success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -700,7 +698,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                         Icons.check_circle,
                         color: ThemeColors(context).success,
                       ),
-                      SizedBox(width: SpacingTokens.sm),
+                      const SizedBox(width: SpacingTokens.sm),
                       Text(
                         'Ready to Deploy!',
                         style: TextStyles.bodyMedium.copyWith(
@@ -711,14 +709,14 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                     ],
                   ),
                   
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   
                   Text(
                     'Your agent has passed all validation checks and is ready for deployment. Click the deploy button to make your agent available for use.',
                     style: TextStyles.bodyMedium,
                   ),
                   
-                  SizedBox(height: SpacingTokens.md),
+                  const SizedBox(height: SpacingTokens.md),
                   
                   Text(
                     'After deployment, you can:',
@@ -740,7 +738,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             ),
           ],
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           Row(
             children: [
@@ -752,7 +750,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                     onPressed: widget.isDeploying ? null : widget.onDeploy,
                   ),
                 ),
-                SizedBox(width: SpacingTokens.sm),
+                const SizedBox(width: SpacingTokens.sm),
               ],
               AsmblButton.secondary(
                 text: 'Save as Draft',
@@ -875,8 +873,8 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Save Draft'),
-        content: Text('Agent saved as draft. You can continue editing later.'),
+        title: const Text('Save Draft'),
+        content: const Text('Agent saved as draft. You can continue editing later.'),
         actions: [
           AsmblButton.primary(
             text: 'OK',

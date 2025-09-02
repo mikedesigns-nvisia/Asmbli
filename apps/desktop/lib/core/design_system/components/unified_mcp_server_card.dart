@@ -72,7 +72,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
             shape: BoxShape.circle,
           ),
         ),
-        SizedBox(width: SpacingTokens.xs),
+        const SizedBox(width: SpacingTokens.xs),
         
         // Server icon
         Container(
@@ -89,7 +89,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
           ),
         ),
         
-        SizedBox(width: SpacingTokens.xs),
+        const SizedBox(width: SpacingTokens.xs),
         
         // Server name and status
         Expanded(
@@ -109,9 +109,9 @@ class UnifiedMCPServerCard extends ConsumerWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               if (showDescription && isSelected && serverConfig?.description != null) ...[
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
-                  serverConfig!.description!,
+                  serverConfig!.description,
                   style: TextStyles.caption.copyWith(
                     color: ThemeColors(context).onSurfaceVariant,
                     fontSize: 9,
@@ -154,7 +154,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
               ),
             ),
             
-            SizedBox(width: SpacingTokens.md),
+            const SizedBox(width: SpacingTokens.md),
             
             Expanded(
               child: Column(
@@ -177,7 +177,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
                       ),
                       if (isSelected) ...[
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: ThemeColors(context).primary,
                             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -194,7 +194,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
                       ],
                     ],
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
                     _getServerCategory(),
                     style: TextStyles.caption.copyWith(
@@ -215,9 +215,9 @@ class UnifiedMCPServerCard extends ConsumerWidget {
         
         // Description
         if (showDescription && serverConfig?.description != null) ...[
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
-            serverConfig!.description!,
+            serverConfig!.description,
             style: TextStyles.bodySmall.copyWith(
               color: ThemeColors(context).onSurfaceVariant,
             ),
@@ -228,15 +228,15 @@ class UnifiedMCPServerCard extends ConsumerWidget {
         
         // Configuration status
         if (serverConfig != null) ...[
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.check_circle_outline,
                 size: 14,
                 color: SemanticColors.success,
               ),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 serverConfig.enabled ? 'Configured and enabled' : 'Configured but disabled',
                 style: TextStyles.caption.copyWith(
@@ -247,7 +247,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
             ],
           ),
         ] else ...[
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Row(
             children: [
               Icon(
@@ -255,7 +255,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
                 size: 14,
                 color: ThemeColors(context).warning,
               ),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Not configured',
                 style: TextStyles.caption.copyWith(

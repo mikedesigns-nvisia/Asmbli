@@ -268,7 +268,7 @@ class _ThinkingBubbleWidgetState extends State<ThinkingBubbleWidget>
                               ),
                             ],
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.psychology_outlined,
                             size: 16,
                             color: Colors.white,

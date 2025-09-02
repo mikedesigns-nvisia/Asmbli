@@ -11,17 +11,14 @@ import '../../../../core/constants/routes.dart';
 import '../widgets/mcp_server_dialog.dart';
 import '../widgets/mcp_health_status_widget.dart';
 import '../widgets/api_key_dialog.dart';
-import '../../../../core/design_system/components/unified_mcp_server_card.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import '../../../../core/services/integration_service.dart';
 import '../../../../core/services/integration_dependency_service.dart';
 import '../../../../core/design_system/components/integration_status_indicators.dart';
-import '../../../../core/services/integration_installation_service.dart' as installation;
 import '../../../../core/services/integration_health_monitoring_service.dart' as health_monitoring;
 import '../widgets/integration_recommendations_widget.dart';
 import '../widgets/integration_dependency_dialog.dart';
 import '../widgets/integration_health_dashboard.dart';
-import '../widgets/enhanced_integrations_tab.dart';
 import '../widgets/manual_mcp_server_modal.dart';
 import '../widgets/custom_mcp_server_modal.dart';
 import '../widgets/simple_auto_detection_wizard.dart';
@@ -134,7 +131,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  description: 'Academic research agent with citation management',
  category: 'Research',
  isActive: true,
- lastUsed: DateTime.now().subtract(Duration(minutes: 15)),
+ lastUsed: DateTime.now().subtract(const Duration(minutes: 15)),
  totalChats: 23,
  mcpServers: ['Brave Search', 'Memory', 'Files'],
  systemPrompt: 'You are a research assistant specialized in academic research and citation management. Always provide well-sourced information and maintain academic standards.',
@@ -146,7 +143,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  description: 'Automated code review with best practices',
  category: 'Development',
  isActive: true,
- lastUsed: DateTime.now().subtract(Duration(hours: 2)),
+ lastUsed: DateTime.now().subtract(const Duration(hours: 2)),
  totalChats: 8,
  mcpServers: ['GitHub', 'Git', 'Files'],
  systemPrompt: 'You are a senior software engineer specializing in code review. Focus on code quality, security, performance, and best practices.',
@@ -255,12 +252,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Column(
  children: [
  // Header
- AppNavigationBar(currentRoute: AppRoutes.settings),
+ const AppNavigationBar(currentRoute: AppRoutes.settings),
  
  // Main Content
  Expanded(
  child: SingleChildScrollView(
- padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+ padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -274,7 +271,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  size: 16,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  Text(
  'Back to Chat',
  style: TextStyle(
@@ -287,7 +284,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  ),
  
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  
  // Page Title and Tab Bar (inline, compact)
  Row(
@@ -301,7 +298,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  color: Theme.of(context).colorScheme.onSurface,
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  
  // Tab Bar (inline)
  Expanded(
@@ -321,12 +318,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ],
  labelColor: Theme.of(context).colorScheme.primary,
  unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
- labelStyle: TextStyle(
+ labelStyle: const TextStyle(
  
  fontSize: 14,
  fontWeight: FontWeight.w600,
  ),
- unselectedLabelStyle: TextStyle(
+ unselectedLabelStyle: const TextStyle(
  
  fontSize: 14,
  fontWeight: FontWeight.w500,
@@ -335,7 +332,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(8),
  ),
- indicatorPadding: EdgeInsets.all(4),
+ indicatorPadding: const EdgeInsets.all(4),
  dividerColor: Colors.transparent,
  ),
  ),
@@ -343,7 +340,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ],
  ),
  
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  
  // Tab View Content (expanded height)
  SizedBox(
@@ -357,22 +354,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.psychology, size: 64, color: ThemeColors(context).primary),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Text(
                         'LLM Configuration',
                         style: GoogleFonts.fustat(fontSize: 18, fontWeight: FontWeight.w600),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'Configure language models in Settings',
                         style: GoogleFonts.fustat(fontSize: 14, color: ThemeColors(context).onSurfaceVariant),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pushNamed('/settings');
                         },
-                        child: Text('Open LLM Settings'),
+                        child: const Text('Open LLM Settings'),
                       ),
                     ],
                   ),
@@ -450,7 +447,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  padding: const EdgeInsets.all(24),
  child: Center(
  child: Container(
- constraints: BoxConstraints(maxWidth: 1200),
+ constraints: const BoxConstraints(maxWidth: 1200),
  child: Column(
  children: [
  // Agent Selection Section
@@ -491,13 +488,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ],
  ),
  
- SizedBox(height: 24),
+ const SizedBox(height: 24),
  
  // Agent Info Display
  Container(
  padding: const EdgeInsets.all(16),
  decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+ color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
  borderRadius: BorderRadius.circular(8),
  border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
  ),
@@ -515,7 +512,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  shape: BoxShape.circle,
  ),
  ),
- SizedBox(width: 12),
+ const SizedBox(width: 12),
  Expanded(
  child: Text(
  agents.firstWhere((a) => a.name == selectedAgent).description,
@@ -528,7 +525,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  ],
  ),
- SizedBox(height: 12),
+ const SizedBox(height: 12),
  
  // API Assignment Display
  Container(
@@ -545,7 +542,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  size: 16,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  Text(
  'API:',
  style: TextStyle(
@@ -555,11 +552,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  Expanded(
  child: _getApiAssignmentWidget(),
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  GestureDetector(
  onTap: _showApiSelectionDialog,
  child: Container(
@@ -584,7 +581,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  ),
  
- SizedBox(height: 12),
+ const SizedBox(height: 12),
  
  // MCP Servers
  Wrap(
@@ -620,7 +617,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  ),
  
- SizedBox(height: 32),
+ const SizedBox(height: 32),
  
  // System Prompt Editor
  _SettingsSection(
@@ -637,7 +634,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
  ),
- SizedBox(height: 12),
+ const SizedBox(height: 12),
  Container(
  decoration: BoxDecoration(
  border: Border.all(color: Theme.of(context).colorScheme.outline),
@@ -654,7 +651,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
  border: InputBorder.none,
- contentPadding: EdgeInsets.all(16),
+ contentPadding: const EdgeInsets.all(16),
  ),
  style: TextStyle(
  
@@ -664,7 +661,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  ),
  ),
- SizedBox(height: 16),
+ const SizedBox(height: 16),
  Row(
  children: [
  Container(
@@ -679,7 +676,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  foregroundColor: Theme.of(context).colorScheme.onSurface,
  overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
  ),
- child: Text(
+ child: const Text(
  'Reset to Default',
  style: TextStyle(
  
@@ -688,7 +685,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  ),
  ),
- SizedBox(width: 12),
+ const SizedBox(width: 12),
  Container(
  decoration: BoxDecoration(
  color: Theme.of(context).colorScheme.primary,
@@ -701,7 +698,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  foregroundColor: Theme.of(context).colorScheme.onPrimary,
  overlayColor: Colors.white.withValues(alpha: 0.1),
  ),
- child: Text(
+ child: const Text(
  'Save Prompt',
  style: TextStyle(
  
@@ -730,7 +727,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  padding: const EdgeInsets.all(24),
  child: Center(
  child: Container(
- constraints: BoxConstraints(maxWidth: 1200),
+ constraints: const BoxConstraints(maxWidth: 1200),
  child: Column(
  children: [
  _SettingsSection(
@@ -758,7 +755,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  },
  ),
  ),
- SizedBox(height: 24),
+ const SizedBox(height: 24),
  Row(
  children: [
  Icon(
@@ -766,7 +763,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  size: 20,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
- SizedBox(width: 12),
+ const SizedBox(width: 12),
  Expanded(
  child: Text(
  'Enable notifications',
@@ -780,14 +777,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Switch(
  value: true,
  onChanged: (value) {},
- activeColor: Theme.of(context).colorScheme.primary,
+ activeThumbColor: Theme.of(context).colorScheme.primary,
  ),
  ],
  ),
  ],
  ),
  ),
- SizedBox(height: 32),
+ const SizedBox(height: 32),
  _SettingsSection(
  title: 'About',
  child: Column(
@@ -799,7 +796,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  size: 20,
  color: Theme.of(context).colorScheme.onSurfaceVariant,
  ),
- SizedBox(width: 12),
+ const SizedBox(width: 12),
  Text(
  'Version 1.0.0',
  style: TextStyle(
@@ -848,7 +845,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  borderRadius: BorderRadius.circular(4),
  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
  ),
- child: Row(
+ child: const Row(
  mainAxisSize: MainAxisSize.min,
  children: [
  Icon(
@@ -894,7 +891,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  size: 12,
  color: apiConfig.isConfigured ? ThemeColors(context).success : ThemeColors(context).error,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Text(
  '${apiConfig.provider} (${apiConfig.model})',
  style: TextStyle(
@@ -922,7 +919,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  side: BorderSide(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
  ),
  title: Text(
- 'Select API for ${selectedAgent}',
+ 'Select API for $selectedAgent',
  style: TextStyle(
  
  fontSize: 18,
@@ -930,7 +927,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  color: Theme.of(context).colorScheme.onSurface,
  ),
  ),
- content: Container(
+ content: SizedBox(
  width: 400,
  child: Column(
  mainAxisSize: MainAxisSize.min,
@@ -939,7 +936,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  final apiConfig = entry.value;
  final isSelected = agentApiAssignments[selectedAgent] == apiConfig.id;
  return Container(
- margin: EdgeInsets.only(bottom: 8),
+ margin: const EdgeInsets.only(bottom: 8),
  decoration: BoxDecoration(
  color: isSelected 
  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.05)
@@ -983,7 +980,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  ),
  if (apiConfig.isDefault) ...[
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
  decoration: BoxDecoration(
@@ -1036,8 +1033,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  },
  ),
  );
- }).toList(),
- SizedBox(height: 16),
+ }),
+ const SizedBox(height: 16),
  Container(
  width: double.infinity,
  decoration: BoxDecoration(
@@ -1080,7 +1077,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  foregroundColor: Theme.of(context).colorScheme.onSurface,
  overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
  ),
- child: Text(
+ child: const Text(
  'Cancel',
  style: TextStyle(
  
@@ -1177,7 +1174,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
  ),
  backgroundColor: isError ? ThemeColors(context).error : ThemeColors(context).success,
  behavior: SnackBarBehavior.floating,
- margin: EdgeInsets.all(16),
+ margin: const EdgeInsets.all(16),
  shape: RoundedRectangleBorder(
  borderRadius: BorderRadius.circular(8),
  ),
@@ -1193,7 +1190,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
           padding: const EdgeInsets.all(24),
           child: Center(
             child: Container(
-              constraints: BoxConstraints(maxWidth: 1200),
+              constraints: const BoxConstraints(maxWidth: 1200),
               child: Column(
                 children: [
                   // MCP Server Configuration Section
@@ -1210,7 +1207,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        SizedBox(height: SpacingTokens.componentSpacing),
+                        const SizedBox(height: SpacingTokens.componentSpacing),
                         
                         // Add New MCP Server Button
                         Row(
@@ -1222,7 +1219,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                                 icon: Icons.add,
                               ),
                             ),
-                            SizedBox(width: 12),
+                            const SizedBox(width: 12),
                             AsmblButton.secondary(
                               text: 'Import Config',
                               onPressed: () => _showImportMCPConfigDialog(),
@@ -1231,7 +1228,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                           ],
                         ),
                         
-                        SizedBox(height: SpacingTokens.componentSpacing),
+                        const SizedBox(height: SpacingTokens.componentSpacing),
                         
                         // MCP Servers List - show actual servers or empty state
                         FutureBuilder<Map<String, MCPServerConfig>>(
@@ -1256,7 +1253,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                     ),
                   ),
                   
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   
                   // MCP Server Health Monitoring Section
                   _SettingsSection(
@@ -1272,15 +1269,15 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        SizedBox(height: SpacingTokens.componentSpacing),
+                        const SizedBox(height: SpacingTokens.componentSpacing),
                         
                         // Health monitoring widget
-                        MCPHealthStatusWidget(showDetails: true),
+                        const MCPHealthStatusWidget(showDetails: true),
                       ],
                     ),
                   ),
                   
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   
                   // Global Context Documents Section
                   _SettingsSection(
@@ -1296,7 +1293,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        SizedBox(height: SpacingTokens.componentSpacing),
+                        const SizedBox(height: SpacingTokens.componentSpacing),
                         
                         AsmblButton.secondary(
                           text: 'Add Context Document',
@@ -1304,13 +1301,13 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                           icon: Icons.description,
                         ),
                         
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         // Empty state for context documents
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -1325,7 +1322,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                                 size: 18,
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
-                              SizedBox(width: 12),
+                              const SizedBox(width: 12),
                               Text(
                                 'No global context documents configured',
                                 style: TextStyle(
@@ -1354,7 +1351,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -1369,7 +1366,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
             size: 48,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             'No MCP Servers Configured',
             style: TextStyle(
@@ -1379,7 +1376,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Add MCP servers to provide tools and capabilities to your agents.\nServers can offer file system access, web search, databases, and more.',
             style: TextStyle(
@@ -1390,7 +1387,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -1399,7 +1396,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                 icon: Icons.library_books,
                 onPressed: _showManualMCPServerModal,
               ),
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               AsmblButton.primary(
                 text: 'Add MCP Server',
                 icon: Icons.add,
@@ -1422,14 +1419,14 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: ThemeColors(context).surface,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(BorderRadiusTokens.xl),
             topRight: Radius.circular(BorderRadiusTokens.xl),
           ),
         ),
         child: Container(
           height: MediaQuery.of(context).size.height * 0.6,
-          padding: EdgeInsets.all(SpacingTokens.xxl),
+          padding: const EdgeInsets.all(SpacingTokens.xxl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1437,7 +1434,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
               Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                    padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                     decoration: BoxDecoration(
                       color: ThemeColors(context).primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1448,7 +1445,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                       color: ThemeColors(context).primary,
                     ),
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1457,7 +1454,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                           'Add MCP Server',
                           style: TextStyles.pageTitle.copyWith(color: ThemeColors(context).onSurface),
                         ),
-                        SizedBox(height: SpacingTokens.xs_precise),
+                        const SizedBox(height: SpacingTokens.xs_precise),
                         Text(
                           'Choose how you want to add an MCP server integration',
                           style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurfaceVariant),
@@ -1472,7 +1469,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                 ],
               ),
               
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               
               // Options
               Expanded(
@@ -1491,7 +1488,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                       },
                     ),
                     
-                    SizedBox(height: SpacingTokens.componentSpacing),
+                    const SizedBox(height: SpacingTokens.componentSpacing),
                     
                     // Server Library Option
                     _buildAddServerOption(
@@ -1506,7 +1503,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                       },
                     ),
                     
-                    SizedBox(height: SpacingTokens.componentSpacing),
+                    const SizedBox(height: SpacingTokens.componentSpacing),
                     
                     // Custom Configuration Option
                     _buildAddServerOption(
@@ -1543,7 +1540,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+        padding: const EdgeInsets.all(SpacingTokens.sectionSpacing),
         decoration: BoxDecoration(
           color: ThemeColors(context).surfaceVariant,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -1552,14 +1549,14 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               ),
               child: Icon(icon, size: 32, color: color),
             ),
-            SizedBox(width: SpacingTokens.sectionSpacing),
+            const SizedBox(width: SpacingTokens.sectionSpacing),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1570,9 +1567,9 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                         title,
                         style: TextStyles.cardTitle.copyWith(color: ThemeColors(context).onSurface),
                       ),
-                      SizedBox(width: SpacingTokens.iconSpacing),
+                      const SizedBox(width: SpacingTokens.iconSpacing),
                       Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: SpacingTokens.iconSpacing,
                           vertical: SpacingTokens.xs_precise,
                         ),
@@ -1590,7 +1587,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                       ),
                     ],
                   ),
-                  SizedBox(height: SpacingTokens.xs_precise),
+                  const SizedBox(height: SpacingTokens.xs_precise),
                   Text(
                     description,
                     style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurfaceVariant),
@@ -1617,12 +1614,12 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
             showDialog(
               context: context,
               builder: (context) => Dialog(
-                child: Container(
+                child: SizedBox(
                   width: 1000,
                   height: 700,
                   child: Container(
-                    padding: EdgeInsets.all(24),
-                    child: Text('Integration marketplace functionality has been moved to the Integration Center. Please use the Integrations tab in the navigation.'),
+                    padding: const EdgeInsets.all(24),
+                    child: const Text('Integration marketplace functionality has been moved to the Integration Center. Please use the Integrations tab in the navigation.'),
                   ),
                 ),
               ),
@@ -1654,7 +1651,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
   void _showLegacyMCPServerDialog() {
     showDialog(
       context: context,
-      builder: (context) => MCPServerDialog(),
+      builder: (context) => const MCPServerDialog(),
     ).then((result) {
       if (result == true) {
         setState(() {});
@@ -1749,7 +1746,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                 decoration: BoxDecoration(
                   color: config.enabled 
                     ? SemanticColors.success.withValues(alpha: 0.1)
-                    : Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.5),
+                    : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: config.enabled 
@@ -1764,7 +1761,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                 ),
               ),
               
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               
               // Server Info
               Expanded(
@@ -1796,7 +1793,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       config.description,
                       style: TextStyle(
@@ -1809,7 +1806,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                 ),
               ),
               
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               
               // Actions
               Row(
@@ -1817,7 +1814,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                 children: [
                   IconButton(
                     onPressed: () => _testMCPServerConnection(serverId, mcpService),
-                    icon: Icon(Icons.play_circle, size: 20),
+                    icon: const Icon(Icons.play_circle, size: 20),
                     style: IconButton.styleFrom(
                       foregroundColor: SemanticColors.primary,
                       overlayColor: SemanticColors.primary.withValues(alpha: 0.1),
@@ -1825,7 +1822,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                   ),
                   IconButton(
                     onPressed: () => _editMCPServer(serverId, config),
-                    icon: Icon(Icons.edit, size: 18),
+                    icon: const Icon(Icons.edit, size: 18),
                     style: IconButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
                       overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
@@ -1833,7 +1830,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                   ),
                   IconButton(
                     onPressed: () => _deleteMCPServer(serverId, mcpService),
-                    icon: Icon(Icons.delete, size: 18),
+                    icon: const Icon(Icons.delete, size: 18),
                     style: IconButton.styleFrom(
                       foregroundColor: SemanticColors.error,
                       overlayColor: SemanticColors.error.withValues(alpha: 0.1),
@@ -1844,13 +1841,13 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
             ],
           ),
           
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           // Server Details
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Column(
@@ -1863,7 +1860,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                       size: 14,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Command: ${config.command} ${config.args.join(' ')}',
@@ -1877,7 +1874,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                   ],
                 ),
                 if (config.env?.isNotEmpty == true) ...[
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Icon(
@@ -1885,7 +1882,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                         size: 14,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'Environment: ${config.env!.keys.join(', ')}',
@@ -1941,7 +1938,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 12, color: color),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
             text,
             style: TextStyle(
@@ -1998,7 +1995,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
             color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
           ),
         ),
-        title: Text(
+        title: const Text(
           'Delete MCP Server',
           style: TextStyle(
             
@@ -2015,7 +2012,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
             style: TextButton.styleFrom(
               overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
             ),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -2023,7 +2020,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
               backgroundColor: SemanticColors.error,
               foregroundColor: Colors.white,
             ),
-            child: Text('Delete'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -2075,7 +2072,7 @@ class _SettingsSection extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           child,
         ],
       ),
@@ -2294,7 +2291,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                   onChanged: (value) => setState(() => _searchQuery = value),
                   decoration: InputDecoration(
                     hintText: 'Search integrations...',
-                    prefixIcon: Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
@@ -2308,7 +2305,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               // Category Filter
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedCategory,
+                  initialValue: _selectedCategory,
                   onChanged: (value) => setState(() => _selectedCategory = value!),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -2424,7 +2421,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               showHealth: false,
               showDescription: true,
               trailing: Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -2440,9 +2437,9 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               ),
             ),
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.sm),
+            padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm),
             child: AsmblButton.secondary(
               text: 'Edit',
               onPressed: () => _handleIntegrationAction(integration),
@@ -2458,7 +2455,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           children: [
             // Header with icon and info
             Padding(
-              padding: EdgeInsets.all(SpacingTokens.sm),
+              padding: const EdgeInsets.all(SpacingTokens.sm),
               child: Column(
                 children: [
                   // Icon
@@ -2475,7 +2472,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                       size: 20,
                     ),
                   ),
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   
                   // Name
                   Text(
@@ -2488,7 +2485,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   
                   // Description
                   Text(
@@ -2507,12 +2504,12 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             
             // Footer
             Padding(
-              padding: EdgeInsets.all(SpacingTokens.sm),
+              padding: const EdgeInsets.all(SpacingTokens.sm),
               child: Column(
                 children: [
                   // Status badge
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: ThemeColors(context).surface,
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -2529,7 +2526,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                       ),
                     ),
                   ),
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   
                   // Action Button
                   AsmblButton.primary(
@@ -2604,7 +2601,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         child: Container(
           width: MediaQuery.of(context).size.width * 0.9,
           height: MediaQuery.of(context).size.height * 0.8,
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             maxWidth: 1400,
             maxHeight: 900,
             minWidth: 800,
@@ -2622,8 +2619,8 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             children: [
               // Header
               Container(
-                padding: EdgeInsets.all(SpacingTokens.lg),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.all(SpacingTokens.lg),
+                decoration: const BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
                       color: SemanticColors.border,
@@ -2632,15 +2629,15 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.store, size: 24, color: SemanticColors.primary),
-                    SizedBox(width: SpacingTokens.sm),
+                    const Icon(Icons.store, size: 24, color: SemanticColors.primary),
+                    const SizedBox(width: SpacingTokens.sm),
                     Text(
                       'Integration Marketplace',
                       style: TextStyles.pageTitle,
                     ),
-                    Spacer(),
+                    const Spacer(),
                     IconButton(
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -2650,8 +2647,8 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               // Marketplace Content
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(24),
-                  child: Text('Integration marketplace functionality has been moved to the Integration Center.'),
+                  padding: const EdgeInsets.all(24),
+                  child: const Text('Integration marketplace functionality has been moved to the Integration Center.'),
                 ),
               ),
             ],
@@ -2665,7 +2662,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
     return Consumer(
       builder: (context, ref, child) {
         return Container(
-          padding: EdgeInsets.all(SpacingTokens.md),
+          padding: const EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
             color: SemanticColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -2675,12 +2672,12 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           ),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.science,
                 color: SemanticColors.primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2724,7 +2721,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         ),
         title: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(
@@ -2732,7 +2729,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                 valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
               ),
             ),
-            SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: SpacingTokens.sm),
             Text(
               'Running Integration Test',
               style: TextStyles.cardTitle,
@@ -2751,7 +2748,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
     try {
       // Note: Integration test service removed - functionality moved to integration_testing_service
       // TODO: Implement integration testing workflow with remaining services
-      await Future.delayed(Duration(seconds: 2)); // Placeholder for now
+      await Future.delayed(const Duration(seconds: 2)); // Placeholder for now
       
       Navigator.of(context).pop(); // Close progress dialog
       
@@ -2781,7 +2778,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
       children: [
         // Main Stats Row
         Container(
-          padding: EdgeInsets.all(SpacingTokens.lg),
+          padding: const EdgeInsets.all(SpacingTokens.lg),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -2797,31 +2794,31 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                 Icons.apps,
                 SemanticColors.primary,
               ),
-              SizedBox(width: SpacingTokens.lg),
+              const SizedBox(width: SpacingTokens.lg),
               _buildStatCard(
                 'Installed',
                 '${stats.configured}',
                 Icons.check_circle,
                 SemanticColors.success,
               ),
-              SizedBox(width: SpacingTokens.lg),
+              const SizedBox(width: SpacingTokens.lg),
               _buildStatCard(
                 'Healthy',
                 '${healthStats.healthy}',
                 Icons.favorite,
                 Colors.green,
               ),
-              SizedBox(width: SpacingTokens.lg),
+              const SizedBox(width: SpacingTokens.lg),
               _buildStatCard(
                 'Need Attention',
                 '${healthStats.unhealthy + healthStats.error}',
                 Icons.warning,
                 Colors.orange,
               ),
-              Spacer(),
+              const Spacer(),
               // Health percentage indicator
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: healthStats.isHealthy ? Colors.green.withValues(alpha: 0.1) : Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -2837,7 +2834,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                       size: 16,
                       color: healthStats.isHealthy ? Colors.green : Colors.orange,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
                       '${healthStats.healthPercentage.toStringAsFixed(0)}% Healthy',
                       style: TextStyle(
@@ -2854,22 +2851,22 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           ),
         ),
         
-        SizedBox(height: SpacingTokens.md),
+        const SizedBox(height: SpacingTokens.md),
         
         // Test Integration Workflow Button
         _buildTestWorkflowButton(context),
         
-        SizedBox(height: SpacingTokens.md),
+        const SizedBox(height: SpacingTokens.md),
         
         // Health Dashboard Widget
-        IntegrationHealthDashboard(),
+        const IntegrationHealthDashboard(),
       ],
     );
   }
 
   Widget _buildStatsOverview(IntegrationStats stats) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -2885,28 +2882,28 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             Icons.apps,
             SemanticColors.primary,
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
             'Configured',
             '${stats.configured}',
             Icons.check_circle,
             SemanticColors.success,
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
             'Active',
             '${stats.enabled}',
             Icons.play_circle,
             ThemeColors(context).primary,
           ),
-          SizedBox(width: SpacingTokens.lg),
+          const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
             'Available',
             '${stats.available}',
             Icons.download,
             SemanticColors.warning,
           ),
-          Spacer(),
+          const Spacer(),
           // Quick category indicators
           Wrap(
             spacing: SpacingTokens.xs,
@@ -2917,7 +2914,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               return Tooltip(
                 message: '${category.displayName}: ${categoryStats.configured}/${categoryStats.total} configured',
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: _getCategoryColor(category).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -2933,7 +2930,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                           shape: BoxShape.circle,
                         ),
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         '${categoryStats.configured}',
                         style: TextStyle(
@@ -2960,7 +2957,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 16, color: color),
-            SizedBox(width: SpacingTokens.xs),
+            const SizedBox(width: SpacingTokens.xs),
             Text(
               value,
               style: TextStyle(
@@ -2971,10 +2968,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             ),
           ],
         ),
-        SizedBox(height: 2),
+        const SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 11,
             color: SemanticColors.onSurfaceVariant,
             fontWeight: FontWeight.w500,
@@ -2994,18 +2991,18 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           // Header with icon, status indicators, and info
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(SpacingTokens.sm),
+              padding: const EdgeInsets.all(SpacingTokens.sm),
               child: Column(
                 children: [
                   // Status row at top
                   Row(
                     children: [
                       IntegrationStatusIndicators.statusBadge(status, compact: true),
-                      Spacer(),
+                      const Spacer(),
                       IntegrationStatusIndicators.difficultyBadge(integration.difficulty, showIcon: false),
                     ],
                   ),
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   
                   // Icon
                   Container(
@@ -3021,7 +3018,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                       size: 20,
                     ),
                   ),
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   
                   // Name
                   Text(
@@ -3034,7 +3031,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   
                   // Description
                   Expanded(
@@ -3049,12 +3046,12 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                     ),
                   ),
                   
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   
                   // Capabilities preview
                   IntegrationStatusIndicators.capabilitiesPreview(integration.capabilities),
                   
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   
                   // Prerequisites indicator
                   IntegrationStatusIndicators.prerequisitesIndicator(integration.prerequisites),
@@ -3065,7 +3062,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           
           // Action button
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
+            padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
             child: AsmblButton.secondary(
               text: _getActionButtonText(status),
               onPressed: integration.isAvailable 
@@ -3100,10 +3097,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           setState(() {});
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Integration updated successfully!'),
+              content: const Text('Integration updated successfully!'),
               backgroundColor: ThemeColors(context).success,
               behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(16),
+              margin: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -3135,7 +3132,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               content: Text('Please install required dependencies first: ${depCheck.missingRequired.join(', ')}'),
               backgroundColor: ThemeColors(context).error,
               behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(16),
+              margin: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -3156,10 +3153,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           setState(() {});
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Integration installed successfully!'),
+              content: const Text('Integration installed successfully!'),
               backgroundColor: ThemeColors(context).success,
               behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(16),
+              margin: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -3185,10 +3182,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             setState(() {}); // Refresh the integrations list
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Integration updated successfully!'),
+                content: const Text('Integration updated successfully!'),
                 backgroundColor: ThemeColors(context).success,
                 behavior: SnackBarBehavior.floating,
-                margin: EdgeInsets.all(16),
+                margin: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -3208,10 +3205,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             setState(() {}); // Refresh the integrations list
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Integration added successfully!'),
+                content: const Text('Integration added successfully!'),
                 backgroundColor: ThemeColors(context).success,
                 behavior: SnackBarBehavior.floating,
-                margin: EdgeInsets.all(16),
+                margin: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -3234,16 +3231,16 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   void _showAddIntegrationDialog() {
     showDialog(
       context: context,
-      builder: (context) => MCPServerDialog(),
+      builder: (context) => const MCPServerDialog(),
     ).then((result) {
       if (result == true) {
         setState(() {}); // Refresh the integrations list
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Integration added successfully!'),
+            content: const Text('Integration added successfully!'),
             backgroundColor: ThemeColors(context).success,
             behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.all(16),
+            margin: const EdgeInsets.all(16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
@@ -3259,7 +3256,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         content: Text(message),
         backgroundColor: isError ? Colors.red : Colors.green,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(16),
+        margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -3270,16 +3267,16 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   void _showAddMCPServerDialog() {
     showDialog(
       context: context,
-      builder: (context) => MCPServerDialog(),
+      builder: (context) => const MCPServerDialog(),
     ).then((result) {
       if (result == true) {
         setState(() {}); // Refresh the integrations list
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('MCP Server added successfully!'),
+            content: const Text('MCP Server added successfully!'),
             backgroundColor: ThemeColors(context).success,
             behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.all(16),
+            margin: const EdgeInsets.all(16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),

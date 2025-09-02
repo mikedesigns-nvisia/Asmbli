@@ -109,18 +109,19 @@ class ModelConfigService extends ApiConfigService {
       }
     }
     
-    // Fallback to API default
-    final defaultId = super.defaultApiConfigId;
-    if (defaultId != null) {
-      return getModelConfig(defaultId);
-    }
-    
-    // Final fallback: any ready local model
+    // Second priority: any ready local model (prefer local over API)
     final readyLocalModels = localModelConfigs.values
         .where((model) => model.status == ModelStatus.ready)
         .toList();
     if (readyLocalModels.isNotEmpty) {
+      print('🤖 Auto-selecting local model: ${readyLocalModels.first.name}');
       return readyLocalModels.first;
+    }
+    
+    // Last resort: API default (only if no local models available)
+    final defaultId = super.defaultApiConfigId;
+    if (defaultId != null) {
+      return getModelConfig(defaultId);
     }
     
     return null;
@@ -366,6 +367,7 @@ class ModelConfigService extends ApiConfigService {
   }
 
   /// Reset all configurations to defaults (removes hardcoded entries)
+  @override
   Future<void> resetToDefaults() async {
     await super.resetToDefaults();
     _localModels.clear();

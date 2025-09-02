@@ -1,4 +1,4 @@
-/// Centralized route constants for the AgentEngine desktop app
+/// Centralized route constants for the Asmbli desktop app
 class AppRoutes {
  // Private constructor to prevent instantiation
  AppRoutes._();
@@ -6,6 +6,7 @@ class AppRoutes {
  // Main routes
  static const String home = '/';
  static const String chat = '/chat';
+ static const String chatV2 = '/chat-v2';
  static const String settings = '/settings';
  static const String agents = '/agents';
  static const String context = '/context';
@@ -22,6 +23,7 @@ class AppRoutes {
  static const Map<String, String> routeNames = {
  home: 'Home',
  chat: 'Chat',
+ chatV2: 'Chat V2',
  settings: 'Settings',
  agents: 'My Agents',
  context: 'Context',
@@ -42,6 +44,7 @@ class AppRoutes {
  static const List<String> allRoutes = [
  home,
  chat,
+ chatV2,
  settings,
  agents,
  context,

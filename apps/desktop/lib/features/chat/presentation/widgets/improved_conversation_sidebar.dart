@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:agent_engine_core/models/conversation.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../providers/conversation_provider.dart';
 import 'conversation_list.dart';
@@ -34,10 +33,10 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
             ),
             child: Column(
               children: [
-                SizedBox(height: SpacingTokens.elementSpacing),
+                const SizedBox(height: SpacingTokens.elementSpacing),
                 IconButton(
                   onPressed: () => setState(() => isCollapsed = false),
-                  icon: Icon(Icons.chevron_left, size: 20),
+                  icon: const Icon(Icons.chevron_left, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.8),
                     foregroundColor: ThemeColors(context).onSurfaceVariant,
@@ -51,7 +50,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
 
         // Main sidebar content
         AnimatedContainer(
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           width: isCollapsed ? 0 : 320,
           child: isCollapsed ? null : _buildSidebarContent(),
         ),
@@ -72,7 +71,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
         children: [
           // Header with hierarchical layout
           Container(
-            padding: EdgeInsets.all(SpacingTokens.cardPadding),
+            padding: const EdgeInsets.all(SpacingTokens.cardPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -87,10 +86,10 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
                         fontSize: 14,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     IconButton(
                       onPressed: () => setState(() => isCollapsed = true),
-                      icon: Icon(Icons.chevron_right, size: 20),
+                      icon: const Icon(Icons.chevron_right, size: 20),
                       style: IconButton.styleFrom(
                         foregroundColor: ThemeColors(context).onSurfaceVariant,
                       ),
@@ -98,7 +97,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
                     ),
                   ],
                 ),
-                SizedBox(height: SpacingTokens.iconSpacing),
+                const SizedBox(height: SpacingTokens.iconSpacing),
                 // New Chat Button on its own row
                 AsmblButton.primary(
                   text: 'New Chat',
@@ -112,7 +111,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
           
           // Optional Topics Organization
           Container(
-            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding, vertical: SpacingTokens.sm),
+            padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding, vertical: SpacingTokens.sm),
             decoration: BoxDecoration(
               color: _showTopicsSection 
                 ? ThemeColors(context).primary.withValues(alpha: 0.05)
@@ -125,7 +124,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
               onTap: () => setState(() => _showTopicsSection = !_showTopicsSection),
               borderRadius: BorderRadius.circular(8),
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: SpacingTokens.xs),
+                padding: const EdgeInsets.symmetric(vertical: SpacingTokens.xs),
                 child: Row(
                   children: [
                     Icon(
@@ -135,7 +134,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
                         ? ThemeColors(context).primary 
                         : ThemeColors(context).onSurfaceVariant,
                     ),
-                    SizedBox(width: SpacingTokens.iconSpacing),
+                    const SizedBox(width: SpacingTokens.iconSpacing),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,16 +175,16 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
           // Content based on mode
           Expanded(
             child: AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               child: _showTopicsSection 
-                ? TopicManagementSection(key: ValueKey('topics'))
-                : ConversationList(key: ValueKey('conversations')),
+                ? const TopicManagementSection(key: ValueKey('topics'))
+                : const ConversationList(key: ValueKey('conversations')),
             ),
           ),
           
           // Footer with secondary actions
           Container(
-            padding: EdgeInsets.all(SpacingTokens.cardPadding),
+            padding: const EdgeInsets.all(SpacingTokens.cardPadding),
             decoration: BoxDecoration(
               border: Border(
                 top: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
@@ -203,7 +202,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
                         onPressed: () => _showArchiveModal(context),
                       ),
                     ),
-                    SizedBox(width: SpacingTokens.componentSpacing),
+                    const SizedBox(width: SpacingTokens.componentSpacing),
                     Expanded(
                       child: AsmblButton.secondary(
                         text: 'Export',
@@ -216,7 +215,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
                 
                 // Stats or tips
                 if (!_showTopicsSection) ...[
-                  SizedBox(height: SpacingTokens.componentSpacing),
+                  const SizedBox(height: SpacingTokens.componentSpacing),
                   _buildQuickTips(),
                 ],
               ],
@@ -232,7 +231,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
     final conversationCount = conversationsAsync.valueOrNull?.length ?? 0;
     
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(6),
@@ -245,7 +244,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
             size: 14,
             color: ThemeColors(context).onSurfaceVariant,
           ),
-          SizedBox(width: SpacingTokens.iconSpacing),
+          const SizedBox(width: SpacingTokens.iconSpacing),
           Expanded(
             child: Text(
               conversationCount > 5 
@@ -276,29 +275,29 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
         title: Row(
           children: [
             Icon(Icons.download, color: ThemeColors(context).primary),
-            SizedBox(width: 8),
-            Text('Export Conversations'),
+            const SizedBox(width: 8),
+            const Text('Export Conversations'),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Export your conversations as:'),
-            SizedBox(height: 12),
+            const Text('Export your conversations as:'),
+            const SizedBox(height: 12),
             ListTile(
-              leading: Icon(Icons.description),
-              title: Text('Markdown Files'),
-              subtitle: Text('Individual .md files for each conversation'),
+              leading: const Icon(Icons.description),
+              title: const Text('Markdown Files'),
+              subtitle: const Text('Individual .md files for each conversation'),
               onTap: () {
                 Navigator.pop(context);
                 _exportAsMarkdown();
               },
             ),
             ListTile(
-              leading: Icon(Icons.data_object),
-              title: Text('JSON Archive'),
-              subtitle: Text('Complete data export with metadata'),
+              leading: const Icon(Icons.data_object),
+              title: const Text('JSON Archive'),
+              subtitle: const Text('Complete data export with metadata'),
               onTap: () {
                 Navigator.pop(context);
                 _exportAsJson();
@@ -319,9 +318,9 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
   void _exportAsMarkdown() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Markdown export coming soon'),
+        content: const Text('Markdown export coming soon'),
         backgroundColor: ThemeColors(context).primary,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -329,9 +328,9 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
   void _exportAsJson() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('JSON export coming soon'),
+        content: const Text('JSON export coming soon'),
         backgroundColor: ThemeColors(context).primary,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -351,7 +350,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
       // Show success feedback
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
               Icon(Icons.chat_bubble, color: Colors.white, size: 16),
               SizedBox(width: 8),
@@ -360,7 +359,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
           ),
           backgroundColor: ThemeColors(context).success,
           behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
     } catch (e) {

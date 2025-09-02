@@ -38,7 +38,7 @@ class _IntegrationSearchBarState extends State<IntegrationSearchBar> {
           BoxShadow(
             color: colors.onSurface.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -46,7 +46,7 @@ class _IntegrationSearchBarState extends State<IntegrationSearchBar> {
         children: [
           // Search Icon
           Padding(
-            padding: EdgeInsets.only(left: SpacingTokens.componentSpacing),
+            padding: const EdgeInsets.only(left: SpacingTokens.componentSpacing),
             child: Icon(
               Icons.search,
               color: _isFocused ? colors.primary : colors.onSurfaceVariant,
@@ -70,7 +70,7 @@ class _IntegrationSearchBarState extends State<IntegrationSearchBar> {
                     color: colors.onSurfaceVariant,
                   ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: SpacingTokens.componentSpacing,
                     vertical: SpacingTokens.componentSpacing,
                   ),
@@ -82,7 +82,7 @@ class _IntegrationSearchBarState extends State<IntegrationSearchBar> {
           // Clear Button (when text exists)
           if (widget.controller.text.isNotEmpty)
             Padding(
-              padding: EdgeInsets.only(right: SpacingTokens.iconSpacing),
+              padding: const EdgeInsets.only(right: SpacingTokens.iconSpacing),
               child: IconButton(
                 onPressed: () {
                   widget.controller.clear();

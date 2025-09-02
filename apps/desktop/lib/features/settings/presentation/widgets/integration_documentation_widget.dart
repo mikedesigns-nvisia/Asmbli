@@ -43,21 +43,21 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
   Widget build(BuildContext context) {
     final docService = ref.watch(integrationDocumentationServiceProvider);
     
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height - 200,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Search Bar
           _buildSearchBar(),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Tab Navigation
           _buildTabNavigation(),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Tab Content
           Expanded(
@@ -80,20 +80,20 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
   Widget _buildHeader() {
     return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.help_outline,
           color: SemanticColors.primary,
           size: 24,
         ),
-        SizedBox(width: SpacingTokens.sm),
+        const SizedBox(width: SpacingTokens.sm),
         Text(
           'Integration Help & Documentation',
           style: TextStyles.cardTitle,
         ),
-        Spacer(),
+        const Spacer(),
         if (_selectedIntegrationId != null) ...[
           Container(
-            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
+            padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
             decoration: BoxDecoration(
               color: SemanticColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -101,8 +101,8 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.integration_instructions, size: 14, color: SemanticColors.primary),
-                SizedBox(width: SpacingTokens.xs),
+                const Icon(Icons.integration_instructions, size: 14, color: SemanticColors.primary),
+                const SizedBox(width: SpacingTokens.xs),
                 Text(
                   IntegrationRegistry.getById(_selectedIntegrationId!)?.name ?? _selectedIntegrationId!,
                   style: TextStyles.bodySmall.copyWith(
@@ -110,10 +110,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(width: SpacingTokens.xs),
+                const SizedBox(width: SpacingTokens.xs),
                 GestureDetector(
                   onTap: () => setState(() => _selectedIntegrationId = null),
-                  child: Icon(Icons.close, size: 14, color: SemanticColors.primary),
+                  child: const Icon(Icons.close, size: 14, color: SemanticColors.primary),
                 ),
               ],
             ),
@@ -132,27 +132,27 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             onChanged: (value) => setState(() => _searchQuery = value),
             decoration: InputDecoration(
               hintText: 'Search documentation, guides, and help articles...',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
-                      icon: Icon(Icons.clear),
+                      icon: const Icon(Icons.clear),
                       onPressed: () => setState(() => _searchQuery = ''),
                     )
                   : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                borderSide: BorderSide(color: SemanticColors.border),
+                borderSide: const BorderSide(color: SemanticColors.border),
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: SpacingTokens.lg, vertical: SpacingTokens.sm),
+              contentPadding: const EdgeInsets.symmetric(horizontal: SpacingTokens.lg, vertical: SpacingTokens.sm),
             ),
           ),
         ),
-        SizedBox(width: SpacingTokens.sm),
+        const SizedBox(width: SpacingTokens.sm),
         
         Expanded(
           child: AsmblStringDropdown(
             value: _selectedCategory,
-            items: ['All', 'Local', 'Cloud APIs', 'Databases', 'AI Enhanced', 'Utilities'],
+            items: const ['All', 'Local', 'Cloud APIs', 'Databases', 'AI Enhanced', 'Utilities'],
             onChanged: (value) => setState(() => _selectedCategory = value ?? 'All'),
           ),
         ),
@@ -191,17 +191,17 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     final popularTopics = docService.getPopularTopics();
     
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Categories Overview
           _buildCategoriesSection(categories),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           
           // Popular Topics
           _buildPopularTopicsSection(popularTopics),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           
           // Getting Started
           _buildGettingStartedSection(),
@@ -218,27 +218,27 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     final quickStart = docService.getQuickStartGuide(_selectedIntegrationId!);
     
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildQuickStartHeader(quickStart),
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Prerequisites
           if (quickStart.prerequisites.isNotEmpty) ...[
             _buildPrerequisitesSection(quickStart.prerequisites),
-            SizedBox(height: SpacingTokens.xl),
+            const SizedBox(height: SpacingTokens.xl),
           ],
           
           // Setup Steps
           _buildSetupStepsSection(quickStart.steps),
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Common Issues
           if (quickStart.commonIssues.isNotEmpty) ...[
             _buildCommonIssuesSection(quickStart.commonIssues),
-            SizedBox(height: SpacingTokens.xl),
+            const SizedBox(height: SpacingTokens.xl),
           ],
           
           // Next Steps
@@ -262,36 +262,36 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     }
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDocumentationHeader(documentation),
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Overview
           _buildOverviewSection(documentation),
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Features
           _buildFeaturesSection(documentation),
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Configuration Examples
           if (configExamples.isNotEmpty) ...[
             _buildConfigurationExamplesSection(configExamples),
-            SizedBox(height: SpacingTokens.xl),
+            const SizedBox(height: SpacingTokens.xl),
           ],
           
           // API Reference
           if (apiReference != null) ...[
             _buildAPIReferenceSection(apiReference),
-            SizedBox(height: SpacingTokens.xl),
+            const SizedBox(height: SpacingTokens.xl),
           ],
           
           // Use Cases
           _buildUseCasesSection(documentation),
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Requirements & Limitations
           _buildRequirementsSection(documentation),
@@ -308,20 +308,20 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     final troubleshooting = docService.getTroubleshootingGuide(_selectedIntegrationId!);
     
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildTroubleshootingHeader(troubleshooting),
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Common Issues
           _buildTroubleshootingIssuesSection(troubleshooting.commonIssues),
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Diagnostic Steps
           _buildDiagnosticStepsSection(troubleshooting.diagnosticSteps),
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Support Resources
           _buildSupportResourcesSection(troubleshooting.supportResources),
@@ -336,19 +336,19 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.search,
               size: 64,
               color: SemanticColors.onSurfaceVariant,
             ),
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             Text(
               'Enter a search query',
               style: TextStyles.bodyLarge.copyWith(
                 color: SemanticColors.onSurfaceVariant,
               ),
             ),
-            SizedBox(height: SpacingTokens.xs),
+            const SizedBox(height: SpacingTokens.xs),
             Text(
               'Search through documentation, guides, and help articles',
               style: TextStyles.bodyMedium.copyWith(
@@ -367,19 +367,19 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.search_off,
               size: 64,
               color: SemanticColors.onSurfaceVariant,
             ),
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             Text(
               'No results found',
               style: TextStyles.bodyLarge.copyWith(
                 color: SemanticColors.onSurfaceVariant,
               ),
             ),
-            SizedBox(height: SpacingTokens.xs),
+            const SizedBox(height: SpacingTokens.xs),
             Text(
               'Try different search terms or browse categories',
               style: TextStyles.bodyMedium.copyWith(
@@ -392,7 +392,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     }
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -400,7 +400,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             'Search Results (${searchResults.length})',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...searchResults.map((result) => _buildSearchResultItem(result)),
         ],
@@ -417,12 +417,12 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           'Integration Categories',
           style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
         ),
-        SizedBox(height: SpacingTokens.lg),
+        const SizedBox(height: SpacingTokens.lg),
         
         GridView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             childAspectRatio: 1.5,
             crossAxisSpacing: SpacingTokens.lg,
@@ -437,7 +437,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildCategoryCard(DocumentationCategory category) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -448,7 +448,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 color: SemanticColors.primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Expanded(
                 child: Text(
                   category.name,
@@ -457,7 +457,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             category.description,
@@ -468,7 +468,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             overflow: TextOverflow.ellipsis,
           ),
           
-          Spacer(),
+          const Spacer(),
           
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -498,15 +498,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
       children: [
         Row(
           children: [
-            Icon(Icons.trending_up, color: SemanticColors.success, size: 16),
-            SizedBox(width: SpacingTokens.xs),
+            const Icon(Icons.trending_up, color: SemanticColors.success, size: 16),
+            const SizedBox(width: SpacingTokens.xs),
             Text(
               'Popular Help Topics',
               style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.lg),
+        const SizedBox(height: SpacingTokens.lg),
         
         ...topics.map((topic) => _buildPopularTopicItem(topic)),
       ],
@@ -515,9 +515,9 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildPopularTopicItem(PopularTopic topic) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       child: AsmblCard(
-        padding: EdgeInsets.all(SpacingTokens.sm),
+        padding: const EdgeInsets.all(SpacingTokens.sm),
         child: Row(
           children: [
             Expanded(
@@ -530,16 +530,16 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                         topic.title,
                         style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                       ),
-                      SizedBox(width: SpacingTokens.xs),
+                      const SizedBox(width: SpacingTokens.xs),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
                           color: SemanticColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
                           topic.category,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.w600,
                             color: SemanticColors.primary,
@@ -548,7 +548,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       ),
                     ],
                   ),
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   Text(
                     topic.description,
                     style: TextStyles.bodySmall.copyWith(
@@ -563,8 +563,8 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               children: [
                 Row(
                   children: [
-                    Icon(Icons.visibility, size: 12, color: SemanticColors.onSurfaceVariant),
-                    SizedBox(width: 2),
+                    const Icon(Icons.visibility, size: 12, color: SemanticColors.onSurfaceVariant),
+                    const SizedBox(width: 2),
                     Text(
                       '${topic.viewCount}',
                       style: TextStyles.bodySmall.copyWith(
@@ -573,11 +573,11 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                     ),
                   ],
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Row(
                   children: [
-                    Icon(Icons.thumb_up, size: 12, color: SemanticColors.success),
-                    SizedBox(width: 2),
+                    const Icon(Icons.thumb_up, size: 12, color: SemanticColors.success),
+                    const SizedBox(width: 2),
                     Text(
                       '${topic.helpfulVotes}',
                       style: TextStyles.bodySmall.copyWith(
@@ -596,41 +596,41 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildGettingStartedSection() {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.play_circle, color: SemanticColors.primary, size: 20),
-              SizedBox(width: SpacingTokens.xs),
+              const Icon(Icons.play_circle, color: SemanticColors.primary, size: 20),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Getting Started',
                 style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           Text(
             'New to integrations? Follow these steps to get started:',
             style: TextStyles.bodyMedium,
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           _buildStepItem('1', 'Choose an integration from the Marketplace'),
           _buildStepItem('2', 'Follow the Quick Start guide for setup'),
           _buildStepItem('3', 'Test your integration to ensure it works'),
           _buildStepItem('4', 'Monitor health and performance'),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           Row(
             children: [
               AsmblButton.primary(
                 text: 'Browse Marketplace',
                 onPressed: widget.onIntegrationSelected,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               AsmblButton.secondary(
                 text: 'View Quick Start',
                 onPressed: () => _tabController.animateTo(1),
@@ -644,20 +644,20 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildStepItem(String number, String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: SpacingTokens.xs),
+      padding: const EdgeInsets.symmetric(vertical: SpacingTokens.xs),
       child: Row(
         children: [
           Container(
             width: 20,
             height: 20,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: SemanticColors.primary,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 number,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: SemanticColors.surface,
@@ -665,7 +665,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               ),
             ),
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Expanded(
             child: Text(
               text,
@@ -680,7 +680,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
   // Quick Start sections
   Widget _buildQuickStartHeader(QuickStartGuide guide) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Row(
         children: [
           Expanded(
@@ -691,7 +691,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   guide.title,
                   style: TextStyles.cardTitle,
                 ),
-                SizedBox(height: SpacingTokens.xs),
+                const SizedBox(height: SpacingTokens.xs),
                 Text(
                   'Get ${IntegrationRegistry.getById(guide.integrationId)?.name} up and running quickly',
                   style: TextStyles.bodyMedium.copyWith(
@@ -707,8 +707,8 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             children: [
               Row(
                 children: [
-                  Icon(Icons.schedule, size: 14, color: SemanticColors.primary),
-                  SizedBox(width: SpacingTokens.xs),
+                  const Icon(Icons.schedule, size: 14, color: SemanticColors.primary),
+                  const SizedBox(width: SpacingTokens.xs),
                   Text(
                     '~${guide.estimatedTime.inMinutes} min',
                     style: TextStyles.bodySmall.copyWith(
@@ -718,9 +718,9 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   ),
                 ],
               ),
-              SizedBox(height: SpacingTokens.xs),
+              const SizedBox(height: SpacingTokens.xs),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: _getDifficultyColor(guide.difficulty).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -743,21 +743,21 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildPrerequisitesSection(List<PrerequisiteStep> prerequisites) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.checklist, color: SemanticColors.warning, size: 16),
-              SizedBox(width: SpacingTokens.xs),
+              const Icon(Icons.checklist, color: SemanticColors.warning, size: 16),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Prerequisites',
                 style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...prerequisites.map((prereq) => _buildPrerequisiteItem(prereq)),
         ],
@@ -767,8 +767,8 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildPrerequisiteItem(PrerequisiteStep prereq) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: SemanticColors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -783,7 +783,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             color: prereq.isRequired ? SemanticColors.warning : SemanticColors.primary,
             size: 16,
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           
           Expanded(
             child: Column(
@@ -796,14 +796,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                     ),
                     if (prereq.isRequired) ...[
-                      SizedBox(width: SpacingTokens.xs),
+                      const SizedBox(width: SpacingTokens.xs),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
                           color: SemanticColors.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
-                        child: Text(
+                        child: const Text(
                           'REQUIRED',
                           style: TextStyle(
                             fontSize: 8,
@@ -838,21 +838,21 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildSetupStepsSection(List<SetupStep> steps) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.list_alt, color: SemanticColors.primary, size: 16),
-              SizedBox(width: SpacingTokens.xs),
+              const Icon(Icons.list_alt, color: SemanticColors.primary, size: 16),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Setup Steps',
                 style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...steps.map((step) => _buildSetupStepItem(step)),
         ],
@@ -862,7 +862,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildSetupStepItem(SetupStep step) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.lg),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.lg),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -870,14 +870,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Container(
             width: 32,
             height: 32,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: SemanticColors.primary,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 '${step.stepNumber}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: SemanticColors.surface,
@@ -885,7 +885,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               ),
             ),
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           
           // Step content
           Expanded(
@@ -896,15 +896,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   step.title,
                   style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(height: SpacingTokens.xs),
+                const SizedBox(height: SpacingTokens.xs),
                 Text(
                   step.description,
                   style: TextStyles.bodyMedium,
                 ),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.sm),
+                  padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
                     color: SemanticColors.primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -930,12 +930,12 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   ),
                 ),
                 
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 
                 Row(
                   children: [
-                    Icon(Icons.check_circle, size: 14, color: SemanticColors.success),
-                    SizedBox(width: SpacingTokens.xs),
+                    const Icon(Icons.check_circle, size: 14, color: SemanticColors.success),
+                    const SizedBox(width: SpacingTokens.xs),
                     Expanded(
                       child: Text(
                         'Expected: ${step.expectedResult}',
@@ -957,21 +957,21 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildCommonIssuesSection(List<CommonIssue> issues) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.help_outline, color: SemanticColors.warning, size: 16),
-              SizedBox(width: SpacingTokens.xs),
+              const Icon(Icons.help_outline, color: SemanticColors.warning, size: 16),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Common Issues',
                 style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...issues.map((issue) => _buildCommonIssueItem(issue)),
         ],
@@ -981,7 +981,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildCommonIssueItem(CommonIssue issue) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       child: ExpansionTile(
         title: Text(
           issue.title,
@@ -995,10 +995,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         ),
         children: [
           Padding(
-            padding: EdgeInsets.all(SpacingTokens.sm),
+            padding: const EdgeInsets.all(SpacingTokens.sm),
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.all(SpacingTokens.sm),
+              padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
                 color: SemanticColors.success.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1016,7 +1016,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       color: SemanticColors.success,
                     ),
                   ),
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   Text(
                     issue.solution,
                     style: TextStyles.bodySmall,
@@ -1032,32 +1032,32 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildNextStepsSection(List<String> nextSteps) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.arrow_forward, color: SemanticColors.primary, size: 16),
-              SizedBox(width: SpacingTokens.xs),
+              const Icon(Icons.arrow_forward, color: SemanticColors.primary, size: 16),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'What\'s Next?',
                 style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...nextSteps.map((step) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.xs),
+            padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: 6,
                   height: 6,
-                  margin: EdgeInsets.only(top: 6, right: SpacingTokens.sm),
-                  decoration: BoxDecoration(
+                  margin: const EdgeInsets.only(top: 6, right: SpacingTokens.sm),
+                  decoration: const BoxDecoration(
                     color: SemanticColors.primary,
                     shape: BoxShape.circle,
                   ),
@@ -1079,7 +1079,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
   // Additional sections for Documentation tab...
   Widget _buildDocumentationHeader(IntegrationDocumentation doc) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1087,7 +1087,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             doc.title,
             style: TextStyles.cardTitle,
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Row(
             children: [
               Text(
@@ -1096,7 +1096,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   color: SemanticColors.onSurfaceVariant,
                 ),
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Updated ${_formatDate(doc.lastUpdated)}',
                 style: TextStyles.bodySmall.copyWith(
@@ -1112,7 +1112,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildOverviewSection(IntegrationDocumentation doc) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1120,7 +1120,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             'Overview',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
             doc.overview,
             style: TextStyles.bodyMedium,
@@ -1132,7 +1132,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildFeaturesSection(IntegrationDocumentation doc) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1140,15 +1140,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             'Features',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           ...doc.features.map((feature) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.xs),
+            padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.check, color: SemanticColors.success, size: 16),
-                SizedBox(width: SpacingTokens.xs),
+                const Icon(Icons.check, color: SemanticColors.success, size: 16),
+                const SizedBox(width: SpacingTokens.xs),
                 Expanded(
                   child: Text(
                     feature,
@@ -1171,7 +1171,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           'Configuration Examples',
           style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         
         ...examples.map((example) => _buildConfigurationExampleItem(example)),
       ],
@@ -1180,9 +1180,9 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildConfigurationExampleItem(ConfigurationExample example) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.lg),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.lg),
       child: AsmblCard(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1192,9 +1192,9 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   example.title,
                   style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(width: SpacingTokens.xs),
+                const SizedBox(width: SpacingTokens.xs),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(
                     color: _getDifficultyColor(example.difficulty).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(3),
@@ -1210,18 +1210,18 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 ),
               ],
             ),
-            SizedBox(height: SpacingTokens.xs),
+            const SizedBox(height: SpacingTokens.xs),
             Text(
               example.description,
               style: TextStyles.bodyMedium.copyWith(
                 color: SemanticColors.onSurfaceVariant,
               ),
             ),
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
             
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(SpacingTokens.sm),
+              padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
                 color: SemanticColors.onSurface.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1240,16 +1240,16 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.copy, size: 16),
+                        icon: const Icon(Icons.copy, size: 16),
                         onPressed: () => _copyToClipboard(example.config.toString()),
                         tooltip: 'Copy configuration',
                       ),
                     ],
                   ),
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   Text(
                     JsonEncoder.withIndent('  ').convert(example.config),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 12,
                       color: SemanticColors.onSurface,
@@ -1259,7 +1259,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               ),
             ),
             
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
             Text(
               example.explanation,
               style: TextStyles.bodySmall.copyWith(
@@ -1281,7 +1281,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         .toList();
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1289,12 +1289,12 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             'Select an Integration',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           GridView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
               childAspectRatio: 1.2,
               crossAxisSpacing: SpacingTokens.sm,
@@ -1306,7 +1306,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               return GestureDetector(
                 onTap: () => setState(() => _selectedIntegrationId = integration.id),
                 child: AsmblCard(
-                  padding: EdgeInsets.all(SpacingTokens.sm),
+                  padding: const EdgeInsets.all(SpacingTokens.sm),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1317,15 +1317,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                             color: SemanticColors.primary,
                             size: 16,
                           ),
-                          Spacer(),
+                          const Spacer(),
                           if (!integration.isAvailable)
                             Container(
-                              padding: EdgeInsets.all(2),
+                              padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 color: SemanticColors.warning.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.schedule,
                                 size: 10,
                                 color: SemanticColors.warning,
@@ -1333,14 +1333,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                             ),
                         ],
                       ),
-                      SizedBox(height: SpacingTokens.xs),
+                      const SizedBox(height: SpacingTokens.xs),
                       Text(
                         integration.name,
                         style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Text(
                         integration.difficulty,
                         style: TextStyles.bodySmall.copyWith(
@@ -1361,9 +1361,9 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildSearchResultItem(SearchResult result) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       child: AsmblCard(
-        padding: EdgeInsets.all(SpacingTokens.sm),
+        padding: const EdgeInsets.all(SpacingTokens.sm),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1374,7 +1374,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   size: 16,
                   color: SemanticColors.primary,
                 ),
-                SizedBox(width: SpacingTokens.xs),
+                const SizedBox(width: SpacingTokens.xs),
                 Expanded(
                   child: Text(
                     result.title,
@@ -1382,14 +1382,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(
                     color: SemanticColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
                     result.type.name.toUpperCase(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 8,
                       fontWeight: FontWeight.w600,
                       color: SemanticColors.primary,
@@ -1398,7 +1398,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 ),
               ],
             ),
-            SizedBox(height: SpacingTokens.xs),
+            const SizedBox(height: SpacingTokens.xs),
             Text(
               result.excerpt,
               style: TextStyles.bodySmall.copyWith(
@@ -1418,12 +1418,12 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.description,
             size: 64,
             color: SemanticColors.onSurfaceVariant,
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           Text(
             message,
             style: TextStyles.bodyLarge.copyWith(
@@ -1482,7 +1482,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
   void _copyToClipboard(String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Copied to clipboard'),
         backgroundColor: SemanticColors.success,
       ),
@@ -1492,7 +1492,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
   // Additional helper methods for troubleshooting, API reference, etc.
   Widget _buildTroubleshootingHeader(TroubleshootingGuide guide) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1500,7 +1500,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             guide.title,
             style: TextStyles.cardTitle,
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Text(
             'Common issues and solutions for this integration',
             style: TextStyles.bodyMedium.copyWith(
@@ -1520,7 +1520,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           'Common Issues',
           style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         
         ...issues.map((issue) => _buildCommonIssueItem(issue)),
       ],
@@ -1529,7 +1529,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildDiagnosticStepsSection(List<DiagnosticStep> steps) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1537,14 +1537,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             'Diagnostic Steps',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
             'Follow these steps to diagnose issues:',
             style: TextStyles.bodyMedium.copyWith(
               color: SemanticColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...steps.map((step) => _buildDiagnosticStepItem(step)),
         ],
@@ -1554,8 +1554,8 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildDiagnosticStepItem(DiagnosticStep step) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: SemanticColors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1567,14 +1567,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Container(
             width: 24,
             height: 24,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: SemanticColors.primary,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 '${step.step}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: SemanticColors.surface,
@@ -1582,7 +1582,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               ),
             ),
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           
           Expanded(
             child: Column(
@@ -1592,21 +1592,21 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   step.title,
                   style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(height: SpacingTokens.xs),
+                const SizedBox(height: SpacingTokens.xs),
                 Text(
                   step.description,
                   style: TextStyles.bodySmall,
                 ),
-                SizedBox(height: SpacingTokens.xs),
+                const SizedBox(height: SpacingTokens.xs),
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.xs),
+                  padding: const EdgeInsets.all(SpacingTokens.xs),
                   decoration: BoxDecoration(
                     color: SemanticColors.onSurface.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     step.command,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 11,
                       color: SemanticColors.onSurface,
@@ -1623,7 +1623,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildSupportResourcesSection(List<SupportResource> resources) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1631,7 +1631,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             'Support Resources',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...resources.map((resource) => _buildSupportResourceItem(resource)),
         ],
@@ -1641,9 +1641,9 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildSupportResourceItem(SupportResource resource) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       child: AsmblCard(
-        padding: EdgeInsets.all(SpacingTokens.sm),
+        padding: const EdgeInsets.all(SpacingTokens.sm),
         child: Row(
           children: [
             Icon(
@@ -1651,7 +1651,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               color: SemanticColors.primary,
               size: 20,
             ),
-            SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: SpacingTokens.sm),
             
             Expanded(
               child: Column(
@@ -1671,7 +1671,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               ),
             ),
             
-            Icon(Icons.open_in_new, size: 16, color: SemanticColors.onSurfaceVariant),
+            const Icon(Icons.open_in_new, size: 16, color: SemanticColors.onSurfaceVariant),
           ],
         ),
       ),
@@ -1680,7 +1680,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildAPIReferenceSection(APIReference apiRef) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1688,10 +1688,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             'API Reference',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
             'Base URL: ${apiRef.baseUrl}',
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'monospace',
               fontSize: 12,
               color: SemanticColors.onSurface,
@@ -1703,7 +1703,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               color: SemanticColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Endpoints
           ...apiRef.endpoints.map((endpoint) => _buildAPIEndpointItem(endpoint)),
@@ -1714,8 +1714,8 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildAPIEndpointItem(APIEndpoint endpoint) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: SemanticColors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1727,7 +1727,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: _getMethodColor(endpoint.method).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -1741,10 +1741,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   ),
                 ),
               ),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 endpoint.path,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'monospace',
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -1752,13 +1752,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Text(
             endpoint.description,
             style: TextStyles.bodySmall,
           ),
           if (endpoint.parameters.isNotEmpty) ...[
-            SizedBox(height: SpacingTokens.xs),
+            const SizedBox(height: SpacingTokens.xs),
             Text(
               'Parameters: ${endpoint.parameters.join(', ')}',
               style: TextStyles.bodySmall.copyWith(
@@ -1773,7 +1773,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   Widget _buildUseCasesSection(IntegrationDocumentation doc) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1781,15 +1781,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             'Use Cases',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           ...doc.useCases.map((useCase) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.xs),
+            padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.play_arrow, color: SemanticColors.primary, size: 16),
-                SizedBox(width: SpacingTokens.xs),
+                const Icon(Icons.play_arrow, color: SemanticColors.primary, size: 16),
+                const SizedBox(width: SpacingTokens.xs),
                 Expanded(
                   child: Text(
                     useCase,
@@ -1810,7 +1810,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
       children: [
         Expanded(
           child: AsmblCard(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1818,15 +1818,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   'Requirements',
                   style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 
                 ...doc.requirements.map((req) => Padding(
-                  padding: EdgeInsets.only(bottom: SpacingTokens.xs),
+                  padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.check_box, color: SemanticColors.success, size: 16),
-                      SizedBox(width: SpacingTokens.xs),
+                      const Icon(Icons.check_box, color: SemanticColors.success, size: 16),
+                      const SizedBox(width: SpacingTokens.xs),
                       Expanded(
                         child: Text(
                           req,
@@ -1840,10 +1840,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             ),
           ),
         ),
-        SizedBox(width: SpacingTokens.lg),
+        const SizedBox(width: SpacingTokens.lg),
         Expanded(
           child: AsmblCard(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1851,15 +1851,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   'Limitations',
                   style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 
                 ...doc.limitations.map((limitation) => Padding(
-                  padding: EdgeInsets.only(bottom: SpacingTokens.xs),
+                  padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.warning, color: SemanticColors.warning, size: 16),
-                      SizedBox(width: SpacingTokens.xs),
+                      const Icon(Icons.warning, color: SemanticColors.warning, size: 16),
+                      const SizedBox(width: SpacingTokens.xs),
                       Expanded(
                         child: Text(
                           limitation,

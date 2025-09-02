@@ -92,7 +92,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
       child: Container(
         width: 800,
         height: 700,
-        padding: EdgeInsets.all(SpacingTokens.xxl),
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -100,7 +100,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                   decoration: BoxDecoration(
                     color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -111,7 +111,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
                     color: colors.primary,
                   ),
                 ),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +120,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
                         'Manual MCP Server Configuration',
                         style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
                       ),
-                      SizedBox(height: SpacingTokens.xs_precise),
+                      const SizedBox(height: SpacingTokens.xs_precise),
                       Text(
                         'Select and configure an MCP server from our curated library',
                         style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
@@ -135,7 +135,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
               ],
             ),
             
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             
             // Content
             Expanded(
@@ -144,7 +144,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
                 : _buildServerSelectionView(),
             ),
             
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             
             // Actions
             Row(
@@ -160,13 +160,13 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
                       });
                     },
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                 ],
                 AsmblButton.secondary(
                   text: 'Cancel',
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 AsmblButton.primary(
                   text: isConfiguring ? 'Add MCP Server' : 'Continue',
                   onPressed: isConfiguring ? _handleAddServer : null,
@@ -186,7 +186,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
       children: [
         // Search bar
         Container(
-          padding: EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
+          padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.componentSpacing),
           decoration: BoxDecoration(
             color: colors.surfaceVariant,
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -204,7 +204,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
           ),
         ),
         
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         // Server type filter tabs
         Row(
@@ -214,19 +214,19 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
               isSelected: true,
               onTap: () => ref.read(mcpServerConfigurationProvider.notifier).resetFilter(),
             ),
-            SizedBox(width: SpacingTokens.iconSpacing),
+            const SizedBox(width: SpacingTokens.iconSpacing),
             _FilterChip(
               label: 'Official',
               isSelected: false,
               onTap: () => ref.read(mcpServerConfigurationProvider.notifier).filterByType(MCPServerType.official),
             ),
-            SizedBox(width: SpacingTokens.iconSpacing),
+            const SizedBox(width: SpacingTokens.iconSpacing),
             _FilterChip(
               label: 'Community',
               isSelected: false,
               onTap: () => ref.read(mcpServerConfigurationProvider.notifier).filterByType(MCPServerType.community),
             ),
-            SizedBox(width: SpacingTokens.iconSpacing),
+            const SizedBox(width: SpacingTokens.iconSpacing),
             _FilterChip(
               label: 'No Auth Required',
               isSelected: false,
@@ -238,7 +238,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
           ],
         ),
         
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         // Server list
         Expanded(
@@ -279,27 +279,27 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
                 Row(
                   children: [
                     _ServerTypeChip(server.type),
-                    Spacer(),
+                    const Spacer(),
                     _ServerStatusChip(server.status),
                   ],
                 ),
-                SizedBox(height: SpacingTokens.componentSpacing),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 Text(
                   server.name,
                   style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
                 ),
-                SizedBox(height: SpacingTokens.iconSpacing),
+                const SizedBox(height: SpacingTokens.iconSpacing),
                 Text(
                   server.description,
                   style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
                 ),
                 if (server.capabilities.isNotEmpty) ...[
-                  SizedBox(height: SpacingTokens.componentSpacing),
+                  const SizedBox(height: SpacingTokens.componentSpacing),
                   Wrap(
                     spacing: SpacingTokens.iconSpacing,
                     runSpacing: SpacingTokens.iconSpacing,
                     children: server.capabilities.map((capability) => Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: SpacingTokens.iconSpacing,
                         vertical: SpacingTokens.xs_precise,
                       ),
@@ -321,7 +321,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           
           // Configuration form
           if (server.requiredEnvVars.isNotEmpty || server.optionalEnvVars.isNotEmpty || 
@@ -330,17 +330,17 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
               'Configuration',
               style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             
             // Custom path input for filesystem/sqlite
             if (server.id == 'filesystem' || server.id == 'sqlite') ...[
               _buildPathInput(),
-              SizedBox(height: SpacingTokens.componentSpacing),
+              const SizedBox(height: SpacingTokens.componentSpacing),
             ],
             
             // Environment variables
             ...server.requiredEnvVars.map((envVar) => Padding(
-              padding: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+              padding: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
               child: _buildEnvVarInput(envVar, required: true),
             )),
             
@@ -349,10 +349,10 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
                 'Optional Configuration',
                 style: TextStyles.bodyLarge.copyWith(color: colors.onSurface),
               ),
-              SizedBox(height: SpacingTokens.componentSpacing),
+              const SizedBox(height: SpacingTokens.componentSpacing),
               
               ...server.optionalEnvVars.map((envVar) => Padding(
-                padding: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+                padding: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
                 child: _buildEnvVarInput(envVar, required: false),
               )),
             ],
@@ -360,14 +360,14 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
           
           // Setup instructions
           if (server.setupInstructions != null) ...[
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(
               'Setup Instructions',
               style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Container(
-              padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               decoration: BoxDecoration(
                 color: colors.primary.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -398,7 +398,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         Container(
           decoration: BoxDecoration(
             color: colors.surfaceVariant,
@@ -413,7 +413,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
                 ? '/path/to/allowed/directory' 
                 : '/path/to/database.db',
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               suffixIcon: IconButton(
                 icon: Icon(Icons.folder_open, color: colors.primary),
                 onPressed: () {
@@ -445,7 +445,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
               ),
             ),
             if (required) ...[
-              SizedBox(width: SpacingTokens.xs_precise),
+              const SizedBox(width: SpacingTokens.xs_precise),
               Text(
                 '*',
                 style: TextStyles.bodyMedium.copyWith(color: colors.error),
@@ -453,12 +453,12 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
             ],
           ],
         ),
-        SizedBox(height: SpacingTokens.xs_precise),
+        const SizedBox(height: SpacingTokens.xs_precise),
         Text(
           description,
           style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
         ),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         Container(
           decoration: BoxDecoration(
             color: colors.surfaceVariant,
@@ -474,7 +474,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
             decoration: InputDecoration(
               hintText: 'Enter $envVar...',
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
             ),
             style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
           ),
@@ -569,7 +569,7 @@ class _FilterChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: SpacingTokens.componentSpacing,
           vertical: SpacingTokens.iconSpacing,
         ),
@@ -608,7 +608,7 @@ class _ServerCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+        margin: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
         child: AsmblCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -622,11 +622,11 @@ class _ServerCard extends StatelessWidget {
                     ),
                   ),
                   _ServerTypeChip(server.type),
-                  SizedBox(width: SpacingTokens.iconSpacing),
+                  const SizedBox(width: SpacingTokens.iconSpacing),
                   _ServerStatusChip(server.status),
                 ],
               ),
-              SizedBox(height: SpacingTokens.iconSpacing),
+              const SizedBox(height: SpacingTokens.iconSpacing),
               Text(
                 server.description,
                 style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
@@ -634,7 +634,7 @@ class _ServerCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               if (server.requiredEnvVars.isNotEmpty) ...[
-                SizedBox(height: SpacingTokens.iconSpacing),
+                const SizedBox(height: SpacingTokens.iconSpacing),
                 Row(
                   children: [
                     Icon(
@@ -642,7 +642,7 @@ class _ServerCard extends StatelessWidget {
                       size: 16,
                       color: colors.onSurfaceVariant,
                     ),
-                    SizedBox(width: SpacingTokens.xs_precise),
+                    const SizedBox(width: SpacingTokens.xs_precise),
                     Text(
                       'Requires authentication',
                       style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
@@ -669,7 +669,7 @@ class _ServerTypeChip extends StatelessWidget {
     final isOfficial = type == MCPServerType.official;
     
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.iconSpacing,
         vertical: SpacingTokens.xs_precise,
       ),
@@ -713,7 +713,7 @@ class _ServerStatusChip extends StatelessWidget {
     }
     
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.iconSpacing,
         vertical: SpacingTokens.xs_precise,
       ),

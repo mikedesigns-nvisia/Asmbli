@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/components/app_navigation_bar.dart';
 import '../../../../core/constants/routes.dart';
 import '../widgets/auto_detection_wizard.dart';
 
@@ -28,12 +27,12 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
           child: Column(
             children: [
               // App Navigation Bar
-              AppNavigationBar(currentRoute: AppRoutes.settings),
+              const AppNavigationBar(currentRoute: AppRoutes.settings),
               
               // Main content
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.all(SpacingTokens.xxl),
+                  padding: const EdgeInsets.all(SpacingTokens.xxl),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -42,25 +41,25 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
                         'Add Integrations',
                         style: TextStyles.pageTitle,
                       ),
-                      SizedBox(height: SpacingTokens.sm),
+                      const SizedBox(height: SpacingTokens.sm),
                       Text(
                         'Connect your tools and services automatically',
                         style: TextStyles.bodyMedium.copyWith(
                           color: SemanticColors.onSurfaceVariant,
                         ),
                       ),
-                      SizedBox(height: SpacingTokens.xxl),
+                      const SizedBox(height: SpacingTokens.xxl),
                       
                       // Auto-detect everything button
                       _buildAutoDetectCard(context),
-                      SizedBox(height: SpacingTokens.xxl),
+                      const SizedBox(height: SpacingTokens.xxl),
                       
                       // Integration categories
                       Text(
                         'Or choose a specific category:',
                         style: TextStyles.titleMedium,
                       ),
-                      SizedBox(height: SpacingTokens.lg),
+                      const SizedBox(height: SpacingTokens.lg),
                       
                       Expanded(
                         child: _buildCategoryGrid(context),
@@ -78,7 +77,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
 
   Widget _buildAutoDetectCard(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -92,18 +91,18 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             decoration: BoxDecoration(
               color: SemanticColors.primary,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.auto_fix_high,
               color: SemanticColors.surface,
               size: 32,
             ),
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           Text(
             'Detect Everything Automatically',
             style: TextStyles.headlineMedium.copyWith(
@@ -111,7 +110,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           Text(
             'Scan your system for all installed tools and services. We\'ll automatically configure the ones we find.',
             style: TextStyles.bodyMedium.copyWith(
@@ -119,7 +118,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           AsmblButton.primary(
             text: 'Start Auto-Detection',
             onPressed: () => _showAutoDetectionWizard(context),
@@ -131,55 +130,55 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
 
   Widget _buildCategoryGrid(BuildContext context) {
     final categories = [
-      CategoryItem(
+      const CategoryItem(
         name: 'Development Tools',
         icon: Icons.code,
         description: 'VS Code, Git, GitHub, Docker, Node.js',
         color: Colors.blue,
       ),
-      CategoryItem(
+      const CategoryItem(
         name: 'Browsers',
         icon: Icons.web,
         description: 'Brave, Chrome, Edge, Firefox, Safari',
         color: Colors.orange,
       ),
-      CategoryItem(
+      const CategoryItem(
         name: 'Cloud Services',
         icon: Icons.cloud,
         description: 'AWS, Google Cloud, Azure, Vercel',
         color: Colors.purple,
       ),
-      CategoryItem(
+      const CategoryItem(
         name: 'Databases',
         icon: Icons.storage,
         description: 'PostgreSQL, MySQL, MongoDB, Redis',
         color: Colors.green,
       ),
-      CategoryItem(
+      const CategoryItem(
         name: 'Communication',
         icon: Icons.chat,
         description: 'Slack, Discord, Teams, Zoom',
         color: Colors.pink,
       ),
-      CategoryItem(
+      const CategoryItem(
         name: 'Design Tools',
         icon: Icons.design_services,
         description: 'Figma, Sketch, Adobe Creative Suite',
         color: Colors.indigo,
       ),
-      CategoryItem(
+      const CategoryItem(
         name: 'Productivity',
         icon: Icons.task_alt,
         description: 'Notion, Obsidian, Jira, Linear',
         color: Colors.teal,
       ),
-      CategoryItem(
+      const CategoryItem(
         name: 'AI & ML',
         icon: Icons.psychology,
         description: 'OpenAI, Anthropic, Hugging Face',
         color: Colors.amber,
       ),
-      CategoryItem(
+      const CategoryItem(
         name: 'File Storage',
         icon: Icons.folder_shared,
         description: 'Dropbox, Google Drive, OneDrive',
@@ -207,7 +206,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
       onTap: () => _showCategoryDetection(context, category.name),
       borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
       child: Container(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         decoration: BoxDecoration(
           color: SemanticColors.surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -217,7 +216,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: category.color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -228,13 +227,13 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
                 size: 32,
               ),
             ),
-            SizedBox(height: SpacingTokens.md),
+            const SizedBox(height: SpacingTokens.md),
             Text(
               category.name,
               style: TextStyles.titleSmall,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: SpacingTokens.xs),
+            const SizedBox(height: SpacingTokens.xs),
             Text(
               category.description,
               style: TextStyles.bodySmall.copyWith(
@@ -244,9 +243,9 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: SpacingTokens.md),
+            const SizedBox(height: SpacingTokens.md),
             Container(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: SpacingTokens.sm,
                 vertical: SpacingTokens.xs,
               ),
@@ -257,12 +256,12 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.auto_fix_high,
                     size: 14,
                     color: SemanticColors.primary,
                   ),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text(
                     'Auto-Detect',
                     style: TextStyles.labelSmall.copyWith(

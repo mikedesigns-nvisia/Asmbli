@@ -103,7 +103,10 @@ class DesktopConversationService implements ConversationService {
   Future<void> setConversationStatus(String id, ConversationStatus status) async {
     try {
       final conversation = await getConversation(id);
-      final updatedConversation = conversation.copyWith(status: status);
+      final updatedConversation = conversation.copyWith(
+        status: status,
+        lastModified: DateTime.now(),
+      );
       await updateConversation(updatedConversation);
     } catch (e) {
       print('⚠️ Failed to set conversation status: $e');

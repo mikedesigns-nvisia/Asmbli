@@ -67,8 +67,8 @@ class DesktopWindowManagementService {
  if (!isDesktop) return;
 
  final windowOptions = WindowOptions(
- size: options.size ?? Size(1400, 900),
- minimumSize: options.minimumSize ?? Size(1000, 700),
+ size: options.size ?? const Size(1400, 900),
+ minimumSize: options.minimumSize ?? const Size(1000, 700),
  maximumSize: options.maximumSize,
  center: options.center,
  backgroundColor: options.backgroundColor ?? Colors.transparent,
@@ -168,7 +168,7 @@ class DesktopWindowManagementService {
  }
 
  Future<Size> getSize() async {
- if (!isDesktop) return Size(1400, 900);
+ if (!isDesktop) return const Size(1400, 900);
  return await windowManager.getSize();
  }
 

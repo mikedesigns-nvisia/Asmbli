@@ -42,12 +42,12 @@ class IntegrationCard extends StatelessWidget {
                 BoxShadow(
                   color: colors.primary.withValues(alpha: 0.1),
                   blurRadius: 4,
-                  offset: Offset(0, 2),
+                  offset: const Offset(0, 2),
                 ),
             ],
           ),
           child: Padding(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -55,17 +55,17 @@ class IntegrationCard extends StatelessWidget {
                 // Header with icon, title, and status
                 _buildHeader(colors, definition),
                 
-                SizedBox(height: SpacingTokens.componentSpacing),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 
                 // Status indicator and description
                 _buildStatusSection(colors, definition),
                 
-                SizedBox(height: SpacingTokens.componentSpacing),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 
                 // Progressive content based on state and mode
                 _buildContent(colors, definition),
                 
-                SizedBox(height: SpacingTokens.componentSpacing),
+                const SizedBox(height: SpacingTokens.componentSpacing),
                 
                 // Actions section
                 _buildActions(colors, definition),
@@ -95,7 +95,7 @@ class IntegrationCard extends StatelessWidget {
           ),
         ),
         
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         
         // Title and category
         Expanded(
@@ -111,7 +111,7 @@ class IntegrationCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: SpacingTokens.xs_precise),
+              const SizedBox(height: SpacingTokens.xs_precise),
               Text(
                 _getCategoryDisplayName(definition.category),
                 style: TextStyles.caption.copyWith(
@@ -143,7 +143,7 @@ class IntegrationCard extends StatelessWidget {
           ),
         ),
         
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         
         // Status text
         Expanded(
@@ -190,7 +190,7 @@ class IntegrationCard extends StatelessWidget {
               size: 16,
               color: colors.success ?? colors.primary,
             ),
-            SizedBox(width: SpacingTokens.xs_precise),
+            const SizedBox(width: SpacingTokens.xs_precise),
             Text(
               '47 requests today',
               style: TextStyles.caption.copyWith(
@@ -201,7 +201,7 @@ class IntegrationCard extends StatelessWidget {
         ),
         
         if (isExpertMode) ...[
-          SizedBox(height: SpacingTokens.iconSpacing),
+          const SizedBox(height: SpacingTokens.iconSpacing),
           // Expert mode additional info
           Row(
             children: [
@@ -209,7 +209,7 @@ class IntegrationCard extends StatelessWidget {
                 label: 'Latency: 120ms',
                 color: colors.onSurfaceVariant,
               ),
-              SizedBox(width: SpacingTokens.iconSpacing),
+              const SizedBox(width: SpacingTokens.iconSpacing),
               _InfoChip(
                 label: 'Uptime: 99.9%',
                 color: colors.success ?? colors.primary,
@@ -232,7 +232,7 @@ class IntegrationCard extends StatelessWidget {
               size: 16,
               color: colors.warning ?? colors.primary,
             ),
-            SizedBox(width: SpacingTokens.xs_precise),
+            const SizedBox(width: SpacingTokens.xs_precise),
             Text(
               'Connection issue detected',
               style: TextStyles.caption.copyWith(
@@ -243,7 +243,7 @@ class IntegrationCard extends StatelessWidget {
         ),
         
         if (isExpertMode) ...[
-          SizedBox(height: SpacingTokens.iconSpacing),
+          const SizedBox(height: SpacingTokens.iconSpacing),
           Text(
             'Last successful connection: 2 hours ago',
             style: TextStyles.caption.copyWith(
@@ -266,7 +266,7 @@ class IntegrationCard extends StatelessWidget {
               size: 16,
               color: colors.primary,
             ),
-            SizedBox(width: SpacingTokens.xs_precise),
+            const SizedBox(width: SpacingTokens.xs_precise),
             Text(
               'Detected on your system',
               style: TextStyles.caption.copyWith(color: colors.primary),
@@ -274,7 +274,7 @@ class IntegrationCard extends StatelessWidget {
           ],
         ),
         
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         
         // Benefits preview
         Text(
@@ -321,7 +321,7 @@ class IntegrationCard extends StatelessWidget {
           onPressed: () => onAction?.call(integrationStatus.definition.id, 'settings'),
         ),
         
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         
         _ActionButton(
           icon: Icons.bar_chart,
@@ -330,7 +330,7 @@ class IntegrationCard extends StatelessWidget {
         ),
         
         if (isExpertMode) ...[
-          SizedBox(width: SpacingTokens.iconSpacing),
+          const SizedBox(width: SpacingTokens.iconSpacing),
           _ActionButton(
             icon: Icons.bug_report,
             label: 'Debug',
@@ -351,7 +351,7 @@ class IntegrationCard extends StatelessWidget {
           onPressed: () => onAction?.call(integrationStatus.definition.id, 'reconnect'),
         ),
         
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         
         _ActionButton(
           icon: Icons.edit,
@@ -385,7 +385,7 @@ class IntegrationCard extends StatelessWidget {
           onPressed: () => onAction?.call(integrationStatus.definition.id, 'add'),
         ),
         
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         
         _ActionButton(
           icon: Icons.info_outline,
@@ -432,7 +432,7 @@ class IntegrationCard extends StatelessWidget {
           size: 12,
           color: colors.onSurfaceVariant,
         ),
-        SizedBox(width: SpacingTokens.xs_precise),
+        const SizedBox(width: SpacingTokens.xs_precise),
         Text(
           '120ms',
           style: TextStyles.caption.copyWith(
@@ -610,7 +610,7 @@ class _ActionButton extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: SpacingTokens.iconSpacing,
             vertical: SpacingTokens.xs_precise,
           ),
@@ -622,7 +622,7 @@ class _ActionButton extends StatelessWidget {
                 size: 14,
                 color: colors.primary,
               ),
-              SizedBox(width: SpacingTokens.xs_precise),
+              const SizedBox(width: SpacingTokens.xs_precise),
               Text(
                 label,
                 style: TextStyles.caption.copyWith(
@@ -650,7 +650,7 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.iconSpacing,
         vertical: SpacingTokens.xs_precise,
       ),

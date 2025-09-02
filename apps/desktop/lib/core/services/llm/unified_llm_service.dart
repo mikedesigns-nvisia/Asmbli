@@ -5,7 +5,6 @@ import 'api_llm_provider.dart';
 import '../model_config_service.dart';
 import '../claude_api_service.dart';
 import '../ollama_service.dart';
-import '../../models/model_config.dart';
 
 /// Unified LLM service that routes requests to appropriate providers
 class UnifiedLLMService {
@@ -121,7 +120,7 @@ class UnifiedLLMService {
     provider ??= getDefaultProvider();
     
     if (provider == null) {
-      throw LLMProviderException('No LLM provider available');
+      throw const LLMProviderException('No LLM provider available');
     }
     
     // Check if provider is available

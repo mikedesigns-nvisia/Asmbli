@@ -42,8 +42,8 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  final _tagsController = TextEditingController();
  
  List<String> _tags = [];
- List<PlatformFile> _uploadedFiles = [];
- bool _isProcessing = false;
+ final List<PlatformFile> _uploadedFiles = [];
+ final bool _isProcessing = false;
  String? _validationMessage;
 
  @override
@@ -63,7 +63,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  isInteractive: false,
  child: Container(
  width: 800,
- constraints: BoxConstraints(
+ constraints: const BoxConstraints(
  minHeight: 500,
  maxHeight: 700,
  ),
@@ -90,13 +90,13 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
 
  Widget _buildFlowHeader(BuildContext context, ThemeColors colors) {
  return Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.elementSpacing,
  vertical: SpacingTokens.componentSpacing,
  ),
  decoration: BoxDecoration(
  color: colors.surface.withValues(alpha: 0.95),
- borderRadius: BorderRadius.only(
+ borderRadius: const BorderRadius.only(
  topLeft: Radius.circular(BorderRadiusTokens.xl),
  topRight: Radius.circular(BorderRadiusTokens.xl),
  ),
@@ -111,7 +111,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  size: 20,
  color: colors.primary,
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +123,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: 2),
+ const SizedBox(height: 2),
  Text(
  _getStepDescription(),
  style: TextStyles.bodySmall.copyWith(
@@ -135,7 +135,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ),
  IconButton(
  onPressed: widget.onCancel,
- icon: Icon(Icons.close, size: 18),
+ icon: const Icon(Icons.close, size: 18),
  style: IconButton.styleFrom(
  foregroundColor: colors.onSurfaceVariant,
  minimumSize: const Size(36, 36),
@@ -147,11 +147,11 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  }
 
  Widget _buildProgressIndicator(BuildContext context, ThemeColors colors) {
- final steps = CreationStep.values;
+ const steps = CreationStep.values;
  final currentIndex = steps.indexOf(_currentStep);
  
  return Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.elementSpacing,
  vertical: SpacingTokens.componentSpacing,
  ),
@@ -179,7 +179,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ),
  child: Center(
  child: isCompleted
- ? Icon(Icons.check, size: 14, color: Colors.white)
+ ? const Icon(Icons.check, size: 14, color: Colors.white)
  : Text(
  '${index + 1}',
  style: TextStyles.caption.copyWith(
@@ -228,7 +228,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
 
  Widget _buildSourceSelectionStep(BuildContext context, ThemeColors colors) {
  return Padding(
- padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.sectionSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -238,7 +238,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  Expanded(
  child: GridView.count(
@@ -308,7 +308,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  size: 48,
  color: isSelected ? colors.primary : colors.onSurfaceVariant,
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  title,
  style: TextStyles.bodyLarge.copyWith(
@@ -317,7 +317,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ),
  textAlign: TextAlign.center,
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  description,
  style: TextStyles.bodySmall.copyWith(
@@ -334,7 +334,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
 
  Widget _buildTypeConfigurationStep(BuildContext context, ThemeColors colors) {
  return Padding(
- padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.sectionSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -344,14 +344,14 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'This helps optimize how agents understand and use your content',
  style: TextStyles.bodyMedium.copyWith(
  color: colors.onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  
  Expanded(
  child: GridView.count(
@@ -376,7 +376,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  child: AsmblCard(
  isInteractive: true,
  child: Container(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
  border: isSelected ? Border.all(color: colors.primary, width: 2) : null,
@@ -388,7 +388,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  size: 24,
  color: isSelected ? colors.primary : colors.onSurfaceVariant,
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -401,7 +401,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: isSelected ? colors.primary : colors.onSurface,
  ),
  ),
- SizedBox(height: 2),
+ const SizedBox(height: 2),
  Text(
  _getTypeDescription(type),
  style: TextStyles.bodySmall.copyWith(
@@ -430,7 +430,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
 
  Widget _buildFileUploadContent(BuildContext context, ThemeColors colors) {
  return Padding(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -440,14 +440,14 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Upload Area
  GestureDetector(
  onTap: _pickFiles,
  child: AsmblCard(
  isInteractive: true,
- child: Container(
+ child: SizedBox(
  height: _uploadedFiles.isEmpty ? 160 : 120,
  child: Column(
  mainAxisAlignment: MainAxisAlignment.center,
@@ -457,7 +457,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  size: _uploadedFiles.isEmpty ? 48 : 40,
  color: colors.primary,
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  'Click to browse or drag and drop',
  style: TextStyles.bodyLarge.copyWith(
@@ -465,7 +465,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Text(
  'PDF, TXT, MD, JSON, CSV (max 10MB each)',
  style: TextStyles.bodySmall.copyWith(
@@ -480,7 +480,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  
  // Uploaded Files List
  if (_uploadedFiles.isNotEmpty) ...[
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'Uploaded Files (${_uploadedFiles.length})',
  style: TextStyles.bodyLarge.copyWith(
@@ -488,18 +488,18 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  
  Expanded(
  child: ListView.separated(
  itemCount: _uploadedFiles.length,
- separatorBuilder: (context, index) => SizedBox(height: 6),
+ separatorBuilder: (context, index) => const SizedBox(height: 6),
  itemBuilder: (context, index) {
  final file = _uploadedFiles[index];
  return AsmblCard(
  isInteractive: false,
  child: Padding(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.iconSpacing,
  ),
@@ -510,7 +510,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  size: 20,
  color: colors.primary,
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
+ const SizedBox(width: SpacingTokens.iconSpacing),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -534,7 +534,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ),
  IconButton(
  onPressed: () => _removeFile(index),
- icon: Icon(Icons.close, size: 14),
+ icon: const Icon(Icons.close, size: 14),
  style: IconButton.styleFrom(
  foregroundColor: colors.onSurfaceVariant,
  minimumSize: const Size(32, 32),
@@ -555,7 +555,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
 
  Widget _buildManualContent(BuildContext context, ThemeColors colors) {
  return Padding(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -565,7 +565,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Title Field
  Column(
@@ -578,7 +578,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  TextFormField(
  controller: _titleController,
  decoration: InputDecoration(
@@ -588,7 +588,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ),
  filled: true,
  fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
- contentPadding: EdgeInsets.symmetric(
+ contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.iconSpacing,
  ),
@@ -610,7 +610,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ],
  ),
  
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Content Field
  Expanded(
@@ -624,7 +624,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Expanded(
  child: TextFormField(
  controller: _contentController,
@@ -638,7 +638,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ),
  filled: true,
  fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
- contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  borderSide: BorderSide(color: colors.border),
@@ -666,7 +666,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
 
  Widget _buildTemplateContent(BuildContext context, ThemeColors colors) {
  return Padding(
- padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.sectionSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -676,7 +676,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  Expanded(
  child: GridView.count(
@@ -696,7 +696,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
 
  Widget _buildValidationStep(BuildContext context, ThemeColors colors) {
  return Padding(
- padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.sectionSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -706,11 +706,11 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  if (_validationMessage != null) ...[
  Container(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  color: SemanticColors.warning.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -718,8 +718,8 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ),
  child: Row(
  children: [
- Icon(Icons.warning_amber, color: SemanticColors.warning, size: 20),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const Icon(Icons.warning_amber, color: SemanticColors.warning, size: 20),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Expanded(
  child: Text(
  _validationMessage!,
@@ -731,7 +731,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ],
  ),
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  ],
  
  // Content Preview
@@ -748,7 +748,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  size: 20,
  color: colors.primary,
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  Text(
  _titleController.text.isNotEmpty 
  ? _titleController.text 
@@ -758,7 +758,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- Spacer(),
+ const Spacer(),
  Chip(
  label: Text(
  _selectedType.displayName,
@@ -771,9 +771,9 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ),
  ],
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  Divider(color: colors.border),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  Expanded(
  child: SingleChildScrollView(
  child: Text(
@@ -799,7 +799,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
 
  Widget _buildFinalizationStep(BuildContext context, ThemeColors colors) {
  return Padding(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -809,7 +809,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Tags Field
  Column(
@@ -822,7 +822,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  TextFormField(
  controller: _tagsController,
  decoration: InputDecoration(
@@ -832,7 +832,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ),
  filled: true,
  fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
- contentPadding: EdgeInsets.symmetric(
+ contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.iconSpacing,
  ),
@@ -858,7 +858,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  .toList();
  },
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Text(
  'Separate tags with commas',
  style: TextStyles.caption.copyWith(
@@ -868,7 +868,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  ],
  ),
  
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Final Summary
  Expanded(
@@ -884,7 +884,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  _buildSummaryRow('Title', _titleController.text.isNotEmpty ? _titleController.text : 'Untitled', colors),
  _buildSummaryRow('Type', _selectedType.displayName, colors),
  _buildSummaryRow('Source', _selectedSource?.name ?? 'Unknown', colors),
@@ -935,13 +935,13 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  final isLastStep = _currentStep == CreationStep.values.last;
  
  return Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.elementSpacing,
  vertical: SpacingTokens.componentSpacing,
  ),
  decoration: BoxDecoration(
  color: colors.surface.withValues(alpha: 0.95),
- borderRadius: BorderRadius.only(
+ borderRadius: const BorderRadius.only(
  bottomLeft: Radius.circular(BorderRadiusTokens.xl),
  bottomRight: Radius.circular(BorderRadiusTokens.xl),
  ),
@@ -984,7 +984,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  child: AsmblCard(
  isInteractive: true,
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -995,7 +995,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  template['description']!,
  style: TextStyles.bodySmall.copyWith(

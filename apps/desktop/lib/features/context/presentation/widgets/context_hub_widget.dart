@@ -40,7 +40,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  size: 20,
  color: colors.primary,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Expanded(
  child: Text(
  'Knowledge Library',
@@ -62,7 +62,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  ],
  ),
  
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  Text(
  'Add helpful examples and knowledge to make your agent smarter',
@@ -71,12 +71,12 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  ),
  ),
  
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  
  // Category Tabs
  _buildCategoryTabs(colors),
  
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  // Sample Context Cards - Make scrollable
  Flexible(
@@ -100,7 +100,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  final isSelected = category == _selectedCategory;
  
  return Padding(
- padding: EdgeInsets.only(right: SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.only(right: SpacingTokens.componentSpacing),
  child: FilterChip(
  label: Row(
  mainAxisSize: MainAxisSize.min,
@@ -110,7 +110,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  size: 14,
  color: isSelected ? colors.primary : colors.onSurfaceVariant,
  ),
- SizedBox(width: 6),
+ const SizedBox(width: 6),
  Text(category.displayName),
  ],
  ),
@@ -139,7 +139,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  if (_categoryScrollController.hasClients) {
  // Calculate approximate position of the selected chip
  const chipWidth = 120.0; // Approximate width of each chip including padding
- final spacing = SpacingTokens.componentSpacing;
+ const spacing = SpacingTokens.componentSpacing;
  
  final targetOffset = (chipWidth + spacing) * selectedIndex;
  final maxScrollExtent = _categoryScrollController.position.maxScrollExtent;
@@ -153,7 +153,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
  
  _categoryScrollController.animateTo(
  scrollPosition,
- duration: Duration(milliseconds: 300),
+ duration: const Duration(milliseconds: 300),
  curve: Curves.easeInOut,
  );
  }
@@ -185,7 +185,7 @@ onConfigure: () => _showConfigureDialog(sample),
  
  return Center(
  child: Padding(
- padding: EdgeInsets.symmetric(vertical: SpacingTokens.sectionSpacing),
+ padding: const EdgeInsets.symmetric(vertical: SpacingTokens.sectionSpacing),
  child: Column(
  mainAxisSize: MainAxisSize.min,
  children: [
@@ -194,7 +194,7 @@ onConfigure: () => _showConfigureDialog(sample),
  size: 32,
  color: colors.onSurfaceVariant.withValues(alpha: 0.6),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'No sample contexts in this category yet',
  style: TextStyles.bodyMedium.copyWith(
@@ -234,8 +234,8 @@ onConfigure: () => _showConfigureDialog(sample),
  SnackBar(
  content: Row(
  children: [
- Icon(Icons.check_circle, color: Colors.white, size: 16),
- SizedBox(width: 4),
+ const Icon(Icons.check_circle, color: Colors.white, size: 16),
+ const SizedBox(width: 4),
  Expanded(
  child: Text(
  'Added "${sample.title}" to your context library',
@@ -343,7 +343,7 @@ class _SampleContextCardState extends State<SampleContextCard> {
  color: colors.primary,
  ),
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +357,7 @@ class _SampleContextCardState extends State<SampleContextCard> {
  maxLines: 1,
  overflow: TextOverflow.ellipsis,
  ),
- SizedBox(height: 2),
+ const SizedBox(height: 2),
  Text(
  widget.sample.contextType.displayName,
  style: TextStyles.caption.copyWith(
@@ -370,7 +370,7 @@ class _SampleContextCardState extends State<SampleContextCard> {
  ],
  ),
  
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Description
  Text(
@@ -382,7 +382,7 @@ class _SampleContextCardState extends State<SampleContextCard> {
  overflow: TextOverflow.ellipsis,
  ),
  
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Tags
  if (widget.sample.tags.isNotEmpty) ...[
@@ -409,7 +409,7 @@ class _SampleContextCardState extends State<SampleContextCard> {
  );
  }).toList(),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  ],
  
  // Action buttons
@@ -423,14 +423,14 @@ class _SampleContextCardState extends State<SampleContextCard> {
  size: AsmblButtonSize.small,
  ),
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  AsmblButtonEnhanced.secondary(
  text: '',
  icon: Icons.tune,
  onPressed: widget.onConfigure,
  size: AsmblButtonSize.small,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  AsmblButtonEnhanced.secondary(
  text: '',
  icon: Icons.visibility_outlined,
@@ -465,7 +465,7 @@ class SampleContextPreviewDialog extends StatelessWidget {
  isInteractive: false,
  child: Container(
  width: 600,
- constraints: BoxConstraints(maxHeight: 500),
+ constraints: const BoxConstraints(maxHeight: 500),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -477,7 +477,7 @@ class SampleContextPreviewDialog extends StatelessWidget {
  size: 24,
  color: colors.primary,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Expanded(
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -499,7 +499,7 @@ class SampleContextPreviewDialog extends StatelessWidget {
  ),
  IconButton(
  onPressed: () => Navigator.of(context).pop(),
- icon: Icon(Icons.close),
+ icon: const Icon(Icons.close),
  style: IconButton.styleFrom(
  foregroundColor: colors.onSurfaceVariant,
  ),
@@ -507,13 +507,13 @@ class SampleContextPreviewDialog extends StatelessWidget {
  ],
  ),
  
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  // Content preview
  Expanded(
  child: SingleChildScrollView(
  child: Container(
- padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  decoration: BoxDecoration(
  color: colors.surfaceVariant.withValues(alpha: 0.3),
  borderRadius: BorderRadius.circular(8),
@@ -529,7 +529,7 @@ class SampleContextPreviewDialog extends StatelessWidget {
  ),
  ),
  
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  
  // Footer
  Row(
@@ -540,7 +540,7 @@ class SampleContextPreviewDialog extends StatelessWidget {
  onPressed: () => Navigator.of(context).pop(),
  size: AsmblButtonSize.medium,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  AsmblButtonEnhanced.accent(
  text: 'Add to Library',
  icon: Icons.add,
@@ -662,7 +662,7 @@ child: AsmblCardEnhanced.outlined(
 isInteractive: false,
 child: Container(
 width: 700,
-constraints: BoxConstraints(maxHeight: 600),
+constraints: const BoxConstraints(maxHeight: 600),
 child: Column(
 crossAxisAlignment: CrossAxisAlignment.start,
 children: [
@@ -674,7 +674,7 @@ Icons.tune,
 size: 24,
 color: colors.primary,
 ),
-SizedBox(width: 4),
+const SizedBox(width: 4),
 Expanded(
 child: Text(
 'Configure Context',
@@ -685,7 +685,7 @@ color: colors.onSurface,
 ),
 IconButton(
 onPressed: () => Navigator.of(context).pop(),
-icon: Icon(Icons.close),
+icon: const Icon(Icons.close),
 style: IconButton.styleFrom(
 foregroundColor: colors.onSurfaceVariant,
 ),
@@ -693,7 +693,7 @@ foregroundColor: colors.onSurfaceVariant,
 ],
 ),
 
-SizedBox(height: SpacingTokens.elementSpacing),
+const SizedBox(height: SpacingTokens.elementSpacing),
 
 // Form
 Expanded(
@@ -709,7 +709,7 @@ fontWeight: FontWeight.w600,
 color: colors.onSurface,
 ),
 ),
-SizedBox(height: SpacingTokens.iconSpacing),
+const SizedBox(height: SpacingTokens.iconSpacing),
 TextField(
 controller: _titleController,
 decoration: InputDecoration(
@@ -723,7 +723,7 @@ fillColor: colors.surface,
 ),
 ),
 
-SizedBox(height: SpacingTokens.componentSpacing),
+const SizedBox(height: SpacingTokens.componentSpacing),
 
 // Type
 Text(
@@ -733,9 +733,9 @@ fontWeight: FontWeight.w600,
 color: colors.onSurface,
 ),
 ),
-SizedBox(height: SpacingTokens.iconSpacing),
+const SizedBox(height: SpacingTokens.iconSpacing),
 DropdownButtonFormField<ContextType>(
-value: _selectedType,
+initialValue: _selectedType,
 decoration: InputDecoration(
 border: OutlineInputBorder(
 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -757,7 +757,7 @@ setState(() => _selectedType = value);
 },
 ),
 
-SizedBox(height: SpacingTokens.componentSpacing),
+const SizedBox(height: SpacingTokens.componentSpacing),
 
 // Content
 Text(
@@ -767,7 +767,7 @@ fontWeight: FontWeight.w600,
 color: colors.onSurface,
 ),
 ),
-SizedBox(height: SpacingTokens.iconSpacing),
+const SizedBox(height: SpacingTokens.iconSpacing),
 TextField(
 controller: _contentController,
 decoration: InputDecoration(
@@ -783,7 +783,7 @@ maxLines: 8,
 minLines: 4,
 ),
 
-SizedBox(height: SpacingTokens.componentSpacing),
+const SizedBox(height: SpacingTokens.componentSpacing),
 
 // Tags
 Text(
@@ -793,7 +793,7 @@ fontWeight: FontWeight.w600,
 color: colors.onSurface,
 ),
 ),
-SizedBox(height: SpacingTokens.iconSpacing),
+const SizedBox(height: SpacingTokens.iconSpacing),
 if (_tags.isNotEmpty)
 Wrap(
 spacing: SpacingTokens.iconSpacing,
@@ -814,7 +814,7 @@ backgroundColor: colors.surfaceVariant.withValues(alpha: 0.5),
 ),
 ),
 
-SizedBox(height: SpacingTokens.elementSpacing),
+const SizedBox(height: SpacingTokens.elementSpacing),
 
 // Footer
 Row(
@@ -825,7 +825,7 @@ text: 'Cancel',
 onPressed: () => Navigator.of(context).pop(),
 size: AsmblButtonSize.medium,
 ),
-SizedBox(width: 4),
+const SizedBox(width: 4),
 AsmblButtonEnhanced.accent(
 text: 'Add to Library',
 icon: Icons.add,
@@ -861,8 +861,8 @@ ScaffoldMessenger.of(context).showSnackBar(
 SnackBar(
 content: Row(
 children: [
-Icon(Icons.check_circle, color: Colors.white, size: 16),
-SizedBox(width: 4),
+const Icon(Icons.check_circle, color: Colors.white, size: 16),
+const SizedBox(width: 4),
 Expanded(
 child: Text(
 'Added "${_titleController.text}" to your context library',

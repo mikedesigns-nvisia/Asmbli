@@ -112,7 +112,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 900),
@@ -122,22 +122,22 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               // Step title and description
               _buildStepHeader(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Environment Variables Section
               _buildEnvironmentVariablesSection(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // MCP Server Status Section
               _buildMCPServerStatusSection(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Context Documents Section
               _buildContextDocumentsSection(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Advanced Settings Section
               _buildAdvancedSettingsSection(context),
@@ -156,7 +156,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           'Advanced Configuration',
           style: TextStyles.pageTitle,
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         Text(
           'Configure environment variables, context documents, and advanced settings to customize your agent\'s behavior and access.',
           style: TextStyles.bodyMedium.copyWith(
@@ -181,12 +181,12 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Environment Variables',
                 style: TextStyles.cardTitle,
               ),
-              Spacer(),
+              const Spacer(),
               IconButton(
                 onPressed: () {
                   setState(() {
@@ -204,7 +204,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Configure API keys, tokens, and other environment variables needed by your MCP servers.',
@@ -214,11 +214,11 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           ),
           
           if (_showEnvironmentHelp) ...[
-            SizedBox(height: SpacingTokens.md),
+            const SizedBox(height: SpacingTokens.md),
             _buildEnvironmentHelp(context),
           ],
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Environment variables list
           if (envVars.isEmpty) ...[
@@ -227,14 +227,14 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             Column(
               children: envVars.keys.map((key) {
                 return Container(
-                  margin: EdgeInsets.only(bottom: SpacingTokens.md),
+                  margin: const EdgeInsets.only(bottom: SpacingTokens.md),
                   child: _buildEnvVariableField(context, key),
                 );
               }).toList(),
             ),
           ],
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Add environment variable section
           _buildAddEnvVariable(context),
@@ -245,7 +245,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
 
   Widget _buildEnvironmentHelp(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: ThemeColors(context).info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -257,7 +257,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(SpacingTokens.sm),
+                padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
                   color: ThemeColors(context).info.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -268,7 +268,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                   size: 20,
                 ),
               ),
-              SizedBox(width: SpacingTokens.md),
+              const SizedBox(width: SpacingTokens.md),
               Text(
                 'Environment Variable Guide',
                 style: TextStyles.cardTitle.copyWith(
@@ -277,7 +277,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           _buildHelpSection(context, 'How to get API keys:', [
             'GitHub: Settings → Developer settings → Personal access tokens → Generate new token',
@@ -285,7 +285,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             'Brave Search: Search.brave.com → Sign up → API Keys',
           ]),
           
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           
           _buildHelpSection(context, 'Security & Storage:', [
             'All variables are encrypted and stored securely',
@@ -294,10 +294,10 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             'You can update or remove variables anytime',
           ]),
           
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           
           Container(
-            padding: EdgeInsets.all(SpacingTokens.md),
+            padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
               color: ThemeColors(context).warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -309,7 +309,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                   color: ThemeColors(context).warning,
                   size: 16,
                 ),
-                SizedBox(width: SpacingTokens.sm),
+                const SizedBox(width: SpacingTokens.sm),
                 Expanded(
                   child: Text(
                     'Never share your API keys or tokens with others. Keep them secure and rotate them regularly.',
@@ -337,9 +337,9 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             color: ThemeColors(context).onSurface,
           ),
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         ...items.map((item) => Padding(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             left: SpacingTokens.md,
             bottom: SpacingTokens.xs,
           ),
@@ -347,7 +347,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                margin: EdgeInsets.only(top: 6),
+                margin: const EdgeInsets.only(top: 6),
                 width: 4,
                 height: 4,
                 decoration: BoxDecoration(
@@ -355,7 +355,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Expanded(
                 child: Text(
                   item,
@@ -377,7 +377,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
       children: [
         // Enhanced empty state with better visual design
         Container(
-          padding: EdgeInsets.all(SpacingTokens.xl),
+          padding: const EdgeInsets.all(SpacingTokens.xl),
           decoration: BoxDecoration(
             color: ThemeColors(context).surface,
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -390,7 +390,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.all(SpacingTokens.lg),
+                padding: const EdgeInsets.all(SpacingTokens.lg),
                 decoration: BoxDecoration(
                   color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
@@ -401,7 +401,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                   color: ThemeColors(context).primary,
                 ),
               ),
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
               Text(
                 'No environment variables configured',
                 style: TextStyles.cardTitle.copyWith(
@@ -409,7 +409,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: SpacingTokens.sm),
+              const SizedBox(height: SpacingTokens.sm),
               Text(
                 'Environment variables store API keys, tokens, and other sensitive configuration data that your agents need to access external services.',
                 style: TextStyles.bodyMedium.copyWith(
@@ -421,7 +421,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           ),
         ),
         
-        SizedBox(height: SpacingTokens.lg),
+        const SizedBox(height: SpacingTokens.lg),
         
         // Quick setup cards for common variables
         _buildCommonVariablesSection(context),
@@ -463,14 +463,14 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             color: ThemeColors(context).onSurface,
           ),
         ),
-        SizedBox(height: SpacingTokens.md),
+        const SizedBox(height: SpacingTokens.md),
         Text(
           'Click on any card below to quickly add a common environment variable:',
           style: TextStyles.bodySmall.copyWith(
             color: ThemeColors(context).onSurfaceVariant,
           ),
         ),
-        SizedBox(height: SpacingTokens.lg),
+        const SizedBox(height: SpacingTokens.lg),
         ...commonVars.map((variable) => _buildQuickSetupCard(context, variable)),
       ],
     );
@@ -478,15 +478,15 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
   
   Widget _buildQuickSetupCard(BuildContext context, Map<String, dynamic> variable) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.md),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.md),
       child: AsmblCard(
         onTap: () => _addCommonVariable(variable['name'], variable['example']),
         child: Padding(
-          padding: EdgeInsets.all(SpacingTokens.md),
+          padding: const EdgeInsets.all(SpacingTokens.md),
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(SpacingTokens.sm),
+                padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
                   color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -497,7 +497,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                   color: ThemeColors(context).primary,
                 ),
               ),
-              SizedBox(width: SpacingTokens.md),
+              const SizedBox(width: SpacingTokens.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,9 +511,9 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                             fontFamily: 'monospace',
                           ),
                         ),
-                        SizedBox(width: SpacingTokens.sm),
+                        const SizedBox(width: SpacingTokens.sm),
                         Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: SpacingTokens.sm,
                             vertical: 2,
                           ),
@@ -531,7 +531,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                         ),
                       ],
                     ),
-                    SizedBox(height: SpacingTokens.xs),
+                    const SizedBox(height: SpacingTokens.xs),
                     Text(
                       variable['description'],
                       style: TextStyles.bodySmall.copyWith(
@@ -558,7 +558,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
     final isSecure = _isSecureVariable(key);
     
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -580,7 +580,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               ),
               if (isSecure)
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: ThemeColors(context).warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
@@ -593,7 +593,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                         size: 12,
                         color: ThemeColors(context).warning,
                       ),
-                      SizedBox(width: 2),
+                      const SizedBox(width: 2),
                       Text(
                         'SECURE',
                         style: TextStyles.bodySmall.copyWith(
@@ -607,7 +607,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                 ),
               IconButton(
                 onPressed: () => _removeEnvVariable(key),
-                icon: Icon(Icons.delete_outline),
+                icon: const Icon(Icons.delete_outline),
                 style: IconButton.styleFrom(
                   foregroundColor: ThemeColors(context).error,
                 ),
@@ -615,7 +615,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           TextField(
             controller: controller,
@@ -643,7 +643,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               ),
               filled: true,
               fillColor: ThemeColors(context).inputBackground,
-              contentPadding: EdgeInsets.all(SpacingTokens.sm),
+              contentPadding: const EdgeInsets.all(SpacingTokens.sm),
             ),
             style: TextStyles.bodyMedium.copyWith(
               fontFamily: isSecure ? 'monospace' : null,
@@ -664,7 +664,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             onPressed: () => _showAddEnvDialog(),
           ),
         ),
-        SizedBox(width: SpacingTokens.sm),
+        const SizedBox(width: SpacingTokens.sm),
         AsmblButton.secondary(
           text: 'Load from File',
           icon: Icons.file_upload,
@@ -679,7 +679,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
     final mcpService = ref.read(mcpSettingsServiceProvider);
     
     if (selectedServers.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
     
     return AsmblCard(
@@ -693,7 +693,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'MCP Server Status',
                 style: TextStyles.cardTitle,
@@ -701,7 +701,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Status of MCP servers selected for this agent:',
@@ -710,21 +710,21 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           Column(
             children: selectedServers.map((serverId) {
               return Container(
-                margin: EdgeInsets.only(bottom: SpacingTokens.md),
+                margin: const EdgeInsets.only(bottom: SpacingTokens.md),
                 child: _buildMCPServerStatusItem(context, serverId, mcpService),
               );
             }).toList(),
           ),
           
           if (_hasUnconfiguredServers(selectedServers, mcpService)) ...[
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             Container(
-              padding: EdgeInsets.all(SpacingTokens.md),
+              padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: ThemeColors(context).warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -737,7 +737,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                     color: ThemeColors(context).warning,
                     size: 16,
                   ),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: Text(
                       'Some MCP servers need configuration. Visit Settings > MCP Servers to set them up.',
@@ -779,7 +779,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
     }
     
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -788,7 +788,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(SpacingTokens.sm),
+            padding: const EdgeInsets.all(SpacingTokens.sm),
             decoration: BoxDecoration(
               color: statusColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -799,7 +799,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               size: 16,
             ),
           ),
-          SizedBox(width: SpacingTokens.md),
+          const SizedBox(width: SpacingTokens.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -811,7 +811,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                     fontFamily: 'monospace',
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   isConfigured 
                     ? (serverConfig?.description ?? 'MCP Server')
@@ -824,7 +824,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: statusColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -864,7 +864,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Context Documents',
                 style: TextStyles.cardTitle,
@@ -872,7 +872,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Select additional context documents to include with your agent. These will be available during conversations.',
@@ -881,7 +881,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Global context documents from settings
           FutureBuilder<List<String>>(
@@ -902,7 +902,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(height: SpacingTokens.sm),
+                  const SizedBox(height: SpacingTokens.sm),
                   
                   ...globalDocs.map((doc) {
                     final isSelected = contextDocs.contains(doc);
@@ -929,13 +929,13 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                       ),
                       activeColor: ThemeColors(context).primary,
                     );
-                  }).toList(),
+                  }),
                 ],
               );
             },
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           AsmblButton.secondary(
             text: 'Manage Context Documents',
@@ -956,7 +956,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             size: 48,
             color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
             'No context documents available',
             style: TextStyles.bodyMedium.copyWith(
@@ -987,12 +987,12 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Advanced Settings',
                 style: TextStyles.cardTitle,
               ),
-              Spacer(),
+              const Spacer(),
               Switch(
                 value: _showAdvancedSettings,
                 onChanged: (value) {
@@ -1000,13 +1000,13 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                     _showAdvancedSettings = value;
                   });
                 },
-                activeColor: ThemeColors(context).primary,
+                activeThumbColor: ThemeColors(context).primary,
               ),
             ],
           ),
           
           if (!_showAdvancedSettings) ...[
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
             Text(
               'Enable to configure performance, security, and behavior settings.',
               style: TextStyles.bodySmall.copyWith(
@@ -1016,7 +1016,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           ],
           
           if (_showAdvancedSettings) ...[
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             
             _buildAdvancedSetting(
               context,
@@ -1029,7 +1029,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               'seconds',
             ),
             
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             
             _buildAdvancedSetting(
               context,
@@ -1042,7 +1042,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               'messages',
             ),
             
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             
             _buildAdvancedToggle(
               context,
@@ -1052,7 +1052,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               false,
             ),
             
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
             
             _buildAdvancedToggle(
               context,
@@ -1101,7 +1101,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           ],
         ),
         
-        SizedBox(height: SpacingTokens.xs),
+        const SizedBox(height: SpacingTokens.xs),
         
         Text(
           description,
@@ -1110,7 +1110,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           ),
         ),
         
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         
         Slider(
           value: currentValue.toDouble(),
@@ -1164,7 +1164,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             widget.wizardState.setAdvancedSetting(key, value);
             widget.onChanged();
           },
-          activeColor: ThemeColors(context).primary,
+          activeThumbColor: ThemeColors(context).primary,
         ),
       ],
     );
@@ -1207,10 +1207,10 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Add Environment Variable'),
+        title: const Text('Add Environment Variable'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Variable Name',
             hintText: 'e.g., API_KEY',
           ),
@@ -1267,8 +1267,8 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Load Environment File'),
-        content: Text('Environment file loading would be implemented here'),
+        title: const Text('Load Environment File'),
+        content: const Text('Environment file loading would be implemented here'),
         actions: [
           AsmblButton.primary(
             text: 'OK',

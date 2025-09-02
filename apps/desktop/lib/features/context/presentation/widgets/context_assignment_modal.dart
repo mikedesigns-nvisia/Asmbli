@@ -33,7 +33,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  child: Container(
  width: 600,
  height: 500,
- padding: EdgeInsets.all(SpacingTokens.xl),
+ padding: const EdgeInsets.all(SpacingTokens.xl),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -50,7 +50,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  color: ColorTokens.foreground,
  ),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Text(
  'Agent: ${widget.agentName}',
  style: TextStyles.bodyLarge.copyWith(
@@ -61,7 +61,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  ),
  IconButton(
  onPressed: () => Navigator.of(context).pop(),
- icon: Icon(
+ icon: const Icon(
  Icons.close,
  color: ColorTokens.foregroundVariant,
  ),
@@ -69,7 +69,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  ],
  ),
 
- SizedBox(height: SpacingTokens.xl),
+ const SizedBox(height: SpacingTokens.xl),
 
  // Current assignments
  assignedContext.when(
@@ -84,23 +84,23 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  color: ColorTokens.foreground,
  ),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  ...assignments.map((doc) => Padding(
- padding: EdgeInsets.only(bottom: SpacingTokens.xs),
+ padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
  child: Container(
- padding: EdgeInsets.all(SpacingTokens.sm),
+ padding: const EdgeInsets.all(SpacingTokens.sm),
  decoration: BoxDecoration(
  color: ColorTokens.muted,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Row(
  children: [
- Icon(
+ const Icon(
  Icons.check_circle,
  size: 16,
  color: SemanticColors.success,
  ),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  Expanded(
  child: Text(
  doc.title,
@@ -113,7 +113,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  ),
  ),
  )),
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
  ],
  ),
  loading: () => const SizedBox.shrink(),
@@ -128,7 +128,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  ),
  ),
 
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
 
  // Document list
  Expanded(
@@ -143,7 +143,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  size: 48,
  color: ColorTokens.foregroundVariant.withValues(alpha: 0.5),
  ),
- SizedBox(height: SpacingTokens.md),
+ const SizedBox(height: SpacingTokens.md),
  Text(
  'No context documents available',
  style: TextStyles.bodyLarge.copyWith(
@@ -185,7 +185,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  color: ColorTokens.foregroundVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Text(
  document.content.length > 100
  ? '${document.content.substring(0, 100)}...'
@@ -203,7 +203,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  );
  },
  ),
- loading: () => Center(
+ loading: () => const Center(
  child: CircularProgressIndicator(),
  ),
  error: (error, _) => Center(
@@ -217,7 +217,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  ),
  ),
 
- SizedBox(height: SpacingTokens.xl),
+ const SizedBox(height: SpacingTokens.xl),
 
  // Action buttons
  Row(
@@ -227,7 +227,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  text: 'Cancel',
  onPressed: () => Navigator.of(context).pop(),
  ),
- SizedBox(width: SpacingTokens.md),
+ const SizedBox(width: SpacingTokens.md),
  AsmblButton.primary(
  text: 'Assign Selected',
  onPressed: selectedDocuments.isEmpty

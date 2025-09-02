@@ -36,7 +36,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
 
   // Pre-configured MCP server templates
   final Map<String, MCPServerTemplate> _templates = {
-    'filesystem': MCPServerTemplate(
+    'filesystem': const MCPServerTemplate(
       name: 'Filesystem',
       command: 'uvx',
       args: ['@modelcontextprotocol/server-filesystem'],
@@ -46,7 +46,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       envVars: {},
       requiredPaths: ['\${HOME}/Documents', '\${HOME}/Projects'],
     ),
-    'web-search': MCPServerTemplate(
+    'web-search': const MCPServerTemplate(
       name: 'Web Search (Brave)',
       command: 'uvx',
       args: ['@modelcontextprotocol/server-brave-search'],
@@ -56,7 +56,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       envVars: {'BRAVE_API_KEY': ''},
       requiredPaths: [],
     ),
-    'memory': MCPServerTemplate(
+    'memory': const MCPServerTemplate(
       name: 'Memory',
       command: 'uvx',
       args: ['@modelcontextprotocol/server-memory'],
@@ -66,7 +66,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       envVars: {},
       requiredPaths: [],
     ),
-    'github': MCPServerTemplate(
+    'github': const MCPServerTemplate(
       name: 'GitHub',
       command: 'uvx',
       args: ['@modelcontextprotocol/server-github'],
@@ -76,7 +76,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       envVars: {'GITHUB_PERSONAL_ACCESS_TOKEN': ''},
       requiredPaths: [],
     ),
-    'git': MCPServerTemplate(
+    'git': const MCPServerTemplate(
       name: 'Git',
       command: 'uvx',
       args: ['@modelcontextprotocol/server-git'],
@@ -86,7 +86,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       envVars: {},
       requiredPaths: [],
     ),
-    'postgres': MCPServerTemplate(
+    'postgres': const MCPServerTemplate(
       name: 'PostgreSQL',
       command: 'uvx',
       args: ['@modelcontextprotocol/server-postgres'],
@@ -96,7 +96,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       envVars: {'POSTGRES_URL': 'postgresql://user:password@localhost:5432/db'},
       requiredPaths: [],
     ),
-    'sqlite': MCPServerTemplate(
+    'sqlite': const MCPServerTemplate(
       name: 'SQLite',
       command: 'uvx',
       args: ['@modelcontextprotocol/server-sqlite'],
@@ -106,7 +106,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       envVars: {},
       requiredPaths: ['\${HOME}/databases'],
     ),
-    'custom': MCPServerTemplate(
+    'custom': const MCPServerTemplate(
       name: 'Custom Server',
       command: '',
       args: [],
@@ -283,11 +283,11 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           maxWidth: 500,
           minWidth: 400,
         ),
-        padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+        padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
         decoration: BoxDecoration(
           color: ThemeColors(context).surface.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(16),
@@ -301,12 +301,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             // Header
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.integration_instructions,
                   size: 28,
                   color: SemanticColors.primary,
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +326,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: Icon(Icons.close),
+                  icon: const Icon(Icons.close),
                   style: IconButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -334,11 +334,11 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               ],
             ),
             
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             
             // Auto-detect option at top
             Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -356,18 +356,18 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: SemanticColors.primary,
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.auto_fix_high,
                           color: SemanticColors.surface,
                           size: 20,
                         ),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,7 +389,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   AsmblButton.primary(
                     text: 'Start Detection',
                     onPressed: () {
@@ -406,14 +406,14 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               ),
             ),
             
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             
             // Divider with "OR" text
             Row(
               children: [
-                Expanded(child: Divider(color: SemanticColors.border)),
+                const Expanded(child: Divider(color: SemanticColors.border)),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     'OR',
                     style: TextStyles.labelSmall.copyWith(
@@ -421,11 +421,11 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     ),
                   ),
                 ),
-                Expanded(child: Divider(color: SemanticColors.border)),
+                const Expanded(child: Divider(color: SemanticColors.border)),
               ],
             ),
             
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             
             // Manual setup options
             Column(
@@ -454,7 +454,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       ),
                     ),
                     
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     
                     // Custom Configuration Option
                     Expanded(
@@ -479,7 +479,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   ],
                 ),
                 
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 
                 // Second row - Legacy options
                 Row(
@@ -497,13 +497,13 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                           Navigator.of(context).pop();
                           showDialog(
                             context: context,
-                            builder: (context) => EnhancedMCPServerWizard(),
+                            builder: (context) => const EnhancedMCPServerWizard(),
                           );
                         },
                       ),
                     ),
                     
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     
                     // Quick Setup Option
                     Expanded(
@@ -548,7 +548,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(12),
@@ -572,7 +572,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 ),
               ),
               
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               
               Text(
                 title,
@@ -580,7 +580,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 textAlign: TextAlign.center,
               ),
               
-              SizedBox(height: 6),
+              const SizedBox(height: 6),
               
               Text(
                 description,
@@ -592,9 +592,9 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               ),
               
               if (badge != null) ...[
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: (badgeColor ?? SemanticColors.primary).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -619,7 +619,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           maxWidth: 800,
           maxHeight: 700,
           minWidth: 600,
@@ -636,7 +636,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           children: [
             // Header
             Container(
-              padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+              padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -646,12 +646,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.storage,
                     size: 24,
                     color: SemanticColors.primary,
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                   Expanded(
                     child: Text(
                       isEdit ? 'Edit MCP Server' : 'Add MCP Server',
@@ -660,7 +660,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.close),
+                    icon: const Icon(Icons.close),
                     style: IconButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -674,30 +674,30 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               child: Form(
                 key: _formKey,
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Template Selection (only for new servers)
                       if (!isEdit) ...[
                         _buildTemplateSelection(),
-                        SizedBox(height: SpacingTokens.sectionSpacing),
+                        const SizedBox(height: SpacingTokens.sectionSpacing),
                       ],
 
                       // Basic Configuration
                       _buildBasicConfiguration(),
 
-                      SizedBox(height: SpacingTokens.sectionSpacing),
+                      const SizedBox(height: SpacingTokens.sectionSpacing),
 
                       // Command Configuration
                       _buildCommandConfiguration(),
 
-                      SizedBox(height: SpacingTokens.sectionSpacing),
+                      const SizedBox(height: SpacingTokens.sectionSpacing),
 
                       // Environment Variables
                       _buildEnvironmentVariables(),
 
-                      SizedBox(height: SpacingTokens.sectionSpacing),
+                      const SizedBox(height: SpacingTokens.sectionSpacing),
 
                       // Advanced Options
                       _buildAdvancedOptions(),
@@ -709,7 +709,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
 
             // Actions
             Container(
-              padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+              padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
@@ -724,7 +724,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     text: 'Cancel',
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                   AsmblButton.primary(
                     text: _isLoading 
                       ? 'Saving...'
@@ -751,7 +751,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           'Server Template',
           style: TextStyles.cardTitle,
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         // Template grid
         Wrap(
@@ -765,11 +765,11 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             return GestureDetector(
               onTap: () => _applyTemplate(templateId),
               child: Container(
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   maxWidth: 160,
                   minWidth: 120,
                 ),
-                padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
                 decoration: BoxDecoration(
                   color: isSelected 
                     ? SemanticColors.primary.withValues(alpha: 0.1)
@@ -790,7 +790,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                         ? SemanticColors.primary
                         : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       template.name,
                       style: TextStyles.labelMedium.copyWith(
@@ -800,7 +800,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       template.category,
                       style: TextStyles.labelSmall.copyWith(
@@ -825,7 +825,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           'Basic Configuration',
           style: TextStyles.cardTitle,
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
 
         // Server Name
         TextFormField(
@@ -845,7 +845,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           },
         ),
 
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
 
         // Description
         TextFormField(
@@ -877,7 +877,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           'Command Configuration',
           style: TextStyles.cardTitle,
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
 
         // Command
         TextFormField(
@@ -897,7 +897,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           },
         ),
 
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
 
         // Arguments
         Column(
@@ -909,17 +909,17 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   'Arguments',
                   style: TextStyles.labelLarge,
                 ),
-                Spacer(),
+                const Spacer(),
                 TextButton.icon(
                   onPressed: () {
                     _safeSetState(() => _args.add(''));
                   },
-                  icon: Icon(Icons.add, size: 16),
-                  label: Text('Add Argument'),
+                  icon: const Icon(Icons.add, size: 16),
+                  label: const Text('Add Argument'),
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             
             ..._args.asMap().entries.map((entry) {
               final index = entry.key;
@@ -947,12 +947,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                         },
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     IconButton(
                       onPressed: () {
                         _safeSetState(() => _args.removeAt(index));
                       },
-                      icon: Icon(Icons.remove_circle, size: 20),
+                      icon: const Icon(Icons.remove_circle, size: 20),
                       style: IconButton.styleFrom(
                         foregroundColor: SemanticColors.error,
                       ),
@@ -960,7 +960,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ],
@@ -977,23 +977,23 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               'Environment Variables',
               style: TextStyles.cardTitle,
             ),
-            Spacer(),
+            const Spacer(),
             TextButton.icon(
               onPressed: () {
                 _showAddEnvVarDialog();
               },
-              icon: Icon(Icons.add, size: 16),
-              label: Text('Add Variable'),
+              icon: const Icon(Icons.add, size: 16),
+              label: const Text('Add Variable'),
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
 
         if (_envVars.isEmpty)
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -1008,7 +1008,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   size: 16,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   'No environment variables configured',
                   style: TextStyles.bodySmall.copyWith(
@@ -1048,7 +1048,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     flex: 3,
                     child: Text(
@@ -1066,26 +1066,26 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   ),
                   IconButton(
                     onPressed: () => _editEnvVar(key, value),
-                    icon: Icon(Icons.edit, size: 16),
+                    icon: const Icon(Icons.edit, size: 16),
                     style: IconButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                      minimumSize: Size(32, 32),
+                      minimumSize: const Size(32, 32),
                     ),
                   ),
                   IconButton(
                     onPressed: () {
                       _safeSetState(() => _envVars.remove(key));
                     },
-                    icon: Icon(Icons.delete, size: 16),
+                    icon: const Icon(Icons.delete, size: 16),
                     style: IconButton.styleFrom(
                       foregroundColor: SemanticColors.error,
-                      minimumSize: Size(32, 32),
+                      minimumSize: const Size(32, 32),
                     ),
                   ),
                 ],
               ),
             );
-          }).toList(),
+          }),
       ],
     );
   }
@@ -1098,7 +1098,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           'Advanced Options',
           style: TextStyles.cardTitle,
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
 
         // Enable/Disable Server
         Row(
@@ -1106,9 +1106,9 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             Switch(
               value: _enabled,
               onChanged: (value) => _safeSetState(() => _enabled = value),
-              activeColor: SemanticColors.success,
+              activeThumbColor: SemanticColors.success,
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1141,7 +1141,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             maxWidth: 500,
             maxHeight: 400,
             minWidth: 400,
@@ -1158,7 +1158,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             children: [
               // Header
               Container(
-                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -1176,7 +1176,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     ),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                       style: IconButton.styleFrom(
                         foregroundColor: SemanticColors.onSurfaceVariant,
                       ),
@@ -1187,7 +1187,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               // Content
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -1201,7 +1201,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                           ),
                         ),
                       ),
-                      SizedBox(height: SpacingTokens.componentSpacing),
+                      const SizedBox(height: SpacingTokens.componentSpacing),
                       TextFormField(
                         controller: valueController,
                         decoration: InputDecoration(
@@ -1219,7 +1219,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               ),
               // Actions
               Container(
-                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
@@ -1234,7 +1234,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       text: 'Cancel',
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    SizedBox(width: SpacingTokens.componentSpacing),
+                    const SizedBox(width: SpacingTokens.componentSpacing),
                     AsmblButton.primary(
                       text: 'Add',
                       onPressed: () {
@@ -1265,7 +1265,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             maxWidth: 500,
             maxHeight: 350,
             minWidth: 400,
@@ -1282,7 +1282,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             children: [
               // Header
               Container(
-                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -1300,7 +1300,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     ),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                       style: IconButton.styleFrom(
                         foregroundColor: SemanticColors.onSurfaceVariant,
                       ),
@@ -1311,7 +1311,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               // Content
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                   child: TextFormField(
                     controller: valueController,
                     decoration: InputDecoration(
@@ -1328,7 +1328,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               ),
               // Actions
               Container(
-                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
@@ -1343,7 +1343,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       text: 'Cancel',
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    SizedBox(width: SpacingTokens.componentSpacing),
+                    const SizedBox(width: SpacingTokens.componentSpacing),
                     AsmblButton.primary(
                       text: 'Update',
                       onPressed: () {

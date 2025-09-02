@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
-import 'mcp_server_configuration_service.dart';
 import '../data/mcp_server_configs.dart';
 
 /// Service for managing MCP server installation lifecycle

@@ -57,7 +57,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
           children: [
             // Header
             Container(
-              padding: EdgeInsets.all(SpacingTokens.headerPadding),
+              padding: const EdgeInsets.all(SpacingTokens.headerPadding),
               decoration: BoxDecoration(
                 color: colors.surface.withValues(alpha: 0.1),
                 border: Border(
@@ -72,7 +72,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                     onPressed: () => Navigator.pop(context),
                     icon: Icon(Icons.arrow_back, color: colors.onSurface),
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -93,11 +93,11 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                       ),
                     ],
                   ),
-                  Spacer(),
+                  const Spacer(),
                   // Filter buttons
                   if (configuredModels.isNotEmpty) ...[
                     _buildFilterChips(colors),
-                    SizedBox(width: SpacingTokens.componentSpacing),
+                    const SizedBox(width: SpacingTokens.componentSpacing),
                   ],
                   AsmblButton.primary(
                     text: 'Add AI',
@@ -111,7 +111,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
             // Main Content
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(SpacingTokens.xxl),
+                padding: const EdgeInsets.all(SpacingTokens.xxl),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1000),
@@ -139,12 +139,12 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
     return Center(
       child: AsmblCard(
         child: Container(
-          padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+          padding: const EdgeInsets.all(SpacingTokens.sectionSpacing),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                 decoration: BoxDecoration(
                   color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
@@ -155,7 +155,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                   color: colors.primary,
                 ),
               ),
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               Text(
                 'Ready to Get Started?',
                 style: GoogleFonts.fustat(
@@ -164,7 +164,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                   color: colors.onSurface,
                 ),
               ),
-              SizedBox(height: SpacingTokens.componentSpacing),
+              const SizedBox(height: SpacingTokens.componentSpacing),
               Text(
                 'Add your first AI assistant to start chatting.\nConnect to services like ChatGPT or Claude, or install a local AI.',
                 style: GoogleFonts.fustat(
@@ -173,7 +173,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               Wrap(
                 alignment: WrapAlignment.center,
                 spacing: SpacingTokens.componentSpacing,
@@ -207,9 +207,9 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
     return Row(
       children: [
         _buildFilterChip('All', 'all', colors),
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         _buildFilterChip('Cloud', 'cloud', colors),
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         _buildFilterChip('Local', 'local', colors),
       ],
     );
@@ -220,7 +220,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
     return GestureDetector(
       onTap: () => setState(() => _selectedFilter = value),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? colors.primary : colors.surface.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(16),
@@ -276,7 +276,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
         AsmblCard(
           child: ListTile(
             leading: Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: colors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -327,12 +327,12 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
     return Center(
       child: AsmblCard(
         child: Container(
-          padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+          padding: const EdgeInsets.all(SpacingTokens.sectionSpacing),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                 decoration: BoxDecoration(
                   color: colors.onSurfaceVariant.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
@@ -343,7 +343,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                   color: colors.onSurfaceVariant,
                 ),
               ),
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               Text(
                 'No Results',
                 style: GoogleFonts.fustat(
@@ -352,7 +352,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                   color: colors.onSurface,
                 ),
               ),
-              SizedBox(height: SpacingTokens.componentSpacing),
+              const SizedBox(height: SpacingTokens.componentSpacing),
               Text(
                 message,
                 style: GoogleFonts.fustat(
@@ -361,7 +361,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               if (_selectedFilter == 'local') ...[
                 // For local filter, show Install Ollama + Download Models buttons
                 Wrap(
@@ -400,7 +400,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
     return Row(
       children: [
         Icon(icon, size: 20, color: colors.primary),
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         Text(
           title,
           style: GoogleFonts.fustat(
@@ -415,7 +415,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
 
   Widget _buildModelCard(ModelConfig model, {required bool isDefault, required ThemeColors colors, required ThemeData theme}) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
       child: AsmblCard(
         child: Container(
           decoration: BoxDecoration(
@@ -423,12 +423,12 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           ),
           child: Padding(
-            padding: EdgeInsets.all(SpacingTokens.cardPadding),
+            padding: const EdgeInsets.all(SpacingTokens.cardPadding),
             child: Row(
               children: [
                 // Model Icon
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: model.isApi 
                       ? colors.primary.withValues(alpha: 0.1)
@@ -441,7 +441,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                     size: 24,
                   ),
                 ),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
 
                 // Model Info
                 Expanded(
@@ -459,9 +459,9 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                             ),
                           ),
                           if (isDefault) ...[
-                            SizedBox(width: SpacingTokens.iconSpacing),
+                            const SizedBox(width: SpacingTokens.iconSpacing),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
                                 color: colors.primary,
                                 borderRadius: BorderRadius.circular(10),
@@ -478,7 +478,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                           ],
                         ],
                       ),
-                      SizedBox(height: 2),
+                      const SizedBox(height: 2),
                       Text(
                         '${model.provider} • ${model.model}',
                         style: GoogleFonts.fustat(
@@ -500,8 +500,8 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                         child: Row(
                           children: [
                             Icon(Icons.star, size: 16, color: colors.primary),
-                            SizedBox(width: 8),
-                            Text('Set as Default'),
+                            const SizedBox(width: 8),
+                            const Text('Set as Default'),
                           ],
                         ),
                       ),
@@ -510,8 +510,8 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                       child: Row(
                         children: [
                           Icon(Icons.speed, size: 16, color: colors.onSurface),
-                          SizedBox(width: 8),
-                          Text('Test Connection'),
+                          const SizedBox(width: 8),
+                          const Text('Test Connection'),
                         ],
                       ),
                     ),
@@ -520,8 +520,8 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                       child: Row(
                         children: [
                           Icon(Icons.edit, size: 16, color: colors.onSurface),
-                          SizedBox(width: 8),
-                          Text('Edit'),
+                          const SizedBox(width: 8),
+                          const Text('Edit'),
                         ],
                       ),
                     ),
@@ -530,14 +530,14 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                       child: Row(
                         children: [
                           Icon(Icons.delete, size: 16, color: colors.error),
-                          SizedBox(width: 8),
-                          Text('Delete'),
+                          const SizedBox(width: 8),
+                          const Text('Delete'),
                         ],
                       ),
                     ),
                   ],
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: colors.surface.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(6),
@@ -579,12 +579,12 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
               ),
               child: ListTile(
                 leading: Container(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.cloud, color: Colors.blue),
+                  child: const Icon(Icons.cloud, color: Colors.blue),
                 ),
                 title: Text(
                   'Cloud AI Service',
@@ -600,7 +600,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                 },
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: colors.border.withValues(alpha: 0.3)),
@@ -608,12 +608,12 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
               ),
               child: ListTile(
                 leading: Container(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.download, color: Colors.orange),
+                  child: const Icon(Icons.download, color: Colors.orange),
                 ),
                 title: Text(
                   'Install Ollama',
@@ -629,7 +629,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                 },
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: colors.border.withValues(alpha: 0.3)),
@@ -637,12 +637,12 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
               ),
               child: ListTile(
                 leading: Container(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.computer, color: Colors.green),
+                  child: const Icon(Icons.computer, color: Colors.green),
                 ),
                 title: Text(
                   'Download Local Models',
@@ -674,7 +674,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
   void _showLocalModelOptions() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => const AlertDialog(
         title: Text('Local Models'),
         content: SizedBox(
           width: 600,
@@ -700,7 +700,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
           showDialog(
             context: context,
             builder: (context) => ApiKeyDialog(
-              existingConfig: model,
+              existingModelConfig: model,
             ),
           );
         }
@@ -723,11 +723,11 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Delete ${model.name}?'),
-        content: Text('This will remove the model from your configuration.'),
+        content: const Text('This will remove the model from your configuration.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () async {
@@ -735,7 +735,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
               await modelConfigs.removeModel(model.id);
               Navigator.pop(context);
             },
-            child: Text('Delete'),
+            child: const Text('Delete'),
           ),
         ],
       ),

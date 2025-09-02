@@ -91,7 +91,7 @@ class AsmblButton extends StatelessWidget {
  
  if (leadingIcon != null) {
  rowChildren.add(Icon(leadingIcon, size: 16));
- rowChildren.add(SizedBox(width: 8));
+ rowChildren.add(const SizedBox(width: 8));
  }
  
  rowChildren.add(
@@ -106,7 +106,7 @@ class AsmblButton extends StatelessWidget {
  );
  
  if (trailingIcon != null) {
- rowChildren.add(SizedBox(width: 8));
+ rowChildren.add(const SizedBox(width: 8));
  rowChildren.add(Icon(trailingIcon, size: 16));
  }
 
@@ -118,7 +118,7 @@ class AsmblButton extends StatelessWidget {
  }
 
  Widget button = AnimatedContainer(
- duration: Duration(milliseconds: 200),
+ duration: const Duration(milliseconds: 200),
  height: height,
  width: width,
  decoration: BoxDecoration(
@@ -132,7 +132,7 @@ class AsmblButton extends StatelessWidget {
  BoxShadow(
  color: backgroundColor.withValues(alpha: 0.3),
  blurRadius: 4,
- offset: Offset(0, 2),
+ offset: const Offset(0, 2),
  ),
  ]
  : null,

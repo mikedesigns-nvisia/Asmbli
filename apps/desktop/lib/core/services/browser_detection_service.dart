@@ -300,7 +300,7 @@ class BrowserDetectionService {
         executablePath: safariPath,
         name: 'Safari',
         confidence: DetectionConfidence.high,
-        profiles: [BrowserProfile(name: 'Default', path: '', isDefault: true)],
+        profiles: [const BrowserProfile(name: 'Default', path: '', isDefault: true)],
       );
     }
     
@@ -373,7 +373,7 @@ class BrowserDetectionService {
     // Check for Default profile
     final defaultProfile = Directory(path.join(userDataPath, 'Default'));
     if (await defaultProfile.exists()) {
-      profiles.add(BrowserProfile(
+      profiles.add(const BrowserProfile(
         name: 'Default',
         path: 'Default',
         isDefault: true,
@@ -475,7 +475,7 @@ class BrowserDetectionService {
       profiles: result.profiles,
       defaultProfile: result.profiles.firstWhere(
         (p) => p.isDefault,
-        orElse: () => result.profiles.isNotEmpty ? result.profiles.first : BrowserProfile(name: 'Default', path: '', isDefault: true),
+        orElse: () => result.profiles.isNotEmpty ? result.profiles.first : const BrowserProfile(name: 'Default', path: '', isDefault: true),
       ),
       version: result.version,
     );

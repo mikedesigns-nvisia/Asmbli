@@ -23,7 +23,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
   bool _isExpanded = true;
   bool _showContextBrowser = false;
   List<SampleContext> _availableContexts = [];
-  List<String> _sessionContextIds = [];
+  final List<String> _sessionContextIds = [];
 
   @override
   void initState() {
@@ -60,25 +60,25 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
           _buildSectionHeader(theme, currentConversation),
           
           if (_isExpanded) ...[
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             
             // Agent Context (Built-in from agent configuration)
             if (currentConversation?.metadata?['type'] == 'agent') ...[
               _buildAgentContextSection(theme, currentConversation!),
-              SizedBox(height: SpacingTokens.componentSpacing),
+              const SizedBox(height: SpacingTokens.componentSpacing),
             ],
             
             // Session Context (Available for both agent and direct API conversations)
             _buildSessionContextSection(theme, selectedConversationId, currentConversation),
             
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             
             // Context Actions
             _buildContextActions(theme),
             
             // Context Browser (if expanded)
             if (_showContextBrowser) ...[
-              SizedBox(height: SpacingTokens.componentSpacing),
+              const SizedBox(height: SpacingTokens.componentSpacing),
               _buildContextBrowser(theme),
             ],
           ],
@@ -98,7 +98,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
           size: 16,
           color: hasContext ? ThemeColors(context).primary : theme.colorScheme.onSurfaceVariant,
         ),
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         Expanded(
           child: Text(
             'Context Documents',
@@ -127,7 +127,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               ),
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
         ],
         IconButton(
           onPressed: () => setState(() => _isExpanded = !_isExpanded),
@@ -138,7 +138,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
           ),
           style: IconButton.styleFrom(
             foregroundColor: theme.colorScheme.onSurfaceVariant,
-            minimumSize: Size(24, 24),
+            minimumSize: const Size(24, 24),
             padding: EdgeInsets.zero,
           ),
         ),
@@ -168,7 +168,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   size: 16,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '$agentName Context',
@@ -181,7 +181,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 ),
               ],
             ),
-            SizedBox(height: 6),
+            const SizedBox(height: 6),
             Text(
               'No built-in context documents configured',
               style: GoogleFonts.fustat(
@@ -214,7 +214,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 size: 16,
                 color: ThemeColors(context).primary,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,7 +255,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             ],
           ),
           
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           
           // Show first few agent context documents
           ...agentContextDocs.take(3).map<Widget>((doc) {
@@ -271,9 +271,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Icon(Icons.description, size: 12, color: ThemeColors(context).primary),
-                  SizedBox(width: 6),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       doc.toString(),
@@ -287,7 +287,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 ],
               ),
             );
-          }).toList(),
+          }),
           
           if (agentContextDocs.length > 3)
             Padding(
@@ -325,7 +325,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   size: 16,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Session Context',
@@ -338,7 +338,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 ),
               ],
             ),
-            SizedBox(height: 6),
+            const SizedBox(height: 6),
             Text(
               conversation?.metadata?['type'] == 'agent' 
                   ? 'Add extra documents for this conversation'
@@ -373,7 +373,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 size: 16,
                 color: theme.colorScheme.onSurfaceVariant,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -406,7 +406,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             ],
           ),
           
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           
           // Show session context documents
           ..._sessionContextIds.map<Widget>((contextId) {
@@ -435,9 +435,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Icon(context.icon, size: 12, color: Colors.blue),
-                  SizedBox(width: 6),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       context.title,
@@ -464,7 +464,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -492,7 +492,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   size: 16,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                SizedBox(width: SpacingTokens.iconSpacing),
+                const SizedBox(width: SpacingTokens.iconSpacing),
                 Text(
                   _showContextBrowser ? 'Hide Context Library' : 'Add Context',
                   style: GoogleFonts.fustat(
@@ -500,7 +500,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 if (!_showContextBrowser)
                   Icon(
                     Icons.add,
@@ -512,7 +512,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
           ),
         ),
         
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         
         // Secondary Actions Row
         Row(
@@ -535,7 +535,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                         size: 14,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         'Upload',
                         style: GoogleFonts.fustat(
@@ -548,7 +548,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 ),
               ),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Expanded(
               child: GestureDetector(
                 onTap: () => context.go(AppRoutes.context),
@@ -567,7 +567,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                         size: 14,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         'Browse',
                         style: GoogleFonts.fustat(
@@ -587,11 +587,11 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
   }
 
   Widget _buildContextBrowser(ThemeData theme) {
-    final categories = ContextHubCategory.values;
+    const categories = ContextHubCategory.values;
     
     return Container(
       width: double.infinity,
-      constraints: BoxConstraints(maxHeight: 300),
+      constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(8),
@@ -611,7 +611,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             child: Row(
               children: [
                 Icon(Icons.library_books, size: 16, color: ThemeColors(context).primary),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   'Context Library',
                   style: GoogleFonts.fustat(
@@ -636,7 +636,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                     .take(3)
                     .toList();
                 
-                if (categoryContexts.isEmpty) return SizedBox.shrink();
+                if (categoryContexts.isEmpty) return const SizedBox.shrink();
                 
                 return _buildCategorySection(theme, category, categoryContexts);
               },
@@ -661,7 +661,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           
           ...contexts.map((ctx) {
             final isAdded = _sessionContextIds.contains(ctx.title);
@@ -689,7 +689,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                             ? ThemeColors(context).success 
                             : theme.colorScheme.onSurfaceVariant,
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           ctx.title,
@@ -708,7 +708,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -725,8 +725,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.add_circle, color: Colors.white, size: 16),
-            SizedBox(width: 8),
+            const Icon(Icons.add_circle, color: Colors.white, size: 16),
+            const SizedBox(width: 8),
             Text(
               'Added "$contextId" to session context',
               style: GoogleFonts.fustat(),
@@ -735,7 +735,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         ),
         backgroundColor: ThemeColors(context).success,
         behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -749,8 +749,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.remove_circle, color: Colors.white, size: 16),
-            SizedBox(width: 8),
+            const Icon(Icons.remove_circle, color: Colors.white, size: 16),
+            const SizedBox(width: 8),
             Text(
               'Removed "$contextId" from session context',
               style: GoogleFonts.fustat(),
@@ -759,7 +759,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         ),
         backgroundColor: Colors.orange,
         behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -771,17 +771,17 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         title: Row(
           children: [
             Icon(Icons.upload_file, color: ThemeColors(context).primary),
-            SizedBox(width: 8),
-            Text('Upload Documents'),
+            const SizedBox(width: 8),
+            const Text('Upload Documents'),
           ],
         ),
-        content: Text(
+        content: const Text(
           'File upload functionality will be implemented here. This will allow you to upload your own documents to use as context.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Got it'),
+            child: const Text('Got it'),
           ),
         ],
       ),

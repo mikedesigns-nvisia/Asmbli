@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
 
@@ -28,7 +27,7 @@ class ApiConfigService {
       }
     } catch (e) {
       print('Error initializing API config service: $e');
-      await _createDefaultConfig();
+      // Don't create default config - let users add their own models
     }
   }
 
@@ -138,30 +137,20 @@ class ApiConfigService {
     }
   }
 
-  /// Create default API configuration
+  /// Create default API configuration (disabled - users should add their own)
   Future<void> _createDefaultConfig() async {
-    const defaultConfig = ApiConfig(
-      id: 'anthropic-default',
-      name: 'Default API Model',
-      provider: 'Anthropic',
-      model: 'claude-3-5-sonnet-20241022',
-      apiKey: '', // Will be set by user
-      baseUrl: 'https://api.anthropic.com',
-      isDefault: true,
-      enabled: true,
-    );
-
-    _apiConfigs[defaultConfig.id] = defaultConfig;
-    _defaultApiConfigId = defaultConfig.id;
-    await _saveApiConfigs();
+    // No longer automatically create Anthropic default
+    // Users should add their own API configurations
+    print('ℹ️ No default API configuration created - users should add their own models');
   }
 
   /// Reset all API configurations to defaults (removes hardcoded entries)
   Future<void> resetToDefaults() async {
     _apiConfigs.clear();
     _defaultApiConfigId = null;
-    await _createDefaultConfig();
-    print('✅ API configurations reset to defaults');
+    // Don't create default config anymore
+    await _saveApiConfigs();
+    print('🧹 Cleared all hardcoded API configurations');
   }
 }
 
@@ -275,18 +264,8 @@ class ApiConfigsNotifier extends StateNotifier<Map<String, ApiConfig>> {
       _isInitialized = true;
     } catch (e) {
       print('Failed to load API configs: $e');
-      // Create a default configuration if loading fails
-      final defaultConfig = ApiConfig(
-        id: 'anthropic-default',
-        name: 'Default API Model',
-        provider: 'Anthropic',
-        model: 'claude-3-5-sonnet-20241022',
-        apiKey: '',
-        baseUrl: 'https://api.anthropic.com',
-        isDefault: true,
-        enabled: true,
-      );
-      state = {defaultConfig.id: defaultConfig};
+      // Don't create default configuration - let users add their own
+      state = <String, ApiConfig>{};
       _isInitialized = true;
     }
   }

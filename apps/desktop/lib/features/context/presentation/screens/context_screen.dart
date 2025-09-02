@@ -47,13 +47,13 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  child: Column(
  children: [
  // App Header
- AppNavigationBar(currentRoute: AppRoutes.context),
+ const AppNavigationBar(currentRoute: AppRoutes.context),
  
  // Main Content
  Expanded(
  child: contextDocuments.when(
  data: (documents) => _buildContent(context, documents),
- loading: () => Center(
+ loading: () => const Center(
  child: CircularProgressIndicator(),
  ),
  error: (error, stackTrace) => Center(
@@ -65,14 +65,14 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  size: 48,
  color: colors.error,
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'Error loading context documents',
  style: TextStyles.pageTitle.copyWith(
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  error.toString(),
  style: TextStyles.bodyMedium.copyWith(
@@ -108,7 +108,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  }).toList();
 
  return SingleChildScrollView(
- padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+ padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -125,7 +125,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  'Manage context documents that can be assigned to agents',
  style: TextStyles.bodyLarge.copyWith(
@@ -143,12 +143,12 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  ],
  ),
 
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
 
  // Context Hub Widget
- ContextHubWidget(),
+ const ContextHubWidget(),
  
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
 
  // Create Form (conditionally shown)
  if (_showCreateForm) ...[
@@ -165,7 +165,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  },
  onCancel: () => setState(() => _showCreateForm = false),
  ),
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  ],
 
  // Filter Bar
@@ -176,7 +176,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  onSearchChanged: (query) => setState(() => _searchQuery = query),
  ),
 
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
 
  // Documents Grid
  if (filteredDocuments.isEmpty)
@@ -202,7 +202,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  size: 64,
  color: colors.onSurfaceVariant.withValues(alpha: 0.5),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  _searchQuery.isNotEmpty || _selectedType != null
  ? 'No documents match your filters'
@@ -211,7 +211,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  _searchQuery.isNotEmpty || _selectedType != null
  ? 'Try adjusting your search or filter criteria'
@@ -222,7 +222,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  textAlign: TextAlign.center,
  ),
  if (_searchQuery.isEmpty && _selectedType == null) ...[
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  AsmblButtonEnhanced.accent(
  text: 'Create Document',
  icon: Icons.add,
@@ -241,13 +241,13 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  builder: (context, constraints) {
  // Calculate number of columns based on available width
  const cardMinWidth = 350.0;
- final spacing = SpacingTokens.elementSpacing;
+ const spacing = SpacingTokens.elementSpacing;
  final availableWidth = constraints.maxWidth;
  final columns = ((availableWidth + spacing) / (cardMinWidth + spacing)).floor().clamp(1, 4);
  
  return GridView.builder(
  shrinkWrap: true,
- physics: NeverScrollableScrollPhysics(),
+ physics: const NeverScrollableScrollPhysics(),
  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
  crossAxisCount: columns,
  crossAxisSpacing: spacing,

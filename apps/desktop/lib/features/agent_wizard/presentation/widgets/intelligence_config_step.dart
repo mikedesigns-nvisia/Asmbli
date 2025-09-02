@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/services/mcp_settings_service.dart';
 import '../../models/agent_wizard_state.dart';
 
 /// Second step of the agent wizard - intelligence and model configuration
@@ -54,7 +53,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 900),
@@ -64,22 +63,22 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
               // Step title and description
               _buildStepHeader(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // API Provider Selection
               _buildApiProviderSection(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // System Prompt Configuration
               _buildSystemPromptSection(context),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Model Parameters
               _buildModelParametersSection(context),
               
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
               
               // Validation feedback
               _buildValidationFeedback(context),
@@ -98,7 +97,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
           'Intelligence Configuration',
           style: TextStyles.pageTitle,
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         Text(
           'Configure your agent\'s intelligence, personality, and behavior. Define the system prompt that guides how your agent thinks and responds.',
           style: TextStyles.bodyMedium.copyWith(
@@ -129,7 +128,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'AI Model Selection',
                 style: TextStyles.cardTitle,
@@ -137,7 +136,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Choose the AI model that will power your agent.',
@@ -146,12 +145,12 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // API Provider dropdown
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: SpacingTokens.md, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.md, vertical: 4),
             decoration: BoxDecoration(
               border: Border.all(color: ThemeColors(context).border),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -191,7 +190,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
           ),
           
           if (_selectedApiProvider.isNotEmpty) ...[
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
             _buildModelDescription(_selectedApiProvider),
           ],
         ],
@@ -226,7 +225,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
     }
 
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: chipColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -235,7 +234,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: chipColor,
               borderRadius: BorderRadius.circular(4),
@@ -249,7 +248,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
               ),
             ),
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Expanded(
             child: Text(
               description,
@@ -275,12 +274,12 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'System Prompt',
                 style: TextStyles.cardTitle,
               ),
-              Spacer(),
+              const Spacer(),
               // Toggle between template and custom
               Row(
                 children: [
@@ -288,7 +287,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                     'Custom',
                     style: TextStyles.bodySmall,
                   ),
-                  SizedBox(width: SpacingTokens.xs),
+                  const SizedBox(width: SpacingTokens.xs),
                   Switch(
                     value: _isCustomPrompt,
                     onChanged: (value) {
@@ -299,14 +298,14 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                         _loadTemplatePrompt();
                       }
                     },
-                    activeColor: ThemeColors(context).primary,
+                    activeThumbColor: ThemeColors(context).primary,
                   ),
                 ],
               ),
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'The system prompt defines your agent\'s personality, expertise, and behavior patterns.',
@@ -315,12 +314,12 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           if (!_isCustomPrompt && widget.wizardState.selectedTemplate == null) ...[
             // Prompt templates
             _buildPromptTemplates(context),
-            SizedBox(height: SpacingTokens.lg),
+            const SizedBox(height: SpacingTokens.lg),
           ],
           
           // System prompt editor
@@ -352,12 +351,12 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
               ),
               filled: true,
               fillColor: ThemeColors(context).inputBackground,
-              contentPadding: EdgeInsets.all(SpacingTokens.md),
+              contentPadding: const EdgeInsets.all(SpacingTokens.md),
             ),
             style: TextStyles.bodyMedium,
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           // Prompt suggestions
           _buildPromptSuggestions(context),
@@ -391,7 +390,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             fontWeight: FontWeight.w600,
           ),
         ),
-        SizedBox(height: SpacingTokens.sm),
+        const SizedBox(height: SpacingTokens.sm),
         
         Wrap(
           spacing: SpacingTokens.sm,
@@ -400,7 +399,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             return GestureDetector(
               onTap: () => _loadPromptTemplate(template['prompt']!),
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: SpacingTokens.md,
                   vertical: SpacingTokens.sm,
                 ),
@@ -418,7 +417,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(width: SpacingTokens.xs),
+                    const SizedBox(width: SpacingTokens.xs),
                     Icon(
                       Icons.add,
                       size: 14,
@@ -436,7 +435,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
 
   Widget _buildPromptSuggestions(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: ThemeColors(context).info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -452,7 +451,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                 color: ThemeColors(context).info,
                 size: 16,
               ),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Prompt Tips',
                 style: TextStyles.bodySmall.copyWith(
@@ -462,7 +461,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Text(
             '• Define the agent\'s role and expertise clearly\n'
             '• Specify the tone and communication style\n'
@@ -493,7 +492,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                 color: ThemeColors(context).primary,
                 size: 20,
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Model Parameters',
                 style: TextStyles.cardTitle,
@@ -501,7 +500,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             ],
           ),
           
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           
           Text(
             'Fine-tune the AI model\'s behavior and response characteristics.',
@@ -510,7 +509,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             ),
           ),
           
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           _buildParameterControls(context),
         ],
@@ -524,7 +523,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
     return Column(
       children: parameters.map((param) {
         return Padding(
-          padding: EdgeInsets.only(bottom: SpacingTokens.md),
+          padding: const EdgeInsets.only(bottom: SpacingTokens.md),
           child: _buildParameterSlider(context, param),
         );
       }).toList(),
@@ -557,7 +556,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
           ],
         ),
         
-        SizedBox(height: SpacingTokens.xs),
+        const SizedBox(height: SpacingTokens.xs),
         
         Slider(
           value: currentValue.toDouble(),
@@ -596,7 +595,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             color: ThemeColors(context).success,
             size: 16,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Text(
             'Intelligence configuration complete',
             style: TextStyles.bodySmall.copyWith(
@@ -617,7 +616,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             color: ThemeColors(context).warning,
             size: 16,
           ),
-          SizedBox(width: SpacingTokens.xs),
+          const SizedBox(width: SpacingTokens.xs),
           Expanded(
             child: Text(
               'Missing: ${missingFields.join(", ")}',

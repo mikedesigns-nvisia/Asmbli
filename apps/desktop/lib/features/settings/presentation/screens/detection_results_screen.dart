@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/detection_configuration_service.dart';
 import '../../../../core/services/simple_detection_service.dart';
-import '../../../../core/services/mcp_settings_service.dart';
 
 class DetectionResultsScreen extends ConsumerStatefulWidget {
   const DetectionResultsScreen({super.key});
@@ -130,10 +129,10 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
 
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.headerPadding),
+      padding: const EdgeInsets.all(SpacingTokens.headerPadding),
       decoration: BoxDecoration(
         color: SemanticColors.surface.withValues(alpha: 0.8),
-        border: Border(
+        border: const Border(
           bottom: BorderSide(color: SemanticColors.border),
         ),
       ),
@@ -145,7 +144,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
               color: SemanticColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.auto_fix_high,
               color: SemanticColors.primary,
               size: 24,
@@ -215,7 +214,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
+          const SizedBox(
             width: 80,
             height: 80,
             child: CircularProgressIndicator(
@@ -252,7 +251,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
               color: SemanticColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.search,
               size: 48,
               color: SemanticColors.primary,

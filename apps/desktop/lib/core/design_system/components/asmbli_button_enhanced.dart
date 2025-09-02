@@ -120,7 +120,7 @@ class _AsmblButtonEnhancedState extends State<AsmblButtonEnhanced>
  void initState() {
  super.initState();
  _animationController = AnimationController(
- duration: Duration(milliseconds: 150),
+ duration: const Duration(milliseconds: 150),
  vsync: this,
  );
  _scaleAnimation = Tween<double>(
@@ -176,7 +176,7 @@ class _AsmblButtonEnhancedState extends State<AsmblButtonEnhanced>
  return Transform.scale(
  scale: _scaleAnimation.value,
  child: AnimatedContainer(
- duration: Duration(milliseconds: 200),
+ duration: const Duration(milliseconds: 200),
  curve: Curves.easeInOut,
  padding: _getPadding(),
  decoration: BoxDecoration(
@@ -204,21 +204,21 @@ class _AsmblButtonEnhancedState extends State<AsmblButtonEnhanced>
  ),
  ),
  ),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  ] else if (widget.icon != null) ...[
  Icon(
  widget.icon,
  size: _getIconSize(),
  color: _getTextColor(colors),
  ),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  ],
  Text(
  widget.text,
  style: _getTextStyle(colors),
  ),
  if (widget.suffix != null) ...[
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  widget.suffix!,
  ],
  ],
@@ -234,17 +234,17 @@ class _AsmblButtonEnhancedState extends State<AsmblButtonEnhanced>
  EdgeInsets _getPadding() {
  switch (widget.size) {
  case AsmblButtonSize.small:
- return EdgeInsets.symmetric(
+ return const EdgeInsets.symmetric(
  horizontal: SpacingTokens.sm,
  vertical: SpacingTokens.xs,
  );
  case AsmblButtonSize.medium:
- return EdgeInsets.symmetric(
+ return const EdgeInsets.symmetric(
  horizontal: SpacingTokens.lg,
  vertical: SpacingTokens.sm,
  );
  case AsmblButtonSize.large:
- return EdgeInsets.symmetric(
+ return const EdgeInsets.symmetric(
  horizontal: SpacingTokens.xl,
  vertical: SpacingTokens.md,
  );

@@ -3,12 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/constants/routes.dart';
 import '../providers/context_provider.dart';
-import '../../data/repositories/context_repository.dart';
-import '../widgets/context_creation_flow.dart';
 import '../../data/models/context_document.dart';
-import '../../data/models/context_assignment.dart';
 
 class ContextLibraryScreen extends ConsumerStatefulWidget {
   const ContextLibraryScreen({super.key});
@@ -32,7 +28,7 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
 
   final List<ContextTemplate> templates = [
     // AI & Agent Specific Content
-    ContextTemplate(
+    const ContextTemplate(
       name: 'Prompt Engineering Best Practices',
       description: 'Effective prompt design and optimization techniques for AI agents',
       category: 'AI & Agents',
@@ -96,7 +92,7 @@ Focus on:
 - Continuously refine based on real usage''',
       useCase: 'Design effective prompts for AI agents and language models',
     ),
-    ContextTemplate(
+    const ContextTemplate(
       name: 'Agent Interaction Patterns',
       description: 'Common patterns for agent communication and task coordination',
       category: 'AI & Agents',
@@ -178,7 +174,7 @@ Router Agent decides:
     ),
 
     // Frontend Development Libraries
-    ContextTemplate(
+    const ContextTemplate(
       name: 'React Development Guide',
       description: 'Modern React patterns, hooks, and best practices',
       category: 'Frontend',
@@ -304,7 +300,7 @@ export const useUser = () => {
 ```''',
       useCase: 'Build modern React applications with hooks and functional components',
     ),
-    ContextTemplate(
+    const ContextTemplate(
       name: 'Vue.js Composition API',
       description: 'Vue 3 composition API patterns and reactive programming',
       category: 'Frontend',
@@ -484,7 +480,7 @@ export const useUserStore = () => {
     ),
 
     // Build Tools & Development Setup
-    ContextTemplate(
+    const ContextTemplate(
       name: 'Modern Build Tools & Development Setup',
       description: 'Comprehensive setup for Vite, ESLint, Prettier, TypeScript, and Docker',
       category: 'Frontend',
@@ -767,7 +763,7 @@ volumes:
     ),
 
     // System Design & Security
-    ContextTemplate(
+    const ContextTemplate(
       name: 'Microservices Architecture Patterns',
       description: 'Design patterns and best practices for microservices systems',
       category: 'Architecture',
@@ -1035,7 +1031,7 @@ class CircuitBreaker {
       useCase: 'Design and implement scalable microservices architectures',
     ),
 
-    ContextTemplate(
+    const ContextTemplate(
       name: 'Security Best Practices & Implementation',
       description: 'Comprehensive security guidelines and implementation patterns',
       category: 'Security',
@@ -1459,7 +1455,7 @@ class SecurityLogger {
     ),
 
     // Include existing templates for completeness
-    ContextTemplate(
+    const ContextTemplate(
       name: 'API Documentation Template',
       description: 'Complete REST API documentation with examples',
       category: 'Documentation',
@@ -1467,7 +1463,7 @@ class SecurityLogger {
       contentPreview: '# API Documentation\n\n## Overview\nThis API provides...\n\n## Endpoints\n\n### GET /api/users\n...',
       useCase: 'Document REST APIs with clear examples and response formats',
     ),
-    ContextTemplate(
+    const ContextTemplate(
       name: 'Database Schema Documentation',
       description: 'Complete database structure and relationships',
       category: 'Documentation',
@@ -1475,7 +1471,7 @@ class SecurityLogger {
       contentPreview: '# Database Schema\n\n## Tables\n\n### users\n- id (Primary Key)\n- email (Unique)\n- created_at...',
       useCase: 'Document database structure and table relationships',
     ),
-    ContextTemplate(
+    const ContextTemplate(
       name: 'Testing Strategies',
       description: 'Unit, integration, and E2E testing approaches',
       category: 'Best Practices',
@@ -1490,7 +1486,7 @@ module.exports = {
   testEnvironment: 'node'...''',
       useCase: 'Establish comprehensive testing practices for your codebase',
     ),
-    ContextTemplate(
+    const ContextTemplate(
       name: 'DevOps Pipeline',
       description: 'CI/CD pipeline configuration and deployment',
       category: 'Deployment',
@@ -1498,7 +1494,7 @@ module.exports = {
       contentPreview: '# CI/CD Pipeline\n\n## GitHub Actions\n\n```yaml\nname: Deploy\non:\n  push:\n    branches: [main]',
       useCase: 'Set up automated deployment pipelines with best practices',
     ),
-    ContextTemplate(
+    const ContextTemplate(
       name: 'Mobile App Architecture',
       description: 'Flutter/React Native app structure patterns',
       category: 'Architecture',
@@ -1528,7 +1524,7 @@ module.exports = {
         children: [
           // Header
           Container(
-            padding: EdgeInsets.all(SpacingTokens.headerPadding),
+            padding: const EdgeInsets.all(SpacingTokens.headerPadding),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -1553,18 +1549,18 @@ module.exports = {
                         }
                       },
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Text(
                       'Context Library',
                       style: TextStyles.pageTitle.copyWith(
                         color: SemanticColors.onSurface,
                       ),
                     ),
-                    Spacer(),
-                    SizedBox(width: 100), // Balance the back button
+                    const Spacer(),
+                    const SizedBox(width: 100), // Balance the back button
                   ],
                 ),
-                SizedBox(height: SpacingTokens.lg),
+                const SizedBox(height: SpacingTokens.lg),
                 // Tab selector
                 Container(
                   decoration: BoxDecoration(
@@ -1578,7 +1574,7 @@ module.exports = {
                         child: GestureDetector(
                           onTap: () => setState(() => selectedTab = 0),
                           child: Container(
-                            padding: EdgeInsets.all(SpacingTokens.md),
+                            padding: const EdgeInsets.all(SpacingTokens.md),
                             decoration: BoxDecoration(
                               color: selectedTab == 0 ? SemanticColors.primary.withValues(alpha: 0.1) : null,
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -1598,7 +1594,7 @@ module.exports = {
                         child: GestureDetector(
                           onTap: () => setState(() => selectedTab = 1),
                           child: Container(
-                            padding: EdgeInsets.all(SpacingTokens.md),
+                            padding: const EdgeInsets.all(SpacingTokens.md),
                             decoration: BoxDecoration(
                               color: selectedTab == 1 ? SemanticColors.primary.withValues(alpha: 0.1) : null,
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -1640,7 +1636,7 @@ module.exports = {
         }
         
         return Padding(
-          padding: EdgeInsets.all(SpacingTokens.xxl),
+          padding: const EdgeInsets.all(SpacingTokens.xxl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1652,17 +1648,17 @@ module.exports = {
                       onChanged: (value) => setState(() => searchQuery = value),
                       decoration: InputDecoration(
                         hintText: 'Search my context...',
-                        prefixIcon: Icon(Icons.search),
+                        prefixIcon: const Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                          borderSide: BorderSide(color: SemanticColors.border),
+                          borderSide: const BorderSide(color: SemanticColors.border),
                         ),
                         filled: true,
                         fillColor: SemanticColors.surface,
                       ),
                     ),
                   ),
-                  SizedBox(width: SpacingTokens.lg),
+                  const SizedBox(width: SpacingTokens.lg),
                   AsmblButton.primary(
                     text: 'Add Context',
                     icon: Icons.add,
@@ -1671,12 +1667,12 @@ module.exports = {
                 ],
               ),
               
-              SizedBox(height: SpacingTokens.xl),
+              const SizedBox(height: SpacingTokens.xl),
               
               // Context documents grid
               Expanded(
                 child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     childAspectRatio: 0.8,
                     crossAxisSpacing: SpacingTokens.lg,
@@ -1687,18 +1683,18 @@ module.exports = {
                     final doc = documents[index];
                     return AsmblCard(
                       child: Padding(
-                        padding: EdgeInsets.all(SpacingTokens.lg),
+                        padding: const EdgeInsets.all(SpacingTokens.lg),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.description,
                                   size: 20,
                                   color: SemanticColors.primary,
                                 ),
-                                SizedBox(width: SpacingTokens.sm),
+                                const SizedBox(width: SpacingTokens.sm),
                                 Expanded(
                                   child: Text(
                                     doc.title,
@@ -1712,14 +1708,14 @@ module.exports = {
                                 ),
                               ],
                             ),
-                            SizedBox(height: SpacingTokens.md),
+                            const SizedBox(height: SpacingTokens.md),
                             Text(
                               doc.type.displayName,
                               style: TextStyles.caption.copyWith(
                                 color: SemanticColors.onSurfaceVariant,
                               ),
                             ),
-                            SizedBox(height: SpacingTokens.sm),
+                            const SizedBox(height: SpacingTokens.sm),
                             Expanded(
                               child: Text(
                                 doc.content,
@@ -1730,14 +1726,14 @@ module.exports = {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            SizedBox(height: SpacingTokens.md),
+                            const SizedBox(height: SpacingTokens.md),
                             // Tags
                             if (doc.tags.isNotEmpty) ...[ 
                               Wrap(
                                 spacing: 4,
                                 children: doc.tags.take(3).map((tag) {
                                   return Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: SemanticColors.surfaceVariant.withValues(alpha: 0.5),
                                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1764,24 +1760,24 @@ module.exports = {
           ),
         );
       },
-      loading: () => Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 48,
               color: SemanticColors.error,
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Error loading context documents',
               style: TextStyles.pageTitle.copyWith(
                 color: SemanticColors.onSurface,
               ),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               error.toString(),
               style: TextStyles.bodyMedium.copyWith(
@@ -1798,7 +1794,7 @@ module.exports = {
   Widget _buildEmptyMyContext() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.xxl),
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -1807,14 +1803,14 @@ module.exports = {
               size: 64,
               color: SemanticColors.onSurfaceVariant.withValues(alpha: 0.6),
             ),
-            SizedBox(height: SpacingTokens.xl),
+            const SizedBox(height: SpacingTokens.xl),
             Text(
               'Your Context Library is Empty',
               style: TextStyles.pageTitle.copyWith(
                 color: SemanticColors.onSurface,
               ),
             ),
-            SizedBox(height: SpacingTokens.md),
+            const SizedBox(height: SpacingTokens.md),
             Text(
               'Add context documents to help your agents understand your codebase, requirements, and preferences.',
               style: TextStyles.bodyMedium.copyWith(
@@ -1822,7 +1818,7 @@ module.exports = {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: SpacingTokens.xl),
+            const SizedBox(height: SpacingTokens.xl),
             AsmblButton.primary(
               text: 'Add Your First Context',
               icon: Icons.add,
@@ -1836,7 +1832,7 @@ module.exports = {
 
   Widget _buildTemplateLibraryTab() {
     return Padding(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1848,17 +1844,17 @@ module.exports = {
                   onChanged: (value) => setState(() => searchQuery = value),
                   decoration: InputDecoration(
                     hintText: 'Search templates...',
-                    prefixIcon: Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                      borderSide: BorderSide(color: SemanticColors.border),
+                      borderSide: const BorderSide(color: SemanticColors.border),
                     ),
                     filled: true,
                     fillColor: SemanticColors.surface,
                   ),
                 ),
               ),
-              SizedBox(width: SpacingTokens.lg),
+              const SizedBox(width: SpacingTokens.lg),
               DropdownButton<String>(
                 value: selectedCategory,
                 onChanged: (String? newValue) {
@@ -1876,12 +1872,12 @@ module.exports = {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: SpacingTokens.xl),
           
           // Templates grid
           Expanded(
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 0.75,
                 crossAxisSpacing: SpacingTokens.lg,
@@ -1923,13 +1919,13 @@ class _TemplateCardState extends State<TemplateCard> {
       child: AsmblCard(
         isInteractive: true,
         child: Padding(
-          padding: EdgeInsets.all(SpacingTokens.lg),
+          padding: const EdgeInsets.all(SpacingTokens.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Category badge
               Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: SpacingTokens.sm,
                   vertical: 4,
                 ),
@@ -1946,7 +1942,7 @@ class _TemplateCardState extends State<TemplateCard> {
                 ),
               ),
               
-              SizedBox(height: SpacingTokens.md),
+              const SizedBox(height: SpacingTokens.md),
               
               // Title
               Text(
@@ -1959,7 +1955,7 @@ class _TemplateCardState extends State<TemplateCard> {
                 overflow: TextOverflow.ellipsis,
               ),
               
-              SizedBox(height: SpacingTokens.sm),
+              const SizedBox(height: SpacingTokens.sm),
               
               // Description
               Expanded(
@@ -1973,7 +1969,7 @@ class _TemplateCardState extends State<TemplateCard> {
                 ),
               ),
               
-              SizedBox(height: SpacingTokens.md),
+              const SizedBox(height: SpacingTokens.md),
               
               // Tags
               if (widget.template.tags.isNotEmpty) ...[
@@ -1982,7 +1978,7 @@ class _TemplateCardState extends State<TemplateCard> {
                   runSpacing: 4,
                   children: widget.template.tags.take(3).map((tag) {
                     return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: SemanticColors.surfaceVariant.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1997,7 +1993,7 @@ class _TemplateCardState extends State<TemplateCard> {
                     );
                   }).toList(),
                 ),
-                SizedBox(height: SpacingTokens.md),
+                const SizedBox(height: SpacingTokens.md),
               ],
               
               // Action buttons
@@ -2009,7 +2005,7 @@ class _TemplateCardState extends State<TemplateCard> {
                       onPressed: () => _showPreview(context),
                     ),
                   ),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: AsmblButton.primary(
                       text: 'Use',
@@ -2033,7 +2029,7 @@ class _TemplateCardState extends State<TemplateCard> {
         child: Container(
           width: 800,
           height: 600,
-          padding: EdgeInsets.all(SpacingTokens.xl),
+          padding: const EdgeInsets.all(SpacingTokens.xl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -2049,12 +2045,12 @@ class _TemplateCardState extends State<TemplateCard> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.close),
+                    icon: const Icon(Icons.close),
                   ),
                 ],
               ),
               
-              SizedBox(height: SpacingTokens.md),
+              const SizedBox(height: SpacingTokens.md),
               
               Text(
                 widget.template.description,
@@ -2063,12 +2059,12 @@ class _TemplateCardState extends State<TemplateCard> {
                 ),
               ),
               
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
               
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(SpacingTokens.lg),
+                  padding: const EdgeInsets.all(SpacingTokens.lg),
                   decoration: BoxDecoration(
                     color: SemanticColors.surfaceVariant.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -2086,7 +2082,7 @@ class _TemplateCardState extends State<TemplateCard> {
                 ),
               ),
               
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
               
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -2095,7 +2091,7 @@ class _TemplateCardState extends State<TemplateCard> {
                     text: 'Close',
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  SizedBox(width: SpacingTokens.md),
+                  const SizedBox(width: SpacingTokens.md),
                   AsmblButton.primary(
                     text: 'Use This Template',
                     onPressed: () {

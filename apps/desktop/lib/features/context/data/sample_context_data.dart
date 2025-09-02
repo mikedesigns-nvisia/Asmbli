@@ -36,7 +36,7 @@ class SampleContextData {
 
  static List<SampleContext> getDevelopmentSamples() {
  return [
- SampleContext(
+ const SampleContext(
  title: 'API Best Practices',
  description: 'REST API design principles and standards',
  content: '''# REST API Best Practices
@@ -83,7 +83,7 @@ class SampleContextData {
  icon: Icons.api,
  ),
  
- SampleContext(
+ const SampleContext(
  title: 'React Component Patterns',
  description: 'Modern React patterns and best practices',
  content: '''# React Component Patterns
@@ -166,7 +166,7 @@ const CardBody = ({ children }) => (
  icon: Icons.widgets,
  ),
  
- SampleContext(
+ const SampleContext(
  title: 'Database Schema Design',
  description: 'SQL database design principles and normalization',
  content: '''# Database Schema Design
@@ -238,7 +238,7 @@ CREATE INDEX idx_posts_user_status ON posts(user_id, status);
 
  static List<SampleContext> getBusinessSamples() {
  return [
- SampleContext(
+ const SampleContext(
  title: 'Product Requirements Template',
  description: 'Structured template for product requirements documentation',
  content: '''# Product Requirements Document (PRD)
@@ -301,7 +301,7 @@ Brief overview of the product, its purpose, and key benefits.
  icon: Icons.assignment,
  ),
  
- SampleContext(
+ const SampleContext(
  title: 'Meeting Notes Template',
  description: 'Structured format for capturing meeting discussions and action items',
  content: '''# Meeting Notes Template
@@ -362,7 +362,7 @@ Brief overview of the product, its purpose, and key benefits.
 
  static List<SampleContext> getResearchSamples() {
  return [
- SampleContext(
+ const SampleContext(
  title: 'User Research Methods',
  description: 'Guide to various user research methodologies and when to use them',
  content: '''# User Research Methods Guide
@@ -446,7 +446,7 @@ Brief overview of the product, its purpose, and key benefits.
 
  static List<SampleContext> getDocumentationSamples() {
  return [
- SampleContext(
+ const SampleContext(
  title: 'API Documentation Template',
  description: 'Complete template for documenting REST APIs',
  content: '''# API Documentation Template
@@ -561,7 +561,7 @@ Create a new user account.
 
  static List<SampleContext> getTemplateSamples() {
  return [
- SampleContext(
+ const SampleContext(
  title: 'Bug Report Template',
  description: 'Standardized template for reporting software bugs',
  content: '''# Bug Report Template
@@ -614,7 +614,7 @@ Add relevant labels: `bug`, `ui`, `performance`, `mobile`, etc.''',
  icon: Icons.bug_report,
  ),
  
- SampleContext(
+ const SampleContext(
  title: 'Code Review Checklist',
  description: 'Comprehensive checklist for code review process',
  content: '''# Code Review Checklist
@@ -693,7 +693,7 @@ Add relevant labels: `bug`, `ui`, `performance`, `mobile`, etc.''',
 
  static List<SampleContext> getAIAgentSamples() {
  return [
- SampleContext(
+ const SampleContext(
  title: 'Prompt Engineering Best Practices',
  description: 'Comprehensive guide to crafting effective AI prompts',
  content: '''# Prompt Engineering Best Practices
@@ -805,7 +805,7 @@ Include:
  icon: Icons.psychology,
  ),
  
- SampleContext(
+ const SampleContext(
  title: 'Agent Interaction Patterns',
  description: 'Effective patterns for working with AI agents',
  content: '''# Agent Interaction Patterns
@@ -956,7 +956,7 @@ Develop reusable prompt templates for common tasks:
 
  static List<SampleContext> getSystemDesignSamples() {
  return [
- SampleContext(
+ const SampleContext(
  title: 'Microservices Architecture Patterns',
  description: 'Design patterns for building scalable microservices',
  content: '''# Microservices Architecture Patterns
@@ -1297,7 +1297,7 @@ spec:
 
  static List<SampleContext> getSecuritySamples() {
  return [
- SampleContext(
+ const SampleContext(
  title: 'Application Security Best Practices',
  description: 'Comprehensive security guidelines for modern applications',
  content: r'''# Application Security Best Practices
@@ -1760,7 +1760,7 @@ const securityAuditMiddleware = (req, res, next) => {
 
  static List<SampleContext> getFrontendLibrariesSamples() {
  return [
- SampleContext(
+ const SampleContext(
  title: 'React Ecosystem Libraries',
  description: 'Essential React libraries and their implementation patterns',
  content: r'''# React Ecosystem Libraries
@@ -1899,7 +1899,7 @@ describe('LoginForm', () => {
  icon: Icons.widgets,
  ),
  
- SampleContext(
+ const SampleContext(
  title: 'CSS Frameworks & Styling',
  description: 'Modern CSS frameworks and styling approaches',
  content: r'''# CSS Frameworks & Styling
@@ -2034,7 +2034,7 @@ $breakpoints: (mobile: 576px, tablet: 768px);
  icon: Icons.brush,
  ),
  
- SampleContext(
+ const SampleContext(
  title: 'Build Tools & Development Setup',
  description: 'Modern build tools and development environment configuration',
  content: r'''# Build Tools & Development Setup

@@ -5,7 +5,6 @@ import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
 import 'header_button.dart';
-import 'quick_actions_dropdown.dart';
 import '../../constants/routes.dart';
 
 // Centralized navigation bar for all screens
@@ -21,7 +20,7 @@ class AppNavigationBar extends ConsumerWidget {
  Widget build(BuildContext context, WidgetRef ref) {
  final colors = ThemeColors(context);
  return Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.headerPadding,
  vertical: SpacingTokens.pageVertical,
  ),
@@ -42,7 +41,7 @@ class AppNavigationBar extends ConsumerWidget {
  size: 24,
  color: colors.primary,
  ),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  // Brand Title
  Text(
  'Asmbli',
@@ -53,16 +52,24 @@ class AppNavigationBar extends ConsumerWidget {
  ],
  ),
  ),
- Spacer(),
+ const Spacer(),
  
  // Navigation Buttons
+ HeaderButton(
+ text: 'Chat',
+ icon: Icons.chat_bubble_outline,
+ onPressed: () => context.go(AppRoutes.chat),
+ isActive: currentRoute == AppRoutes.chat,
+ ),
+ const SizedBox(width: SpacingTokens.lg),
+
  HeaderButton(
  text: 'My Agents',
  icon: Icons.smart_toy,
  onPressed: () => context.go(AppRoutes.agents),
  isActive: currentRoute == AppRoutes.agents,
  ),
- SizedBox(width: SpacingTokens.lg),
+ const SizedBox(width: SpacingTokens.lg),
  
  HeaderButton(
  text: 'Context',
@@ -70,7 +77,7 @@ class AppNavigationBar extends ConsumerWidget {
  onPressed: () => context.go(AppRoutes.context),
  isActive: currentRoute == AppRoutes.context,
  ),
- SizedBox(width: SpacingTokens.lg),
+ const SizedBox(width: SpacingTokens.lg),
  
  HeaderButton(
  text: 'Integrations',
@@ -78,7 +85,7 @@ class AppNavigationBar extends ConsumerWidget {
  onPressed: () => context.go(AppRoutes.integrationHub),
  isActive: currentRoute == AppRoutes.integrationHub,
  ),
- SizedBox(width: SpacingTokens.lg),
+ const SizedBox(width: SpacingTokens.lg),
  
  HeaderButton(
  text: 'Settings',
@@ -86,10 +93,6 @@ class AppNavigationBar extends ConsumerWidget {
  onPressed: () => context.go(AppRoutes.settings),
  isActive: currentRoute == AppRoutes.settings,
  ),
- SizedBox(width: SpacingTokens.xxl),
- 
- // Quick Actions Dropdown
- QuickActionsDropdown(),
  ],
  ),
  );

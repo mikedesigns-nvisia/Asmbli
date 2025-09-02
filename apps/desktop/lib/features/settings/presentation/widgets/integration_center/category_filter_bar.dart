@@ -32,7 +32,7 @@ class CategoryFilterBar extends StatelessWidget {
         children: _categories.map((category) {
           final isSelected = selectedCategory == category.id;
           return Padding(
-            padding: EdgeInsets.only(right: SpacingTokens.iconSpacing),
+            padding: const EdgeInsets.only(right: SpacingTokens.iconSpacing),
             child: FilterChip(
               label: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -42,7 +42,7 @@ class CategoryFilterBar extends StatelessWidget {
                     size: 16,
                     color: isSelected ? colors.primary : colors.onSurfaceVariant,
                   ),
-                  SizedBox(width: SpacingTokens.iconSpacing),
+                  const SizedBox(width: SpacingTokens.iconSpacing),
                   Text(category.label),
                 ],
               ),

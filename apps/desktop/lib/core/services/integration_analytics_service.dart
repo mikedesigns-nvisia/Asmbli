@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import 'integration_service.dart';
@@ -31,7 +30,7 @@ class IntegrationAnalyticsService {
       _usageData[integration.definition.id] = IntegrationUsageData(
         integrationId: integration.definition.id,
         totalInvocations: 0,
-        lastUsed: DateTime.now().subtract(Duration(days: 30)), // Default to 30 days ago
+        lastUsed: DateTime.now().subtract(const Duration(days: 30)), // Default to 30 days ago
         averageResponseTime: 0,
         successRate: 1.0,
         dailyUsage: {},
@@ -163,7 +162,7 @@ class IntegrationAnalyticsService {
     final allUsage = getAllUsageData();
     
     if (allUsage.isEmpty) {
-      return IntegrationStatistics(
+      return const IntegrationStatistics(
         totalIntegrations: 0,
         activeIntegrations: 0,
         totalInvocations: 0,
@@ -189,7 +188,7 @@ class IntegrationAnalyticsService {
     final totalDataTransferred = allUsage.values.fold(0, (sum, usage) => sum + usage.totalDataTransferred);
     
     // Count active integrations (used in last 7 days)
-    final weekAgo = DateTime.now().subtract(Duration(days: 7));
+    final weekAgo = DateTime.now().subtract(const Duration(days: 7));
     final activeIntegrations = allUsage.values.where((usage) => usage.lastUsed.isAfter(weekAgo)).length;
     
     return IntegrationStatistics(

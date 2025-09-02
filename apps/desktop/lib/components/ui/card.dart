@@ -126,7 +126,7 @@ class AsmblCardHeader extends StatelessWidget {
  children: [
  if (title != null) title!,
  if (description != null) ...[
- SizedBox(height: 6),
+ const SizedBox(height: 6),
  description!,
  ],
  ],
@@ -206,7 +206,7 @@ class AsmblSelectionCard extends StatelessWidget {
  children: [
  if (icon != null) ...[
  icon!,
- SizedBox(width: 16),
+ const SizedBox(width: 16),
  ],
  Expanded(
  child: Column(
@@ -215,14 +215,14 @@ class AsmblSelectionCard extends StatelessWidget {
  children: [
  AsmblCardTitle(text: title),
  if (description != null) ...[
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  AsmblCardDescription(text: description!),
  ],
  ],
  ),
  ),
  if (trailing != null) ...[
- SizedBox(width: 16),
+ const SizedBox(width: 16),
  trailing!,
  ],
  ],

@@ -39,7 +39,7 @@ class AppTheme {
  return ThemeData(
  useMaterial3: true,
  scaffoldBackgroundColor: lightBackground,
- colorScheme: ColorScheme.light(
+ colorScheme: const ColorScheme.light(
  brightness: Brightness.light,
  primary: lightPrimary,
  onPrimary: lightPrimaryForeground,
@@ -49,17 +49,15 @@ class AppTheme {
  onTertiary: lightAccentForeground,
  surface: lightCard,
  onSurface: lightCardForeground,
- background: lightBackground,
- onBackground: lightForeground,
  error: Color(0xFFDC2626),
  onError: Colors.white,
  outline: lightBorder,
- surfaceVariant: lightMuted,
+ surfaceContainerHighest: lightMuted,
  onSurfaceVariant: lightMutedForeground,
  ),
  
  // AppBar Theme - Clean and minimal
- appBarTheme: AppBarTheme(
+ appBarTheme: const AppBarTheme(
  elevation: 0,
  scrolledUnderElevation: 0,
  backgroundColor: Colors.transparent,
@@ -96,7 +94,7 @@ class AppTheme {
  borderRadius: BorderRadius.circular(8),
  ),
  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
- textStyle: TextStyle(
+ textStyle: const TextStyle(
   fontWeight: FontWeight.w500,
  fontSize: 14,
  ),
@@ -106,14 +104,14 @@ class AppTheme {
  outlinedButtonTheme: OutlinedButtonThemeData(
  style: OutlinedButton.styleFrom(
  foregroundColor: lightPrimary,
- side: BorderSide(color: lightBorder),
+ side: const BorderSide(color: lightBorder),
  elevation: 0,
  backgroundColor: Colors.transparent,
  shape: RoundedRectangleBorder(
  borderRadius: BorderRadius.circular(8),
  ),
  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
- textStyle: TextStyle(
+ textStyle: const TextStyle(
   fontWeight: FontWeight.w500,
  fontSize: 14,
  ),
@@ -134,15 +132,15 @@ class AppTheme {
  inputDecorationTheme: InputDecorationTheme(
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(8),
- borderSide: BorderSide(color: lightBorder),
+ borderSide: const BorderSide(color: lightBorder),
  ),
  enabledBorder: OutlineInputBorder(
  borderRadius: BorderRadius.circular(8),
- borderSide: BorderSide(color: lightBorder),
+ borderSide: const BorderSide(color: lightBorder),
  ),
  focusedBorder: OutlineInputBorder(
  borderRadius: BorderRadius.circular(8),
- borderSide: BorderSide(color: lightPrimary, width: 2),
+ borderSide: const BorderSide(color: lightPrimary, width: 2),
  ),
  filled: true,
  fillColor: lightInput,
@@ -150,7 +148,7 @@ class AppTheme {
  ),
  
  // Typography - Fustat throughout
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
  displayLarge: TextStyle(
   fontSize: 57,
  fontWeight: FontWeight.w400,
@@ -245,7 +243,7 @@ class AppTheme {
  return ThemeData(
  useMaterial3: true,
  scaffoldBackgroundColor: darkBackground,
- colorScheme: ColorScheme.dark(
+ colorScheme: const ColorScheme.dark(
  brightness: Brightness.dark,
  primary: darkPrimary,
  onPrimary: darkPrimaryForeground,
@@ -255,23 +253,21 @@ class AppTheme {
  onTertiary: darkAccentForeground,
  surface: darkCard,
  onSurface: darkCardForeground,
- background: darkBackground,
- onBackground: darkForeground,
  error: Color(0xFFF87171),
  onError: Colors.white,
  outline: Color(0xFF2B3F33),
- surfaceVariant: const Color(0xFF1F2F25),
- onSurfaceVariant: const Color(0xFFA0BDA8),
+ surfaceContainerHighest: Color(0xFF1F2F25),
+ onSurfaceVariant: Color(0xFFA0BDA8),
  ),
  
  // AppBar Theme - Clean and minimal
- appBarTheme: AppBarTheme(
+ appBarTheme: const AppBarTheme(
  elevation: 0,
  scrolledUnderElevation: 0,
  backgroundColor: Colors.transparent,
  foregroundColor: darkForeground,
  surfaceTintColor: Colors.transparent,
- titleTextStyle: const TextStyle(
+ titleTextStyle: TextStyle(
   fontSize: 24,
  fontWeight: FontWeight.bold,
  fontStyle: FontStyle.italic,
@@ -356,7 +352,7 @@ class AppTheme {
  ),
  
  // Typography - Fustat throughout
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
  displayLarge: TextStyle(
   fontSize: 57,
  fontWeight: FontWeight.w400,
@@ -417,13 +413,13 @@ class AppTheme {
   fontSize: 14,
  fontWeight: FontWeight.w400,
  letterSpacing: 0.25,
- color: const Color(0xFFA0BDA8),
+ color: Color(0xFFA0BDA8),
  ),
  bodySmall: TextStyle(
   fontSize: 12,
  fontWeight: FontWeight.w400,
  letterSpacing: 0.4,
- color: const Color(0xFFA0BDA8),
+ color: Color(0xFFA0BDA8),
  ),
  labelLarge: TextStyle(
   fontSize: 14,
@@ -435,13 +431,13 @@ class AppTheme {
   fontSize: 12,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.5,
- color: const Color(0xFFA0BDA8),
+ color: Color(0xFFA0BDA8),
  ),
  labelSmall: TextStyle(
   fontSize: 11,
  fontWeight: FontWeight.w500,
  letterSpacing: 0.5,
- color: const Color(0xFFA0BDA8),
+ color: Color(0xFFA0BDA8),
  ),
  ),
  );

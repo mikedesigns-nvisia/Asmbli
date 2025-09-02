@@ -6,7 +6,7 @@ import '../widgets/adaptive_integration_router.dart';
 class GeneralSettingsTab extends StatelessWidget {
   final ThemeService themeService;
 
-  const GeneralSettingsTab({Key? key, required this.themeService}) : super(key: key);
+  const GeneralSettingsTab({super.key, required this.themeService});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class GeneralSettingsTab extends StatelessWidget {
                         final currentThemeName = currentThemeMode == ThemeMode.light ? 'Mint' : 'Forest';
 
                         return DropdownButtonFormField<String>(
-                          value: currentThemeName,
+                          initialValue: currentThemeName,
                           items: const [DropdownMenuItem(value: 'Mint', child: Text('Mint')), DropdownMenuItem(value: 'Forest', child: Text('Forest'))],
                           onChanged: (value) {
                             if (value == 'Mint') {
@@ -57,7 +57,7 @@ class GeneralSettingsTab extends StatelessWidget {
                         Icon(Icons.notifications, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         const SizedBox(width: 12),
                         Expanded(child: Text('Enable notifications', style: Theme.of(context).textTheme.bodyMedium)),
-                        Switch(value: true, onChanged: (value) {}, activeColor: Theme.of(context).colorScheme.primary),
+                        Switch(value: true, onChanged: (value) {}, activeThumbColor: Theme.of(context).colorScheme.primary),
                       ],
                     ),
                   ],

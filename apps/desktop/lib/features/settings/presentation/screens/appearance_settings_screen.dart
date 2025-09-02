@@ -41,7 +41,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
         ),
         child: Column(
           children: [
-            AppNavigationBar(currentRoute: AppRoutes.settings),
+            const AppNavigationBar(currentRoute: AppRoutes.settings),
             _buildHeader(colors),
             Expanded(
               child: Row(
@@ -66,7 +66,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
 
   Widget _buildHeader(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       decoration: BoxDecoration(
         color: colors.surface.withValues(alpha: 0.8),
         border: Border(
@@ -79,7 +79,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
             onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back, color: colors.onSurface),
           ),
-          SizedBox(width: SpacingTokens.componentSpacing),
+          const SizedBox(width: SpacingTokens.componentSpacing),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,9 +88,9 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                   'Appearance',
                   style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
                 ),
-                SizedBox(height: SpacingTokens.xs_precise),
+                const SizedBox(height: SpacingTokens.xs_precise),
                 Text(
-                  'Customize the look and feel of AgentEngine',
+                  'Customize the look and feel of Asmbli',
                   style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
                 ),
               ],
@@ -107,18 +107,18 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
 
   Widget _buildMainContent(ThemeColors colors, ThemeMode currentThemeMode, ThemeService themeService) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildThemeSection(colors, currentThemeMode, themeService),
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           _buildColorSchemeSection(colors),
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           _buildTypographySection(colors),
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           _buildLayoutSection(colors),
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           _buildAnimationSection(colors),
         ],
       ),
@@ -128,21 +128,21 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
   Widget _buildThemeSection(ThemeColors colors, ThemeMode currentThemeMode, ThemeService themeService) {
     return AsmblCard(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                   decoration: BoxDecoration(
                     color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(Icons.brightness_6, color: colors.primary, size: 20),
                 ),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Text(
                   'Theme Mode',
                   style: TextStyles.cardTitle.copyWith(
@@ -152,18 +152,18 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                 ),
               ],
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Choose between light, dark, or system-based theme',
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Row(
               children: [
                 Expanded(child: _buildThemeOption('Light', ThemeMode.light, Icons.light_mode, currentThemeMode, themeService, colors)),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Expanded(child: _buildThemeOption('Dark', ThemeMode.dark, Icons.dark_mode, currentThemeMode, themeService, colors)),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Expanded(child: _buildThemeOption('System', ThemeMode.system, Icons.auto_mode, currentThemeMode, themeService, colors)),
               ],
             ),
@@ -179,7 +179,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
       onTap: () => themeService.setTheme(mode),
       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
       child: Container(
-        padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+        padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
         decoration: BoxDecoration(
           color: isSelected ? colors.primary.withValues(alpha: 0.1) : colors.surfaceVariant.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -195,7 +195,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
               color: isSelected ? colors.primary : colors.onSurfaceVariant,
               size: 24,
             ),
-            SizedBox(height: SpacingTokens.iconSpacing),
+            const SizedBox(height: SpacingTokens.iconSpacing),
             Text(
               label,
               style: TextStyles.bodyMedium.copyWith(
@@ -212,21 +212,21 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
   Widget _buildColorSchemeSection(ThemeColors colors) {
     return AsmblCard(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                   decoration: BoxDecoration(
                     color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(Icons.palette, color: colors.accent, size: 20),
                 ),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Text(
                   'Color Scheme',
                   style: TextStyles.cardTitle.copyWith(
@@ -236,12 +236,12 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                 ),
               ],
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Select your preferred color palette (currently using warm neutral)',
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             _buildColorSchemeGrid(colors),
           ],
         ),
@@ -251,10 +251,10 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
 
   Widget _buildColorSchemeGrid(ThemeColors colors) {
     final schemes = [
-      ColorSchemeOption('warm-neutral', 'Warm Neutral', [Color(0xFF3D3328), Color(0xFF736B5F), Color(0xFFFBF9F5)]),
-      ColorSchemeOption('cool-blue', 'Cool Blue', [Color(0xFF1E3A8A), Color(0xFF3B82F6), Color(0xFFF0F9FF)]),
-      ColorSchemeOption('forest-green', 'Forest Green', [Color(0xFF14532D), Color(0xFF22C55E), Color(0xFFF0FDF4)]),
-      ColorSchemeOption('sunset-orange', 'Sunset Orange', [Color(0xFF9A3412), Color(0xFFF97316), Color(0xFFFFF7ED)]),
+      const ColorSchemeOption('warm-neutral', 'Warm Neutral', [Color(0xFF3D3328), Color(0xFF736B5F), Color(0xFFFBF9F5)]),
+      const ColorSchemeOption('cool-blue', 'Cool Blue', [Color(0xFF1E3A8A), Color(0xFF3B82F6), Color(0xFFF0F9FF)]),
+      const ColorSchemeOption('forest-green', 'Forest Green', [Color(0xFF14532D), Color(0xFF22C55E), Color(0xFFF0FDF4)]),
+      const ColorSchemeOption('sunset-orange', 'Sunset Orange', [Color(0xFF9A3412), Color(0xFFF97316), Color(0xFFFFF7ED)]),
     ];
 
     return Wrap(
@@ -270,7 +270,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           child: Container(
             width: 140,
-            padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+            padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               border: Border.all(
@@ -285,7 +285,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                   children: scheme.colors.map((color) => Container(
                     width: 24,
                     height: 24,
-                    margin: EdgeInsets.symmetric(horizontal: 2),
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: BoxDecoration(
                       color: color,
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -293,7 +293,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                     ),
                   )).toList(),
                 ),
-                SizedBox(height: SpacingTokens.iconSpacing),
+                const SizedBox(height: SpacingTokens.iconSpacing),
                 Text(
                   scheme.name,
                   style: TextStyles.caption.copyWith(
@@ -313,21 +313,21 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
   Widget _buildTypographySection(ThemeColors colors) {
     return AsmblCard(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                   decoration: BoxDecoration(
                     color: colors.info.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(Icons.font_download, color: colors.info, size: 20),
                 ),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Text(
                   'Typography',
                   style: TextStyles.cardTitle.copyWith(
@@ -337,14 +337,14 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                 ),
               ],
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Adjust font family and text display preferences',
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             _buildFontSelector(colors),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             _buildTextSizeSlider(colors),
           ],
         ),
@@ -361,7 +361,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
     ];
 
     return DropdownButtonFormField<String>(
-      value: _selectedFont,
+      initialValue: _selectedFont,
       decoration: InputDecoration(
         labelText: 'Font Family',
         border: OutlineInputBorder(
@@ -400,12 +400,12 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             trackHeight: 4,
-            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8),
-            overlayShape: RoundSliderOverlayShape(overlayRadius: 16),
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
           ),
           child: Slider(
             value: _uiScale,
@@ -422,21 +422,21 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
   Widget _buildLayoutSection(ThemeColors colors) {
     return AsmblCard(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                   decoration: BoxDecoration(
                     color: colors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(Icons.view_compact, color: colors.warning, size: 20),
                 ),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Text(
                   'Layout',
                   style: TextStyles.cardTitle.copyWith(
@@ -446,12 +446,12 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                 ),
               ],
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Customize the layout density and spacing',
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             _buildToggleSetting(
               'Compact Mode',
               'Reduce spacing between elements',
@@ -468,21 +468,21 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
   Widget _buildAnimationSection(ThemeColors colors) {
     return AsmblCard(
       child: Padding(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                   decoration: BoxDecoration(
                     color: colors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(Icons.animation, color: colors.success, size: 20),
                 ),
-                SizedBox(width: SpacingTokens.componentSpacing),
+                const SizedBox(width: SpacingTokens.componentSpacing),
                 Text(
                   'Animations',
                   style: TextStyles.cardTitle.copyWith(
@@ -492,12 +492,12 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                 ),
               ],
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Control interface animations and transitions',
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             _buildToggleSetting(
               'Show Animations',
               'Enable smooth transitions and hover effects',
@@ -542,7 +542,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
 
   Widget _buildPreviewPanel(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -550,10 +550,10 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
             'Preview',
             style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
           ),
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           AsmblCard(
             child: Padding(
-              padding: EdgeInsets.all(SpacingTokens.lg),
+              padding: const EdgeInsets.all(SpacingTokens.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -564,7 +564,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                       fontSize: 18 * _uiScale,
                     ),
                   ),
-                  SizedBox(height: SpacingTokens.componentSpacing),
+                  const SizedBox(height: SpacingTokens.componentSpacing),
                   Text(
                     'This is how your text will look with the current settings applied. The preview updates in real-time as you make changes.',
                     style: TextStyles.bodyMedium.copyWith(
@@ -572,20 +572,20 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                       fontSize: 14 * _uiScale,
                     ),
                   ),
-                  SizedBox(height: SpacingTokens.componentSpacing),
+                  const SizedBox(height: SpacingTokens.componentSpacing),
                   AsmblButton.primary(
                     text: 'Sample Button',
                     onPressed: () {},
                   ),
-                  SizedBox(height: SpacingTokens.componentSpacing),
+                  const SizedBox(height: SpacingTokens.componentSpacing),
                   Container(
-                    padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+                    padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
                     decoration: BoxDecoration(
                       color: colors.surfaceVariant.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Text(
-                      'Code example with ${_selectedFont} font family',
+                      'Code example with $_selectedFont font family',
                       style: TextStyle(
                         fontFamily: 'monospace',
                         color: colors.onSurface,
@@ -597,7 +597,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
               ),
             ),
           ),
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
           Text(
             'Theme Info',
             style: TextStyles.bodyLarge.copyWith(
@@ -605,7 +605,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           _buildInfoRow('Color Scheme', _selectedColorScheme.replaceAll('-', ' ').toUpperCase(), colors),
           _buildInfoRow('Font Family', _selectedFont.replaceAll('-', ' ').toUpperCase(), colors),
           _buildInfoRow('UI Scale', '${(_uiScale * 100).round()}%', colors),
@@ -618,7 +618,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
 
   Widget _buildInfoRow(String label, String value, ThemeColors colors) {
     return Padding(
-      padding: EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
+      padding: const EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

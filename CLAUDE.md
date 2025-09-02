@@ -1,4 +1,4 @@
-# AgentEngine Development Guidelines
+# Asmbli Development Guidelines
 
 ## Design System Rules
 

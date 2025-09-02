@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:agent_engine_core/models/conversation.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../providers/conversation_provider.dart';
 
 /// Agent Control Panel - Shows exactly what the agent sees and can access
@@ -42,32 +40,32 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             ),
             child: Column(
               children: [
-                SizedBox(height: SpacingTokens.lg),
+                const SizedBox(height: SpacingTokens.lg),
                 _buildCollapsedIcon(Icons.psychology, 'Agent Brain', 0),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 _buildCollapsedIcon(Icons.extension, 'Tools', 1),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 _buildCollapsedIcon(Icons.memory, 'Memory', 2),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 _buildCollapsedIcon(Icons.assignment, 'Context', 3),
-                Spacer(),
+                const Spacer(),
                 IconButton(
                   onPressed: widget.onToggleCollapse,
-                  icon: Icon(Icons.chevron_right, size: 18),
+                  icon: const Icon(Icons.chevron_right, size: 18),
                   style: IconButton.styleFrom(
                     backgroundColor: ThemeColors(context).primary.withValues(alpha: 0.1),
                     foregroundColor: ThemeColors(context).primary,
                   ),
                   tooltip: 'Show Agent Control Panel',
                 ),
-                SizedBox(height: SpacingTokens.lg),
+                const SizedBox(height: SpacingTokens.lg),
               ],
             ),
           ),
 
         // Main control panel content
         AnimatedContainer(
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           width: widget.isCollapsed ? 0 : 380,
           child: widget.isCollapsed ? null : _buildControlPanelContent(),
         ),
@@ -129,7 +127,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildAgentHeader() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: ThemeColors(context).primary.withValues(alpha: 0.05),
         border: Border(
@@ -142,7 +140,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -153,7 +151,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                   size: 20,
                 ),
               ),
-              SizedBox(width: SpacingTokens.md),
+              const SizedBox(width: SpacingTokens.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,7 +174,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
               ),
               IconButton(
                 onPressed: widget.onToggleCollapse,
-                icon: Icon(Icons.chevron_left, size: 18),
+                icon: const Icon(Icons.chevron_left, size: 18),
                 style: IconButton.styleFrom(
                   foregroundColor: ThemeColors(context).onSurfaceVariant,
                 ),
@@ -185,7 +183,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           
           // Agent identity indicator
           if (widget.selectedConversationId != null)
@@ -205,7 +203,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
         final agentType = conversation.metadata?['type'] ?? 'default_api';
         
         return Container(
-          padding: EdgeInsets.all(SpacingTokens.md),
+          padding: const EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
             color: ThemeColors(context).surface.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(8),
@@ -234,7 +232,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                     : ThemeColors(context).onSurfaceVariant,
                 ),
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +255,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: agentType == 'agent'
                     ? Colors.green.withValues(alpha: 0.1)
@@ -291,7 +289,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     ];
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: SpacingTokens.md, vertical: SpacingTokens.sm),
+      padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.md, vertical: SpacingTokens.sm),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.2)),
@@ -307,7 +305,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             child: GestureDetector(
               onTap: () => setState(() => _selectedSection = index),
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: SpacingTokens.sm),
+                padding: const EdgeInsets.symmetric(vertical: SpacingTokens.sm),
                 decoration: BoxDecoration(
                   color: isSelected 
                     ? ThemeColors(context).primary.withValues(alpha: 0.1)
@@ -327,9 +325,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                             : ThemeColors(context).onSurfaceVariant,
                         ),
                         if (tab['count'] != null) ...[
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                             decoration: BoxDecoration(
                               color: isSelected
                                 ? ThemeColors(context).primary
@@ -350,7 +348,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                         ],
                       ],
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       tab['label'] as String,
                       style: TextStyles.bodySmall.copyWith(
@@ -399,24 +397,24 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
         final environmentVars = conversation.metadata?['environmentVariables'] as Map<String, dynamic>? ?? {};
         
         return SingleChildScrollView(
-          padding: EdgeInsets.all(SpacingTokens.lg),
+          padding: const EdgeInsets.all(SpacingTokens.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Context Documents
               _buildSectionHeader('Context Documents', Icons.description, contextDocs.length),
-              SizedBox(height: SpacingTokens.md),
+              const SizedBox(height: SpacingTokens.md),
               
               if (contextDocs.isEmpty)
                 _buildEmptyContextState()
               else
                 ...contextDocs.map((doc) => _buildContextDocItem(doc.toString())),
               
-              SizedBox(height: SpacingTokens.xxl),
+              const SizedBox(height: SpacingTokens.xxl),
               
               // Environment Context
               _buildSectionHeader('Environment Context', Icons.settings, environmentVars.length),
-              SizedBox(height: SpacingTokens.md),
+              const SizedBox(height: SpacingTokens.md),
               
               if (environmentVars.isEmpty)
                 _buildEmptyEnvironmentState()
@@ -444,12 +442,12 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
         final mcpConfigs = conversation.metadata?['mcpServerConfigs'] as Map<String, dynamic>? ?? {};
         
         return SingleChildScrollView(
-          padding: EdgeInsets.all(SpacingTokens.lg),
+          padding: const EdgeInsets.all(SpacingTokens.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSectionHeader('Active MCP Tools', Icons.extension, mcpServers.length),
-              SizedBox(height: SpacingTokens.md),
+              const SizedBox(height: SpacingTokens.md),
               
               if (mcpServers.isEmpty)
                 _buildNoToolsState()
@@ -469,12 +467,12 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildMemorySection() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionHeader('Conversation Memory', Icons.memory, null),
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           
           _buildMemoryInfo(
             'Context Window',
@@ -517,12 +515,12 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
         final basePrompt = conversation.metadata?['baseSystemPrompt'] as String? ?? systemPrompt;
         
         return SingleChildScrollView(
-          padding: EdgeInsets.all(SpacingTokens.lg),
+          padding: const EdgeInsets.all(SpacingTokens.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSectionHeader('Agent Instructions', Icons.assignment, null),
-              SizedBox(height: SpacingTokens.md),
+              const SizedBox(height: SpacingTokens.md),
               
               // System prompt preview
               _buildInstructionCard(
@@ -532,7 +530,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                 Icons.psychology,
               ),
               
-              SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: SpacingTokens.lg),
               
               _buildInstructionCard(
                 'Base Instructions',
@@ -554,7 +552,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     return Row(
       children: [
         Icon(icon, size: 16, color: ThemeColors(context).primary),
-        SizedBox(width: SpacingTokens.sm),
+        const SizedBox(width: SpacingTokens.sm),
         Text(
           title,
           style: TextStyles.bodyMedium.copyWith(
@@ -563,9 +561,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           ),
         ),
         if (count != null) ...[
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: ThemeColors(context).primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -586,8 +584,8 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildContextDocItem(String docName) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.md),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
@@ -596,7 +594,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       child: Row(
         children: [
           Icon(Icons.description, size: 16, color: ThemeColors(context).primary),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Expanded(
             child: Text(
               docName,
@@ -607,7 +605,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             decoration: BoxDecoration(
               color: Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
@@ -635,8 +633,8 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                        status == 'error' ? Colors.red : Colors.orange;
     
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.md),
-      padding: EdgeInsets.all(SpacingTokens.md),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
@@ -648,14 +646,14 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(4),
+                padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Icon(Icons.extension, size: 14, color: statusColor),
               ),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -678,7 +676,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -696,12 +694,12 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           ),
           
           if (capabilities.isNotEmpty) ...[
-            SizedBox(height: SpacingTokens.sm),
+            const SizedBox(height: SpacingTokens.sm),
             Wrap(
               spacing: 4,
               runSpacing: 4,
               children: capabilities.map((capability) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -723,8 +721,8 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildMemoryInfo(String title, String description, String type, IconData icon, Color color) {
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.md),
-      padding: EdgeInsets.all(SpacingTokens.md),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
@@ -733,7 +731,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       child: Row(
         children: [
           Icon(icon, size: 18, color: color),
-          SizedBox(width: SpacingTokens.md),
+          const SizedBox(width: SpacingTokens.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -745,7 +743,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                     fontSize: 13,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   description,
                   style: TextStyles.bodySmall.copyWith(
@@ -757,7 +755,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
@@ -778,7 +776,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildInstructionCard(String title, String description, String content, IconData icon) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
@@ -790,7 +788,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           Row(
             children: [
               Icon(icon, size: 16, color: ThemeColors(context).primary),
-              SizedBox(width: SpacingTokens.sm),
+              const SizedBox(width: SpacingTokens.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -815,11 +813,11 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(SpacingTokens.sm),
+            padding: const EdgeInsets.all(SpacingTokens.sm),
             decoration: BoxDecoration(
               color: ThemeColors(context).onSurface.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(4),
@@ -848,8 +846,8 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                     key.toLowerCase().contains('token');
     
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.md),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
@@ -862,7 +860,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             size: 14,
             color: isSecret ? Colors.orange : ThemeColors(context).primary,
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -886,7 +884,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             decoration: BoxDecoration(
               color: (isSecret ? Colors.orange : Colors.blue).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
@@ -907,7 +905,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildStatusFooter() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: ThemeColors(context).primary.withValues(alpha: 0.05),
         border: Border(
@@ -919,12 +917,12 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           Container(
             width: 8,
             height: 8,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.green,
               shape: BoxShape.circle,
             ),
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Text(
             'Agent context synced in real-time',
             style: TextStyles.bodySmall.copyWith(
@@ -932,7 +930,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
               fontSize: 11,
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Text(
             'Live',
             style: TextStyles.bodySmall.copyWith(
@@ -949,19 +947,19 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
   // State widgets
   Widget _buildLoadingCard() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: ThemeColors(context).surface.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          SizedBox(
+          const SizedBox(
             width: 16,
             height: 16,
             child: CircularProgressIndicator(strokeWidth: 2),
           ),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Text('Loading agent info...', style: TextStyles.bodySmall),
         ],
       ),
@@ -970,7 +968,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildErrorCard() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.md),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
@@ -984,8 +982,8 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
-          SizedBox(height: SpacingTokens.md),
+          const CircularProgressIndicator(),
+          const SizedBox(height: SpacingTokens.md),
           Text('Loading...', style: TextStyles.bodySmall),
         ],
       ),
@@ -997,8 +995,8 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error, color: Colors.red),
-          SizedBox(height: SpacingTokens.md),
+          const Icon(Icons.error, color: Colors.red),
+          const SizedBox(height: SpacingTokens.md),
           Text('Error loading data', style: TextStyles.bodySmall),
         ],
       ),
@@ -1011,7 +1009,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.chat_bubble_outline, size: 48, color: ThemeColors(context).onSurfaceVariant),
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           Text(
             'No conversation selected',
             style: TextStyles.bodyMedium.copyWith(
@@ -1031,11 +1029,11 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildEmptyContextState() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         children: [
           Icon(Icons.description_outlined, size: 32, color: ThemeColors(context).onSurfaceVariant),
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           Text(
             'No context documents',
             style: TextStyles.bodySmall.copyWith(
@@ -1049,11 +1047,11 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildEmptyEnvironmentState() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         children: [
           Icon(Icons.settings_outlined, size: 32, color: ThemeColors(context).onSurfaceVariant),
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           Text(
             'No environment variables',
             style: TextStyles.bodySmall.copyWith(
@@ -1067,11 +1065,11 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildNoToolsState() {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         children: [
           Icon(Icons.extension_outlined, size: 32, color: ThemeColors(context).onSurfaceVariant),
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           Text(
             'No MCP tools configured',
             style: TextStyles.bodySmall.copyWith(

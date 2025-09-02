@@ -134,7 +134,7 @@ class MCPHealthMonitor {
     print('🔍 Starting MCP server health monitoring');
 
     // Get all configured servers
-    final servers = await _settingsService.getAllMCPServers();
+    final servers = _settingsService.getAllMCPServers();
     
     // Initialize health tracking for each server
     for (final server in servers) {
@@ -394,21 +394,19 @@ class MCPServerStatusChangedEvent extends MCPServerHealthEvent {
   final MCPServerHealthStatus oldStatus;
   final MCPServerHealthStatus newStatus;
 
-  MCPServerStatusChangedEvent(String serverId, this.oldStatus, this.newStatus) 
-      : super(serverId);
+  MCPServerStatusChangedEvent(super.serverId, this.oldStatus, this.newStatus);
 }
 
 /// Event when server reconnection succeeds
 class MCPServerReconnectedEvent extends MCPServerHealthEvent {
-  MCPServerReconnectedEvent(String serverId) : super(serverId);
+  MCPServerReconnectedEvent(super.serverId);
 }
 
 /// Event when server reconnection fails
 class MCPServerReconnectionFailedEvent extends MCPServerHealthEvent {
   final String error;
 
-  MCPServerReconnectionFailedEvent(String serverId, this.error) 
-      : super(serverId);
+  MCPServerReconnectionFailedEvent(super.serverId, this.error);
 }
 
 // ==================== Riverpod Providers ====================

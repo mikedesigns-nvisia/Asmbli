@@ -29,7 +29,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 150),
+      duration: const Duration(milliseconds: 150),
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
@@ -94,16 +94,16 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
                   onTap: widget.onPrimaryAction,
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                   child: Padding(
-                    padding: EdgeInsets.all(SpacingTokens.lg),
+                    padding: const EdgeInsets.all(SpacingTokens.lg),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildHeader(colors, statusConfig),
-                        SizedBox(height: SpacingTokens.componentSpacing),
+                        const SizedBox(height: SpacingTokens.componentSpacing),
                         _buildDescription(colors),
-                        Spacer(),
+                        const Spacer(),
                         _buildMetrics(colors),
-                        SizedBox(height: SpacingTokens.componentSpacing),
+                        const SizedBox(height: SpacingTokens.componentSpacing),
                         _buildActions(colors, statusConfig),
                       ],
                     ),
@@ -122,7 +122,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
       children: [
         // Integration Icon
         Container(
-          padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+          padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
           decoration: BoxDecoration(
             color: widget.integration.brandColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -134,7 +134,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
           ),
         ),
         
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         
         // Name and Status
         Expanded(
@@ -150,7 +150,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: SpacingTokens.xs_precise),
+              const SizedBox(height: SpacingTokens.xs_precise),
               _buildStatusChip(statusConfig, colors),
             ],
           ),
@@ -161,7 +161,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
 
   Widget _buildStatusChip(IntegrationStatusConfig statusConfig, ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.iconSpacing,
         vertical: 2,
       ),
@@ -179,7 +179,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
               size: 12,
               color: statusConfig.textColor,
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
           ],
           Text(
             statusConfig.label,
@@ -207,12 +207,12 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
   }
 
   Widget _buildMetrics(ThemeColors colors) {
-    if (widget.integration.metrics.isEmpty) return SizedBox.shrink();
+    if (widget.integration.metrics.isEmpty) return const SizedBox.shrink();
     
     return Row(
       children: widget.integration.metrics.take(2).map((metric) {
         return Padding(
-          padding: EdgeInsets.only(right: SpacingTokens.componentSpacing),
+          padding: const EdgeInsets.only(right: SpacingTokens.componentSpacing),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -221,7 +221,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
                 size: 14,
                 color: colors.onSurfaceVariant,
               ),
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               Text(
                 metric.value,
                 style: TextStyles.caption.copyWith(
@@ -245,7 +245,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
           ),
         ),
         if (statusConfig.hasSecondaryAction) ...[
-          SizedBox(width: SpacingTokens.iconSpacing),
+          const SizedBox(width: SpacingTokens.iconSpacing),
           IconButton(
             onPressed: widget.onSecondaryAction,
             icon: Icon(

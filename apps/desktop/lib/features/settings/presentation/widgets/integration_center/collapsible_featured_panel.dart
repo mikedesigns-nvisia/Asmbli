@@ -15,8 +15,8 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
     final colors = ThemeColors(context);
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: SpacingTokens.pageHorizontal),
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: colors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -25,7 +25,7 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
           BoxShadow(
             color: colors.onSurface.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -36,7 +36,7 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.star, color: colors.warning, size: 20),
-              SizedBox(width: SpacingTokens.iconSpacing),
+              const SizedBox(width: SpacingTokens.iconSpacing),
               Text(
                 'Featured This Week',
                 style: TextStyles.bodyLarge.copyWith(
@@ -44,7 +44,7 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               IconButton(
                 onPressed: onCollapse,
                 icon: Icon(Icons.close, color: colors.onSurfaceVariant),
@@ -53,19 +53,19 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // Featured Items
           Column(
             children: _getFeaturedIntegrations().map((featured) {
               return Padding(
-                padding: EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
+                padding: const EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
                 child: _buildFeaturedItem(featured, colors),
               );
             }).toList(),
           ),
           
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // View All Button
           AsmblButton.secondary(
@@ -83,7 +83,7 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
       onTap: () => _viewIntegration(featured.id),
       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       child: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: SpacingTokens.iconSpacing,
           vertical: SpacingTokens.xs_precise,
         ),
@@ -91,7 +91,7 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
           children: [
             // Integration Icon
             Container(
-              padding: EdgeInsets.all(SpacingTokens.xs_precise),
+              padding: const EdgeInsets.all(SpacingTokens.xs_precise),
               decoration: BoxDecoration(
                 color: featured.brandColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -103,7 +103,7 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
               ),
             ),
             
-            SizedBox(width: SpacingTokens.componentSpacing),
+            const SizedBox(width: SpacingTokens.componentSpacing),
             
             // Name and Badge
             Expanded(
@@ -116,10 +116,10 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(width: SpacingTokens.iconSpacing),
+                  const SizedBox(width: SpacingTokens.iconSpacing),
                   if (featured.badge.isNotEmpty)
                     Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: SpacingTokens.xs_precise,
                         vertical: 2,
                       ),
@@ -154,21 +154,21 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
 
   List<FeaturedIntegration> _getFeaturedIntegrations() {
     return [
-      FeaturedIntegration(
+      const FeaturedIntegration(
         id: 'github-copilot',
         name: 'GitHub Copilot',
         icon: Icons.auto_awesome,
         brandColor: Color(0xFF24292F),
         badge: '🔥 Hot',
       ),
-      FeaturedIntegration(
+      const FeaturedIntegration(
         id: 'notion-database',
         name: 'Notion Database',
         icon: Icons.table_chart,
         brandColor: Color(0xFF000000),
         badge: '⭐ Popular',
       ),
-      FeaturedIntegration(
+      const FeaturedIntegration(
         id: 'slack-notifications',
         name: 'Slack Notifications',
         icon: Icons.notifications,

@@ -19,7 +19,7 @@ class WizardStepIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.lg,
         vertical: SpacingTokens.md,
       ),
@@ -28,7 +28,7 @@ class WizardStepIndicator extends StatelessWidget {
           // Progress bar
           _buildProgressBar(context),
           
-          SizedBox(height: SpacingTokens.md),
+          const SizedBox(height: SpacingTokens.md),
           
           // Step indicators with titles
           _buildStepIndicators(context),
@@ -70,7 +70,7 @@ class WizardStepIndicator extends StatelessWidget {
           child: GestureDetector(
             onTap: isAccessible && onStepTapped != null ? onStepTapped : null,
             child: Container(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: SpacingTokens.xs,
                 vertical: SpacingTokens.sm,
               ),
@@ -93,7 +93,7 @@ class WizardStepIndicator extends StatelessWidget {
                     ),
                   ),
                   
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   
                   // Step title
                   Text(

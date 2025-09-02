@@ -110,7 +110,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
       child: Container(
         width: 900,
         height: 800,
-        padding: EdgeInsets.all(SpacingTokens.xxl),
+        padding: const EdgeInsets.all(SpacingTokens.xxl),
         child: Form(
           key: _formKey,
           child: Column(
@@ -118,11 +118,11 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             children: [
               // Header
               _buildHeader(colors),
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               
               // Configuration method selector
               _buildConfigurationMethodSelector(colors),
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               
               // Content
               Expanded(
@@ -131,7 +131,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
                 ),
               ),
               
-              SizedBox(height: SpacingTokens.sectionSpacing),
+              const SizedBox(height: SpacingTokens.sectionSpacing),
               
               // Actions
               _buildActions(),
@@ -146,7 +146,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+          padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
           decoration: BoxDecoration(
             color: colors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -157,7 +157,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             color: colors.primary,
           ),
         ),
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +166,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
                 'Custom MCP Server Configuration',
                 style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
               ),
-              SizedBox(height: SpacingTokens.xs_precise),
+              const SizedBox(height: SpacingTokens.xs_precise),
               Text(
                 'Configure a custom MCP server with JSON or manual setup',
                 style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
@@ -191,14 +191,14 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             isSelected: configMethod == ConfigurationMethod.structured,
             onTap: () => setState(() => configMethod = ConfigurationMethod.structured),
           ),
-          SizedBox(width: SpacingTokens.iconSpacing),
+          const SizedBox(width: SpacingTokens.iconSpacing),
         ],
         _MethodTab(
           label: 'JSON Configuration',
           isSelected: configMethod == ConfigurationMethod.json,
           onTap: () => setState(() => configMethod = ConfigurationMethod.json),
         ),
-        SizedBox(width: SpacingTokens.iconSpacing),
+        const SizedBox(width: SpacingTokens.iconSpacing),
         _MethodTab(
           label: 'Manual Configuration',
           isSelected: configMethod == ConfigurationMethod.manual,
@@ -214,14 +214,14 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
       children: [
         // Server name input
         _buildServerNameInput(colors),
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
         
         // JSON editor section
         Text(
           'MCP Server Configuration (JSON)',
           style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         // JSON editor
         Container(
@@ -244,7 +244,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
                   color: colors.onSurface,
                   fontFamily: 'monospace',
                 ),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Enter MCP server configuration JSON...',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
@@ -274,9 +274,9 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
         
         // JSON validation error
         if (jsonError != null) ...[
-          SizedBox(height: SpacingTokens.iconSpacing),
+          const SizedBox(height: SpacingTokens.iconSpacing),
           Container(
-            padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+            padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
             decoration: BoxDecoration(
               color: colors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -285,7 +285,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             child: Row(
               children: [
                 Icon(Icons.error, color: colors.error, size: 16),
-                SizedBox(width: SpacingTokens.iconSpacing),
+                const SizedBox(width: SpacingTokens.iconSpacing),
                 Expanded(
                   child: Text(
                     jsonError!,
@@ -297,7 +297,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
           ),
         ],
         
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
         
         // Example configurations
         _buildExampleConfigurations(colors),
@@ -311,11 +311,11 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
       children: [
         // Server name input
         _buildServerNameInput(colors),
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
         
         // Transport type selector
         _buildTransportTypeSelector(colors),
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
         
         if (transportType == TransportType.stdio) ...[
           // Command configuration
@@ -325,7 +325,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
           _buildUrlConfiguration(colors),
         ],
         
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
         
         // Environment variables
         _buildEnvironmentVariables(colors),
@@ -344,7 +344,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         TextFormField(
           controller: _serverNameController,
           validator: (value) {
@@ -361,7 +361,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             ),
-            contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+            contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           ),
         ),
       ],
@@ -379,13 +379,13 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         Row(
           children: [
             Expanded(
               child: RadioListTile<TransportType>(
-                title: Text('Standard I/O'),
-                subtitle: Text('Process communication'),
+                title: const Text('Standard I/O'),
+                subtitle: const Text('Process communication'),
                 value: TransportType.stdio,
                 groupValue: transportType,
                 onChanged: (value) => setState(() => transportType = value!),
@@ -393,8 +393,8 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             ),
             Expanded(
               child: RadioListTile<TransportType>(
-                title: Text('Server-Sent Events'),
-                subtitle: Text('HTTP/SSE connection'),
+                title: const Text('Server-Sent Events'),
+                subtitle: const Text('HTTP/SSE connection'),
                 value: TransportType.sse,
                 groupValue: transportType,
                 onChanged: (value) => setState(() => transportType = value!),
@@ -414,7 +414,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
           'Command Configuration',
           style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         // Command input
         TextFormField(
@@ -431,11 +431,11 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             ),
-            contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+            contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           ),
         ),
         
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         // Arguments
         _buildArgumentsList(colors),
@@ -451,7 +451,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
           'URL Configuration',
           style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         TextFormField(
           controller: _urlController,
@@ -472,7 +472,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             ),
-            contentPadding: EdgeInsets.all(SpacingTokens.componentSpacing),
+            contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           ),
         ),
       ],
@@ -492,18 +492,18 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             AsmblButton.secondary(
               text: 'Add Argument',
               onPressed: _addArgument,
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         if (arguments.isEmpty)
           Container(
-            padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+            padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
             decoration: BoxDecoration(
               color: colors.surfaceVariant,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -521,8 +521,8 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             final index = entry.key;
             final arg = entry.value;
             return Container(
-              margin: EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
-              padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+              margin: const EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
+              padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               decoration: BoxDecoration(
                 color: colors.surfaceVariant,
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -544,7 +544,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
                       ),
                     ),
                   ),
-                  SizedBox(width: SpacingTokens.componentSpacing),
+                  const SizedBox(width: SpacingTokens.componentSpacing),
                   Expanded(
                     child: Text(
                       arg,
@@ -558,7 +558,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
                 ],
               ),
             );
-          }).toList(),
+          }),
       ],
     );
   }
@@ -573,18 +573,18 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
               'Environment Variables',
               style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
             ),
-            Spacer(),
+            const Spacer(),
             AsmblButton.secondary(
               text: 'Add Variable',
               onPressed: _addEnvVar,
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         if (envVars.isEmpty)
           Container(
-            padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+            padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
             decoration: BoxDecoration(
               color: colors.surfaceVariant,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -602,13 +602,13 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
             final index = entry.key;
             final envVar = entry.value;
             return Container(
-              margin: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+              margin: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
               child: _EnvVarInput(
                 envVar: envVar,
                 onRemove: () => _removeEnvVar(index),
               ),
             );
-          }).toList(),
+          }),
       ],
     );
   }
@@ -623,7 +623,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
         _ExampleConfigCard(
           title: 'NPX Server',
           description: 'Standard NPX-based MCP server',
-          config: {
+          config: const {
             'command': 'npx',
             'args': ['-y', '@my-org/my-mcp-server'],
           },
@@ -632,7 +632,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
         _ExampleConfigCard(
           title: 'Python Server',
           description: 'Python-based MCP server with virtual environment',
-          config: {
+          config: const {
             'command': 'python',
             'args': ['-m', 'my_mcp_server'],
             'env': {
@@ -644,7 +644,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
         _ExampleConfigCard(
           title: 'Local SSE Server',
           description: 'Server-sent events transport',
-          config: {
+          config: const {
             'transport': 'sse',
             'url': 'http://localhost:8080/mcp',
           },
@@ -662,7 +662,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
           text: 'Cancel',
           onPressed: () => Navigator.of(context).pop(),
         ),
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         AsmblButton.primary(
           text: 'Add MCP Server',
           onPressed: _canAddServer() ? _handleAddServer : null,
@@ -694,7 +694,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
   void _formatJson() {
     try {
       final parsed = jsonDecode(_jsonConfigController.text);
-      final formatted = JsonEncoder.withIndent('  ').convert(parsed);
+      final formatted = const JsonEncoder.withIndent('  ').convert(parsed);
       _jsonConfigController.text = formatted;
       _validateJson(formatted);
     } catch (e) {
@@ -755,13 +755,13 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
               size: 48,
               color: colors.onSurfaceVariant,
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'No configuration fields available for this integration.',
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Please use JSON or Manual configuration instead.',
               style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
@@ -777,12 +777,12 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
       children: [
         // Server name input
         _buildServerNameInput(colors),
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
         
         // Integration info (if available)
         if (widget.integration != null) ...[
           _buildIntegrationInfo(widget.integration!, colors),
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
         ],
         
         // Structured form
@@ -790,7 +790,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
           'Configuration',
           style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         
         StructuredFormRenderer(
           configFields: configFields,
@@ -814,7 +814,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                 decoration: BoxDecoration(
                   color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -825,7 +825,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
                   color: colors.primary,
                 ),
               ),
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -834,7 +834,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
                       integration.name,
                       style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
                     ),
-                    SizedBox(height: SpacingTokens.xs_precise),
+                    const SizedBox(height: SpacingTokens.xs_precise),
                     Text(
                       integration.description,
                       style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
@@ -883,7 +883,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
       if (parsedConfig == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Please fix JSON configuration errors'),
+            content: const Text('Please fix JSON configuration errors'),
             backgroundColor: ThemeColors(context).error,
           ),
         );
@@ -1031,7 +1031,7 @@ class _MethodTab extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: SpacingTokens.sectionSpacing,
           vertical: SpacingTokens.componentSpacing,
         ),
@@ -1068,7 +1068,7 @@ class _EnvVarInput extends StatelessWidget {
     final colors = ThemeColors(context);
     
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+      padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
       decoration: BoxDecoration(
         color: colors.surfaceVariant,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -1080,7 +1080,7 @@ class _EnvVarInput extends StatelessWidget {
             flex: 2,
             child: TextField(
               controller: envVar.keyController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Variable Name',
                 hintText: 'API_KEY',
                 border: InputBorder.none,
@@ -1088,12 +1088,12 @@ class _EnvVarInput extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: SpacingTokens.componentSpacing),
+          const SizedBox(width: SpacingTokens.componentSpacing),
           Expanded(
             flex: 3,
             child: TextField(
               controller: envVar.valueController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Value',
                 hintText: 'your-api-key-here',
                 border: InputBorder.none,
@@ -1130,8 +1130,8 @@ class _ExampleConfigCard extends StatelessWidget {
     final colors = ThemeColors(context);
     
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
-      padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
+      padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
       decoration: BoxDecoration(
         color: colors.surfaceVariant,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -1150,7 +1150,7 @@ class _ExampleConfigCard extends StatelessWidget {
                       title,
                       style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
                     ),
-                    SizedBox(height: SpacingTokens.xs_precise),
+                    const SizedBox(height: SpacingTokens.xs_precise),
                     Text(
                       description,
                       style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
@@ -1164,15 +1164,15 @@ class _ExampleConfigCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           Container(
-            padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+            padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
             decoration: BoxDecoration(
               color: colors.surface,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Text(
-              JsonEncoder.withIndent('  ').convert(config),
+              const JsonEncoder.withIndent('  ').convert(config),
               style: TextStyles.caption.copyWith(
                 color: colors.onSurface,
                 fontFamily: 'monospace',
@@ -1200,11 +1200,11 @@ class _AddArgumentDialogState extends State<_AddArgumentDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Add Argument'),
+      title: const Text('Add Argument'),
       content: TextField(
         controller: _controller,
         autofocus: true,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           labelText: 'Argument',
           hintText: '--port 8080',
         ),
@@ -1218,7 +1218,7 @@ class _AddArgumentDialogState extends State<_AddArgumentDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
         TextButton(
           onPressed: () {
@@ -1228,7 +1228,7 @@ class _AddArgumentDialogState extends State<_AddArgumentDialog> {
               Navigator.of(context).pop();
             }
           },
-          child: Text('Add'),
+          child: const Text('Add'),
         ),
       ],
     );

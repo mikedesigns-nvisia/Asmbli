@@ -186,7 +186,7 @@ class ContextResourceServer {
 
   /// Parse context URI to extract document ID
   String? _parseContextURI(String uri) {
-    final contextPrefix = 'context://';
+    const contextPrefix = 'context://';
     if (!uri.startsWith(contextPrefix)) {
       return null;
     }

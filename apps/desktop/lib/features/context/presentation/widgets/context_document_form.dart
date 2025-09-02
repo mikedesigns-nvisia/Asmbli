@@ -79,7 +79,7 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  ],
  ),
 
- SizedBox(height: SpacingTokens.xl),
+ const SizedBox(height: SpacingTokens.xl),
 
  // Title Field
  Column(
@@ -92,7 +92,7 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  TextFormField(
  controller: _titleController,
  decoration: InputDecoration(
@@ -126,7 +126,7 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  ],
  ),
 
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
 
  // Type Dropdown
  Column(
@@ -139,9 +139,9 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  DropdownButtonFormField<ContextType>(
- value: _selectedType,
+ initialValue: _selectedType,
  decoration: InputDecoration(
  filled: true,
  fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
@@ -181,7 +181,7 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  ],
  ),
 
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
 
  // Tags Field
  Column(
@@ -194,14 +194,14 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Text(
  'Separate tags with commas',
  style: TextStyles.caption.copyWith(
  color: colors.onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  TextFormField(
  controller: _tagsController,
  decoration: InputDecoration(
@@ -236,7 +236,7 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  ],
  ),
 
- SizedBox(height: SpacingTokens.lg),
+ const SizedBox(height: SpacingTokens.lg),
 
  // Content Field
  Column(
@@ -249,7 +249,7 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  fontWeight: FontWeight.w600,
  ),
  ),
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  TextFormField(
  controller: _contentController,
  maxLines: 12,
@@ -285,7 +285,7 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  ],
  ),
 
- SizedBox(height: SpacingTokens.xl),
+ const SizedBox(height: SpacingTokens.xl),
 
  // Form Actions
  Row(
@@ -296,7 +296,7 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  onPressed: widget.onCancel,
  size: AsmblButtonSize.medium,
  ),
- SizedBox(width: SpacingTokens.md),
+ const SizedBox(width: SpacingTokens.md),
  AsmblButtonEnhanced.accent(
  text: widget.initialDocument != null ? 'Update' : 'Create',
  onPressed: _handleSave,

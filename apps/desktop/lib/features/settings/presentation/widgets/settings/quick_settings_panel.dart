@@ -13,7 +13,7 @@ class QuickSettingsPanel extends ConsumerWidget {
     final colors = ThemeColors(context);
 
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+      padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -22,7 +22,7 @@ class QuickSettingsPanel extends ConsumerWidget {
             'Quick Settings',
             style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
           ),
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // Quick Settings Cards
           Expanded(
@@ -30,11 +30,11 @@ class QuickSettingsPanel extends ConsumerWidget {
               child: Column(
                 children: [
                   _buildAppearanceCard(colors, ref),
-                  SizedBox(height: SpacingTokens.componentSpacing),
+                  const SizedBox(height: SpacingTokens.componentSpacing),
                   _buildIntegrationCard(colors, ref),
-                  SizedBox(height: SpacingTokens.componentSpacing),
+                  const SizedBox(height: SpacingTokens.componentSpacing),
                   _buildSystemCard(colors),
-                  SizedBox(height: SpacingTokens.componentSpacing),
+                  const SizedBox(height: SpacingTokens.componentSpacing),
                   _buildHelpCard(colors),
                 ],
               ),
@@ -61,7 +61,7 @@ class QuickSettingsPanel extends ConsumerWidget {
             themeService.setTheme(value ? ThemeMode.dark : ThemeMode.light);
           },
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         _QuickSlider(
           label: 'UI Scale',
           value: 1.0,
@@ -81,7 +81,7 @@ class QuickSettingsPanel extends ConsumerWidget {
       title: 'Integration Experience',
       icon: Icons.hub,
       color: colors.accent,
-      children: [
+      children: const [
         IntegrationExperienceToggle(),
       ],
     );
@@ -101,7 +101,7 @@ class QuickSettingsPanel extends ConsumerWidget {
             // This would integrate with system-specific APIs
           },
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         _QuickToggle(
           label: 'Minimize to Tray',
           value: true,
@@ -110,7 +110,7 @@ class QuickSettingsPanel extends ConsumerWidget {
             // This would integrate with desktop window management
           },
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         _QuickAction(
           label: 'Check for Updates',
           icon: Icons.update,
@@ -135,7 +135,7 @@ class QuickSettingsPanel extends ConsumerWidget {
             // Open documentation functionality would go here
           },
         ),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         _QuickAction(
           label: 'Keyboard Shortcuts',
           icon: Icons.keyboard,
@@ -143,7 +143,7 @@ class QuickSettingsPanel extends ConsumerWidget {
             // Show keyboard shortcuts functionality would go here
           },
         ),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         _QuickAction(
           label: 'Report Issue',
           icon: Icons.bug_report,
@@ -175,7 +175,7 @@ class _QuickSettingsCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
@@ -184,7 +184,7 @@ class _QuickSettingsCard extends StatelessWidget {
           BoxShadow(
             color: colors.onSurface.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -195,7 +195,7 @@ class _QuickSettingsCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(SpacingTokens.iconSpacing),
+                padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -206,7 +206,7 @@ class _QuickSettingsCard extends StatelessWidget {
                   color: color,
                 ),
               ),
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               Text(
                 title,
                 style: TextStyles.bodyLarge.copyWith(
@@ -217,7 +217,7 @@ class _QuickSettingsCard extends StatelessWidget {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // Card Content
           ...children,
@@ -293,12 +293,12 @@ class _QuickSlider extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: SpacingTokens.iconSpacing),
+        const SizedBox(height: SpacingTokens.iconSpacing),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             trackHeight: 4,
-            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8),
-            overlayShape: RoundSliderOverlayShape(overlayRadius: 16),
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
           ),
           child: Slider(
             value: value,
@@ -331,7 +331,7 @@ class _QuickAction extends StatelessWidget {
       onTap: onPressed,
       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: SpacingTokens.iconSpacing),
+        padding: const EdgeInsets.symmetric(vertical: SpacingTokens.iconSpacing),
         child: Row(
           children: [
             Icon(
@@ -339,12 +339,12 @@ class _QuickAction extends StatelessWidget {
               size: 18,
               color: colors.onSurfaceVariant,
             ),
-            SizedBox(width: SpacingTokens.componentSpacing),
+            const SizedBox(width: SpacingTokens.componentSpacing),
             Text(
               label,
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
             ),
-            Spacer(),
+            const Spacer(),
             Icon(
               Icons.arrow_forward_ios,
               size: 12,

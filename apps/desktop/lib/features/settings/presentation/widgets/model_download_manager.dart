@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/tokens/theme_colors.dart';
 import '../../../../core/models/model_config.dart';
 import '../../../../core/services/model_config_service.dart';
 import 'ollama_setup_dialog.dart';
@@ -25,7 +24,7 @@ class ModelDownloadManager extends ConsumerWidget {
       children: [
         // Section header
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+          padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -37,7 +36,7 @@ class ModelDownloadManager extends ConsumerWidget {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              SizedBox(height: SpacingTokens.iconSpacing),
+              const SizedBox(height: SpacingTokens.iconSpacing),
               Text(
                 'Download and manage local LLM models for offline AI capabilities',
                 style: GoogleFonts.fustat(
@@ -49,22 +48,22 @@ class ModelDownloadManager extends ConsumerWidget {
           ),
         ),
 
-        SizedBox(height: SpacingTokens.sectionSpacing),
+        const SizedBox(height: SpacingTokens.sectionSpacing),
 
         // Available models for download
         if (availableModels.isNotEmpty) ...[
           _buildSectionHeader('Available for Download', icon: Icons.download, theme: theme),
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           ...availableModels.entries.map((entry) => 
             _buildAvailableModelCard(entry.value, modelConfigService, theme, colors, ref)
           ),
-          SizedBox(height: SpacingTokens.sectionSpacing),
+          const SizedBox(height: SpacingTokens.sectionSpacing),
         ],
 
         // Downloaded/installed models
         if (localModels.isNotEmpty) ...[
           _buildSectionHeader('Downloaded Models', icon: Icons.check_circle, theme: theme),
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           ...localModels.entries.map((entry) => 
             _buildInstalledModelCard(entry.value, modelConfigService, theme, colors, ref)
           ),
@@ -80,11 +79,11 @@ class ModelDownloadManager extends ConsumerWidget {
 
   Widget _buildSectionHeader(String title, {required IconData icon, required ThemeData theme}) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
+      padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
       child: Row(
         children: [
           Icon(icon, size: 16, color: theme.colorScheme.primary),
-          SizedBox(width: SpacingTokens.iconSpacing),
+          const SizedBox(width: SpacingTokens.iconSpacing),
           Text(
             title,
             style: GoogleFonts.fustat(
@@ -109,11 +108,11 @@ class ModelDownloadManager extends ConsumerWidget {
     final downloadProgress = service.getDownloadProgress(model.id);
     
     return Container(
-      margin: EdgeInsets.symmetric(
+      margin: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.elementSpacing,
         vertical: SpacingTokens.componentSpacing,
       ),
-      padding: EdgeInsets.all(SpacingTokens.cardPadding),
+      padding: const EdgeInsets.all(SpacingTokens.cardPadding),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
@@ -128,7 +127,7 @@ class ModelDownloadManager extends ConsumerWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -139,7 +138,7 @@ class ModelDownloadManager extends ConsumerWidget {
                   color: colors.primary,
                 ),
               ),
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,7 +151,7 @@ class ModelDownloadManager extends ConsumerWidget {
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       '${model.provider} ${model.model}',
                       style: GoogleFonts.fustat(
@@ -168,7 +167,7 @@ class ModelDownloadManager extends ConsumerWidget {
             ],
           ),
 
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
 
           // Model details
           Wrap(
@@ -182,7 +181,7 @@ class ModelDownloadManager extends ConsumerWidget {
             ],
           ),
 
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
 
           // Download progress or button
           if (isDownloading && downloadProgress != null) ...[
@@ -196,7 +195,7 @@ class ModelDownloadManager extends ConsumerWidget {
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 LinearProgressIndicator(
                   value: downloadProgress,
                   backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.2),
@@ -229,11 +228,11 @@ class ModelDownloadManager extends ConsumerWidget {
     final isReady = model.status == ModelStatus.ready;
     
     return Container(
-      margin: EdgeInsets.symmetric(
+      margin: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.elementSpacing,
         vertical: SpacingTokens.componentSpacing,
       ),
-      padding: EdgeInsets.all(SpacingTokens.cardPadding),
+      padding: const EdgeInsets.all(SpacingTokens.cardPadding),
       decoration: BoxDecoration(
         color: isReady 
           ? colors.success.withValues(alpha: 0.05)
@@ -252,11 +251,11 @@ class ModelDownloadManager extends ConsumerWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isReady 
                     ? colors.success.withValues(alpha: 0.1)
-                    : theme.colorScheme.surfaceVariant,
+                    : theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -265,7 +264,7 @@ class ModelDownloadManager extends ConsumerWidget {
                   color: isReady ? colors.success : theme.colorScheme.onSurfaceVariant,
                 ),
               ),
-              SizedBox(width: SpacingTokens.componentSpacing),
+              const SizedBox(width: SpacingTokens.componentSpacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +277,7 @@ class ModelDownloadManager extends ConsumerWidget {
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Row(
                       children: [
                         Container(
@@ -289,7 +288,7 @@ class ModelDownloadManager extends ConsumerWidget {
                             shape: BoxShape.circle,
                           ),
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           _getStatusText(model.status),
                           style: GoogleFonts.fustat(
@@ -312,14 +311,14 @@ class ModelDownloadManager extends ConsumerWidget {
                     child: Row(
                       children: [
                         Icon(Icons.delete, size: 16, color: colors.error),
-                        SizedBox(width: 8),
-                        Text('Remove Model'),
+                        const SizedBox(width: 8),
+                        const Text('Remove Model'),
                       ],
                     ),
                   ),
                 ],
                 child: Container(
-                  padding: EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surface,
                     borderRadius: BorderRadius.circular(4),
@@ -334,7 +333,7 @@ class ModelDownloadManager extends ConsumerWidget {
             ],
           ),
 
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
 
           // Model details
           Wrap(
@@ -355,16 +354,16 @@ class ModelDownloadManager extends ConsumerWidget {
 
   Widget _buildModelChip(String text, IconData icon, ThemeData theme) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 10, color: theme.colorScheme.onSurfaceVariant),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
             text,
             style: GoogleFonts.fustat(
@@ -381,14 +380,14 @@ class ModelDownloadManager extends ConsumerWidget {
   Widget _buildEmptyState(BuildContext context, ThemeData theme, ThemeColors colors) {
     return Center(
       child: Container(
-        margin: EdgeInsets.all(SpacingTokens.sectionSpacing),
-        padding: EdgeInsets.all(SpacingTokens.sectionSpacing),
+        margin: const EdgeInsets.all(SpacingTokens.sectionSpacing),
+        padding: const EdgeInsets.all(SpacingTokens.sectionSpacing),
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(SpacingTokens.elementSpacing),
+              padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
+                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
@@ -397,7 +396,7 @@ class ModelDownloadManager extends ConsumerWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(
               'No Local Models Available',
               style: GoogleFonts.fustat(
@@ -406,7 +405,7 @@ class ModelDownloadManager extends ConsumerWidget {
                 color: theme.colorScheme.onSurface,
               ),
             ),
-            SizedBox(height: SpacingTokens.componentSpacing),
+            const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
               'Local model downloads will be available once the\nOllama service is properly configured.',
               style: GoogleFonts.fustat(
@@ -415,7 +414,7 @@ class ModelDownloadManager extends ConsumerWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: SpacingTokens.sectionSpacing),
+            const SizedBox(height: SpacingTokens.sectionSpacing),
             AsmblButton.primary(
               text: 'Set Up Ollama',
               onPressed: () => OllamaSetupDialog.show(context),

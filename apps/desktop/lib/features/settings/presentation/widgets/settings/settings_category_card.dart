@@ -31,7 +31,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
     _expandAnimation = CurvedAnimation(
@@ -66,7 +66,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
@@ -79,13 +79,13 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
               BoxShadow(
                 color: colors.primary.withValues(alpha: 0.1),
                 blurRadius: 16,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               )
             else
               BoxShadow(
                 color: colors.onSurface.withValues(alpha: 0.05),
                 blurRadius: 8,
-                offset: Offset(0, 2),
+                offset: const Offset(0, 2),
               ),
           ],
         ),
@@ -95,7 +95,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
             onTap: widget.onTap,
             borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
             child: Padding(
-              padding: EdgeInsets.all(SpacingTokens.lg),
+              padding: const EdgeInsets.all(SpacingTokens.lg),
               child: Column(
                 children: [
                   // Main Card Content
@@ -120,8 +120,8 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
       children: [
         // Category Icon
         AnimatedContainer(
-          duration: Duration(milliseconds: 150),
-          padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           decoration: BoxDecoration(
             color: widget.category.color.withValues(alpha: _isHovered ? 0.15 : 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -133,7 +133,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
           ),
         ),
         
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         
         // Category Info
         Expanded(
@@ -151,18 +151,18 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
                   ),
                   
                   if (widget.category.badge != null) ...[
-                    SizedBox(width: SpacingTokens.iconSpacing),
+                    const SizedBox(width: SpacingTokens.iconSpacing),
                     _buildBadge(colors),
                   ],
                   
                   if (widget.category.isAdvanced) ...[
-                    SizedBox(width: SpacingTokens.iconSpacing),
+                    const SizedBox(width: SpacingTokens.iconSpacing),
                     _buildAdvancedBadge(colors),
                   ],
                 ],
               ),
               
-              SizedBox(height: SpacingTokens.xs_precise),
+              const SizedBox(height: SpacingTokens.xs_precise),
               
               Text(
                 widget.category.description,
@@ -182,7 +182,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
 
   Widget _buildBadge(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.iconSpacing,
         vertical: 2,
       ),
@@ -206,7 +206,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
 
   Widget _buildAdvancedBadge(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: SpacingTokens.iconSpacing,
         vertical: 2,
       ),
@@ -225,7 +225,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
             size: 10,
             color: colors.warning,
           ),
-          SizedBox(width: 2),
+          const SizedBox(width: 2),
           Text(
             'ADVANCED',
             style: TextStyles.caption.copyWith(
@@ -248,7 +248,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
           onPressed: widget.onExpand,
           icon: AnimatedRotation(
             turns: widget.isExpanded ? 0.5 : 0,
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             child: Icon(
               Icons.expand_more,
               color: colors.onSurfaceVariant,
@@ -273,11 +273,11 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
 
   Widget _buildExpandedContent(ThemeColors colors) {
     return Padding(
-      padding: EdgeInsets.only(top: SpacingTokens.componentSpacing),
+      padding: const EdgeInsets.only(top: SpacingTokens.componentSpacing),
       child: Column(
         children: [
           Divider(color: colors.border),
-          SizedBox(height: SpacingTokens.componentSpacing),
+          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // Quick Settings Based on Category
           _buildQuickSettings(colors),
@@ -310,7 +310,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
           (value) => {}, // TODO: Implement
           colors,
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         _buildQuickAction(
           'Change Theme',
           'Browse available themes',
@@ -333,7 +333,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
           (value) => {}, // TODO: Implement
           colors,
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         _buildQuickToggle(
           'Sound Alerts',
           'Play sounds for notifications',
@@ -357,7 +357,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
           (value) => {}, // TODO: Implement
           colors,
         ),
-        SizedBox(height: SpacingTokens.componentSpacing),
+        const SizedBox(height: SpacingTokens.componentSpacing),
         _buildQuickAction(
           'Clear Data',
           'Remove stored conversations and cache',
@@ -371,7 +371,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
 
   Widget _buildDefaultQuickSettings(ThemeColors colors) {
     return Container(
-      padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+      padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
       decoration: BoxDecoration(
         color: colors.surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -383,7 +383,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
             color: colors.onSurfaceVariant,
             size: 20,
           ),
-          SizedBox(width: SpacingTokens.componentSpacing),
+          const SizedBox(width: SpacingTokens.componentSpacing),
           Text(
             'Click the arrow to access all ${widget.category.title.toLowerCase()} settings',
             style: TextStyles.bodyMedium.copyWith(
@@ -406,7 +406,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
     return Row(
       children: [
         Icon(icon, color: colors.onSurfaceVariant, size: 20),
-        SizedBox(width: SpacingTokens.componentSpacing),
+        const SizedBox(width: SpacingTokens.componentSpacing),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,11 +446,11 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
       onTap: onPressed,
       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: SpacingTokens.iconSpacing),
+        padding: const EdgeInsets.symmetric(vertical: SpacingTokens.iconSpacing),
         child: Row(
           children: [
             Icon(icon, color: colors.primary, size: 20),
-            SizedBox(width: SpacingTokens.componentSpacing),
+            const SizedBox(width: SpacingTokens.componentSpacing),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

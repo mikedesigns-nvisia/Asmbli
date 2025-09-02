@@ -18,20 +18,20 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
     final usageData = analyticsService.getAllUsageData();
     
     return SingleChildScrollView(
-      padding: EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           
           // Real-time Status
           _buildRealTimeStatus(context, realTimeTracker, usageData),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           
           // Statistics Overview
           _buildStatisticsOverview(statistics),
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           
           // Charts and Insights Row
           Row(
@@ -43,12 +43,12 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
                 child: Column(
                   children: [
                     _buildUsageChart(usageData),
-                    SizedBox(height: SpacingTokens.lg),
+                    const SizedBox(height: SpacingTokens.lg),
                     _buildTopIntegrations(usageData),
                   ],
                 ),
               ),
-              SizedBox(width: SpacingTokens.lg),
+              const SizedBox(width: SpacingTokens.lg),
               
               // Performance Insights
               Expanded(
@@ -57,12 +57,12 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
             ],
           ),
           
-          SizedBox(height: SpacingTokens.xxl),
+          const SizedBox(height: SpacingTokens.xxl),
           
           // Usage-based Recommendations
           if (recommendations.isNotEmpty) ...[
             _buildUsageRecommendations(recommendations),
-            SizedBox(height: SpacingTokens.xxl),
+            const SizedBox(height: SpacingTokens.xxl),
           ],
           
           // Detailed Usage Table
@@ -80,7 +80,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
           'Integration Analytics',
           style: TextStyles.pageTitle,
         ),
-        SizedBox(height: SpacingTokens.xs),
+        const SizedBox(height: SpacingTokens.xs),
         Text(
           'Monitor integration performance, usage patterns, and optimization opportunities',
           style: TextStyles.bodyMedium.copyWith(
@@ -102,7 +102,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
             SemanticColors.primary,
           ),
         ),
-        SizedBox(width: SpacingTokens.lg),
+        const SizedBox(width: SpacingTokens.lg),
         Expanded(
           child: _buildStatCard(
             'Active This Week',
@@ -111,7 +111,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
             SemanticColors.success,
           ),
         ),
-        SizedBox(width: SpacingTokens.lg),
+        const SizedBox(width: SpacingTokens.lg),
         Expanded(
           child: _buildStatCard(
             'Total Invocations',
@@ -120,7 +120,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
             SemanticColors.warning,
           ),
         ),
-        SizedBox(width: SpacingTokens.lg),
+        const SizedBox(width: SpacingTokens.lg),
         Expanded(
           child: _buildStatCard(
             'Success Rate',
@@ -135,16 +135,16 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
 
   Widget _buildStatCard(String title, String value, IconData icon, Color color) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(icon, color: color, size: 20),
-              Spacer(),
+              const Spacer(),
               Container(
-                padding: EdgeInsets.all(4),
+                padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -153,12 +153,12 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
             value,
             style: TextStyles.cardTitle.copyWith(color: color),
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Text(
             title,
             style: TextStyles.bodySmall.copyWith(
@@ -173,7 +173,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
   Widget _buildUsageChart(Map<String, IntegrationUsageData> usageData) {
     if (usageData.isEmpty) {
       return AsmblCard(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: _buildEmptyState('No usage data available'),
       );
     }
@@ -185,28 +185,28 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
     final maxUsage = topEntries.isNotEmpty ? topEntries.first.value.totalInvocations : 1;
 
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.bar_chart, color: SemanticColors.primary, size: 16),
-              SizedBox(width: SpacingTokens.xs),
+              const Icon(Icons.bar_chart, color: SemanticColors.primary, size: 16),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Integration Usage',
                 style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...topEntries.map((entry) {
             final integration = IntegrationRegistry.getById(entry.key);
             final percentage = entry.value.totalInvocations / maxUsage;
             
             return Padding(
-              padding: EdgeInsets.only(bottom: SpacingTokens.sm),
+              padding: const EdgeInsets.only(bottom: SpacingTokens.sm),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -226,11 +226,11 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   LinearProgressIndicator(
                     value: percentage,
                     backgroundColor: SemanticColors.border,
-                    valueColor: AlwaysStoppedAnimation(SemanticColors.primary),
+                    valueColor: const AlwaysStoppedAnimation(SemanticColors.primary),
                     minHeight: 6,
                   ),
                 ],
@@ -245,7 +245,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
   Widget _buildTopIntegrations(Map<String, IntegrationUsageData> usageData) {
     if (usageData.isEmpty) {
       return AsmblCard(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: _buildEmptyState('No integrations configured'),
       );
     }
@@ -254,32 +254,32 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
       ..sort((a, b) => b.value.lastUsed.compareTo(a.value.lastUsed));
 
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.trending_up, color: SemanticColors.success, size: 16),
-              SizedBox(width: SpacingTokens.xs),
+              const Icon(Icons.trending_up, color: SemanticColors.success, size: 16),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Recently Active',
                 style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...sortedByRecent.take(5).map((entry) {
             final integration = IntegrationRegistry.getById(entry.key);
             final usage = entry.value;
             
             return Padding(
-              padding: EdgeInsets.only(bottom: SpacingTokens.sm),
+              padding: const EdgeInsets.only(bottom: SpacingTokens.sm),
               child: Row(
                 children: [
                   _buildIntegrationIcon(integration),
-                  SizedBox(width: SpacingTokens.sm),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,21 +309,21 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
 
   Widget _buildPerformanceInsights(List<PerformanceInsight> insights) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.insights, color: SemanticColors.warning, size: 16),
-              SizedBox(width: SpacingTokens.xs),
+              const Icon(Icons.insights, color: SemanticColors.warning, size: 16),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Performance Insights',
                 style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           if (insights.isEmpty)
             _buildEmptyState('All integrations performing well!')
@@ -339,8 +339,8 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
     final icon = _getInsightIcon(insight.type);
     
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -355,7 +355,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
           Row(
             children: [
               Icon(icon, color: color, size: 14),
-              SizedBox(width: SpacingTokens.xs),
+              const SizedBox(width: SpacingTokens.xs),
               Expanded(
                 child: Text(
                   insight.title,
@@ -367,7 +367,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.xs),
+          const SizedBox(height: SpacingTokens.xs),
           Text(
             insight.description,
             style: TextStyles.bodySmall,
@@ -379,21 +379,21 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
 
   Widget _buildUsageRecommendations(List<UsageBasedRecommendation> recommendations) {
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.recommend, color: SemanticColors.primary, size: 16),
-              SizedBox(width: SpacingTokens.xs),
+              const Icon(Icons.recommend, color: SemanticColors.primary, size: 16),
+              const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Usage-Based Recommendations',
                 style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           ...recommendations.map((rec) => _buildRecommendationItem(rec)),
         ],
@@ -403,11 +403,11 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
 
   Widget _buildRecommendationItem(UsageBasedRecommendation recommendation) {
     final integration = IntegrationRegistry.getById(recommendation.integrationId);
-    if (integration == null) return SizedBox.shrink();
+    if (integration == null) return const SizedBox.shrink();
     
     return Container(
-      margin: EdgeInsets.only(bottom: SpacingTokens.sm),
-      padding: EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: SemanticColors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -416,7 +416,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
       child: Row(
         children: [
           _buildIntegrationIcon(integration),
-          SizedBox(width: SpacingTokens.sm),
+          const SizedBox(width: SpacingTokens.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -443,13 +443,13 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
   Widget _buildDetailedUsageTable(Map<String, IntegrationUsageData> usageData) {
     if (usageData.isEmpty) {
       return AsmblCard(
-        padding: EdgeInsets.all(SpacingTokens.lg),
+        padding: const EdgeInsets.all(SpacingTokens.lg),
         child: _buildEmptyState('No usage data available'),
       );
     }
 
     return AsmblCard(
-      padding: EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -457,12 +457,12 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
             'Detailed Usage Statistics',
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: SpacingTokens.lg),
           
           // Table headers
           Container(
-            padding: EdgeInsets.symmetric(vertical: SpacingTokens.sm),
-            decoration: BoxDecoration(
+            padding: const EdgeInsets.symmetric(vertical: SpacingTokens.sm),
+            decoration: const BoxDecoration(
               border: Border(bottom: BorderSide(color: SemanticColors.border)),
             ),
             child: Row(
@@ -482,7 +482,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
             final usage = entry.value;
             
             return Container(
-              padding: EdgeInsets.symmetric(vertical: SpacingTokens.sm),
+              padding: const EdgeInsets.symmetric(vertical: SpacingTokens.sm),
               decoration: BoxDecoration(
                 border: Border(bottom: BorderSide(color: SemanticColors.border.withValues(alpha: 0.3))),
               ),
@@ -493,7 +493,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
                     child: Row(
                       children: [
                         _buildIntegrationIcon(integration),
-                        SizedBox(width: SpacingTokens.xs),
+                        const SizedBox(width: SpacingTokens.xs),
                         Text(integration?.name ?? entry.key, style: TextStyles.bodyMedium),
                       ],
                     ),
@@ -537,13 +537,13 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
         : SemanticColors.error;
     
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        '${percentage}%',
+        '$percentage%',
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.w600,
@@ -557,14 +557,14 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
     final percentage = (confidence * 100).toInt();
     
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: SemanticColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        '${percentage}%',
-        style: TextStyle(
+        '$percentage%',
+        style: const TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.w600,
           color: SemanticColors.primary,
@@ -577,12 +577,12 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
     return Center(
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.analytics,
             size: 32,
             color: SemanticColors.onSurfaceVariant,
           ),
-          SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
             message,
             style: TextStyles.bodyMedium.copyWith(
@@ -662,7 +662,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
         // Active Calls Monitor
         Expanded(
           child: AsmblCard(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -676,20 +676,20 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
                         color: tracker.activeCallsCount > 0 ? Colors.green : colors.onSurfaceVariant,
                       ),
                     ),
-                    SizedBox(width: SpacingTokens.xs),
+                    const SizedBox(width: SpacingTokens.xs),
                     Text(
                       'Real-time Status',
                       style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 Text(
                   'Active Calls: ${tracker.activeCallsCount}',
                   style: TextStyles.bodyMedium,
                 ),
                 if (tracker.activeCallsCount > 0) ...[
-                  SizedBox(height: SpacingTokens.xs),
+                  const SizedBox(height: SpacingTokens.xs),
                   Text(
                     'Integrations processing requests',
                     style: TextStyles.bodySmall.copyWith(
@@ -701,12 +701,12 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
             ),
           ),
         ),
-        SizedBox(width: SpacingTokens.lg),
+        const SizedBox(width: SpacingTokens.lg),
         
         // Data Quality Indicator
         Expanded(
           child: AsmblCard(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -717,21 +717,21 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
                       color: usageData.isNotEmpty ? colors.primary : colors.onSurfaceVariant,
                       size: 16,
                     ),
-                    SizedBox(width: SpacingTokens.xs),
+                    const SizedBox(width: SpacingTokens.xs),
                     Text(
                       'Data Source',
                       style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 Text(
                   usageData.isNotEmpty ? 'Real Usage Data' : 'No Data Yet',
                   style: TextStyles.bodyMedium.copyWith(
                     color: usageData.isNotEmpty ? colors.primary : colors.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(height: SpacingTokens.xs),
+                const SizedBox(height: SpacingTokens.xs),
                 Text(
                   usageData.isNotEmpty 
                       ? 'Analytics from ${usageData.length} integrations'
@@ -744,26 +744,26 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
             ),
           ),
         ),
-        SizedBox(width: SpacingTokens.lg),
+        const SizedBox(width: SpacingTokens.lg),
         
         // Recent Activity Indicator
         Expanded(
           child: AsmblCard(
-            padding: EdgeInsets.all(SpacingTokens.lg),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(Icons.timeline, color: colors.primary, size: 16),
-                    SizedBox(width: SpacingTokens.xs),
+                    const SizedBox(width: SpacingTokens.xs),
                     Text(
                       'Last Activity',
                       style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
-                SizedBox(height: SpacingTokens.sm),
+                const SizedBox(height: SpacingTokens.sm),
                 Builder(
                   builder: (context) {
                     if (usageData.isEmpty) {
@@ -797,7 +797,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
                           _formatLastUsed(mostRecent.lastUsed),
                           style: TextStyles.bodyMedium,
                         ),
-                        SizedBox(height: SpacingTokens.xs),
+                        const SizedBox(height: SpacingTokens.xs),
                         Text(
                           IntegrationRegistry.getById(mostRecent.integrationId)?.name ?? mostRecent.integrationId,
                           style: TextStyles.bodySmall.copyWith(

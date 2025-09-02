@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../models/enhanced_mcp_template.dart';
-import 'mcp_settings_service.dart';
 
 /// Enhanced MCP testing service with comprehensive validation and diagnostics
 /// Supports all server types: local, cloud, enterprise, database, etc.
@@ -245,8 +244,8 @@ class EnhancedMCPTestingService {
         }
       }
 
-      final fileCount = contents.where((e) => e is File).length;
-      final dirCount = contents.where((e) => e is Directory).length;
+      final fileCount = contents.whereType<File>().length;
+      final dirCount = contents.whereType<Directory>().length;
 
       return TestResult.success(
         serverId: serverId,
@@ -524,7 +523,7 @@ class EnhancedMCPTestingService {
     ));
 
     // Simulate connection test
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
     return TestResult.success(
       serverId: serverId,

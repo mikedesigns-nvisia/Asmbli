@@ -439,12 +439,12 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  child: Column(
  children: [
  // Header
- AppNavigationBar(currentRoute: AppRoutes.agents),
+ const AppNavigationBar(currentRoute: AppRoutes.agents),
 
  // Main Content
  Expanded(
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
+ padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -455,7 +455,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  color: ThemeColors(context).onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  selectedTab == 0 
  ? 'Manage and organize your AI-powered assistants'
@@ -464,7 +464,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  color: ThemeColors(context).onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
 
  // Tab Selector
  Row(
@@ -474,7 +474,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  isSelected: selectedTab == 0,
  onTap: () => setState(() => selectedTab = 0),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  _TabButton(
  text: 'Agent Library',
  isSelected: selectedTab == 1,
@@ -482,7 +482,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  ),
  ],
  ),
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
 
  // Content based on selected tab
  Expanded(
@@ -513,7 +513,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  // Agents Grid
  Expanded(
  child: GridView.builder(
- gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+ gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
  crossAxisCount: 3,
  crossAxisSpacing: SpacingTokens.componentSpacing,
  mainAxisSpacing: SpacingTokens.componentSpacing,
@@ -536,7 +536,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  CircularProgressIndicator(
  color: ThemeColors(context).primary,
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'Loading your agents...',
  style: TextStyles.bodyMedium.copyWith(
@@ -555,14 +555,14 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  size: 48,
  color: ThemeColors(context).error,
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'Failed to load agents',
  style: TextStyles.bodyLarge.copyWith(
  color: ThemeColors(context).error,
  ),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Text(
  error.toString(),
  style: TextStyles.bodySmall.copyWith(
@@ -570,7 +570,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  ),
  textAlign: TextAlign.center,
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  AsmblButton.secondary(
  text: 'Retry',
  onPressed: () {
@@ -612,7 +612,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  size: 18,
  ),
  border: InputBorder.none,
- contentPadding: EdgeInsets.symmetric(
+ contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing, 
  vertical: SpacingTokens.sm,
  ),
@@ -620,7 +620,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  style: TextStyles.bodyMedium.copyWith(color: ThemeColors(context).onSurface),
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  
  // Filter Chips
  Wrap(
@@ -652,7 +652,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  size: 18,
  ),
  border: InputBorder.none,
- contentPadding: EdgeInsets.symmetric(
+ contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing, 
  vertical: SpacingTokens.sm,
  ),
@@ -661,7 +661,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  ),
  ),
  ),
- SizedBox(width: SpacingTokens.componentSpacing),
+ const SizedBox(width: SpacingTokens.componentSpacing),
  
  // Filter Chips (flexible width)
  Expanded(
@@ -677,13 +677,13 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  }
  },
  ),
- SizedBox(height: SpacingTokens.elementSpacing),
+ const SizedBox(height: SpacingTokens.elementSpacing),
  // Templates Grid
  Expanded(
  child: filteredTemplates.isEmpty 
  ? _buildEmptyState()
  : GridView.builder(
- gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+ gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
  crossAxisCount: 3,
  crossAxisSpacing: SpacingTokens.componentSpacing,
  mainAxisSpacing: SpacingTokens.componentSpacing,
@@ -702,9 +702,134 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  );
  }
 
- void _useTemplate(AgentTemplate template) {
- // Navigate to agent wizard with this template pre-populated
- context.go('${AppRoutes.agentWizard}?template=${Uri.encodeComponent(template.name)}');
+ void _useTemplate(AgentTemplate template) async {
+ // Create a new agent from template using agent provider
+ final agentNotifier = ref.read(agentNotifierProvider.notifier);
+ 
+ try {
+   final newAgent = Agent(
+     id: 'agent_${DateTime.now().millisecondsSinceEpoch}',
+     name: template.name.replaceAll(' (Template)', ''),
+     description: template.description.split(' - ').first,
+     capabilities: _getCapabilitiesFromTemplate(template),
+     configuration: {
+       'systemPrompt': _generateSystemPromptFromTemplate(template),
+       'temperature': 0.7,
+       'maxTokens': 2048,
+       'source_template': template.name,
+       'category': template.category,
+       'mcpServers': template.mcpServers,
+     },
+   );
+   
+   await agentNotifier.createAgent(newAgent);
+   
+   // Navigate to agent configuration screen to edit the new agent
+   context.go('/agents/configure/${newAgent.id}');
+ } catch (e) {
+   // If agent creation fails, just navigate to new agent screen
+   context.go('/agents/configure');
+ }
+ }
+ 
+ List<String> _getCapabilitiesFromTemplate(AgentTemplate template) {
+   switch (template.category) {
+     case 'Research':
+       return ['research', 'analysis', 'citation', 'fact-checking'];
+     case 'Development':
+       return ['coding', 'debugging', 'code-review', 'testing'];
+     case 'Writing':
+       return ['content-creation', 'editing', 'seo', 'copywriting'];
+     case 'Data Analysis':
+       return ['data-analysis', 'visualization', 'statistics', 'reporting'];
+     case 'Customer Support':
+       return ['customer-service', 'troubleshooting', 'communication', 'ticket-management'];
+     case 'Marketing':
+       return ['marketing', 'campaigns', 'analytics', 'strategy'];
+     default:
+       return ['general-assistance', 'problem-solving', 'communication'];
+   }
+ }
+ 
+ String _generateSystemPromptFromTemplate(AgentTemplate template) {
+   switch (template.category) {
+     case 'Research':
+       return '''You are a helpful research assistant specializing in ${template.name.toLowerCase()}. You excel at:
+
+• Finding and analyzing relevant information from multiple sources
+• Providing accurate citations and references  
+• Synthesizing complex information into clear summaries
+• Fact-checking and verifying information accuracy
+
+Always provide well-sourced, objective information and clearly indicate when something is uncertain or requires verification.''';
+
+     case 'Development': 
+       return '''You are an expert ${template.name.toLowerCase()} focused on software development. Your strengths include:
+
+• Writing clean, efficient, and maintainable code
+• Following best practices and coding standards
+• Debugging and troubleshooting technical issues
+• Code review and optimization suggestions
+• Explaining complex technical concepts clearly
+
+Always provide well-commented code examples and explain your reasoning behind technical decisions.''';
+
+     case 'Writing':
+       return '''You are a professional ${template.name.toLowerCase()} who helps with content creation. You specialize in:
+
+• Creating engaging, well-structured content
+• Adapting tone and style to target audiences  
+• Grammar, style, and clarity improvements
+• SEO optimization and readability
+• Creative and persuasive writing techniques
+
+Always maintain high writing standards while preserving the author's unique voice and intent.''';
+
+     case 'Data Analysis':
+       return '''You are a skilled ${template.name.toLowerCase()} with expertise in data science. You excel at:
+
+• Statistical analysis and data interpretation
+• Data visualization and reporting
+• Identifying patterns and trends in datasets
+• Providing actionable insights from data
+• Explaining complex analytical concepts simply
+
+Always provide clear explanations of your analytical methods and ensure recommendations are data-driven.''';
+
+     case 'Customer Support':
+       return '''You are a friendly and efficient ${template.name.toLowerCase()}. Your core capabilities include:
+
+• Providing helpful, accurate customer service
+• Troubleshooting common issues step-by-step  
+• Escalating complex problems appropriately
+• Maintaining professional, empathetic communication
+• Following company policies and procedures
+
+Always prioritize customer satisfaction while being helpful, patient, and solution-focused.''';
+
+     case 'Marketing':
+       return '''You are a creative ${template.name.toLowerCase()} with expertise in marketing strategy. You specialize in:
+
+• Developing effective marketing campaigns
+• Understanding target audience needs and behaviors
+• Creating compelling content and messaging
+• Analyzing marketing performance and ROI
+• Staying current with marketing trends and best practices  
+
+Always focus on data-driven strategies that deliver measurable results and authentic brand engagement.''';
+
+     default:
+       return '''You are a helpful AI assistant specializing in ${template.name.toLowerCase()}. 
+
+Please customize this system prompt to define:
+• Your specific role and expertise
+• Key capabilities and strengths  
+• How you approach tasks and problems
+• Your communication style and tone
+• Any important guidelines or limitations
+
+This template gives you a starting point - modify it to create your perfect AI assistant!''';
+   }
  }
 
  IconData _getCategoryIcon(String category) {
@@ -726,7 +851,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  return GestureDetector(
  onTap: () => setState(() => selectedCategory = category),
  child: Container(
- padding: EdgeInsets.symmetric(
+ padding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.xs,
  ),
@@ -753,7 +878,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  ? Colors.white 
  : ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  ],
  Text(
  category,
@@ -782,21 +907,21 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  size: 48,
  color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'No templates found',
  style: TextStyles.bodyLarge.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Text(
  'Try adjusting your search or filters',
  style: TextStyles.bodySmall.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
  ),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  AsmblButton.secondary(
  text: 'Clear Filters',
  onPressed: () {
@@ -821,7 +946,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  size: 64,
  color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
  'No agents yet',
  style: TextStyles.bodyLarge.copyWith(
@@ -829,7 +954,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  fontWeight: FontWeight.bold,
  ),
  ),
- SizedBox(height: SpacingTokens.xs),
+ const SizedBox(height: SpacingTokens.xs),
  Text(
  'Create your first AI agent to get started',
  style: TextStyles.bodyMedium.copyWith(
@@ -837,14 +962,14 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  ),
  textAlign: TextAlign.center,
  ),
- SizedBox(height: SpacingTokens.sectionSpacing),
+ const SizedBox(height: SpacingTokens.sectionSpacing),
  AsmblButton.primary(
  text: 'Create Agent',
  onPressed: () {
- context.go(AppRoutes.agentWizard);
+ context.go('/agents/configure');
  },
  ),
- SizedBox(height: SpacingTokens.componentSpacing),
+ const SizedBox(height: SpacingTokens.componentSpacing),
  AsmblButton.secondary(
  text: 'Browse Templates',
  onPressed: () {
@@ -870,7 +995,7 @@ class _AgentCard extends StatelessWidget {
  context.go('${AppRoutes.chat}?agent=${agent.id}');
  },
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -882,7 +1007,7 @@ class _AgentCard extends StatelessWidget {
  alignment: Alignment.bottomRight,
  children: [
  Container(
- padding: EdgeInsets.all(SpacingTokens.xs),
+ padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
  color: ThemeColors(context).surfaceVariant,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -910,7 +1035,7 @@ class _AgentCard extends StatelessWidget {
  ),
  ],
  ),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  
  // Agent name and category
  Expanded(
@@ -927,7 +1052,7 @@ class _AgentCard extends StatelessWidget {
  maxLines: 1,
  overflow: TextOverflow.ellipsis,
  ),
- SizedBox(height: 2),
+ const SizedBox(height: 2),
  Text(
  agent.capabilities.isNotEmpty ? agent.capabilities.first : 'General',
  style: TextStyles.caption.copyWith(
@@ -949,7 +1074,7 @@ class _AgentCard extends StatelessWidget {
  size: 14,
  color: ThemeColors(context).onSurfaceVariant,
  ),
- padding: EdgeInsets.all(4),
+ padding: const EdgeInsets.all(4),
  constraints: const BoxConstraints(
  minWidth: 24,
  minHeight: 24,
@@ -974,12 +1099,12 @@ class _AgentCard extends StatelessWidget {
  mainAxisSize: MainAxisSize.min,
  children: [
  Icon(Icons.copy, size: 12, color: ThemeColors(context).onSurface),
- SizedBox(width: 6),
+ const SizedBox(width: 6),
  Text('Duplicate', style: TextStyle(fontSize: 11, color: ThemeColors(context).onSurface)),
  ],
  ),
  ),
- PopupMenuItem(
+ const PopupMenuItem(
  value: 'delete',
  child: Row(
  mainAxisSize: MainAxisSize.min,
@@ -1000,7 +1125,7 @@ class _AgentCard extends StatelessWidget {
  ],
  ),
  
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  // Recent chat preview
  Expanded(
@@ -1014,7 +1139,7 @@ class _AgentCard extends StatelessWidget {
  size: 11,
  color: ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Text(
  'Description',
  style: TextStyles.caption.copyWith(
@@ -1025,11 +1150,11 @@ class _AgentCard extends StatelessWidget {
  ),
  ],
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  
  // Agent description
  Container(
- padding: EdgeInsets.all(SpacingTokens.xs),
+ padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
  color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1050,7 +1175,7 @@ class _AgentCard extends StatelessWidget {
  ),
  ),
  
- Spacer(),
+ const Spacer(),
  
  // Stats row
  Row(
@@ -1060,7 +1185,7 @@ class _AgentCard extends StatelessWidget {
  size: 10,
  color: ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: 3),
+ const SizedBox(width: 3),
  Text(
  '${agent.capabilities.length} capabilities',
  style: TextStyles.caption.copyWith(
@@ -1069,7 +1194,7 @@ class _AgentCard extends StatelessWidget {
  fontWeight: FontWeight.w500,
  ),
  ),
- SizedBox(width: SpacingTokens.xs),
+ const SizedBox(width: SpacingTokens.xs),
  Icon(
  Icons.circle,
  size: 8,
@@ -1077,7 +1202,7 @@ class _AgentCard extends StatelessWidget {
  ? ThemeColors(context).success 
  : ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: 3),
+ const SizedBox(width: 3),
  Expanded(
  child: Text(
  agent.status == AgentStatus.idle ? 'Ready' : 'Busy',
@@ -1134,7 +1259,7 @@ class _TemplateCard extends StatelessWidget {
  return AsmblCard(
  onTap: template.isComingSoon ? null : onUseTemplate,
  child: Padding(
- padding: EdgeInsets.all(SpacingTokens.componentSpacing),
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -1143,7 +1268,7 @@ class _TemplateCard extends StatelessWidget {
  children: [
  // Icon
  Container(
- padding: EdgeInsets.all(SpacingTokens.xs),
+ padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
  color: ThemeColors(context).surfaceVariant,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1154,7 +1279,7 @@ class _TemplateCard extends StatelessWidget {
  color: ThemeColors(context).primary,
  ),
  ),
- SizedBox(width: SpacingTokens.sm),
+ const SizedBox(width: SpacingTokens.sm),
  
  // Template name and category
  Expanded(
@@ -1178,7 +1303,7 @@ class _TemplateCard extends StatelessWidget {
  ),
  ),
  if (template.isComingSoon) ...[
- SizedBox(width: 6),
+ const SizedBox(width: 6),
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
  decoration: BoxDecoration(
@@ -1197,7 +1322,7 @@ class _TemplateCard extends StatelessWidget {
  ],
  ],
  ),
- SizedBox(height: 2),
+ const SizedBox(height: 2),
  Text(
  template.category,
  style: TextStyles.caption.copyWith(
@@ -1211,7 +1336,7 @@ class _TemplateCard extends StatelessWidget {
  ],
  ),
  
- SizedBox(height: SpacingTokens.sm),
+ const SizedBox(height: SpacingTokens.sm),
  
  // Example use case preview
  Expanded(
@@ -1225,7 +1350,7 @@ class _TemplateCard extends StatelessWidget {
  size: 11,
  color: ThemeColors(context).onSurfaceVariant,
  ),
- SizedBox(width: 4),
+ const SizedBox(width: 4),
  Text(
  'Example Use',
  style: TextStyles.caption.copyWith(
@@ -1236,11 +1361,11 @@ class _TemplateCard extends StatelessWidget {
  ),
  ],
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  
  // Example use case
  Container(
- padding: EdgeInsets.all(SpacingTokens.xs),
+ padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
  color: ThemeColors(context).primary.withValues(alpha: 0.05),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -1261,11 +1386,11 @@ class _TemplateCard extends StatelessWidget {
  ),
  ),
  
- Spacer(),
+ const Spacer(),
  
  // MCP servers preview
  if (template.mcpServers.isNotEmpty) ...[
- SizedBox(height: 6),
+ const SizedBox(height: 6),
  Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -1285,7 +1410,7 @@ class _TemplateCard extends StatelessWidget {
  size: 10,
  color: ThemeColors(context).primary,
  ),
- SizedBox(width: 2),
+ const SizedBox(width: 2),
  Text(
  'MCP',
  style: TextStyles.caption.copyWith(
@@ -1297,7 +1422,7 @@ class _TemplateCard extends StatelessWidget {
  ],
  ),
  ),
- SizedBox(width: 6),
+ const SizedBox(width: 6),
  Text(
  '${template.mcpServers.length} integrations',
  style: TextStyles.caption.copyWith(
@@ -1308,7 +1433,7 @@ class _TemplateCard extends StatelessWidget {
  ),
  ],
  ),
- SizedBox(height: 4),
+ const SizedBox(height: 4),
  Wrap(
  spacing: 3,
  runSpacing: 2,

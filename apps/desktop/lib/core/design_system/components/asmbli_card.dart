@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../tokens/color_tokens.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
@@ -30,7 +29,7 @@ class _AsmblCardState extends State<AsmblCard> {
  Widget build(BuildContext context) {
  final colors = ThemeColors(context);
  final hasInteraction = widget.onTap != null && widget.isInteractive;
- final effectivePadding = widget.padding ?? EdgeInsets.all(SpacingTokens.cardPadding);
+ final effectivePadding = widget.padding ?? const EdgeInsets.all(SpacingTokens.cardPadding);
 
  Widget card = Container(
  decoration: BoxDecoration(
@@ -102,14 +101,14 @@ class AsmblStatsCard extends StatelessWidget {
  size: 32,
  color: colors.primary,
  ),
- SizedBox(height: SpacingTokens.iconSpacing),
+ const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  value,
  style: TextStyles.sectionTitle.copyWith(
  color: colors.onSurface,
  ),
  ),
- SizedBox(height: SpacingTokens.xs_precise),
+ const SizedBox(height: SpacingTokens.xs_precise),
  Text(
  title,
  style: TextStyles.bodySmall.copyWith(
