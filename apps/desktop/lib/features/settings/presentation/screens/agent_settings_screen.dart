@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:agent_engine_core/models/agent.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
+import '../../../../providers/agent_provider.dart';
 
 class AgentSettingsScreen extends ConsumerStatefulWidget {
   const AgentSettingsScreen({super.key});
@@ -15,52 +17,6 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
   String _searchQuery = '';
   String _selectedFilter = 'all';
 
-  final List<AgentConfig> _sampleAgents = [
-    AgentConfig(
-      id: 'default-assistant',
-      name: 'Default Assistant',
-      description: 'General-purpose AI assistant for everyday tasks',
-      systemPrompt: 'You are a helpful AI assistant.',
-      isActive: true,
-      lastUsed: DateTime.now().subtract(Duration(hours: 2)),
-      usageCount: 245,
-      model: 'Claude 3.5 Sonnet',
-      color: Colors.blue,
-    ),
-    AgentConfig(
-      id: 'code-reviewer',
-      name: 'Code Reviewer',
-      description: 'Specialized agent for code analysis and review',
-      systemPrompt: 'You are a senior software engineer reviewing code.',
-      isActive: true,
-      lastUsed: DateTime.now().subtract(Duration(days: 1)),
-      usageCount: 89,
-      model: 'Claude 3.5 Sonnet',
-      color: Colors.green,
-    ),
-    AgentConfig(
-      id: 'writing-assistant',
-      name: 'Writing Assistant',
-      description: 'Helps with creative writing and content creation',
-      systemPrompt: 'You are a professional writing assistant.',
-      isActive: false,
-      lastUsed: DateTime.now().subtract(Duration(days: 7)),
-      usageCount: 23,
-      model: 'Claude 3 Opus',
-      color: Colors.purple,
-    ),
-    AgentConfig(
-      id: 'research-analyst',
-      name: 'Research Analyst',
-      description: 'Conducts thorough research and analysis',
-      systemPrompt: 'You are a meticulous research analyst.',
-      isActive: true,
-      lastUsed: DateTime.now().subtract(Duration(hours: 6)),
-      usageCount: 156,
-      model: 'Claude 3.5 Sonnet',
-      color: Colors.orange,
-    ),
-  ];
 
   @override
   void initState() {
@@ -80,8 +36,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     });
   }
 
-  List<AgentConfig> get _filteredAgents {
-    var agents = _sampleAgents;
+  List<Agent> _getFilteredAgents(List<Agent> agents) {
 
     // Apply search filter
     if (_searchQuery.isNotEmpty) {
@@ -89,22 +44,22 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
       agents = agents.where((agent) =>
         agent.name.toLowerCase().contains(query) ||
         agent.description.toLowerCase().contains(query) ||
-        agent.model.toLowerCase().contains(query)
+        (agent.configuration['model']?.toString() ?? '').toLowerCase().contains(query)
       ).toList();
     }
 
     // Apply status filter
     switch (_selectedFilter) {
       case 'active':
-        agents = agents.where((agent) => agent.isActive).toList();
+        agents = agents.where((agent) => agent.status == AgentStatus.active || agent.status == AgentStatus.idle).toList();
         break;
       case 'inactive':
-        agents = agents.where((agent) => !agent.isActive).toList();
+        agents = agents.where((agent) => agent.status == AgentStatus.paused || agent.status == AgentStatus.error).toList();
         break;
     }
 
-    // Sort by usage count
-    agents.sort((a, b) => b.usageCount.compareTo(a.usageCount));
+    // Sort by name for now (usage tracking would need additional data)
+    agents.sort((a, b) => a.name.compareTo(b.name));
 
     return agents;
   }
@@ -112,7 +67,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = ThemeColors(context);
-    final filteredAgents = _filteredAgents;
+    final agentsAsync = ref.watch(agentNotifierProvider);
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -137,11 +92,11 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                 children: [
                   Expanded(
                     flex: 3,
-                    child: _buildMainContent(colors, filteredAgents),
-                  ),
-                  SizedBox(
-                    width: 300,
-                    child: _buildSidebar(colors),
+                    child: agentsAsync.when(
+                      loading: () => Center(child: CircularProgressIndicator()),
+                      error: (error, stack) => _buildErrorState(colors, error.toString()),
+                      data: (agents) => _buildMainContent(colors, _getFilteredAgents(agents)),
+                    ),
                   ),
                 ],
               ),
@@ -237,9 +192,9 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
 
   Widget _buildFilterChips(ThemeColors colors) {
     final filters = [
-      ('all', 'All', _sampleAgents.length),
-      ('active', 'Active', _sampleAgents.where((a) => a.isActive).length),
-      ('inactive', 'Inactive', _sampleAgents.where((a) => !a.isActive).length),
+      ('all', 'All', 0), // Count will be updated dynamically
+      ('active', 'Active', 0),
+      ('inactive', 'Inactive', 0),
     ];
 
     return Row(
@@ -270,7 +225,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     );
   }
 
-  Widget _buildMainContent(ThemeColors colors, List<AgentConfig> agents) {
+  Widget _buildMainContent(ThemeColors colors, List<Agent> agents) {
     if (agents.isEmpty) {
       return _buildEmptyState(colors);
     }
@@ -294,7 +249,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     );
   }
 
-  Widget _buildAgentCard(AgentConfig agent, ThemeColors colors) {
+  Widget _buildAgentCard(Agent agent, ThemeColors colors) {
     return AsmblCard(
       child: Padding(
         padding: EdgeInsets.all(SpacingTokens.lg),
@@ -306,12 +261,12 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                 Container(
                   padding: EdgeInsets.all(SpacingTokens.componentSpacing),
                   decoration: BoxDecoration(
-                    color: agent.color.withValues(alpha: 0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
                     Icons.smart_toy,
-                    color: agent.color,
+                    color: colors.primary,
                     size: 24,
                   ),
                 ),
@@ -336,15 +291,13 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: agent.isActive 
-                                ? colors.success.withValues(alpha: 0.1)
-                                : colors.onSurfaceVariant.withValues(alpha: 0.1),
+                              color: _getAgentStatusColor(agent.status).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                             ),
                             child: Text(
-                              agent.isActive ? 'ACTIVE' : 'INACTIVE',
+                              _getAgentStatusText(agent.status),
                               style: TextStyles.caption.copyWith(
-                                color: agent.isActive ? colors.success : colors.onSurfaceVariant,
+                                color: _getAgentStatusColor(agent.status),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 10,
                               ),
@@ -396,9 +349,9 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                   ),
                   SizedBox(height: SpacingTokens.xs_precise),
                   Text(
-                    agent.systemPrompt.length > 100 
-                      ? '${agent.systemPrompt.substring(0, 100)}...'
-                      : agent.systemPrompt,
+                    (agent.configuration['systemPrompt']?.toString().length ?? 0) > 100 
+                      ? '${agent.configuration['systemPrompt']?.toString().substring(0, 100)}...'
+                      : agent.configuration['systemPrompt']?.toString() ?? 'No system prompt configured',
                     style: TextStyles.caption.copyWith(
                       color: colors.onSurface,
                     ),
@@ -409,14 +362,14 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
             SizedBox(height: SpacingTokens.componentSpacing),
             Row(
               children: [
-                _buildAgentStat('Model', agent.model, Icons.psychology, colors),
+                _buildAgentStat('Model', agent.configuration['model']?.toString() ?? 'Not configured', Icons.psychology, colors),
                 SizedBox(width: SpacingTokens.sectionSpacing),
-                _buildAgentStat('Usage', '${agent.usageCount} times', Icons.bar_chart, colors),
+                _buildAgentStat('Capabilities', '${agent.capabilities.length} items', Icons.bar_chart, colors),
                 SizedBox(width: SpacingTokens.sectionSpacing),
-                _buildAgentStat('Last Used', _formatLastUsed(agent.lastUsed), Icons.schedule, colors),
+                _buildAgentStat('Status', _getAgentStatusText(agent.status), Icons.schedule, colors),
                 Spacer(),
                 Switch(
-                  value: agent.isActive,
+                  value: agent.status != AgentStatus.paused && agent.status != AgentStatus.error,
                   onChanged: (value) => _toggleAgent(agent, value),
                 ),
               ],
@@ -456,104 +409,9 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     );
   }
 
-  Widget _buildSidebar(ThemeColors colors) {
-    return Container(
-      padding: EdgeInsets.all(SpacingTokens.pageHorizontal),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Quick Actions',
-            style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
-          ),
-          SizedBox(height: SpacingTokens.componentSpacing),
-          AsmblCard(
-            child: Padding(
-              padding: EdgeInsets.all(SpacingTokens.lg),
-              child: Column(
-                children: [
-                  _buildQuickAction('Create Agent', Icons.add, () => _createNewAgent(), colors),
-                  Divider(height: SpacingTokens.sectionSpacing),
-                  _buildQuickAction('Import Config', Icons.upload, () => _importConfig(), colors),
-                  Divider(height: SpacingTokens.sectionSpacing),
-                  _buildQuickAction('Export All', Icons.download, () => _exportAll(), colors),
-                  Divider(height: SpacingTokens.sectionSpacing),
-                  _buildQuickAction('Agent Templates', Icons.dashboard, () => _showTemplates(), colors),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: SpacingTokens.sectionSpacing),
-          AsmblCard(
-            child: Padding(
-              padding: EdgeInsets.all(SpacingTokens.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Usage Statistics',
-                    style: TextStyles.bodyLarge.copyWith(
-                      color: colors.onSurface,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: SpacingTokens.componentSpacing),
-                  _buildUsageStat('Total Agents', '${_sampleAgents.length}', colors),
-                  _buildUsageStat('Active Agents', '${_sampleAgents.where((a) => a.isActive).length}', colors),
-                  _buildUsageStat('Total Usage', '${_sampleAgents.fold<int>(0, (sum, a) => sum + a.usageCount)}', colors),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Sidebar removed as requested by user
 
-  Widget _buildQuickAction(String title, IconData icon, VoidCallback onPressed, ThemeColors colors) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: SpacingTokens.iconSpacing),
-        child: Row(
-          children: [
-            Icon(icon, color: colors.primary, size: 20),
-            SizedBox(width: SpacingTokens.componentSpacing),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
-              ),
-            ),
-            Icon(Icons.arrow_forward_ios, size: 14, color: colors.onSurfaceVariant),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUsageStat(String label, String value, ThemeColors colors) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
-          ),
-          Text(
-            value,
-            style: TextStyles.bodyMedium.copyWith(
-              color: colors.onSurface,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Quick action and usage stat builders removed with sidebar
 
   Widget _buildEmptyState(ThemeColors colors) {
     return Center(
@@ -590,18 +448,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     );
   }
 
-  String _formatLastUsed(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-    
-    if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
-    } else {
-      return '${(difference.inDays / 7).floor()}w ago';
-    }
-  }
+  // Last used formatter removed - not needed for Agent model
 
   void _createNewAgent() {
     // TODO: Implement agent creation dialog
@@ -620,7 +467,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     );
   }
 
-  void _handleAgentAction(AgentConfig agent, String action) {
+  void _handleAgentAction(Agent agent, String action) {
     // TODO: Implement agent actions
     showDialog(
       context: context,
@@ -637,48 +484,77 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     );
   }
 
-  void _toggleAgent(AgentConfig agent, bool value) {
-    setState(() {
-      agent.isActive = value;
-    });
+  void _toggleAgent(Agent agent, bool value) {
+    final newStatus = value ? AgentStatus.idle : AgentStatus.paused;
+    ref.read(agentNotifierProvider.notifier).setAgentStatus(agent.id, newStatus);
   }
 
-  void _importConfig() {
-    // TODO: Implement config import
+  // Export functionality removed as requested by user
+
+  Color _getAgentStatusColor(AgentStatus status) {
+    final colors = ThemeColors(context);
+    switch (status) {
+      case AgentStatus.active:
+        return Colors.green;
+      case AgentStatus.idle:
+        return Colors.blue;
+      case AgentStatus.paused:
+        return colors.onSurfaceVariant;
+      case AgentStatus.error:
+        return Colors.red;
+    }
   }
 
-  void _exportAll() {
-    // TODO: Implement export all
+  String _getAgentStatusText(AgentStatus status) {
+    switch (status) {
+      case AgentStatus.active:
+        return 'ACTIVE';
+      case AgentStatus.idle:
+        return 'IDLE';
+      case AgentStatus.paused:
+        return 'PAUSED';
+      case AgentStatus.error:
+        return 'ERROR';
+    }
   }
 
-  void _showTemplates() {
-    // TODO: Implement template browser
+  Widget _buildErrorState(ThemeColors colors, String error) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(SpacingTokens.xxl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: colors.error,
+            ),
+            SizedBox(height: SpacingTokens.sectionSpacing),
+            Text(
+              'Error Loading Agents',
+              style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
+            ),
+            SizedBox(height: SpacingTokens.componentSpacing),
+            Text(
+              error,
+              style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: SpacingTokens.sectionSpacing),
+            AsmblButton.primary(
+              text: 'Retry',
+              icon: Icons.refresh,
+              onPressed: () => ref.invalidate(agentNotifierProvider),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
-class AgentConfig {
-  final String id;
-  final String name;
-  final String description;
-  final String systemPrompt;
-  bool isActive;
-  final DateTime lastUsed;
-  final int usageCount;
-  final String model;
-  final Color color;
-
-  AgentConfig({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.systemPrompt,
-    required this.isActive,
-    required this.lastUsed,
-    required this.usageCount,
-    required this.model,
-    required this.color,
-  });
-}
+// AgentConfig class removed - now using Agent model from agent_engine_core
 
 extension StringExtension on String {
   String capitalize() => '${this[0].toUpperCase()}${substring(1)}';

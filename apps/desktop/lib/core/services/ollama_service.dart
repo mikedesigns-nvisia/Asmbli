@@ -44,24 +44,40 @@ class OllamaService {
         return;
       }
 
-      // Extract and start embedded Ollama
-      await _extractOllamaBinary();
-      await _startEmbeddedOllama();
-      await _waitForStartup();
+      // Try to extract and start embedded Ollama
+      try {
+        await _extractOllamaBinary();
+        await _startEmbeddedOllama();
+        await _waitForStartup();
+      } catch (e) {
+        print('Failed to start embedded Ollama, trying system installation: $e');
+        
+        // Try to use system-installed Ollama as fallback
+        if (await _trySystemOllama()) {
+          print('Using system-installed Ollama');
+        } else {
+          print('No Ollama installation found. Local models will not be available.');
+          // Don't throw - just mark as not initialized so local models aren't available
+          return;
+        }
+      }
       
       _isInitialized = true;
       print('Ollama service initialized successfully');
     } catch (e) {
       print('Failed to initialize Ollama service: $e');
-      throw Exception('Failed to initialize local LLM service: $e');
+      // Don't throw - gracefully handle missing Ollama
     }
   }
 
   /// Extract Ollama binary from assets to local directory
   Future<void> _extractOllamaBinary() async {
     try {
-      final appDocumentsPath = (await getApplicationDocumentsDirectory()).path;
-      final ollamaDir = Directory(path.join(appDocumentsPath, 'ollama'));
+      // Use application support directory for better cross-platform support
+      final appSupportDir = await getApplicationSupportDirectory();
+      final ollamaDir = Directory(path.join(appSupportDir.path, 'ollama'));
+      
+      print('Creating Ollama directory at: ${ollamaDir.path}');
       
       if (!ollamaDir.existsSync()) {
         ollamaDir.createSync(recursive: true);
@@ -365,46 +381,11 @@ class OllamaService {
     }
   }
 
-  /// Get available models for download
+  /// Get available models for download (no hardcoded samples - user must install through Ollama)
   List<ModelConfig> getAvailableModels() {
-    return [
-      ModelConfig.localModel(
-        id: 'qwq_32b',
-        name: 'QwQ 32B',
-        ollamaModelId: 'qwq:32b-preview-q4_k_m',
-        status: ModelStatus.needsSetup,
-        modelSize: 20 * 1024 * 1024 * 1024, // ~20GB
-        capabilities: ['reasoning', 'thinking', 'math'],
-        downloadUrl: 'qwq:32b-preview-q4_k_m',
-      ),
-      ModelConfig.localModel(
-        id: 'gemma2_27b',
-        name: 'Gemma 2 27B',
-        ollamaModelId: 'gemma2:27b-instruct-q4_k_m',
-        status: ModelStatus.needsSetup,
-        modelSize: 16 * 1024 * 1024 * 1024, // ~16GB
-        capabilities: ['chat', 'reasoning', 'general'],
-        downloadUrl: 'gemma2:27b-instruct-q4_k_m',
-      ),
-      ModelConfig.localModel(
-        id: 'gpt_oss_20b',
-        name: 'GPT-OSS 20B',
-        ollamaModelId: 'gpt-oss:20b-q4_k_m',
-        status: ModelStatus.needsSetup,
-        modelSize: 12 * 1024 * 1024 * 1024, // ~12GB
-        capabilities: ['reasoning', 'code', 'general'],
-        downloadUrl: 'gpt-oss:20b-q4_k_m',
-      ),
-      ModelConfig.localModel(
-        id: 'deepseek_coder_6_7b',
-        name: 'DeepSeek Coder 6.7B',
-        ollamaModelId: 'deepseek-coder:6.7b-instruct-q4_k_m',
-        status: ModelStatus.needsSetup,
-        modelSize: 4 * 1024 * 1024 * 1024, // ~4GB
-        capabilities: ['code', 'programming', 'instruct'],
-        downloadUrl: 'deepseek-coder:6.7b-instruct-q4_k_m',
-      ),
-    ];
+    // Return empty list - users should use ollama CLI to install models
+    // This eliminates dummy data and forces users to actually install models they want
+    return [];
   }
 
   /// Format model name for display
@@ -440,6 +421,61 @@ class OllamaService {
       return ['code', 'programming', 'instruct'];
     } else {
       return ['general'];
+    }
+  }
+
+  /// Try to use system-installed Ollama as fallback
+  Future<bool> _trySystemOllama() async {
+    try {
+      // Try common system paths for Ollama
+      List<String> systemPaths = [];
+      
+      if (_desktopService.isWindows) {
+        systemPaths = [
+          'ollama.exe',
+          r'C:\Users\%USERNAME%\AppData\Local\Programs\Ollama\ollama.exe',
+          r'C:\Program Files\Ollama\ollama.exe',
+          r'C:\Program Files (x86)\Ollama\ollama.exe',
+        ];
+      } else if (_desktopService.isMacOS) {
+        systemPaths = [
+          'ollama',
+          '/usr/local/bin/ollama',
+          '/opt/homebrew/bin/ollama',
+          '/Applications/Ollama.app/Contents/Resources/ollama',
+        ];
+      } else if (_desktopService.isLinux) {
+        systemPaths = [
+          'ollama',
+          '/usr/local/bin/ollama',
+          '/usr/bin/ollama',
+          '~/.local/bin/ollama',
+        ];
+      }
+      
+      for (final systemPath in systemPaths) {
+        try {
+          // Try to run ollama --version to check if it exists and works
+          final result = await Process.run(systemPath, ['--version']);
+          if (result.exitCode == 0) {
+            _ollamaBinaryPath = systemPath;
+            print('Found system Ollama at: $systemPath');
+            
+            // Try to start the service
+            await _startEmbeddedOllama();
+            await _waitForStartup();
+            return true;
+          }
+        } catch (e) {
+          // Continue to next path
+          continue;
+        }
+      }
+      
+      return false;
+    } catch (e) {
+      print('Error trying system Ollama: $e');
+      return false;
     }
   }
 

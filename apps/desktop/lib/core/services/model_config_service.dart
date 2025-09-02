@@ -9,14 +9,15 @@ import 'desktop/desktop_service_provider.dart';
 /// Extended service for managing both API and local model configurations
 class ModelConfigService extends ApiConfigService {
   final OllamaService _ollamaService;
+  final DesktopStorageService _storageService;
   final Map<String, ModelConfig> _localModels = {};
   final Map<String, ModelConfig> _availableModels = {};
   bool _isInitialized = false;
 
   ModelConfigService(
-    DesktopStorageService storageService, 
+    this._storageService, 
     this._ollamaService,
-  ) : super(storageService);
+  ) : super(_storageService);
 
   @override
   Future<void> initialize() async {
@@ -199,7 +200,7 @@ class ModelConfigService extends ApiConfigService {
       // For local models, we need to handle this differently
       // Since ApiConfigService doesn't know about local models,
       // we'll store the default local model ID separately
-      await super._storageService.setPreference('default_local_model', modelId);
+      await _storageService.setPreference('default_local_model', modelId);
     }
   }
 
@@ -269,7 +270,7 @@ class ModelConfigService extends ApiConfigService {
   /// Load local models from storage
   Future<void> _loadLocalModels() async {
     try {
-      final data = super._storageService.getPreference<String>('local_models');
+      final data = _storageService.getPreference<String>('local_models');
       if (data != null) {
         final Map<String, dynamic> modelsJson = json.decode(data);
         
@@ -295,7 +296,7 @@ class ModelConfigService extends ApiConfigService {
         modelsJson[entry.key] = entry.value.toJson();
       }
       
-      await super._storageService.setPreference('local_models', json.encode(modelsJson));
+      await _storageService.setPreference('local_models', json.encode(modelsJson));
     } catch (e) {
       print('Failed to save local models: $e');
     }

@@ -4,6 +4,7 @@ import '../core/services/desktop/desktop_conversation_service.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import '../core/services/mcp_settings_service.dart';
 import '../core/services/agent_system_prompt_service.dart';
+import '../core/services/model_config_service.dart';
 
 final conversationServiceProvider = Provider<ConversationService>((ref) {
  return DesktopConversationService();
@@ -161,7 +162,7 @@ final getOrCreateDefaultConversationProvider = Provider.autoDispose((ref) {
  // Create new default API conversation if none exists
  final defaultMetadata = {
  'type': 'default_api',
- 'apiProvider': 'Claude 3.5 Sonnet',
+ 'apiProvider': ref.read(defaultModelConfigProvider)?.name ?? 'No AI Model',
  'description': 'Direct API chat without agent',
  'createdAt': DateTime.now().toIso8601String(),
  };

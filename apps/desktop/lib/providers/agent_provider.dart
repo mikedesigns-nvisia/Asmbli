@@ -27,69 +27,7 @@ final agentProvider = FutureProvider.family<Agent, String>((ref, id) async {
   return await agentService.getAgent(id);
 });
 
-/// Provider for creating sample agents for demo purposes
-final _sampleAgentsProvider = FutureProvider<List<Agent>>((ref) async {
-  final agentService = ref.watch(agentServiceProvider);
-  
-  // Check if we already have agents
-  final existingAgents = await agentService.listAgents();
-  if (existingAgents.isNotEmpty) {
-    return existingAgents;
-  }
-  
-  // Create sample agents
-  final sampleAgents = [
-    Agent(
-      id: 'research-assistant',
-      name: 'Research Assistant',
-      description: 'Academic research agent with citation management',
-      capabilities: ['web-search', 'file-access', 'memory'],
-      configuration: {
-        'model': 'claude-3-5-sonnet',
-        'temperature': 0.7,
-        'maxTokens': 2048,
-        'systemPrompt': 'You are a helpful research assistant specialized in academic research and citation management.',
-        'mcpServers': ['brave-search', 'memory', 'files'],
-      },
-      status: AgentStatus.idle,
-    ),
-    Agent(
-      id: 'code-helper',
-      name: 'Code Helper',
-      description: 'Development assistant for coding and debugging',
-      capabilities: ['code-execution', 'git', 'github'],
-      configuration: {
-        'model': 'claude-3-5-sonnet',
-        'temperature': 0.3,
-        'maxTokens': 4096,
-        'systemPrompt': 'You are an expert programming assistant that helps with coding, debugging, and development tasks.',
-        'mcpServers': ['git', 'github', 'files'],
-      },
-      status: AgentStatus.idle,
-    ),
-    Agent(
-      id: 'data-analyst',
-      name: 'Data Analyst',
-      description: 'Data analysis and visualization specialist',
-      capabilities: ['data-analysis', 'postgres', 'python'],
-      configuration: {
-        'model': 'claude-3-5-sonnet',
-        'temperature': 0.5,
-        'maxTokens': 3072,
-        'systemPrompt': 'You are a data analysis expert who helps with data processing, analysis, and visualization.',
-        'mcpServers': ['postgres', 'files', 'python'],
-      },
-      status: AgentStatus.idle,
-    ),
-  ];
-  
-  // Create the agents
-  for (final agent in sampleAgents) {
-    await agentService.createAgent(agent);
-  }
-  
-  return sampleAgents;
-});
+// Sample agents provider removed - using real agent data only
 
 /// Notifier class for managing agent operations
 class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
@@ -102,10 +40,7 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
 
   Future<void> _loadAgents() async {
     try {
-      // Load sample agents first to ensure we have some
-      await _ref.read(_sampleAgentsProvider.future);
-      
-      // Then load all agents
+      // Load all agents from service
       final agents = await _agentService.listAgents();
       state = AsyncValue.data(agents);
       

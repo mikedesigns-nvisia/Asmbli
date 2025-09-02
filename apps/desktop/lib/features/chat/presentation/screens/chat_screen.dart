@@ -14,6 +14,9 @@ import '../../../../core/services/mcp_bridge_service.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/claude_api_service.dart';
 import '../../../../core/services/api_config_service.dart';
+import '../../../../core/services/llm/unified_llm_service.dart';
+import '../../../../core/services/llm/llm_provider.dart';
+import '../../../../core/services/model_config_service.dart';
 import '../widgets/conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/agent_deployment_section.dart';
@@ -280,7 +283,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  SizedBox(width: 4),
  Text(
- conversation.metadata?['apiProvider'] ?? 'Claude 3.5 Sonnet',
+ conversation.metadata?['apiProvider'] ?? (ref.read(defaultModelConfigProvider)?.name ?? 'No AI Model'),
  style: GoogleFonts.fustat(
   fontSize: 12,
  fontWeight: FontWeight.w500,
@@ -675,7 +678,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  // Description
  Text(
- 'Chat directly with Claude 3.5 Sonnet.\nLoad an agent from the sidebar for enhanced\ncapabilities with system prompts and MCP servers.',
+ 'Chat directly with ${ref.read(defaultModelConfigProvider)?.name ?? 'your AI assistant'}.\nLoad an agent from the sidebar for enhanced\ncapabilities with system prompts and MCP servers.',
  style: GoogleFonts.fustat(
   fontSize: 14,
  color: theme.colorScheme.onSurfaceVariant,
@@ -1333,23 +1336,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
  Future<void> _handleStandardResponse(String conversationId) async {
  try {
- // Get API configuration from the proper provider
- final claudeApiService = ref.read(claudeApiServiceProvider);
- final defaultApiConfig = ref.read(defaultApiConfigProvider);
+ // Get unified LLM service and selected model
+ final unifiedLLMService = ref.read(unifiedLLMServiceProvider);
+ final selectedModel = ref.read(defaultModelConfigProvider);
 
- if (defaultApiConfig == null || !defaultApiConfig.isConfigured) {
- // Show a helpful error with direct access to API configuration
+ if (selectedModel == null || !selectedModel.isConfigured) {
+ // Show a helpful error with direct access to model configuration
  if (mounted) {
    _showApiKeyConfigurationDialog();
  }
- throw Exception('API key required. Please configure your API key to start chatting.');
+ throw Exception('Model configuration required. Please configure your AI model to start chatting.');
  }
 
  // Get conversation messages for context
  final service = ref.read(conversationServiceProvider);
  final messages = await service.getMessages(conversationId);
  
- // Build conversation history for Claude API
+ // Build conversation history for LLM
  final conversationHistory = messages
  .where((msg) => msg.role != core.MessageRole.system)
  .map((msg) => {
@@ -1366,30 +1369,36 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final conversation = await ref.read(conversationProvider(conversationId).future);
  final systemPrompt = conversation.metadata?['systemPrompt'] as String?;
 
- // Call Claude API
- final response = await claudeApiService.sendMessage(
- message: userMessage,
- apiKey: defaultApiConfig.apiKey,
- model: defaultApiConfig.model,
+ // Create chat context
+ final chatContext = ChatContext(
+ messages: conversationHistory,
  systemPrompt: systemPrompt,
- conversationHistory: conversationHistory,
+ );
+
+ // Call unified LLM service
+ final response = await unifiedLLMService.chat(
+ message: userMessage,
+ modelId: selectedModel.id,
+ context: chatContext,
  );
 
  // Create assistant message with the response
  final assistantMessage = core.Message(
  id: DateTime.now().millisecondsSinceEpoch.toString(),
- content: response.text,
+ content: response.content,
  role: core.MessageRole.assistant,
  timestamp: DateTime.now(),
  metadata: {
- 'apiProvider': defaultApiConfig.provider,
- 'model': defaultApiConfig.model,
- 'tokenUsage': {
- 'inputTokens': response.usage.inputTokens,
- 'outputTokens': response.usage.outputTokens,
- 'totalTokens': response.usage.totalTokens,
- },
- 'stopReason': response.stopReason,
+ 'modelUsed': response.modelUsed,
+ 'modelType': selectedModel.type.name,
+ 'modelProvider': selectedModel.provider,
+ 'tokenUsage': response.usage != null ? {
+ 'inputTokens': response.usage!.inputTokens,
+ 'outputTokens': response.usage!.outputTokens,
+ 'totalTokens': response.usage!.totalTokens,
+ 'estimatedCost': response.usage!.estimatedCost,
+ } : null,
+ 'responseMetadata': response.metadata,
  },
  );
 

@@ -4,12 +4,11 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../widgets/settings/settings_search_bar.dart';
 import '../widgets/settings/settings_category_card.dart';
-import '../widgets/settings/quick_settings_panel.dart';
 import '../../../../core/services/api_config_service.dart';
 import '../../../../providers/agent_provider.dart';
 import '../../../../providers/conversation_provider.dart';
 import '../../../../core/services/integration_service.dart';
-import 'api_settings_screen.dart';
+import 'llm_configuration_screen.dart';
 import 'agent_settings_screen.dart';
 import 'appearance_settings_screen.dart';
 import 'dart:async';
@@ -44,12 +43,11 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
     ),
     SettingsCategory(
       id: 'api',
-      title: 'API Configuration',
-      description: 'AI provider settings and API keys',
-      icon: Icons.key,
+      title: 'AI Models',
+      description: 'Add AI assistants and language models',
+      icon: Icons.auto_awesome,
       color: Colors.green,
       priority: 2,
-      badge: '3 configured',
     ),
     SettingsCategory(
       id: 'agents',
@@ -58,7 +56,6 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
       icon: Icons.smart_toy,
       color: Colors.purple,
       priority: 3,
-      badge: '5 agents',
     ),
     SettingsCategory(
       id: 'appearance',
@@ -169,14 +166,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
                 children: [
                   // Main Settings Content
                   Expanded(
-                    flex: 3,
                     child: _buildMainContent(colors, filteredCategories),
-                  ),
-                  
-                  // Quick Settings Panel (Right Side)
-                  SizedBox(
-                    width: 300,
-                    child: QuickSettingsPanel(),
                   ),
                 ],
               ),
@@ -308,17 +298,6 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
             ),
             
             Spacer(),
-            
-            // Quick Actions  
-            AsmblButton.secondary(
-              text: 'Export Settings',
-              onPressed: _exportSettings,
-            ),
-            SizedBox(width: SpacingTokens.componentSpacing),
-            AsmblButton.primary(
-              text: 'Quick Setup',
-              onPressed: _runQuickSetup,
-            ),
           ],
         );
       },
@@ -589,7 +568,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
     switch (category.id) {
       case 'api':
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const APISettingsScreen()),
+          MaterialPageRoute(builder: (context) => const LLMConfigurationScreen()),
         );
         break;
       case 'agents':
@@ -660,13 +639,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
     );
   }
 
-  void _exportSettings() {
-    // TODO: Implement settings export
-  }
-
-  void _runQuickSetup() {
-    // TODO: Implement quick setup wizard
-  }
+  // Export settings and quick setup functionality removed as requested
 }
 
 /// Settings Category Data Model

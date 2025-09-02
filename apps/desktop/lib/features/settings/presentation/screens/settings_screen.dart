@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../tabs/api_configuration_tab.dart';
 import '../tabs/agent_management_tab.dart';
 import '../../../../core/services/theme_service.dart';
 import '../../../../core/services/mcp_settings_service.dart';
@@ -27,6 +26,7 @@ import '../widgets/manual_mcp_server_modal.dart';
 import '../widgets/custom_mcp_server_modal.dart';
 import '../widgets/simple_auto_detection_wizard.dart';
 import '../tabs/general_settings_tab.dart';
+import '../widgets/model_download_manager.dart';
 
 // Integration model for unified display
 class Integration {
@@ -208,7 +208,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  @override
  void initState() {
  super.initState();
-  _tabController = TabController(length: 3, vsync: this);
+  _tabController = TabController(length: 4, vsync: this);
  selectedModel = providerModels[selectedProvider]!.first;
  
  // Set initial tab if provided
@@ -314,7 +314,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: TabBar(
  controller: _tabController,
  tabs: const [
- Tab(text: 'API Configuration'),
+ Tab(text: 'LLM Configuration'),
+ Tab(text: 'Local Models'),
  Tab(text: 'Agent Management'),
  Tab(text: 'General Settings'),
  ],
@@ -350,18 +351,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: TabBarView(
  controller: _tabController,
  children: [
-                Consumer(
-                  builder: (context, ref, _) {
-                    final allApiConfigs = ref.watch(apiConfigsProvider);
-                    return APIConfigurationTab(
-                      apiConfigs: allApiConfigs.values.map((c) => c.toJson()).toList(),
-                      onAddApiKey: _showAddApiKeyDialog,
-                      onDeleteApiKey: (id) => _deleteApiKey(id),
-                      onEditApiKey: (cfg) => _editApiKeyFromMap(cfg),
-                      onSetAsDefault: (id) => _setAsDefault(id),
-                    );
-                  },
+                // LLM Configuration moved to separate screen
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.psychology, size: 64, color: ThemeColors(context).primary),
+                      SizedBox(height: 16),
+                      Text(
+                        'LLM Configuration',
+                        style: GoogleFonts.fustat(fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Configure language models in Settings',
+                        style: GoogleFonts.fustat(fontSize: 14, color: ThemeColors(context).onSurfaceVariant),
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/settings');
+                        },
+                        child: Text('Open LLM Settings'),
+                      ),
+                    ],
+                  ),
                 ),
+                // Local Models Tab
+                const ModelDownloadManager(),
                 Consumer(
                   builder: (context, ref, _) {
                     return AgentManagementTab(
@@ -427,300 +444,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  _showMessage('Connection successful!');
  }
 
- Widget _buildAPIConfigurationTab() {
- final allApiConfigs = ref.watch(apiConfigsProvider);
- final defaultApiConfig = ref.watch(defaultApiConfigProvider);
- 
- return SingleChildScrollView(
- padding: const EdgeInsets.all(24),
- child: Center(
- child: Container(
- constraints: BoxConstraints(maxWidth: 1200),
- child: Column(
- children: [
- // Saved API Keys Section
- _SettingsSection(
- title: 'Saved API Keys',
- child: Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- children: [
- Text(
- 'Manage your API keys for different providers and models.',
- style: TextStyle(
- 
- fontSize: 14,
- color: Theme.of(context).colorScheme.onSurfaceVariant,
- ),
- ),
- SizedBox(height: SpacingTokens.componentSpacing),
- 
- // API Keys List
- if (allApiConfigs.isEmpty) ...[
- Container(
- padding: const EdgeInsets.all(24),
- decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
- borderRadius: BorderRadius.circular(8),
- border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
- ),
- child: Column(
- children: [
- Icon(
- Icons.api_outlined,
- size: 48,
- color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
- ),
- SizedBox(height: 16),
- Text(
- 'No API Keys Configured',
- style: TextStyle(
- 
- fontSize: 16,
- fontWeight: FontWeight.w500,
- color: Theme.of(context).colorScheme.onSurface,
- ),
- ),
- SizedBox(height: 8),
- Text(
- 'Add your first API key to start using the app with real AI models.',
- style: TextStyle(
- 
- fontSize: 14,
- color: Theme.of(context).colorScheme.onSurfaceVariant,
- ),
- textAlign: TextAlign.center,
- ),
- SizedBox(height: 16),
- AsmblButton.primary(
- text: 'Add API Key',
- onPressed: () => _showAddApiKeyDialog(),
- ),
- ],
- ),
- ),
- ] else ...[
- ...allApiConfigs.entries.map((entry) {
- final apiConfig = entry.value;
- return Container(
- margin: const EdgeInsets.only(bottom: 12),
- padding: const EdgeInsets.all(16),
- decoration: BoxDecoration(
- color: ThemeColors(context).surface.withValues(alpha: 0.9),
- borderRadius: BorderRadius.circular(8),
- border: Border.all(
- color: apiConfig.isDefault 
- ? ThemeColors(context).primary.withValues(alpha: 0.3)
- : ThemeColors(context).border.withValues(alpha: 0.5),
- ),
- ),
- child: Row(
- children: [
- // Status Icon
- Container(
- width: 40,
- height: 40,
- decoration: BoxDecoration(
- color: apiConfig.isConfigured 
- ? ThemeColors(context).success.withValues(alpha: 0.1)
- : ThemeColors(context).error.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(8),
- border: Border.all(
- color: apiConfig.isConfigured 
- ? ThemeColors(context).success.withValues(alpha: 0.3)
- : ThemeColors(context).error.withValues(alpha: 0.3),
- ),
- ),
- child: Icon(
- apiConfig.isConfigured ? Icons.check_circle : Icons.error,
- color: apiConfig.isConfigured ? ThemeColors(context).success : ThemeColors(context).error,
- size: 20,
- ),
- ),
- 
- SizedBox(width: 16),
- 
- // API Key Info
- Expanded(
- child: Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- children: [
- Row(
- children: [
- Text(
- apiConfig.name,
- style: TextStyle(
- 
- fontSize: 16,
- fontWeight: FontWeight.w600,
- color: Theme.of(context).colorScheme.onSurface,
- ),
- ),
- if (apiConfig.isDefault) ...[
- SizedBox(width: SpacingTokens.iconSpacing),
- Container(
- padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
- decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(4),
- border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
- ),
- child: Text(
- 'DEFAULT',
- style: TextStyle(
- 
- fontSize: 10,
- fontWeight: FontWeight.w600,
- color: Theme.of(context).colorScheme.primary,
- ),
- ),
- ),
- ],
- ],
- ),
- SizedBox(height: 4),
- Text(
- '${apiConfig.provider} - ${apiConfig.model}',
- style: TextStyle(
- 
- fontSize: 14,
- color: Theme.of(context).colorScheme.onSurfaceVariant,
- ),
- ),
- ],
- ),
- ),
- 
- // Actions
- Row(
- mainAxisSize: MainAxisSize.min,
- children: [
- if (!apiConfig.isDefault)
- GestureDetector(
- onTap: () => _setAsDefault(apiConfig.id),
- child: Container(
- padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
- decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(4),
- border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
- ),
- child: Text(
- 'Set Default',
- style: TextStyle(
- 
- fontSize: 10,
- fontWeight: FontWeight.w500,
- color: Theme.of(context).colorScheme.primary,
- ),
- ),
- ),
- ),
- SizedBox(width: SpacingTokens.iconSpacing),
- GestureDetector(
- onTap: () => _editApiKey(apiConfig),
- child: Container(
- padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
- decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(4),
- border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
- ),
- child: Text(
- 'Edit',
- style: TextStyle(
- 
- fontSize: 10,
- fontWeight: FontWeight.w500,
- color: ThemeColors(context).primary,
- ),
- ),
- ),
- ),
- SizedBox(width: SpacingTokens.iconSpacing),
- GestureDetector(
- onTap: () => _deleteApiKey(apiConfig.id),
- child: Container(
- padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
- decoration: BoxDecoration(
- color: ThemeColors(context).error.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(4),
- border: Border.all(color: ThemeColors(context).error.withValues(alpha: 0.3)),
- ),
- child: Text(
- 'Delete',
- style: TextStyle(
- 
- fontSize: 10,
- fontWeight: FontWeight.w500,
- color: ThemeColors(context).error,
- ),
- ),
- ),
- ),
- ],
- ),
- ],
- ),
- );
- }).toList(),
- 
- SizedBox(height: SpacingTokens.componentSpacing),
- 
- // Add New API Key Button
- SizedBox(
- width: double.infinity,
- child: AsmblButtonEnhanced.accent(
- text: 'Add New API Key',
- icon: Icons.add,
- onPressed: _showAddApiKeyDialog,
- size: AsmblButtonSize.medium,
- ),
- ),
- ],
- ],
- ),
- ),
- 
- SizedBox(height: SpacingTokens.textSectionSpacing),
- 
- // Security Section
- _SettingsSection(
- title: 'Security',
- child: Container(
- padding: const EdgeInsets.all(16),
- decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(8),
- border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
- ),
- child: Row(
- children: [
- Icon(
- Icons.security,
- size: 20,
- color: ThemeColors(context).primary,
- ),
- SizedBox(width: 12),
- Expanded(
- child: Text(
- 'Your API keys are stored locally and encrypted. They are never transmitted to our servers.',
- style: TextStyle(
- 
- fontSize: 13,
- color: Theme.of(context).colorScheme.onSurface,
- ),
- ),
- ),
- ],
- ),
- ),
- ),
- ],
- ),
- ),
- ),
- );
- }
 
  Widget _buildAgentManagementTab() {
  return SingleChildScrollView(
@@ -1324,11 +1047,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: TextButton.icon(
  onPressed: () {
  Navigator.pop(context);
- _tabController.animateTo(0); // Go to API Configuration tab
+ _tabController.animateTo(0); // Go to LLM Configuration tab
  },
  icon: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
  label: Text(
- 'Add New API Configuration',
+ 'Add New LLM Configuration',
  style: TextStyle(
  
  color: Theme.of(context).colorScheme.primary,
@@ -1798,20 +1521,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                       },
                     ),
                     
-                    SizedBox(height: SpacingTokens.componentSpacing),
-                    
-                    // Legacy Option
-                    _buildAddServerOption(
-                      title: 'Quick Setup Wizard',
-                      description: 'Traditional guided setup for MCP server configuration',
-                      icon: Icons.auto_awesome,
-                      color: Colors.green,
-                      badge: 'Classic',
-                      onTap: () {
-                        Navigator.pop(context);
-                        _showLegacyMCPServerDialog();
-                      },
-                    ),
+                    // Quick Setup Wizard removed as requested
                   ],
                 ),
               ),
