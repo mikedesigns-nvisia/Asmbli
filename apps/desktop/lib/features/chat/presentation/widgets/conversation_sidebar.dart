@@ -17,6 +17,7 @@ class ConversationSidebar extends ConsumerStatefulWidget {
 class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  bool isCollapsed = false;
  bool _showTopicsSection = false;
+ int _selectedTab = 1; // 0 for topics, 1 for conversations
 
  @override
  Widget build(BuildContext context) {
@@ -73,7 +74,11 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  // Header
  Container(
  padding: EdgeInsets.all(SpacingTokens.cardPadding),
- child: Row(
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ // Title and collapse button row
+ Row(
  children: [
  Text(
  'Conversations',
@@ -83,13 +88,6 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  fontSize: 14,
  ),
  ),
- SizedBox(width: SpacingTokens.iconSpacing),
- // New Chat Button
- AsmblButton.primary(
- text: 'New Chat',
- icon: Icons.add,
- onPressed: _startNewChat,
- ),
  Spacer(),
  IconButton(
  onPressed: () => setState(() => isCollapsed = true),
@@ -98,6 +96,16 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  foregroundColor: ThemeColors(context).onSurfaceVariant,
  ),
  tooltip: 'Hide Conversations',
+ ),
+ ],
+ ),
+ SizedBox(height: SpacingTokens.iconSpacing),
+ // New Chat Button on its own row
+ AsmblButton.primary(
+ text: 'New Chat',
+ icon: Icons.add,
+ onPressed: _startNewChat,
+ isFullWidth: true,
  ),
  ],
  ),

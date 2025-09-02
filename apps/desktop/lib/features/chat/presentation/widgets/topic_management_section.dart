@@ -124,6 +124,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: SpacingTokens.lg),
         // Topics Header
         Padding(
           padding: EdgeInsets.symmetric(horizontal: SpacingTokens.lg),

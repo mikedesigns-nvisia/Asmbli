@@ -20,6 +20,7 @@ class ConversationList extends ConsumerWidget {
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
+ SizedBox(height: SpacingTokens.lg),
  Row(
  children: [
  Icon(

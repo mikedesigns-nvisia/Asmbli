@@ -70,34 +70,41 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with New Chat prominently displayed
+          // Header with hierarchical layout
           Container(
             padding: EdgeInsets.all(SpacingTokens.cardPadding),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Conversations',
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: ThemeColors(context).onSurface,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
+                // Title and collapse button row
+                Row(
+                  children: [
+                    Text(
+                      'Conversations',
+                      style: TextStyles.bodyMedium.copyWith(
+                        color: ThemeColors(context).onSurface,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () => setState(() => isCollapsed = true),
+                      icon: Icon(Icons.chevron_right, size: 20),
+                      style: IconButton.styleFrom(
+                        foregroundColor: ThemeColors(context).onSurfaceVariant,
+                      ),
+                      tooltip: 'Hide Conversations',
+                    ),
+                  ],
                 ),
-                Spacer(),
-                // New Chat Button - Primary action
+                SizedBox(height: SpacingTokens.iconSpacing),
+                // New Chat Button on its own row
                 AsmblButton.primary(
                   text: 'New Chat',
                   icon: Icons.add,
                   onPressed: _startNewChat,
-                ),
-                SizedBox(width: SpacingTokens.iconSpacing),
-                IconButton(
-                  onPressed: () => setState(() => isCollapsed = true),
-                  icon: Icon(Icons.chevron_right, size: 20),
-                  style: IconButton.styleFrom(
-                    foregroundColor: ThemeColors(context).onSurfaceVariant,
-                  ),
-                  tooltip: 'Hide Conversations',
+                  isFullWidth: true,
                 ),
               ],
             ),
