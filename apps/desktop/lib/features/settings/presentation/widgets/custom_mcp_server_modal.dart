@@ -7,6 +7,9 @@ import '../../../../core/services/mcp_template_service.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import 'structured_form_renderer.dart';
 
+
+import '../../../core/models/mcp_server_config.dart';
+
 /// Modal for manually configuring custom MCP servers with JSON input or structured forms
 class CustomMCPServerModal extends StatefulWidget {
   final Function(Map<String, dynamic>) onConfigurationComplete;

@@ -1329,6 +1329,8 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   }
 
   Future<void> _deployAgent() async {
+    if (!mounted) return; // Check mounted before starting
+    
     setState(() {
       _isDeploying = true;
     });
@@ -1342,19 +1344,29 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
       // Create agent configuration
       final agentConfig = await _wizardState.buildAgentConfig();
       
+      // Check mounted after async operation
+      if (!mounted) return;
+      
       // Save agent to settings/storage
       // This would integrate with your agent storage system
       await _saveAgentConfiguration(agentConfig);
+      
+      // Check mounted after async operation
+      if (!mounted) return;
       
       // Show success and navigate to chat
       _showDeploymentSuccess();
       
     } catch (e) {
-      _showDeploymentError(e.toString());
+      if (mounted) {
+        _showDeploymentError(e.toString());
+      }
     } finally {
-      setState(() {
-        _isDeploying = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isDeploying = false;
+        });
+      }
     }
   }
 
@@ -1407,6 +1419,8 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   }
 
   void _showDeploymentSuccess() {
+    if (!mounted) return; // Check mounted before showing dialog
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -1459,6 +1473,8 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   }
 
   void _showDeploymentError(String error) {
+    if (!mounted) return; // Check mounted before showing dialog
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

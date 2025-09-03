@@ -1,0 +1,237 @@
+# Asmbli Platform Production Configuration
+# This file contains production-ready configuration for deployment
+
+# Application Configuration
+app:
+  name: "Asmbli Platform"
+  version: "1.0.0"
+  environment: "production"
+  debug: false
+  log_level: "info"
+  port: 8080
+  host: "0.0.0.0"
+
+# Database Configuration
+database:
+  # Vector Database
+  vector_db:
+    provider: "chromadb"  # or "pinecone", "weaviate"
+    host: "localhost"
+    port: 8000
+    collection_prefix: "asmbli_prod_"
+    max_connections: 20
+    timeout_seconds: 30
+    
+  # Cache Database (Redis)
+  redis:
+    enabled: true
+    host: "localhost" 
+    port: 6379
+    db: 0
+    password: "${REDIS_PASSWORD}"
+    max_connections: 10
+    timeout_seconds: 5
+    
+  # File Storage
+  file_storage:
+    provider: "local"  # or "s3", "gcs"
+    path: "./data/storage"
+    max_size_gb: 100
+    backup_enabled: true
+
+# Model Provider Configuration
+model_providers:
+  openai:
+    enabled: true
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "https://api.openai.com/v1"
+    timeout_seconds: 30
+    max_requests_per_minute: 1000
+    
+  anthropic:
+    enabled: true
+    api_key: "${ANTHROPIC_API_KEY}"
+    base_url: "https://api.anthropic.com"
+    timeout_seconds: 45
+    max_requests_per_minute: 500
+    
+  ollama:
+    enabled: true
+    base_url: "http://localhost:11434"
+    timeout_seconds: 60
+    models:
+      - "llama2"
+      - "codellama"
+      - "mistral"
+
+# Cache Configuration
+cache:
+  memory_cache:
+    max_size_entries: 10000
+    ttl_hours: 2
+    cleanup_interval_minutes: 30
+    
+  disk_cache:
+    max_size_gb: 10
+    ttl_days: 7
+    cleanup_interval_hours: 6
+    path: "./data/cache"
+    
+  model_response_cache:
+    enabled: true
+    ttl_hours: 24
+    max_tokens: 4000
+    temperature_threshold: 0.8
+
+# Job Processing Configuration
+job_processing:
+  worker_pool:
+    min_workers: 4
+    max_workers: 16
+    auto_scaling: true
+    target_cpu_utilization: 0.7
+    scale_up_threshold: 0.8
+    scale_down_threshold: 0.3
+    
+  job_queue:
+    max_concurrent_jobs: 20
+    default_timeout_minutes: 30
+    max_retries: 3
+    persistence_enabled: true
+    
+  job_types:
+    document_processing:
+      timeout_minutes: 10
+      max_retries: 2
+      priority: "normal"
+      
+    model_embedding:
+      timeout_minutes: 15
+      max_retries: 1
+      priority: "high"
+      
+    file_indexing:
+      timeout_minutes: 60
+      max_retries: 3
+      priority: "low"
+
+# Security Configuration
+security:
+  authentication:
+    jwt_secret: "${JWT_SECRET}"
+    token_expiry_hours: 24
+    refresh_token_expiry_days: 30
+    
+  api_keys:
+    admin_key: "${ADMIN_API_KEY}"
+    service_keys:
+      - "${SERVICE_API_KEY_1}"
+      - "${SERVICE_API_KEY_2}"
+      
+  rate_limiting:
+    enabled: true
+    requests_per_hour: 10000
+    burst_limit: 100
+    
+  cors:
+    enabled: true
+    allowed_origins:
+      - "http://localhost:3000"
+      - "https://app.asmbli.com"
+    allowed_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    allowed_headers: ["Content-Type", "Authorization"]
+
+# Monitoring & Observability
+monitoring:
+  metrics:
+    enabled: true
+    endpoint: "/metrics"
+    prometheus_compatible: true
+    
+  health_checks:
+    enabled: true
+    endpoint: "/health"
+    interval_seconds: 30
+    timeout_seconds: 5
+    
+  logging:
+    level: "info"
+    format: "json"
+    file: "./logs/asmbli.log"
+    max_size_mb: 100
+    max_files: 10
+    
+  tracing:
+    enabled: true
+    service_name: "asmbli-platform"
+    jaeger_endpoint: "http://localhost:14268/api/traces"
+
+# Performance Configuration
+performance:
+  request_timeout_seconds: 300
+  max_request_size_mb: 10
+  connection_pool_size: 50
+  keep_alive_timeout_seconds: 75
+  
+  workflow_execution:
+    max_parallel_nodes: 10
+    node_timeout_seconds: 600
+    memory_limit_mb: 1024
+    
+  vector_search:
+    index_type: "hnsw"
+    ef_construction: 200
+    m: 16
+    max_results: 1000
+    similarity_threshold: 0.7
+
+# Development & Testing
+development:
+  hot_reload: false
+  debug_routes: false
+  mock_providers: false
+  test_data_enabled: false
+  
+  test_configuration:
+    run_integration_tests: true
+    run_performance_tests: true
+    performance_thresholds:
+      cache_write_ops_per_sec: 1000
+      cache_read_ops_per_sec: 5000
+      workflow_max_execution_ms: 2000
+      vector_search_max_ms: 100
+      job_throughput_per_sec: 10
+
+# Backup & Recovery
+backup:
+  enabled: true
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention_days: 30
+  storage:
+    provider: "local"  # or "s3", "gcs"
+    path: "./data/backups"
+    
+  components:
+    - "vector_database"
+    - "cache_data"
+    - "job_queue_state"
+    - "configuration"
+    - "logs"
+
+# Deployment Configuration
+deployment:
+  strategy: "rolling"
+  health_check_grace_period_seconds: 60
+  shutdown_grace_period_seconds: 30
+  
+  resources:
+    cpu_limit: "2000m"
+    memory_limit: "4Gi"
+    cpu_request: "500m"
+    memory_request: "1Gi"
+    
+  environment_variables:
+    NODE_ENV: "production"
+    TZ: "UTC"
+    RUST_LOG: "info"
+    FLUTTER_BUILD_MODE: "release"

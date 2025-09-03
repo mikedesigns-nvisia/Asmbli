@@ -7,9 +7,16 @@ import '../core/services/agent_system_prompt_service.dart';
 import '../core/services/model_config_service.dart';
 import '../core/services/desktop/hive_cleanup_service.dart';
 import '../core/models/model_config.dart';
+import '../core/services/business/conversation_business_service.dart';
+import '../core/di/service_locator.dart';
 
 final conversationServiceProvider = Provider<ConversationService>((ref) {
  return DesktopConversationService();
+});
+
+/// Provider for the conversation business service (contains business logic)
+final conversationBusinessServiceProvider = Provider<ConversationBusinessService>((ref) {
+  return ServiceLocator.instance.get<ConversationBusinessService>();
 });
 
 final conversationsProvider = StreamProvider<List<Conversation>>((ref) async* {
@@ -53,55 +60,35 @@ final messagesProvider = StreamProvider.family<List<Message>, String>((ref, conv
 });
 
 final createConversationProvider = Provider.autoDispose((ref) {
- final service = ref.read(conversationServiceProvider);
+ final businessService = ref.read(conversationBusinessServiceProvider);
  
  return ({required String title, Map<String, dynamic>? metadata}) async {
  // Get the default model configuration to store with conversation
  final defaultModel = ref.read(defaultModelConfigProvider);
  
- // Get global MCP and context settings
- final mcpService = ref.read(mcpSettingsServiceProvider);
- final globalContextDocs = mcpService.globalContextDocuments;
- final globalMcpServers = mcpService.getAllMCPServers()
-     .where((server) => server.enabled)
-     .map((server) => server.id)
-     .toList();
- 
- // Merge provided metadata with default model information
- final conversationMetadata = {
-   'type': 'direct_chat',
-   'createdAt': DateTime.now().toIso8601String(),
-   'version': '1.0.0',
-   'generator': 'AgentEngine Direct Chat',
-   'hasGlobalMCP': globalMcpServers.isNotEmpty,
-   'hasGlobalContext': globalContextDocs.isNotEmpty,
-   'globalMcpServers': globalMcpServers,
-   'globalContextDocuments': globalContextDocs,
-   'mcpEnabled': globalMcpServers.isNotEmpty,
-   'contextEnabled': globalContextDocs.isNotEmpty,
-   ...?metadata, // Spread provided metadata (can override above values)
- };
- 
- // Add default model info if available
- if (defaultModel != null) {
-   conversationMetadata.addAll({
-     'defaultModelId': defaultModel.id,
-     'defaultModelName': defaultModel.name,
-     'defaultModelProvider': defaultModel.provider,
-     'modelType': defaultModel.isLocal ? 'local' : 'api',
-     'modelConfigured': defaultModel.isConfigured,
-   });
- }
- 
- final conversation = Conversation(
- id: DateTime.now().millisecondsSinceEpoch.toString(),
- title: title,
- messages: [],
- createdAt: DateTime.now(),
- metadata: conversationMetadata,
+ // Use business service for conversation creation with full validation
+ final result = await businessService.createConversation(
+   title: title,
+   modelId: defaultModel?.id,
+   metadata: {
+     'type': 'direct_chat',
+     'version': '2.0.0',
+     'generator': 'AgentEngine Business Service',
+     'defaultModelId': defaultModel?.id,
+     'defaultModelName': defaultModel?.name,
+     'defaultModelProvider': defaultModel?.provider,
+     'modelType': defaultModel?.isLocal ?? false ? 'local' : 'api',
+     'modelConfigured': defaultModel?.isConfigured ?? false,
+     ...?metadata, // Spread provided metadata
+   },
  );
  
- return await service.createConversation(conversation);
+ if (result.isSuccess) {
+   return result.data!;
+ } else {
+   throw Exception(result.error);
+ }
+ 
  };
 });
 

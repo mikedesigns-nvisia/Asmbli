@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/mcp_server_config.dart';
+
+import '../core/models/mcp_server_config.dart';
 
 /// MCP Server Template for easy configuration
 class MCPServerTemplate {
@@ -693,10 +694,15 @@ class MCPTemplateService {
     return MCPServerConfig(
       id: customId ?? serverDefaults['id'] as String,
       name: serverDefaults['name'] as String,
-      command: 'uvx', // Default command, will be customized based on server type
+      type: template.category, // Use category as type
+      command: 'npx', // Use npx instead of uvx for Windows compatibility
       args: _getArgsForServer(template, config),
+      workingDirectory: null,
       env: _getEnvForServer(template, config),
       enabled: true,
+      description: template.description,
+      capabilities: [], // Templates don't have direct capabilities field
+      requiredAuth: [],
     );
   }
 

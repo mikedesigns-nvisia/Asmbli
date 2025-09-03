@@ -4,11 +4,11 @@ import 'context_mcp_resource_service.dart';
 
 /// Service for managing MCP server configurations and integration
 /// This bridges the gap between detected integrations and MCP server configs
-class MCPServerConfigurationService {
+class MCPServerLibraryConfigurationService {
   
   /// Map detected integration to available MCP servers
-  static List<MCPServerConfig> getServersForIntegration(String integrationId) {
-    final servers = <MCPServerConfig>[];
+  static List<MCPServerLibraryConfig> getServersForIntegration(String integrationId) {
+    final servers = <MCPServerLibraryConfig>[];
     
     switch (integrationId.toLowerCase()) {
       case 'figma':
@@ -262,7 +262,7 @@ class MCPServerConfigurationService {
   /// Get MCP server configuration ready for agent integration
   /// Following MCP standards from Hugging Face course documentation
   static Map<String, dynamic> generateAgentMCPConfig(
-    MCPServerConfig server,
+    MCPServerLibraryConfig server,
     Map<String, String> userEnvVars,
     {String? customPath}
   ) {
@@ -337,7 +337,7 @@ class MCPServerConfigurationService {
   /// Generate complete MCP configuration for an agent including context resources
   static Future<Map<String, dynamic>> generateCompleteAgentMCPConfig(
     String agentId,
-    List<MCPServerConfig> servers,
+    List<MCPServerLibraryConfig> servers,
     Map<String, String> userEnvVars,
     dynamic ref, // Accept both WidgetRef and Ref
   ) async {
@@ -363,7 +363,7 @@ class MCPServerConfigurationService {
   
   /// Validate required environment variables are provided
   static ValidationResult validateServerConfig(
-    MCPServerConfig server,
+    MCPServerLibraryConfig server,
     Map<String, String> providedEnvVars
   ) {
     final missingVars = <String>[];
@@ -385,7 +385,7 @@ class MCPServerConfigurationService {
   }
   
   /// Get setup instructions with placeholders filled
-  static String getSetupInstructions(MCPServerConfig server) {
+  static String getSetupInstructions(MCPServerLibraryConfig server) {
     var instructions = server.setupInstructions ?? 'No additional setup required.';
     
     // Add environment variable instructions if needed
@@ -548,17 +548,17 @@ class MCPServerConfigurationService {
   }
   
   /// Get recommended servers for new users
-  static List<MCPServerConfig> getRecommendedServers() {
+  static List<MCPServerLibraryConfig> getRecommendedServers() {
     return [
       MCPServerLibrary.getServer('filesystem')!,
       MCPServerLibrary.getServer('git')!,
       MCPServerLibrary.getServer('memory')!,
       MCPServerLibrary.getServer('fetch')!,
-    ].where((server) => server != null).cast<MCPServerConfig>().toList();
+    ].where((server) => server != null).cast<MCPServerLibraryConfig>().toList();
   }
   
   /// Search servers by name or capability
-  static List<MCPServerConfig> searchServers(String query) {
+  static List<MCPServerLibraryConfig> searchServers(String query) {
     final lowerQuery = query.toLowerCase();
     return MCPServerLibrary.servers.where((server) =>
       server.name.toLowerCase().contains(lowerQuery) ||
@@ -582,13 +582,13 @@ class ValidationResult {
 }
 
 /// Provider for MCP server configuration service
-final mcpServerConfigurationServiceProvider = Provider<MCPServerConfigurationService>((ref) {
-  return MCPServerConfigurationService();
+final mcpServerConfigurationServiceProvider = Provider<MCPServerLibraryConfigurationService>((ref) {
+  return MCPServerLibraryConfigurationService();
 });
 
 /// State management for MCP server configurations
-class MCPServerConfigurationNotifier extends StateNotifier<List<MCPServerConfig>> {
-  MCPServerConfigurationNotifier() : super(MCPServerLibrary.servers);
+class MCPServerLibraryConfigurationNotifier extends StateNotifier<List<MCPServerLibraryConfig>> {
+  MCPServerLibraryConfigurationNotifier() : super(MCPServerLibrary.servers);
   
   /// Filter servers by type
   void filterByType(MCPServerType? type) {
@@ -613,7 +613,7 @@ class MCPServerConfigurationNotifier extends StateNotifier<List<MCPServerConfig>
     if (query.isEmpty) {
       state = MCPServerLibrary.servers;
     } else {
-      state = MCPServerConfigurationService.searchServers(query);
+      state = MCPServerLibraryConfigurationService.searchServers(query);
     }
   }
   
@@ -624,6 +624,6 @@ class MCPServerConfigurationNotifier extends StateNotifier<List<MCPServerConfig>
 }
 
 /// Provider for MCP server configuration state
-final mcpServerConfigurationProvider = StateNotifierProvider<MCPServerConfigurationNotifier, List<MCPServerConfig>>((ref) {
-  return MCPServerConfigurationNotifier();
+final mcpServerConfigurationProvider = StateNotifierProvider<MCPServerLibraryConfigurationNotifier, List<MCPServerLibraryConfig>>((ref) {
+  return MCPServerLibraryConfigurationNotifier();
 });

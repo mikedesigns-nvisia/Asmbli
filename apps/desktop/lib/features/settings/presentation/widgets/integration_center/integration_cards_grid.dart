@@ -3,6 +3,9 @@ import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/data/mcp_server_configs.dart';
 import 'universal_integration_card.dart';
 
+
+import '../../../../core/models/mcp_server_config.dart';
+
 /// Integration Cards Grid - Main content area showing all integration cards
 /// Responsive grid that adapts to screen size and filters
 class IntegrationCardsGrid extends StatelessWidget {

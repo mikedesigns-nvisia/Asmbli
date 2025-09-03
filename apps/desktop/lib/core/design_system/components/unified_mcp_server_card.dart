@@ -5,6 +5,9 @@ import '../../services/mcp_settings_service.dart';
 import '../../services/mcp_health_monitor.dart';
 import '../../../features/settings/presentation/widgets/mcp_health_status_widget.dart';
 
+
+import '../../models/mcp_server_config.dart';
+
 /// Unified MCP server representation used across all screens
 /// Provides consistent styling and information display
 class UnifiedMCPServerCard extends ConsumerWidget {

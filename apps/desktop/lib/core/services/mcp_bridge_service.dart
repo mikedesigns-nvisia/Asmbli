@@ -276,18 +276,31 @@ class MCPBridgeService {
 
   Future<Map<String, dynamic>> _buildMCPConfig() async {
     final allServers = _settingsService.allMCPServers;
-    final enabledServers = allServers.entries
-        .where((entry) => entry.value.enabled)
-        .map((entry) => entry.value.toJson())
-        .toList();
+    final enabledServers = <String, dynamic>{};
+    
+    // Convert server configs to the format expected by the JavaScript bridge
+    for (final entry in allServers.entries.where((e) => e.value.enabled)) {
+      final server = entry.value;
+      enabledServers[server.id] = {
+        'command': server.command,
+        'args': server.args,
+        'env': server.env ?? {},
+        'cwd': server.workingDirectory,
+        'name': server.name,
+        'type': server.type,
+        'enabled': server.enabled,
+      };
+    }
 
     return {
-      'servers': enabledServers,
-      'globalTimeout': 30000,
-      'maxConcurrentConnections': 5,
-      'retryAttempts': 3,
-      'isDesktop': true, // Flutter desktop always true
-      'globalContext': _settingsService.globalContextDocuments,
+      'mcpServers': enabledServers, // Changed from 'servers' to match JS bridge format
+      'globalConfig': {
+        'globalTimeout': 30000,
+        'maxConcurrentConnections': 5,
+        'retryAttempts': 3,
+        'isDesktop': true,
+        'globalContext': _settingsService.globalContextDocuments,
+      }
     };
   }
 

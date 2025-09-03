@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import 'mcp_settings_service.dart';
 
+
+import '../models/mcp_server_config.dart';
+
 /// Service for managing integration status and configurations
 /// Acts as a bridge between the unified IntegrationRegistry and actual MCP server configs
 class IntegrationService {

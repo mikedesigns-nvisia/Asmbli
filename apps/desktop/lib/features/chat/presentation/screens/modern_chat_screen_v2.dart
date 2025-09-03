@@ -22,6 +22,7 @@ class _ModernChatScreenV2State extends ConsumerState<ModernChatScreenV2> {
   final TextEditingController messageController = TextEditingController();
   bool isLeftSidebarCollapsed = false;
   bool isRightSidebarCollapsed = false;
+  bool _isSendingMessage = false; // Prevent double-sending
 
   @override
   void initState() {
@@ -31,15 +32,28 @@ class _ModernChatScreenV2State extends ConsumerState<ModernChatScreenV2> {
 
   Future<void> _ensureDefaultConversation() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return; // Check if widget is still mounted
+      
       final currentSelection = ref.read(selectedConversationIdProvider);
       if (currentSelection == null) {
         // Create a clean conversation without hardcoded defaults
         final createConversation = ref.read(createConversationProvider);
-        final conversation = await createConversation(
-          title: 'New Chat',
-          metadata: {'type': 'user_created'}, // No default_api type
-        );
-        ref.read(selectedConversationIdProvider.notifier).state = conversation.id;
+        try {
+          final conversation = await createConversation(
+            title: 'New Chat',
+            metadata: {'type': 'user_created'}, // No default_api type
+          );
+          
+          // Always check mounted state after async operations
+          if (!mounted) return;
+          
+          ref.read(selectedConversationIdProvider.notifier).state = conversation.id;
+        } catch (e) {
+          // Handle creation errors gracefully
+          if (mounted) {
+            print('Failed to create default conversation: $e');
+          }
+        }
       }
     });
   }
@@ -243,17 +257,42 @@ class _ModernChatScreenV2State extends ConsumerState<ModernChatScreenV2> {
   }
 
   Future<void> _handleSubmit(String message) async {
+    if (!mounted) return; // Check mounted state before starting
+    
+    // Prevent race conditions - don't allow multiple sends at once
+    if (_isSendingMessage) {
+      print('⚠️ Message send already in progress, ignoring duplicate request');
+      return;
+    }
+    
     final selectedConversationId = ref.read(selectedConversationIdProvider);
     if (selectedConversationId == null || message.trim().isEmpty) return;
 
-    // Use existing sendMessage provider - fully service-driven
-    final sendMessage = ref.read(sendMessageProvider);
-    await sendMessage(
-      conversationId: selectedConversationId,
-      content: message.trim(),
-    );
+    // Set sending lock
+    _isSendingMessage = true;
 
-    messageController.clear();
+    try {
+      // Use existing sendMessage provider - fully service-driven
+      final sendMessage = ref.read(sendMessageProvider);
+      await sendMessage(
+        conversationId: selectedConversationId,
+        content: message.trim(),
+      );
+
+      // Check mounted state after async operation before UI updates
+      if (!mounted) return;
+      
+      messageController.clear();
+    } catch (e) {
+      // Handle send errors gracefully
+      if (mounted) {
+        print('Failed to send message: $e');
+        // Could show error snackbar here if needed
+      }
+    } finally {
+      // Always release the lock, even on error
+      _isSendingMessage = false;
+    }
   }
 
   @override

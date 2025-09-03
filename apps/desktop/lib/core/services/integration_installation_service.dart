@@ -5,6 +5,9 @@ import 'mcp_settings_service.dart';
 import 'integration_service.dart';
 import 'detection_configuration_service.dart';
 
+
+import '../core/models/mcp_server_config.dart';
+
 /// Service that handles the complete integration installation workflow
 class IntegrationInstallationService {
   final MCPSettingsService _mcpSettingsService;

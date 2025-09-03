@@ -23,6 +23,8 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
   late AnimationController _typingController;
   late AnimationController _workflowController;
   late AnimationController _notificationController;
+  Timer? _progressTimer;
+  Timer? _notificationTimer;
   
   final List<DemoMessage> _demoMessages = [
     DemoMessage(
@@ -129,14 +131,14 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
   
   void _startDemoProgression() {
     // Auto-progress through workflow steps
-    Timer.periodic(const Duration(seconds: 3), (timer) {
+    _progressTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (mounted && currentWorkflowStep < 2) {
         setState(() {
           currentWorkflowStep++;
           if (currentWorkflowStep == 2) {
             showCompletionNotification = true;
             _notificationController.forward().then((_) {
-              Timer(const Duration(seconds: 3), () {
+              _notificationTimer = Timer(const Duration(seconds: 3), () {
                 if (mounted) {
                   _notificationController.reverse();
                 }
@@ -183,6 +185,8 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     _typingController.dispose();
     _workflowController.dispose();
     _notificationController.dispose();
+    _progressTimer?.cancel();
+    _notificationTimer?.cancel();
     super.dispose();
   }
 

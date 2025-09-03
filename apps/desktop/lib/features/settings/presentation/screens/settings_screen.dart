@@ -25,6 +25,9 @@ import '../widgets/simple_auto_detection_wizard.dart';
 import '../tabs/general_settings_tab.dart';
 import '../widgets/model_download_manager.dart';
 
+
+import '../../../core/models/mcp_server_config.dart';
+
 // Integration model for unified display
 class Integration {
   final String id;

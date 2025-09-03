@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/design_system/design_system.dart';
 import 'core/constants/routes.dart';
+import 'core/di/service_locator.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
 import 'features/chat/presentation/screens/modern_chat_screen_v2.dart';
 import 'features/chat/presentation/screens/demo_chat_screen.dart'; // Remove after video
@@ -31,7 +32,26 @@ import 'core/services/desktop/hive_cleanup_service.dart';
 void main() async {
  WidgetsFlutterBinding.ensureInitialized();
 
- // Initialize desktop services
+ // Initialize Service Locator first (contains all business logic)
+ print('🚀 Initializing Service Locator...');
+ try {
+   final startTime = DateTime.now();
+   await ServiceLocator.instance.initialize();
+   final duration = DateTime.now().difference(startTime);
+   print('✅ Service Locator initialized in ${duration.inMilliseconds}ms');
+   
+   // Perform health check
+   final healthChecker = ServiceHealthChecker();
+   final healthResult = await healthChecker.checkHealth();
+   print(healthResult.toString());
+   
+ } catch (e, stackTrace) {
+   print('❌ Service Locator initialization failed: $e');
+   print('Stack trace: $stackTrace');
+   // Continue with fallback initialization
+ }
+
+ // Initialize desktop services (legacy support)
  try {
  await DesktopServiceProvider.instance.initialize();
  // Desktop services initialized successfully

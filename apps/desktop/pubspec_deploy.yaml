@@ -1,0 +1,45 @@
+name: asmbli_platform
+description: AI Agent Orchestration Platform
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Core dependencies for the platform
+  cupertino_icons: ^1.0.2
+  path: ^1.8.3
+  crypto: ^3.0.3
+  
+  # HTTP and networking
+  http: ^1.1.0
+  
+  # JSON handling  
+  json_annotation: ^4.8.1
+  
+  # Storage
+  path_provider: ^2.1.1
+  
+  # Async utilities
+  async: ^2.11.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  # Testing
+  test: ^1.24.0
+  mockito: ^5.4.2
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
+  
+  # Linting
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

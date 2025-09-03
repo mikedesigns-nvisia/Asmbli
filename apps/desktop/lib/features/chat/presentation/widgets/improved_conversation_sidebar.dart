@@ -262,6 +262,8 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
   }
 
   void _showArchiveModal(BuildContext context) {
+    if (!mounted) return; // Check mounted before showing dialog
+    
     showDialog(
       context: context,
       builder: (context) => const ConversationArchiveModal(),
@@ -269,6 +271,8 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
   }
 
   void _showExportDialog(BuildContext context) {
+    if (!mounted) return; // Check mounted before showing dialog
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -316,6 +320,8 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
   }
 
   void _exportAsMarkdown() {
+    if (!mounted) return; // Check mounted before showing snackbar
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Markdown export coming soon'),
@@ -326,6 +332,8 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
   }
 
   void _exportAsJson() {
+    if (!mounted) return; // Check mounted before showing snackbar
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('JSON export coming soon'),
@@ -336,10 +344,15 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
   }
 
   void _startNewChat() async {
+    if (!mounted) return; // Check mounted before starting async operation
+    
     try {
       // Create a new conversation
       final createConversation = ref.read(createConversationProvider);
       final conversation = await createConversation(title: 'New Chat');
+      
+      // Always check mounted after async operations
+      if (!mounted) return;
       
       // Set as selected conversation
       ref.read(selectedConversationIdProvider.notifier).state = conversation.id;

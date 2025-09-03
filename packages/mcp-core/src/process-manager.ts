@@ -37,8 +37,14 @@ export class MCPProcessManager {
       // Spawn the MCP server process
       const childProcess = spawn(command, args, {
         stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env, ...config.env },
-        cwd: config.workingDirectory || process.cwd()
+        env: { 
+          ...process.env, 
+          ...config.env,
+          // Ensure Node.js PATH is available on Windows
+          PATH: process.env.PATH || process.env.Path
+        },
+        cwd: config.workingDirectory || process.cwd(),
+        shell: true // Enable shell on Windows to find npx
       });
 
       const connection: MCPConnection = {
@@ -56,6 +62,9 @@ export class MCPProcessManager {
       // Store connection
       this.connections.set(serverId, connection);
 
+      // Wait a bit for the server to start
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       // Initialize MCP connection
       await this.initializeMCPConnection(serverId);
 
@@ -360,30 +369,44 @@ export class MCPProcessManager {
   }
 
   private async initializeMCPConnection(serverId: string): Promise<void> {
-    // Send initialize request
-    const initResult = await this.sendMessage(serverId, {
-      jsonrpc: '2.0',
-      method: 'initialize',
-      params: {
-        protocolVersion: '2024-11-05',
-        capabilities: {
-          roots: { listChanged: true },
-          sampling: {}
-        },
-        clientInfo: {
-          name: 'AgentEngine',
-          version: '1.0.0'
+    const connection = this.connections.get(serverId);
+    if (!connection) {
+      throw new Error(`Connection not found for server ${serverId}`);
+    }
+
+    try {
+      // Send initialize request
+      const initResult = await this.sendMessage(serverId, {
+        jsonrpc: '2.0',
+        method: 'initialize',
+        params: {
+          protocolVersion: '2024-11-05',
+          capabilities: {
+            roots: { listChanged: true },
+            sampling: {}
+          },
+          clientInfo: {
+            name: 'AgentEngine',
+            version: '1.0.0'
+          }
         }
-      }
-    });
+      });
 
-    console.log(`MCP server ${serverId} initialization result:`, initResult);
+      console.log(`MCP server ${serverId} initialization result:`, initResult);
 
-    // Send initialized notification
-    await this.sendMessage(serverId, {
-      jsonrpc: '2.0',
-      method: 'notifications/initialized'
-    });
+      // Send initialized notification
+      await this.sendMessage(serverId, {
+        jsonrpc: '2.0',
+        method: 'notifications/initialized'
+      });
+
+      // Mark as connected
+      connection.isConnected = true;
+      
+    } catch (error) {
+      console.error(`Failed to initialize MCP server ${serverId}:`, error);
+      throw error;
+    }
   }
 
   async dispose(): Promise<void> {

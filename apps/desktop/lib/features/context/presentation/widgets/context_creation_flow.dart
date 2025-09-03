@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/utils/file_validation_utils.dart';
 import '../../data/models/context_document.dart';
 
 enum CreationStep {
@@ -709,28 +710,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  const SizedBox(height: SpacingTokens.elementSpacing),
  
  if (_validationMessage != null) ...[
- Container(
- padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
- decoration: BoxDecoration(
- color: SemanticColors.warning.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- border: Border.all(color: SemanticColors.warning),
- ),
- child: Row(
- children: [
- const Icon(Icons.warning_amber, color: SemanticColors.warning, size: 20),
- const SizedBox(width: SpacingTokens.componentSpacing),
- Expanded(
- child: Text(
- _validationMessage!,
- style: TextStyles.bodyMedium.copyWith(
- color: colors.onSurface,
- ),
- ),
- ),
- ],
- ),
- ),
+ _buildValidationMessage(colors),
  const SizedBox(height: SpacingTokens.elementSpacing),
  ],
  
@@ -1111,21 +1091,41 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  }
 
  Future<void> _pickFiles() async {
+ if (!mounted) return; // Check mounted before async operation
+ 
  final result = await FilePicker.platform.pickFiles(
  allowMultiple: true,
  type: FileType.custom,
- allowedExtensions: ['pdf', 'txt', 'md', 'json', 'csv'],
+ allowedExtensions: ['pdf', 'txt', 'md', 'json', 'csv', 'docx', 'doc', 'rtf', 'xml'],
  );
 
- if (result != null) {
+ if (result != null && mounted) {
+ // Validate all files comprehensively
+ final validationResult = FileValidationUtils.validateContextFiles(result.files);
+ 
+ if (validationResult.isValid) {
  setState(() {
- _uploadedFiles.addAll(
- result.files.where((file) => file.size <= 10 * 1024 * 1024),
- );
+ _uploadedFiles.addAll(result.files);
+ _validationMessage = null;
  });
  
- // Auto-generate content from uploaded files
+ // Show success message with any warnings
+ if (validationResult.fileResults.any((r) => r.warning != null)) {
+ setState(() {
+ _validationMessage = FileValidationUtils.getValidationSummary(validationResult);
+ });
+ }
+ } else {
+ // Show comprehensive error message
+ setState(() {
+ _validationMessage = FileValidationUtils.getValidationSummary(validationResult);
+ });
+ }
+ 
+ // Auto-generate content from uploaded files if validation passed
+ if (validationResult.isValid) {
  _processUploadedFiles();
+ }
  }
  }
 
@@ -1281,6 +1281,61 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  default:
  break;
  }
+ }
+
+ Widget _buildValidationMessage(ThemeColors colors) {
+ final isError = _validationMessage!.toLowerCase().contains('error') || 
+                _validationMessage!.toLowerCase().contains('failed') ||
+                _validationMessage!.toLowerCase().contains('invalid') ||
+                _validationMessage!.toLowerCase().contains('exceeds') ||
+                _validationMessage!.toLowerCase().contains('not supported');
+ 
+ final isWarning = _validationMessage!.toLowerCase().contains('warning') ||
+                  _validationMessage!.toLowerCase().contains('large file') ||
+                  _validationMessage!.toLowerCase().contains('may take longer');
+ 
+ Color messageColor;
+ Color backgroundColor; 
+ IconData icon;
+ 
+ if (isError) {
+ messageColor = colors.error;
+ backgroundColor = colors.error.withValues(alpha: 0.1);
+ icon = Icons.error_outline;
+ } else if (isWarning) {
+ messageColor = SemanticColors.warning;
+ backgroundColor = SemanticColors.warning.withValues(alpha: 0.1);
+ icon = Icons.warning_amber;
+ } else {
+ // Success message with warnings
+ messageColor = colors.primary;
+ backgroundColor = colors.primary.withValues(alpha: 0.1);
+ icon = Icons.info_outline;
+ }
+ 
+ return Container(
+ padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+ decoration: BoxDecoration(
+ color: backgroundColor,
+ borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+ border: Border.all(color: messageColor.withValues(alpha: 0.5)),
+ ),
+ child: Row(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Icon(icon, color: messageColor, size: 20),
+ const SizedBox(width: SpacingTokens.componentSpacing),
+ Expanded(
+ child: Text(
+ _validationMessage!,
+ style: TextStyles.bodyMedium.copyWith(
+ color: colors.onSurface,
+ ),
+ ),
+ ),
+ ],
+ ),
+ );
  }
 
  void _createDocument() {

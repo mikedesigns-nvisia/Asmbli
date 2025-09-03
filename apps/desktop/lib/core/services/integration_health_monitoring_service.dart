@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'mcp_settings_service.dart';
 import 'integration_service.dart';
 
+
+import '../models/mcp_server_config.dart';
+
 /// Service for monitoring the health and status of all integrations
 class IntegrationHealthMonitoringService {
   final MCPSettingsService _mcpSettingsService;

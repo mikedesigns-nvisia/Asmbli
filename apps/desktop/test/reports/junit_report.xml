@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Unit Tests" 
+             tests="75" 
+             failures="3" 
+             time="0.002">
+    <testcase name="test_1" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_2" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_3" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_4" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_5" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_6" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_7" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_8" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_9" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_10" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_11" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_12" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_13" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_14" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_15" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_16" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_17" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_18" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_19" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_20" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_21" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_22" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_23" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_24" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_25" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_26" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_27" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_28" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_29" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_30" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_31" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_32" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_33" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_34" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_35" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_36" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_37" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_38" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_39" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_40" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_41" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_42" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_43" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_44" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_45" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_46" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_47" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_48" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_49" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_50" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_51" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_52" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_53" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_54" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_55" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_56" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_57" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_58" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_59" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_60" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_61" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_62" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_63" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_64" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_65" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_66" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_67" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_68" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_69" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_70" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_71" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_72" 
+              classname="Unit Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_73" 
+              classname="Unit Tests" 
+              time="0.1">
+      <failure message="Mock provider connection timeout">
+        Mock provider connection timeout
+      </failure>
+    </testcase>
+    <testcase name="test_74" 
+              classname="Unit Tests" 
+              time="0.1">
+      <failure message="Mock provider connection timeout">
+        Mock provider connection timeout
+      </failure>
+    </testcase>
+    <testcase name="test_75" 
+              classname="Unit Tests" 
+              time="0.1">
+      <failure message="Mock provider connection timeout">
+        Mock provider connection timeout
+      </failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="Integration Tests" 
+             tests="25" 
+             failures="1" 
+             time="0.0">
+    <testcase name="test_1" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_2" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_3" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_4" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_5" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_6" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_7" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_8" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_9" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_10" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_11" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_12" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_13" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_14" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_15" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_16" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_17" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_18" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_19" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_20" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_21" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_22" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_23" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_24" 
+              classname="Integration Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_25" 
+              classname="Integration Tests" 
+              time="0.1">
+      <failure message="Mock provider connection timeout">
+        Mock provider connection timeout
+      </failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="Performance Tests" 
+             tests="25" 
+             failures="1" 
+             time="0.0">
+    <testcase name="test_1" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_2" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_3" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_4" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_5" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_6" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_7" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_8" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_9" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_10" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_11" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_12" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_13" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_14" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_15" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_16" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_17" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_18" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_19" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_20" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_21" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_22" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_23" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_24" 
+              classname="Performance Tests" 
+              time="0.1">
+    </testcase>
+    <testcase name="test_25" 
+              classname="Performance Tests" 
+              time="0.1">
+      <failure message="Mock provider connection timeout">
+        Mock provider connection timeout
+      </failure>
+    </testcase>
+  </testsuite>
+</testsuites>

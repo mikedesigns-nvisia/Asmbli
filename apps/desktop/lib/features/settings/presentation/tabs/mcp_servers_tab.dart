@@ -9,6 +9,9 @@ import '../../../../core/services/mcp_registry.dart';
 import '../../../../core/services/mcp_adapter.dart' as adapter;
 import '../../../../core/services/mcp_settings_service.dart' as settings;
 
+
+import '../../../core/models/mcp_server_config.dart';
+
 class MCPServersTab extends ConsumerWidget {
   const MCPServersTab({super.key});
 

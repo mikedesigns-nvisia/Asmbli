@@ -165,15 +165,18 @@ class FlutterMCPBridge {
       let enabledCount = 0;
       for (const [serverId, config] of Object.entries(mcpServers)) {
         try {
+          console.log(`Enabling MCP server: ${serverId}`, config);
+          
           await this.mcpManager.enableServer(serverId, {
-            command: config.command,
+            command: config.command || 'npx',
             args: config.args || [],
             env: config.env || {},
-            workingDirectory: config.cwd || process.cwd()
+            workingDirectory: config.cwd || config.workingDirectory || process.cwd()
           });
           enabledCount++;
+          console.log(`✓ Successfully enabled MCP server: ${serverId}`);
         } catch (serverError) {
-          console.error(`Failed to enable server ${serverId}:`, serverError.message);
+          console.error(`✗ Failed to enable server ${serverId}:`, serverError.message);
         }
       }
       

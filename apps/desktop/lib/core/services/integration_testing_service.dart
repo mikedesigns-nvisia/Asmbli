@@ -5,6 +5,9 @@ import 'package:agent_engine_core/agent_engine_core.dart';
 import 'integration_service.dart';
 import 'mcp_settings_service.dart';
 
+
+import '../core/models/mcp_server_config.dart';
+
 // Validation classes for integration testing
 class ValidationResult {
   final bool isValid;

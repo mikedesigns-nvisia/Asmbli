@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import '../../../core/services/agent_system_prompt_service.dart';
 
+
+import '../../core/models/mcp_server_config.dart';
+
 /// State management for the agent deployment wizard
 /// Tracks user input across all wizard steps
 class AgentWizardState extends ChangeNotifier {

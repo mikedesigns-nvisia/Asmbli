@@ -21,6 +21,7 @@ class ConversationInput extends ConsumerStatefulWidget {
 
 class _ConversationInputState extends ConsumerState<ConversationInput> {
   final FocusNode _focusNode = FocusNode();
+  final FocusNode _keyboardListenerFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class _ConversationInputState extends ConsumerState<ConversationInput> {
             children: [
               Expanded(
                 child: KeyboardListener(
-                  focusNode: FocusNode(),
+                  focusNode: _keyboardListenerFocusNode,
                   onKeyEvent: (event) {
                     if (event is KeyDownEvent) {
                       final isEnterPressed = event.logicalKey == LogicalKeyboardKey.enter;
@@ -138,6 +139,7 @@ class _ConversationInputState extends ConsumerState<ConversationInput> {
   @override
   void dispose() {
     _focusNode.dispose();
+    _keyboardListenerFocusNode.dispose();
     super.dispose();
   }
 }

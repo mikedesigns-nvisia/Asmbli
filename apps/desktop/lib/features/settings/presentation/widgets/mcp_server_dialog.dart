@@ -7,6 +7,9 @@ import 'enhanced_mcp_server_wizard.dart';
 import 'manual_mcp_server_modal.dart';
 import 'custom_mcp_server_modal.dart';
 
+
+import '../../../core/models/mcp_server_config.dart';
+
 /// Dialog for adding or editing MCP server configurations
 class MCPServerDialog extends ConsumerStatefulWidget {
   final MCPServerConfig? existingConfig;

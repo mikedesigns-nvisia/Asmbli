@@ -11,13 +11,41 @@
 
 // Static registration method
 void McpChannelPlugin::RegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar) {
-  // Minimal plugin registration - just register the plugin without channels for now
-  // TODO: Implement MCP functionality in pure Dart instead
+  // Create and register the MCP channel plugin with proper channels
+  auto channel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+      flutter::FlutterDesktopRegistrarGetMessenger(registrar),
+      "agentengine.mcp",
+      &flutter::StandardMethodCodec::GetInstance());
+
+  auto event_channel = std::make_unique<flutter::EventChannel<flutter::EncodableValue>>(
+      flutter::FlutterDesktopRegistrarGetMessenger(registrar),
+      "agentengine.mcp.events",
+      &flutter::StandardMethodCodec::GetInstance());
+
+  // Create plugin instance with channels
+  auto plugin = std::make_unique<McpChannelPlugin>();
   
-  // Keep a static instance alive to prevent deallocation
-  static auto plugin = std::make_unique<McpChannelPlugin>();
+  // Set up stream handler for events
+  plugin->stream_handler_ = std::make_unique<McpEventStreamHandler>(plugin.get());
+  event_channel->SetStreamHandler(std::move(plugin->stream_handler_));
+
+  // Set method call handler
+  channel->SetMethodCallHandler([plugin = plugin.get()](const auto& call, auto result) {
+    plugin->HandleMethodCall(call, std::move(result));
+  });
+
+  // Keep instances alive - they'll be destroyed when the registrar is destroyed
+  flutter::FlutterDesktopRegistrarSetDestructionHandler(
+      registrar, [](FlutterDesktopPluginRegistrarRef) {
+        // Plugin cleanup will happen automatically when unique_ptrs go out of scope
+      });
+
+  // Keep static references to prevent deallocation
+  static auto channel_ref = std::move(channel);
+  static auto event_channel_ref = std::move(event_channel);
+  static auto plugin_ref = std::move(plugin);
   
-  // Plugin registered successfully - MCP functionality will be handled in Dart
+  std::cout << "✓ MCP Channel Plugin registered successfully" << std::endl;
 }
 
 McpChannelPlugin::McpChannelPlugin() 

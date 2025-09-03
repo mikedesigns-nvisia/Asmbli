@@ -1,0 +1,1466 @@
+openapi: 3.0.0
+info:
+  title: Asmbli Platform API
+  version: 1.0.0
+  description: |
+    The definitive AI agent orchestration platform providing comprehensive APIs for:
+    - Multi-provider model management with intelligent routing
+    - DAG-based workflow orchestration and execution
+    - Vector database operations for semantic search
+    - Performance optimization with caching and background processing
+    - Agent lifecycle management and monitoring
+    
+    ## Authentication
+    All API endpoints require bearer token authentication. Include your API key in the Authorization header:
+    ```
+    Authorization: Bearer YOUR_API_KEY
+    ```
+    
+    ## Rate Limits
+    - Standard tier: 1000 requests per hour
+    - Premium tier: 10000 requests per hour
+    - Enterprise tier: Unlimited
+    
+    ## Webhooks
+    Configure webhooks to receive real-time notifications about workflow executions, job completions, and system events.
+    
+  contact:
+    name: Asmbli Support
+    url: https://asmbli.com/support
+    email: support@asmbli.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api-staging.asmbli.com/v1
+    description: Staging environment
+  - url: https://api.asmbli.com/v1
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: agents
+    description: Agent lifecycle and management operations
+  - name: workflows
+    description: Workflow orchestration and execution
+  - name: models
+    description: Multi-provider model management
+  - name: vector-db
+    description: Vector database and semantic search
+  - name: jobs
+    description: Background job processing
+  - name: cache
+    description: Performance optimization and caching
+  - name: monitoring
+    description: System monitoring and analytics
+
+paths:
+  # Agent Management
+  /agents:
+    get:
+      summary: List all agents
+      description: Retrieve a paginated list of all registered agents with their current status and capabilities
+      operationId: listAgents
+      tags: [agents]
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of agents to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of agents to skip for pagination
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: status
+          in: query
+          description: Filter agents by status
+          schema:
+            type: string
+            enum: [active, inactive, error, maintenance]
+        - name: capabilities
+          in: query
+          description: Filter agents by capabilities (comma-separated)
+          schema:
+            type: string
+            example: "search,summarize,analyze"
+      responses:
+        200:
+          description: List of agents retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agents:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Agent'
+                  total:
+                    type: integer
+                    description: Total number of agents matching criteria
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        500:
+          $ref: '#/components/responses/InternalError'
+          
+    post:
+      summary: Create new agent
+      description: Register a new agent with specified capabilities and configuration
+      operationId: createAgent
+      tags: [agents]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAgentRequest'
+      responses:
+        201:
+          description: Agent created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        409:
+          description: Agent with this ID already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /agents/{agentId}:
+    get:
+      summary: Get agent details
+      description: Retrieve detailed information about a specific agent
+      operationId: getAgent
+      tags: [agents]
+      parameters:
+        - $ref: '#/components/parameters/AgentId'
+      responses:
+        200:
+          description: Agent details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        404:
+          $ref: '#/components/responses/NotFound'
+        
+    put:
+      summary: Update agent
+      description: Update agent configuration and capabilities
+      operationId: updateAgent
+      tags: [agents]
+      parameters:
+        - $ref: '#/components/parameters/AgentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAgentRequest'
+      responses:
+        200:
+          description: Agent updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        404:
+          $ref: '#/components/responses/NotFound'
+        
+    delete:
+      summary: Delete agent
+      description: Permanently delete an agent and all associated data
+      operationId: deleteAgent
+      tags: [agents]
+      parameters:
+        - $ref: '#/components/parameters/AgentId'
+      responses:
+        204:
+          description: Agent deleted successfully
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /agents/{agentId}/execute:
+    post:
+      summary: Execute agent
+      description: Execute an agent with provided input data
+      operationId: executeAgent
+      tags: [agents]
+      parameters:
+        - $ref: '#/components/parameters/AgentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentExecutionRequest'
+      responses:
+        200:
+          description: Agent execution completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentExecutionResult'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  # Workflow Management
+  /workflows:
+    get:
+      summary: List workflows
+      description: Retrieve all available workflow templates and instances
+      operationId: listWorkflows
+      tags: [workflows]
+      parameters:
+        - name: type
+          in: query
+          description: Filter by workflow type
+          schema:
+            type: string
+            enum: [template, instance]
+        - name: status
+          in: query
+          description: Filter by execution status (for instances)
+          schema:
+            type: string
+            enum: [pending, running, completed, failed, cancelled]
+      responses:
+        200:
+          description: Workflows retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workflows:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Workflow'
+                  total:
+                    type: integer
+
+    post:
+      summary: Create workflow
+      description: Create a new workflow from template or custom definition
+      operationId: createWorkflow
+      tags: [workflows]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflowRequest'
+      responses:
+        201:
+          description: Workflow created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+
+  /workflows/{workflowId}/execute:
+    post:
+      summary: Execute workflow
+      description: Execute a workflow with specified input parameters
+      operationId: executeWorkflow
+      tags: [workflows]
+      parameters:
+        - $ref: '#/components/parameters/WorkflowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowExecutionRequest'
+      responses:
+        200:
+          description: Workflow execution completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowExecutionResult'
+        202:
+          description: Workflow execution started (async mode)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executionId:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [started]
+                  trackingUrl:
+                    type: string
+                    format: uri
+
+  /workflows/{workflowId}/executions/{executionId}:
+    get:
+      summary: Get workflow execution status
+      description: Retrieve the current status and results of a workflow execution
+      operationId: getWorkflowExecution
+      tags: [workflows]
+      parameters:
+        - $ref: '#/components/parameters/WorkflowId'
+        - name: executionId
+          in: path
+          required: true
+          description: Unique execution identifier
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Execution status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowExecutionResult'
+
+  # Model Management
+  /models:
+    get:
+      summary: List available models
+      description: Retrieve all models across all configured providers
+      operationId: listModels
+      tags: [models]
+      parameters:
+        - name: provider
+          in: query
+          description: Filter models by provider
+          schema:
+            type: string
+            enum: [openai, anthropic, ollama, huggingface]
+        - name: capability
+          in: query
+          description: Filter by model capabilities
+          schema:
+            type: string
+            enum: [chat, completion, embedding, image-generation]
+      responses:
+        200:
+          description: Available models retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  models:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Model'
+                  providers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ModelProvider'
+
+  /models/chat/completions:
+    post:
+      summary: Create chat completion
+      description: Generate chat completions using intelligent model routing
+      operationId: createChatCompletion
+      tags: [models]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatCompletionRequest'
+      responses:
+        200:
+          description: Chat completion generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatCompletionResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        429:
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /models/embeddings:
+    post:
+      summary: Create embeddings
+      description: Generate vector embeddings for text inputs
+      operationId: createEmbeddings
+      tags: [models]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmbeddingRequest'
+      responses:
+        200:
+          description: Embeddings generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmbeddingResponse'
+
+  # Vector Database
+  /vector-db/collections:
+    get:
+      summary: List collections
+      description: Retrieve all vector database collections
+      operationId: listCollections
+      tags: [vector-db]
+      responses:
+        200:
+          description: Collections retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  collections:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VectorCollection'
+
+    post:
+      summary: Create collection
+      description: Create a new vector database collection
+      operationId: createCollection
+      tags: [vector-db]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCollectionRequest'
+      responses:
+        201:
+          description: Collection created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VectorCollection'
+
+  /vector-db/collections/{collectionId}/documents:
+    post:
+      summary: Add documents
+      description: Add documents to a vector collection with automatic embedding generation
+      operationId: addDocuments
+      tags: [vector-db]
+      parameters:
+        - $ref: '#/components/parameters/CollectionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddDocumentsRequest'
+      responses:
+        201:
+          description: Documents added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  documentIds:
+                    type: array
+                    items:
+                      type: string
+                  indexingJobId:
+                    type: string
+                    description: Background job ID for tracking indexing progress
+
+  /vector-db/collections/{collectionId}/search:
+    post:
+      summary: Search documents
+      description: Perform semantic search across documents in a collection
+      operationId: searchDocuments
+      tags: [vector-db]
+      parameters:
+        - $ref: '#/components/parameters/CollectionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        200:
+          description: Search completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+
+  # Job Management
+  /jobs:
+    get:
+      summary: List jobs
+      description: Retrieve background jobs with filtering and pagination
+      operationId: listJobs
+      tags: [jobs]
+      parameters:
+        - name: status
+          in: query
+          description: Filter jobs by status
+          schema:
+            type: string
+            enum: [pending, running, completed, failed, cancelled]
+        - name: type
+          in: query
+          description: Filter jobs by type
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        200:
+          description: Jobs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Job'
+                  total:
+                    type: integer
+
+    post:
+      summary: Create job
+      description: Submit a new background job for processing
+      operationId: createJob
+      tags: [jobs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJobRequest'
+      responses:
+        201:
+          description: Job created and queued successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+
+  /jobs/{jobId}:
+    get:
+      summary: Get job status
+      description: Retrieve detailed status and results of a specific job
+      operationId: getJob
+      tags: [jobs]
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+      responses:
+        200:
+          description: Job status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Cancel job
+      description: Cancel a pending or running job
+      operationId: cancelJob
+      tags: [jobs]
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+      responses:
+        200:
+          description: Job cancelled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cancelled:
+                    type: boolean
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Cache Management
+  /cache/stats:
+    get:
+      summary: Get cache statistics
+      description: Retrieve cache performance metrics and statistics
+      operationId: getCacheStats
+      tags: [cache]
+      responses:
+        200:
+          description: Cache statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CacheStatistics'
+
+  /cache/clear:
+    post:
+      summary: Clear cache
+      description: Clear cache entries with optional filtering
+      operationId: clearCache
+      tags: [cache]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                level:
+                  type: string
+                  enum: [memory, disk, all]
+                  default: all
+                pattern:
+                  type: string
+                  description: Key pattern to match (supports wildcards)
+      responses:
+        200:
+          description: Cache cleared successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cleared:
+                    type: boolean
+                  entriesRemoved:
+                    type: integer
+
+  # System Monitoring
+  /health:
+    get:
+      summary: System health check
+      description: Retrieve overall system health and component status
+      operationId: getSystemHealth
+      tags: [monitoring]
+      responses:
+        200:
+          description: System health retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemHealth'
+
+  /metrics:
+    get:
+      summary: System metrics
+      description: Retrieve detailed system metrics and performance data
+      operationId: getSystemMetrics
+      tags: [monitoring]
+      responses:
+        200:
+          description: System metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemMetrics'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    AgentId:
+      name: agentId
+      in: path
+      required: true
+      description: Unique agent identifier
+      schema:
+        type: string
+        format: uuid
+    
+    WorkflowId:
+      name: workflowId
+      in: path
+      required: true
+      description: Unique workflow identifier
+      schema:
+        type: string
+        format: uuid
+    
+    CollectionId:
+      name: collectionId
+      in: path
+      required: true
+      description: Vector collection identifier
+      schema:
+        type: string
+    
+    JobId:
+      name: jobId
+      in: path
+      required: true
+      description: Background job identifier
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or body
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Authentication required or invalid credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Requested resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Agent:
+      type: object
+      required: [id, name, capabilities, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique agent identifier
+        name:
+          type: string
+          description: Human-readable agent name
+        description:
+          type: string
+          description: Agent description and purpose
+        capabilities:
+          type: array
+          description: List of agent capabilities
+          items:
+            type: string
+            enum: [search, summarize, analyze, translate, generate, classify]
+        modelId:
+          type: string
+          description: Associated model identifier
+        status:
+          type: string
+          enum: [active, inactive, error, maintenance]
+          description: Current agent status
+        config:
+          type: object
+          description: Agent-specific configuration
+        performance:
+          $ref: '#/components/schemas/AgentPerformance'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateAgentRequest:
+      type: object
+      required: [name, capabilities]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        capabilities:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        modelId:
+          type: string
+        config:
+          type: object
+          description: Agent configuration parameters
+
+    UpdateAgentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+        modelId:
+          type: string
+        config:
+          type: object
+
+    AgentExecutionRequest:
+      type: object
+      required: [input]
+      properties:
+        input:
+          type: object
+          description: Input data for agent execution
+        timeout:
+          type: integer
+          description: Execution timeout in seconds
+          minimum: 1
+          maximum: 3600
+          default: 300
+        priority:
+          type: string
+          enum: [low, normal, high, critical]
+          default: normal
+
+    AgentExecutionResult:
+      type: object
+      properties:
+        executionId:
+          type: string
+          format: uuid
+        success:
+          type: boolean
+        output:
+          type: object
+          description: Agent execution output
+        error:
+          type: string
+          description: Error message if execution failed
+        performance:
+          $ref: '#/components/schemas/ExecutionPerformance'
+
+    Workflow:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [template, instance]
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowNode'
+        status:
+          type: string
+          enum: [draft, active, paused, completed, failed]
+        createdAt:
+          type: string
+          format: date-time
+
+    WorkflowNode:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [agent, condition, parallel, loop]
+        config:
+          type: object
+        dependencies:
+          type: array
+          items:
+            type: string
+        inputMapping:
+          type: object
+        outputMapping:
+          type: object
+
+    CreateWorkflowRequest:
+      type: object
+      required: [name, nodes]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        templateId:
+          type: string
+          description: Create from template
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowNode'
+
+    WorkflowExecutionRequest:
+      type: object
+      required: [input]
+      properties:
+        input:
+          type: object
+          description: Workflow input data
+        async:
+          type: boolean
+          description: Execute asynchronously
+          default: false
+        timeout:
+          type: integer
+          description: Total execution timeout in seconds
+          default: 1800
+
+    WorkflowExecutionResult:
+      type: object
+      properties:
+        executionId:
+          type: string
+          format: uuid
+        workflowId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [running, completed, failed, cancelled]
+        outputs:
+          type: object
+          description: Final workflow outputs
+        errors:
+          type: array
+          items:
+            type: string
+        executionGraph:
+          type: object
+          description: Execution path and node results
+        performance:
+          $ref: '#/components/schemas/WorkflowPerformance'
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+    Model:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        provider:
+          type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+        maxTokens:
+          type: integer
+        costPer1kTokens:
+          type: number
+        isAvailable:
+          type: boolean
+        performance:
+          $ref: '#/components/schemas/ModelPerformance'
+
+    ModelProvider:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [healthy, degraded, unavailable]
+        models:
+          type: array
+          items:
+            type: string
+        health:
+          $ref: '#/components/schemas/ProviderHealth'
+
+    ChatCompletionRequest:
+      type: object
+      required: [messages]
+      properties:
+        model:
+          type: string
+          description: Specific model or auto-route
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+        maxTokens:
+          type: integer
+          minimum: 1
+          maximum: 32000
+        temperature:
+          type: number
+          minimum: 0
+          maximum: 2
+        stream:
+          type: boolean
+          default: false
+        preferredProviders:
+          type: array
+          items:
+            type: string
+
+    ChatMessage:
+      type: object
+      required: [role, content]
+      properties:
+        role:
+          type: string
+          enum: [system, user, assistant]
+        content:
+          type: string
+        name:
+          type: string
+
+    ChatCompletionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        model:
+          type: string
+        provider:
+          type: string
+        content:
+          type: string
+        usage:
+          $ref: '#/components/schemas/TokenUsage'
+        finishReason:
+          type: string
+        performance:
+          $ref: '#/components/schemas/ResponsePerformance'
+
+    TokenUsage:
+      type: object
+      properties:
+        promptTokens:
+          type: integer
+        completionTokens:
+          type: integer
+        totalTokens:
+          type: integer
+
+    EmbeddingRequest:
+      type: object
+      required: [input]
+      properties:
+        input:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        model:
+          type: string
+          default: text-embedding-ada-002
+
+    EmbeddingResponse:
+      type: object
+      properties:
+        embeddings:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+        usage:
+          $ref: '#/components/schemas/TokenUsage'
+        model:
+          type: string
+
+    VectorCollection:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        dimensions:
+          type: integer
+        documentCount:
+          type: integer
+        indexType:
+          type: string
+          enum: [flat, hnsw, ivf]
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateCollectionRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        dimensions:
+          type: integer
+          default: 1536
+        indexType:
+          type: string
+          enum: [flat, hnsw, ivf]
+          default: hnsw
+
+    AddDocumentsRequest:
+      type: object
+      required: [documents]
+      properties:
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        generateEmbeddings:
+          type: boolean
+          default: true
+
+    Document:
+      type: object
+      required: [id, content]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        metadata:
+          type: object
+        embedding:
+          type: array
+          items:
+            type: number
+
+    SearchRequest:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 10
+        threshold:
+          type: number
+          minimum: 0
+          maximum: 1
+          default: 0.7
+        filter:
+          type: object
+          description: Metadata filters
+        includeMetadata:
+          type: boolean
+          default: true
+
+    SearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResult'
+        totalCount:
+          type: integer
+        performance:
+          $ref: '#/components/schemas/SearchPerformance'
+
+    SearchResult:
+      type: object
+      properties:
+        document:
+          $ref: '#/components/schemas/Document'
+        score:
+          type: number
+        highlights:
+          type: array
+          items:
+            type: string
+
+    Job:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        priority:
+          type: string
+          enum: [low, normal, high, critical]
+        status:
+          type: string
+          enum: [pending, running, completed, failed, cancelled, retrying]
+        data:
+          type: object
+        result:
+          type: object
+        error:
+          type: string
+        attempts:
+          type: integer
+        maxRetries:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+    CreateJobRequest:
+      type: object
+      required: [type, data]
+      properties:
+        type:
+          type: string
+          enum: [document_processing, model_embedding, file_indexing, workflow_execution]
+        data:
+          type: object
+        priority:
+          type: string
+          enum: [low, normal, high, critical]
+          default: normal
+        maxRetries:
+          type: integer
+          default: 3
+        scheduledAt:
+          type: string
+          format: date-time
+
+    # Performance and Statistics Schemas
+    AgentPerformance:
+      type: object
+      properties:
+        averageLatency:
+          type: number
+          description: Average execution time in milliseconds
+        successRate:
+          type: number
+          description: Success rate as percentage
+        totalExecutions:
+          type: integer
+
+    ExecutionPerformance:
+      type: object
+      properties:
+        duration:
+          type: integer
+          description: Execution duration in milliseconds
+        tokensUsed:
+          type: integer
+        cost:
+          type: number
+
+    WorkflowPerformance:
+      type: object
+      properties:
+        totalDuration:
+          type: integer
+        parallelEfficiency:
+          type: number
+        nodeExecutions:
+          type: object
+
+    ModelPerformance:
+      type: object
+      properties:
+        averageLatency:
+          type: number
+        throughput:
+          type: number
+        errorRate:
+          type: number
+
+    ProviderHealth:
+      type: object
+      properties:
+        isHealthy:
+          type: boolean
+        latency:
+          type: number
+        errorRate:
+          type: number
+        lastCheck:
+          type: string
+          format: date-time
+
+    ResponsePerformance:
+      type: object
+      properties:
+        latency:
+          type: number
+        tokensPerSecond:
+          type: number
+        cached:
+          type: boolean
+
+    SearchPerformance:
+      type: object
+      properties:
+        searchTime:
+          type: number
+        documentsScanned:
+          type: integer
+        indexUtilization:
+          type: number
+
+    CacheStatistics:
+      type: object
+      properties:
+        memoryCache:
+          $ref: '#/components/schemas/CacheStats'
+        diskCache:
+          $ref: '#/components/schemas/CacheStats'
+        overallHitRate:
+          type: number
+
+    CacheStats:
+      type: object
+      properties:
+        size:
+          type: integer
+        maxSize:
+          type: integer
+        hits:
+          type: integer
+        misses:
+          type: integer
+        hitRate:
+          type: number
+
+    SystemHealth:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, down]
+        components:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+              details:
+                type: object
+        uptime:
+          type: number
+
+    SystemMetrics:
+      type: object
+      properties:
+        requests:
+          type: object
+          properties:
+            total:
+              type: integer
+            ratePerSecond:
+              type: number
+            averageLatency:
+              type: number
+        cache:
+          $ref: '#/components/schemas/CacheStatistics'
+        jobs:
+          type: object
+          properties:
+            pending:
+              type: integer
+            running:
+              type: integer
+            completed:
+              type: integer
+        workers:
+          type: object
+          properties:
+            total:
+              type: integer
+            active:
+              type: integer
+            utilization:
+              type: number
+
+    # Common Objects
+    Pagination:
+      type: object
+      properties:
+        limit:
+          type: integer
+        offset:
+          type: integer
+        hasMore:
+          type: boolean
+
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+        details:
+          type: object
+        requestId:
+          type: string

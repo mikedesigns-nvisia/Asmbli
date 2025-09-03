@@ -6,10 +6,17 @@ import '../core/services/desktop/desktop_agent_service.dart';
 import '../core/services/mcp_installation_service.dart';
 import '../core/services/context_mcp_resource_service.dart';
 import '../core/services/mcp_conversation_bridge_service.dart';
+import '../core/services/business/agent_business_service.dart';
+import '../core/di/service_locator.dart';
 
-/// Provider for the agent service
+/// Provider for the agent service (legacy support)
 final agentServiceProvider = Provider<AgentService>((ref) {
   return DesktopAgentService();
+});
+
+/// Provider for the agent business service (contains business logic)
+final agentBusinessServiceProvider = Provider<AgentBusinessService>((ref) {
+  return ServiceLocator.instance.get<AgentBusinessService>();
 });
 
 /// Provider for the list of all agents
@@ -31,22 +38,28 @@ final agentProvider = FutureProvider.family<Agent, String>((ref, id) async {
 
 /// Notifier class for managing agent operations
 class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
-  final AgentService _agentService;
+  final AgentBusinessService _agentBusinessService;
   final Ref _ref;
 
-  AgentNotifier(this._agentService, this._ref) : super(const AsyncValue.loading()) {
+  AgentNotifier(this._agentBusinessService, this._ref) : super(const AsyncValue.loading()) {
     _loadAgents();
   }
 
   Future<void> _loadAgents() async {
     try {
-      // Load all agents from service
-      final agents = await _agentService.listAgents();
-      state = AsyncValue.data(agents);
+      // Load all agents using business service
+      final result = await _agentBusinessService.getAgents();
       
-      // Set first agent as active if none selected
-      if (agents.isNotEmpty && _ref.read(activeAgentProvider) == null) {
-        _ref.read(activeAgentProvider.notifier).state = agents.first;
+      if (result.isSuccess) {
+        final agents = result.data!;
+        state = AsyncValue.data(agents);
+        
+        // Set first agent as active if none selected
+        if (agents.isNotEmpty && _ref.read(activeAgentProvider) == null) {
+          _ref.read(activeAgentProvider.notifier).state = agents.first;
+        }
+      } else {
+        state = AsyncValue.error(result.error!, StackTrace.current);
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -55,8 +68,22 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
 
   Future<void> createAgent(Agent agent) async {
     try {
-      await _agentService.createAgent(agent);
-      await _loadAgents();
+      // Use business service for agent creation with full validation
+      final result = await _agentBusinessService.createAgent(
+        name: agent.name,
+        description: agent.description,
+        capabilities: agent.capabilities,
+        modelId: agent.modelId,
+        mcpServers: _getMCPServersFromMetadata(agent),
+        contextDocs: _getContextDocsFromMetadata(agent),
+        configuration: agent.metadata,
+      );
+      
+      if (result.isSuccess) {
+        await _loadAgents();
+      } else {
+        state = AsyncValue.error(result.error!, StackTrace.current);
+      }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -64,13 +91,28 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
 
   Future<void> updateAgent(Agent agent) async {
     try {
-      await _agentService.updateAgent(agent);
-      await _loadAgents();
+      // Use business service for agent updates with validation
+      final result = await _agentBusinessService.updateAgent(
+        agent: agent,
+        name: agent.name,
+        description: agent.description,
+        capabilities: agent.capabilities,
+        modelId: agent.modelId,
+        mcpServers: _getMCPServersFromMetadata(agent),
+        contextDocs: _getContextDocsFromMetadata(agent),
+        configuration: agent.metadata,
+      );
       
-      // Update active agent if it was the one being updated
-      final activeAgent = _ref.read(activeAgentProvider);
-      if (activeAgent?.id == agent.id) {
-        _ref.read(activeAgentProvider.notifier).state = agent;
+      if (result.isSuccess) {
+        await _loadAgents();
+        
+        // Update active agent if it was the one being updated
+        final activeAgent = _ref.read(activeAgentProvider);
+        if (activeAgent?.id == agent.id) {
+          _ref.read(activeAgentProvider.notifier).state = result.data!;
+        }
+      } else {
+        state = AsyncValue.error(result.error!, StackTrace.current);
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -79,15 +121,21 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
 
   Future<void> deleteAgent(String id) async {
     try {
-      await _agentService.deleteAgent(id);
-      await _loadAgents();
+      // Use business service for safe deletion
+      final result = await _agentBusinessService.deleteAgent(id);
       
-      // Clear active agent if it was deleted
-      final activeAgent = _ref.read(activeAgentProvider);
-      if (activeAgent?.id == id) {
-        final agents = state.value ?? [];
-        _ref.read(activeAgentProvider.notifier).state = 
-            agents.isNotEmpty ? agents.first : null;
+      if (result.isSuccess) {
+        await _loadAgents();
+        
+        // Clear active agent if it was deleted
+        final activeAgent = _ref.read(activeAgentProvider);
+        if (activeAgent?.id == id) {
+          final agents = state.value ?? [];
+          _ref.read(activeAgentProvider.notifier).state = 
+              agents.isNotEmpty ? agents.first : null;
+        }
+      } else {
+        state = AsyncValue.error(result.error!, StackTrace.current);
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -96,11 +144,42 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
 
   Future<void> setAgentStatus(String id, AgentStatus status) async {
     try {
-      await _agentService.setAgentStatus(id, status);
+      // Use business service for status changes with proper validation
+      if (status == AgentStatus.active) {
+        final result = await _agentBusinessService.activateAgent(id);
+        if (!result.isSuccess) {
+          state = AsyncValue.error(result.error!, StackTrace.current);
+          return;
+        }
+      } else if (status == AgentStatus.inactive) {
+        final result = await _agentBusinessService.deactivateAgent(id);
+        if (!result.isSuccess) {
+          state = AsyncValue.error(result.error!, StackTrace.current);
+          return;
+        }
+      }
+      
       await _loadAgents();
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
+  }
+
+  // Helper methods to extract metadata
+  List<String> _getMCPServersFromMetadata(Agent agent) {
+    final mcpServers = agent.metadata['mcpServers'];
+    if (mcpServers is List) {
+      return List<String>.from(mcpServers);
+    }
+    return [];
+  }
+
+  List<String> _getContextDocsFromMetadata(Agent agent) {
+    final contextDocs = agent.metadata['contextDocuments'];
+    if (contextDocs is List) {
+      return List<String>.from(contextDocs);
+    }
+    return [];
   }
 
   void setActiveAgent(Agent? agent) {
@@ -265,6 +344,6 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
 
 /// Provider for the agent notifier
 final agentNotifierProvider = StateNotifierProvider<AgentNotifier, AsyncValue<List<Agent>>>((ref) {
-  final agentService = ref.watch(agentServiceProvider);
-  return AgentNotifier(agentService, ref);
+  final agentBusinessService = ref.watch(agentBusinessServiceProvider);
+  return AgentNotifier(agentBusinessService, ref);
 });

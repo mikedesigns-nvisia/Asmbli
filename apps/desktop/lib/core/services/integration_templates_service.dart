@@ -6,6 +6,9 @@ import 'package:agent_engine_core/agent_engine_core.dart';
 import 'integration_service.dart';
 import 'integration_backup_service.dart';
 
+
+import '../core/models/mcp_server_config.dart';
+
 /// Service for managing integration templates and sharing
 class IntegrationTemplatesService {
   final IntegrationService _integrationService;

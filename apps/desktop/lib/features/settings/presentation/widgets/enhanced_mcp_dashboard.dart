@@ -9,6 +9,9 @@ import '../../../../core/services/enhanced_mcp_testing_service.dart';
 import '../../../../core/services/intelligent_mcp_recommendations.dart';
 import 'enhanced_mcp_server_wizard.dart';
 
+
+import '../../../core/models/mcp_server_config.dart';
+
 /// Comprehensive MCP integration dashboard with management, monitoring, and recommendations
 class EnhancedMCPDashboard extends ConsumerStatefulWidget {
   final String? agentRole;

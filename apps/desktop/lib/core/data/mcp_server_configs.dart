@@ -6,7 +6,7 @@
 
 library;
 
-class MCPServerConfig {
+class MCPServerLibraryConfig {
   final String id;
   final String name;
   final String description;
@@ -20,7 +20,7 @@ class MCPServerConfig {
   final String? repositoryUrl;
   final String? documentationUrl;
 
-  const MCPServerConfig({
+  const MCPServerLibraryConfig({
     required this.id,
     required this.name,
     required this.description,
@@ -74,11 +74,11 @@ enum MCPServerStatus {
 
 /// Curated library of MCP server configurations
 class MCPServerLibrary {
-  static const List<MCPServerConfig> servers = [
+  static const List<MCPServerLibraryConfig> servers = [
     
     // OFFICIAL ANTHROPIC SERVERS
     
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'filesystem',
       name: 'Filesystem',
       description: 'Secure file operations with configurable access controls',
@@ -93,7 +93,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'git',
       name: 'Git',
       description: 'Tools to read, search, and manipulate Git repositories',
@@ -107,7 +107,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'memory',
       name: 'Memory',
       description: 'Knowledge graph-based persistent memory system',
@@ -121,7 +121,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'github',
       name: 'GitHub',
       description: 'GitHub API integration for repositories, issues, and pull requests',
@@ -137,7 +137,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'brave-search',
       name: 'Brave Search',
       description: 'Web search capabilities using Brave Search API',
@@ -153,7 +153,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'postgresql',
       name: 'PostgreSQL',
       description: 'PostgreSQL database operations and queries',
@@ -169,7 +169,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'sqlite',
       name: 'SQLite',
       description: 'SQLite database operations and queries',
@@ -184,7 +184,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'slack',
       name: 'Slack',
       description: 'Slack workspace integration for channels and messaging',
@@ -200,7 +200,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'google-drive',
       name: 'Google Drive',
       description: 'Google Drive file operations and management',
@@ -216,7 +216,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'puppeteer',
       name: 'Puppeteer',
       description: 'Browser automation and web scraping',
@@ -230,7 +230,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'fetch',
       name: 'Fetch',
       description: 'Web content fetching and conversion for efficient LLM usage',
@@ -244,7 +244,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'everything',
       name: 'Everything',
       description: 'Reference/test server with prompts, resources, and tools',
@@ -258,7 +258,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'sequential-thinking',
       name: 'Sequential Thinking',
       description: 'Dynamic problem-solving through thought sequences',
@@ -272,7 +272,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'time',
       name: 'Time',
       description: 'Time and timezone conversion capabilities',
@@ -288,7 +288,7 @@ class MCPServerLibrary {
 
     // SPECIAL SERVERS
     
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'figma-official',
       name: 'Figma Dev Mode MCP Server',
       description: 'Official Figma MCP server for design file access',
@@ -305,7 +305,7 @@ class MCPServerLibrary {
 
     // COMMUNITY SERVERS
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'notion',
       name: 'Notion',
       description: 'Notion workspace integration for pages and databases',
@@ -320,7 +320,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'linear',
       name: 'Linear',
       description: 'Linear issue tracking and project management',
@@ -335,7 +335,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'docker',
       name: 'Docker',
       description: 'Docker container management and operations',
@@ -350,7 +350,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.beta,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'jira',
       name: 'Jira',
       description: 'Atlassian Jira project management and issue tracking',
@@ -365,7 +365,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'airtable',
       name: 'Airtable',
       description: 'Airtable database operations and base management',
@@ -380,7 +380,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'discord',
       name: 'Discord',
       description: 'Discord server management and messaging',
@@ -397,7 +397,7 @@ class MCPServerLibrary {
 
     // DEVELOPER & DEVOPS TOOLS
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'buildkite',
       name: 'Buildkite',
       description: 'Exposing Buildkite data (pipelines, builds, jobs, tests) to AI tooling',
@@ -412,7 +412,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'buildable',
       name: 'Buildable',
       description: 'Official MCP server for Buildable AI-powered development platform',
@@ -427,7 +427,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'sentry',
       name: 'Sentry',
       description: 'Error tracking and debugging integration',
@@ -442,7 +442,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'circleci',
       name: 'CircleCI',
       description: 'Enable AI Agents to fix build failures from CircleCI',
@@ -457,7 +457,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.beta,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'gitguardian',
       name: 'GitGuardian',
       description: 'Scan projects using GitGuardian\'s API with 500+ secret detectors',
@@ -472,7 +472,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'browser-automation',
       name: 'Browser MCP',
       description: 'Automate your local browser',
@@ -486,7 +486,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.beta,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'gremlin',
       name: 'Gremlin',
       description: 'Official Gremlin MCP server for reliability and chaos engineering',
@@ -503,7 +503,7 @@ class MCPServerLibrary {
 
     // CLOUD & INFRASTRUCTURE
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'aws-bedrock',
       name: 'AWS Bedrock KB Retrieval',
       description: 'AWS Bedrock Knowledge Base retrieval integration',
@@ -518,7 +518,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'aws-cdk',
       name: 'AWS CDK',
       description: 'AWS Cloud Development Kit integration',
@@ -533,7 +533,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.beta,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'aws-cost-analysis',
       name: 'AWS Cost Analysis',
       description: 'AWS cost monitoring and analysis',
@@ -548,7 +548,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'cloudflare',
       name: 'Cloudflare',
       description: 'Traffic analysis, performance monitoring, and security management',
@@ -563,7 +563,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'vercel',
       name: 'Vercel',
       description: 'Official Vercel MCP server for project and deployment management',
@@ -578,7 +578,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'netlify',
       name: 'Netlify',
       description: 'Create, deploy, and manage websites on Netlify',
@@ -593,7 +593,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'azure',
       name: 'Azure MCP Server',
       description: 'Connect AI agents to Azure services like storage, databases, and log analytics',
@@ -610,7 +610,7 @@ class MCPServerLibrary {
 
     // DATABASE & DATA
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'supabase',
       name: 'Supabase',
       description: 'Interact with Supabase: Create tables, query data, deploy edge functions',
@@ -625,7 +625,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'bigquery',
       name: 'BigQuery',
       description: 'Database integration with schema inspection',
@@ -640,7 +640,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'clickhouse',
       name: 'ClickHouse',
       description: 'Query your ClickHouse database server',
@@ -655,7 +655,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'redis',
       name: 'Redis',
       description: 'Access to Redis databases for key-value operations',
@@ -670,7 +670,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'caldav',
       name: 'CalDAV',
       description: 'Expose calendar operations as tools for AI assistants',
@@ -687,7 +687,7 @@ class MCPServerLibrary {
 
     // BUSINESS & PRODUCTIVITY
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'stripe',
       name: 'Stripe',
       description: 'Interact with Stripe API for payment processing',
@@ -702,7 +702,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'twilio',
       name: 'Twilio',
       description: 'Interact with Twilio APIs to send messages',
@@ -717,7 +717,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'zapier',
       name: 'Zapier',
       description: 'Automate cross-app workflows',
@@ -732,7 +732,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.beta,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'box',
       name: 'Box',
       description: 'Interact with the Intelligent Content Management platform through Box AI',
@@ -747,7 +747,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'boost-space',
       name: 'Boost.space',
       description: 'Centralized, automated business data from 2000+ sources',
@@ -762,7 +762,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'glean',
       name: 'Glean',
       description: 'Enterprise search and chat using Glean\'s API',
@@ -779,7 +779,7 @@ class MCPServerLibrary {
 
     // DATA & ANALYTICS
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'supadata',
       name: 'Supadata',
       description: 'YouTube, TikTok, X and Web data for makers',
@@ -794,7 +794,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'tako',
       name: 'Tako',
       description: 'Real-time financial, sports, weather, and public data with visualization',
@@ -811,7 +811,7 @@ class MCPServerLibrary {
 
     // SPECIAL INTEGRATIONS
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: '1mcpserver',
       name: '1mcpserver',
       description: 'MCP of MCPs - Automatically discover and configure MCP servers',
@@ -825,7 +825,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.alpha,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'atlassian-remote',
       name: 'Atlassian Remote MCP',
       description: 'Official Atlassian remote MCP server for Jira and Confluence Cloud',
@@ -841,7 +841,7 @@ class MCPServerLibrary {
       status: MCPServerStatus.stable,
     ),
 
-    MCPServerConfig(
+    MCPServerLibraryConfig(
       id: 'continue-dev',
       name: 'Continue.dev',
       description: 'Open-source AI code assistant for IDEs with chat, autocomplete, and inline editing',
@@ -862,7 +862,7 @@ class MCPServerLibrary {
   ];
 
   /// Get server by ID
-  static MCPServerConfig? getServer(String id) {
+  static MCPServerLibraryConfig? getServer(String id) {
     try {
       return servers.firstWhere((server) => server.id == id);
     } catch (e) {
@@ -871,17 +871,17 @@ class MCPServerLibrary {
   }
 
   /// Get servers by type
-  static List<MCPServerConfig> getServersByType(MCPServerType type) {
+  static List<MCPServerLibraryConfig> getServersByType(MCPServerType type) {
     return servers.where((server) => server.type == type).toList();
   }
 
   /// Get servers by status
-  static List<MCPServerConfig> getServersByStatus(MCPServerStatus status) {
+  static List<MCPServerLibraryConfig> getServersByStatus(MCPServerStatus status) {
     return servers.where((server) => server.status == status).toList();
   }
 
   /// Get all official stable servers
-  static List<MCPServerConfig> getOfficialStableServers() {
+  static List<MCPServerLibraryConfig> getOfficialStableServers() {
     return servers.where((server) => 
       server.type == MCPServerType.official && 
       server.status == MCPServerStatus.stable
@@ -889,7 +889,7 @@ class MCPServerLibrary {
   }
 
   /// Search servers by capability
-  static List<MCPServerConfig> searchByCapability(String capability) {
+  static List<MCPServerLibraryConfig> searchByCapability(String capability) {
     return servers.where((server) => 
       server.capabilities.any((cap) => 
         cap.toLowerCase().contains(capability.toLowerCase())
@@ -898,12 +898,12 @@ class MCPServerLibrary {
   }
 
   /// Get servers that require authentication
-  static List<MCPServerConfig> getServersRequiringAuth() {
+  static List<MCPServerLibraryConfig> getServersRequiringAuth() {
     return servers.where((server) => server.requiredEnvVars.isNotEmpty).toList();
   }
 
   /// Get servers that work without authentication  
-  static List<MCPServerConfig> getServersWithoutAuth() {
+  static List<MCPServerLibraryConfig> getServersWithoutAuth() {
     return servers.where((server) => server.requiredEnvVars.isEmpty).toList();
   }
 }

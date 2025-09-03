@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
 
+import '../models/mcp_server_config.dart';
+
 /// Global MCP (Model Context Protocol) settings service
 /// Manages server configurations, API assignments, and runtime status
 class MCPSettingsService {
@@ -402,97 +404,6 @@ class MCPSettingsService {
 }
 
 // ==================== Data Models ====================
-
-/// MCP Server configuration
-class MCPServerConfig {
-  final String id;
-  final String name;
-  final String command;
-  final List<String> args;
-  final Map<String, String>? env;
-  final String description;
-  final bool enabled;
-  final DateTime createdAt;
-  final DateTime? lastUpdated;
-  final String? transport; // 'stdio' or 'sse'
-  final String? url; // For SSE transport
-
-  const MCPServerConfig({
-    required this.id,
-    required this.name,
-    required this.command,
-    required this.args,
-    this.env,
-    required this.description,
-    this.enabled = true,
-    required this.createdAt,
-    this.lastUpdated,
-    this.transport,
-    this.url,
-  });
-
-  factory MCPServerConfig.fromJson(Map<String, dynamic> json) {
-    return MCPServerConfig(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      command: json['command'] as String,
-      args: List<String>.from(json['args'] as List),
-      env: json['env'] != null ? Map<String, String>.from(json['env']) : null,
-      description: json['description'] as String,
-      enabled: json['enabled'] as bool? ?? true,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      lastUpdated: json['lastUpdated'] != null 
-        ? DateTime.parse(json['lastUpdated'] as String) 
-        : null,
-      transport: json['transport'] as String?,
-      url: json['url'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'command': command,
-      'args': args,
-      if (env != null) 'env': env,
-      'description': description,
-      'enabled': enabled,
-      'createdAt': createdAt.toIso8601String(),
-      if (lastUpdated != null) 'lastUpdated': lastUpdated!.toIso8601String(),
-      if (transport != null) 'transport': transport,
-      if (url != null) 'url': url,
-    };
-  }
-
-  MCPServerConfig copyWith({
-    String? id,
-    String? name,
-    String? command,
-    List<String>? args,
-    Map<String, String>? env,
-    String? description,
-    bool? enabled,
-    DateTime? createdAt,
-    DateTime? lastUpdated,
-    String? transport,
-    String? url,
-  }) {
-    return MCPServerConfig(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      command: command ?? this.command,
-      args: args ?? this.args,
-      env: env ?? this.env,
-      description: description ?? this.description,
-      enabled: enabled ?? this.enabled,
-      createdAt: createdAt ?? this.createdAt,
-      lastUpdated: lastUpdated ?? this.lastUpdated,
-      transport: transport ?? this.transport,
-      url: url ?? this.url,
-    );
-  }
-}
 
 /// MCP Server runtime status
 class MCPServerStatus {

@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'mcp_settings_service.dart';
 
+
+import '../core/models/mcp_server_config.dart';
+
 // If the real MCPServerConfig type is provided by another package, import it
 // there instead. We reference agent_engine_core above which may provide it.
 // This file assumes a compatible MCPServerConfig exists. If not, add a
