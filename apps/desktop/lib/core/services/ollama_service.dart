@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -32,10 +33,9 @@ class OllamaService {
   Future<bool> get isAvailable async {
     try {
       final response = await _dio.get('/api/version');
-      print('DEBUG: Ollama available check - status: ${response.statusCode}');
+      debugPrint('Ollama available - status: ${response.statusCode}');
       return response.statusCode == 200;
     } catch (e) {
-      print('DEBUG: Ollama not available - error: $e');
       return false;
     }
   }
@@ -47,7 +47,7 @@ class OllamaService {
     try {
       // First check if Ollama is already running externally
       if (await isAvailable) {
-        print('Found existing Ollama instance');
+        debugPrint('Found existing Ollama instance');
         _isInitialized = true;
         return;
       }
@@ -58,22 +58,22 @@ class OllamaService {
         await _startEmbeddedOllama();
         await _waitForStartup();
       } catch (e) {
-        print('Failed to start embedded Ollama, trying system installation: $e');
+        debugPrint('Failed to start embedded Ollama, trying system installation: $e');
         
         // Try to use system-installed Ollama as fallback
         if (await _trySystemOllama()) {
-          print('Using system-installed Ollama');
+          debugPrint('Using system-installed Ollama');
         } else {
-          print('No Ollama installation found. Local models will not be available.');
+          debugPrint('No Ollama installation found. Local models will not be available.');
           // Don't throw - just mark as not initialized so local models aren't available
           return;
         }
       }
       
       _isInitialized = true;
-      print('Ollama service initialized successfully');
+      debugPrint('Ollama service initialized successfully');
     } catch (e) {
-      print('Failed to initialize Ollama service: $e');
+      debugPrint('Failed to initialize Ollama service: $e');
       // Don't throw - gracefully handle missing Ollama
     }
   }
@@ -85,7 +85,6 @@ class OllamaService {
       final appSupportDir = await getApplicationSupportDirectory();
       final ollamaDir = Directory(path.join(appSupportDir.path, 'ollama'));
       
-      print('Creating Ollama directory at: ${ollamaDir.path}');
       
       if (!ollamaDir.existsSync()) {
         ollamaDir.createSync(recursive: true);
@@ -113,7 +112,6 @@ class OllamaService {
 
       // Only extract if binary doesn't exist or is outdated
       if (!binaryFile.existsSync()) {
-        print('Extracting Ollama binary to $_ollamaBinaryPath');
         
         try {
           final byteData = await rootBundle.load(assetPath);
@@ -125,22 +123,19 @@ class OllamaService {
             await Process.run('chmod', ['+x', _ollamaBinaryPath!]);
           }
           
-          print('Ollama binary extracted successfully');
         } catch (e) {
-          print('Failed to extract Ollama binary from assets: $e');
+          debugPrint('Failed to extract Ollama binary from assets: $e');
           // For development, try to find system-installed Ollama
           if (_desktopService.isWindows) {
             _ollamaBinaryPath = 'ollama.exe';
           } else {
             _ollamaBinaryPath = 'ollama';
           }
-          print('Using system Ollama binary: $_ollamaBinaryPath');
         }
       } else {
-        print('Using existing Ollama binary: $_ollamaBinaryPath');
       }
     } catch (e) {
-      print('Error extracting Ollama binary: $e');
+      debugPrint('Error extracting Ollama binary: $e');
       rethrow;
     }
   }
@@ -152,7 +147,6 @@ class OllamaService {
     }
 
     try {
-      print('Starting Ollama server...');
       
       final environment = <String, String>{
         'OLLAMA_HOST': '127.0.0.1:11434',
@@ -168,29 +162,24 @@ class OllamaService {
 
       // Listen to process output for debugging
       _ollamaProcess!.stdout.transform(utf8.decoder).listen((data) {
-        print('Ollama stdout: $data');
       });
 
       _ollamaProcess!.stderr.transform(utf8.decoder).listen((data) {
-        print('Ollama stderr: $data');
       });
 
-      print('Ollama server process started with PID: ${_ollamaProcess!.pid}');
     } catch (e) {
-      print('Failed to start Ollama server: $e');
+      debugPrint('Failed to start Ollama server: $e');
       rethrow;
     }
   }
 
   /// Wait for Ollama server to be ready
   Future<void> _waitForStartup() async {
-    print('Waiting for Ollama server to start...');
     
     for (int i = 0; i < 30; i++) {
       await Future.delayed(const Duration(seconds: 1));
       
       if (await isAvailable) {
-        print('Ollama server is ready!');
         return;
       }
     }
@@ -201,12 +190,10 @@ class OllamaService {
   /// Get list of installed models
   Future<List<ModelConfig>> getInstalledModels() async {
     try {
-      print('DEBUG: Calling /api/tags to get installed models');
       final response = await _dio.get('/api/tags');
       final data = response.data as Map<String, dynamic>;
       final models = data['models'] as List<dynamic>? ?? [];
       
-      print('DEBUG: Found ${models.length} installed models in Ollama');
       
       return models.map<ModelConfig>((modelData) {
         final model = modelData as Map<String, dynamic>;
@@ -224,11 +211,10 @@ class OllamaService {
           capabilities: _getModelCapabilities(name),
         );
         
-        print('DEBUG: Created model config - id: ${modelConfig.id}, name: ${modelConfig.name}, ollamaId: ${modelConfig.ollamaModelId}');
         return modelConfig;
       }).toList();
     } catch (e) {
-      print('Failed to get installed models: $e');
+      debugPrint('Failed to get installed models: $e');
       return [];
     }
   }
@@ -239,7 +225,6 @@ class OllamaService {
     Function(double)? onProgress,
   }) async {
     try {
-      print('Starting download of model: $modelName');
       
       final response = await _dio.post(
         '/api/pull',
@@ -269,7 +254,6 @@ class OllamaService {
               }
               
               if (data.containsKey('status')) {
-                print('Download status: ${data['status']}');
               }
             } catch (e) {
               // Skip malformed JSON lines
@@ -277,13 +261,11 @@ class OllamaService {
             }
           }
         } catch (e) {
-          print('Error processing download chunk: $e');
         }
       }
       
-      print('Model download completed: $modelName');
     } catch (e) {
-      print('Failed to download model $modelName: $e');
+      debugPrint('Failed to download model $modelName: $e');
       rethrow;
     }
   }
@@ -292,9 +274,8 @@ class OllamaService {
   Future<void> removeModel(String modelName) async {
     try {
       await _dio.delete('/api/delete', data: {'name': modelName});
-      print('Model removed: $modelName');
     } catch (e) {
-      print('Failed to remove model $modelName: $e');
+      debugPrint('Failed to remove model $modelName: $e');
       rethrow;
     }
   }
@@ -326,7 +307,7 @@ class OllamaService {
       
       return data['response'] as String? ?? '';
     } catch (e) {
-      print('Failed to generate response: $e');
+      debugPrint('Failed to generate response: $e');
       rethrow;
     }
   }
@@ -388,11 +369,10 @@ class OllamaService {
             }
           }
         } catch (e) {
-          print('Error processing streaming chunk: $e');
         }
       }
     } catch (e) {
-      print('Failed to generate streaming response: $e');
+      debugPrint('Failed to generate streaming response: $e');
       rethrow;
     }
   }
@@ -548,7 +528,7 @@ class OllamaService {
           final result = await Process.run(systemPath, ['--version']);
           if (result.exitCode == 0) {
             _ollamaBinaryPath = systemPath;
-            print('Found system Ollama at: $systemPath');
+            debugPrint('Found system Ollama at: $systemPath');
             
             // Try to start the service
             await _startEmbeddedOllama();
@@ -563,7 +543,7 @@ class OllamaService {
       
       return false;
     } catch (e) {
-      print('Error trying system Ollama: $e');
+      debugPrint('Error trying system Ollama: $e');
       return false;
     }
   }
@@ -571,11 +551,9 @@ class OllamaService {
   /// Shutdown the Ollama service
   Future<void> shutdown() async {
     if (_ollamaProcess != null) {
-      print('Shutting down Ollama server...');
       _ollamaProcess!.kill();
       await _ollamaProcess!.exitCode;
       _ollamaProcess = null;
-      print('Ollama server shut down');
     }
     _isInitialized = false;
   }
@@ -594,7 +572,7 @@ final ollamaServiceProvider = Provider<OllamaService>((ref) {
   
   // Initialize on first access (don't await to avoid blocking)
   service.initialize().catchError((e) {
-    print('Failed to initialize Ollama service: $e');
+    debugPrint('Failed to initialize Ollama service: $e');
   });
   
   // Cleanup on disposal

@@ -148,7 +148,7 @@ void main() async {
     }
     
     // Final summary
-    print('\n' + '='*60);
+    print('\n${'='*60}');
     print('🏁 SIMPLE MCP TEST RESULTS');
     print('='*60);
     

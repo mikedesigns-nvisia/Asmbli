@@ -139,6 +139,28 @@ class ContextMCPResourceService {
       return false;
     }
   }
+
+  /// Assign context to agent (business service compatibility)
+  Future<void> assignContextToAgent(String agentId, List<String> contextIds) async {
+    // Placeholder implementation - actual context assignment would be handled by context provider
+  }
+
+  /// Unassign context from agent (business service compatibility)
+  Future<void> unassignContextFromAgent(String agentId, List<String> contextIds) async {
+    // Placeholder implementation - actual context unassignment would be handled by context provider
+  }
+
+  /// Get context content for documents (business service compatibility)
+  Future<String> getContextForDocuments(List<String> contextIds) async {
+    // Placeholder implementation - would fetch and combine context document content
+    return contextIds.isEmpty ? '' : 'Context content for documents: ${contextIds.join(', ')}';
+  }
+
+  /// Get resource content (business service compatibility)
+  Future<String> getResourceContent(String resourceId) async {
+    // Placeholder implementation - would fetch specific resource content
+    return 'Resource content for: $resourceId';
+  }
 }
 
 /// MCP Resource model following the official specification

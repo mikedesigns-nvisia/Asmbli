@@ -4,11 +4,10 @@ import 'dart:convert';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/mcp_template_service.dart';
-import '../../../../core/services/mcp_settings_service.dart';
 import 'structured_form_renderer.dart';
 
 
-import '../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart';
 
 /// Modal for manually configuring custom MCP servers with JSON input or structured forms
 class CustomMCPServerModal extends StatefulWidget {
@@ -934,7 +933,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
       enabled: true,
       createdAt: DateTime.now(),
       transport: serverConfigData['transport']?.toString(),
-      url: serverConfigData['url']?.toString(),
+      url: serverConfigData['url']?.toString() ?? 'local://$serverName',
     );
     
     // For backward compatibility with existing callers, pass the raw config format

@@ -19,7 +19,7 @@ void main() {
     
     test('ModelRequest validates required fields', () {
       expect(
-        () => ModelRequest(
+        () => const ModelRequest(
           model: '',
           messages: [],
         ),
@@ -27,7 +27,7 @@ void main() {
       );
       
       expect(
-        () => ModelRequest(
+        () => const ModelRequest(
           model: 'gpt-3.5-turbo',
           messages: [],
         ),
@@ -71,7 +71,7 @@ void main() {
       );
       
       expect(response.content, equals('Test response'));
-      expect(response.usage?.totalTokens, equals(30));
+      expect(response.usage.totalTokens, equals(30));
       expect(response.finishReason, equals('stop'));
     });
     
@@ -165,9 +165,9 @@ void main() {
     });
     
     test('selects fastest provider when strategy is performance', () async {
-      openaiProvider.avgLatency = Duration(milliseconds: 500);
-      anthropicProvider.avgLatency = Duration(milliseconds: 300);
-      ollamaProvider.avgLatency = Duration(milliseconds: 100);
+      openaiProvider.avgLatency = const Duration(milliseconds: 500);
+      anthropicProvider.avgLatency = const Duration(milliseconds: 300);
+      ollamaProvider.avgLatency = const Duration(milliseconds: 100);
       
       router.setSelectionStrategy(ModelSelectionStrategy.fastest);
       
@@ -267,7 +267,7 @@ void main() {
       
       expect(response.success, isTrue);
       expect(response.content, isNotEmpty);
-      expect(response.usage?.totalTokens, greaterThan(0));
+      expect(response.usage.totalTokens, greaterThan(0));
     });
     
     test('streams responses correctly', () async {
@@ -288,7 +288,7 @@ void main() {
     });
     
     test('validates requests before processing', () async {
-      final invalidRequest = ModelRequest(
+      const invalidRequest = ModelRequest(
         model: '',
         messages: [],
       );
@@ -331,7 +331,7 @@ void main() {
     });
     
     test('caches responses when enabled', () async {
-      manager.enableCaching(Duration(minutes: 5));
+      manager.enableCaching(const Duration(minutes: 5));
       
       final request = ModelRequest(
         model: 'test-model',
@@ -353,12 +353,12 @@ void main() {
     });
     
     test('respects timeout settings', () async {
-      mockProvider.delay = Duration(seconds: 5);
+      mockProvider.delay = const Duration(seconds: 5);
       
       final request = ModelRequest(
         model: 'test-model',
         messages: [ModelMessage.user('Timeout test')],
-        timeout: Duration(seconds: 1),
+        timeout: const Duration(seconds: 1),
       );
       
       expect(
@@ -385,10 +385,10 @@ void main() {
     });
     
     test('monitors provider health continuously', () async {
-      await monitor.startMonitoring(Duration(milliseconds: 100));
+      await monitor.startMonitoring(const Duration(milliseconds: 100));
       
       // Wait for a few health checks
-      await Future.delayed(Duration(milliseconds: 350));
+      await Future.delayed(const Duration(milliseconds: 350));
       
       final health1 = monitor.getProviderHealth('provider1');
       final health2 = monitor.getProviderHealth('provider2');
@@ -402,10 +402,10 @@ void main() {
     test('detects unhealthy providers', () async {
       provider1.shouldFail = true;
       
-      await monitor.startMonitoring(Duration(milliseconds: 100));
+      await monitor.startMonitoring(const Duration(milliseconds: 100));
       
       // Wait for health checks to detect failure
-      await Future.delayed(Duration(milliseconds: 350));
+      await Future.delayed(const Duration(milliseconds: 350));
       
       final health1 = monitor.getProviderHealth('provider1');
       final health2 = monitor.getProviderHealth('provider2');
@@ -416,11 +416,11 @@ void main() {
     });
     
     test('tracks latency trends', () async {
-      provider1.delay = Duration(milliseconds: 100);
-      provider2.delay = Duration(milliseconds: 200);
+      provider1.delay = const Duration(milliseconds: 100);
+      provider2.delay = const Duration(milliseconds: 200);
       
-      await monitor.startMonitoring(Duration(milliseconds: 50));
-      await Future.delayed(Duration(milliseconds: 300));
+      await monitor.startMonitoring(const Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 300));
       
       final health1 = monitor.getProviderHealth('provider1');
       final health2 = monitor.getProviderHealth('provider2');
@@ -435,12 +435,12 @@ void main() {
         alerts.add(alert);
       });
       
-      await monitor.startMonitoring(Duration(milliseconds: 100));
+      await monitor.startMonitoring(const Duration(milliseconds: 100));
       
       // Simulate degraded performance
       provider1.errorRate = 0.6; // High error rate
       
-      await Future.delayed(Duration(milliseconds: 350));
+      await Future.delayed(const Duration(milliseconds: 350));
       
       expect(alerts, isNotEmpty);
       expect(alerts.any((a) => a.type == AlertType.highErrorRate), isTrue);
@@ -490,7 +490,7 @@ void main() {
         promptTokens: 1000,
         completionTokens: 500,
         costPer1kTokens: 0.002,
-        timestamp: now.subtract(Duration(hours: 2)),
+        timestamp: now.subtract(const Duration(hours: 2)),
       );
       
       costTracker.recordUsage(
@@ -503,8 +503,8 @@ void main() {
       );
       
       final hourlyReport = costTracker.getUsageByTimeRange(
-        start: now.subtract(Duration(hours: 1)),
-        end: now.add(Duration(minutes: 1)),
+        start: now.subtract(const Duration(hours: 1)),
+        end: now.add(const Duration(minutes: 1)),
       );
       
       final totalReport = costTracker.generateReport();
@@ -570,8 +570,8 @@ class MockModelProvider implements ModelProvider {
   
   bool isHealthy = true;
   bool shouldFail = false;
-  Duration delay = Duration(milliseconds: 100);
-  Duration avgLatency = Duration(milliseconds: 200);
+  Duration delay = const Duration(milliseconds: 100);
+  Duration avgLatency = const Duration(milliseconds: 200);
   double costPer1kTokens = 0.002;
   double errorRate = 0.0;
   int rateLimit = 1000; // requests per minute
@@ -597,10 +597,7 @@ class MockModelProvider implements ModelProvider {
     ];
   
   @override
-  Future<bool> get isAvailable async {
-    await Future.delayed(Duration(milliseconds: 10));
-    return isHealthy && !shouldFail;
-  }
+  bool get isAvailable => isHealthy && !shouldFail;
   
   @override
   Future<ModelResponse> complete(ModelRequest request) async {
@@ -652,14 +649,14 @@ class MockModelProvider implements ModelProvider {
     final words = 'Mock streaming response from $name'.split(' ');
     
     for (final word in words) {
-      await Future.delayed(Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 50));
       yield '$word ';
     }
   }
   
   @override
   Future<List<ModelInfo>> listModels() async {
-    await Future.delayed(Duration(milliseconds: 50));
+    await Future.delayed(const Duration(milliseconds: 50));
     
     if (shouldFail) {
       throw ModelException('Failed to list models for provider $id');
@@ -670,7 +667,7 @@ class MockModelProvider implements ModelProvider {
   
   @override
   Future<ProviderHealth> checkHealth() async {
-    await Future.delayed(Duration(milliseconds: 20));
+    await Future.delayed(const Duration(milliseconds: 20));
     
     return ProviderHealth(
       providerId: id,

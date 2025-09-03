@@ -44,7 +44,7 @@ class SSEMCPAdapter extends MCPAdapter {
       _setupHttpClient(config);
       await _performHandshake(config);
       await _establishSSEConnection(config);
-      _setConnected(const Uuid().v4());
+      setConnected(const Uuid().v4());
       
       print('✅ SSE MCP adapter connected to ${config.url}');
     } catch (e) {
@@ -188,7 +188,7 @@ class SSEMCPAdapter extends MCPAdapter {
         final stream = response.data!.stream;
         String buffer = '';
         
-        await for (final chunk in stream.transform(utf8.decoder)) {
+        await for (final chunk in stream.cast<List<int>>().transform(const Utf8Decoder())) {
           buffer += chunk;
           
           // Process complete SSE events
@@ -279,7 +279,7 @@ class SSEMCPAdapter extends MCPAdapter {
         }
       } else {
         // Handle as notification
-        _handleNotification(jsonData);
+        handleNotification(jsonData);
       }
     } catch (e) {
       print('❌ Error handling SSE message: $e');
@@ -290,7 +290,7 @@ class SSEMCPAdapter extends MCPAdapter {
   void _handleNotificationEvent(String data) {
     try {
       final jsonData = jsonDecode(data) as Map<String, dynamic>;
-      _handleNotification(jsonData);
+      handleNotification(jsonData);
     } catch (e) {
       print('❌ Error handling SSE notification: $e');
     }
@@ -309,7 +309,7 @@ class SSEMCPAdapter extends MCPAdapter {
         serverId: connectionId,
       );
       
-      _eventController.add(event);
+      eventController.add(event);
     } catch (e) {
       print('❌ Error handling SSE error event: $e');
     }
@@ -335,7 +335,7 @@ class SSEMCPAdapter extends MCPAdapter {
         serverId: connectionId,
       );
       
-      _eventController.add(event);
+      eventController.add(event);
     } catch (e) {
       print('❌ Error handling generic SSE event: $e');
     }
@@ -478,7 +478,7 @@ class SSEMCPAdapter extends MCPAdapter {
       serverId: connectionId,
     );
     
-    _eventController.add(event);
+    eventController.add(event);
     
     // Attempt reconnection
     if (_config?.autoReconnect == true && _reconnectAttempts < _maxReconnectAttempts) {
@@ -498,7 +498,7 @@ class SSEMCPAdapter extends MCPAdapter {
       serverId: connectionId,
     );
     
-    _eventController.add(event);
+    eventController.add(event);
     
     // Complete pending requests with error
     for (final completer in _responseCompleter.values) {

@@ -31,7 +31,7 @@ dependencies:
   path_provider: ^2.1.0
   
   # File System & Git
-  file_picker: ^6.0.0
+  file_picker: ^8.0.0
   path: ^1.8.3
   
   # JSON & Serialization
@@ -53,6 +53,8 @@ dependencies:
   google_fonts: ^6.1.0  # Google Fonts integration
   web_socket_channel: ^3.0.3
 
+  crypto: any
+  meta: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

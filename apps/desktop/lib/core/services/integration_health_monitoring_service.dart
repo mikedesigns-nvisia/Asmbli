@@ -141,7 +141,7 @@ class IntegrationHealthMonitoringService {
       'command': config.command,
       'args': config.args,
       'environmentVariables': config.env?.length ?? 0,
-      'createdAt': config.createdAt.toIso8601String(),
+      'createdAt': config.createdAt?.toIso8601String(),
       'lastUpdated': config.lastUpdated?.toIso8601String(),
       'connectionStatus': status.isConnected ? 'Connected' : 'Disconnected',
       'serverLatency': status.latencyMs,

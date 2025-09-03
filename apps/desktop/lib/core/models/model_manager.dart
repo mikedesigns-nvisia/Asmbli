@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:path/path.dart' as path;
+import 'package:flutter/foundation.dart';
 import 'model_interfaces.dart';
 import 'model_router.dart';
 import 'providers/openai_provider.dart';
@@ -23,13 +23,12 @@ class ModelManager {
 
   ModelManager({
     ModelManagerConfig? config,
-  }) : _config = config ?? ModelManagerConfig();
+  }) : _config = config ?? const ModelManagerConfig();
 
   /// Initialize the model management system
   Future<void> initialize({String? configPath}) async {
     if (_isInitialized) return;
 
-    print('🚀 Initializing Model Management System');
     _configPath = configPath;
 
     try {
@@ -58,12 +57,11 @@ class ModelManager {
       await _router.initialize();
 
       _isInitialized = true;
-      print('✅ Model Management System initialized successfully');
       
       // Print system status
       await _printSystemStatus();
     } catch (e) {
-      throw ModelException(
+      throw ProviderInitializationException(
         'Failed to initialize model management system: $e',
         originalError: e,
       );
@@ -72,14 +70,12 @@ class ModelManager {
 
   /// Register a model provider
   void registerProvider(ModelProvider provider) {
-    print('📝 Registering provider: ${provider.name}');
     _providers[provider.id] = provider;
     _router.registerProvider(provider);
   }
 
   /// Unregister a model provider
   void unregisterProvider(String providerId) {
-    print('🗑️ Unregistering provider: $providerId');
     _providers.remove(providerId);
     _router.unregisterProvider(providerId);
   }
@@ -99,7 +95,7 @@ class ModelManager {
           final models = await provider.getAvailableModels();
           allModels.addAll(models);
         } catch (e) {
-          print('⚠️ Failed to get models from ${provider.id}: $e');
+          debugPrint('Failed to get models from ${provider.id}: $e');
         }
       }
     }
@@ -218,17 +214,15 @@ class ModelManager {
     
     final results = <String, bool>{};
     
-    print('🔍 Testing all providers...');
     
     for (final provider in _providers.values) {
       try {
-        print('Testing ${provider.name}...');
         final isHealthy = await provider.testConnection();
         results[provider.id] = isHealthy;
-        print('${isHealthy ? "✅" : "❌"} ${provider.name}: ${isHealthy ? "SUCCESS" : "FAILED"}');
+        debugPrint('${provider.name}: ${isHealthy ? "SUCCESS" : "FAILED"}');
       } catch (e) {
         results[provider.id] = false;
-        print('❌ ${provider.name}: ERROR - $e');
+        debugPrint('${provider.name}: ERROR - $e');
       }
     }
     
@@ -239,7 +233,6 @@ class ModelManager {
   Future<void> saveConfiguration(String filePath) async {
     _ensureInitialized();
     
-    print('💾 Saving configuration to: $filePath');
     
     final config = {
       'version': '1.0.0',
@@ -261,26 +254,23 @@ class ModelManager {
     final file = File(filePath);
     await file.writeAsString(jsonEncode(config));
     
-    print('✅ Configuration saved successfully');
   }
 
   /// Load configuration from file
   Future<void> _loadConfiguration(String filePath) async {
     try {
-      print('📁 Loading configuration from: $filePath');
       
       final file = File(filePath);
       if (!await file.exists()) {
-        print('⚠️ Configuration file not found, using defaults');
+        debugPrint('Configuration file not found, using defaults');
         return;
       }
 
       final content = await file.readAsString();
       final config = jsonDecode(content) as Map<String, dynamic>;
       
-      print('✅ Configuration loaded successfully');
     } catch (e) {
-      print('⚠️ Failed to load configuration: $e');
+      debugPrint('Failed to load configuration: $e');
     }
   }
 
@@ -305,43 +295,17 @@ class ModelManager {
       baseUrl: _config.ollamaBaseUrl,
     ));
     
-    print('✅ Default providers registered');
   }
 
   /// Print system status
   Future<void> _printSystemStatus() async {
-    print('\n📊 Model Management System Status:');
-    print('=' * 50);
-    
-    final health = await getSystemHealth();
-    print('System Health: ${health.isHealthy ? "✅ HEALTHY" : "❌ UNHEALTHY"}');
-    print('Providers: ${health.healthyProviders}/${health.totalProviders} healthy');
-    
-    print('\nProvider Status:');
-    for (final entry in health.providersHealth.entries) {
-      final status = entry.value;
-      print('  ${status.isHealthy ? "✅" : "❌"} ${entry.key}: ${status.status} (${status.latency.toStringAsFixed(0)}ms)');
-    }
-    
-    final models = await getAllAvailableModels();
-    print('\nAvailable Models: ${models.length}');
-    
-    final modelsByProvider = <String, int>{};
-    for (final model in models) {
-      modelsByProvider[model.providerId] = (modelsByProvider[model.providerId] ?? 0) + 1;
-    }
-    
-    for (final entry in modelsByProvider.entries) {
-      print('  ${entry.key}: ${entry.value} models');
-    }
-    
-    print('=' * 50);
+    // Removed verbose system status logging
   }
 
   /// Ensure the system is initialized
   void _ensureInitialized() {
     if (!_isInitialized) {
-      throw ModelException('Model management system not initialized. Call initialize() first.');
+      throw const ProviderInitializationException('Model management system not initialized. Call initialize() first.');
     }
   }
 
@@ -349,13 +313,11 @@ class ModelManager {
   Future<void> dispose() async {
     if (!_isInitialized) return;
     
-    print('🧹 Disposing model management system');
     
     await _router.dispose();
     _providers.clear();
     _isInitialized = false;
     
-    print('✅ Model management system disposed');
   }
 }
 
@@ -453,7 +415,7 @@ class UsageAnalytics {
   /// Calculate usage trends
   UsageTrends _calculateTrends(List<AnalyticsRecord> currentRecords, DateTimeRange? range) {
     if (range == null || currentRecords.isEmpty) {
-      return UsageTrends(
+      return const UsageTrends(
         requestsChange: 0.0,
         tokensChange: 0.0,
         costChange: 0.0,
@@ -472,7 +434,7 @@ class UsageAnalytics {
         .toList();
 
     if (previousRecords.isEmpty) {
-      return UsageTrends(
+      return const UsageTrends(
         requestsChange: 0.0,
         tokensChange: 0.0,
         costChange: 0.0,
@@ -572,7 +534,7 @@ class UsageReport {
       requestsByType: {},
       requestsByProvider: {},
       requestsByModel: {},
-      trends: UsageTrends(
+      trends: const UsageTrends(
         requestsChange: 0.0,
         tokensChange: 0.0,
         costChange: 0.0,

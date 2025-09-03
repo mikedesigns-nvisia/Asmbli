@@ -1,10 +1,10 @@
 import 'package:test/test.dart';
 import 'dart:async';
 import 'dart:math';
-import '../../lib/core/agents/workflow_engine.dart';
-import '../../lib/core/agents/graph/directed_graph.dart';
-import '../../lib/core/agents/vector_database.dart';
-import '../../lib/core/models/model_interfaces.dart';
+import 'package:agentengine_desktop/core/agents/workflow_engine.dart';
+import 'package:agentengine_desktop/core/agents/graph/directed_graph.dart';
+import 'package:agentengine_desktop/core/agents/vector_database.dart';
+import 'package:agentengine_desktop/core/models/model_interfaces.dart';
 
 void main() {
   group('Agent Workflow Integration', () {
@@ -79,8 +79,8 @@ void main() {
       ), dependencies: ['search']);
       
       final parallelAgent = MockAgent('parallel');
-      parallelAgent.delay = Duration(milliseconds: 1500);
-      summaryAgent.delay = Duration(milliseconds: 1000);
+      parallelAgent.delay = const Duration(milliseconds: 1500);
+      summaryAgent.delay = const Duration(milliseconds: 1000);
       
       final input = WorkflowInput(data: {'query': 'parallel test'});
       final startTime = DateTime.now();
@@ -110,11 +110,11 @@ void main() {
     });
     
     test('respects timeout constraints', () async {
-      searchAgent.delay = Duration(seconds: 10);
+      searchAgent.delay = const Duration(seconds: 10);
       
       final input = WorkflowInput(
         data: {'query': 'timeout test'},
-        timeout: Duration(seconds: 2),
+        timeout: const Duration(seconds: 2),
       );
       
       expect(
@@ -626,7 +626,7 @@ void performanceTests() {
 /// Helper functions and mock classes
 class MockAgent {
   final String id;
-  Duration delay = Duration(milliseconds: 100);
+  Duration delay = const Duration(milliseconds: 100);
   bool shouldFail = false;
   String errorMessage = 'Mock agent failed';
   Map<String, dynamic> mockOutput = {'result': 'mock success'};

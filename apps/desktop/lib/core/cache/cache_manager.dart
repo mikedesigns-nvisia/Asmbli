@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'lru_cache.dart';
 import 'file_cache.dart';
@@ -28,13 +29,12 @@ class CacheManager {
 
   CacheManager({
     CacheManagerConfig? config,
-  }) : _config = config ?? CacheManagerConfig();
+  }) : _config = config ?? const CacheManagerConfig();
 
   /// Initialize all cache levels
   Future<void> initialize() async {
     if (_isInitialized) return;
 
-    print('🚀 Initializing Cache Manager');
 
     try {
       // Initialize L1: Memory cache
@@ -55,7 +55,6 @@ class CacheManager {
       _startStatsCollection();
 
       _isInitialized = true;
-      print('✅ Cache Manager initialized successfully');
       
       await _printCacheStatus();
     } catch (e) {
@@ -117,7 +116,7 @@ class CacheManager {
 
       return value;
     } catch (e) {
-      print('⚠️ Cache get error for key $key: $e');
+      debugPrint('Cache get error for key $key: $e');
       _stats.recordError();
       return null;
     }
@@ -156,7 +155,7 @@ class CacheManager {
 
       _stats.recordSet();
     } catch (e) {
-      print('⚠️ Cache set error for key $key: $e');
+      debugPrint('Cache set error for key $key: $e');
       _stats.recordError();
       rethrow;
     }
@@ -178,7 +177,7 @@ class CacheManager {
       
       return await _diskCache.containsKey(key);
     } catch (e) {
-      print('⚠️ Cache containsKey error for key $key: $e');
+      debugPrint('Cache containsKey error for key $key: $e');
       return false;
     }
   }
@@ -209,7 +208,7 @@ class CacheManager {
 
       return removed;
     } catch (e) {
-      print('⚠️ Cache remove error for key $key: $e');
+      debugPrint('Cache remove error for key $key: $e');
       return false;
     }
   }
@@ -237,9 +236,8 @@ class CacheManager {
 
       await Future.wait(futures);
 
-      print('🧹 Cache cleared for levels: ${clearLevels.map((l) => l.name).join(', ')}');
     } catch (e) {
-      print('⚠️ Cache clear error: $e');
+      debugPrint('Cache clear error: $e');
       rethrow;
     }
   }
@@ -279,7 +277,6 @@ class CacheManager {
   Future<void> performMaintenance() async {
     _ensureInitialized();
 
-    print('🧹 Performing cache maintenance...');
 
     try {
       // Memory cache cleanup
@@ -292,16 +289,14 @@ class CacheManager {
         await _performRedisCleanup();
       }
 
-      print('✅ Cache maintenance completed');
     } catch (e) {
-      print('⚠️ Cache maintenance error: $e');
+      debugPrint('Cache maintenance error: $e');
     }
   }
 
   /// Initialize Redis connection
   Future<void> _initializeRedis() async {
     try {
-      print('🔌 Connecting to Redis...');
       
       _redis = await RedisClient.connect(
         _config.redisHost,
@@ -314,9 +309,8 @@ class CacheManager {
       await _redis!.ping();
       
       _redisAvailable = true;
-      print('✅ Redis connected successfully');
     } catch (e) {
-      print('⚠️ Redis connection failed, using memory fallback: $e');
+      debugPrint('Redis connection failed, using memory fallback: $e');
       _redisAvailable = false;
     }
   }
@@ -372,7 +366,6 @@ class CacheManager {
       
       return jsonDecode(value) as T;
     } catch (e) {
-      print('⚠️ Redis get error: $e');
       return null;
     }
   }
@@ -386,7 +379,6 @@ class CacheManager {
         await _redis!.set(key, serialized);
       }
     } catch (e) {
-      print('⚠️ Redis set error: $e');
     }
   }
 
@@ -394,7 +386,6 @@ class CacheManager {
     try {
       return await _redis!.exists(key) > 0;
     } catch (e) {
-      print('⚠️ Redis exists error: $e');
       return false;
     }
   }
@@ -403,7 +394,6 @@ class CacheManager {
     try {
       return await _redis!.del([key]) > 0;
     } catch (e) {
-      print('⚠️ Redis delete error: $e');
       return false;
     }
   }
@@ -412,7 +402,6 @@ class CacheManager {
     try {
       await _redis!.flushdb();
     } catch (e) {
-      print('⚠️ Redis clear error: $e');
     }
   }
 
@@ -430,16 +419,13 @@ class CacheManager {
 
   /// Print current cache status
   Future<void> _printCacheStatus() async {
-    print('\n📊 Cache Manager Status:');
-    print('  L1 (Memory): ✅ ${_memoryCache.length}/${_memoryCache.maxSize} entries');
-    print('  L2 (Redis):  ${_redisAvailable ? "✅" : "❌"} ${_redisAvailable ? "Connected" : "Unavailable"}');
-    print('  L3 (Disk):   ✅ ${_diskCache.stats.entryCount} entries (${_diskCache.stats.usagePercent.toStringAsFixed(1)}% full)');
+    // Removed verbose cache status logging
   }
 
   /// Ensure cache manager is initialized
   void _ensureInitialized() {
     if (!_isInitialized) {
-      throw CacheException('Cache manager not initialized. Call initialize() first.');
+      throw const CacheException('Cache manager not initialized. Call initialize() first.');
     }
   }
 
@@ -447,7 +433,6 @@ class CacheManager {
   Future<void> dispose() async {
     if (!_isInitialized) return;
 
-    print('🧹 Disposing cache manager...');
 
     _statsTimer?.cancel();
     
@@ -458,7 +443,6 @@ class CacheManager {
     await _diskCache.dispose();
     
     _isInitialized = false;
-    print('✅ Cache manager disposed');
   }
 }
 

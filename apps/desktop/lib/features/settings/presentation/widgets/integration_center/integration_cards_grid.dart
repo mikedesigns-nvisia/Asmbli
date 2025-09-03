@@ -4,7 +4,7 @@ import '../../../../../core/data/mcp_server_configs.dart';
 import 'universal_integration_card.dart';
 
 
-import '../../../../core/models/mcp_server_config.dart';
+import '../../../../../core/models/mcp_server_config.dart';
 
 /// Integration Cards Grid - Main content area showing all integration cards
 /// Responsive grid that adapts to screen size and filters
@@ -215,7 +215,7 @@ class IntegrationCardsGrid extends StatelessWidget {
     }).toList();
   }
 
-  IconData _getIconForServer(MCPServerConfig server) {
+  IconData _getIconForServer(MCPServerLibraryConfig server) {
     // Map server capabilities to appropriate icons
     if (server.capabilities.contains('git_log') || server.capabilities.contains('repository_search')) {
       return Icons.code;
@@ -246,7 +246,7 @@ class IntegrationCardsGrid extends StatelessWidget {
     }
   }
 
-  Color _getBrandColorForServer(MCPServerConfig server) {
+  Color _getBrandColorForServer(MCPServerLibraryConfig server) {
     // Map server names to brand colors
     switch (server.id) {
       case 'github': return const Color(0xFF24292F);
@@ -274,7 +274,7 @@ class IntegrationCardsGrid extends StatelessWidget {
     }
   }
 
-  IntegrationStatus _getStatusForServer(MCPServerConfig server) {
+  IntegrationStatus _getStatusForServer(MCPServerLibraryConfig server) {
     // Map server status to integration status
     switch (server.status) {
       case MCPServerStatus.stable:
@@ -290,7 +290,7 @@ class IntegrationCardsGrid extends StatelessWidget {
     }
   }
 
-  String _getCategoryForServer(MCPServerConfig server) {
+  String _getCategoryForServer(MCPServerLibraryConfig server) {
     // Map server types and capabilities to categories
     if (server.type == MCPServerType.official) {
       if (server.capabilities.any((cap) => ['git_log', 'repository_search', 'code_review'].contains(cap))) {
@@ -330,7 +330,7 @@ class IntegrationCardsGrid extends StatelessWidget {
     return 'other';
   }
 
-  double _getRatingForServer(MCPServerConfig server) {
+  double _getRatingForServer(MCPServerLibraryConfig server) {
     // Generate ratings based on server type and status
     if (server.type == MCPServerType.official) {
       return 4.8 + (server.id.hashCode % 3) * 0.1; // 4.8-4.9 for official

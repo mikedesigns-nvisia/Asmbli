@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'base_agent.dart';
 import 'models/workflow_models.dart';
 
@@ -119,8 +118,7 @@ class WorkflowNode {
     dynamic input,
     ExecutionContext context,
   ) async {
-    return await Future.timeout(
-      _executeCoreLogic(input, context),
+    return await _executeCoreLogic(input, context).timeout(
       config.timeout,
       onTimeout: () {
         throw TimeoutException(
@@ -389,16 +387,16 @@ class WorkflowNode {
     // This could be based on historical data, node type, or configuration
     switch (type) {
       case WorkflowNodeType.agent:
-        return Duration(seconds: 30); // Agents typically take longer
+        return const Duration(seconds: 30); // Agents typically take longer
       case WorkflowNodeType.condition:
       case WorkflowNodeType.gate:
-        return Duration(milliseconds: 100); // Conditions are fast
+        return const Duration(milliseconds: 100); // Conditions are fast
       case WorkflowNodeType.transform:
-        return Duration(seconds: 5); // Transformations are medium
+        return const Duration(seconds: 5); // Transformations are medium
       case WorkflowNodeType.parallel:
-        return Duration(seconds: 60); // Parallel operations take longer
+        return const Duration(seconds: 60); // Parallel operations take longer
       default:
-        return Duration(seconds: 10); // Default estimate
+        return const Duration(seconds: 10); // Default estimate
     }
   }
 

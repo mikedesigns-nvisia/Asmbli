@@ -1,6 +1,6 @@
 import 'package:agent_engine_core/models/conversation.dart';
-import 'package:agent_engine_core/models/agent.dart';
 import 'package:agent_engine_core/services/conversation_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import 'base_business_service.dart';
 import '../llm/unified_llm_service.dart';
@@ -52,14 +52,10 @@ class ConversationBusinessService extends BaseBusinessService {
 
       // Validate conversation exists
       final conversation = await _conversationRepository.getConversation(conversationId);
-      if (conversation == null) {
-        return BusinessResult.failure('Conversation not found: $conversationId');
-      }
 
       // Create and save user message
       final userMessage = Message(
         id: const Uuid().v4(),
-        conversationId: conversationId,
         content: content.trim(),
         role: MessageRole.user,
         timestamp: DateTime.now(),
@@ -121,15 +117,10 @@ class ConversationBusinessService extends BaseBusinessService {
 
       // Validate conversation exists
       final conversation = await _conversationRepository.getConversation(conversationId);
-      if (conversation == null) {
-        yield MessageChunk.error('Conversation not found: $conversationId');
-        return;
-      }
 
       // Create and save user message
       final userMessage = Message(
         id: const Uuid().v4(),
-        conversationId: conversationId,
         content: content.trim(),
         role: MessageRole.user,
         timestamp: DateTime.now(),
@@ -159,37 +150,19 @@ class ConversationBusinessService extends BaseBusinessService {
       );
 
       // Start streaming from LLM
-      await for (final chunk in _llmService.generateStream(
-        prompt: enrichedContext.prompt,
+      await for (final chunk in _llmService.chatStream(
+        message: enrichedContext.prompt,
         modelId: modelId,
-        context: enrichedContext.context,
+        context: null, // TODO: Convert Map<String, dynamic> to ChatContext
       )) {
-        if (chunk.isContent) {
-          fullContent.write(chunk.content);
-          yield MessageChunk.content(messageId, chunk.content!);
-        } else if (chunk.isTool) {
-          // Handle MCP tool calls during streaming
-          final toolResult = await _handleMCPToolCall(
-            toolCall: chunk.toolCall!,
-            mcpServers: mcpServers,
-          );
-          mcpResults.add(toolResult);
-          yield MessageChunk.toolResult(messageId, toolResult);
-        } else if (chunk.isResource) {
-          // Handle resource access during streaming
-          final resource = await _handleResourceAccess(
-            resourceRequest: chunk.resourceRequest!,
-            contextDocs: contextDocs,
-          );
-          resourceData.add(resource);
-          yield MessageChunk.resourceData(messageId, resource);
-        }
+        // Simple string chunks for now - TODO: Implement structured streaming
+        fullContent.write(chunk);
+        yield MessageChunk.content(messageId, chunk);
       }
 
       // Create final assistant message
       final assistantMessage = Message(
         id: messageId,
-        conversationId: conversationId,
         content: fullContent.toString(),
         role: MessageRole.assistant,
         timestamp: DateTime.now(),
@@ -236,7 +209,7 @@ class ConversationBusinessService extends BaseBusinessService {
         title: title.trim(),
         messages: [],
         createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        lastModified: DateTime.now(),
         status: ConversationStatus.active,
         metadata: {
           'version': '2.0',
@@ -267,15 +240,15 @@ class ConversationBusinessService extends BaseBusinessService {
       validateRequired({'conversationId': conversationId});
 
       final conversation = await _conversationRepository.getConversation(conversationId);
-      if (conversation == null) {
-        return BusinessResult.failure('Conversation not found: $conversationId');
-      }
 
       final updatedConversation = conversation.copyWith(
-        title: title?.trim(),
-        status: status,
-        updatedAt: DateTime.now(),
-        metadata: metadata != null ? {...conversation.metadata, ...metadata} : null,
+        title: title?.trim() ?? conversation.title,
+        status: status ?? conversation.status,
+        lastModified: DateTime.now(),
+        metadata: metadata != null ? {
+          ...?conversation.metadata,
+          ...metadata,
+        } : conversation.metadata,
       );
 
       final result = await _conversationRepository.updateConversation(updatedConversation);
@@ -308,9 +281,6 @@ class ConversationBusinessService extends BaseBusinessService {
       validateRequired({'conversationId': conversationId});
 
       final conversation = await _conversationRepository.getConversation(conversationId);
-      if (conversation == null) {
-        return BusinessResult.failure('Conversation not found: $conversationId');
-      }
 
       // Clean up conversation resources
       await _cleanupConversationResources(conversation);
@@ -345,12 +315,12 @@ class ConversationBusinessService extends BaseBusinessService {
 
       if (agentId != null) {
         filteredConversations = filteredConversations
-            .where((c) => c.metadata['agentId'] == agentId)
+            .where((c) => c.metadata?['agentId'] == agentId)
             .toList();
       }
 
       // Sort by last activity
-      filteredConversations.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      filteredConversations.sort((a, b) => (b.lastModified ?? b.createdAt).compareTo(a.lastModified ?? a.createdAt));
 
       // Apply pagination
       if (offset != null && offset > 0) {
@@ -399,14 +369,13 @@ class ConversationBusinessService extends BaseBusinessService {
       // Create assistant message
       final assistantMessage = Message(
         id: const Uuid().v4(),
-        conversationId: conversation.id,
         content: response.content,
         role: MessageRole.assistant,
         timestamp: DateTime.now(),
         metadata: {
-          'modelUsed': modelId,
-          'processingTime': response.processingTime,
-          'tokenCount': response.tokenCount,
+          'conversationId': conversation.id,
+          'modelUsed': response.modelUsed,
+          'tokenCount': (response.usage?.inputTokens ?? 0) + (response.usage?.outputTokens ?? 0),
           'mcpServersUsed': mcpServers,
           'hasGlobalContext': contextDocs.isNotEmpty,
           'agentId': agentId,
@@ -449,7 +418,7 @@ class ConversationBusinessService extends BaseBusinessService {
     // Add MCP capabilities
     if (mcpServers.isNotEmpty) {
       final mcpCapabilities = await _mcpService.getCapabilitiesForServers(mcpServers);
-      contextBuilder.putList('mcpCapabilities', mcpCapabilities);
+      contextBuilder.putString('mcpCapabilities', mcpCapabilities.toString());
     }
 
     // Build system prompt
@@ -482,9 +451,9 @@ class ConversationBusinessService extends BaseBusinessService {
   }) async {
     try {
       final result = await _mcpService.callTool(
+        toolCall.name,
+        toolCall.arguments,
         serverId: toolCall.serverId,
-        toolName: toolCall.name,
-        arguments: toolCall.arguments,
       );
 
       return MCPToolResult(
@@ -515,7 +484,6 @@ class ConversationBusinessService extends BaseBusinessService {
     try {
       final content = await _contextService.getResourceContent(
         resourceRequest.uri,
-        contextDocs,
       );
 
       return MCPResourceData(
@@ -539,13 +507,13 @@ class ConversationBusinessService extends BaseBusinessService {
     Conversation conversation,
     Message message,
   ) async {
-    final messageCount = (conversation.metadata['messageCount'] as int? ?? 0) + 1;
+    final messageCount = (conversation.metadata?['messageCount'] as int? ?? 0) + 1;
     
     await _conversationRepository.updateConversation(
       conversation.copyWith(
-        updatedAt: DateTime.now(),
+        lastModified: DateTime.now(),
         metadata: {
-          ...conversation.metadata,
+          ...?conversation.metadata,
           'messageCount': messageCount,
           'lastActivity': DateTime.now().toIso8601String(),
           'lastMessageRole': message.role.name,

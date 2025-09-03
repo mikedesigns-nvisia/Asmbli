@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import '../models/model_interfaces.dart';
 import 'cache_manager.dart';
 
@@ -186,7 +185,7 @@ class CachedModelProvider implements ModelProvider {
     }
 
     // Don't cache very large responses
-    final responseTokens = response.usage?.completionTokens ?? 0;
+    final responseTokens = response.usage.completionTokens ?? 0;
     if (responseTokens > _maxTokensToCache) {
       return false;
     }

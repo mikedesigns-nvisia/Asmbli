@@ -124,7 +124,7 @@ class FileValidationUtils {
       
       // Check if file exists
       if (!file.existsSync()) {
-        return FileValidationResult(
+        return const FileValidationResult(
           isValid: false,
           error: 'File does not exist',
           fileSize: 0,
@@ -238,7 +238,7 @@ class FileValidationUtils {
     
     // Check for no files
     if (files.isEmpty) {
-      return ContextValidationResult(
+      return const ContextValidationResult(
         isValid: false,
         error: 'No files selected',
         totalSize: 0,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
 import 'mcp_settings_service.dart';
@@ -27,7 +28,6 @@ class IntegrationInstallationService {
     bool autoDetect = true,
   }) async {
     try {
-      print('IntegrationInstallationService: Starting installation of $integrationId');
 
       // 1. Get integration definition
       final integration = IntegrationRegistry.getById(integrationId);
@@ -39,12 +39,11 @@ class IntegrationInstallationService {
         throw IntegrationException('Integration not yet available: ${integration.name}');
       }
 
-      print('IntegrationInstallationService: Found integration: ${integration.name}');
 
       // 2. Check prerequisites
       final prerequisiteResult = await _checkPrerequisites(integration);
       if (!prerequisiteResult.allMet) {
-        print('IntegrationInstallationService: Prerequisites not met for ${integration.name}');
+        debugPrint('Prerequisites not met for ${integration.name}');
         return InstallationResult(
           success: false,
           integrationId: integrationId,
@@ -57,18 +56,16 @@ class IntegrationInstallationService {
       // 3. Auto-detect configuration if requested
       Map<String, dynamic> finalConfig = customConfig ?? {};
       if (autoDetect) {
-        print('IntegrationInstallationService: Running auto-detection for ${integration.name}');
         final detectedConfig = await _autoDetectConfiguration(integration);
         if (detectedConfig != null) {
           finalConfig = {...detectedConfig, ...finalConfig}; // Custom config overrides
-          print('IntegrationInstallationService: Auto-detected configuration for ${integration.name}');
         }
       }
 
       // 4. Validate configuration
       final validationResult = await _validateConfiguration(integration, finalConfig);
       if (!validationResult.isValid) {
-        print('IntegrationInstallationService: Configuration validation failed for ${integration.name}');
+        debugPrint('Configuration validation failed for ${integration.name}');
         return InstallationResult(
           success: false,
           integrationId: integrationId,
@@ -80,16 +77,14 @@ class IntegrationInstallationService {
 
       // 5. Create MCP server configuration
       final mcpConfig = await _createMCPConfiguration(integration, finalConfig);
-      print('IntegrationInstallationService: Created MCP configuration for ${integration.name}');
 
       // 6. Install and test MCP server
       await _mcpSettingsService.setMCPServer(integrationId, mcpConfig);
-      print('IntegrationInstallationService: Saved MCP server configuration for ${integration.name}');
 
       // 7. Test connection
       final connectionResult = await _testConnection(integrationId, mcpConfig);
       if (!connectionResult.success) {
-        print('IntegrationInstallationService: Connection test failed for ${integration.name}');
+        debugPrint('Connection test failed for ${integration.name}');
         // Remove the failed configuration
         await _mcpSettingsService.removeMCPServer(integrationId);
         
@@ -104,7 +99,6 @@ class IntegrationInstallationService {
 
       // 8. Update integration service status
       await _integrationService.updateIntegrationStatus(integrationId, IntegrationStatus.active);
-      print('IntegrationInstallationService: Integration ${integration.name} installed successfully');
 
       return InstallationResult(
         success: true,
@@ -118,7 +112,7 @@ class IntegrationInstallationService {
       );
 
     } catch (e) {
-      print('IntegrationInstallationService: Installation failed for $integrationId: $e');
+      debugPrint('Installation failed for $integrationId: $e');
       return InstallationResult(
         success: false,
         integrationId: integrationId,
@@ -131,7 +125,6 @@ class IntegrationInstallationService {
   /// Uninstall an integration
   Future<bool> uninstallIntegration(String integrationId) async {
     try {
-      print('IntegrationInstallationService: Uninstalling integration $integrationId');
       
       // Remove MCP server
       await _mcpSettingsService.removeMCPServer(integrationId);
@@ -139,10 +132,9 @@ class IntegrationInstallationService {
       // Update integration status
       await _integrationService.updateIntegrationStatus(integrationId, IntegrationStatus.available);
       
-      print('IntegrationInstallationService: Integration $integrationId uninstalled successfully');
       return true;
     } catch (e) {
-      print('IntegrationInstallationService: Failed to uninstall $integrationId: $e');
+      debugPrint('Failed to uninstall $integrationId: $e');
       return false;
     }
   }
@@ -412,6 +404,7 @@ class IntegrationInstallationService {
     return MCPServerConfig(
       id: integration.id,
       name: integration.name,
+      url: 'stdio://${integration.id}',
       command: integration.command,
       args: [...integration.args, ...(_buildCommandArgs(integration, config))],
       env: env,

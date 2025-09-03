@@ -1,5 +1,5 @@
 /// Core models for vector database operations
-import 'dart:convert';
+library;
 
 /// Represents a document to be indexed in the vector database
 class VectorDocument {

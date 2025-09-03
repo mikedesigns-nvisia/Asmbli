@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:agent_engine_core/services/agent_service.dart';
 import 'package:agent_engine_core/services/conversation_service.dart';
@@ -6,6 +7,7 @@ import 'package:agent_engine_core/services/conversation_service.dart';
 import '../services/desktop/desktop_agent_service.dart';
 import '../services/desktop/desktop_conversation_service.dart';
 import '../services/desktop/desktop_storage_service.dart';
+import '../services/desktop/desktop_service_provider.dart';
 import '../services/llm/unified_llm_service.dart';
 import '../services/mcp_bridge_service.dart';
 import '../services/context_mcp_resource_service.dart';
@@ -13,6 +15,8 @@ import '../services/agent_context_prompt_service.dart';
 import '../services/theme_service.dart';
 import '../services/model_config_service.dart';
 import '../services/mcp_settings_service.dart';
+import '../services/claude_api_service.dart';
+import '../services/ollama_service.dart';
 
 // Business services
 import '../services/business/base_business_service.dart';
@@ -140,14 +144,31 @@ class ServiceLocator {
     registerSingleton<AgentService>(DesktopAgentService());
     registerSingleton<ConversationService>(DesktopConversationService());
 
-    // Register infrastructure services
-    registerSingleton<UnifiedLLMService>(UnifiedLLMService());
-    registerSingleton<MCPBridgeService>(MCPBridgeService());
+    // Register infrastructure services with proper dependencies
+    final mcpSettingsService = MCPSettingsService(storageService);
+    registerSingleton<MCPSettingsService>(mcpSettingsService);
+    
+    final desktopServiceProvider = DesktopServiceProvider.instance;
+    final ollamaService = OllamaService(desktopServiceProvider);
+    registerSingleton<OllamaService>(ollamaService);
+    
+    final claudeApiService = ClaudeApiService(mcpSettingsService);
+    registerSingleton<ClaudeApiService>(claudeApiService);
+    
+    final modelConfigService = ModelConfigService(storageService, ollamaService);
+    registerSingleton<ModelConfigService>(modelConfigService);
+    
+    final unifiedLlmService = UnifiedLLMService(modelConfigService, claudeApiService, ollamaService);
+    registerSingleton<UnifiedLLMService>(unifiedLlmService);
+    
+    final mcpBridgeService = MCPBridgeService(mcpSettingsService);
+    registerSingleton<MCPBridgeService>(mcpBridgeService);
+    
     registerSingleton<ContextMCPResourceService>(ContextMCPResourceService());
     registerSingleton<AgentContextPromptService>(AgentContextPromptService());
     registerSingleton<ThemeService>(ThemeService());
-    registerSingleton<ModelConfigService>(ModelConfigService());
-    registerSingleton<MCPSettingsService>(MCPSettingsService());
+    
+    // Use the existing singleton BusinessEventBus
     registerSingleton<BusinessEventBus>(BusinessEventBus());
   }
 
@@ -222,7 +243,7 @@ class ServiceLocator {
 
   /// Get all registered service types
   List<Type> getRegisteredTypes() {
-    return [..._services.keys, ..._factories.keys].toSet().toList();
+    return <Type>{..._services.keys, ..._factories.keys}.toList();
   }
 
   /// Get service instance count

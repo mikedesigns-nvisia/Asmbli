@@ -59,9 +59,10 @@ Future<void> _demonstrateCacheSystem() async {
   await fileCache.initialize();
   
   final cacheManager = CacheManager(
-    diskCache: fileCache,
-    memoryMaxSize: 50,
-    enableRedis: false, // Disabled for example
+    config: CacheManagerConfig(
+      memoryMaxSize: 50,
+      enableRedis: false, // Disabled for example
+    ),
   );
   await cacheManager.initialize();
   
@@ -278,9 +279,10 @@ Future<void> _demonstrateCachedModelProvider() async {
   await fileCache.initialize();
   
   final cacheManager = CacheManager(
-    diskCache: fileCache,
-    memoryMaxSize: 100,
-    enableRedis: false,
+    config: CacheManagerConfig(
+      memoryMaxSize: 100,
+      enableRedis: false,
+    ),
   );
   await cacheManager.initialize();
   
@@ -373,9 +375,10 @@ Future<void> _benchmarkCachePerformance() async {
   await fileCache.initialize();
   
   final cacheManager = CacheManager(
-    diskCache: fileCache,
-    memoryMaxSize: 1000,
-    enableRedis: false,
+    config: CacheManagerConfig(
+      memoryMaxSize: 1000,
+      enableRedis: false,
+    ),
   );
   await cacheManager.initialize();
   
@@ -480,11 +483,10 @@ class MockOpenAIProvider implements ModelProvider {
   
   @override
   ModelCapabilities get capabilities => const ModelCapabilities(
-    supportsChat: true,
-    supportsCompletion: true,
     supportsStreaming: true,
+    supportsTools: true,
     maxTokens: 4000,
-    supportsFunctions: true,
+    type: ModelType.chat,
   );
   
   @override

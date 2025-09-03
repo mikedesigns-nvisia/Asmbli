@@ -400,7 +400,7 @@ class OllamaProvider extends ModelProvider {
   }
 
   /// Build prompt from messages
-  String _buildPromptFromMessages(List<Message> messages, String? systemPrompt) {
+  String _buildPromptFromMessages(List<ModelMessage> messages, String? systemPrompt) {
     final buffer = StringBuffer();
     
     // Add system prompt if provided
@@ -487,7 +487,7 @@ class OllamaProvider extends ModelProvider {
   Stream<String> _parseStreamingResponse(ResponseBody responseBody) async* {
     final stream = responseBody.stream;
     
-    await for (final chunk in stream.transform(utf8.decoder)) {
+    await for (final chunk in stream.cast<List<int>>().transform(utf8.decoder)) {
       final lines = chunk.split('\n');
       
       for (final line in lines) {
@@ -549,7 +549,7 @@ class OllamaProvider extends ModelProvider {
       
       case DioExceptionType.connectionError:
         return ProviderConnectionException(
-          'Cannot connect to Ollama - is it running on ${baseUrl}?',
+          'Cannot connect to Ollama - is it running on $baseUrl?',
           providerId: id,
           originalError: error,
         );
@@ -557,7 +557,7 @@ class OllamaProvider extends ModelProvider {
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
         return ModelCompletionException(
-          'Ollama API error (${statusCode}): ${error.message}',
+          'Ollama API error ($statusCode): ${error.message}',
           providerId: id,
           request: request,
           originalError: error,

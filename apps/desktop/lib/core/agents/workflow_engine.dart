@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:uuid/uuid.dart';
 import 'graph/directed_graph.dart';
 import 'workflow_node.dart';
@@ -91,7 +90,7 @@ class AgentWorkflow {
   bool validate({bool throwOnError = false}) {
     try {
       if (graph.isEmpty) {
-        throw WorkflowValidationException('Workflow is empty');
+        throw const WorkflowValidationException('Workflow is empty');
       }
 
       // Check for circular dependencies
@@ -504,7 +503,7 @@ class WorkflowTemplates {
       description: 'Analyzes code for security vulnerabilities',
       processor: (input, context) async {
         // Mock security analysis
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2));
         return SecurityAnalysisResult(
           vulnerabilities: [],
           overallSecurity: SecurityLevel.medium,
@@ -519,11 +518,11 @@ class WorkflowTemplates {
       description: 'Analyzes code for performance issues',
       processor: (input, context) async {
         // Mock performance analysis
-        await Future.delayed(Duration(seconds: 3));
+        await Future.delayed(const Duration(seconds: 3));
         return PerformanceAnalysisResult(
           issues: [],
           optimizations: [],
-          metrics: PerformanceMetrics(complexity: 0.7, linesOfCode: 150),
+          metrics: const PerformanceMetrics(complexity: 0.7, linesOfCode: 150),
           metadata: {'analysis_time': DateTime.now().toIso8601String()},
         );
       },
@@ -535,10 +534,10 @@ class WorkflowTemplates {
       description: 'Analyzes code for style and formatting issues',
       processor: (input, context) async {
         // Mock style analysis
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
         return StyleAnalysisResult(
           issues: [],
-          metrics: StyleMetrics(
+          metrics: const StyleMetrics(
             totalLines: 150,
             totalIssues: 0,
             styleScore: 0.95,
@@ -612,7 +611,7 @@ class WorkflowTemplates {
       name: 'Data Ingester',
       description: 'Ingests raw data from various sources',
       processor: (input, context) async {
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2));
         return {'raw_data': input, 'ingested_at': DateTime.now().toIso8601String()};
       },
     );
@@ -623,7 +622,7 @@ class WorkflowTemplates {
       name: 'Data Validator',
       description: 'Validates ingested data quality',
       processor: (input, context) async {
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
         return {'validated_data': input, 'validation_score': 0.95};
       },
     );
@@ -634,7 +633,7 @@ class WorkflowTemplates {
       name: 'Data Transformer',
       description: 'Transforms data into target format',
       processor: (input, context) async {
-        await Future.delayed(Duration(seconds: 3));
+        await Future.delayed(const Duration(seconds: 3));
         return {'transformed_data': input, 'transform_version': '1.0'};
       },
     );
@@ -645,7 +644,7 @@ class WorkflowTemplates {
       name: 'Data Output',
       description: 'Outputs processed data',
       processor: (input, context) async {
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
         return {'final_output': input, 'completed_at': DateTime.now().toIso8601String()};
       },
     );

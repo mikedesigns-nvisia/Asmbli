@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:isolate';
 import 'dart:math';
 import '../cache/file_cache.dart';
 
@@ -618,7 +616,10 @@ class JobQueue {
 
 /// Queue event types
 abstract class QueueEvent {
-  final DateTime timestamp = DateTime.now();
+  final DateTime timestamp;
+  
+  // Generative constructor for subclasses
+  QueueEvent() : timestamp = DateTime.now();
   
   factory QueueEvent.jobAdded(QueuedJob job) = JobAddedEvent;
   factory QueueEvent.jobStarted(QueuedJob job) = JobStartedEvent;
@@ -630,34 +631,34 @@ abstract class QueueEvent {
 
 class JobAddedEvent extends QueueEvent {
   final QueuedJob job;
-  JobAddedEvent(this.job);
+  JobAddedEvent(this.job) : super();
 }
 
 class JobStartedEvent extends QueueEvent {
   final QueuedJob job;
-  JobStartedEvent(this.job);
+  JobStartedEvent(this.job) : super();
 }
 
 class JobCompletedEvent extends QueueEvent {
   final QueuedJob job;
   final JobResult result;
-  JobCompletedEvent(this.job, this.result);
+  JobCompletedEvent(this.job, this.result) : super();
 }
 
 class JobFailedEvent extends QueueEvent {
   final QueuedJob job;
   final JobResult result;
-  JobFailedEvent(this.job, this.result);
+  JobFailedEvent(this.job, this.result) : super();
 }
 
 class JobCancelledEvent extends QueueEvent {
   final QueuedJob job;
-  JobCancelledEvent(this.job);
+  JobCancelledEvent(this.job) : super();
 }
 
 class JobRetryingEvent extends QueueEvent {
   final QueuedJob job;
-  JobRetryingEvent(this.job);
+  JobRetryingEvent(this.job) : super();
 }
 
 /// Queue statistics
@@ -762,7 +763,7 @@ class DocumentProcessingJob implements Job {
         jobId: id,
         success: true,
         result: result,
-        executionTime: Duration(seconds: 3),
+        executionTime: const Duration(seconds: 3),
         metadata: {'file_size_bytes': 1024 * (500 + Random().nextInt(1500))},
       );
     } catch (e) {
@@ -770,7 +771,7 @@ class DocumentProcessingJob implements Job {
         jobId: id,
         success: false,
         error: e.toString(),
-        executionTime: Duration(seconds: 1),
+        executionTime: const Duration(seconds: 1),
       );
     }
   }
@@ -852,7 +853,7 @@ class ModelEmbeddingJob implements Job {
         jobId: id,
         success: true,
         result: result,
-        executionTime: Duration(seconds: 8),
+        executionTime: const Duration(seconds: 8),
         metadata: {
           'text_length': text.length,
           'embedding_dimension': embeddings.length,
@@ -863,7 +864,7 @@ class ModelEmbeddingJob implements Job {
         jobId: id,
         success: false,
         error: e.toString(),
-        executionTime: Duration(seconds: 2),
+        executionTime: const Duration(seconds: 2),
       );
     }
   }
@@ -943,7 +944,7 @@ class FileIndexingJob implements Job {
         jobId: id,
         success: true,
         result: result,
-        executionTime: Duration(seconds: 15),
+        executionTime: const Duration(seconds: 15),
         metadata: {
           'files_processed': filesIndexed,
           'directory_depth': 3 + Random().nextInt(5),
@@ -954,7 +955,7 @@ class FileIndexingJob implements Job {
         jobId: id,
         success: false,
         error: e.toString(),
-        executionTime: Duration(seconds: 3),
+        executionTime: const Duration(seconds: 3),
       );
     }
   }

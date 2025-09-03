@@ -3,7 +3,7 @@
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
-#include "mcp_channel_plugin.h"
+// #include "mcp_channel_plugin.h"  // Temporarily disabled due to API compatibility issues
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -27,9 +27,9 @@ bool FlutterWindow::OnCreate() {
   }
   RegisterPlugins(flutter_controller_->engine());
   
-  // Register custom MCP channel plugin
-  McpChannelPlugin::RegisterWithRegistrar(
-      flutter_controller_->engine()->GetRegistrarForPlugin("McpChannelPlugin"));
+  // Register custom MCP channel plugin - Temporarily disabled due to API compatibility issues
+  // McpChannelPlugin::RegisterWithRegistrar(
+  //     flutter_controller_->engine()->GetRegistrarForPlugin("McpChannelPlugin"));
   
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 

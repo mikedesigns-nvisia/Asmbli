@@ -72,6 +72,7 @@ class DetectionConfigurationService {
       final mcpConfig = MCPServerConfig(
         id: template.id,
         name: template.name,
+        url: 'stdio://${template.id}',
         command: config.executablePath,
         args: template.args,
         env: {...template.env, ...config.environmentVariables},

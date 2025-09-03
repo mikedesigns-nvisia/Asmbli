@@ -4,11 +4,11 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:path/path.dart' as path;
-import '../../lib/core/cache/lru_cache.dart';
-import '../../lib/core/cache/file_cache.dart';
-import '../../lib/core/cache/cache_manager.dart';
-import '../../lib/core/cache/cached_model_provider.dart';
-import '../../lib/core/models/model_interfaces.dart';
+import 'package:agentengine_desktop/core/cache/lru_cache.dart';
+import 'package:agentengine_desktop/core/cache/file_cache.dart';
+import 'package:agentengine_desktop/core/cache/cache_manager.dart';
+import 'package:agentengine_desktop/core/cache/cached_model_provider.dart';
+import 'package:agentengine_desktop/core/models/model_interfaces.dart';
 
 void main() {
   group('LRU Cache', () {
@@ -17,7 +17,7 @@ void main() {
     setUp(() {
       cache = LRUCache<String, String>(
         maxSize: 3,
-        defaultTTL: Duration(seconds: 1),
+        defaultTTL: const Duration(seconds: 1),
       );
     });
     
@@ -49,12 +49,12 @@ void main() {
     });
     
     test('respects TTL expiration', () async {
-      cache.put('key1', 'value1', ttl: Duration(milliseconds: 100));
+      cache.put('key1', 'value1', ttl: const Duration(milliseconds: 100));
       
       expect(cache.get('key1'), equals('value1'));
       
       // Wait for expiration
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
       
       expect(cache.get('key1'), isNull);
       expect(cache.length, equals(0));
@@ -118,13 +118,13 @@ void main() {
     });
     
     test('evicts expired items automatically', () {
-      cache.put('key1', 'value1', ttl: Duration(milliseconds: 50));
-      cache.put('key2', 'value2', ttl: Duration(seconds: 10));
+      cache.put('key1', 'value1', ttl: const Duration(milliseconds: 50));
+      cache.put('key2', 'value2', ttl: const Duration(seconds: 10));
       
       expect(cache.length, equals(2));
       
       // Wait for key1 to expire
-      Future.delayed(Duration(milliseconds: 100), () {
+      Future.delayed(const Duration(milliseconds: 100), () {
         cache.evictExpired();
         
         expect(cache.length, equals(1));
@@ -143,7 +143,7 @@ void main() {
       fileCache = FileCache(
         directory: tempDir,
         maxSizeGB: 1, // 1GB limit for tests
-        defaultTTL: Duration(hours: 1),
+        defaultTTL: const Duration(hours: 1),
       );
       await fileCache.initialize();
     });
@@ -193,7 +193,7 @@ void main() {
       await fileCache.put(
         'ttl_test',
         'expire me',
-        ttl: Duration(milliseconds: 100),
+        ttl: const Duration(milliseconds: 100),
         type: CacheDataType.string,
       );
       
@@ -201,7 +201,7 @@ void main() {
       expect(await fileCache.containsKey('ttl_test'), isTrue);
       
       // Wait for expiration
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
       
       // Should be expired
       expect(await fileCache.containsKey('ttl_test'), isFalse);
@@ -265,7 +265,7 @@ void main() {
       final smallCache = FileCache(
         directory: tempDir,
         maxSizeGB: 0.001, // Very small limit
-        defaultTTL: Duration(hours: 1),
+        defaultTTL: const Duration(hours: 1),
       );
       await smallCache.initialize();
       
@@ -413,13 +413,13 @@ void main() {
       await cacheManager.put(
         'ttl_test',
         'expire me',
-        ttl: Duration(milliseconds: 100),
+        ttl: const Duration(milliseconds: 100),
         level: CacheLevel.memory,
       );
       
       expect(await cacheManager.get('ttl_test'), equals('expire me'));
       
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
       
       expect(await cacheManager.get('ttl_test'), isNull);
     });
@@ -471,7 +471,7 @@ void main() {
       cachedProvider = CachedModelProvider(
         mockProvider,
         cacheManager,
-        defaultCacheTTL: Duration(minutes: 30),
+        defaultCacheTTL: const Duration(minutes: 30),
         enableStreaming: false,
         maxTokensToCache: 4000,
       );
@@ -665,7 +665,7 @@ class MockModelProvider implements ModelProvider {
   ];
   
   @override
-  Future<bool> get isAvailable async => true;
+  bool get isAvailable => true;
   
   int callCount = 0;
   bool mockLargeResponse = false;
@@ -679,7 +679,7 @@ class MockModelProvider implements ModelProvider {
     callCount++;
     
     // Simulate API delay
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
     
     final content = mockLargeResponse 
         ? 'Large response: ${'Very long content ' * 1000}'
@@ -710,7 +710,7 @@ class MockModelProvider implements ModelProvider {
     
     final words = 'Mock streaming response'.split(' ');
     for (final word in words) {
-      await Future.delayed(Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 50));
       yield '$word ';
     }
   }

@@ -115,7 +115,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  Widget build(BuildContext context) {
    // Get available models from model config service
    final modelConfigs = ref.watch(allModelConfigsProvider);
-   final availableModels = ['Default Model', ...modelConfigs.values.where((m) => m.isConfigured).map((m) => m.name).toList()];
+   final availableModels = ['Default Model', ...modelConfigs.values.where((m) => m.isConfigured).map((m) => m.name)];
 
  return Scaffold(
  body: Container(

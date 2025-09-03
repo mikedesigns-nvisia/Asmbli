@@ -7,7 +7,6 @@ import 'integration_service.dart';
 import 'integration_backup_service.dart';
 
 
-import '../models/mcp_server_config.dart';
 
 /// Service for managing integration templates and sharing
 class IntegrationTemplatesService {

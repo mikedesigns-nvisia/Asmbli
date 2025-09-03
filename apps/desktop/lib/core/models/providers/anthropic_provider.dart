@@ -147,7 +147,7 @@ class AnthropicProvider extends ModelProvider {
       // Anthropic doesn't have a dedicated health check endpoint,
       // so we'll make a minimal completion request
       final testRequest = ModelRequest(
-        messages: [Message.user('Hi')],
+        messages: [ModelMessage.user('Hi')],
         maxTokens: 1,
       );
       
@@ -378,13 +378,13 @@ class AnthropicProvider extends ModelProvider {
     final stream = responseBody.stream;
     final buffer = StringBuffer();
     
-    await for (final chunk in stream.transform(utf8.decoder)) {
+    await for (final chunk in stream.cast<List<int>>().transform(utf8.decoder)) {
       buffer.write(chunk);
       final lines = buffer.toString().split('\n');
       
       // Keep the last potentially incomplete line in the buffer
       buffer.clear();
-      if (lines.isNotEmpty && !lines.last.isEmpty) {
+      if (lines.isNotEmpty && lines.last.isNotEmpty) {
         buffer.write(lines.last);
       }
       
@@ -487,7 +487,7 @@ class AnthropicProvider extends ModelProvider {
           );
         } else {
           return ModelCompletionException(
-            'Anthropic API error (${statusCode}): ${error.message}',
+            'Anthropic API error ($statusCode): ${error.message}',
             providerId: id,
             request: request,
             originalError: error,

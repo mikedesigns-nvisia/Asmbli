@@ -175,7 +175,7 @@ class RAGPipeline {
   /// Truncate context entry to fit within token limit
   String _truncateContextEntry(String entry, int maxTokens) {
     final words = entry.split(' ');
-    final estimatedWordsPerToken = 0.75; // Rough estimate
+    const estimatedWordsPerToken = 0.75; // Rough estimate
     final maxWords = (maxTokens * estimatedWordsPerToken).floor();
     
     if (words.length <= maxWords) return entry;

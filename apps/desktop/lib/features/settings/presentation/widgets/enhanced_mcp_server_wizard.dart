@@ -9,7 +9,7 @@ import '../../../../core/models/enhanced_mcp_template.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 
 
-import '../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart';
 
 /// Enhanced MCP server setup wizard with template browser and smart forms
 /// Provides a complete user-friendly experience for all MCP integrations
@@ -701,6 +701,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
       final config = MCPServerConfig(
         id: serverId,
         name: _selectedTemplate!.name,
+        url: 'stdio://', // Default stdio URL for template-based servers
         command: _selectedTemplate!.command,
         args: List.from(_selectedTemplate!.args),
         env: _formValues.map((key, value) => MapEntry(key, value.toString())),

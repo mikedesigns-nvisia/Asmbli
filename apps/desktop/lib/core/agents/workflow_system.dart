@@ -31,7 +31,7 @@ export 'models/workflow_models.dart';
 export 'workflow_templates.dart';
 
 // Examples and testing
-export 'workflow_engine_example.dart';
+// export 'workflow_engine_example.dart'; // TODO: Create example file when needed
 
 /// Quick start guide for the Workflow System
 /// 

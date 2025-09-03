@@ -19,6 +19,8 @@
 
 library model_system;
 
+import 'model_interfaces.dart';
+
 // Core interfaces and models
 export 'model_interfaces.dart';
 
@@ -32,7 +34,7 @@ export 'model_router.dart';
 export 'model_manager.dart';
 
 // Examples and testing
-export 'model_management_example.dart';
+// export 'model_management_example.dart'; // TODO: Create example file when needed
 
 /// Quick start guide for the Model System
 /// 

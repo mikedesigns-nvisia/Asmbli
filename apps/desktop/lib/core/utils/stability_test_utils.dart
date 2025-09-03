@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -49,7 +48,7 @@ class StabilityTestUtils {
       // Create resources that need disposal
       for (int i = 0; i < 10; i++) {
         controllers.add(TextEditingController());
-        timers.add(Timer.periodic(Duration(milliseconds: 100), (timer) {}));
+        timers.add(Timer.periodic(const Duration(milliseconds: 100), (timer) {}));
       }
       
       // Simulate proper disposal
@@ -279,7 +278,7 @@ class StabilityTestUtils {
           return false; // Should be prevented
         }
         operationInProgress = true;
-        await Future.delayed(Duration(milliseconds: 10));
+        await Future.delayed(const Duration(milliseconds: 10));
         operationInProgress = false;
         return true;
       }));
@@ -297,13 +296,13 @@ class StabilityTestUtils {
       // Simulate rapid calls
       for (int i = 0; i < 10; i++) {
         debounceTimer?.cancel();
-        debounceTimer = Timer(Duration(milliseconds: 100), () {
+        debounceTimer = Timer(const Duration(milliseconds: 100), () {
           debounceCount++;
         });
-        await Future.delayed(Duration(milliseconds: 10));
+        await Future.delayed(const Duration(milliseconds: 10));
       }
       
-      await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(const Duration(milliseconds: 200));
       results['debouncing'] = debounceCount <= 1;
       
     } catch (e) {
@@ -378,7 +377,7 @@ class _TestAsyncWidgetState extends State<_TestAsyncWidget> {
       _isLoading = true;
     });
     
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
     
     if (!mounted) return; // Check after async operation
     
@@ -391,10 +390,10 @@ class _TestAsyncWidgetState extends State<_TestAsyncWidget> {
   Widget build(BuildContext context) {
     return Container(
       child: _isLoading 
-        ? CircularProgressIndicator()
+        ? const CircularProgressIndicator()
         : ElevatedButton(
             onPressed: _simulateAsyncOperation,
-            child: Text('Test Async'),
+            child: const Text('Test Async'),
           ),
     );
   }

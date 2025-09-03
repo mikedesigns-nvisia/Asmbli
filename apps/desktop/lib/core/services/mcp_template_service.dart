@@ -694,6 +694,7 @@ class MCPTemplateService {
     return MCPServerConfig(
       id: customId ?? serverDefaults['id'] as String,
       name: serverDefaults['name'] as String,
+      url: serverDefaults['url'] as String? ?? 'stdio://', // Provide default URL
       type: template.category, // Use category as type
       command: 'npx', // Use npx instead of uvx for Windows compatibility
       args: _getArgsForServer(template, config),

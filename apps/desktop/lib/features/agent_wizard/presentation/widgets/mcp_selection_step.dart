@@ -491,7 +491,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                   ),
                   ...[
                   Text(
-                    config.description,
+                    config.description ?? '',
                     style: TextStyles.bodySmall.copyWith(
                       color: ThemeColors(context).onSurfaceVariant,
                     ),

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:uuid/uuid.dart';
 import 'base_mcp_adapter.dart';
 import '../../models/mcp_server_config.dart';

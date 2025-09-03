@@ -8,7 +8,7 @@ import 'manual_mcp_server_modal.dart';
 import 'custom_mcp_server_modal.dart';
 
 
-import '../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart';
 
 /// Dialog for adding or editing MCP server configurations
 class MCPServerDialog extends ConsumerStatefulWidget {
@@ -146,7 +146,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       final config = widget.existingConfig!;
       _nameController.text = config.name;
       _commandController.text = config.command;
-      _descriptionController.text = config.description;
+      _descriptionController.text = config.description ?? '';
       _args = List.from(config.args);
       _envVars = Map.from(config.env ?? {});
       _enabled = config.enabled;
@@ -184,6 +184,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       final config = MCPServerConfig(
         id: serverId,
         name: _nameController.text.trim(),
+        url: 'local://$serverId',
         command: _commandController.text.trim(),
         args: _args.where((arg) => arg.trim().isNotEmpty).toList(),
         env: _envVars.isNotEmpty ? _envVars : null,
@@ -231,6 +232,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
         id: serverId,
         name: serverId.replaceAll('-', ' ').split(' ').map((word) => 
           word[0].toUpperCase() + word.substring(1)).join(' '),
+        url: 'local://$serverId',
         command: serverConfig['command'] as String? ?? '',
         args: (serverConfig['args'] as List?)?.cast<String>() ?? [],
         env: serverConfig['env'] as Map<String, String>?,

@@ -54,7 +54,7 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
           child: Column(
             children: [
               // App Navigation Bar
-              AppNavigationBar(currentRoute: AppRoutes.context),
+              const AppNavigationBar(currentRoute: AppRoutes.context),
               
               // Page Header
               Container(

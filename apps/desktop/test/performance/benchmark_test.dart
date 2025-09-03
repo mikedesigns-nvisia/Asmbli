@@ -3,13 +3,13 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:math';
-import '../../lib/core/agents/workflow_engine.dart';
-import '../../lib/core/agents/vector_database.dart';
-import '../../lib/core/cache/cache_manager.dart';
-import '../../lib/core/cache/file_cache.dart';
-import '../../lib/core/jobs/job_queue.dart';
-import '../../lib/core/jobs/worker_pool.dart';
-import '../../lib/core/models/model_interfaces.dart';
+import 'package:agentengine_desktop/core/agents/workflow_engine.dart';
+import 'package:agentengine_desktop/core/agents/vector_database.dart';
+import 'package:agentengine_desktop/core/cache/cache_manager.dart';
+import 'package:agentengine_desktop/core/cache/file_cache.dart';
+import 'package:agentengine_desktop/core/jobs/job_queue.dart';
+import 'package:agentengine_desktop/core/jobs/worker_pool.dart';
+import 'package:agentengine_desktop/core/models/model_interfaces.dart';
 
 void main() {
   group('Performance Benchmarks', () {
@@ -382,7 +382,7 @@ void main() {
         await fileCache.initialize();
         
         workerPool = WorkerPool(
-          config: WorkerPoolConfig(
+          config: const WorkerPoolConfig(
             minWorkers: 4,
             maxWorkers: 8,
             enableAutoScaling: true,
@@ -431,7 +431,7 @@ void main() {
           }
         });
         
-        await completer.future.timeout(Duration(seconds: 30));
+        await completer.future.timeout(const Duration(seconds: 30));
         stopwatch.stop();
         
         final actualThroughput = jobCount / stopwatch.elapsed.inSeconds;
@@ -449,7 +449,7 @@ void main() {
         // Create CPU-intensive jobs
         final heavyJobs = List.generate(highLoadJobCount, (i) => FastTestJob(
           id: 'heavy_job_$i',
-          executionTime: Duration(milliseconds: 200),
+          executionTime: const Duration(milliseconds: 200),
           cpuIntensive: true,
         ));
         
@@ -463,7 +463,7 @@ void main() {
         }
         
         // Wait a bit for auto-scaling to kick in
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2));
         
         final scaledWorkerCount = workerPool.getStatistics().totalWorkers;
         
@@ -476,7 +476,7 @@ void main() {
         
         // Wait for all jobs to complete
         while (jobQueue.getStatistics().runningJobs + jobQueue.getStatistics().pendingJobs > 0) {
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
         }
         
         stopwatch.stop();
@@ -497,7 +497,7 @@ void main() {
         
         final fastJobs1 = List.generate(jobCount, (i) => FastTestJob(
           id: 'no_persist_$i',
-          executionTime: Duration(milliseconds: 50),
+          executionTime: const Duration(milliseconds: 50),
         ));
         
         final noPersistenceStopwatch = Stopwatch()..start();
@@ -508,7 +508,7 @@ void main() {
         
         while (noPersistenceQueue.getStatistics().runningJobs + 
                noPersistenceQueue.getStatistics().pendingJobs > 0) {
-          await Future.delayed(Duration(milliseconds: 50));
+          await Future.delayed(const Duration(milliseconds: 50));
         }
         
         noPersistenceStopwatch.stop();
@@ -523,7 +523,7 @@ void main() {
         
         final fastJobs2 = List.generate(jobCount, (i) => FastTestJob(
           id: 'with_persist_$i',
-          executionTime: Duration(milliseconds: 50),
+          executionTime: const Duration(milliseconds: 50),
         ));
         
         final withPersistenceStopwatch = Stopwatch()..start();
@@ -534,7 +534,7 @@ void main() {
         
         while (withPersistenceQueue.getStatistics().runningJobs + 
                withPersistenceQueue.getStatistics().pendingJobs > 0) {
-          await Future.delayed(Duration(milliseconds: 50));
+          await Future.delayed(const Duration(milliseconds: 50));
         }
         
         withPersistenceStopwatch.stop();
@@ -649,7 +649,7 @@ class FastTestJob implements Job {
   final int maxRetries = 0;
   
   @override
-  final Duration timeout = Duration(minutes: 1);
+  const Duration timeout = Duration(minutes: 1);
   
   final Duration executionTime;
   final bool cpuIntensive;
@@ -767,5 +767,5 @@ int _getCurrentMemoryUsage() {
 
 Future<void> _forceGarbageCollection() async {
   // Mock GC for demo - in real implementation would trigger actual GC
-  await Future.delayed(Duration(milliseconds: 1));
+  await Future.delayed(const Duration(milliseconds: 1));
 }

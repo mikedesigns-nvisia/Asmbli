@@ -74,6 +74,7 @@ class IntegrationService {
     final mcpConfig = MCPServerConfig(
       id: integrationDef.id,
       name: integrationDef.name,
+      url: 'stdio://', // Default URL for integration-based servers
       command: integrationDef.command,
       args: List.from(integrationDef.args),
       env: config.map((key, value) => MapEntry(key, value.toString())),
@@ -135,6 +136,7 @@ class IntegrationService {
       final updatedConfig = MCPServerConfig(
         id: mcpConfig.id,
         name: mcpConfig.name,
+        url: mcpConfig.url, // Use existing URL
         command: mcpConfig.command,
         args: mcpConfig.args,
         env: mcpConfig.env,

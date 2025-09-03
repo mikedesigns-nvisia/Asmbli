@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'mcp_settings_service.dart';
@@ -34,9 +35,8 @@ class MCPBridgeService {
       _setupEventListening();
       
       _isInitialized = true;
-      print('✓ MCP Bridge Service initialized');
     } catch (e) {
-      print('✗ MCP Bridge Service initialization failed: $e');
+      debugPrint('MCP Bridge Service initialization failed: $e');
       throw MCPBridgeException('Failed to initialize MCP bridge: $e');
     }
   }
@@ -78,15 +78,14 @@ class MCPBridgeService {
       if (_healthService != null && response['success'] == true) {
         for (final serverId in enabledServerIds) {
           _healthService!.forceHealthCheck(serverId).catchError((e) {
-            print('Health check failed for $serverId: $e');
+            debugPrint('Health check failed for $serverId: $e');
           });
         }
       }
       
-      print('DEBUG: Raw MCP response: $response');
       return MCPResponse.fromJson(response);
     } catch (e) {
-      print('DEBUG: MCP Bridge error: $e');
+      debugPrint('MCP Bridge error: $e');
       throw MCPBridgeException('Failed to process message: $e');
     }
   }
@@ -155,7 +154,6 @@ class MCPBridgeService {
         'config': serverConfig.toJson(),
       });
 
-      print('✓ Reinitialized MCP server: $serverId');
     } catch (e) {
       throw MCPBridgeException('Failed to reinitialize server $serverId: $e');
     }
@@ -320,7 +318,7 @@ class MCPBridgeService {
   void _setupEventListening() {
     _eventSubscription = _eventChannel.receiveBroadcastStream().listen(
       (event) => _handleEvent(event as Map<String, dynamic>),
-      onError: (error) => print('MCP Bridge event error: $error'),
+      onError: (error) => debugPrint('MCP Bridge event error: $error'),
     );
   }
 
@@ -367,11 +365,64 @@ class MCPBridgeService {
         break;
 
       default:
-        print('Unknown MCP bridge event type: $type');
+        debugPrint('Unknown MCP bridge event type: $type');
     }
     } catch (e) {
-      print('MCP response error: $e');
+      debugPrint('MCP response error: $e');
     }
+  }
+
+  /// Get capabilities for servers (business service compatibility)
+  Future<Map<String, dynamic>> getCapabilitiesForServers(List<String> serverIds) async {
+    final capabilities = <String, dynamic>{};
+    for (final serverId in serverIds) {
+      try {
+        final serverCapsMap = await getServerCapabilities([serverId]);
+        final serverCaps = serverCapsMap[serverId];
+        capabilities[serverId] = serverCaps?.toJson() ?? {'error': 'No capabilities found'};
+      } catch (e) {
+        capabilities[serverId] = {'error': e.toString()};
+      }
+    }
+    return capabilities;
+  }
+
+  /// Call tool on MCP server (business service compatibility)
+  Future<Map<String, dynamic>> callTool(String toolName, Map<String, dynamic> params, {String? serverId}) async {
+    try {
+      return await _methodChannel.invokeMethod('callTool', {
+        'toolName': toolName,
+        'params': params,
+        'serverId': serverId,
+      });
+    } catch (e) {
+      return {'error': e.toString()};
+    }
+  }
+
+  /// Check if server is configured (business service compatibility)
+  Future<bool> isServerConfigured(String serverId) async {
+    try {
+      final result = await testServerConnection(serverId);
+      return result.isConnected;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Configure server for agent (business service compatibility)
+  Future<void> configureServerForAgent(String agentId, String serverId) async {
+    // Placeholder implementation
+  }
+
+  /// Start server (business service compatibility)
+  Future<void> startServer(String serverId) async {
+    // Placeholder implementation
+  }
+
+  /// Stop server for agent (business service compatibility)
+  Future<void> stopServerForAgent(String agentId, String serverId) async {
+    // Placeholder implementation
   }
 }
 
@@ -470,6 +521,16 @@ class MCPServerCapabilities {
       extensions: json['extensions'] as Map<String, dynamic>?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tools': tools,
+      'resources': resources,
+      'supportsProgress': supportsProgress,
+      'supportsCancel': supportsCancel,
+      if (extensions != null) 'extensions': extensions,
+    };
+  }
 }
 
 /// MCP bridge exception
@@ -490,7 +551,7 @@ final mcpBridgeServiceProvider = Provider<MCPBridgeService>((ref) {
   
   // Initialize on first access
   bridge.initialize().catchError((error) {
-    print('Failed to initialize MCP bridge: $error');
+    debugPrint('Failed to initialize MCP bridge: $error');
   });
   
   // Dispose when provider is disposed

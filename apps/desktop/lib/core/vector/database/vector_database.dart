@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
-import 'package:path/path.dart' as path;
 import '../models/vector_models.dart';
 import '../processing/document_chunker.dart';
 import '../embeddings/embedding_service.dart';

@@ -35,7 +35,7 @@ class MCPInstallationService {
   }
   
   /// Check installation status of a specific MCP server
-  static Future<MCPServerInstallation> _checkServerInstallationStatus(MCPServerConfig server) async {
+  static Future<MCPServerInstallation> _checkServerInstallationStatus(MCPServerLibraryConfig server) async {
     try {
       // Handle different server types
       switch (server.type) {
@@ -45,6 +45,13 @@ class MCPInstallationService {
           return await _checkCommunityServerStatus(server);
         case MCPServerType.experimental:
           return await _checkExperimentalServerStatus(server);
+        default:
+          return MCPServerInstallation(
+            server: server,
+            requiresInstallation: true,
+            installationMethod: MCPInstallationMethod.npm,
+            reason: 'Unknown server type: ${server.type}',
+          );
       }
     } catch (e) {
       return MCPServerInstallation(
@@ -57,9 +64,10 @@ class MCPInstallationService {
   }
   
   /// Check official Anthropic MCP server status
-  static Future<MCPServerInstallation> _checkOfficialServerStatus(MCPServerConfig server) async {
+  static Future<MCPServerInstallation> _checkOfficialServerStatus(MCPServerLibraryConfig server) async {
     // Official servers use npx with @modelcontextprotocol packages
-    final packageName = server.configuration['args']?[1] as String?;
+    final args = server.configuration['args'] as List?;
+    final packageName = args != null && args.length > 1 ? args[1] : null;
     if (packageName == null) {
       return MCPServerInstallation(
         server: server,
@@ -82,12 +90,12 @@ class MCPInstallationService {
   }
   
   /// Check community MCP server status
-  static Future<MCPServerInstallation> _checkCommunityServerStatus(MCPServerConfig server) async {
+  static Future<MCPServerInstallation> _checkCommunityServerStatus(MCPServerLibraryConfig server) async {
     // Community servers may use different package managers
-    final command = server.configuration['command'] as String?;
-    final args = server.configuration['args'] as List<dynamic>?;
+    final command = server.configuration['command'] as String? ?? '';
+    final args = server.configuration['args'] as List? ?? [];
     
-    if (command == null || args == null) {
+    if (command.isEmpty || args.isEmpty) {
       return MCPServerInstallation(
         server: server,
         requiresInstallation: true,
@@ -109,7 +117,7 @@ class MCPInstallationService {
     
     // For npx packages, check if package exists
     if (command == 'npx' && args.length > 1) {
-      final packageName = args[1] as String;
+      final packageName = args[1];
       final packageResult = await Process.run('npx', ['--dry-run', packageName], runInShell: true);
       
       return MCPServerInstallation(
@@ -130,7 +138,7 @@ class MCPInstallationService {
   }
   
   /// Check experimental MCP server status
-  static Future<MCPServerInstallation> _checkExperimentalServerStatus(MCPServerConfig server) async {
+  static Future<MCPServerInstallation> _checkExperimentalServerStatus(MCPServerLibraryConfig server) async {
     // Experimental servers may require special handling
     return MCPServerInstallation(
       server: server,
@@ -274,7 +282,7 @@ class MCPInstallationService {
 
 /// Represents an MCP server installation requirement
 class MCPServerInstallation {
-  final MCPServerConfig server;
+  final MCPServerLibraryConfig server;
   final bool requiresInstallation;
   final MCPInstallationMethod installationMethod;
   final String reason;

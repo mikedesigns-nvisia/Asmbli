@@ -51,11 +51,11 @@ class MCPServerExecutionService {
     MCPServerConfig serverConfig,
     Map<String, String> environmentVars,
   ) async {
-    final command = serverConfig.configuration['command'] as String? ?? 'npx';
-    final args = List<String>.from(serverConfig.configuration['args'] as List? ?? []);
+    final command = serverConfig.command.isNotEmpty ? serverConfig.command : 'npx';
+    final args = List<String>.from(serverConfig.args);
     
     // Handle special transport cases
-    final transport = serverConfig.configuration['transport'] as String? ?? 'stdio';
+    final transport = serverConfig.transport ?? 'stdio';
     
     if (transport == 'sse') {
       // Server-Sent Events transport (HTTP-based)
@@ -87,8 +87,8 @@ class MCPServerExecutionService {
     MCPServerConfig serverConfig,
     Map<String, String> environmentVars,
   ) async {
-    final url = serverConfig.configuration['url'] as String?;
-    if (url == null) {
+    final url = serverConfig.url;
+    if (url.isEmpty) {
       throw Exception('SSE server URL not configured for ${serverConfig.id}');
     }
     
@@ -451,11 +451,28 @@ class MCPServerExecutionService {
       final serverId = serverRef is String ? serverRef : serverRef['id'] as String?;
       if (serverId == null) continue;
       
-      final serverConfig = MCPServerLibrary.getServer(serverId);
-      if (serverConfig == null) {
+      final libraryConfig = MCPServerLibrary.getServer(serverId);
+      if (libraryConfig == null) {
         print('⚠️ Unknown MCP server: $serverId');
         continue;
       }
+      
+      // Convert MCPServerLibraryConfig to MCPServerConfig
+      final serverConfig = MCPServerConfig(
+        id: libraryConfig.id,
+        name: libraryConfig.name,
+        url: 'local://${libraryConfig.id}',
+        command: libraryConfig.configuration['command']?.toString() ?? '',
+        args: libraryConfig.configuration['args'] is List 
+          ? List<String>.from(libraryConfig.configuration['args'])
+          : [],
+        env: libraryConfig.configuration['env'] is Map
+          ? Map<String, String>.from(libraryConfig.configuration['env'])
+          : null,
+        description: libraryConfig.description,
+        capabilities: libraryConfig.capabilities,
+        enabled: true,
+      );
       
       try {
         final serverProcess = await startMCPServer(serverConfig, environmentVars);

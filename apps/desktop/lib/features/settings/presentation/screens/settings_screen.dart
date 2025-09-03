@@ -26,7 +26,7 @@ import '../tabs/general_settings_tab.dart';
 import '../widgets/model_download_manager.dart';
 
 
-import '../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart';
 
 // Integration model for unified display
 class Integration {
@@ -1687,7 +1687,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
           createdAt: DateTime.now(),
           lastUpdated: DateTime.now(),
           transport: 'sse',
-          url: serverConfig['url'] as String?,
+          url: serverConfig['url'] as String? ?? 'sse://$serverId',
         );
       } else {
         // Standard stdio transport configuration
@@ -1695,6 +1695,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
           id: serverId,
           name: serverId.replaceAll('-', ' ').split(' ').map((word) => 
             word[0].toUpperCase() + word.substring(1)).join(' '),
+          url: 'local://$serverId',
           command: serverConfig['command'] as String? ?? '',
           args: (serverConfig['args'] as List?)?.cast<String>() ?? [],
           env: serverConfig['env'] as Map<String, String>?,
@@ -1798,7 +1799,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      config.description,
+                      config.description ?? '',
                       style: TextStyle(
                         
                         fontSize: 13,

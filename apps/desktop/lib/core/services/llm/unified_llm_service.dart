@@ -200,6 +200,46 @@ class UnifiedLLMService {
     }
     _providers.clear();
   }
+
+  /// Generate response using specified model (business service compatibility)
+  Future<LLMResponse> generate({
+    required String prompt,
+    String? modelId,
+    Map<String, dynamic>? context,
+  }) async {
+    return await chat(
+      message: prompt,
+      modelId: modelId,
+      context: context != null ? ChatContext(metadata: context) : null,
+    );
+  }
+
+  /// Generate streaming response (business service compatibility)
+  Stream<String> generateStream({
+    required String prompt,
+    String? modelId,
+    Map<String, dynamic>? context,
+  }) async* {
+    yield* chatStream(
+      message: prompt,
+      modelId: modelId,
+      context: context != null ? ChatContext(metadata: context) : null,
+    );
+  }
+
+  /// Check if model is available (business service compatibility)
+  bool isModelAvailable(String modelId) {
+    final provider = getProvider(modelId);
+    return provider != null;
+  }
+
+  /// Initialize model (business service compatibility) 
+  Future<void> initializeModel(String modelId) async {
+    final provider = getProvider(modelId);
+    if (provider != null) {
+      await provider.initialize();
+    }
+  }
 }
 
 // Riverpod provider for unified LLM service

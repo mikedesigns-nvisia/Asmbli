@@ -147,7 +147,7 @@ class MCPAdapterTestSuite {
         print('  ⚠️ WebSocket echo server not available, skipping connection test');
       }
       
-      testResult.passed = testResult.checks.values.where((check) => check != null).every((check) => check!);
+      testResult.passed = testResult.checks.values.where((check) => check != null).every((check) => check);
       
     } catch (e) {
       testResult.error = e.toString();
@@ -260,7 +260,7 @@ class MCPAdapterTestSuite {
         print('  ✓ Invalid URL properly rejected');
       }
       
-      testResult.passed = testResult.checks.values.where((check) => check != null).every((check) => check!);
+      testResult.passed = testResult.checks.values.where((check) => check != null).every((check) => check);
       
     } catch (e) {
       testResult.error = e.toString();
@@ -512,7 +512,7 @@ class MCPAdapterTestSuite {
   
   /// Print comprehensive test summary
   void _printTestSummary(MCPTestResults results) {
-    print('\n' + '='*80);
+    print('\n${'='*80}');
     print('🏁 MCP ADAPTER TEST SUITE RESULTS');
     print('='*80);
     print('Total Tests: ${results.results.length}');

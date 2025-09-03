@@ -13,9 +13,10 @@ class DefaultMCPSetup {
     print('🔧 Setting up default MCP servers...');
 
     // Memory MCP Server (no auth needed)
-    final memoryServer = MCPServerConfig(
+    const memoryServer = MCPServerConfig(
       id: 'memory-mcp',
       name: 'Memory',
+      url: 'stdio://memory-mcp',
       type: 'memory',
       enabled: true,
       command: 'npx', // Use npx instead of uvx for Windows compatibility
@@ -28,9 +29,10 @@ class DefaultMCPSetup {
     );
 
     // Filesystem MCP Server (no auth needed, safe directory)
-    final filesystemServer = MCPServerConfig(
+    const filesystemServer = MCPServerConfig(
       id: 'filesystem-mcp',
       name: 'File System',
+      url: 'stdio://filesystem-mcp',
       type: 'filesystem',
       enabled: false, // Disabled by default for security
       command: 'npx',
@@ -43,9 +45,10 @@ class DefaultMCPSetup {
     );
 
     // Git MCP Server (no auth needed)
-    final gitServer = MCPServerConfig(
+    const gitServer = MCPServerConfig(
       id: 'git-mcp',
       name: 'Git',
+      url: 'stdio://git-mcp',
       type: 'git',
       enabled: false, // Disabled by default
       command: 'npx',
@@ -58,9 +61,10 @@ class DefaultMCPSetup {
     );
 
     // Time MCP Server (no auth needed)
-    final timeServer = MCPServerConfig(
+    const timeServer = MCPServerConfig(
       id: 'time-mcp',
       name: 'Time',
+      url: 'stdio://time-mcp',
       type: 'time',
       enabled: true,
       command: 'npx',

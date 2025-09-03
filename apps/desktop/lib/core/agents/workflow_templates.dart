@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:path/path.dart' as path;
 import 'workflow_engine.dart';
 import 'workflow_node.dart';
 import 'base_agent.dart';
@@ -10,7 +9,7 @@ import 'models/workflow_models.dart';
 /// Service for managing and instantiating workflow templates
 class WorkflowTemplateService {
   final Map<String, WorkflowTemplate> _templates = {};
-  final Map<String, AgentFactory> _agentFactories = {};
+  final Map<String, WorkflowAgentFactory> _agentFactories = {};
   
   /// Register a workflow template
   void registerTemplate(WorkflowTemplate template) {
@@ -19,7 +18,7 @@ class WorkflowTemplateService {
   }
 
   /// Register an agent factory
-  void registerAgentFactory(String type, AgentFactory factory) {
+  void registerAgentFactory(String type, WorkflowAgentFactory factory) {
     print('🏭 Registering agent factory: $type');
     _agentFactories[type] = factory;
   }
@@ -98,7 +97,7 @@ class WorkflowTemplateService {
 
     // Validate the created workflow
     if (!workflow.validate()) {
-      throw TemplateException('Created workflow failed validation');
+      throw const TemplateException('Created workflow failed validation');
     }
 
     print('✅ Workflow created successfully from template: ${template.name}');
@@ -250,7 +249,7 @@ class WorkflowTemplateService {
       version: workflow.version,
       nodeTemplates: nodeTemplates,
       dependencies: dependencies,
-      config: WorkflowTemplateConfig(), // Use default config
+      config: const WorkflowTemplateConfig(), // Use default config
       metadata: metadata ?? Map.from(workflow.metadata),
     );
 
@@ -290,7 +289,7 @@ class WorkflowTemplateService {
 }
 
 /// Abstract factory for creating agents
-abstract class AgentFactory {
+abstract class WorkflowAgentFactory {
   /// Create an agent of the specified type with the given configuration
   Future<Agent> createAgent(String type, Map<String, dynamic> config);
   
@@ -302,7 +301,7 @@ abstract class AgentFactory {
 }
 
 /// Built-in agent factory for common agent types
-class BuiltInAgentFactory extends AgentFactory {
+class BuiltInAgentFactory extends WorkflowAgentFactory {
   @override
   Future<Agent> createAgent(String type, Map<String, dynamic> config) async {
     switch (type) {
@@ -313,7 +312,7 @@ class BuiltInAgentFactory extends AgentFactory {
           description: 'Performs security analysis',
           processor: (input, context) async {
             // Simulate security analysis
-            await Future.delayed(Duration(seconds: 2));
+            await Future.delayed(const Duration(seconds: 2));
             return SecurityAnalysisResult(
               vulnerabilities: [],
               overallSecurity: SecurityLevel.medium,
@@ -331,11 +330,11 @@ class BuiltInAgentFactory extends AgentFactory {
           description: 'Performs performance analysis',
           processor: (input, context) async {
             // Simulate performance analysis
-            await Future.delayed(Duration(seconds: 3));
+            await Future.delayed(const Duration(seconds: 3));
             return PerformanceAnalysisResult(
               issues: [],
               optimizations: [],
-              metrics: PerformanceMetrics(),
+              metrics: const PerformanceMetrics(),
               metadata: config,
             );
           },
@@ -350,10 +349,10 @@ class BuiltInAgentFactory extends AgentFactory {
           description: 'Performs style analysis',
           processor: (input, context) async {
             // Simulate style analysis
-            await Future.delayed(Duration(seconds: 1));
+            await Future.delayed(const Duration(seconds: 1));
             return StyleAnalysisResult(
               issues: [],
-              metrics: StyleMetrics(
+              metrics: const StyleMetrics(
                 totalLines: 0,
                 totalIssues: 0,
                 styleScore: 1.0,
@@ -477,7 +476,7 @@ class PredefinedTemplates {
 
   /// Code review workflow template
   static WorkflowTemplate createCodeReviewTemplate() {
-    return WorkflowTemplate(
+    return const WorkflowTemplate(
       id: 'code_review_template',
       name: 'Code Review Workflow',
       description: 'Parallel analysis workflow for comprehensive code review',
@@ -533,7 +532,7 @@ class PredefinedTemplates {
 
   /// Data processing pipeline template
   static WorkflowTemplate createDataPipelineTemplate() {
-    return WorkflowTemplate(
+    return const WorkflowTemplate(
       id: 'data_pipeline_template',
       name: 'Data Processing Pipeline',
       description: 'Sequential data processing workflow',
@@ -589,7 +588,7 @@ class PredefinedTemplates {
 
   /// Testing workflow template
   static WorkflowTemplate createTestingTemplate() {
-    return WorkflowTemplate(
+    return const WorkflowTemplate(
       id: 'testing_template',
       name: 'Comprehensive Testing',
       description: 'Multi-stage testing workflow',
@@ -643,7 +642,7 @@ class PredefinedTemplates {
 
   /// Deployment workflow template
   static WorkflowTemplate createDeploymentTemplate() {
-    return WorkflowTemplate(
+    return const WorkflowTemplate(
       id: 'deployment_template',
       name: 'Application Deployment',
       description: 'Automated deployment workflow',

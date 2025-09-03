@@ -40,7 +40,7 @@ class NullSafetyUtils {
       final decoded = jsonDecode(jsonString);
       if (decoded is List) {
         if (itemParser != null) {
-          return decoded.map<T>((item) {
+          return decoded.map<T?>((item) {
             try {
               return itemParser(item);
             } catch (e) {
@@ -178,7 +178,7 @@ class NullSafetyUtils {
     if (value is List) {
       try {
         if (itemParser != null) {
-          return value.map<T>((item) {
+          return value.map<T?>((item) {
             try {
               return itemParser(item);
             } catch (e) {
@@ -374,7 +374,7 @@ class NullSafetyUtils {
       );
     }
     
-    return ValidationResult(isValid: true);
+    return const ValidationResult(isValid: true);
   }
   
   /// Creates a null-safe map builder

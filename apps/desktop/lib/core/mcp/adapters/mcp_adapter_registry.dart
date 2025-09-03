@@ -246,7 +246,7 @@ class MCPAdapterRegistry {
       // Check for WebSocket upgrade support
       if (uri.scheme == 'http' || uri.scheme == 'https') {
         final client = Dio();
-        final response = await client.options(
+        final response = await client.head(
           url,
           options: Options(
             headers: {
@@ -254,7 +254,7 @@ class MCPAdapterRegistry {
               'Upgrade': 'websocket',
             },
             validateStatus: (status) => true,
-          ),
+          )
         );
         
         // Check response headers for WebSocket support
@@ -272,12 +272,12 @@ class MCPAdapterRegistry {
   Future<bool> _isSSEEndpoint(String url) async {
     try {
       final client = Dio();
-      final response = await client.options(
+      final response = await client.head(
         url,
         options: Options(
           headers: {'Accept': 'text/event-stream'},
           validateStatus: (status) => true,
-        ),
+        )
       );
       
       final contentType = response.headers.value('content-type');

@@ -326,7 +326,9 @@ class DocumentChunker {
     
     // Look for lists
     if (RegExp(r'^\s*[-*+]\s+', multiLine: true).hasMatch(text) ||
-        RegExp(r'^\s*\d+\.\s+', multiLine: true).hasMatch(text)) return 'list';
+        RegExp(r'^\s*\d+\.\s+', multiLine: true).hasMatch(text)) {
+      return 'list';
+    }
     
     // Look for quotes
     if (RegExp(r'^\s*>', multiLine: true).hasMatch(text)) return 'quote';

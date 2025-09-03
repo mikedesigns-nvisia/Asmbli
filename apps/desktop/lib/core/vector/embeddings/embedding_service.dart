@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:dio/dio.dart';
-import '../models/vector_models.dart';
 
 /// Abstract base class for embedding generation services
 abstract class EmbeddingService {
@@ -232,7 +230,7 @@ class APIEmbeddingService extends EmbeddingService {
 
       final data = response.data;
       if (data['data'] == null || data['data'].isEmpty) {
-        throw EmbeddingException('No embedding data received from API');
+        throw const EmbeddingException('No embedding data received from API');
       }
 
       return List<double>.from(data['data'][0]['embedding']);
@@ -256,7 +254,7 @@ class APIEmbeddingService extends EmbeddingService {
 
       final data = response.data;
       if (data['data'] == null) {
-        throw EmbeddingException('No embedding data received from API');
+        throw const EmbeddingException('No embedding data received from API');
       }
 
       final embeddings = <List<double>>[];

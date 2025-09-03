@@ -19,7 +19,7 @@ abstract class BaseBusinessService {
       final result = await operation();
       debugPrint('✅ Business operation completed: $operationName');
       return result;
-    } catch (error, stackTrace) {
+    } catch (error) {
       debugPrint('❌ Business operation failed: $operationName - $error');
       rethrow;
     }

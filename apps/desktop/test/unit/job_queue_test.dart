@@ -1,11 +1,10 @@
 import 'package:test/test.dart';
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
-import '../../lib/core/jobs/job_queue.dart';
-import '../../lib/core/jobs/worker_pool.dart';
-import '../../lib/core/jobs/job_persistence.dart';
-import '../../lib/core/cache/file_cache.dart';
+import 'package:agentengine_desktop/core/jobs/job_queue.dart';
+import 'package:agentengine_desktop/core/jobs/worker_pool.dart';
+import 'package:agentengine_desktop/core/jobs/job_persistence.dart';
+import 'package:agentengine_desktop/core/cache/file_cache.dart';
 
 void main() {
   group('Job Queue', () {
@@ -37,19 +36,19 @@ void main() {
       final lowPriorityJob = TestJob(
         id: 'low',
         priority: JobPriority.low,
-        executionTime: Duration(milliseconds: 100),
+        executionTime: const Duration(milliseconds: 100),
       );
       
       final highPriorityJob = TestJob(
         id: 'high',
         priority: JobPriority.high,
-        executionTime: Duration(milliseconds: 100),
+        executionTime: const Duration(milliseconds: 100),
       );
       
       final normalPriorityJob = TestJob(
         id: 'normal',
         priority: JobPriority.normal,
-        executionTime: Duration(milliseconds: 100),
+        executionTime: const Duration(milliseconds: 100),
       );
       
       await jobQueue.addJob(lowPriorityJob);
@@ -60,7 +59,7 @@ void main() {
       expect(stats.pendingJobs, equals(3));
       
       // Allow processing to start
-      await Future.delayed(Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 50));
       
       // High priority job should be processed first
       expect(highPriorityJob.startTime, isNotNull);
@@ -70,14 +69,14 @@ void main() {
     test('processes jobs within concurrency limits', () async {
       final jobs = List.generate(5, (i) => TestJob(
         id: 'job_$i',
-        executionTime: Duration(milliseconds: 200),
+        executionTime: const Duration(milliseconds: 200),
       ));
       
       final futures = jobs.map((job) => jobQueue.addJob(job));
       await Future.wait(futures);
       
       // Wait for processing to start
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       
       final stats = jobQueue.getStatistics();
       
@@ -91,13 +90,13 @@ void main() {
         id: 'failing',
         shouldFail: true,
         maxRetries: 3,
-        executionTime: Duration(milliseconds: 50),
+        executionTime: const Duration(milliseconds: 50),
       );
       
       await jobQueue.addJob(failingJob);
       
       // Wait for all retry attempts
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 5));
       
       expect(failingJob.executionCount, equals(4)); // 1 initial + 3 retries
       expect(jobQueue.getJobStatus('failing'), equals(JobStatus.failed));
@@ -106,13 +105,13 @@ void main() {
     test('cancels jobs correctly', () async {
       final slowJob = TestJob(
         id: 'slow',
-        executionTime: Duration(seconds: 5),
+        executionTime: const Duration(seconds: 5),
       );
       
       await jobQueue.addJob(slowJob);
       
       // Let it start processing
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       
       final cancelled = await jobQueue.cancelJob('slow');
       
@@ -126,11 +125,11 @@ void main() {
         completedJobs.add(result);
       });
       
-      final job = TestJob(id: 'event_test', executionTime: Duration(milliseconds: 100));
+      final job = TestJob(id: 'event_test', executionTime: const Duration(milliseconds: 100));
       await jobQueue.addJob(job);
       
       // Wait for completion
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
       
       expect(completedJobs.length, equals(1));
       expect(completedJobs.first.success, isTrue);
@@ -141,8 +140,8 @@ void main() {
     
     test('provides accurate queue statistics', () async {
       final jobs = [
-        TestJob(id: 'job1', executionTime: Duration(milliseconds: 100)),
-        TestJob(id: 'job2', executionTime: Duration(milliseconds: 200)),
+        TestJob(id: 'job1', executionTime: const Duration(milliseconds: 100)),
+        TestJob(id: 'job2', executionTime: const Duration(milliseconds: 200)),
         TestJob(id: 'job3', shouldFail: true),
       ];
       
@@ -151,7 +150,7 @@ void main() {
       }
       
       // Wait for processing
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
       
       final stats = jobQueue.getStatistics();
       
@@ -161,31 +160,31 @@ void main() {
     });
     
     test('schedules jobs for future execution', () async {
-      final futureTime = DateTime.now().add(Duration(milliseconds: 500));
-      final scheduledJob = TestJob(id: 'scheduled', executionTime: Duration(milliseconds: 50));
+      final futureTime = DateTime.now().add(const Duration(milliseconds: 500));
+      final scheduledJob = TestJob(id: 'scheduled', executionTime: const Duration(milliseconds: 50));
       
       await jobQueue.addJob(scheduledJob, scheduledAt: futureTime);
       
       // Should not execute immediately
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       expect(scheduledJob.executionCount, equals(0));
       
       // Should execute after scheduled time
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
       expect(scheduledJob.executionCount, equals(1));
     });
     
     test('handles timeout correctly', () async {
       final timeoutJob = TestJob(
         id: 'timeout',
-        executionTime: Duration(seconds: 10),
-        timeout: Duration(milliseconds: 500),
+        executionTime: const Duration(seconds: 10),
+        timeout: const Duration(milliseconds: 500),
       );
       
       await jobQueue.addJob(timeoutJob);
       
       // Wait for timeout to occur
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
       
       final result = jobQueue.getJobResult('timeout');
       expect(result?.success, isFalse);
@@ -198,7 +197,7 @@ void main() {
     
     setUp(() async {
       workerPool = WorkerPool(
-        config: WorkerPoolConfig(
+        config: const WorkerPoolConfig(
           minWorkers: 1,
           maxWorkers: 3,
           enableAutoScaling: false, // Disabled for predictable tests
@@ -218,7 +217,7 @@ void main() {
     });
     
     test('assigns jobs to available workers', () async {
-      final job = TestJob(id: 'worker_test', executionTime: Duration(milliseconds: 200));
+      final job = TestJob(id: 'worker_test', executionTime: const Duration(milliseconds: 200));
       final queuedJob = QueuedJob(job: job, createdAt: DateTime.now());
       
       final assignedWorker = await workerPool.assignJob(queuedJob);
@@ -231,7 +230,7 @@ void main() {
     test('scales up workers under load', () async {
       // Enable auto-scaling for this test
       final scalingPool = WorkerPool(
-        config: WorkerPoolConfig(
+        config: const WorkerPoolConfig(
           minWorkers: 1,
           maxWorkers: 3,
           enableAutoScaling: true,
@@ -243,7 +242,7 @@ void main() {
       try {
         // Create high load
         final jobs = List.generate(5, (i) => QueuedJob(
-          job: TestJob(id: 'load_$i', executionTime: Duration(seconds: 2)),
+          job: TestJob(id: 'load_$i', executionTime: const Duration(seconds: 2)),
           createdAt: DateTime.now(),
         ));
         
@@ -252,7 +251,7 @@ void main() {
         }
         
         // Wait for scaling to occur
-        await Future.delayed(Duration(seconds: 3));
+        await Future.delayed(const Duration(seconds: 3));
         
         final stats = scalingPool.getStatistics();
         expect(stats.totalWorkers, greaterThan(1));
@@ -270,14 +269,14 @@ void main() {
       final crashingJob = TestJob(
         id: 'crash_test',
         shouldCrash: true,
-        executionTime: Duration(milliseconds: 100),
+        executionTime: const Duration(milliseconds: 100),
       );
       
       final queuedJob = QueuedJob(job: crashingJob, createdAt: DateTime.now());
       await workerPool.assignJob(queuedJob);
       
       // Wait for failure handling
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
       
       // Should maintain minimum worker count
       final finalStats = workerPool.getStatistics();
@@ -285,13 +284,13 @@ void main() {
     });
     
     test('tracks worker performance metrics', () async {
-      final job = TestJob(id: 'metrics_test', executionTime: Duration(milliseconds: 150));
+      final job = TestJob(id: 'metrics_test', executionTime: const Duration(milliseconds: 150));
       final queuedJob = QueuedJob(job: job, createdAt: DateTime.now());
       
       await workerPool.assignJob(queuedJob);
       
       // Wait for completion
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
       
       final stats = workerPool.getStatistics();
       expect(stats.totalJobsProcessed, equals(1));
@@ -309,7 +308,7 @@ void main() {
     
     test('handles concurrent job assignments', () async {
       final jobs = List.generate(10, (i) => QueuedJob(
-        job: TestJob(id: 'concurrent_$i', executionTime: Duration(milliseconds: 100)),
+        job: TestJob(id: 'concurrent_$i', executionTime: const Duration(milliseconds: 100)),
         createdAt: DateTime.now(),
       ));
       

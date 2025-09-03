@@ -123,7 +123,7 @@ void main() async {
     }
     
     // Final summary
-    print('\n' + '='*60);
+    print('\n${'='*60}');
     print('🏁 BASIC MCP ADAPTER TEST RESULTS');
     print('='*60);
     print('Tests Run: $testCount');

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'job_queue.dart';
 
 /// Worker pool configuration
@@ -131,7 +132,6 @@ class WorkerPool {
   int _totalWorkersDestroyed = 0;
 
   WorkerPool({required this.config}) {
-    print('👥 Initializing worker pool (min: ${config.minWorkers}, max: ${config.maxWorkers})');
     
     _healthCheckTimer = Timer.periodic(config.healthCheckInterval, (_) => _performHealthCheck());
     
@@ -147,7 +147,6 @@ class WorkerPool {
 
   /// Start the worker pool
   Future<void> start() async {
-    print('🚀 Starting worker pool...');
     
     // Create minimum number of workers
     final futures = <Future<void>>[];
@@ -156,7 +155,6 @@ class WorkerPool {
     }
     
     await Future.wait(futures);
-    print('✅ Worker pool started with ${_workers.length} workers');
   }
 
   /// Submit job to worker pool
@@ -166,7 +164,6 @@ class WorkerPool {
     if (availableWorker == null) {
       // Try to scale up if possible
       if (_canScaleUp()) {
-        print('📈 Scaling up: creating additional worker for job ${job.job.id}');
         await _createWorker();
         return await assignJob(job); // Retry
       }
@@ -247,10 +244,9 @@ class WorkerPool {
       });
       
       _eventController.add(WorkerPoolEvent.jobAssigned(updatedWorker, job));
-      print('🎯 Assigned job ${job.job.id} to worker ${worker.id}');
       
     } catch (e) {
-      print('⚠️ Failed to assign job to worker ${worker.id}: $e');
+      debugPrint('Failed to assign job to worker ${worker.id}: $e');
       _eventController.add(WorkerPoolEvent.workerError(worker, e.toString()));
     }
   }
@@ -260,7 +256,6 @@ class WorkerPool {
     final workerId = 'worker_${DateTime.now().millisecondsSinceEpoch}_${Random().nextInt(1000)}';
     
     try {
-      print('🔧 Creating worker: $workerId');
       
       final receivePort = ReceivePort();
       final isolate = await Isolate.spawn(
@@ -301,10 +296,9 @@ class WorkerPool {
       _totalWorkersCreated++;
       
       _eventController.add(WorkerPoolEvent.workerCreated(workerInfo));
-      print('✅ Created worker: $workerId');
       
     } catch (e) {
-      print('❌ Failed to create worker $workerId: $e');
+      debugPrint('Failed to create worker $workerId: $e');
       _eventController.add(WorkerPoolEvent.workerCreationFailed(workerId, e.toString()));
     }
   }
@@ -315,7 +309,7 @@ class WorkerPool {
     if (worker == null) return;
     
     try {
-      final msg = message as Map;
+      final msg = message as Map<String, dynamic>;
       final type = msg['type'] as String;
       
       switch (type) {
@@ -333,12 +327,12 @@ class WorkerPool {
           break;
       }
     } catch (e) {
-      print('⚠️ Invalid message from worker $workerId: $e');
+      debugPrint('Invalid message from worker $workerId: $e');
     }
   }
 
   /// Handle job completion from worker
-  void _handleJobCompleted(WorkerInfo worker, Map message) {
+  void _handleJobCompleted(WorkerInfo worker, Map<String, dynamic> message) {
     final jobId = message['job_id'] as String;
     final executionTime = Duration(milliseconds: message['execution_time_ms'] as int);
     final result = message['result'];
@@ -357,11 +351,10 @@ class WorkerPool {
     final job = _assignedJobs.remove(jobId);
     
     _eventController.add(WorkerPoolEvent.jobCompleted(updatedWorker, jobId, result));
-    print('✅ Job $jobId completed by worker ${worker.id} (${executionTime.inMilliseconds}ms)');
   }
 
   /// Handle job failure from worker
-  void _handleJobFailed(WorkerInfo worker, Map message) {
+  void _handleJobFailed(WorkerInfo worker, Map<String, dynamic> message) {
     final jobId = message['job_id'] as String;
     final error = message['error'] as String;
     final executionTime = Duration(milliseconds: message['execution_time_ms'] as int? ?? 0);
@@ -380,12 +373,12 @@ class WorkerPool {
     final job = _assignedJobs.remove(jobId);
     
     _eventController.add(WorkerPoolEvent.jobFailed(updatedWorker, jobId, error));
-    print('❌ Job $jobId failed in worker ${worker.id}: $error');
+    debugPrint('Job $jobId failed in worker ${worker.id}: $error');
   }
 
   /// Handle worker error
   void _handleWorkerError(WorkerInfo worker, String error) {
-    print('⚠️ Worker ${worker.id} error: $error');
+    debugPrint('Worker ${worker.id} error: $error');
     
     final updatedWorker = worker.copyWith(status: WorkerStatus.crashed);
     _workers[worker.id] = updatedWorker;
@@ -416,7 +409,7 @@ class WorkerPool {
       final timeSinceActivity = DateTime.now().difference(worker.lastActivity);
       
       if (timeSinceActivity > const Duration(minutes: 2) && worker.status == WorkerStatus.busy) {
-        print('💔 Worker ${worker.id} appears unresponsive');
+        debugPrint('Worker ${worker.id} appears unresponsive');
         unhealthyWorkers.add(worker);
       }
     }
@@ -433,7 +426,6 @@ class WorkerPool {
 
   /// Restart an unhealthy worker
   Future<void> _restartWorker(WorkerInfo worker) async {
-    print('🔄 Restarting worker: ${worker.id}');
     
     try {
       // Kill the isolate
@@ -460,7 +452,7 @@ class WorkerPool {
       _eventController.add(WorkerPoolEvent.workerRestarted(worker));
       
     } catch (e) {
-      print('⚠️ Failed to restart worker ${worker.id}: $e');
+      debugPrint('Failed to restart worker ${worker.id}: $e');
     }
   }
 
@@ -480,13 +472,11 @@ class WorkerPool {
     
     // Scale up if high utilization
     if (avgUtilization > config.targetCpuUtilization && _canScaleUp() && timeSinceLastScale.inMinutes > 2) {
-      print('📈 Auto-scaling up: utilization ${(avgUtilization * 100).toStringAsFixed(1)}%');
       _createWorker();
       _lastScaleAction = DateTime.now();
     }
     // Scale down if low utilization
     else if (avgUtilization < config.targetCpuUtilization * 0.3 && _canScaleDown() && timeSinceLastScale.inMinutes > 5) {
-      print('📉 Auto-scaling down: utilization ${(avgUtilization * 100).toStringAsFixed(1)}%');
       _removeIdleWorker();
       _lastScaleAction = DateTime.now();
     }
@@ -529,7 +519,6 @@ class WorkerPool {
     }
     
     for (final worker in workersToRemove) {
-      print('🧹 Cleaning up idle worker: ${worker.id}');
       _destroyWorker(worker);
     }
   }
@@ -543,16 +532,14 @@ class WorkerPool {
       _totalWorkersDestroyed++;
       
       _eventController.add(WorkerPoolEvent.workerDestroyed(worker));
-      print('🗑️ Destroyed worker: ${worker.id}');
       
     } catch (e) {
-      print('⚠️ Error destroying worker ${worker.id}: $e');
+      debugPrint('Error destroying worker ${worker.id}: $e');
     }
   }
 
   /// Stop the worker pool
   Future<void> stop() async {
-    print('🛑 Stopping worker pool...');
     
     _healthCheckTimer?.cancel();
     _scalingTimer?.cancel();
@@ -566,7 +553,6 @@ class WorkerPool {
         worker.isolate.kill();
         worker.receivePort.close();
       } catch (e) {
-        print('⚠️ Error stopping worker ${worker.id}: $e');
       }
     });
     
@@ -576,7 +562,6 @@ class WorkerPool {
     _assignedJobs.clear();
     
     await _eventController.close();
-    print('✅ Worker pool stopped');
   }
 
   /// Worker isolate entry point
@@ -605,12 +590,12 @@ class WorkerPool {
     // Listen for jobs
     receivePort.listen((message) async {
       try {
-        final msg = message as Map;
+        final msg = message as Map<String, dynamic>;
         final type = msg['type'] as String;
         
         switch (type) {
           case 'execute_job':
-            await _executeJobInWorker(sendPort, workerId, msg['job'] as Map);
+            await _executeJobInWorker(sendPort, workerId, msg['job'] as Map<String, dynamic>);
             break;
           case 'shutdown':
             receivePort.close();
@@ -629,7 +614,7 @@ class WorkerPool {
   }
 
   /// Execute job in worker isolate
-  static Future<void> _executeJobInWorker(SendPort sendPort, String workerId, Map jobData) async {
+  static Future<void> _executeJobInWorker(SendPort sendPort, String workerId, Map<String, dynamic> jobData) async {
     final stopwatch = Stopwatch()..start();
     
     try {
@@ -664,7 +649,10 @@ class WorkerPool {
 
 /// Worker pool events
 abstract class WorkerPoolEvent {
-  final DateTime timestamp = DateTime.now();
+  final DateTime timestamp;
+  
+  // Generative constructor for subclasses
+  WorkerPoolEvent() : timestamp = DateTime.now();
   
   factory WorkerPoolEvent.workerCreated(WorkerInfo worker) = WorkerCreatedEvent;
   factory WorkerPoolEvent.workerDestroyed(WorkerInfo worker) = WorkerDestroyedEvent;
@@ -680,60 +668,60 @@ abstract class WorkerPoolEvent {
 
 class WorkerCreatedEvent extends WorkerPoolEvent {
   final WorkerInfo worker;
-  WorkerCreatedEvent(this.worker);
+  WorkerCreatedEvent(this.worker) : super();
 }
 
 class WorkerDestroyedEvent extends WorkerPoolEvent {
   final WorkerInfo worker;
-  WorkerDestroyedEvent(this.worker);
+  WorkerDestroyedEvent(this.worker) : super();
 }
 
 class WorkerRestartedEvent extends WorkerPoolEvent {
   final WorkerInfo worker;
-  WorkerRestartedEvent(this.worker);
+  WorkerRestartedEvent(this.worker) : super();
 }
 
 class WorkerErrorEvent extends WorkerPoolEvent {
   final WorkerInfo worker;
   final String error;
-  WorkerErrorEvent(this.worker, this.error);
+  WorkerErrorEvent(this.worker, this.error) : super();
 }
 
 class WorkerCreationFailedEvent extends WorkerPoolEvent {
   final String workerId;
   final String error;
-  WorkerCreationFailedEvent(this.workerId, this.error);
+  WorkerCreationFailedEvent(this.workerId, this.error) : super();
 }
 
 class JobAssignedEvent extends WorkerPoolEvent {
   final WorkerInfo worker;
   final QueuedJob job;
-  JobAssignedEvent(this.worker, this.job);
+  JobAssignedEvent(this.worker, this.job) : super();
 }
 
 class JobCompletedEvent extends WorkerPoolEvent {
   final WorkerInfo worker;
   final String jobId;
   final dynamic result;
-  JobCompletedEvent(this.worker, this.jobId, this.result);
+  JobCompletedEvent(this.worker, this.jobId, this.result) : super();
 }
 
 class JobFailedEvent extends WorkerPoolEvent {
   final WorkerInfo worker;
   final String jobId;
   final String error;
-  JobFailedEvent(this.worker, this.jobId, this.error);
+  JobFailedEvent(this.worker, this.jobId, this.error) : super();
 }
 
 class JobInterruptedEvent extends WorkerPoolEvent {
   final WorkerInfo worker;
   final QueuedJob job;
-  JobInterruptedEvent(this.worker, this.job);
+  JobInterruptedEvent(this.worker, this.job) : super();
 }
 
 class HealthCheckCompletedEvent extends WorkerPoolEvent {
   final int unhealthyWorkers;
-  HealthCheckCompletedEvent(this.unhealthyWorkers);
+  HealthCheckCompletedEvent(this.unhealthyWorkers) : super();
 }
 
 /// Worker pool statistics

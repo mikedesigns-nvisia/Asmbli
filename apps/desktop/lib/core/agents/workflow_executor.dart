@@ -60,7 +60,7 @@ class WorkflowExecutor {
   /// Validate that the workflow is properly formed
   void _validateWorkflow() {
     if (workflow.isEmpty) {
-      throw WorkflowExecutionException('Workflow is empty');
+      throw const WorkflowExecutionException('Workflow is empty');
     }
 
     // Check for circular dependencies
@@ -116,7 +116,7 @@ class WorkflowExecutor {
       
       // Check if we should stop on error
       if (config.stopOnFirstError && _hasFailedNodes()) {
-        throw WorkflowExecutionException('Stopping execution due to failed nodes');
+        throw const WorkflowExecutionException('Stopping execution due to failed nodes');
       }
     }
   }

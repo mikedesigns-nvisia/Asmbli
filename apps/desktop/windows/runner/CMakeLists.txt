@@ -11,7 +11,7 @@ add_executable(${BINARY_NAME} WIN32
   "main.cpp"
   "utils.cpp"
   "win32_window.cpp"
-  "mcp_channel_plugin.cpp"
+  # "mcp_channel_plugin.cpp"  # Temporarily disabled due to API compatibility
   "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
   "Runner.rc"
   "runner.exe.manifest"

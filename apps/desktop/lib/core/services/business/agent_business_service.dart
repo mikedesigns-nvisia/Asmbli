@@ -2,6 +2,7 @@ import 'package:agent_engine_core/models/agent.dart';
 import 'package:agent_engine_core/services/agent_service.dart';
 import 'package:uuid/uuid.dart';
 import 'base_business_service.dart';
+import '../../../features/context/data/models/context_document.dart' as context;
 import '../mcp_bridge_service.dart';
 import '../llm/unified_llm_service.dart';
 import '../context_mcp_resource_service.dart';
@@ -67,30 +68,30 @@ class AgentBusinessService extends BaseBusinessService {
         name: name.trim(),
         description: description.trim(),
         capabilities: capabilities,
-        modelId: modelId,
-        status: AgentStatus.inactive,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        metadata: {
+        status: AgentStatus.idle,
+        configuration: {
+          'modelId': modelId,
           'version': '1.0',
           'creator': 'agent_business_service',
           'mcpServers': mcpServers,
           'contextDocuments': contextDocs,
-          'configuration': configuration,
+          'createdAt': DateTime.now().toIso8601String(),
+          'updatedAt': DateTime.now().toIso8601String(),
+          ...configuration,
         },
       );
 
       // Generate context-aware system prompt
       final systemPrompt = await _generateSystemPrompt(
         agent: agent,
-        contextDocs: contextDocs,
+        contextDocs: [], // TODO: Convert contextDocs IDs to ContextDocument objects
         mcpServers: mcpServers,
       );
 
       // Update agent with generated prompt
       final agentWithPrompt = agent.copyWith(
-        metadata: {
-          ...agent.metadata,
+        configuration: {
+          ...agent.configuration,
           'systemPrompt': systemPrompt,
           'promptGenerated': true,
         },
@@ -128,14 +129,15 @@ class AgentBusinessService extends BaseBusinessService {
 
       // Create updated agent
       final updatedAgent = agent.copyWith(
-        name: name?.trim(),
-        description: description?.trim(),
-        capabilities: capabilities,
-        modelId: modelId,
-        updatedAt: DateTime.now(),
-        metadata: configuration != null
-            ? {...agent.metadata, 'configuration': configuration}
-            : agent.metadata,
+        name: name?.trim() ?? agent.name,
+        description: description?.trim() ?? agent.description,
+        capabilities: capabilities ?? agent.capabilities,
+        configuration: {
+          ...agent.configuration,
+          if (modelId != null) 'modelId': modelId,
+          'updatedAt': DateTime.now().toIso8601String(),
+          if (configuration != null) ...configuration,
+        },
       );
 
       // Validate the update
@@ -158,13 +160,13 @@ class AgentBusinessService extends BaseBusinessService {
       if (_requiresPromptRegeneration(agent, updatedAgent)) {
         final newPrompt = await _generateSystemPrompt(
           agent: updatedAgent,
-          contextDocs: contextDocs ?? _getContextDocsFromMetadata(agent),
+          contextDocs: [], // TODO: Convert contextDocs/metadata to ContextDocument objects
           mcpServers: mcpServers ?? _getMCPServersFromMetadata(agent),
         );
 
         final agentWithNewPrompt = updatedAgent.copyWith(
-          metadata: {
-            ...updatedAgent.metadata,
+          configuration: {
+            ...updatedAgent.configuration,
             'systemPrompt': newPrompt,
             'promptRegenerated': DateTime.now().toIso8601String(),
           },
@@ -187,9 +189,6 @@ class AgentBusinessService extends BaseBusinessService {
       validateRequired({'agentId': agentId});
 
       final agent = await _agentRepository.getAgent(agentId);
-      if (agent == null) {
-        return BusinessResult.failure('Agent not found: $agentId');
-      }
 
       // Validate agent can be activated
       final validationResult = await _validateAgentActivation(agent);
@@ -198,7 +197,7 @@ class AgentBusinessService extends BaseBusinessService {
       }
 
       // Ensure model is ready
-      await _ensureModelReady(agent.modelId);
+      await _ensureModelReady(agent.configuration['modelId']);
 
       // Ensure MCP servers are running
       final mcpServers = _getMCPServersFromMetadata(agent);
@@ -207,9 +206,9 @@ class AgentBusinessService extends BaseBusinessService {
       // Activate the agent
       final activatedAgent = agent.copyWith(
         status: AgentStatus.active,
-        updatedAt: DateTime.now(),
-        metadata: {
-          ...agent.metadata,
+        configuration: {
+          ...agent.configuration,
+          'updatedAt': DateTime.now().toIso8601String(),
           'activatedAt': DateTime.now().toIso8601String(),
         },
       );
@@ -227,19 +226,16 @@ class AgentBusinessService extends BaseBusinessService {
       validateRequired({'agentId': agentId});
 
       final agent = await _agentRepository.getAgent(agentId);
-      if (agent == null) {
-        return BusinessResult.failure('Agent not found: $agentId');
-      }
 
       // Clean up agent resources
       await _cleanupAgentResources(agent);
 
       // Deactivate the agent
       final deactivatedAgent = agent.copyWith(
-        status: AgentStatus.inactive,
-        updatedAt: DateTime.now(),
-        metadata: {
-          ...agent.metadata,
+        status: AgentStatus.idle,
+        configuration: {
+          ...agent.configuration,
+          'updatedAt': DateTime.now().toIso8601String(),
           'deactivatedAt': DateTime.now().toIso8601String(),
         },
       );
@@ -257,9 +253,6 @@ class AgentBusinessService extends BaseBusinessService {
       validateRequired({'agentId': agentId});
 
       final agent = await _agentRepository.getAgent(agentId);
-      if (agent == null) {
-        return BusinessResult.failure('Agent not found: $agentId');
-      }
 
       // Validate agent can be deleted
       final validationResult = await _validateAgentDeletion(agent);
@@ -297,7 +290,7 @@ class AgentBusinessService extends BaseBusinessService {
       }
 
       if (modelId != null) {
-        filteredAgents = filteredAgents.where((a) => a.modelId == modelId).toList();
+        filteredAgents = filteredAgents.where((a) => a.configuration['modelId'] == modelId).toList();
       }
 
       if (capabilities != null && capabilities.isNotEmpty) {
@@ -316,9 +309,6 @@ class AgentBusinessService extends BaseBusinessService {
       validateRequired({'agentId': agentId});
 
       final agent = await _agentRepository.getAgent(agentId);
-      if (agent == null) {
-        return BusinessResult.failure('Agent not found: $agentId');
-      }
 
       return BusinessResult.success(agent);
     });
@@ -341,7 +331,7 @@ class AgentBusinessService extends BaseBusinessService {
     }
 
     // Validate model exists and is configured
-    if (!await _modelService.isModelAvailable(modelId)) {
+    if (!_modelService.isModelAvailable(modelId)) {
       return ValidationResult(
         isValid: false,
         error: 'Model "$modelId" is not available',
@@ -358,49 +348,49 @@ class AgentBusinessService extends BaseBusinessService {
       }
     }
 
-    return ValidationResult(isValid: true);
+    return const ValidationResult(isValid: true);
   }
 
   Future<ValidationResult> _validateAgentUpdate(Agent agent) async {
     // Basic validation - agent exists
     if (agent.id.isEmpty) {
-      return ValidationResult(
+      return const ValidationResult(
         isValid: false,
         error: 'Agent ID cannot be empty',
       );
     }
 
-    return ValidationResult(isValid: true);
+    return const ValidationResult(isValid: true);
   }
 
   Future<ValidationResult> _validateAgentActivation(Agent agent) async {
     if (agent.status == AgentStatus.active) {
-      return ValidationResult(
+      return const ValidationResult(
         isValid: false,
         error: 'Agent is already active',
       );
     }
 
-    return ValidationResult(isValid: true);
+    return const ValidationResult(isValid: true);
   }
 
   Future<ValidationResult> _validateAgentDeletion(Agent agent) async {
     if (agent.status == AgentStatus.active) {
-      return ValidationResult(
+      return const ValidationResult(
         isValid: false,
         error: 'Cannot delete active agent. Deactivate first.',
       );
     }
 
-    return ValidationResult(isValid: true);
+    return const ValidationResult(isValid: true);
   }
 
   Future<String> _generateSystemPrompt({
     required Agent agent,
-    required List<String> contextDocs,
+    required List<context.ContextDocument> contextDocs,
     required List<String> mcpServers,
   }) async {
-    return await _promptService.createContextAwarePrompt(
+    return _promptService.createContextAwarePrompt(
       agentName: agent.name,
       agentDescription: agent.description,
       personality: 'Professional',
@@ -437,7 +427,7 @@ class AgentBusinessService extends BaseBusinessService {
       await _mcpService.stopServerForAgent(agent.id, serverId);
     }
 
-    await _contextService.unassignContextFromAgent(agent.id);
+    await _contextService.unassignContextFromAgent(agent.id, []);
   }
 
   bool _requiresPromptRegeneration(Agent oldAgent, Agent newAgent) {
@@ -447,18 +437,16 @@ class AgentBusinessService extends BaseBusinessService {
   }
 
   List<String> _getMCPServersFromMetadata(Agent agent) {
-    final mcpServers = agent.metadata['mcpServers'];
+    final mcpServers = agent.configuration['mcpServers'];
     if (mcpServers is List) {
       return List<String>.from(mcpServers);
     }
     return [];
   }
 
-  List<String> _getContextDocsFromMetadata(Agent agent) {
-    final contextDocs = agent.metadata['contextDocuments'];
-    if (contextDocs is List) {
-      return List<String>.from(contextDocs);
-    }
+  List<context.ContextDocument> _getContextDocsFromMetadata(Agent agent) {
+    // TODO: Implement proper context document retrieval from metadata
+    // For now, return empty list as this is placeholder functionality
     return [];
   }
 

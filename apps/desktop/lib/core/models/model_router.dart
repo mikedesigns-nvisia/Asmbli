@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'model_interfaces.dart';
 
 /// Intelligent model router that selects the best provider for each request
@@ -84,7 +83,7 @@ class ModelRouter {
       );
 
       if (provider == null) {
-        throw ModelException(
+        throw ProviderConnectionException(
           'No suitable provider available for request',
           modelId: request.model,
         );
@@ -130,14 +129,14 @@ class ModelRouter {
       );
 
       if (provider == null) {
-        throw ModelException(
+        throw ProviderConnectionException(
           'No suitable provider available for streaming request',
           modelId: request.model,
         );
       }
 
       if (!provider.capabilities.supportsStreaming) {
-        throw ModelException(
+        throw ModelCompletionException(
           'Selected provider ${provider.id} does not support streaming',
           providerId: provider.id,
         );
@@ -169,7 +168,7 @@ class ModelRouter {
           .toList();
 
       if (embeddingProviders.isEmpty) {
-        throw ModelException('No providers available for embeddings');
+        throw const ProviderConnectionException('No providers available for embeddings');
       }
 
       // Prefer specified providers
@@ -608,7 +607,7 @@ class CostTracker {
     );
     
     _records.add(record);
-    print('💰 Tracked usage: ${provider}/${model} - ${usage.totalTokens} tokens, \$${usage.totalCost.toStringAsFixed(4)}');
+    print('💰 Tracked usage: $provider/$model - ${usage.totalTokens} tokens, \$${usage.totalCost.toStringAsFixed(4)}');
   }
 
   /// Generate cost report
@@ -678,7 +677,7 @@ class PerformanceMonitor {
   /// Get performance statistics
   PerformanceStats getStats() {
     if (_records.isEmpty) {
-      return PerformanceStats(
+      return const PerformanceStats(
         totalRequests: 0,
         successRate: 0.0,
         averageResponseTime: Duration.zero,

@@ -1,8 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
-import 'package:path/path.dart' as path;
 import '../services/desktop/desktop_storage_service.dart';
 
 class StorageResult<T> {
@@ -105,7 +102,7 @@ class SafeStorageUtils {
       }
       
       // Validate data integrity
-      final validationResult = await _validateDataIntegrity(dataResult, boxName, key, storageType);
+      final validationResult = _validateDataIntegrity(dataResult, boxName, key, storageType);
       
       if (validationResult.isValid) {
         // Data is valid, extract the actual value
@@ -160,7 +157,7 @@ class SafeStorageUtils {
     try {
       // Check if data has required metadata
       if (!data.containsKey('data') || !data.containsKey('checksum')) {
-        return ValidationResult(
+        return const ValidationResult(
           isValid: false,
           error: 'Missing required metadata (data/checksum)',
         );
@@ -188,7 +185,7 @@ class SafeStorageUtils {
         if (timestamp != null) {
           final dataAge = DateTime.now().millisecondsSinceEpoch - timestamp;
           if (dataAge < 0) {
-            return ValidationResult(
+            return const ValidationResult(
               isValid: false,
               error: 'Future timestamp detected - possible corruption',
             );
@@ -196,7 +193,7 @@ class SafeStorageUtils {
         }
       }
       
-      return ValidationResult(isValid: true);
+      return const ValidationResult(isValid: true);
     } catch (e) {
       return ValidationResult(
         isValid: false,
@@ -285,8 +282,8 @@ class SafeStorageUtils {
     try {
       // Move backups: backup -> backup_1, backup_1 -> backup_2, etc.
       for (int i = MAX_BACKUP_VERSIONS - 1; i > 0; i--) {
-        final fromKey = i == 1 ? '$key$BACKUP_SUFFIX' : '${key}${BACKUP_SUFFIX}_${i-1}';
-        final toKey = '${key}${BACKUP_SUFFIX}_$i';
+        final fromKey = i == 1 ? '$key$BACKUP_SUFFIX' : '$key${BACKUP_SUFFIX}_${i-1}';
+        final toKey = '$key${BACKUP_SUFFIX}_$i';
         
         final backupData = await _retrieveData(boxName, fromKey, storageType);
         if (backupData != null) {
@@ -295,7 +292,7 @@ class SafeStorageUtils {
       }
       
       // Remove the oldest backup if it exists
-      final oldestBackupKey = '${key}${BACKUP_SUFFIX}_${MAX_BACKUP_VERSIONS}';
+      final oldestBackupKey = '$key${BACKUP_SUFFIX}_$MAX_BACKUP_VERSIONS';
       await _removeData(boxName, oldestBackupKey, storageType);
     } catch (e) {
       print('⚠️ Failed to rotate backups for $boxName:$key - $e');
@@ -312,7 +309,7 @@ class SafeStorageUtils {
     try {
       final backupKey = version == 0 
         ? '$key$BACKUP_SUFFIX'
-        : '${key}${BACKUP_SUFFIX}_$version';
+        : '$key${BACKUP_SUFFIX}_$version';
       
       final backupData = await _retrieveData(boxName, backupKey, storageType);
       if (backupData == null) {

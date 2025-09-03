@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 import 'base_mcp_adapter.dart';
@@ -41,7 +40,7 @@ class HTTPMCPAdapter extends MCPAdapter {
       _setupHttpClient(config);
       await _performHandshake(config);
       _startPolling(config);
-      _setConnected(const Uuid().v4());
+      setConnected(const Uuid().v4());
       
       print('✅ HTTP MCP adapter connected to ${config.url}');
     } catch (e) {
@@ -355,10 +354,10 @@ class HTTPMCPAdapter extends MCPAdapter {
         
         if (notifications is List) {
           for (final notification in notifications) {
-            _handleNotification(notification);
+            handleNotification(notification);
           }
         } else if (notifications is Map<String, dynamic>) {
-          _handleNotification(notifications);
+          handleNotification(notifications);
         }
       }
       
@@ -367,7 +366,7 @@ class HTTPMCPAdapter extends MCPAdapter {
       if (e is DioException && e.type == DioExceptionType.receiveTimeout) {
         return;
       }
-      throw e;
+      rethrow;
     }
   }
   

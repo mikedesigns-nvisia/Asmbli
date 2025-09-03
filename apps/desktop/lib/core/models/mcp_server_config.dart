@@ -2,7 +2,7 @@
 class MCPServerConfig {
   final String id;
   final String name;
-  final String type;
+  final String? type;
   final String command;
   final List<String> args;
   final String? workingDirectory;
@@ -29,6 +29,12 @@ class MCPServerConfig {
   final int? maxRetries;
   final int? retryDelay;
   final bool enablePolling;
+  
+  // Missing properties that are referenced in the UI
+  final Map<String, String>? requiredEnvVars;
+  final Map<String, String>? optionalEnvVars;
+  final String? status;
+  final String? setupInstructions;
 
   const MCPServerConfig({
     required this.id,
@@ -58,6 +64,11 @@ class MCPServerConfig {
     this.maxRetries,
     this.retryDelay,
     this.enablePolling = false,
+    // Missing properties
+    this.requiredEnvVars,
+    this.optionalEnvVars,
+    this.status,
+    this.setupInstructions,
   });
 
   Map<String, dynamic> toJson() {
@@ -88,6 +99,10 @@ class MCPServerConfig {
       'maxRetries': maxRetries,
       'retryDelay': retryDelay,
       'enablePolling': enablePolling,
+      'requiredEnvVars': requiredEnvVars,
+      'optionalEnvVars': optionalEnvVars,
+      'status': status,
+      'setupInstructions': setupInstructions,
     };
   }
 
@@ -119,6 +134,10 @@ class MCPServerConfig {
       maxRetries: json['maxRetries'],
       retryDelay: json['retryDelay'],
       enablePolling: json['enablePolling'] ?? false,
+      requiredEnvVars: json['requiredEnvVars'] != null ? Map<String, String>.from(json['requiredEnvVars']) : null,
+      optionalEnvVars: json['optionalEnvVars'] != null ? Map<String, String>.from(json['optionalEnvVars']) : null,
+      status: json['status'],
+      setupInstructions: json['setupInstructions'],
     );
   }
   
@@ -149,6 +168,10 @@ class MCPServerConfig {
     int? maxRetries,
     int? retryDelay,
     bool? enablePolling,
+    Map<String, String>? requiredEnvVars,
+    Map<String, String>? optionalEnvVars,
+    String? status,
+    String? setupInstructions,
   }) {
     return MCPServerConfig(
       id: id ?? this.id,
@@ -177,6 +200,10 @@ class MCPServerConfig {
       maxRetries: maxRetries ?? this.maxRetries,
       retryDelay: retryDelay ?? this.retryDelay,
       enablePolling: enablePolling ?? this.enablePolling,
+      requiredEnvVars: requiredEnvVars ?? this.requiredEnvVars,
+      optionalEnvVars: optionalEnvVars ?? this.optionalEnvVars,
+      status: status ?? this.status,
+      setupInstructions: setupInstructions ?? this.setupInstructions,
     );
   }
 }

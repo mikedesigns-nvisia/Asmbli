@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:dio/dio.dart';
 import '../model_interfaces.dart';
 
@@ -443,13 +442,13 @@ class OpenAIProvider extends ModelProvider {
     final stream = responseBody.stream;
     final buffer = StringBuffer();
     
-    await for (final chunk in stream.transform(utf8.decoder)) {
+    await for (final chunk in stream.cast<List<int>>().transform(utf8.decoder)) {
       buffer.write(chunk);
       final lines = buffer.toString().split('\n');
       
       // Keep the last potentially incomplete line in the buffer
       buffer.clear();
-      if (lines.isNotEmpty && !lines.last.isEmpty) {
+      if (lines.isNotEmpty && lines.last.isNotEmpty) {
         buffer.write(lines.last);
       }
       
@@ -541,7 +540,7 @@ class OpenAIProvider extends ModelProvider {
           );
         } else {
           return ModelCompletionException(
-            'OpenAI API error (${statusCode}): ${error.message}',
+            'OpenAI API error ($statusCode): ${error.message}',
             providerId: id,
             request: request,
             originalError: error,

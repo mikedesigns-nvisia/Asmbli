@@ -1,8 +1,7 @@
-import 'dart:async';
-import 'package:agent_engine_core/models/conversation.dart';
-
 /// Core model management interfaces and data structures
 library model_interfaces;
+
+import 'dart:async';
 
 /// Abstract base class for all model providers
 abstract class ModelProvider {
@@ -522,6 +521,7 @@ class ProviderConnectionException extends ModelException {
   const ProviderConnectionException(
     super.message, {
     super.providerId,
+    super.modelId,
     super.originalError,
   });
 }

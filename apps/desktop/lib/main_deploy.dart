@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 // Core system imports (only the ones we built)
-import 'core/agents/workflow_engine.dart';
 import 'core/models/model_management_example.dart';
 import 'core/performance_optimization_example.dart';
 import 'core/cache/cache_manager.dart';
@@ -19,7 +18,7 @@ void main() async {
     await initializeCoreSystems();
     
     // Run the Flutter app
-    runApp(AsmbliPlatformApp());
+    runApp(const AsmbliPlatformApp());
   } catch (e, stackTrace) {
     print('❌ Failed to initialize Asmbli Platform: $e');
     print('Stack trace: $stackTrace');
@@ -50,7 +49,7 @@ Future<void> initializeCoreSystems() async {
 }
 
 class AsmbliPlatformApp extends StatelessWidget {
-  const AsmbliPlatformApp({Key? key}) : super(key: key);
+  const AsmbliPlatformApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -60,13 +59,13 @@ class AsmbliPlatformApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: PlatformDashboard(),
+      home: const PlatformDashboard(),
     );
   }
 }
 
 class PlatformDashboard extends StatefulWidget {
-  const PlatformDashboard({Key? key}) : super(key: key);
+  const PlatformDashboard({super.key});
 
   @override
   State<PlatformDashboard> createState() => _PlatformDashboardState();
@@ -284,9 +283,9 @@ class _PlatformDashboardState extends State<PlatformDashboard> {
           break;
         case 'all':
           output += await _runWorkflowDemo();
-          output += '\n' + '=' * 60 + '\n';
+          output += '\n${'=' * 60}\n';
           output += await _runModelDemo();
-          output += '\n' + '=' * 60 + '\n';
+          output += '\n${'=' * 60}\n';
           output += await _runPerformanceDemo();
           break;
       }

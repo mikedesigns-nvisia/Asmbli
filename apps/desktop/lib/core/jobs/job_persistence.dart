@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import '../cache/file_cache.dart';
 import 'job_queue.dart';
-import 'worker_pool.dart';
 
 /// Job persistence and recovery system
 class JobPersistenceManager {
@@ -202,7 +201,7 @@ class JobPersistenceManager {
   Future<QueuedJob?> _recoverJob(JobCheckpoint checkpoint) async {
     // Validate checkpoint integrity
     if (!_validateCheckpoint(checkpoint)) {
-      throw PersistenceException('Checkpoint integrity check failed');
+      throw const PersistenceException('Checkpoint integrity check failed');
     }
     
     // Determine recovery action based on state
@@ -407,7 +406,7 @@ class JobPersistenceManager {
       final walData = _pendingTransactions.map((t) => t.toJson()).toList();
       
       // Append to WAL file
-      final content = walData.map((data) => jsonEncode(data)).join('\n') + '\n';
+      final content = '${walData.map((data) => jsonEncode(data)).join('\n')}\n';
       await walFile.writeAsString(content, mode: FileMode.append);
       
       _pendingTransactions.clear();

@@ -13,7 +13,7 @@ import 'enhanced_auto_detection_modal.dart';
 import 'integration_recommendations_widget.dart';
 
 
-import '../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart';
 
 /// Enhanced integrations tab that ties together:
 /// 1. Auto-detection → Available MCP servers

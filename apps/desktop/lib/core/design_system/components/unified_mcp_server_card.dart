@@ -220,7 +220,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
         if (showDescription && serverConfig?.description != null) ...[
           const SizedBox(height: SpacingTokens.sm),
           Text(
-            serverConfig!.description,
+            serverConfig!.description!,
             style: TextStyles.bodySmall.copyWith(
               color: ThemeColors(context).onSurfaceVariant,
             ),
