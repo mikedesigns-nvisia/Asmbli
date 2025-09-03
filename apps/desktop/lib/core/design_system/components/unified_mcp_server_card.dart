@@ -114,7 +114,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
               if (showDescription && isSelected && serverConfig?.description != null) ...[
                 const SizedBox(height: 2),
                 Text(
-                  serverConfig!.description,
+                  serverConfig!.description ?? 'No description',
                   style: TextStyles.caption.copyWith(
                     color: ThemeColors(context).onSurfaceVariant,
                     fontSize: 9,

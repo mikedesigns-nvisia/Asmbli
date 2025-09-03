@@ -6,7 +6,7 @@ import 'integration_service.dart';
 import 'mcp_settings_service.dart';
 
 
-import '../core/models/mcp_server_config.dart';
+import '../models/mcp_server_config.dart';
 
 // Validation classes for integration testing
 class ValidationResult {

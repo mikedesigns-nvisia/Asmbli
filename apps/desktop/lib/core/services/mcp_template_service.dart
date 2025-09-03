@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
-import '../core/models/mcp_server_config.dart';
+import '../models/mcp_server_config.dart';
 
 /// MCP Server Template for easy configuration
 class MCPServerTemplate {

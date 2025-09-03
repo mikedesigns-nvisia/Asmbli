@@ -1,6 +1,6 @@
 import 'mcp_settings_service.dart';
 
-import '../core/models/mcp_server_config.dart';
+import '../models/mcp_server_config.dart';
 
 /// Initialize default MCP servers for testing
 class DefaultMCPSetup {

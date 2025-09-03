@@ -8,7 +8,7 @@ import 'mcp_settings_service.dart';
 import 'integration_testing_service.dart'; // For ValidationIssue and ValidationSeverity
 
 
-import '../core/models/mcp_server_config.dart';
+import '../models/mcp_server_config.dart';
 
 /// Service for backing up and exporting integration configurations
 class IntegrationBackupService {

@@ -8,7 +8,7 @@ import '../../../settings/presentation/widgets/mcp_server_dialog.dart';
 import '../../models/agent_wizard_state.dart';
 
 
-import '../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart';
 
 /// Third step of the agent wizard - MCP server selection with health monitoring
 class MCPSelectionStep extends ConsumerStatefulWidget {

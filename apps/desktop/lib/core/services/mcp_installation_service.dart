@@ -4,7 +4,7 @@ import 'package:agent_engine_core/models/agent.dart';
 import '../data/mcp_server_configs.dart';
 
 
-import '../core/models/mcp_server_config.dart';
+import '../models/mcp_server_config.dart';
 
 /// Service for managing MCP server installation lifecycle
 /// Based on Model Context Protocol documentation and best practices

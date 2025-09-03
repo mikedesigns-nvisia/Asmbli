@@ -7,7 +7,7 @@ import '../data/mcp_server_configs.dart';
 import 'desktop/desktop_storage_service.dart';
 
 
-import '../core/models/mcp_server_config.dart';
+import '../models/mcp_server_config.dart';
 
 /// Service for executing and managing MCP server processes
 /// Implements JSON-RPC 2.0 communication as per MCP specification

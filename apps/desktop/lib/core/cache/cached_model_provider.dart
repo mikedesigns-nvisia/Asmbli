@@ -42,10 +42,10 @@ class CachedModelProvider implements ModelProvider {
   ModelCapabilities get capabilities => _inner.capabilities;
 
   @override
-  List<ModelInfo> get availableModels => _inner.availableModels;
+  Map<String, dynamic> get config => _inner.config;
 
   @override
-  Future<bool> get isAvailable => _inner.isAvailable;
+  bool get isAvailable => _inner.isAvailable;
 
   @override
   Future<ModelResponse> complete(ModelRequest request) async {
@@ -103,7 +103,7 @@ class CachedModelProvider implements ModelProvider {
       final completeResponse = ModelResponse(
         content: buffer.toString(),
         model: request.model,
-        usage: TokenUsage(promptTokens: 0, completionTokens: 0, totalTokens: 0),
+        usage: Usage(promptTokens: 0, completionTokens: 0, totalCost: 0.0),
         finishReason: 'stop',
         metadata: {'cached_from_stream': true},
       );
@@ -116,27 +116,42 @@ class CachedModelProvider implements ModelProvider {
   }
 
   @override
-  Future<List<ModelInfo>> listModels() => _inner.listModels();
+  Future<List<ModelInfo>> getAvailableModels() => _inner.getAvailableModels();
 
   @override
-  Future<ProviderHealth> checkHealth() async {
-    final innerHealth = await _inner.checkHealth();
+  Future<ProviderHealth> healthCheck() async {
+    final innerHealth = await _inner.healthCheck();
     
     // Add cache statistics to health check
-    final cacheStats = await _getCacheStatistics();
+    final cacheStats = _cache.getStats();
     
     return ProviderHealth(
-      providerId: id,
       isHealthy: innerHealth.isHealthy,
       latency: innerHealth.latency,
-      errorRate: innerHealth.errorRate,
-      metadata: {
-        ...innerHealth.metadata,
+      status: innerHealth.status,
+      error: innerHealth.error,
+      details: {
+        ...innerHealth.details,
         'cache_hit_rate': _getCacheHitRate(),
         'cache_stats': cacheStats,
         'streaming_requests': _streamingRequests,
       },
     );
+  }
+
+  @override
+  Future<void> initialize() => _inner.initialize();
+
+  @override
+  Future<bool> testConnection() => _inner.testConnection();
+
+  @override
+  Future<List<double>> embed(String text) => _inner.embed(text);
+
+  @override
+  Future<void> dispose() async {
+    await _inner.dispose();
+    // Clean up cache resources if needed
   }
 
   /// Check if a request is cacheable
@@ -147,12 +162,10 @@ class CachedModelProvider implements ModelProvider {
     }
 
     // Don't cache streaming requests by default
-    if (request.stream == true && !_enableStreaming) {
-      return false;
-    }
+    // (We'll handle streaming separately in the stream method)
 
     // Don't cache requests with high randomness
-    if (request.temperature != null && request.temperature! > 0.8) {
+    if (request.temperature > 0.8) {
       return false;
     }
 
@@ -194,10 +207,8 @@ class CachedModelProvider implements ModelProvider {
       'max_tokens': request.maxTokens,
       'temperature': request.temperature,
       'top_p': request.topP,
-      'frequency_penalty': request.frequencyPenalty,
-      'presence_penalty': request.presencePenalty,
       'stop': request.stop,
-      'tools': request.tools?.map((t) => t.toJson()).toList(),
+      'tools': request.tools,
     };
     
     return _cache.generateKey('model_response', keyData);
@@ -214,23 +225,22 @@ class CachedModelProvider implements ModelProvider {
       Duration cacheTTL = _defaultCacheTTL;
       
       // Longer TTL for deterministic requests (low temperature)
-      if (request.temperature != null && request.temperature! < 0.3) {
+      if (request.temperature < 0.3) {
         cacheTTL = _defaultCacheTTL * 2;
       }
       
       // Shorter TTL for high token usage (likely more specific/contextual)
-      if (response.usage != null && response.usage!.totalTokens > 2000) {
+      if (response.usage.totalTokens > 2000) {
         cacheTTL = _defaultCacheTTL ~/ 2;
       }
 
-      await _cache.put(
+      await _cache.set(
         cacheKey, 
         response.toJson(),
         ttl: cacheTTL,
-        level: CacheLevel.all, // Store in all cache levels
       );
       
-      print('💾 Cached response: ${response.usage?.totalTokens ?? 0} tokens, TTL: ${cacheTTL.inHours}h');
+      print('💾 Cached response: ${response.usage.totalTokens} tokens, TTL: ${cacheTTL.inHours}h');
     } catch (e) {
       print('⚠️ Failed to cache response: $e');
     }
@@ -257,7 +267,7 @@ class CachedModelProvider implements ModelProvider {
   /// Get detailed cache statistics
   Future<Map<String, dynamic>> _getCacheStatistics() async {
     try {
-      final stats = await _cache.getStatistics();
+      final stats = _cache.getStats().toJson();
       return {
         'provider_cache_hits': _cacheHits,
         'provider_cache_misses': _cacheMisses,

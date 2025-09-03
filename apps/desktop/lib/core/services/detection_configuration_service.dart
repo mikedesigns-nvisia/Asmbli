@@ -5,7 +5,7 @@ import 'detection_integration_mapping.dart';
 import 'mcp_settings_service.dart';
 
 
-import '../core/models/mcp_server_config.dart';
+import '../models/mcp_server_config.dart';
 
 /// Service that bridges detection results to MCP server configuration
 class DetectionConfigurationService {

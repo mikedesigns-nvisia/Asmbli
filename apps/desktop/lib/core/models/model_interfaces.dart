@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:agent_engine_core/models/conversation.dart';
 
 /// Core model management interfaces and data structures
 library model_interfaces;
@@ -47,7 +48,7 @@ abstract class ModelProvider {
 
 /// Request object for model completion
 class ModelRequest {
-  final List<Message> messages;
+  final List<ModelMessage> messages;
   final String? model;
   final double temperature;
   final int maxTokens;
@@ -86,7 +87,7 @@ class ModelRequest {
   factory ModelRequest.fromJson(Map<String, dynamic> json) {
     return ModelRequest(
       messages: (json['messages'] as List)
-          .map((m) => Message.fromJson(m))
+          .map((m) => ModelMessage.fromJson(m))
           .toList(),
       model: json['model'],
       temperature: json['temperature']?.toDouble() ?? 0.7,
@@ -100,7 +101,7 @@ class ModelRequest {
   }
 
   ModelRequest copyWith({
-    List<Message>? messages,
+    List<ModelMessage>? messages,
     String? model,
     double? temperature,
     int? maxTokens,
@@ -170,15 +171,15 @@ class ModelResponse {
   }
 }
 
-/// Message in a conversation
-class Message {
+/// Message in a model conversation (differs from core Message)
+class ModelMessage {
   final String role;
   final String content;
   final String? name;
   final Map<String, dynamic>? toolCalls;
   final String? toolCallId;
 
-  const Message({
+  const ModelMessage({
     required this.role,
     required this.content,
     this.name,
@@ -196,8 +197,8 @@ class Message {
     };
   }
 
-  factory Message.fromJson(Map<String, dynamic> json) {
-    return Message(
+  factory ModelMessage.fromJson(Map<String, dynamic> json) {
+    return ModelMessage(
       role: json['role'],
       content: json['content'],
       name: json['name'],
@@ -207,18 +208,18 @@ class Message {
   }
 
   /// Create a user message
-  factory Message.user(String content) {
-    return Message(role: 'user', content: content);
+  factory ModelMessage.user(String content) {
+    return ModelMessage(role: 'user', content: content);
   }
 
   /// Create an assistant message
-  factory Message.assistant(String content) {
-    return Message(role: 'assistant', content: content);
+  factory ModelMessage.assistant(String content) {
+    return ModelMessage(role: 'assistant', content: content);
   }
 
   /// Create a system message
-  factory Message.system(String content) {
-    return Message(role: 'system', content: content);
+  factory ModelMessage.system(String content) {
+    return ModelMessage(role: 'system', content: content);
   }
 }
 

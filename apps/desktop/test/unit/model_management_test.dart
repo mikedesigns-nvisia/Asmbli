@@ -1,12 +1,13 @@
 import 'package:test/test.dart';
 import 'dart:async';
 import 'dart:math';
-import '../../lib/core/models/model_interfaces.dart';
-import '../../lib/core/models/model_router.dart';
-import '../../lib/core/models/model_manager.dart';
-import '../../lib/core/models/providers/openai_provider.dart';
-import '../../lib/core/models/providers/anthropic_provider.dart';
-import '../../lib/core/models/providers/ollama_provider.dart';
+import 'package:agentengine_desktop/core/models/model_interfaces.dart';
+import 'package:agentengine_desktop/core/models/model_router.dart';
+import 'package:agentengine_desktop/core/models/model_manager.dart';
+import 'package:agentengine_desktop/core/models/providers/openai_provider.dart';
+import 'package:agentengine_desktop/core/models/providers/anthropic_provider.dart';
+import 'package:agentengine_desktop/core/models/providers/ollama_provider.dart';
+import 'package:agent_engine_core/models/conversation.dart';
 
 void main() {
   group('Model Interfaces', () {
@@ -36,7 +37,7 @@ void main() {
       // Valid request should not throw
       final validRequest = ModelRequest(
         model: 'gpt-3.5-turbo',
-        messages: [Message.user('Hello')],
+        messages: [ModelMessage.user('Hello')],
       );
       
       expect(validRequest.model, equals('gpt-3.5-turbo'));
@@ -44,15 +45,15 @@ void main() {
     });
     
     test('Message types are created correctly', () {
-      final userMessage = Message.user('User input');
+      final userMessage = ModelMessage.user('User input');
       expect(userMessage.role, equals('user'));
       expect(userMessage.content, equals('User input'));
       
-      final assistantMessage = Message.assistant('Assistant response');
+      final assistantMessage = ModelMessage.assistant('Assistant response');
       expect(assistantMessage.role, equals('assistant'));
       expect(assistantMessage.content, equals('Assistant response'));
       
-      final systemMessage = Message.system('System prompt');
+      final systemMessage = ModelMessage.system('System prompt');
       expect(systemMessage.role, equals('system'));
       expect(systemMessage.content, equals('System prompt'));
     });
@@ -121,7 +122,7 @@ void main() {
     test('routes to preferred provider when available', () async {
       final request = ModelRequest(
         model: 'gpt-3.5-turbo',
-        messages: [Message.user('Test')],
+        messages: [ModelMessage.user('Test')],
         preferredProviders: ['openai'],
       );
       
@@ -136,7 +137,7 @@ void main() {
       
       final request = ModelRequest(
         model: 'gpt-3.5-turbo',
-        messages: [Message.user('Test')],
+        messages: [ModelMessage.user('Test')],
         preferredProviders: ['openai', 'anthropic'],
       );
       
@@ -155,7 +156,7 @@ void main() {
       
       final request = ModelRequest(
         model: 'any-model',
-        messages: [Message.user('Cost test')],
+        messages: [ModelMessage.user('Cost test')],
       );
       
       final response = await router.route(request);
@@ -172,7 +173,7 @@ void main() {
       
       final request = ModelRequest(
         model: 'any-model',
-        messages: [Message.user('Speed test')],
+        messages: [ModelMessage.user('Speed test')],
       );
       
       final response = await router.route(request);
@@ -182,9 +183,9 @@ void main() {
     
     test('tracks cost across multiple requests', () async {
       final requests = [
-        ModelRequest(model: 'gpt-3.5-turbo', messages: [Message.user('Request 1')]),
-        ModelRequest(model: 'claude-3-haiku', messages: [Message.user('Request 2')]),
-        ModelRequest(model: 'llama2', messages: [Message.user('Request 3')]),
+        ModelRequest(model: 'gpt-3.5-turbo', messages: [ModelMessage.user('Request 1')]),
+        ModelRequest(model: 'claude-3-haiku', messages: [ModelMessage.user('Request 2')]),
+        ModelRequest(model: 'llama2', messages: [ModelMessage.user('Request 3')]),
       ];
       
       for (final request in requests) {
@@ -204,18 +205,18 @@ void main() {
       // First two requests should succeed
       await router.route(ModelRequest(
         model: 'gpt-3.5-turbo',
-        messages: [Message.user('Request 1')],
+        messages: [ModelMessage.user('Request 1')],
       ));
       
       await router.route(ModelRequest(
         model: 'gpt-3.5-turbo', 
-        messages: [Message.user('Request 2')],
+        messages: [ModelMessage.user('Request 2')],
       ));
       
       // Third request should be rate limited and fall back
       final response = await router.route(ModelRequest(
         model: 'gpt-3.5-turbo',
-        messages: [Message.user('Request 3')],
+        messages: [ModelMessage.user('Request 3')],
       ));
       
       // Should fallback to different provider
@@ -229,7 +230,7 @@ void main() {
       
       final request = ModelRequest(
         model: 'any-model',
-        messages: [Message.user('Failure test')],
+        messages: [ModelMessage.user('Failure test')],
       );
       
       final response = await router.route(request);
@@ -258,7 +259,7 @@ void main() {
     test('completes requests successfully', () async {
       final request = ModelRequest(
         model: 'test-model',
-        messages: [Message.user('Hello, world!')],
+        messages: [ModelMessage.user('Hello, world!')],
         maxTokens: 100,
       );
       
@@ -272,7 +273,7 @@ void main() {
     test('streams responses correctly', () async {
       final request = ModelRequest(
         model: 'test-model',
-        messages: [Message.user('Stream test')],
+        messages: [ModelMessage.user('Stream test')],
         stream: true,
       );
       
@@ -301,7 +302,7 @@ void main() {
     test('tracks usage statistics', () async {
       final requests = List.generate(5, (i) => ModelRequest(
         model: 'test-model',
-        messages: [Message.user('Test message $i')],
+        messages: [ModelMessage.user('Test message $i')],
       ));
       
       for (final request in requests) {
@@ -319,7 +320,7 @@ void main() {
       final futures = List.generate(10, (i) => manager.complete(
         ModelRequest(
           model: 'test-model',
-          messages: [Message.user('Concurrent request $i')],
+          messages: [ModelMessage.user('Concurrent request $i')],
         ),
       ));
       
@@ -334,7 +335,7 @@ void main() {
       
       final request = ModelRequest(
         model: 'test-model',
-        messages: [Message.user('Cacheable request')],
+        messages: [ModelMessage.user('Cacheable request')],
         temperature: 0.0, // Deterministic
       );
       
@@ -356,7 +357,7 @@ void main() {
       
       final request = ModelRequest(
         model: 'test-model',
-        messages: [Message.user('Timeout test')],
+        messages: [ModelMessage.user('Timeout test')],
         timeout: Duration(seconds: 1),
       );
       
