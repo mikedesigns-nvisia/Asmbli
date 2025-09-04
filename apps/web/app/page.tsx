@@ -175,11 +175,11 @@ export default function HomePage() {
 
           {/* Hero Text */}
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold italic mb-4 sm:mb-6 font-display leading-tight">
-            Build and integrate custom AI agents into your workflow
+            Professional AI agents that integrate with your actual tools
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
-            Build, customize, flow. 
-            Connect your tools, deploy specialized agents, stay in control.
+            Deploy specialized AI agents with full MCP integration, 20+ professional templates, 
+            and enterprise-grade security. Your tools, your data, your control.
           </p>
 
           {/* Key Capabilities */}
@@ -188,35 +188,35 @@ export default function HomePage() {
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                 <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">🎯 Your Tools</h3>
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">🔗 Native Tool Integration</h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Immediately access your tools through MCP Servers. Set up your tool workflows naturally in the app.
+                Full MCP Server integration with Git, databases, Figma, Slack, and 40+ tools. No configuration required.
               </p>
             </div>
             <div className="text-center p-4 sm:p-0">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                 <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">🚀 20+ Templates</h3>
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">🚀 Production-Ready Templates</h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Blockchain developer, UX designer, DevOps engineer, and more. Professional agents ready in seconds.
+                20+ battle-tested agent templates: Senior Developer, DevOps Engineer, Product Manager, and more.
               </p>
             </div>
             <div className="text-center p-4 sm:p-0 sm:col-span-2 lg:col-span-1">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                 <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">🔒 Private & Secure</h3>
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">🛡️ Enterprise Security</h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Your API key, your data, your agents. Everything runs locally with enterprise-grade security.
+                Zero data collection, local execution, direct API connections. Built for teams that need privacy.
               </p>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-            <Link href="#beta-signup">
+            <Link href="/download">
               <Button size="lg" className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-amber-950">
-                Get Early Access
+                Download Beta
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -231,11 +231,11 @@ export default function HomePage() {
           <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-muted-foreground px-4">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              <span className="whitespace-nowrap">Windows Available Now</span>
+              <span className="whitespace-nowrap">Beta Available Now</span>
             </span>
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
-              <span className="whitespace-nowrap">macOS Coming Soon</span>
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              <span className="whitespace-nowrap">Active Development</span>
             </span>
             <span className="flex items-center gap-1">
               <Shield className="w-3 h-3" />
@@ -253,7 +253,7 @@ export default function HomePage() {
               Why Asmbli?
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-              The professional AI agent platform that actually works in your environment
+              The most comprehensive AI agent platform with real tool integration and enterprise-grade architecture
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto">
@@ -262,9 +262,9 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Zap className="h-6 w-6 text-green-600" />
                 </div>
-                <CardTitle className="text-lg">Zero Setup</CardTitle>
+                <CardTitle className="text-lg">Production Ready</CardTitle>
                 <CardDescription>
-                  MCP tool integration. No configuration files, no YAML, no complex setup.
+                  Robust MCP integration, automatic tool discovery, and enterprise deployment options.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -273,9 +273,9 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Code className="h-6 w-6 text-blue-600" />
                 </div>
-                <CardTitle className="text-lg">Real Integration</CardTitle>
+                <CardTitle className="text-lg">Deep Integration</CardTitle>
                 <CardDescription>
-                  Connect to actual tools: Git repos, databases, Figma, Slack. Not just chat.
+                  40+ MCP servers: Git, PostgreSQL, Figma, VSCode, Slack, Linear, Notion, and more.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -284,9 +284,9 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Bot className="h-6 w-6 text-purple-600" />
                 </div>
-                <CardTitle className="text-lg">Professional Agents</CardTitle>
+                <CardTitle className="text-lg">Expert-Level Agents</CardTitle>
                 <CardDescription>
-                  Specialized for real work: blockchain dev, UX design, DevOps, research.
+                  Senior-level templates with domain expertise, proven workflows, and professional outputs.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -295,9 +295,9 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Shield className="h-6 w-6 text-amber-600" />
                 </div>
-                <CardTitle className="text-lg">Your Control</CardTitle>
+                <CardTitle className="text-lg">Total Ownership</CardTitle>
                 <CardDescription>
-                  Your API keys, your data, your agents. Nothing leaves your machine.
+                  Your infrastructure, your models, your data. Full control with zero vendor lock-in.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -309,34 +309,34 @@ export default function HomePage() {
       <section className="py-12 sm:py-16 lg:py-20 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 font-display">
-            Get Started in 3 Steps
+            Deploy Professional AI Agents in Minutes
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <div className="text-center p-4 sm:p-0">
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                 <span className="text-xl sm:text-2xl font-bold text-amber-800">1</span>
               </div>
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">Download Asmbli</h3>
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Request Beta Access</h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Get the desktop app and sign in with beta access
+                Join our exclusive beta program and get instant access to download
               </p>
             </div>
             <div className="text-center p-4 sm:p-0">
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                 <span className="text-xl sm:text-2xl font-bold text-amber-800">2</span>
               </div>
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">Add Your API Key</h3>
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Connect Your Model</h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Connect Claude, GPT, or Gemini. Your key, your data, your control.
+                Add your API key for Claude, GPT-4, or Gemini. Direct connection, zero middleman.
               </p>
             </div>
             <div className="text-center p-4 sm:p-0 sm:col-span-2 lg:col-span-1">
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                 <span className="text-xl sm:text-2xl font-bold text-amber-800">3</span>
               </div>
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">Pick an Agent & Chat</h3>
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Deploy & Execute</h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Choose a template or create custom. MCP integration handles the rest.
+                Select from 20+ professional templates. Tools auto-connect via MCP protocol.
               </p>
             </div>
           </div>
@@ -344,7 +344,7 @@ export default function HomePage() {
           <div className="mt-8 sm:mt-12 px-4">
             <Link href="#beta-signup">
               <Button size="lg" className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-amber-950">
-                Start Building Agents
+                Get Beta Access
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -694,11 +694,11 @@ export default function HomePage() {
       <section id="beta-signup" className="py-12 sm:py-16 lg:py-20 px-4 bg-gradient-to-br from-amber-50/30 to-yellow-50/30">
         <div className="container mx-auto max-w-2xl text-center">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 font-display">
-            Join the Beta
+            Join the Professional Beta
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 px-4">
-            Get early access to Asmbli's professional AI agent platform. 
-            Beta users receive priority support and exclusive features.
+            Get exclusive access to the most advanced AI agent platform with full MCP integration, 
+            professional templates, and enterprise-grade security.
           </p>
           
           <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border mx-4 sm:mx-0">
@@ -720,15 +720,15 @@ export default function HomePage() {
           <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-amber-500" />
-              <span>Free beta access</span>
+              <span>Full platform access</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-amber-500" />
-              <span>Priority support</span>
+              <span>20+ professional templates</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-amber-500" />
-              <span>Exclusive features</span>
+              <span>Complete MCP integration</span>
             </div>
           </div>
         </div>
