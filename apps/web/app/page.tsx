@@ -214,12 +214,9 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-            <Link href="/download">
-              <Button size="lg" className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-amber-950">
-                Download Beta
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <Button size="lg" className="w-full sm:w-auto bg-gray-400 text-gray-700 cursor-not-allowed" disabled>
+              Coming Soon
+            </Button>
             <Link href="/templates">
               <Button size="lg" variant="outline" className="w-full sm:w-auto">
                 View Templates
@@ -230,12 +227,12 @@ export default function HomePage() {
           {/* Status Bar */}
           <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-muted-foreground px-4">
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              <span className="whitespace-nowrap">Beta Available Now</span>
+              <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
+              <span className="whitespace-nowrap">Coming Soon</span>
             </span>
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              <span className="whitespace-nowrap">Active Development</span>
+              <span className="whitespace-nowrap">Final Testing</span>
             </span>
             <span className="flex items-center gap-1">
               <Shield className="w-3 h-3" />
@@ -342,12 +339,9 @@ export default function HomePage() {
           </div>
           
           <div className="mt-8 sm:mt-12 px-4">
-            <Link href="#beta-signup">
-              <Button size="lg" className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-amber-950">
-                Get Beta Access
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <Button size="lg" className="w-full sm:w-auto bg-gray-400 text-gray-700 cursor-not-allowed" disabled>
+              Coming Soon
+            </Button>
           </div>
         </div>
       </section>
@@ -716,41 +710,43 @@ export default function HomePage() {
       <section id="beta-signup" className="py-12 sm:py-16 lg:py-20 px-4 bg-gradient-to-br from-amber-50/30 to-yellow-50/30">
         <div className="container mx-auto max-w-2xl text-center">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 font-display">
-            Join the Professional Beta
+            Coming Soon
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 px-4">
-            Get exclusive access to the most advanced AI agent platform with full MCP integration, 
-            professional templates, and enterprise-grade security.
+            The most advanced AI agent platform with full MCP integration, 
+            professional templates, and enterprise-grade security is launching soon.
           </p>
           
           <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border mx-4 sm:mx-0">
-            <BetaSignupForm />
-            
-            <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
-              <p className="text-sm text-muted-foreground mb-4">
-                Already have beta access?
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Bot className="h-8 w-8 text-amber-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4">Platform Launching Soon</h3>
+              <p className="text-muted-foreground mb-6">
+                We're putting the finishing touches on the most comprehensive AI agent platform. 
+                Follow us for launch updates!
               </p>
-              <Link href="/download">
-                <Button variant="outline" className="w-full">
-                  Go to Downloads
-                  <ArrowRight className="ml-2 h-4 w-4" />
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button variant="outline" className="w-full sm:w-auto" disabled>
+                  Email Updates Coming Soon
                 </Button>
-              </Link>
+              </div>
             </div>
           </div>
           
           <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-amber-500" />
-              <span>Full platform access</span>
+              <span>20+ professional templates ready</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-amber-500" />
-              <span>20+ professional templates</span>
+              <span>Complete MCP integration built</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-amber-500" />
-              <span>Complete MCP integration</span>
+              <span>Enterprise security implemented</span>
             </div>
           </div>
         </div>
