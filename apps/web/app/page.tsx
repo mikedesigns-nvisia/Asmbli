@@ -179,7 +179,7 @@ export default function HomePage() {
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
             Deploy specialized AI agents with full MCP integration, 20+ professional templates, 
-            and enterprise-grade security. Your tools, your data, your control.
+            and maximum security. Cloud APIs or local models - your tools, your data, your control.
           </p>
 
           {/* Key Capabilities */}
@@ -206,9 +206,9 @@ export default function HomePage() {
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                 <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">🛡️ Enterprise Security</h3>
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">🛡️ Maximum Security</h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Zero data collection, local execution, direct API connections. Built for teams that need privacy.
+                Local LLMs + zero data collection + offline execution. Ultimate privacy for sensitive work.
               </p>
             </div>
           </div>
@@ -297,7 +297,7 @@ export default function HomePage() {
                 </div>
                 <CardTitle className="text-lg">Total Ownership</CardTitle>
                 <CardDescription>
-                  Your infrastructure, your models, your data. Full control with zero vendor lock-in.
+                  Your infrastructure, cloud APIs or local models, your data. Complete privacy with zero vendor lock-in.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -325,9 +325,9 @@ export default function HomePage() {
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                 <span className="text-xl sm:text-2xl font-bold text-amber-800">2</span>
               </div>
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">Connect Your Model</h3>
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Choose Your AI</h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Add your API key for Claude, GPT-4, or Gemini. Direct connection, zero middleman.
+                Cloud APIs (Claude, GPT-4, Gemini) or local Ollama models for maximum privacy.
               </p>
             </div>
             <div className="text-center p-4 sm:p-0 sm:col-span-2 lg:col-span-1">
@@ -357,10 +357,10 @@ export default function HomePage() {
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 font-display">
-              What's an API Key and Why It's Important
+              Choose Your AI: Cloud APIs or Local Models
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              An API key is your secure access credential that lets you use AI services while maintaining control over your data
+              Connect to cloud AI services with your own API key, or run completely local models for maximum privacy and security
             </p>
           </div>
 
@@ -372,12 +372,12 @@ export default function HomePage() {
                   <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
                     <Key className="h-5 w-5 text-yellow-600" />
                   </div>
-                  <CardTitle>What is an API Key?</CardTitle>
+                  <CardTitle>Cloud AI with Your API Key</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-muted-foreground">
-                  Think of an API key as a secure password that identifies you to an AI service. It's like having your own personal access card that:
+                  Use your own API key to connect to Claude, GPT-4, or Gemini. Direct connection to providers with enterprise-grade security:
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
@@ -400,36 +400,36 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            {/* Why It's Important */}
-            <Card className="border-2 border-yellow-300/20 bg-yellow-50/10">
+            {/* Local Models */}
+            <Card className="border-2 border-green-300/20 bg-green-50/10">
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
-                    <Shield className="h-5 w-5 text-yellow-600" />
+                  <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
+                    <Lock className="h-5 w-5 text-green-600" />
                   </div>
-                  <CardTitle>Why It's Important</CardTitle>
+                  <CardTitle>Local Models (Maximum Security)</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-muted-foreground">
-                  Using your own API key with Asmbli provides crucial benefits:
+                  Run AI models completely offline on your own hardware for ultimate privacy and control:
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
-                    <span className="text-sm"><strong>Direct relationship</strong> with the AI provider</span>
+                    <span className="text-sm"><strong>Zero network calls</strong> - everything runs locally</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
-                    <span className="text-sm"><strong>No middleman</strong> storing or processing your data</span>
+                    <span className="text-sm"><strong>No data ever leaves</strong> your machine</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
-                    <span className="text-sm"><strong>Full control</strong> over usage limits and costs</span>
+                    <span className="text-sm"><strong>No usage costs</strong> after initial setup</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
-                    <span className="text-sm"><strong>Provider-level security</strong> and data policies apply directly</span>
+                    <span className="text-sm"><strong>Perfect for sensitive</strong> or classified work</span>
                   </li>
                 </ul>
               </CardContent>
@@ -508,27 +508,49 @@ export default function HomePage() {
 
           <div className="text-center mt-8">
             <p className="text-muted-foreground mb-6">
-              Ready to get started with your own API key?
+              Choose your AI approach: cloud convenience or local privacy
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-              <Link href="https://console.anthropic.com/api" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                  Get Anthropic API Key
-                  <ExternalLink className="ml-2 h-3 w-3" />
-                </Button>
-              </Link>
-              <Link href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                  Get OpenAI API Key
-                  <ExternalLink className="ml-2 h-3 w-3" />
-                </Button>
-              </Link>
-              <Link href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                  Get Google API Key
-                  <ExternalLink className="ml-2 h-3 w-3" />
-                </Button>
-              </Link>
+            <div className="grid sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
+              <div>
+                <h4 className="font-semibold mb-3 text-sm">Cloud AI Providers</h4>
+                <div className="flex flex-col gap-2">
+                  <Link href="https://console.anthropic.com/api" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" className="w-full">
+                      Get Anthropic API Key
+                      <ExternalLink className="ml-2 h-3 w-3" />
+                    </Button>
+                  </Link>
+                  <Link href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" className="w-full">
+                      Get OpenAI API Key
+                      <ExternalLink className="ml-2 h-3 w-3" />
+                    </Button>
+                  </Link>
+                  <Link href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" className="w-full">
+                      Get Google API Key
+                      <ExternalLink className="ml-2 h-3 w-3" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-3 text-sm">Local Models via Ollama</h4>
+                <div className="flex flex-col gap-2">
+                  <Button variant="outline" size="sm" className="w-full">
+                    Built-in Ollama Support
+                    <Lock className="ml-2 h-3 w-3" />
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full" disabled>
+                    Auto Model Discovery
+                    <Lock className="ml-2 h-3 w-3" />
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full" disabled>
+                    Custom Endpoints
+                    <Lock className="ml-2 h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
