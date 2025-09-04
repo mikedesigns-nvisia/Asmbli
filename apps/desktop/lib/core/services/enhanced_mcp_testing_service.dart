@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../models/enhanced_mcp_template.dart';
+import '../models/mcp_server_config.dart';
+import 'mcp_server_execution_service.dart';
+import '../di/service_locator.dart';
 
 /// Enhanced MCP testing service with comprehensive validation and diagnostics
 /// Supports all server types: local, cloud, enterprise, database, etc.
@@ -13,6 +16,9 @@ class EnhancedMCPTestingService {
 
   final Map<String, StreamController<TestResult>> _testStreams = {};
   final Map<String, Timer> _healthCheckTimers = {};
+  
+  /// Get the shared singleton MCP execution service
+  MCPServerExecutionService get _executionService => ServiceLocator.instance.get<MCPServerExecutionService>();
 
   /// Test connection for any MCP server configuration
   Future<TestResult> testConnection(
@@ -70,6 +76,104 @@ class EnhancedMCPTestingService {
         message: 'Unexpected error: ${e.toString()}',
         error: e.toString(),
         suggestions: ['Check your internet connection', 'Verify all configuration values'],
+      ));
+    }
+  }
+
+  /// Test actual MCP server startup and communication
+  Future<TestResult> testActualMCPServer(
+    String serverId,
+    EnhancedMCPTemplate template,
+    Map<String, dynamic> config,
+  ) async {
+    final testId = DateTime.now().millisecondsSinceEpoch.toString();
+    
+    try {
+      // Create MCPServerConfig from template and config
+      final serverConfig = MCPServerConfig(
+        id: serverId,
+        name: template.name,
+        url: 'stdio://$serverId',
+        command: template.command,
+        args: List<String>.from(template.args),
+        env: config.map((key, value) => MapEntry(key, value.toString())),
+        description: template.description,
+        enabled: true,
+        transport: 'stdio',
+      );
+
+      _broadcastTestUpdate(serverId, TestResult.loading(
+        serverId: serverId,
+        testId: testId,
+        message: 'Starting MCP server process...',
+      ));
+
+      // Try to start the actual MCP server
+      final serverProcess = await _executionService.startMCPServer(serverConfig, config.map((k, v) => MapEntry(k, v.toString())));
+      
+      _broadcastTestUpdate(serverId, TestResult.loading(
+        serverId: serverId,
+        testId: testId,
+        message: 'Testing server communication...',
+      ));
+
+      // Wait for server to initialize
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Test basic communication
+      try {
+        await _executionService.sendMCPRequest(serverId, 'tools/list', {});
+        
+        // Success - stop the test server
+        await _executionService.stopMCPServer(serverId);
+        
+        return _broadcastTestUpdate(serverId, TestResult.success(
+          serverId: serverId,
+          testId: testId,
+          message: 'MCP server test completed successfully',
+          details: 'Server started and responded to tools/list request',
+          metadata: {
+            'serverRunning': true,
+            'communicationTest': 'passed',
+            'transport': serverProcess.transport.name,
+          },
+        ));
+      } catch (commError) {
+        // Communication failed - stop the server
+        await _executionService.stopMCPServer(serverId);
+        
+        return _broadcastTestUpdate(serverId, TestResult.warning(
+          serverId: serverId,
+          testId: testId,
+          message: 'Server started but communication failed',
+          details: commError.toString(),
+          suggestions: [
+            'Server may need more time to initialize',
+            'Check server logs for errors',
+            'Verify server supports MCP protocol',
+          ],
+        ));
+      }
+    } catch (e, stackTrace) {
+      debugPrint('Actual MCP server test error: $e\n$stackTrace');
+      
+      // Ensure server is cleaned up
+      try {
+        await _executionService.stopMCPServer(serverId);
+      } catch (cleanupError) {
+        debugPrint('Cleanup error: $cleanupError');
+      }
+      
+      return _broadcastTestUpdate(serverId, TestResult.error(
+        serverId: serverId,
+        testId: testId,
+        message: 'Failed to start MCP server',
+        error: e.toString(),
+        suggestions: [
+          'Check server dependencies are installed',
+          'Verify command and arguments',
+          'Check environment variables',
+        ],
       ));
     }
   }
@@ -513,28 +617,11 @@ class EnhancedMCPTestingService {
     String testId,
     Map<String, dynamic> config,
   ) async {
-    // This would integrate with actual PostgreSQL connection testing
-    // For now, simulate the test process
-    
-    _broadcastTestUpdate(serverId, TestResult.loading(
+    return TestResult.error(
       serverId: serverId,
       testId: testId,
-      message: 'Connecting to PostgreSQL...',
-    ));
-
-    // Simulate connection test
-    await Future.delayed(const Duration(seconds: 2));
-
-    return TestResult.success(
-      serverId: serverId,
-      testId: testId,
-      message: 'PostgreSQL connection verified',
-      details: 'Database: myapp\nVersion: 14.2\nConnection successful',
-      metadata: {
-        'version': '14.2',
-        'database': 'myapp',
-        'ssl': true,
-      },
+      message: 'PostgreSQL testing not implemented',
+      details: 'Database connection testing requires implementation of actual PostgreSQL client',
     );
   }
 

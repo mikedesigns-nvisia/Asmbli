@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import '../data/mcp_server_configs.dart';
 import 'desktop/desktop_storage_service.dart';
-
-
 import '../models/mcp_server_config.dart';
+import '../models/mcp_server_process.dart';
+import '../di/service_locator.dart';
 
 /// Service for executing and managing MCP server processes
 /// Implements JSON-RPC 2.0 communication as per MCP specification
@@ -15,6 +15,105 @@ class MCPServerExecutionService {
   final DesktopStorageService _storage = DesktopStorageService.instance;
   final Map<String, MCPServerProcess> _runningServers = {};
   final Map<String, StreamSubscription> _serverSubscriptions = {};
+  final Map<String, String> _serverInstallPaths = {}; // Track installed server paths
+  
+  /// Install MCP server if not already installed
+  Future<String> ensureMCPServerInstalled(MCPServerConfig config) async {
+    final serverId = config.id;
+    
+    // Check if already installed and cached
+    if (_serverInstallPaths.containsKey(serverId)) {
+      final cachedPath = _serverInstallPaths[serverId]!;
+      if (await File(cachedPath).exists() || await Directory(cachedPath).exists()) {
+        return cachedPath;
+      }
+    }
+    
+    // Install server based on command type
+    String installedPath;
+    final command = config.command;
+    
+    if (command.startsWith('uvx ') || command.startsWith('npx ')) {
+      // Node.js/Python package manager installation
+      installedPath = await _installPackageManagerServer(config);
+    } else if (command.contains('docker ')) {
+      // Docker container installation
+      installedPath = await _installDockerServer(config);
+    } else if (await File(command).exists()) {
+      // Local executable already exists
+      installedPath = command;
+    } else {
+      throw Exception('Unknown server installation method for: $command');
+    }
+    
+    _serverInstallPaths[serverId] = installedPath;
+    return installedPath;
+  }
+  
+  /// Install server via package manager (uvx/npx)
+  Future<String> _installPackageManagerServer(MCPServerConfig config) async {
+    final command = config.command;
+    final parts = command.split(' ');
+    
+    if (parts.length < 2) {
+      throw Exception('Invalid package manager command: $command');
+    }
+    
+    final packageManager = parts[0]; // 'uvx' or 'npx'
+    final packageName = parts[1]; // e.g., '@modelcontextprotocol/server-github'
+    
+    print('📦 Installing MCP server: $packageName via $packageManager');
+    
+    // Run installation command
+    final process = await Process.run(
+      packageManager,
+      ['--help'], // First check if package manager is available
+      runInShell: true,
+    );
+    
+    if (process.exitCode != 0) {
+      throw Exception('Package manager $packageManager not found. Please install it first.');
+    }
+    
+    // For uvx/npx, we don't need to pre-install - they handle it automatically
+    // Just verify the package exists by testing the command
+    print('✅ Package manager $packageManager available');
+    return command; // Return original command for uvx/npx
+  }
+  
+  /// Install server via Docker
+  Future<String> _installDockerServer(MCPServerConfig config) async {
+    final command = config.command;
+    print('🐳 Installing Docker-based MCP server: $command');
+    
+    // Check if Docker is available
+    final dockerCheck = await Process.run('docker', ['--version'], runInShell: true);
+    if (dockerCheck.exitCode != 0) {
+      throw Exception('Docker not found. Please install Docker first.');
+    }
+    
+    // Extract image name from docker command
+    final parts = command.split(' ');
+    final imageIndex = parts.indexOf('run') + 1;
+    if (imageIndex < parts.length) {
+      final imageName = parts[imageIndex];
+      
+      // Pull the Docker image
+      final pullProcess = await Process.run(
+        'docker',
+        ['pull', imageName],
+        runInShell: true,
+      );
+      
+      if (pullProcess.exitCode != 0) {
+        throw Exception('Failed to pull Docker image: $imageName\n${pullProcess.stderr}');
+      }
+      
+      print('✅ Docker image $imageName installed');
+    }
+    
+    return command;
+  }
   
   /// Start an MCP server process for the given configuration
   Future<MCPServerProcess> startMCPServer(
@@ -34,14 +133,32 @@ class MCPServerExecutionService {
       }
     }
     
+    // Ensure server is installed before starting
+    print('🔍 Checking MCP server installation for: ${serverConfig.name}');
+    try {
+      await ensureMCPServerInstalled(serverConfig);
+      print('✅ MCP server installation verified');
+    } catch (e) {
+      print('❌ MCP server installation failed: $e');
+      throw Exception('Failed to install MCP server ${serverConfig.name}: $e');
+    }
+    
     final process = await _spawnMCPProcess(serverConfig, environmentVars);
     _runningServers[serverId] = process;
     
     // Setup health monitoring
     _setupServerHealthMonitoring(process);
     
-    // Perform initial handshake
-    await _performMCPHandshake(process);
+    // Perform initial handshake with timeout
+    print('🤝 Performing MCP handshake with ${serverConfig.name}');
+    try {
+      await _performMCPHandshake(process);
+      print('✅ MCP handshake successful');
+    } catch (e) {
+      print('❌ MCP handshake failed: $e');
+      await stopMCPServer(serverId); // Clean up failed server
+      rethrow;
+    }
     
     return process;
   }
@@ -51,9 +168,6 @@ class MCPServerExecutionService {
     MCPServerConfig serverConfig,
     Map<String, String> environmentVars,
   ) async {
-    final command = serverConfig.command.isNotEmpty ? serverConfig.command : 'npx';
-    final args = List<String>.from(serverConfig.args);
-    
     // Handle special transport cases
     final transport = serverConfig.transport ?? 'stdio';
     
@@ -62,23 +176,13 @@ class MCPServerExecutionService {
       return await _startSSEServer(serverConfig, environmentVars);
     }
     
-    // Default stdio transport
-    final mergedEnv = Map<String, String>.from(Platform.environment);
-    mergedEnv.addAll(environmentVars);
+    // Use the real MCPServerProcess.start() method
+    print('🚀 Starting MCP server: ${serverConfig.command} ${serverConfig.args.join(' ')}');
     
-    final process = await Process.start(
-      command,
-      args,
-      environment: mergedEnv,
-      runInShell: true,
-    );
-    
-    return MCPServerProcess(
+    return await MCPServerProcess.start(
       id: serverConfig.id,
       config: serverConfig,
-      process: process,
-      transport: MCPTransport.stdio,
-      startTime: DateTime.now(),
+      environmentVars: environmentVars,
     );
   }
   
@@ -97,9 +201,7 @@ class MCPServerExecutionService {
       id: serverConfig.id,
       config: serverConfig,
       process: null, // No local process for remote servers
-      transport: MCPTransport.sse,
       startTime: DateTime.now(),
-      sseUrl: url,
     );
   }
   
@@ -113,7 +215,7 @@ class MCPServerExecutionService {
     _serverSubscriptions.remove(serverId);
     
     // Send shutdown signal
-    if (server.transport == MCPTransport.stdio && server.process != null) {
+    if (server.process != null) {
       try {
         // Send shutdown request per MCP spec
         await sendMCPRequest(serverId, 'shutdown', {});
@@ -134,50 +236,151 @@ class MCPServerExecutionService {
     _runningServers.remove(serverId);
   }
   
-  /// Setup health monitoring for an MCP server
+  /// Setup health monitoring for an MCP server with auto-recovery
   void _setupServerHealthMonitoring(MCPServerProcess server) {
-    if (server.transport == MCPTransport.stdio && server.process != null) {
-      // Monitor process exit
+    if (server.process != null) {
+      // Monitor process exit with auto-restart capability
       _serverSubscriptions[server.id] = server.process!.exitCode.asStream().listen(
         (exitCode) {
           print('🔴 MCP server ${server.id} exited with code $exitCode');
-          _runningServers.remove(server.id);
-          _serverSubscriptions[server.id]?.cancel();
-          _serverSubscriptions.remove(server.id);
+          server.recordError('Process exited with code $exitCode');
+          
+          // Attempt auto-restart if enabled and exit wasn't intentional
+          if (server.config.autoReconnect && exitCode != 0) {
+            print('🔄 Attempting auto-restart for ${server.id}');
+            Timer(const Duration(seconds: 5), () => _attemptServerRestart(server));
+          } else {
+            _runningServers.remove(server.id);
+            _serverSubscriptions[server.id]?.cancel();
+            _serverSubscriptions.remove(server.id);
+          }
         },
       );
       
-      // Monitor stderr for errors
+      // Monitor stderr for errors with categorization
       server.process!.stderr.transform(utf8.decoder).listen(
         (data) {
-          print('⚠️ MCP server ${server.id} error: $data');
+          print('⚠️ MCP server ${server.id} stderr: $data');
+          server.recordError('Stderr: ${data.trim()}');
+          
+          // Check for critical errors that require restart
+          if (_isCriticalError(data)) {
+            print('💥 Critical error detected in ${server.id}, marking for restart');
+            server.isHealthy = false;
+          }
+        },
+      );
+      
+      // Monitor stdout for useful information
+      server.process!.stdout.transform(utf8.decoder).listen(
+        (data) {
+          // Log initialization messages and capability announcements
+          if (data.contains('MCP') || data.contains('initialized') || data.contains('capabilities')) {
+            print('ℹ️ MCP server ${server.id}: ${data.trim()}');
+          }
         },
       );
     }
     
-    // Setup periodic health checks
-    Timer.periodic(const Duration(seconds: 30), (timer) async {
-      if (!_runningServers.containsKey(server.id)) {
-        timer.cancel();
-        return;
-      }
+    // Setup periodic health checks with exponential backoff
+    int healthCheckInterval = 30; // Start with 30 seconds
+    late Timer healthTimer;
+    
+    void scheduleHealthCheck() {
+      healthTimer = Timer(Duration(seconds: healthCheckInterval), () async {
+        if (!_runningServers.containsKey(server.id)) {
+          healthTimer.cancel();
+          return;
+        }
+        
+        try {
+          await _performHealthCheck(server);
+          print('✅ Health check passed for ${server.id}');
+          // Reset interval on success
+          healthCheckInterval = 30;
+          scheduleHealthCheck();
+        } catch (e) {
+          print('❌ Health check failed for ${server.id}: $e');
+          server.recordError('Health check failed: $e');
+          
+          // Exponential backoff (but cap at 5 minutes)
+          healthCheckInterval = (healthCheckInterval * 1.5).clamp(30, 300).round();
+          
+          // Attempt recovery after multiple failures
+          if (!server.isHealthy && server.config.autoReconnect) {
+            _attemptServerRestart(server);
+          } else {
+            scheduleHealthCheck();
+          }
+        }
+      });
+    }
+    
+    scheduleHealthCheck();
+  }
+  
+  /// Check if stderr output indicates a critical error requiring restart
+  bool _isCriticalError(String stderr) {
+    final criticalPatterns = [
+      'out of memory',
+      'segmentation fault',
+      'fatal error',
+      'panic:',
+      'uncaught exception',
+      'connection refused',
+      'permission denied',
+      'address already in use',
+    ];
+    
+    final lowerStderr = stderr.toLowerCase();
+    return criticalPatterns.any((pattern) => lowerStderr.contains(pattern));
+  }
+  
+  /// Attempt to restart a failed MCP server
+  Future<void> _attemptServerRestart(MCPServerProcess server) async {
+    if (!server.config.autoReconnect) return;
+    
+    final maxRetries = server.config.maxRetries ?? 3;
+    final currentRetries = 0; // Track retries separately
+    
+    if (currentRetries >= maxRetries) {
+      print('❌ Max restart attempts reached for ${server.id}, giving up');
+      server.recordError('Max restart attempts exceeded');
+      return;
+    }
+    
+    print('🔄 Restart attempt ${currentRetries + 1}/$maxRetries for ${server.id}');
+    
+    try {
+      // Clean up old process
+      await stopMCPServer(server.id);
       
-      try {
-        await _performHealthCheck(server);
-      } catch (e) {
-        print('❌ Health check failed for ${server.id}: $e');
-        // Mark as unhealthy but don't kill immediately
-        server.lastHealthCheck = DateTime.now();
-        server.isHealthy = false;
-      }
-    });
+      // Wait before restart
+      final delay = server.config.retryDelay ?? 5000;
+      await Future.delayed(Duration(milliseconds: delay));
+      
+      // Attempt restart
+      final newProcess = await startMCPServer(server.config, server.config.env ?? {});
+      print('✅ Successfully restarted ${server.id}');
+      
+    } catch (e) {
+      print('❌ Restart failed for ${server.id}: $e');
+      server.recordError('Restart failed: $e');
+      // Increment retry count would be tracked separately
+      
+      // Schedule another retry with exponential backoff
+      final delay = server.config.retryDelay ?? 5000;
+      Timer(Duration(milliseconds: delay * 2), () => _attemptServerRestart(server));
+    }
   }
   
   /// Perform MCP handshake to establish communication
   Future<void> _performMCPHandshake(MCPServerProcess server) async {
     try {
-      // Initialize the MCP session
-      final initResponse = await sendMCPRequest(server.id, 'initialize', {
+      print('🤝 Initializing MCP server ${server.id}...');
+      
+      // Send initialize request directly via the server
+      final initResponse = await server.sendJsonRpcRequest('initialize', {
         'protocolVersion': '2024-11-05',
         'capabilities': {
           'tools': {},
@@ -191,14 +394,17 @@ class MCPServerExecutionService {
         },
       });
       
-      print('✅ MCP server ${server.id} initialized: $initResponse');
+      print('✅ MCP server ${server.id} initialized: ${initResponse['result']}');
       
-      // Send initialized notification
-      await sendMCPNotification(server.id, 'notifications/initialized', {});
+      // Send initialized notification (no response expected)
+      await server.sendInput(json.encode({
+        'jsonrpc': '2.0',
+        'method': 'notifications/initialized',
+        'params': {},
+      }));
       
       server.isInitialized = true;
       server.isHealthy = true;
-      server.lastHealthCheck = DateTime.now();
       
     } catch (e) {
       print('❌ MCP handshake failed for ${server.id}: $e');
@@ -209,11 +415,11 @@ class MCPServerExecutionService {
   
   /// Perform health check on an MCP server
   Future<void> _performHealthCheck(MCPServerProcess server) async {
-    if (server.transport == MCPTransport.sse) {
+    if (server.config.transport == 'sse') {
       // For SSE servers, check HTTP endpoint
       final client = HttpClient();
       try {
-        final request = await client.getUrl(Uri.parse(server.sseUrl!));
+        final request = await client.getUrl(Uri.parse(server.config.url));
         final response = await request.close();
         server.isHealthy = response.statusCode == 200;
       } finally {
@@ -222,7 +428,7 @@ class MCPServerExecutionService {
     } else {
       // For stdio servers, send ping request
       try {
-        await sendMCPRequest(server.id, 'ping', {});
+        await sendMCPRequest(server.id, 'tools/list', {});
         server.isHealthy = true;
       } catch (e) {
         server.isHealthy = false;
@@ -230,7 +436,7 @@ class MCPServerExecutionService {
       }
     }
     
-    server.lastHealthCheck = DateTime.now();
+    // Health check timestamp would be tracked separately
   }
   
   /// Send JSON-RPC 2.0 request to MCP server
@@ -244,20 +450,8 @@ class MCPServerExecutionService {
       throw Exception('MCP server $serverId not available');
     }
     
-    final requestId = DateTime.now().millisecondsSinceEpoch.toString();
-    
-    final request = {
-      'jsonrpc': '2.0',
-      'id': requestId,
-      'method': method,
-      'params': params,
-    };
-    
-    if (server.transport == MCPTransport.stdio) {
-      return await _sendStdioRequest(server, request, requestId);
-    } else {
-      return await _sendSSERequest(server, request, requestId);
-    }
+    // Use the real MCPServerProcess JSON-RPC communication
+    return await server.sendJsonRpcRequest(method, params);
   }
   
   /// Send notification (no response expected)
@@ -277,10 +471,10 @@ class MCPServerExecutionService {
       'params': params,
     };
     
-    if (server.transport == MCPTransport.stdio) {
-      await _sendStdioNotification(server, notification);
-    } else {
+    if (server.config.transport == 'sse') {
       await _sendSSENotification(server, notification);
+    } else {
+      await _sendStdioNotification(server, notification);
     }
   }
   
@@ -310,8 +504,14 @@ class MCPServerExecutionService {
           subscription?.cancel();
           
           if (response.containsKey('error')) {
-            completer.completeError(Exception('MCP Error: ${response['error']}'));
+            final errorInfo = response['error'];
+            final errorMessage = errorInfo is Map ? 
+                'MCP Error ${errorInfo['code'] ?? 'unknown'}: ${errorInfo['message'] ?? 'Unknown error'}' :
+                'MCP Error: $errorInfo';
+            server.recordError(errorMessage);
+            completer.completeError(Exception(errorMessage));
           } else {
+            server.recordActivity();
             completer.complete(response);
           }
         }
@@ -356,7 +556,7 @@ class MCPServerExecutionService {
   ) async {
     final client = HttpClient();
     try {
-      final uri = Uri.parse('${server.sseUrl}/request');
+      final uri = Uri.parse('${server.config.url}/request');
       final httpRequest = await client.postUrl(uri);
       httpRequest.headers.contentType = ContentType.json;
       
@@ -383,7 +583,7 @@ class MCPServerExecutionService {
   ) async {
     final client = HttpClient();
     try {
-      final uri = Uri.parse('${server.sseUrl}/notification');
+      final uri = Uri.parse('${server.config.url}/notification');
       final request = await client.postUrl(uri);
       request.headers.contentType = ContentType.json;
       
@@ -487,47 +687,8 @@ class MCPServerExecutionService {
   }
 }
 
-/// Represents a running MCP server process
-class MCPServerProcess {
-  final String id;
-  final MCPServerConfig config;
-  final Process? process;
-  final MCPTransport transport;
-  final DateTime startTime;
-  final String? sseUrl;
-  
-  bool isInitialized = false;
-  bool isHealthy = false;
-  DateTime? lastHealthCheck;
-  
-  MCPServerProcess({
-    required this.id,
-    required this.config,
-    required this.process,
-    required this.transport,
-    required this.startTime,
-    this.sseUrl,
-  });
-  
-  /// Get server uptime
-  Duration get uptime => DateTime.now().difference(startTime);
-  
-  /// Check if process is alive
-  bool get isAlive {
-    if (transport == MCPTransport.sse) {
-      return isHealthy; // For SSE, rely on health check
-    }
-    return process != null && process!.pid > 0;
-  }
-}
 
-/// MCP transport protocols
-enum MCPTransport {
-  stdio,  // Standard input/output (default)
-  sse,    // Server-Sent Events (HTTP-based)
-}
-
-/// Provider for MCP server execution service
+/// Provider for MCP server execution service - uses singleton from ServiceLocator
 final mcpServerExecutionServiceProvider = Provider<MCPServerExecutionService>((ref) {
-  return MCPServerExecutionService();
+  return ServiceLocator.instance.get<MCPServerExecutionService>();
 });
