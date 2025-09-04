@@ -162,7 +162,7 @@ export default function HomePage() {
                   className="w-full h-auto rounded-md sm:rounded-lg hover:scale-[1.02] transition-transform duration-300 object-contain max-h-[300px] sm:max-h-[400px] md:max-h-[500px] lg:max-h-[600px] xl:max-h-[700px]"
                   aria-label="Asmbli - Professional AI Agent Platform with Your Tools and MCP Integration"
                 >
-                  <source src="/hero-demo.mp4" type="video/mp4" />
+                  <source src="/hero-demo-new.mp4" type="video/mp4" />
                   <img 
                     src="/hero-app-screenshot.png" 
                     alt="Asmbli - Professional AI Agent Platform with Your Tools and MCP Integration"
