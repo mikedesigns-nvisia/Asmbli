@@ -600,14 +600,20 @@ class _ActionButton extends StatelessWidget {
     if (isPrimary) {
       return AsmblButton.primary(
         text: label,
-        onPressed: onPressed,
+        onPressed: () {
+          print('🔘 Primary button pressed: $label');
+          onPressed?.call();
+        },
       );
     }
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onPressed,
+        onTap: () {
+          print('🔘 Secondary button pressed: $label');
+          onPressed?.call();
+        },
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         child: Padding(
           padding: const EdgeInsets.symmetric(

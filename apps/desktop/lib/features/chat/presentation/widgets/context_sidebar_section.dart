@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
-import '../../../context/data/sample_context_data.dart';
 import '../../../context/presentation/widgets/context_hub_widget.dart';
 import '../../../context/data/models/context_document.dart';
 import 'package:agent_engine_core/models/conversation.dart';
@@ -22,20 +21,7 @@ class ContextSidebarSection extends ConsumerStatefulWidget {
 class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
   bool _isExpanded = true;
   bool _showContextBrowser = false;
-  List<SampleContext> _availableContexts = [];
   final List<String> _sessionContextIds = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAvailableContexts();
-  }
-
-  void _loadAvailableContexts() {
-    setState(() {
-      _availableContexts = SampleContextData.getAllSamples();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -410,17 +396,10 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
           
           // Show session context documents
           ..._sessionContextIds.map<Widget>((contextId) {
-            final context = _availableContexts.firstWhere(
-              (ctx) => ctx.title == contextId,
-              orElse: () => SampleContext(
-                title: contextId,
-                description: 'Custom document',
-                content: '',
-                contextType: ContextType.custom,
-                category: ContextHubCategory.templates,
-                tags: [],
-                icon: Icons.description,
-              ),
+            // Create a simple context representation for the UI
+            final context = (
+              title: contextId,
+              icon: Icons.description,
             );
             
             return Padding(
@@ -587,11 +566,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
   }
 
   Widget _buildContextBrowser(ThemeData theme) {
-    const categories = ContextHubCategory.values;
-    
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(maxHeight: 300),
+      constraints: const BoxConstraints(maxHeight: 200),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(8),
@@ -615,7 +592,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 Text(
                   'Context Library',
                   style: GoogleFonts.fustat(
-                                        fontSize: 13,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.onSurface,
                   ),
@@ -624,22 +601,32 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             ),
           ),
           
-          // Categories List
+          // Content
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                final categoryContexts = _availableContexts
-                    .where((ctx) => ctx.category == category)
-                    .take(3)
-                    .toList();
-                
-                if (categoryContexts.isEmpty) return const SizedBox.shrink();
-                
-                return _buildCategorySection(theme, category, categoryContexts);
-              },
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.construction,
+                      size: 32,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Context library will be available soon',
+                      style: GoogleFonts.fustat(
+                        fontSize: 12,
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -647,72 +634,6 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
     );
   }
 
-  Widget _buildCategorySection(ThemeData theme, ContextHubCategory category, List<SampleContext> contexts) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            category.displayName,
-            style: GoogleFonts.fustat(
-                            fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 4),
-          
-          ...contexts.map((ctx) {
-            final isAdded = _sessionContextIds.contains(ctx.title);
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: GestureDetector(
-                onTap: () => isAdded ? _removeSessionContext(ctx.title) : _addSessionContext(ctx.title),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isAdded 
-                        ? ThemeColors(context).success.withValues(alpha: 0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(4),
-                    border: isAdded 
-                        ? Border.all(color: ThemeColors(context).success.withValues(alpha: 0.3))
-                        : null,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        isAdded ? Icons.check_circle : ctx.icon,
-                        size: 12,
-                        color: isAdded 
-                            ? ThemeColors(context).success 
-                            : theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          ctx.title,
-                          style: GoogleFonts.fustat(
-                                                        fontSize: 10,
-                            color: isAdded 
-                                ? ThemeColors(context).success
-                                : theme.colorScheme.onSurface,
-                            fontWeight: isAdded ? FontWeight.w600 : FontWeight.normal,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
 
   void _addSessionContext(String contextId) {
     setState(() {

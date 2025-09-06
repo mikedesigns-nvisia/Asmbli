@@ -14,6 +14,7 @@ import '../../../../core/services/llm/llm_provider.dart';
 import '../../../../core/services/model_config_service.dart';
 import '../../../../core/models/model_config.dart';
 import '../../../../core/services/agent_context_prompt_service.dart';
+import '../../../../core/services/model_warmup_service.dart';
 import '../widgets/improved_conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/agent_deployment_section.dart';
@@ -34,6 +35,8 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
  bool isSidebarCollapsed = false;
  final TextEditingController messageController = TextEditingController();
+ bool _modelsWarmedUp = false;
+ bool _isWarmingUp = false;
  
  @override
  void initState() {
@@ -46,8 +49,37 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  // TODO: Implement ServiceProvider
  // ServiceProvider.configure(useInMemory: true);
  // await ServiceProvider.initialize();
+ 
+ // Start model warm-up process
+ _startModelWarmUp();
  } catch (e) {
  print('Service initialization failed: $e');
+ }
+ }
+
+ Future<void> _startModelWarmUp() async {
+ if (_isWarmingUp || _modelsWarmedUp) return;
+ 
+ setState(() {
+   _isWarmingUp = true;
+ });
+ 
+ try {
+   print('🔥 Starting model warm-up for chat screen...');
+   final warmUpService = ref.read(modelWarmUpServiceProvider);
+   await warmUpService.warmUpAllModels();
+   
+   setState(() {
+     _modelsWarmedUp = true;
+     _isWarmingUp = false;
+   });
+   
+   print('✅ Model warm-up completed');
+ } catch (e) {
+   print('❌ Model warm-up failed: $e');
+   setState(() {
+     _isWarmingUp = false;
+   });
  }
  }
 
@@ -59,7 +91,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final isDark = theme.brightness == Brightness.dark;
  
  return Scaffold(
- body: Container(
+ body: Stack(
+ children: [
+ Container(
   decoration: BoxDecoration(
  gradient: RadialGradient(
  center: Alignment.topCenter,
@@ -126,6 +160,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ],
  ),
  ),
+ ),
+
+ // Model warm-up loading overlay
+ if (_isWarmingUp)
+   _buildWarmUpOverlay(context),
+ ],
  ),
  );
  }
@@ -306,6 +346,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  ],
+ 
+ // Priming status indicator for all conversations
+ const SizedBox(width: 8),
+ _buildPrimingStatusIndicator(context, conversation),
  ],
  ),
  );
@@ -527,6 +571,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                    ),
                  ),
                ),
+               
+               // Warm-up status indicator
+               Consumer(
+                 builder: (context, ref, _) {
+                   final isReady = ref.watch(isModelReadyProvider(model.id));
+                   return Container(
+                     width: 8,
+                     height: 8,
+                     decoration: BoxDecoration(
+                       color: isReady 
+                         ? ThemeColors(context).success
+                         : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                       shape: BoxShape.circle,
+                     ),
+                   );
+                 },
+               ),
                if (model.isLocal) ...[
                  const SizedBox(width: SpacingTokens.xs),
                  Text(
@@ -622,9 +683,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  if (modelType == 'local') {
    return Icons.storage; // Local storage icon for local models
- } else {
+ } else if (modelType == 'api') {
    return Icons.cloud; // Cloud icon for API models
  }
+ 
+ // Fallback: check the conversation-specific selected model
+ final conversationModel = ref.read(conversationModelProvider(conversation.id));
+ if (conversationModel?.isLocal == true) {
+   return Icons.storage; // Local storage icon for local models
+ }
+ 
+ return Icons.cloud; // Default to cloud icon
  }
 
  /// Get contextual text for conversation badge
@@ -636,13 +705,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
    return 'Agent';
  }
  
- // Show model type based on current selected model
- final selectedModel = ref.read(selectedModelProvider);
- if (selectedModel?.isLocal == true) {
- return 'Local';
- } else {
- return 'Cloud';
+ // Use the conversation's stored model type for consistency with icon logic
+ final modelType = metadata?['modelType'] as String?;
+ if (modelType == 'local') {
+   return 'Local';
+ } else if (modelType == 'api') {
+   return 'Cloud';
  }
+ 
+ // Fallback: check the conversation-specific selected model
+ final conversationModel = ref.read(conversationModelProvider(conversation.id));
+ if (conversationModel?.isLocal == true) {
+   return 'Local';
+ }
+ 
+ return 'Cloud';
  }
 
  Widget _buildSidebar(BuildContext context) {
@@ -1449,6 +1526,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  try {
  ref.read(isLoadingProvider.notifier).state = true;
  
+ // Ensure conversation is primed before sending message
+ final conversationModel = ref.read(conversationModelProvider(selectedConversationId)) 
+     ?? ref.read(selectedModelProvider);
+ 
+ if (conversationModel != null) {
+   final ensurePrimed = ref.read(ensureConversationPrimedProvider);
+   await ensurePrimed(selectedConversationId, conversationModel.id);
+ }
+ 
  final sendMessage = ref.read(sendMessageProvider);
  await sendMessage(
  conversationId: selectedConversationId,
@@ -1686,6 +1772,10 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
      );
      
      await service.addMessage(conversationId, assistantMessage);
+     
+     // Update conversation priming status to success since message worked
+     await _updateConversationPrimingAfterSuccess(conversationId, selectedModel);
+     
      ref.invalidate(messagesProvider(conversationId));
      return;
      
@@ -1726,6 +1816,10 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  );
 
  await service.addMessage(conversationId, assistantMessage);
+ 
+ // Update conversation priming status to success since message worked
+ await _updateConversationPrimingAfterSuccess(conversationId, selectedModel);
+ 
  ref.invalidate(messagesProvider(conversationId));
  
  } catch (e) {
@@ -1849,7 +1943,307 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  }
  }
 
-  /// Show API key configuration dialog when user tries to chat without API key
+ /// Build warm-up loading overlay
+Widget _buildWarmUpOverlay(BuildContext context) {
+ final theme = Theme.of(context);
+ final warmUpStatusAsync = ref.watch(modelWarmUpStatusProvider);
+ 
+ return Container(
+   color: theme.colorScheme.surface.withValues(alpha: 0.95),
+   child: Center(
+     child: Container(
+       constraints: const BoxConstraints(maxWidth: 400),
+       padding: const EdgeInsets.all(SpacingTokens.xxl),
+       child: Column(
+         mainAxisSize: MainAxisSize.min,
+         children: [
+           // Loading icon
+           Container(
+             padding: const EdgeInsets.all(SpacingTokens.lg),
+             decoration: BoxDecoration(
+               color: ThemeColors(context).primary.withValues(alpha: 0.1),
+               shape: BoxShape.circle,
+             ),
+             child: Icon(
+               Icons.model_training,
+               size: 48,
+               color: ThemeColors(context).primary,
+             ),
+           ),
+           
+           const SizedBox(height: SpacingTokens.lg),
+           
+           // Title
+           Text(
+             'Warming Up Models',
+             style: GoogleFonts.fustat(
+               fontSize: 24,
+               fontWeight: FontWeight.w600,
+               color: theme.colorScheme.onSurface,
+             ),
+           ),
+           
+           const SizedBox(height: SpacingTokens.sm),
+           
+           // Subtitle
+           Text(
+             'Preparing AI models for optimal performance...',
+             style: GoogleFonts.fustat(
+               fontSize: 14,
+               color: theme.colorScheme.onSurfaceVariant,
+             ),
+             textAlign: TextAlign.center,
+           ),
+           
+           const SizedBox(height: SpacingTokens.xl),
+           
+           // Model status list
+           warmUpStatusAsync.when(
+             data: (statusMap) => _buildModelStatusList(context, statusMap),
+             loading: () => const CircularProgressIndicator(),
+             error: (error, _) => Text(
+               'Error during warm-up: $error',
+               style: TextStyle(color: theme.colorScheme.error),
+             ),
+           ),
+         ],
+       ),
+     ),
+   ),
+ );
+}
+
+/// Build list of model warm-up statuses
+Widget _buildModelStatusList(BuildContext context, Map<String, ModelWarmUpStatus> statusMap) {
+ final theme = Theme.of(context);
+ final statuses = statusMap.values.toList();
+ 
+ if (statuses.isEmpty) {
+   return Text(
+     'No models to warm up',
+     style: GoogleFonts.fustat(
+       color: theme.colorScheme.onSurfaceVariant,
+     ),
+   );
+ }
+ 
+ return Column(
+   children: statuses.map((status) => _buildModelStatusItem(context, status)).toList(),
+ );
+}
+
+/// Build individual model status item
+Widget _buildModelStatusItem(BuildContext context, ModelWarmUpStatus status) {
+ final theme = Theme.of(context);
+ 
+ IconData statusIcon;
+ Color statusColor;
+ String statusText;
+ 
+ switch (status.status) {
+   case WarmUpState.starting:
+     statusIcon = Icons.schedule;
+     statusColor = theme.colorScheme.onSurfaceVariant;
+     statusText = 'Starting...';
+     break;
+   case WarmUpState.warming:
+     statusIcon = Icons.hourglass_empty;
+     statusColor = ThemeColors(context).primary;
+     statusText = 'Warming...';
+     break;
+   case WarmUpState.ready:
+     statusIcon = Icons.check_circle;
+     statusColor = ThemeColors(context).success;
+     statusText = 'Ready';
+     break;
+   case WarmUpState.error:
+     statusIcon = Icons.error;
+     statusColor = ThemeColors(context).error;
+     statusText = 'Error';
+     break;
+   case WarmUpState.needsWarmUp:
+     statusIcon = Icons.refresh;
+     statusColor = theme.colorScheme.onSurfaceVariant;
+     statusText = 'Needs warm-up';
+     break;
+ }
+ 
+ return Container(
+   margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+   padding: const EdgeInsets.symmetric(
+     horizontal: SpacingTokens.md,
+     vertical: SpacingTokens.sm,
+   ),
+   decoration: BoxDecoration(
+     color: theme.colorScheme.surface,
+     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+     border: Border.all(
+       color: theme.colorScheme.outline.withValues(alpha: 0.3),
+     ),
+   ),
+   child: Row(
+     children: [
+       Icon(
+         statusIcon,
+         size: 16,
+         color: statusColor,
+       ),
+       const SizedBox(width: SpacingTokens.sm),
+       
+       Expanded(
+         child: Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Text(
+               status.modelName,
+               style: GoogleFonts.fustat(
+                 fontSize: 14,
+                 fontWeight: FontWeight.w500,
+                 color: theme.colorScheme.onSurface,
+               ),
+             ),
+             Row(
+               children: [
+                 Text(
+                   status.isLocal ? 'Local' : 'API',
+                   style: GoogleFonts.fustat(
+                     fontSize: 11,
+                     color: theme.colorScheme.onSurfaceVariant,
+                   ),
+                 ),
+                 const SizedBox(width: SpacingTokens.xs),
+                 Text(
+                   '•',
+                   style: TextStyle(
+                     color: theme.colorScheme.onSurfaceVariant,
+                   ),
+                 ),
+                 const SizedBox(width: SpacingTokens.xs),
+                 Text(
+                   statusText,
+                   style: GoogleFonts.fustat(
+                     fontSize: 11,
+                     color: statusColor,
+                     fontWeight: FontWeight.w500,
+                   ),
+                 ),
+               ],
+             ),
+           ],
+         ),
+       ),
+       
+       if (status.status == WarmUpState.warming)
+         const SizedBox(
+           width: 16,
+           height: 16,
+           child: CircularProgressIndicator(strokeWidth: 2),
+         ),
+     ],
+   ),
+ );
+}
+
+/// Build priming status indicator for conversation
+Widget _buildPrimingStatusIndicator(BuildContext context, core.Conversation conversation) {
+ final primingStatus = ref.watch(conversationPrimingStatusProvider(conversation.id));
+ final theme = Theme.of(context);
+ 
+ if (primingStatus == null) return Container();
+ 
+ final isPrimed = primingStatus['isPrimed'] as bool? ?? false;
+ final primingAttempted = primingStatus['primingAttempted'] as bool? ?? false;
+ final primingError = primingStatus['primingError'] as String?;
+ 
+ Color indicatorColor;
+ String statusText;
+ IconData statusIcon;
+ 
+ if (isPrimed) {
+   indicatorColor = ThemeColors(context).success;
+   statusText = 'PRIMED';
+   statusIcon = Icons.check_circle;
+ } else if (primingError != null) {
+   indicatorColor = ThemeColors(context).error;
+   statusText = 'ERROR';
+   statusIcon = Icons.error;
+ } else if (primingAttempted) {
+   indicatorColor = theme.colorScheme.onSurfaceVariant;
+   statusText = 'FAILED';
+   statusIcon = Icons.warning;
+ } else {
+   indicatorColor = theme.colorScheme.onSurfaceVariant;
+   statusText = 'NOT PRIMED';
+   statusIcon = Icons.schedule;
+ }
+ 
+ return Container(
+   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+   decoration: BoxDecoration(
+     color: indicatorColor.withValues(alpha: 0.1),
+     borderRadius: BorderRadius.circular(8),
+     border: Border.all(
+       color: indicatorColor.withValues(alpha: 0.3),
+     ),
+   ),
+   child: Row(
+     mainAxisSize: MainAxisSize.min,
+     children: [
+       Icon(
+         statusIcon,
+         size: 10,
+         color: indicatorColor,
+       ),
+       const SizedBox(width: 4),
+       Text(
+         statusText,
+         style: GoogleFonts.fustat(
+           fontSize: 8,
+           fontWeight: FontWeight.w600,
+           color: indicatorColor,
+         ),
+       ),
+     ],
+   ),
+ );
+}
+
+/// Update conversation priming status to success after message works
+Future<void> _updateConversationPrimingAfterSuccess(String conversationId, ModelConfig model) async {
+ try {
+   final businessService = ref.read(conversationBusinessServiceProvider);
+   
+   // Update conversation metadata to reflect successful priming
+   await businessService.updateConversation(
+     conversationId: conversationId,
+     metadata: {
+       'isPrimed': true,
+       'primingAttempted': true,
+       'primedAt': DateTime.now().toIso8601String(),
+       'primingResult': {
+         'status': 'success',
+         'method': 'message_success',
+         'modelUsed': model.id,
+         'modelName': model.name,
+         'verifiedAt': DateTime.now().toIso8601String(),
+       },
+       'primingError': null, // Clear any previous error
+     },
+   );
+   
+   // Update model warm-up status to ready since message succeeded
+   final warmUpService = ref.read(modelWarmUpServiceProvider);
+   warmUpService.markModelAsReady(model.id);
+   
+   // Refresh conversation provider to update UI
+   ref.invalidate(conversationProvider(conversationId));
+   
+ } catch (e) {
+   print('Failed to update priming status after success: $e');
+ }
+}
+
+ /// Show API key configuration dialog when user tries to chat without API key
  void _showApiKeyConfigurationDialog() {
    showDialog(
      context: context,

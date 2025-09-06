@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import '../services/desktop/desktop_storage_service.dart';
+import 'storage_transaction_manager.dart';
 
 class StorageResult<T> {
   final bool success;
@@ -410,6 +411,40 @@ class SafeStorageUtils {
     return digest.toString();
   }
   
+  /// Execute multiple storage operations in a transaction
+  static Future<StorageResult<void>> executeTransaction(
+    List<StorageOperation> operations, {
+    Duration? timeout,
+  }) async {
+    try {
+      final result = await StorageTransactionManager.instance.executeTransaction(
+        operations,
+        timeout: timeout,
+      );
+      
+      if (result.success) {
+        return StorageResult.success(null);
+      } else {
+        return StorageResult.error('Transaction failed: ${result.errors.join(', ')}');
+      }
+    } catch (e) {
+      return StorageResult.error('Transaction execution failed: $e');
+    }
+  }
+  
+  /// Begin a manual transaction for complex operations
+  static StorageTransaction beginTransaction({Duration? timeout}) {
+    return StorageTransactionManager.instance.beginTransaction(timeout: timeout);
+  }
+  
+  /// Get active transaction count (for monitoring)
+  static int get activeTransactionCount => StorageTransactionManager.instance.activeTransactionCount;
+  
+  /// Rollback all active transactions (emergency cleanup)
+  static Future<void> rollbackAllTransactions() async {
+    await StorageTransactionManager.instance.rollbackAllTransactions();
+  }
+
   /// Health check for storage subsystem
   static Future<StorageHealthResult> performHealthCheck() async {
     final results = <String, bool>{};
@@ -450,17 +485,41 @@ class SafeStorageUtils {
         errors.add('SharedPreferences test error: $e');
       }
       
+      // Test transaction system
+      try {
+        final transactionOps = [
+          SetHiveDataOperation(boxName: 'settings', key: '${testKey}_txn1', value: 'test1'),
+          SetHiveDataOperation(boxName: 'settings', key: '${testKey}_txn2', value: 'test2'),
+          RemoveHiveDataOperation(boxName: 'settings', key: '${testKey}_txn1'),
+        ];
+        
+        final txnResult = await executeTransaction(transactionOps);
+        results['transactions'] = txnResult.success;
+        
+        // Cleanup
+        await safeRemove('settings', '${testKey}_txn2');
+        
+        if (!results['transactions']!) {
+          errors.add('Transaction system test failed');
+        }
+      } catch (e) {
+        results['transactions'] = false;
+        errors.add('Transaction test error: $e');
+      }
+      
     } catch (e) {
       errors.add('Health check error: $e');
     }
     
     final isHealthy = results.values.any((result) => result);
+    final activeTransactions = activeTransactionCount;
     
     return StorageHealthResult(
       isHealthy: isHealthy,
       subsystemResults: results,
       errors: errors,
       timestamp: DateTime.now(),
+      activeTransactionCount: activeTransactions,
     );
   }
 }
@@ -480,12 +539,14 @@ class StorageHealthResult {
   final Map<String, bool> subsystemResults;
   final List<String> errors;
   final DateTime timestamp;
+  final int activeTransactionCount;
   
   const StorageHealthResult({
     required this.isHealthy,
     required this.subsystemResults,
     required this.errors,
     required this.timestamp,
+    this.activeTransactionCount = 0,
   });
   
   @override
@@ -493,6 +554,7 @@ class StorageHealthResult {
     final buffer = StringBuffer();
     buffer.writeln('Storage Health Check Results:');
     buffer.writeln('Overall Status: ${isHealthy ? '✅ Healthy' : '❌ Unhealthy'}');
+    buffer.writeln('Active Transactions: $activeTransactionCount');
     
     for (final entry in subsystemResults.entries) {
       final status = entry.value ? '✅' : '❌';

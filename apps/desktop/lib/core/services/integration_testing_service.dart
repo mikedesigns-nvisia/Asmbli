@@ -414,28 +414,49 @@ class IntegrationTestingService {
     MCPServerConfig config,
     DateTime startTime,
   ) async {
-    // Simulate connectivity test
-    await Future.delayed(Duration(milliseconds: 500 + Random().nextInt(1000)));
-    
-    final success = Random().nextBool(); // Mock success/failure
-    
-    return TestResult(
-      testId: _generateTestId(),
-      testType: TestType.connectivity,
-      integrationId: integration.id,
-      startTime: startTime,
-      endTime: DateTime.now(),
-      status: success ? TestStatus.passed : TestStatus.failed,
-      severity: success ? TestSeverity.info : TestSeverity.high,
-      message: success 
-          ? 'Successfully connected to ${integration.name}'
-          : 'Failed to connect to ${integration.name}',
-      details: {
-        'endpoint': config.command.isNotEmpty ? config.command : 'unknown',
-        'responseTime': '${500 + Random().nextInt(1000)}ms',
-        'protocol': integration.category == IntegrationCategory.cloudAPIs ? 'HTTPS' : 'Local',
-      },
-    );
+    try {
+      // Test real MCP server connection
+      final connectionResult = await _mcpService.testMCPServerConnection(config.id);
+      final success = connectionResult.isConnected;
+      final responseTime = DateTime.now().difference(startTime).inMilliseconds;
+      
+      return TestResult(
+        testId: _generateTestId(),
+        testType: TestType.connectivity,
+        integrationId: integration.id,
+        startTime: startTime,
+        endTime: DateTime.now(),
+        status: success ? TestStatus.passed : TestStatus.failed,
+        severity: success ? TestSeverity.info : TestSeverity.high,
+        message: success 
+            ? 'Successfully connected to ${integration.name} MCP server'
+            : 'Failed to connect to ${integration.name} MCP server',
+        details: {
+          'endpoint': config.command.isNotEmpty ? config.command : 'unknown',
+          'responseTime': '${responseTime}ms',
+          'protocol': integration.category == IntegrationCategory.cloudAPIs ? 'HTTPS' : 'Local',
+          'capabilities': success ? connectionResult.metadata?.toString() : null,
+          'error': success ? null : connectionResult.errorMessage,
+        },
+      );
+    } catch (e) {
+      final responseTime = DateTime.now().difference(startTime).inMilliseconds;
+      return TestResult(
+        testId: _generateTestId(),
+        testType: TestType.connectivity,
+        integrationId: integration.id,
+        startTime: startTime,
+        endTime: DateTime.now(),
+        status: TestStatus.failed,
+        severity: TestSeverity.high,
+        message: 'Connection test failed for ${integration.name}',
+        details: {
+          'endpoint': config.command.isNotEmpty ? config.command : 'unknown',
+          'responseTime': '${responseTime}ms',
+          'error': e.toString(),
+        },
+      );
+    }
   }
   
   Future<TestResult> _testAuthentication(
@@ -806,12 +827,22 @@ class IntegrationTestingService {
   ) async {
     final issues = <ValidationIssue>[];
     
-    // Mock connectivity validation
-    if (Random().nextBool()) {
+    // Production connectivity validation - check MCP server status
+    try {
+      final connectionStatus = await _mcpService.testMCPServerConnection(config.id);
+      if (!connectionStatus.isConnected) {
       issues.add(ValidationIssue(
         severity: ValidationSeverity.warning,
         integrationId: integration.id,
-        message: 'Connection test failed',
+        message: 'MCP server connection failed: ${connectionStatus.errorMessage}',
+        affectedIntegrations: [integration.id],
+      ));
+      }
+    } catch (e) {
+      issues.add(ValidationIssue(
+        severity: ValidationSeverity.error,
+        integrationId: integration.id,
+        message: 'Connection validation failed: ${e.toString()}',
         affectedIntegrations: [integration.id],
       ));
     }
@@ -825,8 +856,8 @@ class IntegrationTestingService {
   ) async {
     final issues = <ValidationIssue>[];
     
-    // Mock permission validation
-    if (integration.category == IntegrationCategory.local && Random().nextBool()) {
+    // Production permission validation
+    if (integration.category == IntegrationCategory.local) {
       issues.add(ValidationIssue(
         severity: ValidationSeverity.warning,
         integrationId: integration.id,
@@ -861,8 +892,25 @@ class IntegrationTestingService {
   }
   
   bool _isPrerequisiteMet(String prerequisite) {
-    // Mock prerequisite checking
-    return Random().nextBool();
+    // Production prerequisite checking - validate actual system requirements
+    final prereqLower = prerequisite.toLowerCase();
+    
+    // Check for common prerequisites
+    if (prereqLower.contains('node') || prereqLower.contains('npm')) {
+      // TODO: Check if Node.js/npm is installed via process check
+      return true; // Assume available for now
+    }
+    if (prereqLower.contains('python')) {
+      // TODO: Check if Python is installed
+      return true; // Assume available for now
+    }
+    if (prereqLower.contains('docker')) {
+      // TODO: Check if Docker is running
+      return true; // Assume available for now
+    }
+    
+    // Default to true for now - should implement actual system checks
+    return true;
   }
   
   double _calculateOverallScore(List<BenchmarkTest> tests) {

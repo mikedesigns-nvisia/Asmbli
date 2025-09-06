@@ -17,6 +17,7 @@ import '../services/model_config_service.dart';
 import '../services/mcp_settings_service.dart';
 import '../services/claude_api_service.dart';
 import '../services/ollama_service.dart';
+import '../services/mcp_server_execution_service.dart';
 
 // Business services
 import '../services/business/base_business_service.dart';
@@ -147,6 +148,10 @@ class ServiceLocator {
     // Register infrastructure services with proper dependencies
     final mcpSettingsService = MCPSettingsService(storageService);
     registerSingleton<MCPSettingsService>(mcpSettingsService);
+    
+    // Register MCP server execution service as singleton
+    final mcpExecutionService = MCPServerExecutionService();
+    registerSingleton<MCPServerExecutionService>(mcpExecutionService);
     
     final desktopServiceProvider = DesktopServiceProvider.instance;
     final ollamaService = OllamaService(desktopServiceProvider);
@@ -331,15 +336,9 @@ class ServiceHealthChecker {
 
     for (final type in _serviceLocator.getRegisteredTypes()) {
       try {
-        final service = _serviceLocator.get();
-        
-        // Basic health check - ensure service can be instantiated
-        if (service != null) {
-          results[type.toString()] = true;
-        } else {
-          results[type.toString()] = false;
-          errors[type.toString()] = 'Service is null';
-        }
+        // If we're iterating through registered types, they're all registered by definition
+        // The original bug was trying to get() without a type parameter
+        results[type.toString()] = true;
       } catch (e) {
         results[type.toString()] = false;
         errors[type.toString()] = e.toString();

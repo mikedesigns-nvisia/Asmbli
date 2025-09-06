@@ -3,6 +3,7 @@ import 'package:agent_engine_core/services/conversation_service.dart';
 import '../core/services/desktop/desktop_conversation_service.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import '../core/services/mcp_settings_service.dart';
+import '../core/services/mcp_server_execution_service.dart';
 import '../core/services/agent_system_prompt_service.dart';
 import '../core/services/model_config_service.dart';
 import '../core/services/desktop/hive_cleanup_service.dart';
@@ -22,47 +23,38 @@ final conversationBusinessServiceProvider = Provider<ConversationBusinessService
 final conversationsProvider = StreamProvider<List<Conversation>>((ref) async* {
  final service = ref.read(conversationServiceProvider);
  
- while (true) {
  try {
- final allConversations = await service.listConversations();
- yield allConversations.where((c) => c.status == ConversationStatus.active).toList();
- await Future.delayed(const Duration(seconds: 5)); 
+   final allConversations = await service.listConversations();
+   yield allConversations.where((c) => c.status == ConversationStatus.active).toList();
  } catch (e) {
- yield* Stream.error(e);
- }
+   yield* Stream.error(e);
  }
 });
 
 final conversationProvider = StreamProvider.family<Conversation, String>((ref, conversationId) async* {
  final service = ref.read(conversationServiceProvider);
  
- while (true) {
  try {
- yield await service.getConversation(conversationId);
- await Future.delayed(const Duration(seconds: 2));
+   yield await service.getConversation(conversationId);
  } catch (e) {
- yield* Stream.error(e);
- }
+   yield* Stream.error(e);
  }
 });
 
 final messagesProvider = StreamProvider.family<List<Message>, String>((ref, conversationId) async* {
  final service = ref.read(conversationServiceProvider);
  
- while (true) {
  try {
- yield await service.getMessages(conversationId);
- await Future.delayed(const Duration(seconds: 1));
+   yield await service.getMessages(conversationId);
  } catch (e) {
- yield* Stream.error(e);
- }
+   yield* Stream.error(e);
  }
 });
 
 final createConversationProvider = Provider.autoDispose((ref) {
  final businessService = ref.read(conversationBusinessServiceProvider);
  
- return ({required String title, Map<String, dynamic>? metadata}) async {
+ return ({required String title, Map<String, dynamic>? metadata, bool autoPrime = true}) async {
  // Get the default model configuration to store with conversation
  final defaultModel = ref.read(defaultModelConfigProvider);
  
@@ -70,6 +62,7 @@ final createConversationProvider = Provider.autoDispose((ref) {
  final result = await businessService.createConversation(
    title: title,
    modelId: defaultModel?.id,
+   autoPrime: autoPrime,
    metadata: {
      'type': 'direct_chat',
      'version': '2.0.0',
@@ -84,6 +77,8 @@ final createConversationProvider = Provider.autoDispose((ref) {
  );
  
  if (result.isSuccess) {
+   // Invalidate conversations list to show the new conversation in sidebar
+   ref.invalidate(conversationsProvider);
    return result.data!;
  } else {
    throw Exception(result.error);
@@ -96,6 +91,7 @@ final createConversationProvider = Provider.autoDispose((ref) {
 final createAgentConversationProvider = Provider.autoDispose((ref) {
  final service = ref.read(conversationServiceProvider);
  final mcpService = ref.read(mcpSettingsServiceProvider);
+ final mcpExecutionService = ref.read(mcpServerExecutionServiceProvider);
  
  return ({
  required String agentId,
@@ -168,6 +164,34 @@ final createAgentConversationProvider = Provider.autoDispose((ref) {
  metadata: agentMetadata,
  );
  
+ // Actually start the MCP servers for this agent's tools
+ if (mcpServers.isNotEmpty) {
+   try {
+     print('🚀 Starting ${mcpServers.length} MCP servers for agent: $agentName');
+     final startedServers = <String>[];
+     
+     for (final serverId in mcpServers) {
+       final serverConfig = mcpService.getMCPServer(serverId);
+       if (serverConfig != null) {
+         try {
+           await mcpExecutionService.startMCPServer(
+             serverConfig,
+             serverConfig.env ?? {}
+           );
+           startedServers.add(serverId);
+           print('✅ Started MCP server: $serverId');
+         } catch (e) {
+           print('⚠️ Failed to start MCP server $serverId: $e');
+         }
+       }
+     }
+     
+     print('🎯 Agent "$agentName" ready with ${startedServers.length}/${mcpServers.length} MCP tools active');
+   } catch (e) {
+     print('❌ Error starting MCP servers for agent: $e');
+   }
+ }
+ 
  return await service.createConversation(conversation);
  };
 });
@@ -236,15 +260,22 @@ final getOrCreateDefaultConversationProvider = Provider.autoDispose((ref) {
  'contextEnabled': globalContextDocs.isNotEmpty,
  };
  
- final conversation = Conversation(
- id: DateTime.now().millisecondsSinceEpoch.toString(),
- title: 'Let\'s Talk',
- messages: [],
- createdAt: DateTime.now(),
- metadata: defaultMetadata,
+ // Use the business service for conversation creation with auto-priming
+ final businessService = ref.read(conversationBusinessServiceProvider);
+ final result = await businessService.createConversation(
+   title: 'Let\'s Talk',
+   modelId: selectedModel?.id,
+   autoPrime: true,
+   metadata: defaultMetadata,
  );
  
- return await service.createConversation(conversation);
+ if (result.isSuccess) {
+   // Invalidate conversations list to show the new conversation in sidebar
+   ref.invalidate(conversationsProvider);
+   return result.data!;
+ } else {
+   throw Exception(result.error);
+ }
  }
  };
 });
@@ -352,14 +383,11 @@ final deleteConversationProvider = Provider.autoDispose((ref) {
 final archivedConversationsProvider = StreamProvider<List<Conversation>>((ref) async* {
  final service = ref.read(conversationServiceProvider);
  
- while (true) {
  try {
- final allConversations = await service.listConversations();
- yield allConversations.where((c) => c.status == ConversationStatus.archived).toList();
- await Future.delayed(const Duration(seconds: 5)); 
+   final allConversations = await service.listConversations();
+   yield allConversations.where((c) => c.status == ConversationStatus.archived).toList();
  } catch (e) {
- yield* Stream.error(e);
- }
+   yield* Stream.error(e);
  }
 });
 
@@ -443,6 +471,77 @@ final setConversationModelProvider = Provider.autoDispose((ref) {
       rethrow;
     }
   };
+});
+
+// Priming providers
+final primeConversationProvider = Provider.autoDispose((ref) {
+  final businessService = ref.read(conversationBusinessServiceProvider);
+  
+  return (String conversationId, String modelId) async {
+    final result = await businessService.primeConversation(
+      conversationId: conversationId,
+      modelId: modelId,
+    );
+    
+    if (result.isSuccess) {
+      // Invalidate conversation to refresh UI with priming status
+      ref.invalidate(conversationProvider(conversationId));
+      return result.data!;
+    } else {
+      throw Exception(result.error);
+    }
+  };
+});
+
+final ensureConversationPrimedProvider = Provider.autoDispose((ref) {
+  final businessService = ref.read(conversationBusinessServiceProvider);
+  
+  return (String conversationId, String modelId) async {
+    final result = await businessService.ensureConversationPrimed(
+      conversationId: conversationId,
+      modelId: modelId,
+    );
+    
+    if (result.isSuccess) {
+      // Invalidate conversation to refresh UI with priming status
+      ref.invalidate(conversationProvider(conversationId));
+      return result.data!;
+    } else {
+      throw Exception(result.error);
+    }
+  };
+});
+
+// Provider to check if conversation is primed
+final isConversationPrimedProvider = Provider.family<bool, String>((ref, conversationId) {
+  final conversationAsync = ref.watch(conversationProvider(conversationId));
+  
+  return conversationAsync.maybeWhen(
+    data: (conversation) {
+      final isPrimed = conversation.metadata?['isPrimed'] as bool? ?? false;
+      return isPrimed;
+    },
+    orElse: () => false,
+  );
+});
+
+// Provider to get priming status and details
+final conversationPrimingStatusProvider = Provider.family<Map<String, dynamic>?, String>((ref, conversationId) {
+  final conversationAsync = ref.watch(conversationProvider(conversationId));
+  
+  return conversationAsync.maybeWhen(
+    data: (conversation) {
+      final metadata = conversation.metadata ?? {};
+      return {
+        'isPrimed': metadata['isPrimed'] as bool? ?? false,
+        'primingAttempted': metadata['primingAttempted'] as bool? ?? false,
+        'primedAt': metadata['primedAt'] as String?,
+        'primingResult': metadata['primingResult'] as Map<String, dynamic>?,
+        'primingError': metadata['primingError'] as String?,
+      };
+    },
+    orElse: () => null,
+  );
 });
 
 /// Helper function to get provider name for conversation metadata

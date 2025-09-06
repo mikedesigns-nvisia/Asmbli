@@ -7,8 +7,7 @@ import '../../../../core/design_system/components/mcp_testing_widgets.dart';
 import 'enhanced_auto_detection_modal.dart';
 import '../../../../core/models/enhanced_mcp_template.dart';
 import '../../../../core/services/mcp_settings_service.dart';
-
-
+import '../../../../core/services/mcp_server_execution_service.dart';
 import '../../../../core/models/mcp_server_config.dart';
 
 /// Enhanced MCP server setup wizard with template browser and smart forms
@@ -692,8 +691,8 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     setState(() => _isLoading = true);
     
     try {
-      // Simulate testing connection
-      await Future.delayed(const Duration(seconds: 2));
+      // Save configuration and actually start the MCP server
+      await Future.delayed(const Duration(milliseconds: 500));
       
       final serverId = widget.serverId ?? 
           _selectedTemplate!.name.toLowerCase().replaceAll(' ', '-');
@@ -711,13 +710,53 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
         lastUpdated: DateTime.now(),
       );
 
+      // Save configuration
       final mcpService = ref.read(mcpSettingsServiceProvider);
       await mcpService.setMCPServer(serverId, config);
       await mcpService.saveSettings();
 
       if (mounted) {
-        await Future.delayed(const Duration(seconds: 1)); // Show success state
-        Navigator.of(context).pop(true);
+        // Show starting server message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Starting MCP server: ${config.name}...'),
+            backgroundColor: Colors.blue[800],
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+
+      // Actually start the MCP server using execution service
+      final executionService = ref.read(mcpServerExecutionServiceProvider);
+      try {
+        final serverProcess = await executionService.startMCPServer(
+          config, 
+          config.env ?? {}
+        );
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✅ ${config.name} server running and ready!'),
+              backgroundColor: Colors.green[800],
+              duration: const Duration(seconds: 3),
+            ),
+          );
+          await Future.delayed(const Duration(milliseconds: 500));
+          Navigator.of(context).pop(true);
+        }
+      } catch (serverError) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('⚠️ Server configured but failed to start: $serverError'),
+              backgroundColor: Colors.orange[800],
+              duration: const Duration(seconds: 4),
+            ),
+          );
+          await Future.delayed(const Duration(milliseconds: 500));
+          Navigator.of(context).pop(true);
+        }
       }
     } catch (e) {
       if (mounted) {

@@ -200,6 +200,7 @@ class ConversationBusinessService extends BaseBusinessService {
     String? agentId,
     String? modelId,
     Map<String, dynamic> metadata = const {},
+    bool autoPrime = true,
   }) async {
     return handleBusinessOperation('createConversation', () async {
       validateRequired({'title': title});
@@ -218,12 +219,34 @@ class ConversationBusinessService extends BaseBusinessService {
           'modelId': modelId,
           'messageCount': 0,
           'lastActivity': DateTime.now().toIso8601String(),
+          'isPrimed': false,
+          'primingAttempted': false,
           ...metadata,
         },
       );
 
       final createdConversation = await _conversationRepository.createConversation(conversation);
       _eventBus.publish(EntityCreatedEvent(createdConversation));
+
+      // Auto-prime the conversation if requested and modelId is provided
+      if (autoPrime && modelId != null) {
+        final primingResult = await _primeConversation(createdConversation, modelId);
+        if (primingResult.isSuccess) {
+          // Update conversation with priming success
+          final primedConversation = await _conversationRepository.updateConversation(
+            createdConversation.copyWith(
+              metadata: {
+                ...createdConversation.metadata!,
+                'isPrimed': true,
+                'primingAttempted': true,
+                'primedAt': DateTime.now().toIso8601String(),
+                'primingResult': primingResult.data,
+              },
+            ),
+          );
+          return BusinessResult.success(primedConversation);
+        }
+      }
 
       return BusinessResult.success(createdConversation);
     });
@@ -336,6 +359,58 @@ class ConversationBusinessService extends BaseBusinessService {
       }
 
       return BusinessResult.success(filteredConversations);
+    });
+  }
+
+  /// Primes a conversation for optimal first-message performance
+  Future<BusinessResult<Map<String, dynamic>>> primeConversation({
+    required String conversationId,
+    required String modelId,
+  }) async {
+    return handleBusinessOperation('primeConversation', () async {
+      final conversation = await _conversationRepository.getConversation(conversationId);
+      final result = await _primeConversation(conversation, modelId);
+      return result;
+    });
+  }
+
+  /// Checks if a conversation needs priming and attempts it
+  Future<BusinessResult<bool>> ensureConversationPrimed({
+    required String conversationId,
+    required String modelId,
+  }) async {
+    return handleBusinessOperation('ensureConversationPrimed', () async {
+      final conversation = await _conversationRepository.getConversation(conversationId);
+      
+      // Check if already primed
+      final isPrimed = conversation.metadata?['isPrimed'] as bool? ?? false;
+      final primingAttempted = conversation.metadata?['primingAttempted'] as bool? ?? false;
+      
+      if (isPrimed) {
+        return BusinessResult.success(true);
+      }
+      
+      if (!primingAttempted) {
+        final primingResult = await _primeConversation(conversation, modelId);
+        
+        // Update metadata regardless of success
+        await _conversationRepository.updateConversation(
+          conversation.copyWith(
+            metadata: {
+              ...conversation.metadata ?? {},
+              'isPrimed': primingResult.isSuccess,
+              'primingAttempted': true,
+              'primedAt': DateTime.now().toIso8601String(),
+              'primingResult': primingResult.data,
+              'primingError': primingResult.isSuccess ? null : primingResult.error,
+            },
+          ),
+        );
+        
+        return BusinessResult.success(primingResult.isSuccess);
+      }
+      
+      return BusinessResult.success(false);
     });
   }
 
@@ -525,6 +600,204 @@ class ConversationBusinessService extends BaseBusinessService {
   Future<void> _cleanupConversationResources(Conversation conversation) async {
     // Clean up any conversation-specific resources
     // This could include temporary files, cache entries, etc.
+  }
+
+  /// Core priming implementation for different conversation types
+  Future<BusinessResult<Map<String, dynamic>>> _primeConversation(
+    Conversation conversation,
+    String modelId,
+  ) async {
+    try {
+      final conversationType = conversation.metadata?['type'] as String?;
+      final startTime = DateTime.now();
+
+      switch (conversationType) {
+        case 'agent':
+          return await _primeAgentConversation(conversation, modelId);
+        case 'default_api':
+        case 'direct_chat':
+        default:
+          return await _primeRegularConversation(conversation, modelId);
+      }
+    } catch (e) {
+      return BusinessResult.failure('Failed to prime conversation: $e');
+    }
+  }
+
+  /// Prime agent conversation with MCP tools and context validation
+  Future<BusinessResult<Map<String, dynamic>>> _primeAgentConversation(
+    Conversation conversation,
+    String modelId,
+  ) async {
+    final startTime = DateTime.now();
+    final results = <String, dynamic>{};
+
+    try {
+      // 1. Validate MCP servers
+      final mcpServers = (conversation.metadata?['mcpServers'] as List<dynamic>?)
+          ?.map((s) => s.toString())
+          .toList() ?? [];
+      
+      final mcpValidation = <String, dynamic>{};
+      for (final serverId in mcpServers) {
+        try {
+          // Test MCP server connectivity without sending actual message
+          final capabilities = await _mcpService.getCapabilitiesForServers([serverId]);
+          mcpValidation[serverId] = {
+            'status': 'available',
+            'capabilities': capabilities.isNotEmpty,
+          };
+        } catch (e) {
+          mcpValidation[serverId] = {
+            'status': 'error',
+            'error': e.toString(),
+          };
+        }
+      }
+      results['mcpValidation'] = mcpValidation;
+
+      // 2. Validate context documents
+      final contextDocs = (conversation.metadata?['contextDocuments'] as List<dynamic>?)
+          ?.map((d) => d.toString())
+          .toList() ?? [];
+      
+      if (contextDocs.isNotEmpty) {
+        try {
+          final contextContent = await _contextService.getContextForDocuments(contextDocs);
+          results['contextValidation'] = {
+            'status': 'available',
+            'documentCount': contextDocs.length,
+            'contentLength': contextContent.length,
+          };
+        } catch (e) {
+          results['contextValidation'] = {
+            'status': 'error',
+            'error': e.toString(),
+          };
+        }
+      }
+
+      // 3. Send lightweight priming message through MCP bridge
+      final primingMessage = 'System initialization check. Confirm all agent capabilities are ready.';
+      try {
+        final mcpResponse = await _mcpService.callTool(
+          'system_check',
+          {'message': primingMessage},
+          serverId: mcpServers.isNotEmpty ? mcpServers.first : null,
+        );
+        results['mcpConnectionTest'] = {
+          'status': 'success',
+          'response': mcpResponse.toString().length > 0,
+        };
+      } catch (e) {
+        // MCP test failed, but don't fail the entire priming
+        results['mcpConnectionTest'] = {
+          'status': 'skipped',
+          'reason': 'No MCP test tool available',
+        };
+      }
+
+      // 4. Test basic LLM connectivity with agent system prompt
+      final systemPrompt = conversation.metadata?['systemPrompt'] as String? ??
+          'You are a helpful AI assistant with enhanced capabilities.';
+      
+      try {
+        final testResponse = await _llmService.generate(
+          prompt: 'System ready check - respond with "READY" if all systems operational.',
+          modelId: modelId,
+          context: {
+            'systemPrompt': systemPrompt,
+            'isPrimingCheck': true,
+            'maxTokens': 10,
+          },
+        );
+        
+        results['llmConnectionTest'] = {
+          'status': 'success',
+          'modelUsed': testResponse.modelUsed,
+          'responseReceived': testResponse.content.isNotEmpty,
+        };
+      } catch (e) {
+        results['llmConnectionTest'] = {
+          'status': 'error',
+          'error': e.toString(),
+        };
+        // LLM failure is critical for agents
+        return BusinessResult.failure('Agent LLM connection test failed: $e');
+      }
+
+      final duration = DateTime.now().difference(startTime).inMilliseconds;
+      results['primingDuration'] = duration;
+      results['primingType'] = 'agent';
+      results['timestamp'] = DateTime.now().toIso8601String();
+
+      return BusinessResult.success(results);
+    } catch (e) {
+      return BusinessResult.failure('Agent priming failed: $e');
+    }
+  }
+
+  /// Prime regular conversation with basic model validation
+  Future<BusinessResult<Map<String, dynamic>>> _primeRegularConversation(
+    Conversation conversation,
+    String modelId,
+  ) async {
+    final startTime = DateTime.now();
+    final results = <String, dynamic>{};
+
+    try {
+      // 1. Test basic LLM connectivity
+      final systemPrompt = conversation.metadata?['systemPrompt'] as String? ??
+          'You are a helpful AI assistant.';
+      
+      try {
+        final testResponse = await _llmService.generate(
+          prompt: 'System ready check - respond with "READY" if operational.',
+          modelId: modelId,
+          context: {
+            'systemPrompt': systemPrompt,
+            'isPrimingCheck': true,
+            'maxTokens': 10,
+          },
+        );
+        
+        results['llmConnectionTest'] = {
+          'status': 'success',
+          'modelUsed': testResponse.modelUsed,
+          'responseReceived': testResponse.content.isNotEmpty,
+          'isLocalModel': testResponse.metadata?['isLocal'] ?? false,
+        };
+      } catch (e) {
+        results['llmConnectionTest'] = {
+          'status': 'error',
+          'error': e.toString(),
+        };
+        return BusinessResult.failure('LLM connection test failed: $e');
+      }
+
+      // 2. Check for global context documents (non-agent conversations can still use global context)
+      try {
+        // This would check global context from settings - simplified for now
+        results['globalContextCheck'] = {
+          'status': 'available',
+          'hasGlobalContext': false, // TODO: Implement global context check
+        };
+      } catch (e) {
+        results['globalContextCheck'] = {
+          'status': 'error',
+          'error': e.toString(),
+        };
+      }
+
+      final duration = DateTime.now().difference(startTime).inMilliseconds;
+      results['primingDuration'] = duration;
+      results['primingType'] = 'regular';
+      results['timestamp'] = DateTime.now().toIso8601String();
+
+      return BusinessResult.success(results);
+    } catch (e) {
+      return BusinessResult.failure('Regular conversation priming failed: $e');
+    }
   }
 }
 

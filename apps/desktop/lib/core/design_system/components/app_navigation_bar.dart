@@ -80,8 +80,8 @@ class AppNavigationBar extends ConsumerWidget {
  const SizedBox(width: SpacingTokens.lg),
  
  HeaderButton(
- text: 'Integrations',
- icon: Icons.hub,
+ text: 'Tools',
+ icon: Icons.extension,
  onPressed: () => context.go(AppRoutes.integrationHub),
  isActive: currentRoute == AppRoutes.integrationHub,
  ),

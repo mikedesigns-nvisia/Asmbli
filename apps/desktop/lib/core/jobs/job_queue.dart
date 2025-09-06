@@ -829,44 +829,12 @@ class ModelEmbeddingJob implements Job {
 
   @override
   Future<JobResult> execute() async {
-    try {
-      final text = data['text'] as String;
-      final model = data['model'] as String? ?? 'text-embedding-ada-002';
-      
-      print('🔢 Generating embeddings for text (${text.length} chars, model: $model)');
-      
-      // Simulate embedding generation
-      await Future.delayed(Duration(seconds: 5 + Random().nextInt(10)));
-      
-      // Generate fake embeddings
-      final embeddings = List.generate(1536, (i) => Random().nextDouble() * 2 - 1);
-      
-      final result = {
-        'text': text,
-        'model': model,
-        'embeddings': embeddings,
-        'dimension': embeddings.length,
-        'generated_at': DateTime.now().toIso8601String(),
-      };
-      
-      return JobResult(
-        jobId: id,
-        success: true,
-        result: result,
-        executionTime: const Duration(seconds: 8),
-        metadata: {
-          'text_length': text.length,
-          'embedding_dimension': embeddings.length,
-        },
-      );
-    } catch (e) {
-      return JobResult(
-        jobId: id,
-        success: false,
-        error: e.toString(),
-        executionTime: const Duration(seconds: 2),
-      );
-    }
+    return JobResult(
+      jobId: id,
+      success: false,
+      error: 'Embedding generation not implemented - requires integration with embedding service',
+      executionTime: const Duration(milliseconds: 1),
+    );
   }
 
   @override

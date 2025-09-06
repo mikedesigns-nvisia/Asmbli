@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:async';
 
 import 'core/design_system/design_system.dart';
 import 'core/constants/routes.dart';
@@ -25,31 +27,35 @@ import 'core/services/desktop/desktop_storage_service.dart';
 import 'core/services/api_config_service.dart';
 import 'core/services/feature_flag_service.dart';
 import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
-import 'features/settings/presentation/screens/integration_center_screen.dart';
+import 'features/tools/presentation/screens/tools_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/services/desktop/hive_cleanup_service.dart';
+import 'core/error_handling/error_boundary.dart';
+import 'core/error_handling/global_error_handler.dart';
 
 void main() async {
- WidgetsFlutterBinding.ensureInitialized();
+  // Set up error zone for the entire app
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
- // Initialize Service Locator first (contains all business logic)
- print('🚀 Initializing Service Locator...');
- try {
-   final startTime = DateTime.now();
-   await ServiceLocator.instance.initialize();
-   final duration = DateTime.now().difference(startTime);
-   print('✅ Service Locator initialized in ${duration.inMilliseconds}ms');
-   
-   // Perform health check
-   final healthChecker = ServiceHealthChecker();
-   final healthResult = await healthChecker.checkHealth();
-   print(healthResult.toString());
-   
- } catch (e, stackTrace) {
-   print('❌ Service Locator initialization failed: $e');
-   print('Stack trace: $stackTrace');
-   // Continue with fallback initialization
- }
+    // Initialize Service Locator first (contains all business logic)
+    print('🚀 Initializing Service Locator...');
+    try {
+      final startTime = DateTime.now();
+      await ServiceLocator.instance.initialize();
+      final duration = DateTime.now().difference(startTime);
+      print('✅ Service Locator initialized in ${duration.inMilliseconds}ms');
+      
+      // Perform health check
+      final healthChecker = ServiceHealthChecker();
+      final healthResult = await healthChecker.checkHealth();
+      print(healthResult.toString());
+      
+    } catch (e, stackTrace) {
+      print('❌ Service Locator initialization failed: $e');
+      print('Stack trace: $stackTrace');
+      // Continue with fallback initialization
+    }
 
  // Initialize desktop services (legacy support)
  try {
@@ -111,14 +117,28 @@ void main() async {
  // Initialize SharedPreferences for feature flags
  final prefs = await SharedPreferences.getInstance();
  
- runApp(
- ProviderScope(
- overrides: [
- featureFlagServiceProvider.overrideWithValue(FeatureFlagService(prefs)),
- ],
- child: const AsmblDesktopApp(),
- ),
- );
+    runApp(
+      ProviderScope(
+        overrides: [
+          featureFlagServiceProvider.overrideWithValue(FeatureFlagService(prefs)),
+        ],
+        child: ErrorMonitoringWidget(
+          child: NavigationErrorBoundary(
+            child: const AsmblDesktopApp(),
+          ),
+        ),
+      ),
+    );
+  }, (error, stackTrace) {
+    // Global error handler for uncaught exceptions
+    print('🚨 Uncaught error: $error');
+    print('Stack trace: $stackTrace');
+    
+    // In production, you might want to send this to a crash reporting service
+    if (kReleaseMode) {
+      // Send to crash reporting service
+    }
+  });
 }
 
 class AsmblDesktopApp extends ConsumerWidget {
@@ -178,7 +198,7 @@ final _router = GoRouter(
  ),
  GoRoute(
  path: AppRoutes.integrationHub,
- builder: (context, state) => const IntegrationCenterScreen(),
+ builder: (context, state) => const ToolsScreen(),
  ),
  // Legacy route redirects to Integration Hub
  GoRoute(

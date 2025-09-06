@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/services/feature_flag_service.dart';
 import '../../../../core/constants/routes.dart';
 import '../screens/settings_screen.dart';
-import '../screens/integration_hub_screen.dart';
+import '../../../tools/presentation/screens/tools_screen.dart';
 
 /// Adaptive Integration Router
 /// Routes users to either legacy integration tabs or new Integration Hub
@@ -23,7 +23,7 @@ class AdaptiveIntegrationRouter extends ConsumerWidget {
     
     if (isHubEnabled) {
       // Default: New Integration Hub (unified experience)
-      return const IntegrationHubScreen();
+      return const ToolsScreen();
     } else {
       // Fallback: Legacy settings screen (for users who explicitly opt out)
       return SettingsScreen(initialTab: initialTab ?? 'integrations');

@@ -47,7 +47,11 @@
       "Bash(for file in ./lib/core/design_system/components/*.dart)",
       "Bash(do if grep -q \"Space Grotesk\" \"$file\")",
       "Bash(then echo \"Processing $file\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services\\desktop/**)",
+      "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services/**)",
+      "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services\\adapters/**)",
+      "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services/**)"
     ],
     "deny": [],
     "ask": [],

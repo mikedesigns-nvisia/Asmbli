@@ -10,6 +10,36 @@ enum ContextType {
  custom,
 }
 
+/// Categories for organizing context in the hub
+enum ContextHubCategory {
+  all,
+  development,
+  business,
+  research,
+  documentation,
+  templates,
+}
+
+/// Extension to provide human-readable names for context hub categories
+extension ContextHubCategoryExtension on ContextHubCategory {
+  String get displayName {
+    switch (this) {
+      case ContextHubCategory.all:
+        return 'All';
+      case ContextHubCategory.development:
+        return 'Development';
+      case ContextHubCategory.business:
+        return 'Business';
+      case ContextHubCategory.research:
+        return 'Research';
+      case ContextHubCategory.documentation:
+        return 'Documentation';
+      case ContextHubCategory.templates:
+        return 'Templates';
+    }
+  }
+}
+
 /// Extension to provide human-readable names for context types
 extension ContextTypeExtension on ContextType {
  String get displayName {

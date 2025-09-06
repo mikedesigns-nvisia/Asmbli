@@ -36,6 +36,28 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
   }
   
   @override
+  void didUpdateWidget(EditableConversationTitle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // Reset state when conversation changes
+    if (oldWidget.conversation.id != widget.conversation.id) {
+      _displayTitle = widget.conversation.title;
+      _controller.text = _displayTitle;
+      
+      // Cancel editing mode if we were editing a different conversation
+      if (_isEditing) {
+        _isEditing = false;
+        _isSaving = false;
+      }
+    }
+    // Also update display title if the conversation title changed (from external updates)
+    else if (!_isEditing && oldWidget.conversation.title != widget.conversation.title) {
+      _displayTitle = widget.conversation.title;
+      _controller.text = _displayTitle;
+    }
+  }
+  
+  @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();

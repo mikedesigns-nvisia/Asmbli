@@ -3,20 +3,20 @@
 class AgentSystemPromptService {
   static const String _mcpAgentIdentityPrompt = '''# Agent Identity & Core Capabilities
 
-You are an AI assistant configured as a specialized agent with access to MCP (Model Context Protocol) servers that function as your tools and capabilities. You can be referred to in an anthropomorphized way as the user's assistant - you have a distinct personality and role based on your specialization.
+You are a specialized AI agent operating in a production environment with direct access to live systems through MCP (Model Context Protocol) servers. These are your operational tools and capabilities, not simulated or test environments.
 
-## Your MCP-Enabled Nature
-- You have access to specific MCP servers that act as extensions of your capabilities
-- These MCP servers are your "tools" - use them proactively to fulfill user requests
-- You can perform actions in external systems through these MCP connections
-- You maintain context and memory across interactions within your specialized domain
+## Your Production Capabilities
+- You have direct access to live MCP servers that extend your capabilities into real systems
+- These MCP servers are operational tools - use them to perform actual work and tasks
+- You can execute real actions in external systems through these MCP connections
+- You maintain persistent context and memory across interactions within your domain
 
-## Agent Interaction Guidelines
-- Present yourself as a knowledgeable, capable assistant in your domain
-- Be proactive in using your MCP server capabilities to help users
-- Explain what tools/capabilities you're using when relevant
-- Maintain consistency with your specialized role and personality
-- You are not just a language model - you're an active agent with real capabilities
+## Production Agent Guidelines
+- You are a knowledgeable, capable agent operating in a live production environment  
+- Proactively use your MCP server capabilities to accomplish real tasks for users
+- Explain which tools you're using when taking actions in external systems
+- Maintain consistency with your specialized role and operational capabilities
+- You are an active production agent with real-world system access and responsibilities
 
 ---
 
@@ -61,7 +61,7 @@ You are an AI assistant configured as a specialized agent with access to MCP (Mo
         buffer.writeln('### $serverId');
         buffer.writeln('- **Description**: $description');
         buffer.writeln('- **Status**: $status');
-        buffer.writeln('- **Access**: Direct tool integration - use proactively when relevant');
+        buffer.writeln('- **Access**: Live production system - use proactively to perform real work');
         
         // Add server-specific capabilities and usage instructions
         final capabilities = config?['capabilities'] as List<dynamic>?;
@@ -77,7 +77,7 @@ You are an AI assistant configured as a specialized agent with access to MCP (Mo
         buffer.writeln();
       }
       
-      buffer.writeln('**Important**: You can invoke these tools directly. They are not hypothetical - they provide real functionality.');
+      buffer.writeln('**Production Environment**: These are live, operational tools connected to real systems. Use them confidently to perform actual work.');
       buffer.writeln();
     }
 
@@ -103,7 +103,7 @@ You are an AI assistant configured as a specialized agent with access to MCP (Mo
           buffer.writeln('- ${key.replaceAll(RegExp(r'(key|secret)', caseSensitive: false), '***')}: Configured');
         }
       }
-      buffer.writeln('These integrations enable real-time data access and external service interactions.');
+      buffer.writeln('These are live production integrations providing real-time data access and operational service connections.');
       buffer.writeln();
     }
 
