@@ -9,6 +9,7 @@ class SpacingTokens {
  
  // Golden ratio spacing scale
  static const double none = 0.0;
+ static const double xxs = baseUnit * 0.25; // 2px
  static const double xs = baseUnit * 0.5; // 4px
  static const double sm = baseUnit; // 8px
  static const double md = baseUnit * phi * 0.5; // ~6.5px (rounded to 6)
@@ -29,6 +30,7 @@ class SpacingTokens {
  
  // Layout specific golden ratio spacing
  static const double pageHorizontal = xl_precise; // 34px - page margins
+ static const double pageHorizontalPadding = xl_precise; // 34px - alias for pageHorizontal
  static const double pageVertical = xl_precise; // 34px - page vertical spacing
  static const double headerPadding = xl_precise; // 34px - header padding
  static const double sectionSpacing = xxl_precise; // 55px - between major sections
@@ -51,6 +53,7 @@ class SpacingTokens {
 
 class BorderRadiusTokens {
  static const double none = 0.0;
+ static const double xs = 2.0;
  static const double sm = 4.0;
  static const double md = 6.0; // Your standard button radius
  static const double lg = 8.0; // Your input radius

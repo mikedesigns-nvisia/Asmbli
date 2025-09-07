@@ -18,6 +18,8 @@ import '../services/mcp_settings_service.dart';
 import '../services/claude_api_service.dart';
 import '../services/ollama_service.dart';
 import '../services/mcp_server_execution_service.dart';
+import '../services/mcp_catalog_service.dart';
+import '../services/secure_auth_service.dart';
 
 // Business services
 import '../services/business/base_business_service.dart';
@@ -145,12 +147,17 @@ class ServiceLocator {
     registerSingleton<AgentService>(DesktopAgentService());
     registerSingleton<ConversationService>(DesktopConversationService());
 
+    // Register MCP catalog service first (needed by other MCP services)
+    final secureAuthService = SecureAuthService(storageService);
+    final mcpCatalogService = MCPCatalogService(storageService, secureAuthService);
+    registerSingleton<MCPCatalogService>(mcpCatalogService);
+    
     // Register infrastructure services with proper dependencies
-    final mcpSettingsService = MCPSettingsService(storageService);
+    final mcpSettingsService = MCPSettingsService(storageService, mcpCatalogService);
     registerSingleton<MCPSettingsService>(mcpSettingsService);
     
     // Register MCP server execution service as singleton
-    final mcpExecutionService = MCPServerExecutionService();
+    final mcpExecutionService = MCPServerExecutionService(mcpCatalogService, mcpSettingsService);
     registerSingleton<MCPServerExecutionService>(mcpExecutionService);
     
     final desktopServiceProvider = DesktopServiceProvider.instance;

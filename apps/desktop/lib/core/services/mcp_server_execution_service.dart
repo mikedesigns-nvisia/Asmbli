@@ -761,7 +761,7 @@ class MCPServerExecutionService {
       );
 
       // Start the server
-      await startMCPServer(serverConfig);
+      await startMCPServer(serverConfig, env);
       
       // Mark as used for analytics
       await _catalogService.markServerUsed(agentId, catalogEntryId);

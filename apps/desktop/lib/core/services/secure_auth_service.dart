@@ -6,6 +6,8 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pointycastle/export.dart';
+import 'package:http/http.dart' as http;
+import '../config/oauth_config.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
 
@@ -58,22 +60,6 @@ class SecureAuthService {
   }
 
   /// Initialize master key with PBKDF2 derivation
-  Future<void> _initializeMasterKey() async {
-    // Try to load existing master key
-    final existingKey = _storageService.getPreference<String>(_masterKeyBox);
-    
-    if (existingKey != null) {
-      // Decrypt existing master key using device-specific salt
-      _masterKey = await _deriveKeyFromDevice(existingKey);
-    } else {
-      // Generate new master key
-      _masterKey = _generateSecureKey(32);
-      
-      // Store encrypted master key
-      final encryptedKey = await _encryptMasterKey(_masterKey!);
-      await _storageService.setPreference(_masterKeyBox, encryptedKey);
-    }
-  }
 
   /// Generate secure random key
   Uint8List _generateSecureKey(int length) {
@@ -110,20 +96,12 @@ class SecureAuthService {
       
       // Clean expired credentials
       _credentialCache.removeWhere((key, cache) => 
-          now.difference(cache.timestamp) > const Duration(minutes: 5));
+          now.difference(cache.cachedAt) > const Duration(minutes: 5));
       
       // Clean expired tokens
       _tokenCache.removeWhere((key, cache) => 
-          now.difference(cache.timestamp) > const Duration(minutes: 5));
+          now.difference(cache.cachedAt) > const Duration(minutes: 5));
     });
-  }
-  Uint8List _generateEntropy() {
-    final random = Random.secure();
-    final entropy = Uint8List(64);
-    for (int i = 0; i < entropy.length; i++) {
-      entropy[i] = random.nextInt(256);
-    }
-    return entropy;
   }
 
   /// Initialize or load master key with proper key derivation
@@ -207,7 +185,9 @@ class SecureAuthService {
   /// Generate secure random bytes
   Uint8List _generateSecureBytes(int length) {
     final bytes = Uint8List(length);
-    _secureRandom!.nextBytes(bytes);
+    for (int i = 0; i < length; i++) {
+      bytes[i] = _secureRandom!.nextUint8();
+    }
     return bytes;
   }
 
@@ -708,7 +688,7 @@ class SecureAuthService {
       final nonce = _generateSecureBytes(12); // 96-bit nonce for GCM
       
       final cipher = GCMBlockCipher(AESEngine());
-      final params = AEADParameters(KeyParameter(_masterKey!), 128, nonce);
+      final params = AEADParameters(KeyParameter(_masterKey!), 128, nonce, Uint8List(0));
       
       cipher.init(true, params);
       
@@ -739,7 +719,7 @@ class SecureAuthService {
       final ciphertext = data.sublist(12);
       
       final cipher = GCMBlockCipher(AESEngine());
-      final params = AEADParameters(KeyParameter(_masterKey!), 128, nonce);
+      final params = AEADParameters(KeyParameter(_masterKey!), 128, nonce, Uint8List(0));
       
       cipher.init(false, params);
       
@@ -777,18 +757,6 @@ class SecureAuthService {
     _tokenCache.clear();
   }
 
-  /// Start cache cleanup timer
-  void _startCacheCleanup() {
-    Timer.periodic(Duration(minutes: 1), (timer) {
-      _cleanupExpiredCache();
-    });
-  }
-
-  /// Clean up expired cache entries
-  void _cleanupExpiredCache() {
-    _credentialCache.removeWhere((key, cached) => cached.isExpired);
-    _tokenCache.removeWhere((key, cached) => cached.isExpired);
-  }
 
   /// Get list of configured OAuth services
   List<String> getConfiguredOAuthServices() {
@@ -881,6 +849,7 @@ class _CachedCredential {
 class _CachedOAuthToken {
   final OAuthToken token;
   final DateTime expiresAt;
+  final DateTime cachedAt = DateTime.now();
 
   _CachedOAuthToken(this.token, this.expiresAt);
 

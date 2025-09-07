@@ -58,8 +58,6 @@ class OAuthConfig {
     ),
   };
 
-  };
-
   /// Get OAuth configuration for a service with environment loading
   static OAuthClientConfig getConfig(String service) {
     final config = _baseConfigs[service.toLowerCase()];

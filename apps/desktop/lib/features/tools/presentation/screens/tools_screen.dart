@@ -4,7 +4,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../providers/tools_provider.dart';
 import '../widgets/server_management_tab.dart';
-import '../widgets/marketplace_tab.dart';
+import '../widgets/catalogue_tab.dart';
 import '../widgets/agent_connections_tab.dart';
 
 class ToolsScreen extends ConsumerStatefulWidget {
@@ -66,7 +66,7 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
                 controller: _tabController,
                 children: const [
                   ServerManagementTab(),
-                  MarketplaceTab(),
+                  CatalogueTab(),
                   AgentConnectionsTab(),
                 ],
               ),
@@ -253,7 +253,7 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
           ),
           Tab(
             icon: Icon(Icons.store),
-            text: 'Marketplace',
+            text: 'Catalogue',
           ),
           Tab(
             icon: Icon(Icons.hub),

@@ -128,7 +128,7 @@ class ProductionLogger {
       ...?metrics,
     };
     
-    _log(LogLevel.info, 'Performance: $operation', perfData, category ?? 'performance');
+    _log(LogLevel.info, 'Performance: $operation', perfData, category ?? 'performance', null);
   }
 
   /// Log user action for analytics
@@ -145,7 +145,7 @@ class ProductionLogger {
       ...?context,
     };
     
-    _log(LogLevel.info, 'User Action: $action', actionData, 'user_action');
+    _log(LogLevel.info, 'User Action: $action', actionData, 'user_action', null);
   }
 
   /// Log API request/response
@@ -165,7 +165,7 @@ class ProductionLogger {
     };
     
     final level = statusCode >= 400 ? LogLevel.error : LogLevel.info;
-    _log(level, 'API Call: $method $url', apiData, 'api');
+    _log(level, 'API Call: $method $url', apiData, 'api', null);
   }
 
   /// Log MCP server operation
@@ -185,7 +185,7 @@ class ProductionLogger {
     };
     
     final level = success ? LogLevel.info : LogLevel.error;
-    _log(level, 'MCP $operation: $serverId', mcpData, 'mcp');
+    _log(level, 'MCP $operation: $serverId', mcpData, 'mcp', null);
   }
 
   /// Core logging method

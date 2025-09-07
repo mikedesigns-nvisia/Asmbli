@@ -61,7 +61,10 @@ class EnvironmentConfig {
     }
     
     // Check config file
-    return _config[key] as T? ?? defaultValue;
+    final configValue = _config[key] as T?;
+    if (configValue != null) return configValue;
+    if (defaultValue != null) return defaultValue;
+    throw Exception('Configuration value not found for key: $key');
   }
 
   /// Get OAuth client configuration
