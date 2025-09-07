@@ -30,8 +30,9 @@ import 'features/settings/presentation/widgets/adaptive_integration_router.dart'
 import 'features/tools/presentation/screens/tools_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/services/desktop/hive_cleanup_service.dart';
-import 'core/error_handling/error_boundary.dart';
-import 'core/error_handling/global_error_handler.dart';
+import 'core/error/app_error_handler.dart';
+import 'core/services/production_logger.dart';
+import 'core/config/environment_config.dart';
 import 'core/services/vector_integration_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -39,6 +40,15 @@ void main() async {
   // Set up error zone for the entire app
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    // Initialize production error handling first
+    print('🛡️ Initializing error handling...');
+    try {
+      await AppErrorHandler.instance.initialize();
+      print('✅ Error handling initialized');
+    } catch (e) {
+      print('❌ Error handling initialization failed: $e');
+    }
 
     // Initialize Service Locator first (contains all business logic)
     print('🚀 Initializing Service Locator...');
@@ -133,21 +143,23 @@ void main() async {
         overrides: [
           featureFlagServiceProvider.overrideWithValue(FeatureFlagService(prefs)),
         ],
-        child: ErrorMonitoringWidget(
-          child: NavigationErrorBoundary(
-            child: const VectorInitializedApp(),
-          ),
+        child: AppErrorHandler.errorBoundary(
+          boundaryName: 'app_root',
+          child: const VectorInitializedApp(),
         ),
       ),
     );
   }, (error, stackTrace) {
-    // Global error handler for uncaught exceptions
-    print('🚨 Uncaught error: $error');
-    print('Stack trace: $stackTrace');
-    
-    // In production, you might want to send this to a crash reporting service
-    if (kReleaseMode) {
-      // Send to crash reporting service
+    // Global error handler delegates to AppErrorHandler
+    try {
+      AppErrorHandler.handleBusinessError(
+        error,
+        operation: 'main_zone_error',
+        severity: ErrorSeverity.critical,
+      );
+    } catch (e) {
+      print('❌ Error handler failed: $e');
+      print('Original error: $error');
     }
   });
 }
@@ -183,7 +195,7 @@ class VectorInitializedApp extends ConsumerWidget {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Initializing Vector Database...',
+                        'Setting up your workspace...',
                         style: GoogleFonts.fustat(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -192,7 +204,7 @@ class VectorInitializedApp extends ConsumerWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Setting up context and knowledge systems',
+                        'Preparing your knowledge base and context',
                         style: GoogleFonts.fustat(
                           fontSize: 14,
                           color: Colors.white70,
