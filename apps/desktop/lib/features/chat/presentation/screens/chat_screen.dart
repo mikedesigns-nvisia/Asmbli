@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agent_engine_core/models/conversation.dart' as core;
+import 'dart:async';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
@@ -21,6 +22,7 @@ import '../widgets/agent_deployment_section.dart';
 import '../widgets/streaming_message_widget.dart';
 import '../widgets/editable_conversation_title.dart';
 import '../widgets/context_sidebar_section.dart';
+import '../components/model_warmup_status_indicator.dart';
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
 class ChatScreen extends ConsumerStatefulWidget {
@@ -35,8 +37,6 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
  bool isSidebarCollapsed = false;
  final TextEditingController messageController = TextEditingController();
- bool _modelsWarmedUp = false;
- bool _isWarmingUp = false;
  
  @override
  void initState() {
@@ -50,36 +50,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  // ServiceProvider.configure(useInMemory: true);
  // await ServiceProvider.initialize();
  
- // Start model warm-up process
- _startModelWarmUp();
+ // Start model warm-up process in background (non-blocking)
+ _startModelWarmUpInBackground();
  } catch (e) {
  print('Service initialization failed: $e');
  }
  }
 
- Future<void> _startModelWarmUp() async {
- if (_isWarmingUp || _modelsWarmedUp) return;
- 
- setState(() {
-   _isWarmingUp = true;
- });
- 
+ Future<void> _startModelWarmUpInBackground() async {
  try {
    print('🔥 Starting model warm-up for chat screen...');
    final warmUpService = ref.read(modelWarmUpServiceProvider);
-   await warmUpService.warmUpAllModels();
-   
-   setState(() {
-     _modelsWarmedUp = true;
-     _isWarmingUp = false;
-   });
-   
-   print('✅ Model warm-up completed');
+   // Run warmup in background without blocking UI
+   unawaited(warmUpService.warmUpAllModels());
+   print('✅ Model warm-up started in background');
  } catch (e) {
    print('❌ Model warm-up failed: $e');
-   setState(() {
-     _isWarmingUp = false;
-   });
  }
  }
 
@@ -111,6 +97,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  // Header
  const AppNavigationBar(currentRoute: AppRoutes.chat),
+ 
+ // Model warmup status notification
+ const Padding(
+   padding: EdgeInsets.symmetric(
+     horizontal: SpacingTokens.headerPadding,
+     vertical: SpacingTokens.xs,
+   ),
+   child: Row(
+     children: [
+       ModelWarmupStatusIndicator(),
+     ],
+   ),
+ ),
  
  // Main Content
  Expanded(
@@ -162,9 +161,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
 
- // Model warm-up loading overlay
- if (_isWarmingUp)
-   _buildWarmUpOverlay(context),
+ // Model warm-up notification (removed blocking overlay)
  ],
  ),
  );
@@ -1943,206 +1940,6 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  }
  }
 
- /// Build warm-up loading overlay
-Widget _buildWarmUpOverlay(BuildContext context) {
- final theme = Theme.of(context);
- final warmUpStatusAsync = ref.watch(modelWarmUpStatusProvider);
- 
- return Container(
-   color: theme.colorScheme.surface.withValues(alpha: 0.95),
-   child: Center(
-     child: Container(
-       constraints: const BoxConstraints(maxWidth: 400),
-       padding: const EdgeInsets.all(SpacingTokens.xxl),
-       child: Column(
-         mainAxisSize: MainAxisSize.min,
-         children: [
-           // Loading icon
-           Container(
-             padding: const EdgeInsets.all(SpacingTokens.lg),
-             decoration: BoxDecoration(
-               color: ThemeColors(context).primary.withValues(alpha: 0.1),
-               shape: BoxShape.circle,
-             ),
-             child: Icon(
-               Icons.model_training,
-               size: 48,
-               color: ThemeColors(context).primary,
-             ),
-           ),
-           
-           const SizedBox(height: SpacingTokens.lg),
-           
-           // Title
-           Text(
-             'Warming Up Models',
-             style: GoogleFonts.fustat(
-               fontSize: 24,
-               fontWeight: FontWeight.w600,
-               color: theme.colorScheme.onSurface,
-             ),
-           ),
-           
-           const SizedBox(height: SpacingTokens.sm),
-           
-           // Subtitle
-           Text(
-             'Preparing AI models for optimal performance...',
-             style: GoogleFonts.fustat(
-               fontSize: 14,
-               color: theme.colorScheme.onSurfaceVariant,
-             ),
-             textAlign: TextAlign.center,
-           ),
-           
-           const SizedBox(height: SpacingTokens.xl),
-           
-           // Model status list
-           warmUpStatusAsync.when(
-             data: (statusMap) => _buildModelStatusList(context, statusMap),
-             loading: () => const CircularProgressIndicator(),
-             error: (error, _) => Text(
-               'Error during warm-up: $error',
-               style: TextStyle(color: theme.colorScheme.error),
-             ),
-           ),
-         ],
-       ),
-     ),
-   ),
- );
-}
-
-/// Build list of model warm-up statuses
-Widget _buildModelStatusList(BuildContext context, Map<String, ModelWarmUpStatus> statusMap) {
- final theme = Theme.of(context);
- final statuses = statusMap.values.toList();
- 
- if (statuses.isEmpty) {
-   return Text(
-     'No models to warm up',
-     style: GoogleFonts.fustat(
-       color: theme.colorScheme.onSurfaceVariant,
-     ),
-   );
- }
- 
- return Column(
-   children: statuses.map((status) => _buildModelStatusItem(context, status)).toList(),
- );
-}
-
-/// Build individual model status item
-Widget _buildModelStatusItem(BuildContext context, ModelWarmUpStatus status) {
- final theme = Theme.of(context);
- 
- IconData statusIcon;
- Color statusColor;
- String statusText;
- 
- switch (status.status) {
-   case WarmUpState.starting:
-     statusIcon = Icons.schedule;
-     statusColor = theme.colorScheme.onSurfaceVariant;
-     statusText = 'Starting...';
-     break;
-   case WarmUpState.warming:
-     statusIcon = Icons.hourglass_empty;
-     statusColor = ThemeColors(context).primary;
-     statusText = 'Warming...';
-     break;
-   case WarmUpState.ready:
-     statusIcon = Icons.check_circle;
-     statusColor = ThemeColors(context).success;
-     statusText = 'Ready';
-     break;
-   case WarmUpState.error:
-     statusIcon = Icons.error;
-     statusColor = ThemeColors(context).error;
-     statusText = 'Error';
-     break;
-   case WarmUpState.needsWarmUp:
-     statusIcon = Icons.refresh;
-     statusColor = theme.colorScheme.onSurfaceVariant;
-     statusText = 'Needs warm-up';
-     break;
- }
- 
- return Container(
-   margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
-   padding: const EdgeInsets.symmetric(
-     horizontal: SpacingTokens.md,
-     vertical: SpacingTokens.sm,
-   ),
-   decoration: BoxDecoration(
-     color: theme.colorScheme.surface,
-     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-     border: Border.all(
-       color: theme.colorScheme.outline.withValues(alpha: 0.3),
-     ),
-   ),
-   child: Row(
-     children: [
-       Icon(
-         statusIcon,
-         size: 16,
-         color: statusColor,
-       ),
-       const SizedBox(width: SpacingTokens.sm),
-       
-       Expanded(
-         child: Column(
-           crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
-             Text(
-               status.modelName,
-               style: GoogleFonts.fustat(
-                 fontSize: 14,
-                 fontWeight: FontWeight.w500,
-                 color: theme.colorScheme.onSurface,
-               ),
-             ),
-             Row(
-               children: [
-                 Text(
-                   status.isLocal ? 'Local' : 'API',
-                   style: GoogleFonts.fustat(
-                     fontSize: 11,
-                     color: theme.colorScheme.onSurfaceVariant,
-                   ),
-                 ),
-                 const SizedBox(width: SpacingTokens.xs),
-                 Text(
-                   '•',
-                   style: TextStyle(
-                     color: theme.colorScheme.onSurfaceVariant,
-                   ),
-                 ),
-                 const SizedBox(width: SpacingTokens.xs),
-                 Text(
-                   statusText,
-                   style: GoogleFonts.fustat(
-                     fontSize: 11,
-                     color: statusColor,
-                     fontWeight: FontWeight.w500,
-                   ),
-                 ),
-               ],
-             ),
-           ],
-         ),
-       ),
-       
-       if (status.status == WarmUpState.warming)
-         const SizedBox(
-           width: 16,
-           height: 16,
-           child: CircularProgressIndicator(strokeWidth: 2),
-         ),
-     ],
-   ),
- );
-}
 
 /// Build priming status indicator for conversation
 Widget _buildPrimingStatusIndicator(BuildContext context, core.Conversation conversation) {

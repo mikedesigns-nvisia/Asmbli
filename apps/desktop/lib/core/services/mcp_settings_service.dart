@@ -4,12 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
 import '../models/mcp_server_config.dart';
+import '../models/mcp_catalog_entry.dart';
+import 'mcp_catalog_service.dart';
 
 
 /// Global MCP (Model Context Protocol) settings service
 /// Manages server configurations, API assignments, and runtime status
 class MCPSettingsService {
   final DesktopStorageService _storageService;
+  final MCPCatalogService _catalogService;
   
   // Global MCP server configurations
   final Map<String, MCPServerConfig> _globalMCPConfigs = {};
@@ -30,7 +33,7 @@ class MCPSettingsService {
   final StreamController<Map<String, dynamic>> _settingsUpdatesController = 
       StreamController<Map<String, dynamic>>.broadcast();
 
-  MCPSettingsService(this._storageService) {
+  MCPSettingsService(this._storageService, this._catalogService) {
     _loadSettings();
   }
 
@@ -290,21 +293,44 @@ class MCPSettingsService {
 
   // ==================== Agent Configuration Assembly ====================
 
-  /// Get complete agent configuration for deployment
+  /// Get complete agent configuration for deployment using catalog system
   Future<AgentDeploymentConfig> getAgentDeploymentConfig(String agentId) async {
     // Get agent's assigned API config
     final apiConfigId = _agentApiMappings[agentId];
     
-    // Get agent's MCP servers (from agent definition)
-    // This would normally come from the agent's metadata
-    final agentMCPServers = <String>[]; // TODO: Get from agent definition
+    // Get enabled MCP servers from catalog service
+    final enabledServerIds = _catalogService.getEnabledServerIds(agentId);
+    final agentConfigs = _catalogService.getAgentMCPConfigs(agentId);
     
-    // Build MCP server configs with global settings
+    // Build MCP server configs with catalog entries and auth
     final mcpConfigs = <String, Map<String, dynamic>>{};
-    for (final serverId in agentMCPServers) {
-      final config = _globalMCPConfigs[serverId];
-      if (config != null) {
-        mcpConfigs[serverId] = config.toJson();
+    for (final serverId in enabledServerIds) {
+      final catalogEntry = _catalogService.getCatalogEntry(serverId);
+      final agentConfig = agentConfigs[serverId];
+      
+      if (catalogEntry != null && agentConfig != null) {
+        // Convert catalog entry to MCPServerConfig for deployment
+        final serverConfig = MCPServerConfig(
+          id: catalogEntry.id,
+          name: catalogEntry.name,
+          url: catalogEntry.remoteUrl ?? '',
+          command: catalogEntry.command ?? '',
+          args: catalogEntry.args,
+          transport: _transportTypeToString(catalogEntry.transport),
+          protocol: catalogEntry.transport.name,
+          env: {
+            ...?catalogEntry.defaultEnvVars,
+            ...agentConfig.authConfig,
+            ...?agentConfig.customEnvVars,
+          },
+          enabled: agentConfig.enabled,
+          description: catalogEntry.description,
+          capabilities: catalogEntry.capabilities,
+          lastUsed: agentConfig.lastUsed,
+          createdAt: agentConfig.createdAt,
+        );
+        
+        mcpConfigs[serverId] = serverConfig.toJson();
       }
     }
     
@@ -321,6 +347,18 @@ class MCPSettingsService {
       contextDocuments: contextDocs,
       timestamp: DateTime.now(),
     );
+  }
+
+  /// Helper method to convert transport type to string
+  String _transportTypeToString(MCPTransportType transport) {
+    switch (transport) {
+      case MCPTransportType.stdio:
+        return 'stdio';
+      case MCPTransportType.sse:
+        return 'sse';
+      case MCPTransportType.http:
+        return 'http';
+    }
   }
 
   // ==================== Private Methods ====================
@@ -545,7 +583,8 @@ class DirectAPIConfig {
 
 final mcpSettingsServiceProvider = Provider<MCPSettingsService>((ref) {
   final storageService = ref.read(desktopStorageServiceProvider);
-  return MCPSettingsService(storageService);
+  final catalogService = ref.read(mcpCatalogServiceProvider);
+  return MCPSettingsService(storageService, catalogService);
 });
 
 /// Provider for MCP server statuses

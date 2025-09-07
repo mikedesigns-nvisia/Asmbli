@@ -7,15 +7,22 @@ import '../data/mcp_server_configs.dart';
 import 'desktop/desktop_storage_service.dart';
 import '../models/mcp_server_config.dart';
 import '../models/mcp_server_process.dart';
+import '../models/mcp_catalog_entry.dart';
+import 'mcp_catalog_service.dart';
+import 'mcp_settings_service.dart';
 import '../di/service_locator.dart';
 
 /// Service for executing and managing MCP server processes
 /// Implements JSON-RPC 2.0 communication as per MCP specification
 class MCPServerExecutionService {
   final DesktopStorageService _storage = DesktopStorageService.instance;
+  final MCPCatalogService _catalogService;
+  final MCPSettingsService _settingsService;
   final Map<String, MCPServerProcess> _runningServers = {};
   final Map<String, StreamSubscription> _serverSubscriptions = {};
   final Map<String, String> _serverInstallPaths = {}; // Track installed server paths
+
+  MCPServerExecutionService(this._catalogService, this._settingsService);
   
   /// Install MCP server if not already installed
   Future<String> ensureMCPServerInstalled(MCPServerConfig config) async {
@@ -685,10 +692,159 @@ class MCPServerExecutionService {
     
     return startedServers;
   }
+
+  // ==================== Catalog-Based Methods ====================
+
+  /// Start all enabled MCP servers for an agent using the catalog system
+  Future<List<String>> startAgentMCPServersByCatalog(String agentId) async {
+    final startedServers = <String>[];
+    
+    try {
+      // Get enabled servers from catalog
+      final enabledServerIds = _catalogService.getEnabledServerIds(agentId);
+      
+      for (final serverId in enabledServerIds) {
+        try {
+          final success = await _startAgentMCPServerFromCatalog(agentId, serverId);
+          if (success) {
+            startedServers.add(serverId);
+            print('✅ Started MCP server: $serverId for agent: $agentId');
+          } else {
+            print('⚠️ Failed to start MCP server: $serverId for agent: $agentId');
+          }
+        } catch (e) {
+          print('❌ Error starting MCP server $serverId for agent $agentId: $e');
+        }
+      }
+      
+      print('🚀 Started ${startedServers.length}/${enabledServerIds.length} MCP servers for agent: $agentId');
+      return startedServers;
+      
+    } catch (e) {
+      print('❌ Failed to start MCP servers for agent $agentId: $e');
+      return startedServers;
+    }
+  }
+
+  /// Start a specific MCP server for an agent with catalog configuration
+  Future<bool> _startAgentMCPServerFromCatalog(String agentId, String catalogEntryId) async {
+    try {
+      // Get catalog entry
+      final catalogEntry = _catalogService.getCatalogEntry(catalogEntryId);
+      if (catalogEntry == null) {
+        throw Exception('Catalog entry not found: $catalogEntryId');
+      }
+
+      // Get agent credentials
+      final credentials = await _catalogService.getAgentServerCredentials(agentId, catalogEntryId);
+      
+      // Build environment variables from catalog and credentials
+      final env = <String, String>{
+        ...?catalogEntry.defaultEnvVars,
+        ...credentials,
+      };
+
+      // Create MCPServerConfig from catalog entry
+      final serverConfig = MCPServerConfig(
+        id: '${agentId}_$catalogEntryId',
+        name: catalogEntry.name,
+        url: catalogEntry.remoteUrl ?? '',
+        command: catalogEntry.command ?? '',
+        args: catalogEntry.args,
+        transport: _transportTypeToString(catalogEntry.transport),
+        protocol: catalogEntry.transport.name,
+        env: env,
+        enabled: true,
+        description: catalogEntry.description,
+        capabilities: catalogEntry.capabilities,
+        createdAt: DateTime.now(),
+      );
+
+      // Start the server
+      await startMCPServer(serverConfig);
+      
+      // Mark as used for analytics
+      await _catalogService.markServerUsed(agentId, catalogEntryId);
+      
+      return true;
+      
+    } catch (e) {
+      print('❌ Failed to start agent MCP server $catalogEntryId: $e');
+      return false;
+    }
+  }
+
+  /// Helper method to convert transport type to string
+  String _transportTypeToString(MCPTransportType transport) {
+    switch (transport) {
+      case MCPTransportType.stdio:
+        return 'stdio';
+      case MCPTransportType.sse:
+        return 'sse';
+      case MCPTransportType.http:
+        return 'http';
+    }
+  }
+
+  /// Validate agent MCP server configuration
+  Future<Map<String, String>> validateAgentMCPServers(String agentId) async {
+    final results = <String, String>{};
+    final enabledServerIds = _catalogService.getEnabledServerIds(agentId);
+    
+    for (final serverId in enabledServerIds) {
+      final catalogEntry = _catalogService.getCatalogEntry(serverId);
+      if (catalogEntry == null) {
+        results[serverId] = 'Catalog entry not found';
+        continue;
+      }
+
+      // Check if configured
+      final isConfigured = await _catalogService.isAgentServerConfigured(agentId, serverId);
+      if (!isConfigured) {
+        results[serverId] = 'Authentication configuration missing or invalid';
+        continue;
+      }
+
+      // Check if command/dependencies are available
+      if (catalogEntry.command?.isNotEmpty == true) {
+        final commandParts = catalogEntry.command!.split(' ');
+        final executable = commandParts.first;
+        
+        try {
+          final result = await Process.run(executable, ['--help'], runInShell: true);
+          if (result.exitCode != 0 && !executable.startsWith('uvx') && !executable.startsWith('npx')) {
+            results[serverId] = 'Command not available: $executable';
+            continue;
+          }
+        } catch (e) {
+          results[serverId] = 'Command check failed: $e';
+          continue;
+        }
+      }
+
+      results[serverId] = 'OK';
+    }
+    
+    return results;
+  }
+
+  /// Stop all MCP servers for an agent
+  Future<void> stopAgentMCPServers(String agentId) async {
+    final enabledServerIds = _catalogService.getEnabledServerIds(agentId);
+    
+    for (final serverId in enabledServerIds) {
+      final serverInstanceId = '${agentId}_$serverId';
+      await stopMCPServer(serverInstanceId);
+    }
+    
+    print('🛑 Stopped all MCP servers for agent: $agentId');
+  }
 }
 
 
-/// Provider for MCP server execution service - uses singleton from ServiceLocator
+/// Provider for MCP server execution service - uses catalog and settings services
 final mcpServerExecutionServiceProvider = Provider<MCPServerExecutionService>((ref) {
-  return ServiceLocator.instance.get<MCPServerExecutionService>();
+  final catalogService = ref.read(mcpCatalogServiceProvider);
+  final settingsService = ref.read(mcpSettingsServiceProvider);
+  return MCPServerExecutionService(catalogService, settingsService);
 });
