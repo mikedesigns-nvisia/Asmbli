@@ -62,18 +62,29 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
             _buildEmptyState(colors)
           else
             Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: SpacingTokens.lg,
-                  crossAxisSpacing: SpacingTokens.lg,
-                  childAspectRatio: 1.1,
-                ),
-                itemCount: filteredEntries.length,
-                itemBuilder: (context, index) {
-                  return MCPCatalogEntryCard(
-                    entry: filteredEntries[index],
-                    onTap: () => _showServerDetails(context, filteredEntries[index]),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  print('📐 CatalogueTab Grid Debug: width=${constraints.maxWidth}, using 4 columns (fixed)');
+                  
+                  // Calculate column width for 4 columns with spacing
+                  final spacing = SpacingTokens.lg;
+                  final totalSpacing = spacing * 3; // 3 gaps between 4 columns
+                  final columnWidth = (constraints.maxWidth - totalSpacing) / 4;
+                  
+                  return SingleChildScrollView(
+                    child: Wrap(
+                      spacing: spacing,
+                      runSpacing: spacing,
+                      children: filteredEntries.map((entry) {
+                        return SizedBox(
+                          width: columnWidth,
+                          child: MCPCatalogEntryCard(
+                            entry: entry,
+                            onTap: () => _showServerDetails(context, entry),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   );
                 },
               ),

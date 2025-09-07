@@ -304,54 +304,6 @@ class MCPServerRegistry {
         isFeatured: false,
       ),
 
-      'openai': const MCPCatalogEntry(
-        id: 'openai',
-        name: 'OpenAI API Integration',
-        description: 'Access OpenAI models, fine-tuning, and assistants API. (Coming Soon)',
-        transport: MCPTransportType.stdio,
-        command: 'uvx @modelcontextprotocol/server-openai',
-        requiredAuth: [
-          MCPAuthRequirement(
-            type: MCPAuthType.bearerToken,
-            name: 'OPENAI_API_KEY',
-            displayName: 'OpenAI API Key',
-            description: 'API key for OpenAI services',
-            placeholder: 'sk-xxxxxxxxxxxxxxxxxxxxxxxx',
-          ),
-        ],
-        capabilities: ['model-access', 'fine-tuning', 'assistants-api', 'embeddings'],
-        category: MCPServerCategory.ai,
-        isOfficial: false,
-        version: '0.2.0-beta',
-        supportedPlatforms: ['web', 'desktop'],
-        pricing: MCPPricingModel.usageBased,
-        setupInstructions: 'OpenAI MCP server is in beta. Expected Q1 2025.',
-        isFeatured: false,
-      ),
-
-      'anthropic': const MCPCatalogEntry(
-        id: 'anthropic',
-        name: 'Anthropic Claude API',
-        description: 'Direct access to Claude models and capabilities. (Research Phase)',
-        transport: MCPTransportType.stdio,
-        command: 'uvx @modelcontextprotocol/server-anthropic',
-        requiredAuth: [
-          MCPAuthRequirement(
-            type: MCPAuthType.custom,
-            name: 'ANTHROPIC_API_KEY',
-            displayName: 'Anthropic API Key',
-            description: 'API key for Anthropic services',
-          ),
-        ],
-        capabilities: ['claude-models', 'constitutional-ai', 'long-context'],
-        category: MCPServerCategory.ai,
-        isOfficial: false,
-        version: '0.1.0-research',
-        supportedPlatforms: ['web', 'desktop'],
-        pricing: MCPPricingModel.usageBased,
-        setupInstructions: 'Anthropic MCP server is in research phase.',
-        isFeatured: false,
-      ),
     };
   }
 
@@ -389,7 +341,6 @@ class MCPServerRegistry {
     return {
       'Q1 2025': [
         'Slack MCP Server (official)',
-        'OpenAI MCP Server (beta)',
         'Docker MCP Server (community)',
         'Calendar MCP Server (basic)',
       ],
@@ -421,8 +372,6 @@ class MCPServerRegistry {
       'notion': 'High Priority - Productivity focus, good API documentation',
       'linear': 'Medium Priority - Developer tools focus, growing user base',
       'aws': 'Medium Priority - Complex authentication, security considerations',
-      'openai': 'Low Priority - Potential circular dependency with host AI',
-      'anthropic': 'Research Only - Internal use case unclear',
       'microsoft-365': 'High Priority - Enterprise demand, mature APIs',
       'google-workspace': 'Medium Priority - Good APIs, OAuth complexity',
       'figma': 'Medium Priority - Design workflow integration',

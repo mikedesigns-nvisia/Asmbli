@@ -44,7 +44,7 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
             _buildHeader(context, colors),
             Expanded(
               child: SingleChildScrollView(
-                padding: SpacingTokens.pageHorizontalPadding,
+                padding: EdgeInsets.all(SpacingTokens.pageHorizontalPadding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -266,20 +266,33 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
   }
 
   Widget _buildEntriesGrid(List<MCPCatalogEntry> entries, ThemeColors colors) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 1.2,
-      ),
-      itemCount: entries.length,
-      itemBuilder: (context, index) {
-        return MCPCatalogEntryCard(
-          entry: entries[index],
-          onTap: () => _showServerSetupDialog(entries[index]),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Fixed 4-column grid regardless of screen size
+        int crossAxisCount = 4;
+        
+        // Debug print to see what's happening
+        print('📐 Grid Debug: width=${constraints.maxWidth}, columns=$crossAxisCount (fixed 4-column)');
+        
+        // Fixed aspect ratio for 4-column compact cards (made smaller for better fit)
+        double aspectRatio = 0.6;
+        
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: constraints.maxWidth / 4, // Force exactly 4 columns
+            crossAxisSpacing: SpacingTokens.md,
+            mainAxisSpacing: SpacingTokens.md,
+            childAspectRatio: aspectRatio,
+          ),
+          itemCount: entries.length,
+          itemBuilder: (context, index) {
+            return MCPCatalogEntryCard(
+              entry: entries[index],
+              onTap: () => _showServerSetupDialog(entries[index]),
+            );
+          },
         );
       },
     );
