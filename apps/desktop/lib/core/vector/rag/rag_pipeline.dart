@@ -59,11 +59,11 @@ class RAGPipeline {
 
       // Step 4: Generate response
       final generationStart = DateTime.now();
-      final response = await _modelService.generate(prompt);
+      final response = await _modelService.generate(prompt: prompt);
       final generationTime = DateTime.now().difference(generationStart);
 
-      // Step 5: Process and enhance the response
-      final processedResponse = _processResponse(response, searchResults);
+      // Step 5: Process and enhance the response  
+      final processedResponse = _processResponse(response.content, searchResults);
 
       // Step 6: Add citations if requested
       final finalAnswer = includeCitations

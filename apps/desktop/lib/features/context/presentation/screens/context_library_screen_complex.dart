@@ -1627,7 +1627,7 @@ module.exports = {
   }
 
   Widget _buildMyContextTab() {
-    final contextAsync = ref.watch(contextDocumentsProvider);
+    final contextAsync = ref.watch(contextDocumentsWithVectorProvider);
     
     return contextAsync.when(
       data: (documents) {

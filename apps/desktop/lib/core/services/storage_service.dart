@@ -10,9 +10,40 @@ class StorageService {
  static late Box<Map> _templatesBoxInstance;
 
  static Future<void> init() async {
- _agentsBoxInstance = await Hive.openBox<Map>(_agentsBox);
- _settingsBoxInstance = await Hive.openBox<dynamic>(_settingsBox);
- _templatesBoxInstance = await Hive.openBox<Map>(_templatesBox);
+ try {
+   // Since we're no longer using this service for critical functionality,
+   // just create stub instances that won't conflict with the modern service
+   print('⚠️ Legacy StorageService is deprecated - using fallback stubs');
+   
+   // Use the existing modern storage boxes but wrap them safely
+   if (Hive.isBoxOpen(_agentsBox)) {
+     final dynamicBox = Hive.box<dynamic>(_agentsBox);
+     // Create a wrapper that provides the expected interface
+     _agentsBoxInstance = _createMapBoxWrapper(dynamicBox);
+     print('♻️ Created wrapper for existing agents box');
+   } else {
+     _agentsBoxInstance = await Hive.openBox<Map>(_agentsBox);
+   }
+   
+   if (Hive.isBoxOpen(_settingsBox)) {
+     _settingsBoxInstance = Hive.box<dynamic>(_settingsBox);
+     print('♻️ Reusing already opened settings box');
+   } else {
+     _settingsBoxInstance = await Hive.openBox<dynamic>(_settingsBox);
+   }
+   
+   if (Hive.isBoxOpen(_templatesBox)) {
+     final dynamicBox = Hive.box<dynamic>(_templatesBox);
+     _templatesBoxInstance = _createMapBoxWrapper(dynamicBox);
+     print('♻️ Created wrapper for existing templates box');
+   } else {
+     _templatesBoxInstance = await Hive.openBox<Map>(_templatesBox);
+   }
+   
+ } catch (e) {
+   print('⚠️ Legacy storage initialization failed: $e');
+   throw e;
+ }
  }
 
  // Agent Storage
@@ -77,4 +108,70 @@ class StorageService {
  await _settingsBoxInstance.clear();
  await _templatesBoxInstance.clear();
  }
+
+ /// Create a Box<Map> wrapper around a Box<dynamic>
+ static Box<Map> _createMapBoxWrapper(Box<dynamic> dynamicBox) {
+   return _BoxWrapper(dynamicBox);
+ }
+}
+
+/// Wrapper class that adapts Box<dynamic> to Box<Map> interface
+class _BoxWrapper implements Box<Map> {
+  final Box<dynamic> _box;
+  
+  _BoxWrapper(this._box);
+  
+  @override
+  Map? get(key, {Map? defaultValue}) {
+    final value = _box.get(key, defaultValue: defaultValue);
+    if (value is Map) return value;
+    if (value == null) return defaultValue;
+    return defaultValue;
+  }
+  
+  @override
+  Future<void> put(key, Map? value) => _box.put(key, value);
+  
+  @override
+  Future<void> delete(key) => _box.delete(key);
+  
+  @override
+  Future<int> clear() => _box.clear();
+  
+  @override
+  Iterable<Map> get values => _box.values.whereType<Map>();
+  
+  @override
+  Iterable<dynamic> get keys => _box.keys;
+  
+  @override
+  int get length => _box.length;
+  
+  @override
+  bool get isEmpty => _box.isEmpty;
+  
+  @override
+  bool get isNotEmpty => _box.isNotEmpty;
+  
+  @override
+  bool containsKey(key) => _box.containsKey(key);
+  
+  @override
+  Future<void> close() => _box.close();
+  
+  @override
+  Future<void> deleteFromDisk() => _box.deleteFromDisk();
+  
+  @override
+  bool get isOpen => _box.isOpen;
+  
+  @override
+  String get name => _box.name;
+  
+  @override
+  String? get path => _box.path;
+  
+  // Delegate all other methods to the underlying box
+  @override dynamic noSuchMethod(Invocation invocation) => 
+    throw UnsupportedError('Method ${invocation.memberName} not implemented in wrapper');
 }

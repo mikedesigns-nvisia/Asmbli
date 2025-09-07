@@ -27,7 +27,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  @override
  Widget build(BuildContext context) {
  final colors = ThemeColors(context);
- final contextDocuments = ref.watch(contextDocumentsProvider);
+ final contextDocuments = ref.watch(contextDocumentsWithVectorProvider);
  
  return Scaffold(
  body: Container(
@@ -154,13 +154,14 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  if (_showCreateForm) ...[
  ContextCreationFlow(
  onSave: (document) async {
- await ref.read(contextRepositoryProvider).createDocument(
+ final notifier = ref.read(contextDocumentNotifierProvider.notifier);
+ await notifier.createDocument(
  title: document.title,
  content: document.content,
  type: document.type,
  tags: document.tags,
  );
- ref.invalidate(contextDocumentsProvider);
+ ref.invalidate(contextDocumentsWithVectorProvider);
  setState(() => _showCreateForm = false);
  },
  onCancel: () => setState(() => _showCreateForm = false),
@@ -260,12 +261,14 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  return ContextDocumentCard(
  document: document,
  onEdit: (updatedDocument) async {
- await ref.read(contextRepositoryProvider).updateDocument(updatedDocument);
- ref.invalidate(contextDocumentsProvider);
+ final notifier = ref.read(contextDocumentNotifierProvider.notifier);
+ await notifier.updateDocument(updatedDocument);
+ ref.invalidate(contextDocumentsWithVectorProvider);
  },
  onDelete: (documentId) async {
- await ref.read(contextRepositoryProvider).deleteDocument(documentId);
- ref.invalidate(contextDocumentsProvider);
+ final notifier = ref.read(contextDocumentNotifierProvider.notifier);
+ await notifier.deleteDocument(documentId);
+ ref.invalidate(contextDocumentsWithVectorProvider);
  },
  onAssignToAgent: (documentId) {
  // Navigate to agent assignment

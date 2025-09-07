@@ -32,6 +32,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/services/desktop/hive_cleanup_service.dart';
 import 'core/error_handling/error_boundary.dart';
 import 'core/error_handling/global_error_handler.dart';
+import 'core/services/vector_integration_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   // Set up error zone for the entire app
@@ -61,6 +63,15 @@ void main() async {
  try {
  await DesktopServiceProvider.instance.initialize();
  // Desktop services initialized successfully
+ 
+ // Initialize legacy storage service (always needed)
+ try {
+   await Hive.initFlutter('asmbli_app_data');
+   await StorageService.init();
+   print('✅ Legacy storage service initialized');
+ } catch (storageError) {
+   print('⚠️ Legacy storage initialization failed: $storageError');
+ }
  
  // Check and clean database if needed
  print('🔍 Checking database health...');
@@ -124,7 +135,7 @@ void main() async {
         ],
         child: ErrorMonitoringWidget(
           child: NavigationErrorBoundary(
-            child: const AsmblDesktopApp(),
+            child: const VectorInitializedApp(),
           ),
         ),
       ),
@@ -139,6 +150,69 @@ void main() async {
       // Send to crash reporting service
     }
   });
+}
+
+/// Wrapper to initialize vector system before main app
+class VectorInitializedApp extends ConsumerWidget {
+  const VectorInitializedApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch vector system initialization
+    final vectorInitialization = ref.watch(vectorSystemInitializationProvider);
+    
+    return vectorInitialization.when(
+      data: (_) => const AsmblDesktopApp(),
+      loading: () => MaterialApp(
+        home: Scaffold(
+          backgroundColor: const Color(0xFF0A0E1A),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A1F2E),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      const CircularProgressIndicator(
+                        color: Color(0xFF4ECDC4),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Initializing Vector Database...',
+                        style: GoogleFonts.fustat(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Setting up context and knowledge systems',
+                        style: GoogleFonts.fustat(
+                          fontSize: 14,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      error: (error, stackTrace) {
+        print('❌ Vector system initialization failed: $error');
+        // Continue with main app even if vector system fails
+        return const AsmblDesktopApp();
+      },
+    );
+  }
 }
 
 class AsmblDesktopApp extends ConsumerWidget {

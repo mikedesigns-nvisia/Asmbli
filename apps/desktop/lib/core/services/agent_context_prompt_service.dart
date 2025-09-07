@@ -2,9 +2,12 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/context/data/models/context_document.dart';
 import '../../features/context/presentation/providers/context_provider.dart';
+import '../vector/models/vector_models.dart';
+import 'vector_context_retrieval_service.dart';
+import 'package:agent_engine_core/models/conversation.dart';
 
 /// Service to integrate context documents into agent system prompts
-/// Provides MCP-aware prompt enhancement with context data
+/// Provides vector-enhanced prompt enhancement with contextual data
 class AgentContextPromptService {
   static final AgentContextPromptService _instance = AgentContextPromptService._internal();
   factory AgentContextPromptService() => _instance;
@@ -27,6 +30,187 @@ class AgentContextPromptService {
     } catch (e) {
       // If context loading fails, return base prompt
       return basePrompt;
+    }
+  }
+
+  /// Enhanced version that uses vector search for relevant context based on user message
+  Future<String> enhancePromptWithVectorContext(
+    String basePrompt,
+    String userMessage,
+    String agentId,
+    WidgetRef ref, {
+    List<String>? sessionContextIds,
+    int maxContextChunks = 5,
+  }) async {
+    try {
+      final retrievalService = ref.read(vectorContextRetrievalServiceProvider);
+      
+      if (retrievalService != null) {
+        // Get relevant context using vector search
+        final contextResults = await retrievalService!.getContextForMessage(
+          userMessage,
+          agentId: agentId,
+          sessionContextIds: sessionContextIds,
+          maxResults: maxContextChunks,
+        );
+        
+        if (contextResults.isEmpty) {
+          return basePrompt;
+        }
+
+        return _buildVectorEnhancedPrompt(basePrompt, contextResults, userMessage);
+      } else {
+        return basePrompt;
+      }
+    } catch (e) {
+      print('⚠️ Vector context enhancement failed: $e');
+      // Fallback to traditional context enhancement
+      return await enhancePromptWithContext(basePrompt, agentId, ref);
+    }
+  }
+
+  /// Build enhanced prompt with vector search results
+  String _buildVectorEnhancedPrompt(
+    String basePrompt, 
+    List<VectorSearchResult> contextResults,
+    String userMessage,
+  ) {
+    final buffer = StringBuffer(basePrompt);
+    
+    buffer.writeln('\n\n## Relevant Context');
+    buffer.writeln('Based on your query "$userMessage", here is the most relevant context:');
+    
+    // Group results by document
+    final documentGroups = <String, List<VectorSearchResult>>{};
+    for (final result in contextResults) {
+      final docTitle = result.chunk.metadata['document_title']?.toString() ?? 'Unknown';
+      documentGroups.putIfAbsent(docTitle, () => []).add(result);
+    }
+    
+    // Add each document's relevant chunks
+    for (final entry in documentGroups.entries) {
+      final docTitle = entry.key;
+      final results = entry.value;
+      
+      buffer.writeln('\n### $docTitle');
+      
+      // Sort by relevance
+      results.sort((a, b) => b.effectiveScore.compareTo(a.effectiveScore));
+      
+      for (int i = 0; i < results.length && i < 3; i++) {
+        final result = results[i];
+        final chunk = result.chunk;
+        final relevance = (result.effectiveScore * 100).toInt();
+        
+        buffer.writeln('\n**Context Chunk ${i + 1}** (${relevance}% relevant):');
+        buffer.writeln(chunk.text.trim());
+        
+        // Add metadata if useful
+        if (chunk.metadata.containsKey('section_type')) {
+          buffer.writeln('_Type: ${chunk.metadata['section_type']}_');
+        }
+      }
+    }
+    
+    // Add usage instructions
+    buffer.writeln('\n### Context Usage Guidelines');
+    buffer.writeln('- Use this context to provide accurate, relevant answers');
+    buffer.writeln('- Reference specific examples or procedures when available');
+    buffer.writeln('- If context contradicts your general knowledge, prioritize the context');
+    buffer.writeln('- If the context doesn\'t contain relevant information, acknowledge this clearly');
+    buffer.writeln('- Use the relevance percentages to prioritize information');
+    
+    return buffer.toString();
+  }
+
+  /// Build contextual message enhancement for conversations
+  Future<String> buildMessageContext(
+    List<Message> recentMessages,
+    String agentId,
+    WidgetRef ref, {
+    List<String>? sessionContextIds,
+    int maxMessages = 3,
+  }) async {
+    try {
+      if (recentMessages.isEmpty) return '';
+      
+      // Extract key topics from recent messages
+      final userMessages = recentMessages
+          .where((msg) => msg.role == MessageRole.user)
+          .take(maxMessages)
+          .map((msg) => msg.content)
+          .toList();
+      
+      if (userMessages.isEmpty) return '';
+      
+      // Combine recent messages for context search
+      final combinedQuery = userMessages.join(' ');
+      
+      final retrievalService = ref.read(vectorContextRetrievalServiceProvider);
+      
+      if (retrievalService != null) {
+        final contextResults = await retrievalService!.getContextForMessage(
+          combinedQuery,
+          agentId: agentId,
+          sessionContextIds: sessionContextIds,
+          maxResults: 3,
+        );
+        
+        if (contextResults.isEmpty) return '';
+        
+        // Build concise context summary
+        final buffer = StringBuffer();
+        buffer.writeln('## Conversation Context');
+        
+        final seenDocuments = <String>{};
+        for (final result in contextResults) {
+          final docTitle = result.chunk.metadata['document_title']?.toString() ?? 'Unknown';
+          if (!seenDocuments.contains(docTitle)) {
+            seenDocuments.add(docTitle);
+            final snippet = result.chunk.text.length > 150 
+                ? '${result.chunk.text.substring(0, 150)}...'
+                : result.chunk.text;
+            buffer.writeln('\n**$docTitle**: $snippet');
+          }
+        }
+        
+        return buffer.toString();
+      } else {
+        return '';
+      }
+      
+    } catch (e) {
+      print('⚠️ Message context building failed: $e');
+      return '';
+    }
+  }
+
+  /// Get context statistics for debugging
+  Future<Map<String, dynamic>> getContextStats(
+    String agentId,
+    WidgetRef ref, {
+    List<String>? sessionContextIds,
+  }) async {
+    try {
+      final retrievalService = ref.read(vectorContextRetrievalServiceProvider);
+      if (retrievalService != null) {
+        return await retrievalService!.getContextStats(
+          agentId: agentId,
+          sessionContextIds: sessionContextIds,
+        );
+      } else {
+        return {
+          'error': 'Vector context retrieval service not available',
+          'totalContextDocuments': 0,
+          'availableChunks': 0,
+        };
+      }
+    } catch (e) {
+      return {
+        'error': e.toString(),
+        'agent_id': agentId,
+        'session_context_count': sessionContextIds?.length ?? 0,
+      };
     }
   }
 

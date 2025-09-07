@@ -25,7 +25,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
 
  @override
  Widget build(BuildContext context) {
- final contextDocuments = ref.watch(contextDocumentsProvider);
+ final contextDocuments = ref.watch(contextDocumentsWithVectorProvider);
  final assignedContext = ref.watch(contextForAgentProvider(widget.agentId));
 
  return Dialog(

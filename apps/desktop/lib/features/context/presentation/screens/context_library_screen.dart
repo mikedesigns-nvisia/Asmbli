@@ -34,7 +34,7 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = ThemeColors(context);
-    final contextAsync = ref.watch(contextDocumentsProvider);
+    final contextAsync = ref.watch(contextDocumentsWithVectorProvider);
     
     return Scaffold(
       body: Container(

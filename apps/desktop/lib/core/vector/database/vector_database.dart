@@ -102,13 +102,33 @@ class VectorDatabase {
     }
 
     print('🔄 Updating document: ${document.title}');
+    final startTime = DateTime.now();
 
     try {
       // Remove existing chunks
       await _storage.deleteChunks(document.id);
       
-      // Process the updated document
-      await addDocument(document);
+      // Process the updated document directly (avoid addDocument to prevent infinite loop)
+      // Chunk the document
+      final chunks = _chunker.chunkDocument(document);
+      print('🔧 Created ${chunks.length} chunks');
+
+      // Generate embeddings for all chunks
+      final texts = chunks.map((chunk) => chunk.text).toList();
+      final embeddings = await _embeddingService.generateEmbeddings(texts);
+      
+      // Add embeddings to chunks
+      final chunksWithEmbeddings = <VectorChunk>[];
+      for (int i = 0; i < chunks.length; i++) {
+        chunksWithEmbeddings.add(chunks[i].copyWith(embedding: embeddings[i]));
+      }
+
+      // Store document and chunks
+      await _storage.storeDocument(document);
+      await _storage.storeChunks(chunksWithEmbeddings);
+
+      final duration = DateTime.now().difference(startTime);
+      print('✅ Updated document ${document.title} in ${duration.inMilliseconds}ms');
       
     } catch (e) {
       throw VectorDatabaseException('Failed to update document ${document.id}: $e');
