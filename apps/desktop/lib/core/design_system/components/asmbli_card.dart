@@ -104,14 +104,14 @@ class AsmblStatsCard extends StatelessWidget {
  const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
  value,
- style: TextStyles.sectionTitle.copyWith(
+ style: TextStyle(
  color: colors.onSurface,
  ),
  ),
  const SizedBox(height: SpacingTokens.xs_precise),
  Text(
  title,
- style: TextStyles.bodySmall.copyWith(
+ style: TextStyle(
  color: colors.onSurfaceVariant,
  ),
  textAlign: TextAlign.center,

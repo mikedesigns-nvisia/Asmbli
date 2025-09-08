@@ -264,7 +264,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
                   const SizedBox(width: 4),
                   Text(
                     'Auto-Detect',
-                    style: TextStyles.labelSmall.copyWith(
+                    style: TextStyles.labelMedium.copyWith(
                       color: SemanticColors.primary,
                     ),
                   ),

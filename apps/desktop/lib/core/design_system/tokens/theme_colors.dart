@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../services/theme_service.dart';
 
 // Theme-aware color provider - USE THIS INSTEAD OF SemanticColors
 class ThemeColors {
  final BuildContext context;
  final ThemeData theme;
  final String? _colorScheme;
+ final WidgetRef? _ref;
  
  ThemeColors(this.context, {String? colorScheme}) 
+   : theme = Theme.of(context), 
+     _colorScheme = colorScheme,
+     _ref = null;
+     
+ ThemeColors.withRef(this.context, this._ref, {String? colorScheme}) 
    : theme = Theme.of(context), 
      _colorScheme = colorScheme;
      
@@ -15,16 +22,16 @@ class ThemeColors {
  String get _actualColorScheme {
    if (_colorScheme != null) return _colorScheme!;
    
-   // Try to get the current scheme from Provider
-   if (context is ConsumerWidget || context is ConsumerStatefulWidget) {
+   // Try to get from provider if ref is available
+   if (_ref != null) {
      try {
-       // This is a hack - we'll need to access the provider differently
-       // For now, let's determine based on theme colors
-       return _detectSchemeFromTheme();
+       final themeState = _ref!.read(themeServiceProvider);
+       return themeState.colorScheme;
      } catch (e) {
-       return 'warm-neutral';
+       return _detectSchemeFromTheme();
      }
    }
+   
    return _detectSchemeFromTheme();
  }
  

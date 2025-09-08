@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/components/asmbli_card_enhanced.dart';
 import '../../data/models/context_document.dart';
 import '../providers/context_provider.dart';
 import '../../data/repositories/context_repository.dart';
 import '../../../../core/services/vector_database_service.dart';
 import '../../../../core/vector/models/vector_models.dart';
+import 'context_document_card.dart';
 
 class ContextHubWidget extends ConsumerStatefulWidget {
   const ContextHubWidget({super.key});
@@ -152,56 +154,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
                     ),
                   ),
                   const SizedBox(height: SpacingTokens.iconSpacing),
-                  ...documents.take(3).map((doc) => Container(
-                    margin: const EdgeInsets.only(bottom: SpacingTokens.iconSpacing),
-                    padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
-                    decoration: BoxDecoration(
-                      color: colors.background,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: colors.border),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          _getDocumentIcon(doc.type),
-                          size: 14,
-                          color: colors.primary,
-                        ),
-                        const SizedBox(width: SpacingTokens.iconSpacing),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                doc.title,
-                                style: TextStyles.bodySmall.copyWith(
-                                  color: colors.onSurface,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                doc.type.displayName,
-                                style: TextStyles.caption.copyWith(
-                                  color: colors.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                  if (documents.length > 3) ...[
-                    const SizedBox(height: SpacingTokens.iconSpacing),
-                    Text(
-                      '... and ${documents.length - 3} more',
-                      style: TextStyles.caption.copyWith(
-                        color: colors.onSurfaceVariant,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ],
+                  _buildDocumentsGrid(documents, colors),
                 ],
               );
             },
@@ -242,6 +195,154 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDocumentsGrid(List<ContextDocument> documents, ThemeColors colors) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int crossAxisCount = 4;
+        double aspectRatio = 0.7; // Slightly taller for enhanced cards
+        
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: constraints.maxWidth / 4,
+            crossAxisSpacing: SpacingTokens.md,
+            mainAxisSpacing: SpacingTokens.md,
+            childAspectRatio: aspectRatio,
+          ),
+          itemCount: documents.length,
+          itemBuilder: (context, index) {
+            final doc = documents[index];
+            return ContextDocumentCard(
+              document: doc,
+              onEdit: _handleEditDocument,
+              onDelete: _handleDeleteDocument,
+              onAssignToAgent: _handleAssignToAgent,
+              onPreview: () => _handlePreviewDocument(doc),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _handleEditDocument(ContextDocument document) {
+    // Show edit dialog or navigate to edit screen
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: ThemeColors(context).surface,
+        title: Text(
+          'Edit Document',
+          style: TextStyles.cardTitle.copyWith(
+            color: ThemeColors(context).onSurface,
+          ),
+        ),
+        content: Text(
+          'Edit functionality for "${document.title}" will be implemented here.',
+          style: TextStyles.bodyMedium.copyWith(
+            color: ThemeColors(context).onSurfaceVariant,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleDeleteDocument(String documentId) {
+    // Implementation will depend on your context service
+    // For now, show confirmation that delete was triggered
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Delete document $documentId'),
+        backgroundColor: ThemeColors(context).warning,
+      ),
+    );
+  }
+
+  void _handleAssignToAgent(String documentId) {
+    // Show agent selection dialog or navigate to assignment screen
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Assign document $documentId to agent'),
+        backgroundColor: ThemeColors(context).info,
+      ),
+    );
+  }
+
+  void _handlePreviewDocument(ContextDocument document) {
+    // Show preview dialog with document content
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: ThemeColors(context).surface,
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: MediaQuery.of(context).size.height * 0.8,
+          padding: EdgeInsets.all(SpacingTokens.xl),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    _getDocumentIcon(document.type),
+                    color: ThemeColors(context).primary,
+                  ),
+                  SizedBox(width: SpacingTokens.sm),
+                  Expanded(
+                    child: Text(
+                      document.title,
+                      style: TextStyles.pageTitle.copyWith(
+                        color: ThemeColors(context).onSurface,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(Icons.close, color: ThemeColors(context).onSurfaceVariant),
+                  ),
+                ],
+              ),
+              SizedBox(height: SpacingTokens.lg),
+              Container(
+                padding: EdgeInsets.all(SpacingTokens.sm),
+                decoration: BoxDecoration(
+                  color: ThemeColors(context).primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Text(
+                  document.type.displayName,
+                  style: TextStyles.bodySmall.copyWith(
+                    color: ThemeColors(context).primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(height: SpacingTokens.lg),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Text(
+                    document.content,
+                    style: TextStyles.bodyMedium.copyWith(
+                      color: ThemeColors(context).onSurface,
+                      height: 1.6,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

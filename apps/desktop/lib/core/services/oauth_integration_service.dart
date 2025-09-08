@@ -405,6 +405,15 @@ class OAuthIntegrationService {
     await _stopCallbackServer();
     _pendingAuth.clear();
   }
+
+  /// Authorize with OAuth provider
+  Future<Map<String, String>?> authorize(OAuthProvider provider, {List<String>? scopes}) async {
+    final config = await _getProviderConfig(provider);
+    if (config == null) return null;
+    
+    // Implementation would go here - for now return null to indicate failure
+    return null;
+  }
 }
 
 

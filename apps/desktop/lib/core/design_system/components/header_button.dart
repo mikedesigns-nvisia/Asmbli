@@ -76,7 +76,7 @@ class _HeaderButtonState extends State<HeaderButton> {
  const SizedBox(width: SpacingTokens.sm),
  Text(
  widget.text,
- style: TextStyles.navButton.copyWith(
+ style: TextStyle(
  color: widget.isActive || _isHovered || _isPressed
  ? colors.accent
  : colors.onSurfaceVariant,

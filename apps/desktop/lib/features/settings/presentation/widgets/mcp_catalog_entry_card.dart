@@ -162,8 +162,7 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard>
       style: TextStyles.bodySmall.copyWith(
         color: colors.onSurfaceVariant,
         height: 1.2,
-        fontSize: 11,
-      ),
+             ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
@@ -227,8 +226,7 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard>
             text,
             style: TextStyles.caption.copyWith(
               color: colors.onSurfaceVariant,
-              fontSize: 9,
-            ),
+                         ),
           ),
         ],
       ),
@@ -254,8 +252,7 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard>
               style: TextStyles.caption.copyWith(
                 color: colors.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
-                fontSize: 10,
-              ),
+                             ),
             ),
           ],
         ),
@@ -280,8 +277,7 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard>
                 capability.replaceAll('-', ' '),
                 style: TextStyles.caption.copyWith(
                   color: cardColors.accentColor,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w500,
+                                   fontWeight: FontWeight.w500,
                 ),
               ),
             );
@@ -310,8 +306,7 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard>
                   widget.entry.hasAuth ? 'Auth required' : 'Ready to use',
                   style: TextStyles.caption.copyWith(
                     color: colors.onSurfaceVariant,
-                    fontSize: 10,
-                  ),
+                                     ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -368,8 +363,7 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard>
         style: TextStyles.caption.copyWith(
           color: badgeColor,
           fontWeight: FontWeight.w500,
-          fontSize: 10,
-        ),
+                 ),
       ),
     );
   }

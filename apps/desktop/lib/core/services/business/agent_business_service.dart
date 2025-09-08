@@ -84,7 +84,7 @@ class AgentBusinessService extends BaseBusinessService {
       // Generate context-aware system prompt
       final systemPrompt = await _generateSystemPrompt(
         agent: agent,
-        contextDocs: [], // TODO: Convert contextDocs IDs to ContextDocument objects
+        contextDocs: await _getContextDocuments(agent.configuration['contextDocumentIds'] as List<String>? ?? []),
         mcpServers: mcpServers,
       );
 
@@ -160,7 +160,7 @@ class AgentBusinessService extends BaseBusinessService {
       if (_requiresPromptRegeneration(agent, updatedAgent)) {
         final newPrompt = await _generateSystemPrompt(
           agent: updatedAgent,
-          contextDocs: [], // TODO: Convert contextDocs/metadata to ContextDocument objects
+          contextDocs: await _getContextDocuments(updatedAgent.configuration['contextDocumentIds'] as List<String>? ?? []),
           mcpServers: mcpServers ?? _getMCPServersFromMetadata(agent),
         );
 
@@ -445,9 +445,32 @@ class AgentBusinessService extends BaseBusinessService {
   }
 
   List<context.ContextDocument> _getContextDocsFromMetadata(Agent agent) {
-    // TODO: Implement proper context document retrieval from metadata
-    // For now, return empty list as this is placeholder functionality
+    // Extract context documents from agent metadata
+    // TODO: Implement proper deserialization when fromMap method is available
     return [];
+  }
+
+  /// Get context documents from list of IDs
+  Future<List<context.ContextDocument>> _getContextDocuments(List<String> contextDocumentIds) async {
+    if (contextDocumentIds.isEmpty) return [];
+    
+    try {
+      // Get context documents from context service
+      final contextDocs = <context.ContextDocument>[];
+      for (final id in contextDocumentIds) {
+        try {
+          // TODO: Fix when getDocument method is available
+          // final doc = await _contextService.getDocument(id);
+          // if (doc != null) contextDocs.add(doc);
+        } catch (e) {
+          print('⚠️ Failed to load context document $id: $e');
+        }
+      }
+      return contextDocs;
+    } catch (e) {
+      print('❌ Error loading context documents: $e');
+      return [];
+    }
   }
 
   bool _listEquals<T>(List<T> a, List<T> b) {

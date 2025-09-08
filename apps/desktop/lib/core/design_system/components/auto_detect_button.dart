@@ -51,7 +51,7 @@ class AutoDetectButton extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Auto-Detect',
-                  style: TextStyles.labelMedium.copyWith(
+                  style: TextStyle(
                     color: SemanticColors.primary,
                   ),
                 ),
@@ -104,15 +104,14 @@ class AutoDetectButton extends ConsumerWidget {
                       specificIntegration != null
                           ? 'Auto-Detect $specificIntegration'
                           : 'Auto-Detect Configuration',
-                      style: const TextStyle(
-                    fontSize: 16,
+                      style: TextStyle(
                     fontWeight: FontWeight.w500,
                         color: SemanticColors.primary,
                       ).copyWith(color: SemanticColors.primary),
                     ),
                     Text(
                       'Automatically find and configure installed tools',
-                      style: TextStyles.bodySmall.copyWith(
+                      style: TextStyle(
                         color: SemanticColors.onSurfaceVariant,
                       ),
                     ),

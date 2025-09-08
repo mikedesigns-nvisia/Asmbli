@@ -103,7 +103,6 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
                   text: 'New Chat',
                   icon: Icons.add,
                   onPressed: _startNewChat,
-                  isFullWidth: true,
                 ),
               ],
             ),

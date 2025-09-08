@@ -342,8 +342,7 @@ class OAuthProviderCard extends StatelessWidget {
         'Approval Required',
         style: TextStyles.caption.copyWith(
           color: colors.accent,
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
+                   fontWeight: FontWeight.w500,
         ),
       ),
     );

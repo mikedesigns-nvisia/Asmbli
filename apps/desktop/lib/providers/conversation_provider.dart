@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/services/conversation_service.dart';
 import '../core/services/desktop/desktop_conversation_service.dart';
@@ -135,7 +136,7 @@ final createAgentConversationProvider = Provider.autoDispose((ref) {
    mcpServers: mcpServers,
    mcpServerConfigs: enhancedMcpConfigs,
    contextDocuments: allContextDocuments,
-   environmentTokens: <String, String>{}, // TODO: Add environment tokens to AgentDeploymentConfig
+   environmentTokens: _getEnvironmentTokens(), // Environment variables from system
  );
 
  final agentMetadata = {
@@ -555,4 +556,14 @@ String _getProviderName(Ref ref) {
     }
   }
   return 'LLM';
+}
+
+/// Get environment tokens from system environment
+Map<String, String> _getEnvironmentTokens() {
+  return {
+    'USER': Platform.environment['USER'] ?? Platform.environment['USERNAME'] ?? 'user',
+    'HOME': Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'] ?? '',
+    'PLATFORM': Platform.operatingSystem,
+    'APP_VERSION': '1.0.0', // TODO: Get from package info
+  };
 }

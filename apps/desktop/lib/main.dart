@@ -6,12 +6,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:async';
 
 import 'core/design_system/design_system.dart';
+import 'core/design_system/components/asmbli_card_enhanced.dart';
 import 'core/constants/routes.dart';
 import 'core/di/service_locator.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
-import 'features/chat/presentation/screens/modern_chat_screen_v2.dart';
+// import 'features/chat/presentation/screens/modern_chat_screen_v2.dart'; // Temporarily disabled
 import 'features/chat/presentation/screens/demo_chat_screen.dart'; // Remove after video
 import 'features/settings/presentation/screens/modern_settings_screen.dart';
+import 'features/settings/presentation/screens/apple_style_oauth_screen.dart';
 import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'features/agents/presentation/screens/agent_configuration_screen.dart';
 import 'features/context/presentation/screens/context_library_screen.dart';
@@ -197,8 +199,7 @@ class VectorInitializedApp extends ConsumerWidget {
                       Text(
                         'Setting up your workspace...',
                         style: GoogleFonts.fustat(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                                                   fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
@@ -206,8 +207,7 @@ class VectorInitializedApp extends ConsumerWidget {
                       Text(
                         'Preparing your knowledge base and context',
                         style: GoogleFonts.fustat(
-                          fontSize: 14,
-                          color: Colors.white70,
+                                                   color: Colors.white70,
                         ),
                       ),
                     ],
@@ -269,14 +269,20 @@ final _router = GoRouter(
    return ChatScreen(selectedTemplate: template);
  },
  ),
- GoRoute(
- path: AppRoutes.chatV2,
- builder: (context, state) => const ModernChatScreenV2(),
- ),
+ // Temporarily disabled - missing file
+ // GoRoute(
+ // path: AppRoutes.chatV2,
+ // builder: (context, state) => const ModernChatScreenV2(),
+ // ),
  // Demo route for video recording (remove after video)
  GoRoute(
  path: AppRoutes.demoChat,
  builder: (context, state) => const DemoChatScreen(),
+ ),
+ // OAuth settings route
+ GoRoute(
+ path: AppRoutes.oauthSettings,
+ builder: (context, state) => const AppleStyleOAuthScreen(),
  ),
  GoRoute(
  path: AppRoutes.settings,
@@ -516,7 +522,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  ),
  ],
  const SizedBox(height: SpacingTokens.componentSpacing),
- AsmblButtonEnhanced.outline(
+ AsmblButton.outline(
  text: 'View All Chats',
  icon: Icons.forum,
  onPressed: () => context.go(AppRoutes.chat),
@@ -547,7 +553,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  ),
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
- AsmblButtonEnhanced.secondary(
+ AsmblButton.secondary(
  text: 'Retry',
  icon: Icons.refresh,
  onPressed: () => ref.invalidate(conversationsProvider),

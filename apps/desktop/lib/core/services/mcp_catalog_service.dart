@@ -51,7 +51,7 @@ class MCPCatalogService {
         );
       },
       operationName: 'load_mcp_catalog',
-      rethrow: true,
+      throwError: true,
     );
   }
 
@@ -153,7 +153,7 @@ class MCPCatalogService {
       },
       operationName: 'add_custom_catalog_entry',
       context: {'entry_id': entry.id, 'entry_name': entry.name},
-      rethrow: true,
+      throwError: true,
     );
   }
 
@@ -352,6 +352,38 @@ class MCPCatalogService {
         lastUsed: DateTime.now(),
       );
       // Don't save immediately to avoid too many writes
+    }
+  }
+
+  /// Validate catalog entry data
+  void _validateCatalogEntry(MCPCatalogEntry entry) {
+    final validations = InputValidator.validateFields({
+      'entry_id': () => InputValidator.validateMcpServerId(entry.id),
+      'entry_name': () => InputValidator.validateLength(
+        entry.name,
+        min: 1,
+        max: 100,
+        fieldName: 'Entry name',
+      ),
+      'description': () => InputValidator.validateLength(
+        entry.description,
+        min: 1,
+        max: 500,
+        fieldName: 'Description',
+      ),
+    });
+
+    validations.throwIfInvalid(context: {
+      'entry_id': entry.id,
+      'entry_name': entry.name,
+    });
+
+    // Validate capabilities
+    if (entry.capabilities.isEmpty) {
+      throw AppErrorHandler.handleValidationError(
+        'capabilities',
+        'At least one capability must be specified',
+      );
     }
   }
 }

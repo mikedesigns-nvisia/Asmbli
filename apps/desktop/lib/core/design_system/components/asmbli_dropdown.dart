@@ -42,7 +42,7 @@ class AsmblDropdown<T> extends StatelessWidget {
  hint: hint != null
  ? Text(
  hint!,
- style: TextStyles.bodyMedium.copyWith(
+ style: TextStyle(
  color: colors.onSurfaceVariant,
  ),
  )
@@ -53,7 +53,7 @@ class AsmblDropdown<T> extends StatelessWidget {
  size: 20,
  ),
  onChanged: onChanged,
- style: TextStyles.bodyMedium.copyWith(
+ style: TextStyle(
  color: colors.onSurface,
  fontWeight: FontWeight.w500,
  ),
@@ -70,7 +70,7 @@ class AsmblDropdown<T> extends StatelessWidget {
  ? itemBuilder!(item)
  : Text(
  item.toString(),
- style: TextStyles.bodyMedium.copyWith(
+ style: TextStyle(
  color: colors.onSurface,
  fontWeight: FontWeight.w500,
  ),
@@ -182,7 +182,7 @@ class _AsmblSearchableDropdownState<T> extends State<AsmblSearchableDropdown<T>>
  widget.itemBuilder != null
  ? widget.searchStringBuilder(widget.value)
  : widget.value.toString(),
- style: TextStyles.bodyMedium.copyWith(
+ style: TextStyle(
  color: colors.onSurface,
  fontWeight: FontWeight.w500,
  ),
@@ -224,7 +224,7 @@ class _AsmblSearchableDropdownState<T> extends State<AsmblSearchableDropdown<T>>
  controller: searchController,
  decoration: InputDecoration(
  hintText: 'Search...',
- hintStyle: TextStyles.bodySmall.copyWith(
+ hintStyle: TextStyle(
  color: colors.onSurfaceVariant,
  ),
  prefixIcon: Icon(
@@ -241,7 +241,7 @@ class _AsmblSearchableDropdownState<T> extends State<AsmblSearchableDropdown<T>>
  vertical: 8,
  ),
  ),
- style: TextStyles.bodySmall.copyWith(
+ style: TextStyle(
  color: colors.onSurface,
  ),
  onChanged: (value) => setState(() => searchQuery = value),
@@ -284,7 +284,7 @@ class _AsmblSearchableDropdownState<T> extends State<AsmblSearchableDropdown<T>>
  ? widget.itemBuilder!(item)
  : Text(
  widget.searchStringBuilder(item),
- style: TextStyles.bodyMedium.copyWith(
+ style: TextStyle(
  color: isSelected
  ? colors.primary
  : colors.onSurface,

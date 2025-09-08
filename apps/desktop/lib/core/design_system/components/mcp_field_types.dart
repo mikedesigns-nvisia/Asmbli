@@ -89,7 +89,6 @@ class PathPickerField extends MCPField {
           Text(
             description!,
             style: TextStyle(
-              fontSize: 12,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -108,18 +107,15 @@ class PathPickerField extends MCPField {
         Text(
           label,
           style: TextStyle(
-                        fontSize: 14,
-            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         if (this.required) ...[
           const SizedBox(width: 4),
-          const Text(
+          Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
-              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -151,7 +147,6 @@ class PathPickerField extends MCPField {
               value!,
               style: TextStyle(
                 fontFamily: 'JetBrains Mono',
-                fontSize: 12,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
@@ -287,7 +282,6 @@ class ApiTokenField extends MCPField {
             Text(
               'Format: $tokenFormat',
               style: TextStyle(
-                fontSize: 11,
                 fontFamily: 'JetBrains Mono',
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -313,18 +307,15 @@ class ApiTokenField extends MCPField {
         Text(
           label,
           style: TextStyle(
-                        fontSize: 14,
-            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         if (this.required) ...[
           const SizedBox(width: 4),
-          const Text(
+          Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
-              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -462,7 +453,6 @@ class SelectField extends MCPField {
                       child: Text(
                         option.badge!,
                         style: TextStyle(
-                          fontSize: 10,
                           color: option.badgeColor ?? SemanticColors.primary,
                           fontWeight: FontWeight.w500,
                         ),
@@ -498,7 +488,6 @@ class SelectField extends MCPField {
           Text(
             description!,
             style: TextStyle(
-              fontSize: 12,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -513,18 +502,15 @@ class SelectField extends MCPField {
         Text(
           label,
           style: TextStyle(
-                        fontSize: 14,
-            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         if (this.required) ...[
           const SizedBox(width: 4),
-          const Text(
+          Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
-              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -550,7 +536,7 @@ class SelectField extends MCPField {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -560,7 +546,7 @@ class SelectField extends MCPField {
               }
               Navigator.of(context).pop();
             },
-            child: const Text('Set'),
+            child: Text('Set'),
           ),
         ],
       ),
@@ -622,11 +608,10 @@ class DatabaseConnectionField extends MCPField {
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'Connection Builder',
                     style: TextStyle(
                                             fontWeight: FontWeight.w500,
-                      fontSize: 14,
                     ),
                   ),
                   const Spacer(),
@@ -647,7 +632,6 @@ class DatabaseConnectionField extends MCPField {
           Text(
             description!,
             style: TextStyle(
-              fontSize: 12,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -662,18 +646,15 @@ class DatabaseConnectionField extends MCPField {
         Text(
           label,
           style: TextStyle(
-                        fontSize: 14,
-            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         if (this.required) ...[
           const SizedBox(width: 4),
-          const Text(
+          Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
-              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),

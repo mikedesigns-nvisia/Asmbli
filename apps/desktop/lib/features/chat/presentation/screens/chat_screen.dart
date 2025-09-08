@@ -46,9 +46,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  Future<void> _initializeServices() async {
  try {
- // TODO: Implement ServiceProvider
- // ServiceProvider.configure(useInMemory: true);
- // await ServiceProvider.initialize();
+ // Services are initialized via Riverpod providers
+ // No manual ServiceProvider needed - services auto-initialize when accessed
  
  // Start model warm-up process in background (non-blocking)
  _startModelWarmUpInBackground();
@@ -179,8 +178,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  'Let\'s Talk',
  style: GoogleFonts.fustat(
-  fontSize: 20,
- fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
  ),
@@ -194,8 +192,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: Text(
  'Select a conversation',
  style: GoogleFonts.fustat(
-  fontSize: 12,
- color: theme.colorScheme.onSurfaceVariant,
+  color: theme.colorScheme.onSurfaceVariant,
  ),
  ),
  ),
@@ -236,8 +233,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  EditableConversationTitle(
  conversation: conversation,
  style: GoogleFonts.fustat(
-  fontSize: 20,
- fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
  ),
@@ -248,8 +244,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  conversation.metadata?['agentName'] ?? 'Agent',
  style: GoogleFonts.fustat(
-  fontSize: 13,
- color: theme.colorScheme.onSurfaceVariant,
+  color: theme.colorScheme.onSurfaceVariant,
  fontStyle: FontStyle.italic,
  ),
  ),
@@ -263,8 +258,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: Text(
  '${(conversation.metadata?['mcpServers'] as List?)?.length ?? 0} MCP',
  style: GoogleFonts.fustat(
-  fontSize: 10,
- color: theme.colorScheme.onSurfaceVariant,
+  color: theme.colorScheme.onSurfaceVariant,
  fontWeight: FontWeight.w500,
  ),
  ),
@@ -298,8 +292,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  _getConversationBadgeText(conversation),
  style: GoogleFonts.fustat(
-  fontSize: 12,
- fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w500,
  color: _getConversationTypeColor(conversation, theme),
  ),
  ),
@@ -334,8 +327,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  'ACTIVE',
  style: GoogleFonts.fustat(
-  fontSize: 9,
- fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w600,
  color: ThemeColors(context).success,
  ),
  ),
@@ -367,8 +359,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  'Loading conversation...',
  style: GoogleFonts.fustat(
-  fontSize: 16,
- color: theme.colorScheme.onSurfaceVariant,
+  color: theme.colorScheme.onSurfaceVariant,
  ),
  ),
  ],
@@ -379,8 +370,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: Text(
  'Error loading conversation',
  style: GoogleFonts.fustat(
-  fontSize: 16,
- color: theme.colorScheme.error,
+  color: theme.colorScheme.error,
  ),
  ),
  ),
@@ -415,8 +405,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
            child: Text(
              selectedModel?.isLocal == true ? 'Local Model' : 'Cloud Model',
              style: GoogleFonts.fustat(
-               fontSize: 11,
-               fontWeight: FontWeight.w500,
+                             fontWeight: FontWeight.w500,
                color: theme.colorScheme.onSurfaceVariant,
              ),
            ),
@@ -505,8 +494,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                  child: Text(
                    'LOCAL',
                    style: TextStyle(
-                     fontSize: 8,
-                     fontWeight: FontWeight.w600,
+                                         fontWeight: FontWeight.w600,
                      color: ThemeColors(context).accent,
                    ),
                  ),
@@ -590,8 +578,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                  Text(
                    'LOCAL',
                    style: TextStyle(
-                     fontSize: 7,
-                     fontWeight: FontWeight.w600,
+                                         fontWeight: FontWeight.w600,
                      color: ThemeColors(context).accent,
                    ),
                  ),
@@ -600,8 +587,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                  Text(
                    model.provider.toUpperCase(),
                    style: TextStyle(
-                     fontSize: 7,
-                     fontWeight: FontWeight.w600,
+                                         fontWeight: FontWeight.w600,
                      color: ThemeColors(context).primary,
                    ),
                  ),
@@ -741,8 +727,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  'Agent Control Panel',
  style: GoogleFonts.fustat(
-  fontSize: 16,
- fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
  overflow: TextOverflow.visible,
@@ -751,8 +736,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  'What your agent sees & can access',
  style: GoogleFonts.fustat(
-  fontSize: 11,
- color: theme.colorScheme.onSurfaceVariant,
+  color: theme.colorScheme.onSurfaceVariant,
  ),
  overflow: TextOverflow.visible,
  softWrap: true,
@@ -950,8 +934,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  'LLM Chat',
  style: GoogleFonts.fustat(
-  fontSize: 24,
- fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
  ),
@@ -962,8 +945,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  'Chat directly with ${ref.read(defaultModelConfigProvider)?.name ?? 'your AI assistant'}.\nAdd context documents for better help, or load an agent\nfrom the sidebar for enhanced capabilities.',
  style: GoogleFonts.fustat(
-  fontSize: 14,
- color: theme.colorScheme.onSurfaceVariant,
+  color: theme.colorScheme.onSurfaceVariant,
  height: 1.5,
  ),
  textAlign: TextAlign.center,
@@ -1201,16 +1183,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                      Text(
                        agentName,
                        style: GoogleFonts.fustat(
-                                                  fontSize: 14,
-                         fontWeight: FontWeight.w600,
+                                                                          fontWeight: FontWeight.w600,
                          color: theme.colorScheme.onSurface,
                        ),
                      ),
                      Text(
                        _getConversationDescription(conversation),
                        style: GoogleFonts.fustat(
-                                                  fontSize: 11,
-                         color: theme.colorScheme.onSurfaceVariant,
+                                                                          color: theme.colorScheme.onSurfaceVariant,
                        ),
                      ),
                    ],
@@ -1225,8 +1205,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                  child: Text(
                    agentType == 'agent' ? 'LIVE' : 'BASIC',
                    style: GoogleFonts.fustat(
-                                          fontSize: 9,
-                     fontWeight: FontWeight.w600,
+                                                              fontWeight: FontWeight.w600,
                      color: Colors.white,
                    ),
                  ),
@@ -1277,8 +1256,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
          Text(
            'Agent Resources',
            style: GoogleFonts.fustat(
-                          fontSize: 13,
-             fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w600,
              color: theme.colorScheme.onSurface,
            ),
          ),
@@ -1297,8 +1275,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
              Text(
                '+ ${mcpServers.length - 4} more tools',
                style: GoogleFonts.fustat(
-                                  fontSize: 11,
-                 color: theme.colorScheme.onSurfaceVariant,
+                                                  color: theme.colorScheme.onSurfaceVariant,
                  fontStyle: FontStyle.italic,
                ),
              ),
@@ -1314,8 +1291,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
              Text(
                '+ ${contextDocs.length - 3} more documents',
                style: GoogleFonts.fustat(
-                                  fontSize: 11,
-                 color: theme.colorScheme.onSurfaceVariant,
+                                                  color: theme.colorScheme.onSurfaceVariant,
                  fontStyle: FontStyle.italic,
                ),
              ),
@@ -1340,8 +1316,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
          Text(
            text,
            style: GoogleFonts.fustat(
-                          fontSize: 10,
-             fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w500,
              color: color,
            ),
          ),
@@ -1358,8 +1333,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        Text(
          title,
          style: GoogleFonts.fustat(
-                      fontSize: 12,
-           fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w500,
            color: theme.colorScheme.onSurface,
          ),
        ),
@@ -1388,16 +1362,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
            child: Text(
              serverId,
              style: GoogleFonts.fustat(
-                              fontSize: 11,
-               color: theme.colorScheme.onSurface,
+                                            color: theme.colorScheme.onSurface,
              ),
            ),
          ),
          Text(
            status.toUpperCase(),
            style: GoogleFonts.fustat(
-                          fontSize: 9,
-             fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w600,
              color: statusColor,
            ),
          ),
@@ -1417,8 +1389,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
            child: Text(
              docName,
              style: GoogleFonts.fustat(
-                              fontSize: 11,
-               color: theme.colorScheme.onSurface,
+                                            color: theme.colorScheme.onSurface,
              ),
              overflow: TextOverflow.ellipsis,
            ),
@@ -1451,8 +1422,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
            Text(
              'No conversation selected',
              style: GoogleFonts.fustat(
-                              fontSize: 12,
-               fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.w500,
                color: theme.colorScheme.onSurfaceVariant,
              ),
            ),
@@ -1482,8 +1452,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
            Text(
              'Loading agent context...',
              style: GoogleFonts.fustat(
-                              fontSize: 12,
-               color: theme.colorScheme.onSurfaceVariant,
+                                            color: theme.colorScheme.onSurfaceVariant,
              ),
            ),
          ],
@@ -1504,8 +1473,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        child: Text(
          'Error loading agent context',
          style: GoogleFonts.fustat(
-                      fontSize: 12,
-           color: Colors.red,
+                                color: Colors.red,
          ),
        ),
      ),
@@ -1864,8 +1832,7 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  Text(
  'Let\'s Talk',
  style: GoogleFonts.fustat(
-  fontSize: 20,
- fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
  ),
  ),
@@ -1873,8 +1840,7 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  Text(
  'Type a message below to begin this conversation.',
  style: GoogleFonts.fustat(
-  fontSize: 14,
- color: theme.colorScheme.onSurfaceVariant,
+  color: theme.colorScheme.onSurfaceVariant,
  height: 1.5,
  ),
  textAlign: TextAlign.center,
@@ -1995,8 +1961,7 @@ Widget _buildPrimingStatusIndicator(BuildContext context, core.Conversation conv
        Text(
          statusText,
          style: GoogleFonts.fustat(
-           fontSize: 8,
-           fontWeight: FontWeight.w600,
+                     fontWeight: FontWeight.w600,
            color: indicatorColor,
          ),
        ),

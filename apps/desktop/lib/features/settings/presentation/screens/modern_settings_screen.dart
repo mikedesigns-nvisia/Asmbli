@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../widgets/settings/settings_search_bar.dart';
@@ -65,12 +66,21 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
       priority: 4,
     ),
     SettingsCategory(
+      id: 'oauth',
+      title: 'OAuth Connections',
+      description: 'Configure GitHub, Google, Microsoft and other OAuth providers',
+      icon: Icons.security,
+      color: Colors.cyan,
+      priority: 5,
+      searchKeywords: ['oauth', 'github', 'google', 'microsoft', 'authentication', 'login', 'provider', 'integration', 'connection'],
+    ),
+    SettingsCategory(
       id: 'privacy',
       title: 'Privacy & Security',
       description: 'Data handling and security preferences',
       icon: Icons.shield,
       color: Colors.red,
-      priority: 5,
+      priority: 6,
     ),
     SettingsCategory(
       id: 'notifications',
@@ -78,7 +88,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
       description: 'Alert preferences and notification settings',
       icon: Icons.notifications,
       color: Colors.indigo,
-      priority: 6,
+      priority: 7,
     ),
     SettingsCategory(
       id: 'advanced',
@@ -86,7 +96,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
       description: 'Developer settings and experimental features',
       icon: Icons.settings_applications,
       color: Colors.grey,
-      priority: 7,
+      priority: 8,
       isAdvanced: true,
     ),
     SettingsCategory(
@@ -95,7 +105,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
       description: 'App information, updates, and support',
       icon: Icons.info,
       color: Colors.teal,
-      priority: 8,
+      priority: 9,
     ),
   ];
 
@@ -579,6 +589,9 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const AppearanceSettingsScreen()),
         );
+        break;
+      case 'oauth':
+        context.go(AppRoutes.oauthSettings);
         break;
       case 'privacy':
         _showComingSoonDialog(category.title);

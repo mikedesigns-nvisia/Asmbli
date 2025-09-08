@@ -116,7 +116,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  const SizedBox(width: SpacingTokens.componentSpacing),
  Text(
  'Quick Actions',
- style: TextStyles.sectionTitle.copyWith(
+ style: TextStyle(
  color: colors.onSurface,
  fontWeight: FontWeight.w600,
  ),
@@ -264,7 +264,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  children: [
  Text(
  title,
- style: TextStyles.bodyMedium.copyWith(
+ style: TextStyle(
  color: colors.onSurface,
  fontWeight: FontWeight.w600,
  ),
@@ -272,7 +272,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  const SizedBox(height: SpacingTokens.xs_precise),
  Text(
  description,
- style: TextStyles.caption.copyWith(
+ style: TextStyle(
  color: colors.onSurfaceVariant,
  ),
  ),
@@ -363,7 +363,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  const SizedBox(width: SpacingTokens.iconSpacing),
  Text(
  'Quick Actions',
- style: TextStyles.bodyMedium.copyWith(
+ style: TextStyle(
  color: _isOpen ? colors.primary : colors.onSurface,
  fontWeight: _isOpen ? FontWeight.w600 : FontWeight.w500,
  ),

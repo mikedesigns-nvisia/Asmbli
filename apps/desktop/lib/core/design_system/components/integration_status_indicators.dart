@@ -27,7 +27,6 @@ class IntegrationStatusIndicators {
             Text(
               text,
               style: TextStyle(
-                fontSize: 9,
                 fontWeight: FontWeight.w600,
                 color: colors.foreground,
               ),
@@ -52,7 +51,6 @@ class IntegrationStatusIndicators {
           Text(
             text,
             style: TextStyle(
-              fontSize: 11,
               fontWeight: FontWeight.w600,
               color: colors.foreground,
             ),
@@ -77,9 +75,9 @@ class IntegrationStatusIndicators {
           Text(
             'Available',
             style: TextStyle(
-              fontSize: 9,
               color: SemanticColors.success,
               fontWeight: FontWeight.w500,
+              fontSize: 12,
             ),
           ),
         ],
@@ -98,9 +96,9 @@ class IntegrationStatusIndicators {
         Text(
           'Coming Soon',
           style: TextStyle(
-            fontSize: 9,
             color: SemanticColors.warning,
             fontWeight: FontWeight.w500,
+            fontSize: 12,
           ),
         ),
       ],
@@ -128,7 +126,6 @@ class IntegrationStatusIndicators {
           Text(
             difficulty,
             style: TextStyle(
-              fontSize: 9,
               fontWeight: FontWeight.w600,
               color: colors.foreground,
             ),
@@ -165,8 +162,7 @@ class IntegrationStatusIndicators {
             const SizedBox(width: 2),
             Text(
               '${prerequisites.length} req',
-              style: const TextStyle(
-                fontSize: 9,
+              style: TextStyle(
                 fontWeight: FontWeight.w500,
                 color: SemanticColors.warning,
               ),
@@ -197,8 +193,7 @@ class IntegrationStatusIndicators {
             ),
             child: Text(
               capability,
-              style: const TextStyle(
-                fontSize: 8,
+              style: TextStyle(
                 color: SemanticColors.primary,
                 fontWeight: FontWeight.w500,
               ),
@@ -214,8 +209,7 @@ class IntegrationStatusIndicators {
             ),
             child: Text(
               '+${capabilities.length - maxShow}',
-              style: const TextStyle(
-                fontSize: 8,
+              style: TextStyle(
                 color: SemanticColors.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),

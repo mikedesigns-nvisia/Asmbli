@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/components/asmbli_card_enhanced.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../context/presentation/widgets/context_hub_widget.dart';
 import '../../../../core/services/agent_context_prompt_service.dart';
@@ -1507,7 +1508,7 @@ class _MCPSetupGuideButton extends StatelessWidget {
  Widget build(BuildContext context) {
  final colors = ThemeColors(context);
  
- return AsmblButtonEnhanced.outline(
+ return AsmblButton.outline(
  text: 'Need help setting up tools?',
  icon: Icons.help_outline,
  onPressed: onPressed,
@@ -1706,13 +1707,13 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  Row(
  mainAxisAlignment: MainAxisAlignment.end,
  children: [
- AsmblButtonEnhanced.secondary(
+ AsmblButton.secondary(
  text: 'Close',
  onPressed: () => Navigator.of(context).pop(),
  size: AsmblButtonSize.medium,
  ),
  const SizedBox(width: SpacingTokens.componentSpacing),
- AsmblButtonEnhanced.accent(
+ AsmblButton.accent(
  text: 'Open Documentation',
  icon: Icons.open_in_new,
  onPressed: () {

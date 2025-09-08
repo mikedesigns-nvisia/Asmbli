@@ -83,7 +83,7 @@ class AppErrorHandler {
   /// Setup zone error handler
   void _setupZoneErrorHandler() {
     FlutterError.onError = (FlutterErrorDetails details) {
-      Zone.current.handleUncaughtError(details.exception, details.stack);
+      Zone.current.handleUncaughtError(details.exception, details.stack ?? StackTrace.current);
     };
   }
 
@@ -262,7 +262,7 @@ class AppErrorHandler {
     required String operationName,
     Map<String, dynamic>? context,
     T? fallbackValue,
-    bool rethrow = false,
+    bool throwError = false,
   }) async {
     final handler = AppErrorHandler.instance;
     final timer = PerformanceTimer.start(operationName, context: context);
@@ -281,7 +281,7 @@ class AppErrorHandler {
         context: context,
       );
 
-      if (rethrow || fallbackValue == null) {
+      if (throwError || fallbackValue == null) {
         throw appError;
       }
       

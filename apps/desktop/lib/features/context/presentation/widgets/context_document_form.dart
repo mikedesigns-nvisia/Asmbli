@@ -291,13 +291,13 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  Row(
  mainAxisAlignment: MainAxisAlignment.end,
  children: [
- AsmblButtonEnhanced.secondary(
+ AsmblButton.secondary(
  text: 'Cancel',
  onPressed: widget.onCancel,
  size: AsmblButtonSize.medium,
  ),
  const SizedBox(width: SpacingTokens.md),
- AsmblButtonEnhanced.accent(
+ AsmblButton.accent(
  text: widget.initialDocument != null ? 'Update' : 'Create',
  onPressed: _handleSave,
  size: AsmblButtonSize.medium,

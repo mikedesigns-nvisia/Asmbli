@@ -6,6 +6,9 @@ import '../../../core/services/agent_system_prompt_service.dart';
 /// State management for the agent deployment wizard
 /// Tracks user input across all wizard steps
 class AgentWizardState extends ChangeNotifier {
+  // Agent ID (generated or set)
+  String? _id;
+  
   // Step 1: Agent Basics
   String _agentName = '';
   String _agentDescription = '';
@@ -30,6 +33,9 @@ class AgentWizardState extends ChangeNotifier {
   bool _isValidated = false;
   String? _testConversationId;
 
+  // Agent ID getter
+  String? get id => _id;
+  
   // Getters for Step 1: Agent Basics
   String get agentName => _agentName;
   String get agentDescription => _agentDescription;

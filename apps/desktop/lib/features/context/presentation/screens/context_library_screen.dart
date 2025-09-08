@@ -112,7 +112,7 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
                       ),
                     ),
                     const SizedBox(width: SpacingTokens.lg),
-                    AsmblButtonEnhanced.accent(
+                    AsmblButton.accent(
                       text: 'Add Context',
                       icon: Icons.add,
                       onPressed: () => setState(() => _showCreateFlow = true),

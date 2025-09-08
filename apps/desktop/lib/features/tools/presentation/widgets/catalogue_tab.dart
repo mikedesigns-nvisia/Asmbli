@@ -289,8 +289,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   'FEATURED',
                   style: TextStyles.caption.copyWith(
                     color: colors.primary,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
+                                       fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

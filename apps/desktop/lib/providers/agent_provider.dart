@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import 'package:agent_engine_core/services/agent_service.dart';
@@ -264,8 +265,13 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
   Future<Map<String, String>> _getAgentEnvironmentVars(Agent agent) async {
     final environmentVars = <String, String>{};
     
-    // TODO: Get environment variables from secure storage or settings
-    // For now, return empty map - servers that require env vars will fail gracefully
+    // Get basic system environment variables
+    // TODO: Add secure storage for sensitive API keys/tokens
+    environmentVars.addAll({
+      'USER': Platform.environment['USER'] ?? Platform.environment['USERNAME'] ?? 'user',
+      'HOME': Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'] ?? '',
+      'PATH': Platform.environment['PATH'] ?? '',
+    });
     
     return environmentVars;
   }

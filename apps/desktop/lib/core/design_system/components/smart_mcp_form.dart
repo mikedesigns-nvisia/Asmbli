@@ -119,8 +119,6 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                     Text(
                       widget.template.name,
                       style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                        fontSize: 18,
                         color: widget.template.brandColor ?? SemanticColors.primary,
                       ),
                     ),
@@ -135,7 +133,6 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                 Text(
                   widget.template.description,
                   style: TextStyle(
-                    fontSize: 13,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
@@ -154,7 +151,6 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                         child: Text(
                           capability,
                           style: TextStyle(
-                            fontSize: 9,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
                           ),
@@ -196,7 +192,6 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
       child: Text(
         widget.template.difficulty,
         style: TextStyle(
-          fontSize: 9,
           color: badgeColor,
           fontWeight: FontWeight.w600,
         ),
@@ -223,9 +218,9 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
           Text(
             'Popular',
             style: TextStyle(
-              fontSize: 9,
               color: SemanticColors.primary,
               fontWeight: FontWeight.w600,
+              fontSize: 12,
             ),
           ),
         ],
@@ -257,8 +252,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
               Text(
                 'Prerequisites',
                 style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
                   color: Colors.orange,
                 ),
               ),
@@ -281,7 +275,6 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                     child: Text(
                       prereq,
                       style: TextStyle(
-                        fontSize: 11,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
@@ -410,8 +403,6 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
               Text(
                 field.label,
                 style: TextStyle(
-                                    fontSize: 14,
-                  fontWeight: FontWeight.w500,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
@@ -419,7 +410,6 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                 Text(
                   field.description!,
                   style: TextStyle(
-                    fontSize: 12,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -534,8 +524,6 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
         Text(
           'Advanced Options',
           style: TextStyle(
-                        fontSize: 16,
-            fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
@@ -569,8 +557,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
               Text(
                 'Setup Instructions',
                 style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
                   color: SemanticColors.primary,
                 ),
               ),
@@ -593,8 +580,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                     child: Center(
                       child: Text(
                         instruction.step.toString(),
-                        style: const TextStyle(
-                          fontSize: 10,
+                        style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -608,15 +594,13 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                       children: [
                         Text(
                           instruction.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            fontSize: 12,
                           ),
                         ),
                         Text(
                           instruction.description,
                           style: TextStyle(
-                            fontSize: 11,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
@@ -628,7 +612,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                             },
                             child: Text(
                               instruction.actionText ?? 'Learn More',
-                              style: const TextStyle(fontSize: 10),
+                              style: TextStyles.caption,
                             ),
                           ),
                         ],

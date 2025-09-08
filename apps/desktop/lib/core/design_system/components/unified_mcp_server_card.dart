@@ -4,6 +4,7 @@ import '../design_system.dart';
 import '../../services/mcp_settings_service.dart';
 import '../../services/mcp_health_monitor.dart';
 import '../../../features/settings/presentation/widgets/mcp_health_status_widget.dart';
+import '../../constants/app_constants.dart';
 
 
 import '../../models/mcp_server_config.dart';
@@ -102,7 +103,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
             children: [
               Text(
                 serverConfig?.name ?? serverId,
-                style: TextStyles.bodySmall.copyWith(
+                style: TextStyle(
                   color: isSelected 
                     ? ThemeColors(context).primary 
                     : ThemeColors(context).onSurface,
@@ -115,9 +116,8 @@ class UnifiedMCPServerCard extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   serverConfig!.description ?? 'No description',
-                  style: TextStyles.caption.copyWith(
+                  style: TextStyle(
                     color: ThemeColors(context).onSurfaceVariant,
-                    fontSize: 9,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -168,7 +168,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           serverConfig?.name ?? serverId,
-                          style: TextStyles.bodyMedium.copyWith(
+                          style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: isSelected 
                               ? ThemeColors(context).primary 
@@ -187,9 +187,8 @@ class UnifiedMCPServerCard extends ConsumerWidget {
                           ),
                           child: Text(
                             'SELECTED',
-                            style: TextStyles.caption.copyWith(
+                            style: TextStyle(
                               color: Colors.white,
-                              fontSize: 9,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -200,7 +199,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
                   const SizedBox(height: 2),
                   Text(
                     _getServerCategory(),
-                    style: TextStyles.caption.copyWith(
+                    style: TextStyle(
                       color: ThemeColors(context).onSurfaceVariant,
                     ),
                   ),
@@ -221,7 +220,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
           const SizedBox(height: SpacingTokens.sm),
           Text(
             serverConfig!.description!,
-            style: TextStyles.bodySmall.copyWith(
+            style: TextStyle(
               color: ThemeColors(context).onSurfaceVariant,
             ),
             maxLines: 2,
@@ -242,7 +241,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 serverConfig.enabled ? 'Configured and enabled' : 'Configured but disabled',
-                style: TextStyles.caption.copyWith(
+                style: TextStyle(
                   color: serverConfig.enabled ? SemanticColors.success : ThemeColors(context).warning,
                   fontWeight: FontWeight.w500,
                 ),
@@ -261,7 +260,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Not configured',
-                style: TextStyles.caption.copyWith(
+                style: TextStyle(
                   color: ThemeColors(context).warning,
                   fontWeight: FontWeight.w500,
                 ),
@@ -301,18 +300,18 @@ class UnifiedMCPServerCard extends ConsumerWidget {
     switch (serverId.toLowerCase()) {
       case 'github':
       case 'git':
-        return const Color(0xFF333333);
+        return const Color(BrandColors.github);
       case 'postgres':
       case 'database':
-        return const Color(0xFF336791);
+        return const Color(BrandColors.database);
       case 'files':
       case 'filesystem':
-        return const Color(0xFF4CAF50);
+        return const Color(BrandColors.api);
       case 'memory':
-        return const Color(0xFF9C27B0);
+        return const Color(BrandColors.storage);
       case 'brave-search':
       case 'search':
-        return const Color(0xFFFF7A00);
+        return const Color(BrandColors.notification);
       case 'slack':
         return const Color(0xFF4A154B);
       case 'notion':

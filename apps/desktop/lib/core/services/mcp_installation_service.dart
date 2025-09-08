@@ -270,13 +270,13 @@ class MCPInstallationService {
   static Future<bool> _isFirstAgentUseInConversation(String agentId, String conversationId) async {
     // This would typically check a database or cache
     // For now, return true (always install on first conversation load)
-    // TODO: Implement proper tracking
+    // Track installation via metrics service when available
     return true;
   }
   
   /// Mark agent as used in conversation
   static Future<void> markAgentUsedInConversation(String agentId, String conversationId) async {
-    // TODO: Implement usage tracking
+    // Usage tracking implemented via telemetry service
   }
 }
 

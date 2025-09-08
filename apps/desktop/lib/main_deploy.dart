@@ -175,8 +175,7 @@ class _PlatformDashboardState extends State<PlatformDashboard> {
                             _demoOutput,
                             style: const TextStyle(
                               fontFamily: 'monospace',
-                              fontSize: 12,
-                            ),
+                                                         ),
                           ),
                         ),
                       ),
@@ -244,8 +243,7 @@ class _PlatformDashboardState extends State<PlatformDashboard> {
               title,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+                             ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),

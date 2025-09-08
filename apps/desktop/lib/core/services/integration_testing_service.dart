@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/agent_engine_core.dart';
@@ -897,16 +898,16 @@ class IntegrationTestingService {
     
     // Check for common prerequisites
     if (prereqLower.contains('node') || prereqLower.contains('npm')) {
-      // TODO: Check if Node.js/npm is installed via process check
-      return true; // Assume available for now
+      // Check if Node.js/npm is available via system PATH
+      return await _checkSystemCommand('node --version') || await _checkSystemCommand('npm --version');
     }
     if (prereqLower.contains('python')) {
-      // TODO: Check if Python is installed
-      return true; // Assume available for now
+      // Check if Python is available via system PATH
+      return await _checkSystemCommand('python --version') || await _checkSystemCommand('python3 --version');
     }
     if (prereqLower.contains('docker')) {
-      // TODO: Check if Docker is running
-      return true; // Assume available for now
+      // Check if Docker is running
+      return await _checkSystemCommand('docker --version') && await _checkDockerRunning();
     }
     
     // Default to true for now - should implement actual system checks
@@ -945,6 +946,26 @@ class IntegrationTestingService {
   
   String _generateSessionId() => 'test_${DateTime.now().millisecondsSinceEpoch}_${Random().nextInt(1000)}';
   String _generateTestId() => 'test_${DateTime.now().millisecondsSinceEpoch}_${Random().nextInt(10000)}';
+  
+  /// Check if a system command is available
+  Future<bool> _checkSystemCommand(String command) async {
+    try {
+      final result = await Process.run(command.split(' ').first, command.split(' ').skip(1).toList());
+      return result.exitCode == 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Check if Docker daemon is running
+  Future<bool> _checkDockerRunning() async {
+    try {
+      final result = await Process.run('docker', ['info']);
+      return result.exitCode == 0;
+    } catch (e) {
+      return false;
+    }
+  }
   
   /// Dispose resources
   void dispose() {

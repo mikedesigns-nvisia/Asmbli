@@ -58,10 +58,7 @@ class ServiceDetectionField extends MCPField {
                   Expanded(
                     child: Text(
                       'Auto-Detect ${serviceType.displayName}',
-                      style: const TextStyle(
-                                                fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                      ),
+                      style: TextStyles.labelLarge,
                     ),
                   ),
                   if (isScanning) ...[
@@ -92,7 +89,6 @@ class ServiceDetectionField extends MCPField {
           Text(
             description!,
             style: TextStyle(
-              fontSize: 12,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -107,18 +103,15 @@ class ServiceDetectionField extends MCPField {
         Text(
           label,
           style: TextStyle(
-                        fontSize: 14,
-            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         if (this.required) ...[
           const SizedBox(width: 4),
-          const Text(
+          Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
-              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -140,7 +133,6 @@ class ServiceDetectionField extends MCPField {
               Text(
                 'Scanning for ${serviceType.displayName} services...',
                 style: TextStyle(
-                  fontSize: 12,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
@@ -164,7 +156,6 @@ class ServiceDetectionField extends MCPField {
             Text(
               'No ${serviceType.displayName} services detected',
               style: TextStyle(
-                fontSize: 13,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
@@ -173,7 +164,6 @@ class ServiceDetectionField extends MCPField {
             Text(
               _getInstallationHint(),
               style: TextStyle(
-                fontSize: 11,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
@@ -232,7 +222,6 @@ class ServiceDetectionField extends MCPField {
                                 service.name,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 13,
                                   color: isSelected 
                                     ? SemanticColors.primary 
                                     : Theme.of(context).colorScheme.onSurface,
@@ -248,7 +237,6 @@ class ServiceDetectionField extends MCPField {
                                 child: Text(
                                   service.status.displayName,
                                   style: TextStyle(
-                                    fontSize: 9,
                                     color: _getStatusColor(service.status),
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -259,7 +247,6 @@ class ServiceDetectionField extends MCPField {
                           Text(
                             '${service.host}:${service.port}',
                             style: TextStyle(
-                              fontSize: 11,
                               fontFamily: 'JetBrains Mono',
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
@@ -268,7 +255,6 @@ class ServiceDetectionField extends MCPField {
                             Text(
                               'Version ${service.version}',
                               style: TextStyle(
-                                fontSize: 10,
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
@@ -413,8 +399,6 @@ class _PortScannerFieldState extends State<PortScannerField> {
             Text(
               widget.label,
               style: TextStyle(
-                                fontSize: 14,
-                fontWeight: FontWeight.w500,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
@@ -431,7 +415,6 @@ class _PortScannerFieldState extends State<PortScannerField> {
           Text(
             widget.description!,
             style: TextStyle(
-              fontSize: 12,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -450,11 +433,10 @@ class _PortScannerFieldState extends State<PortScannerField> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Detected Services',
                   style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -485,9 +467,8 @@ class _PortScannerFieldState extends State<PortScannerField> {
           const SizedBox(width: 8),
           Text(
             'Port ${port.port}',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'JetBrains Mono',
-              fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -495,7 +476,6 @@ class _PortScannerFieldState extends State<PortScannerField> {
           Text(
             port.serviceName ?? 'Unknown Service',
             style: TextStyle(
-              fontSize: 11,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -503,7 +483,6 @@ class _PortScannerFieldState extends State<PortScannerField> {
           Text(
             port.isOpen ? 'Open' : 'Closed',
             style: TextStyle(
-              fontSize: 10,
               color: port.isOpen ? SemanticColors.success : SemanticColors.error,
               fontWeight: FontWeight.w500,
             ),

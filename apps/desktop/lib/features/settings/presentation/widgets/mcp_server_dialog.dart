@@ -421,7 +421,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     'OR',
-                    style: TextStyles.labelSmall.copyWith(
+                    style: TextStyles.labelMedium.copyWith(
                       color: SemanticColors.onSurfaceVariant,
                     ),
                   ),
@@ -606,7 +606,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   ),
                   child: Text(
                     badge,
-                    style: TextStyles.labelSmall.copyWith(
+                    style: TextStyles.labelMedium.copyWith(
                       color: badgeColor ?? SemanticColors.primary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -808,7 +808,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     const SizedBox(height: 4),
                     Text(
                       template.category,
-                      style: TextStyles.labelSmall.copyWith(
+                      style: TextStyles.labelMedium.copyWith(
                         color: SemanticColors.onSurfaceVariant,
                       ),
                     ),

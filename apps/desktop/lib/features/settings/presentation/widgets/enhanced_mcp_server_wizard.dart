@@ -338,7 +338,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'OR CHOOSE MANUALLY',
-                  style: TextStyles.labelSmall.copyWith(
+                  style: TextStyles.labelMedium.copyWith(
                     color: SemanticColors.onSurfaceVariant,
                   ),
                 ),

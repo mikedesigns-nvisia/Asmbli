@@ -54,6 +54,8 @@ dependencies:
   web_socket_channel: ^3.0.3
 
   crypto: any
+  pointycastle: ^3.7.3
+  http: ^1.1.0
   meta: any
 dev_dependencies:
   flutter_test:

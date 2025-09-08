@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../design_system.dart';
 import 'mcp_field_types.dart';
+import '../../constants/app_constants.dart';
 
 /// OAuth integration fields for cloud services
 /// Supports: Google, Microsoft, GitHub, Figma, Slack, Notion, etc.
@@ -58,15 +59,13 @@ class OAuthField extends MCPField {
                       children: [
                         Text(
                           provider.displayName,
-                          style: const TextStyle(
-                                                        fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
                           _getStatusText(),
                           style: TextStyle(
-                            fontSize: 12,
                             color: _getStatusColor(context),
                             fontWeight: FontWeight.w500,
                           ),
@@ -93,7 +92,6 @@ class OAuthField extends MCPField {
           Text(
             description!,
             style: TextStyle(
-              fontSize: 12,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -108,18 +106,15 @@ class OAuthField extends MCPField {
         Text(
           label,
           style: TextStyle(
-                        fontSize: 14,
-            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         if (this.required) ...[
           const SizedBox(width: 4),
-          const Text(
+          Text(
             '*',
             style: TextStyle(
               color: SemanticColors.error,
-              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -153,7 +148,7 @@ class OAuthField extends MCPField {
           onPressed: onAuthenticate,
         );
       case OAuthStatus.authenticating:
-        return const AsmblButton.secondary(
+        return AsmblButton.secondary(
           text: 'Connecting...',
           icon: Icons.hourglass_empty,
           onPressed: null,
@@ -190,10 +185,9 @@ class OAuthField extends MCPField {
             backgroundColor: provider.brandColor,
             child: Text(
               _getAccountInitials(),
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 12,
               ),
             ),
           ),
@@ -204,15 +198,13 @@ class OAuthField extends MCPField {
               children: [
                 Text(
                   _getAccountName(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    fontSize: 13,
                   ),
                 ),
                 Text(
                   _getAccountEmail(),
                   style: TextStyle(
-                    fontSize: 11,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -222,10 +214,9 @@ class OAuthField extends MCPField {
           if (onRevoke != null)
             TextButton(
               onPressed: onRevoke,
-              child: const Text(
+              child: Text(
                 'Disconnect',
                 style: TextStyle(
-                  fontSize: 11,
                   color: SemanticColors.error,
                 ),
               ),
@@ -239,11 +230,10 @@ class OAuthField extends MCPField {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Permissions',
           style: TextStyle(
-                        fontWeight: FontWeight.w500,
-            fontSize: 13,
+            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 8),
@@ -256,7 +246,7 @@ class OAuthField extends MCPField {
               selected: isSelected,
               label: Text(
                 scope.displayName,
-                style: const TextStyle(fontSize: 11),
+                style: TextStyles.bodySmall,
               ),
               onSelected: (selected) {
                 // Handle scope selection
@@ -350,8 +340,6 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
         Text(
           widget.label,
           style: TextStyle(
-                        fontSize: 14,
-            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
@@ -360,7 +348,6 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
           Text(
             widget.description!,
             style: TextStyle(
-              fontSize: 12,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -415,7 +402,6 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
                                   scope.displayName,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 13,
                                     color: isSelected 
                                       ? widget.provider.brandColor 
                                       : Theme.of(context).colorScheme.onSurface,
@@ -424,7 +410,6 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
                                 Text(
                                   scope.description,
                                   style: TextStyle(
-                                    fontSize: 11,
                                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
@@ -439,10 +424,9 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
                                 color: SemanticColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Required',
                                 style: TextStyle(
-                                  fontSize: 9,
                                   color: SemanticColors.primary,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -502,7 +486,7 @@ class OAuthProvider {
     id: 'google',
     displayName: 'Google',
     icon: Icons.account_circle,
-    brandColor: Color(0xFF4285F4),
+    brandColor: Color(BrandColors.google),
     availableScopes: [
       OAuthScope(
         id: 'drive.readonly',
@@ -526,7 +510,7 @@ class OAuthProvider {
     id: 'microsoft',
     displayName: 'Microsoft',
     icon: Icons.business,
-    brandColor: Color(0xFF0078D4),
+    brandColor: Color(BrandColors.microsoft),
     availableScopes: [
       OAuthScope(
         id: 'files.read',
@@ -546,7 +530,7 @@ class OAuthProvider {
     id: 'github',
     displayName: 'GitHub',
     icon: Icons.code,
-    brandColor: Color(0xFF333333),
+    brandColor: Color(BrandColors.github),
     availableScopes: [
       OAuthScope(
         id: 'repo',
@@ -566,7 +550,7 @@ class OAuthProvider {
     id: 'figma',
     displayName: 'Figma',
     icon: Icons.design_services,
-    brandColor: Color(0xFFF24E1E),
+    brandColor: Color(BrandColors.figma),
     availableScopes: [
       OAuthScope(
         id: 'file_read',

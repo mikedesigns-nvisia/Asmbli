@@ -95,7 +95,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                     Text(
                       'Connection Test',
                       style: TextStyle(
-                                                fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -103,7 +102,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                     Text(
                       widget.template.name,
                       style: TextStyle(
-                        fontSize: 12,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -209,7 +207,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
         Text(
           'Ready to test connection',
           style: TextStyle(
-            fontSize: 14,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
@@ -217,7 +214,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
         Text(
           'Click "Test Connection" to verify your configuration',
           style: TextStyle(
-            fontSize: 12,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
@@ -233,8 +229,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
       children: [
         Text(
           _currentResult!.message,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TextStyle(
             fontWeight: FontWeight.w500,
             color: SemanticColors.primary,
           ),
@@ -248,7 +243,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
         Text(
           'This may take a few moments...',
           style: TextStyle(
-            fontSize: 11,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
@@ -276,7 +270,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               child: Text(
                 result.message,
                 style: TextStyle(
-                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: statusColor,
                 ),
@@ -300,7 +293,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
             child: Text(
               result.details!,
               style: TextStyle(
-                fontSize: 11,
                 fontFamily: 'JetBrains Mono',
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -324,9 +316,9 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
         if (result.error != null && result.error!.isNotEmpty) ...[
           const SizedBox(height: 12),
           ExpansionTile(
-            title: const Text(
+            title: Text(
               'Technical Details',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+              style: TextStyle(fontWeight: FontWeight.w500),
             ),
             children: [
               Container(
@@ -339,7 +331,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                 child: Text(
                   result.error!,
                   style: TextStyle(
-                    fontSize: 10,
                     fontFamily: 'JetBrains Mono',
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -361,7 +352,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
         Text(
           'Test Checklist:',
           style: TextStyle(
-            fontSize: 12,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -383,7 +373,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                 Text(
                   field.label,
                   style: TextStyle(
-                    fontSize: 11,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -403,7 +392,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
             Text(
               'Network connectivity',
               style: TextStyle(
-                fontSize: 11,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
@@ -426,10 +414,9 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Connection Details:',
             style: TextStyle(
-              fontSize: 11,
               fontWeight: FontWeight.w500,
               color: SemanticColors.success,
             ),
@@ -441,7 +428,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               child: Text(
                 '${_formatMetadataKey(entry.key)}: ${_formatMetadataValue(entry.value)}',
                 style: TextStyle(
-                  fontSize: 10,
                   fontFamily: 'JetBrains Mono',
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
@@ -479,7 +465,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               Text(
                 'Suggestions:',
                 style: TextStyle(
-                  fontSize: 11,
                   fontWeight: FontWeight.w500,
                   color: color,
                 ),
@@ -496,7 +481,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                   Text(
                     '• ',
                     style: TextStyle(
-                      fontSize: 10,
                       color: color,
                     ),
                   ),
@@ -504,7 +488,6 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                     child: Text(
                       suggestion,
                       style: TextStyle(
-                        fontSize: 10,
                         color: Theme.of(context).colorScheme.onSurface,
                         height: 1.2,
                       ),
@@ -619,7 +602,6 @@ class MCPConnectionStatus extends StatelessWidget {
               Text(
                 _getStatusText(testResult!.status),
                 style: TextStyle(
-                  fontSize: 9,
                   fontWeight: FontWeight.w600,
                   color: color,
                 ),
@@ -650,7 +632,6 @@ class MCPConnectionStatus extends StatelessWidget {
           Text(
             'Untested',
             style: TextStyle(
-              fontSize: 9,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -761,7 +742,6 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
               Text(
                 'Integration Health',
                 style: TextStyle(
-                                    fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
@@ -770,7 +750,6 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
               Text(
                 '$connectedServers/$totalServers',
                 style: TextStyle(
-                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: connectedServers == totalServers
                       ? SemanticColors.success
@@ -793,7 +772,6 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
           Text(
             'Last updated: ${DateTime.now().toString().substring(11, 16)}',
             style: TextStyle(
-              fontSize: 10,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),

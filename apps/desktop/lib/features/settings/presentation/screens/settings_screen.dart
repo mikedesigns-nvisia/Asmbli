@@ -2447,7 +2447,6 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             child: AsmblButton.secondary(
               text: 'Edit',
               onPressed: () => _handleIntegrationAction(integration),
-              isFullWidth: true,
             ),
           ),
         ],
@@ -2536,8 +2535,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                   AsmblButton.primary(
                     text: 'Install',
                     onPressed: () => _handleIntegrationAction(integration),
-                    isFullWidth: true,
-                  ),
+                        ),
                 ],
               ),
             ),
@@ -3072,7 +3070,6 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               onPressed: integration.isAvailable 
                   ? () => _handleIntegrationStatusAction(status)
                   : null,
-              isFullWidth: true,
             ),
           ),
         ],

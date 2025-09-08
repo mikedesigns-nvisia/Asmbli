@@ -440,7 +440,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
               
               const Spacer(),
               
-              AsmblButtonEnhanced.secondary(
+              AsmblButton.secondary(
                 text: 'Test Connection',
                 onPressed: _isTesting ? null : _testApiKey,
                 size: AsmblButtonSize.small,

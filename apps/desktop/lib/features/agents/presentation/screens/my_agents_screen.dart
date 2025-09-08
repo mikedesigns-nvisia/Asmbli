@@ -5,6 +5,9 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/agent_provider.dart';
 import 'package:agent_engine_core/models/agent.dart';
+import '../widgets/enhanced_agent_card.dart';
+import '../widgets/enhanced_agent_template_card.dart';
+import '../../../agents/data/models/agent_template.dart';
 
 class MyAgentsScreen extends ConsumerStatefulWidget {
  const MyAgentsScreen({super.key});
@@ -514,15 +517,20 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  Expanded(
  child: GridView.builder(
  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
- crossAxisCount: 3,
+ crossAxisCount: 4,
  crossAxisSpacing: SpacingTokens.componentSpacing,
  mainAxisSpacing: SpacingTokens.componentSpacing,
- childAspectRatio: 1.6,
+ childAspectRatio: 0.9,
  ),
  itemCount: agents.length,
  itemBuilder: (context, index) {
  final agent = agents[index];
- return _AgentCard(agent: agent);
+ return EnhancedAgentCard(
+   agent: agent,
+   onEdit: () => _editAgent(agent),
+   onDelete: () => _deleteAgent(agent),
+   onDuplicate: () => _duplicateAgent(agent),
+ );
  },
  ),
  ),
@@ -684,16 +692,17 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  ? _buildEmptyState()
  : GridView.builder(
  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
- crossAxisCount: 3,
+ crossAxisCount: 4,
  crossAxisSpacing: SpacingTokens.componentSpacing,
  mainAxisSpacing: SpacingTokens.componentSpacing,
- childAspectRatio: 1.4,
+ childAspectRatio: 0.8,
  ),
  itemCount: filteredTemplates.length,
  itemBuilder: (context, index) {
- return _TemplateCard(
+ return EnhancedAgentTemplateCard(
  template: filteredTemplates[index],
  onUseTemplate: () => _useTemplate(filteredTemplates[index]),
+ onPreview: () => _previewTemplate(filteredTemplates[index]),
  );
  },
  ),
@@ -730,6 +739,261 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
    // If agent creation fails, just navigate to new agent screen
    context.go('/agents/configure');
  }
+ }
+ 
+ void _editAgent(Agent agent) {
+   context.go('/agents/configure/${agent.id}');
+ }
+ 
+ void _deleteAgent(Agent agent) {
+   // Show confirmation dialog and delete agent
+   showDialog(
+     context: context,
+     builder: (context) => AlertDialog(
+       backgroundColor: ThemeColors(context).surface,
+       title: Text(
+         'Delete Agent',
+         style: TextStyles.cardTitle.copyWith(
+           color: ThemeColors(context).onSurface,
+         ),
+       ),
+       content: Text(
+         'Are you sure you want to delete "${agent.name}"? This action cannot be undone.',
+         style: TextStyles.bodyMedium.copyWith(
+           color: ThemeColors(context).onSurfaceVariant,
+         ),
+       ),
+       actions: [
+         TextButton(
+           onPressed: () => Navigator.of(context).pop(),
+           child: const Text('Cancel'),
+         ),
+         TextButton(
+           onPressed: () async {
+             Navigator.of(context).pop();
+             try {
+               final agentNotifier = ref.read(agentNotifierProvider.notifier);
+               await agentNotifier.deleteAgent(agent.id);
+               ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(content: Text('Deleted "${agent.name}"')),
+               );
+             } catch (e) {
+               ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(
+                   content: Text('Failed to delete agent: $e'),
+                   backgroundColor: ThemeColors(context).error,
+                 ),
+               );
+             }
+           },
+           style: TextButton.styleFrom(
+             foregroundColor: ThemeColors(context).error,
+           ),
+           child: const Text('Delete'),
+         ),
+       ],
+     ),
+   );
+ }
+ 
+ void _duplicateAgent(Agent agent) async {
+   try {
+     final agentNotifier = ref.read(agentNotifierProvider.notifier);
+     final duplicatedAgent = Agent(
+       id: 'agent_${DateTime.now().millisecondsSinceEpoch}',
+       name: '${agent.name} (Copy)',
+       description: agent.description,
+       capabilities: List.from(agent.capabilities),
+       configuration: Map.from(agent.configuration ?? {}),
+       status: AgentStatus.idle,
+     );
+     
+     await agentNotifier.createAgent(duplicatedAgent);
+     ScaffoldMessenger.of(context).showSnackBar(
+       SnackBar(content: Text('Duplicated "${agent.name}"')),
+     );
+   } catch (e) {
+     ScaffoldMessenger.of(context).showSnackBar(
+       SnackBar(
+         content: Text('Failed to duplicate agent: $e'),
+         backgroundColor: ThemeColors(context).error,
+       ),
+     );
+   }
+ }
+ 
+ void _previewTemplate(AgentTemplate template) {
+   showDialog(
+     context: context,
+     builder: (context) => Dialog(
+       backgroundColor: ThemeColors(context).surface,
+       child: Container(
+         width: MediaQuery.of(context).size.width * 0.8,
+         height: MediaQuery.of(context).size.height * 0.8,
+         padding: EdgeInsets.all(SpacingTokens.xl),
+         child: Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Row(
+               children: [
+                 Container(
+                   padding: const EdgeInsets.all(SpacingTokens.sm),
+                   decoration: BoxDecoration(
+                     color: ThemeColors(context).primary.withOpacity(0.1),
+                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                   ),
+                   child: Icon(
+                     _getCategoryIcon(template.category),
+                     color: ThemeColors(context).primary,
+                     size: 24,
+                   ),
+                 ),
+                 SizedBox(width: SpacingTokens.sm),
+                 Expanded(
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       Text(
+                         template.name,
+                         style: TextStyles.pageTitle.copyWith(
+                           color: ThemeColors(context).onSurface,
+                         ),
+                       ),
+                       Text(
+                         template.category,
+                         style: TextStyles.bodyMedium.copyWith(
+                           color: ThemeColors(context).primary,
+                           fontWeight: FontWeight.w600,
+                         ),
+                       ),
+                     ],
+                   ),
+                 ),
+                 IconButton(
+                   onPressed: () => Navigator.of(context).pop(),
+                   icon: Icon(Icons.close, color: ThemeColors(context).onSurfaceVariant),
+                 ),
+               ],
+             ),
+             SizedBox(height: SpacingTokens.lg),
+             
+             // Description
+             Text(
+               'Description',
+               style: TextStyles.bodyLarge.copyWith(
+                 color: ThemeColors(context).onSurface,
+                 fontWeight: FontWeight.w600,
+               ),
+             ),
+             SizedBox(height: SpacingTokens.sm),
+             Text(
+               template.description,
+               style: TextStyles.bodyMedium.copyWith(
+                 color: ThemeColors(context).onSurfaceVariant,
+                 height: 1.6,
+               ),
+             ),
+             
+             SizedBox(height: SpacingTokens.lg),
+             
+             // Example Use Case
+             Text(
+               'Example Use Case',
+               style: TextStyles.bodyLarge.copyWith(
+                 color: ThemeColors(context).onSurface,
+                 fontWeight: FontWeight.w600,
+               ),
+             ),
+             SizedBox(height: SpacingTokens.sm),
+             Container(
+               width: double.infinity,
+               padding: EdgeInsets.all(SpacingTokens.sm),
+               decoration: BoxDecoration(
+                 color: ThemeColors(context).primary.withOpacity(0.1),
+                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                 border: Border.all(color: ThemeColors(context).primary.withOpacity(0.2)),
+               ),
+               child: Text(
+                 template.exampleUse,
+                 style: TextStyles.bodyMedium.copyWith(
+                   color: ThemeColors(context).onSurface,
+                   height: 1.6,
+                 ),
+               ),
+             ),
+             
+             if (template.mcpServers.isNotEmpty) ...[
+               SizedBox(height: SpacingTokens.lg),
+               Text(
+                 'MCP Integrations',
+                 style: TextStyles.bodyLarge.copyWith(
+                   color: ThemeColors(context).onSurface,
+                   fontWeight: FontWeight.w600,
+                 ),
+               ),
+               SizedBox(height: SpacingTokens.sm),
+               Wrap(
+                 spacing: SpacingTokens.sm,
+                 runSpacing: SpacingTokens.sm,
+                 children: template.mcpServers.map((server) {
+                   return Container(
+                     padding: EdgeInsets.symmetric(
+                       horizontal: SpacingTokens.sm,
+                       vertical: SpacingTokens.xs,
+                     ),
+                     decoration: BoxDecoration(
+                       color: ThemeColors(context).surfaceVariant,
+                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                       border: Border.all(color: ThemeColors(context).primary.withOpacity(0.3)),
+                     ),
+                     child: Row(
+                       mainAxisSize: MainAxisSize.min,
+                       children: [
+                         Icon(
+                           Icons.hub,
+                           size: 14,
+                           color: ThemeColors(context).primary,
+                         ),
+                         SizedBox(width: SpacingTokens.xs),
+                         Text(
+                           server,
+                           style: TextStyles.bodySmall.copyWith(
+                             color: ThemeColors(context).onSurface,
+                             fontWeight: FontWeight.w500,
+                           ),
+                         ),
+                       ],
+                     ),
+                   );
+                 }).toList(),
+               ),
+             ],
+             
+             Spacer(),
+             
+             // Action buttons
+             Row(
+               mainAxisAlignment: MainAxisAlignment.end,
+               children: [
+                 AsmblButton.secondary(
+                   text: 'Close',
+                   onPressed: () => Navigator.of(context).pop(),
+                 ),
+                 SizedBox(width: SpacingTokens.sm),
+                 AsmblButton.primary(
+                   text: template.isComingSoon ? 'Coming Soon' : 'Use Template',
+                   onPressed: template.isComingSoon ? null : () {
+                     Navigator.of(context).pop();
+                     _useTemplate(template);
+                   },
+                 ),
+               ],
+             ),
+           ],
+         ),
+       ),
+     ),
+   );
  }
  
  List<String> _getCapabilitiesFromTemplate(AgentTemplate template) {
@@ -887,7 +1151,6 @@ This template gives you a starting point - modify it to create your perfect AI a
  ? Colors.white 
  : ThemeColors(context).onSurfaceVariant,
  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
- fontSize: 11,
  ),
  ),
  ],
@@ -1047,7 +1310,6 @@ class _AgentCard extends StatelessWidget {
  style: TextStyles.bodyMedium.copyWith(
  color: ThemeColors(context).onSurface,
  fontWeight: FontWeight.w600,
- fontSize: 13,
  ),
  maxLines: 1,
  overflow: TextOverflow.ellipsis,
@@ -1057,7 +1319,6 @@ class _AgentCard extends StatelessWidget {
  agent.capabilities.isNotEmpty ? agent.capabilities.first : 'General',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
- fontSize: 10,
  ),
  ),
  ],
@@ -1100,7 +1361,7 @@ class _AgentCard extends StatelessWidget {
  children: [
  Icon(Icons.copy, size: 12, color: ThemeColors(context).onSurface),
  const SizedBox(width: 6),
- Text('Duplicate', style: TextStyle(fontSize: 11, color: ThemeColors(context).onSurface)),
+ Text('Duplicate', style: TextStyles.caption.copyWith(color: ThemeColors(context).onSurface)),
  ],
  ),
  ),
@@ -1111,7 +1372,7 @@ class _AgentCard extends StatelessWidget {
  children: [
  Icon(Icons.delete, color: Colors.red, size: 12),
  SizedBox(width: 6),
- Text('Delete', style: TextStyle(color: Colors.red, fontSize: 11)),
+ Text('Delete', style: TextStyle(color: Colors.red, fontSize: 12)),
  ],
  ),
  ),
@@ -1144,7 +1405,6 @@ class _AgentCard extends StatelessWidget {
  'Description',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
- fontSize: 10,
  fontWeight: FontWeight.w500,
  ),
  ),
@@ -1167,7 +1427,6 @@ class _AgentCard extends StatelessWidget {
  agent.description,
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurface,
- fontSize: 10,
  height: 1.2,
  ),
  maxLines: 2,
@@ -1190,7 +1449,6 @@ class _AgentCard extends StatelessWidget {
  '${agent.capabilities.length} capabilities',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
- fontSize: 9,
  fontWeight: FontWeight.w500,
  ),
  ),
@@ -1208,7 +1466,6 @@ class _AgentCard extends StatelessWidget {
  agent.status == AgentStatus.idle ? 'Ready' : 'Busy',
  style: TextStyles.caption.copyWith(
  color: ThemeColors(context).onSurfaceVariant,
- fontSize: 9,
  ),
  overflow: TextOverflow.ellipsis,
  ),
@@ -1245,307 +1502,4 @@ class _TabButton extends StatelessWidget {
  }
 }
 
-class _TemplateCard extends StatelessWidget {
- final AgentTemplate template;
- final VoidCallback onUseTemplate;
-
- const _TemplateCard({
- required this.template,
- required this.onUseTemplate,
- });
-
- @override
- Widget build(BuildContext context) {
- return AsmblCard(
- onTap: template.isComingSoon ? null : onUseTemplate,
- child: Padding(
- padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
- child: Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- children: [
- // Header with icon, name, and popularity
- Row(
- children: [
- // Icon
- Container(
- padding: const EdgeInsets.all(SpacingTokens.xs),
- decoration: BoxDecoration(
- color: ThemeColors(context).surfaceVariant,
- borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- ),
- child: Icon(
- _getCategoryIcon(template.category),
- size: 18,
- color: ThemeColors(context).primary,
- ),
- ),
- const SizedBox(width: SpacingTokens.sm),
- 
- // Template name and category
- Expanded(
- child: Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- children: [
- Row(
- children: [
- Expanded(
- child: Text(
- template.name,
- style: TextStyles.bodyMedium.copyWith(
- color: template.isComingSoon 
- ? ThemeColors(context).onSurfaceVariant
- : ThemeColors(context).onSurface,
- fontWeight: FontWeight.w600,
- fontSize: 13,
- ),
- maxLines: 1,
- overflow: TextOverflow.ellipsis,
- ),
- ),
- if (template.isComingSoon) ...[
- const SizedBox(width: 6),
- Container(
- padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
- decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(4),
- ),
- child: Text(
- 'SOON',
- style: TextStyles.caption.copyWith(
- fontSize: 8,
- fontWeight: FontWeight.bold,
- color: ThemeColors(context).primary,
- ),
- ),
- ),
- ],
- ],
- ),
- const SizedBox(height: 2),
- Text(
- template.category,
- style: TextStyles.caption.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- fontSize: 10,
- ),
- ),
- ],
- ),
- ),
- ],
- ),
- 
- const SizedBox(height: SpacingTokens.sm),
- 
- // Example use case preview
- Expanded(
- child: Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- children: [
- Row(
- children: [
- Icon(
- Icons.lightbulb_outline,
- size: 11,
- color: ThemeColors(context).onSurfaceVariant,
- ),
- const SizedBox(width: 4),
- Text(
- 'Example Use',
- style: TextStyles.caption.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- fontSize: 10,
- fontWeight: FontWeight.w500,
- ),
- ),
- ],
- ),
- const SizedBox(height: 4),
- 
- // Example use case
- Container(
- padding: const EdgeInsets.all(SpacingTokens.xs),
- decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.05),
- borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- border: Border.all(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
- width: 0.5,
- ),
- ),
- child: Text(
- template.exampleUse,
- style: TextStyles.caption.copyWith(
- color: ThemeColors(context).onSurface,
- fontSize: 10,
- height: 1.2,
- ),
- maxLines: 2,
- overflow: TextOverflow.ellipsis,
- ),
- ),
- 
- const Spacer(),
- 
- // MCP servers preview
- if (template.mcpServers.isNotEmpty) ...[
- const SizedBox(height: 6),
- Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- children: [
- Row(
- children: [
- Container(
- padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
- decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(4),
- ),
- child: Row(
- mainAxisSize: MainAxisSize.min,
- children: [
- Icon(
- Icons.hub,
- size: 10,
- color: ThemeColors(context).primary,
- ),
- const SizedBox(width: 2),
- Text(
- 'MCP',
- style: TextStyles.caption.copyWith(
- color: ThemeColors(context).primary,
- fontSize: 8,
- fontWeight: FontWeight.bold,
- ),
- ),
- ],
- ),
- ),
- const SizedBox(width: 6),
- Text(
- '${template.mcpServers.length} integrations',
- style: TextStyles.caption.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- fontSize: 9,
- fontWeight: FontWeight.w500,
- ),
- ),
- ],
- ),
- const SizedBox(height: 4),
- Wrap(
- spacing: 3,
- runSpacing: 2,
- children: template.mcpServers.take(4).map((server) {
- return Container(
- padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
- decoration: BoxDecoration(
- color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.5),
- borderRadius: BorderRadius.circular(3),
- border: Border.all(
- color: ThemeColors(context).primary.withValues(alpha: 0.2),
- width: 0.5,
- ),
- ),
- child: Text(
- server,
- style: TextStyles.caption.copyWith(
- color: ThemeColors(context).primary,
- fontSize: 8,
- fontWeight: FontWeight.w500,
- ),
- ),
- );
- }).toList(),
- ),
- if (template.mcpServers.length > 4)
- Padding(
- padding: const EdgeInsets.only(top: 2),
- child: Text(
- '+${template.mcpServers.length - 4} more',
- style: TextStyles.caption.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- fontSize: 8,
- fontStyle: FontStyle.italic,
- ),
- ),
- ),
- ],
- ),
- ],
- ],
- ),
- ),
- ],
- ),
- ),
- );
- }
-
- IconData _getCategoryIcon(String category) {
- switch (category) {
- case 'Research': return Icons.search;
- case 'Development': return Icons.code;
- case 'Writing': return Icons.edit;
- case 'Data Analysis': return Icons.analytics;
- case 'Customer Support': return Icons.support_agent;
- case 'Marketing': return Icons.campaign;
- case 'Design': return Icons.design_services;
- default: return Icons.smart_toy;
- }
- }
-
- IconData _getMCPServerIcon(String server) {
- switch (server) {
- case 'Files': return Icons.folder;
- case 'Git': return Icons.code;
- case 'Postgres': return Icons.storage;
- case 'Filesystem': return Icons.description;
- case 'Memory': return Icons.memory;
- case 'Time': return Icons.schedule;
- case 'GitHub': return Icons.code_outlined;
- case 'Slack': return Icons.chat;
- case 'Linear': return Icons.assignment;
- case 'Notion': return Icons.note;
- case 'Brave Search': return Icons.search;
- case 'Figma': return Icons.design_services;
- default: return Icons.extension;
- }
- }
-
- Color _getPopularityColor(int popularity, BuildContext context) {
- if (popularity >= 90) {
- return Colors.green.shade600;
- } else if (popularity >= 80) {
- return Colors.orange.shade600;
- } else {
- return ThemeColors(context).primary;
- }
- }
-}
-
-class AgentTemplate {
- final String name;
- final String description;
- final String category;
- final List<String> tags;
- final bool mcpStack;
- final List<String> mcpServers;
- final String exampleUse;
- final int popularity;
- final bool isComingSoon;
-
- AgentTemplate({
- required this.name,
- required this.description,
- required this.category,
- required this.tags,
- required this.mcpStack,
- required this.mcpServers,
- required this.exampleUse,
- required this.popularity,
- this.isComingSoon = false,
- });
-}
 

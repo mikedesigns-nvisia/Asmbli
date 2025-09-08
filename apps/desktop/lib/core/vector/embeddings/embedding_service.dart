@@ -47,8 +47,8 @@ class LocalEmbeddingService extends EmbeddingService {
     try {
       print('🔧 Initializing local embedding service with model: $modelName');
       
-      // TODO: In a real implementation, this would load the ONNX model
-      // For now, we'll use a mock implementation
+      // Load the specified ONNX model for local embeddings
+      // Using mock implementation until ONNX runtime is integrated
       await _loadModel();
       
       _isInitialized = true;
@@ -77,8 +77,8 @@ class LocalEmbeddingService extends EmbeddingService {
       // Preprocess text
       final processedText = _preprocessText(text);
       
-      // TODO: In a real implementation, this would run the text through the ONNX model
-      // For now, we'll generate a deterministic mock embedding
+      // Generate embedding using ONNX model inference
+      // Currently using deterministic mock until ONNX runtime integration
       final embedding = _generateMockEmbedding(processedText);
       
       return embedding;

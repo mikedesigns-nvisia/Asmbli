@@ -260,7 +260,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    AsmblButtonEnhanced.primary(
+                    AsmblButton.primary(
                       text: 'View Templates',
                       icon: Icons.library_books,
                       onPressed: () => context.go(AppRoutes.agents),
@@ -269,7 +269,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                     
                     const SizedBox(width: SpacingTokens.lg),
                     
-                    AsmblButtonEnhanced.secondary(
+                    AsmblButton.secondary(
                       text: 'Start Chat',
                       icon: Icons.chat_bubble_outline,
                       onPressed: () => context.go(AppRoutes.chat),

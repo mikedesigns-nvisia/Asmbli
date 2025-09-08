@@ -134,7 +134,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  ),
  ],
  ),
- AsmblButtonEnhanced.accent(
+ AsmblButton.accent(
  text: 'Create Document',
  icon: Icons.add,
  onPressed: () => setState(() => _showCreateForm = true),
@@ -224,7 +224,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  ),
  if (_searchQuery.isEmpty && _selectedType == null) ...[
  const SizedBox(height: SpacingTokens.componentSpacing),
- AsmblButtonEnhanced.accent(
+ AsmblButton.accent(
  text: 'Create Document',
  icon: Icons.add,
  onPressed: () => setState(() => _showCreateForm = true),

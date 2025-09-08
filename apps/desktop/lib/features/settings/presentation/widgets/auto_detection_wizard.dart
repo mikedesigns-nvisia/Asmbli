@@ -172,7 +172,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
               ),
               child: Text(
                 category,
-                style: TextStyles.labelSmall.copyWith(
+                style: TextStyles.labelMedium.copyWith(
                   color: SemanticColors.primary,
                 ),
               ),
@@ -301,7 +301,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
         ),
         Text(
           label,
-          style: TextStyles.labelSmall.copyWith(
+          style: TextStyles.labelMedium.copyWith(
             color: SemanticColors.onSurfaceVariant,
           ),
         ),

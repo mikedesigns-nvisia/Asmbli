@@ -107,7 +107,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         Text(
           'Choose Integration',
           style: TextStyle(
-                        fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -116,7 +115,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         Text(
           'Connect your agent to external services and tools',
           style: TextStyle(
-            fontSize: 14,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
@@ -204,12 +202,12 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
           value: item,
           child: Text(
             item,
-            style: const TextStyle(fontSize: 12),
+            style: TextStyles.bodySmall,
           ),
         )).toList(),
         hint: Text(
           label,
-          style: const TextStyle(fontSize: 12),
+          style: TextStyles.bodySmall,
         ),
       ),
     );
@@ -233,8 +231,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
             Text(
               'Recommended for you',
               style: TextStyle(
-                                fontSize: 14,
-                fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w500,
                 color: SemanticColors.primary,
               ),
             ),
@@ -335,8 +332,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
               Text(
                 template.name,
                 style: TextStyle(
-                                    fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 maxLines: 1,
@@ -350,7 +346,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                   Text(
                     template.category,
                     style: TextStyle(
-                      fontSize: 11,
                       color: template.brandColor ?? SemanticColors.primary,
                       fontWeight: FontWeight.w500,
                     ),
@@ -367,7 +362,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                 child: Text(
                   template.description,
                   style: TextStyle(
-                    fontSize: 12,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                     height: 1.3,
                   ),
@@ -393,7 +387,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                       child: Text(
                         capability,
                         style: TextStyle(
-                          fontSize: 9,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w500,
                         ),
@@ -452,7 +445,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                     Text(
                       template.name,
                       style: TextStyle(
-                                                fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: isRecommended 
                           ? SemanticColors.primary 
@@ -464,7 +456,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                     Text(
                       template.category,
                       style: TextStyle(
-                        fontSize: 10,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -497,7 +488,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
           Text(
             'No integrations found',
             style: TextStyle(
-              fontSize: 16,
               fontWeight: FontWeight.w500,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -506,8 +496,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
           Text(
             'Try adjusting your search or filters',
             style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),
@@ -547,7 +536,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
           Text(
             'Popular',
             style: TextStyle(
-              fontSize: 8,
               color: Colors.orange,
               fontWeight: FontWeight.w600,
             ),
@@ -564,10 +552,9 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         color: SemanticColors.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: const Text(
+      child: Text(
         'Recommended',
         style: TextStyle(
-          fontSize: 8,
           color: SemanticColors.success,
           fontWeight: FontWeight.w600,
         ),
@@ -600,7 +587,6 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
       child: Text(
         difficulty,
         style: TextStyle(
-          fontSize: 8,
           color: badgeColor,
           fontWeight: FontWeight.w600,
         ),
