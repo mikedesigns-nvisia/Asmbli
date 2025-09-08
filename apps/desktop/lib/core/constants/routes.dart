@@ -16,8 +16,9 @@ class AppRoutes {
  static const String integrationHub = '/integration-hub';
  static const String marketplace = '/marketplace';
  
- // Demo route (remove after video recording)
+ // Demo routes (remove after video recording)
  static const String demoChat = '/demo-chat';
+ static const String oauthSettings = '/oauth-settings';
  
  // Route names for easier identification
  static const Map<String, String> routeNames = {
@@ -33,6 +34,7 @@ class AppRoutes {
  integrationHub: 'Integration Hub',
  marketplace: 'Marketplace',
  demoChat: 'Demo Chat', // Remove after video
+ oauthSettings: 'OAuth Settings',
  };
  
  // Helper method to get route name
@@ -54,5 +56,6 @@ class AppRoutes {
  integrationHub,
  marketplace,
  demoChat, // Remove after video
+ oauthSettings,
  ];
 }

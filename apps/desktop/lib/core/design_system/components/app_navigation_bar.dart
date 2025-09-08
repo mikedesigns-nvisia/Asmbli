@@ -35,17 +35,10 @@ class AppNavigationBar extends ConsumerWidget {
  onTap: () => context.go(AppRoutes.home),
  child: Row(
  children: [
- // Simple brand icon
- Icon(
- Icons.hub,
- size: 24,
- color: colors.primary,
- ),
- const SizedBox(width: SpacingTokens.sm),
  // Brand Title
  Text(
  'Asmbli',
- style: TextStyles.brandTitle.copyWith(
+ style: TextStyle(
  color: colors.onSurface,
  ),
  ),
