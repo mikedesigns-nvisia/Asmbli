@@ -38,8 +38,10 @@ class AppNavigationBar extends ConsumerWidget {
  // Brand Title
  Text(
  'Asmbli',
- style: TextStyle(
- color: colors.onSurface,
+ style: TextStyles.brandTitle.copyWith(
+ color: colors.primary,
+ fontWeight: FontWeight.bold,
+ fontSize: 24,
  ),
  ),
  ],

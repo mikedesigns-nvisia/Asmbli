@@ -538,61 +538,105 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
          isExpanded: true,
          items: models.map((model) => DropdownMenuItem<String>(
            value: model.id,
-           child: Row(
-             children: [
-               Icon(
-                 model.isLocal ? Icons.computer : Icons.cloud,
-                 size: 14,
-                 color: model.isLocal
-                     ? ThemeColors(context).accent
-                     : ThemeColors(context).primary,
-               ),
-               const SizedBox(width: SpacingTokens.xs),
-               Expanded(
-                 child: Text(
-                   model.name,
-                   style: TextStyles.bodySmall.copyWith(
-                     color: theme.colorScheme.onSurface,
+           child: Container(
+             height: 44, // Increased height to prevent cramping
+             child: Row(
+               children: [
+                 Icon(
+                   model.isLocal ? Icons.computer : Icons.cloud,
+                   size: 16, // Slightly larger icon
+                   color: model.isLocal
+                       ? ThemeColors(context).accent
+                       : ThemeColors(context).primary,
+                 ),
+                 const SizedBox(width: SpacingTokens.sm), // Increased spacing
+                 Expanded(
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     children: [
+                       Text(
+                         model.name,
+                         style: TextStyles.bodyMedium.copyWith(
+                           color: theme.colorScheme.onSurface,
+                           fontWeight: FontWeight.w500,
+                         ),
+                         maxLines: 1,
+                         overflow: TextOverflow.ellipsis,
+                       ),
+                       if (model.provider.isNotEmpty && !model.isLocal)
+                         Text(
+                           model.provider,
+                           style: TextStyles.bodySmall.copyWith(
+                             color: theme.colorScheme.onSurfaceVariant,
+                             fontSize: 11,
+                           ),
+                         ),
+                     ],
                    ),
                  ),
-               ),
-               
-               // Warm-up status indicator
-               Consumer(
-                 builder: (context, ref, _) {
-                   final isReady = ref.watch(isModelReadyProvider(model.id));
-                   return Container(
-                     width: 8,
-                     height: 8,
-                     decoration: BoxDecoration(
-                       color: isReady 
-                         ? ThemeColors(context).success
-                         : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                       shape: BoxShape.circle,
+                 
+                 const SizedBox(width: SpacingTokens.sm), // More space before badges
+                 
+                 // Status indicators row
+                 Row(
+                   mainAxisSize: MainAxisSize.min,
+                   children: [
+                     // Warm-up status indicator
+                     Consumer(
+                       builder: (context, ref, _) {
+                         final isReady = ref.watch(isModelReadyProvider(model.id));
+                         return Container(
+                           width: 8,
+                           height: 8,
+                           decoration: BoxDecoration(
+                             color: isReady 
+                               ? ThemeColors(context).success
+                               : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                             shape: BoxShape.circle,
+                           ),
+                         );
+                       },
                      ),
-                   );
-                 },
-               ),
-               if (model.isLocal) ...[
-                 const SizedBox(width: SpacingTokens.xs),
-                 Text(
-                   'LOCAL',
-                   style: TextStyle(
-                                         fontWeight: FontWeight.w600,
-                     color: ThemeColors(context).accent,
-                   ),
-                 ),
-               ] else if (model.provider.isNotEmpty) ...[
-                 const SizedBox(width: SpacingTokens.xs),
-                 Text(
-                   model.provider.toUpperCase(),
-                   style: TextStyle(
-                                         fontWeight: FontWeight.w600,
-                     color: ThemeColors(context).primary,
-                   ),
+                     if (model.isLocal) ...[
+                       const SizedBox(width: SpacingTokens.sm),
+                       Container(
+                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                         decoration: BoxDecoration(
+                           color: ThemeColors(context).accent.withValues(alpha: 0.15),
+                           borderRadius: BorderRadius.circular(8),
+                         ),
+                         child: Text(
+                           'LOCAL',
+                           style: TextStyle(
+                             fontSize: 9,
+                             fontWeight: FontWeight.w600,
+                             color: ThemeColors(context).accent,
+                           ),
+                         ),
+                       ),
+                     ] else if (model.provider.isNotEmpty) ...[
+                       const SizedBox(width: SpacingTokens.sm),
+                       Container(
+                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                         decoration: BoxDecoration(
+                           color: ThemeColors(context).primary.withValues(alpha: 0.15),
+                           borderRadius: BorderRadius.circular(8),
+                         ),
+                         child: Text(
+                           model.provider.toUpperCase(),
+                           style: TextStyle(
+                             fontSize: 9,
+                             fontWeight: FontWeight.w600,
+                             color: ThemeColors(context).primary,
+                           ),
+                         ),
+                       ),
+                     ],
+                   ],
                  ),
                ],
-             ],
+             ),
            ),
          )).toList(),
          onChanged: (String? modelId) {
