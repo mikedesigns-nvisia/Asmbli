@@ -22,11 +22,13 @@ enum CreationSource {
 class ContextCreationFlow extends StatefulWidget {
  final Function(ContextDocument) onSave;
  final VoidCallback onCancel;
+ final ContextDocument? initialDocument;
 
  const ContextCreationFlow({
  super.key,
  required this.onSave,
  required this.onCancel,
+ this.initialDocument,
  });
 
  @override
@@ -46,6 +48,21 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  final List<PlatformFile> _uploadedFiles = [];
  final bool _isProcessing = false;
  String? _validationMessage;
+
+ @override
+ void initState() {
+   super.initState();
+   if (widget.initialDocument != null) {
+     final doc = widget.initialDocument!;
+     _titleController.text = doc.title;
+     _contentController.text = doc.content;
+     _selectedType = doc.type;
+     _tags = List.from(doc.tags);
+     _tagsController.text = _tags.join(', ');
+     _selectedSource = CreationSource.manual;
+     _currentStep = CreationStep.contentInput;
+   }
+ }
 
  @override
  void dispose() {
@@ -118,7 +135,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Text(
- 'Create Context Document',
+ widget.initialDocument != null ? 'Edit Context Document' : 'Create Context Document',
  style: TextStyles.bodyLarge.copyWith(
  fontWeight: FontWeight.w600,
  color: colors.onSurface,
@@ -949,7 +966,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  
  // Next/Create Button
  AsmblButton.primary(
- text: isLastStep ? 'Create Document' : 'Next',
+ text: isLastStep ? (widget.initialDocument != null ? 'Update Document' : 'Create Document') : 'Next',
  icon: isLastStep ? Icons.check : Icons.arrow_forward,
  onPressed: canGoNext ? (isLastStep ? _createDocument : _goToNextStep) : null,
  ),
@@ -1339,19 +1356,23 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  }
 
  void _createDocument() {
+ final isEditing = widget.initialDocument != null;
+ final originalDoc = widget.initialDocument;
+ 
  final document = ContextDocument(
- id: '',
+ id: isEditing ? originalDoc!.id : '',
  title: _titleController.text.trim(),
  content: _contentController.text.trim(),
  type: _selectedType,
  tags: _tags,
- createdAt: DateTime.now(),
+ createdAt: isEditing ? originalDoc!.createdAt : DateTime.now(),
  updatedAt: DateTime.now(),
- isActive: true,
+ isActive: isEditing ? originalDoc!.isActive : true,
  metadata: {
  'source': _selectedSource?.name ?? 'manual',
  'hasFiles': _uploadedFiles.isNotEmpty,
  'fileCount': _uploadedFiles.length,
+ if (isEditing && originalDoc!.metadata.isNotEmpty) ...originalDoc.metadata,
  },
  );
 

@@ -6,6 +6,8 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../providers/context_provider.dart';
 import '../widgets/context_hub_widget.dart';
+import '../widgets/context_creation_flow.dart';
+import '../../data/models/context_document.dart';
 
 class ContextLibraryScreen extends ConsumerStatefulWidget {
   const ContextLibraryScreen({super.key});
@@ -77,7 +79,11 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
                           ),
                         ),
                         const Spacer(),
-                        const SizedBox(width: 100), // Balance the back button
+                        HeaderButton(
+                          text: 'Add Context',
+                          icon: Icons.add,
+                          onPressed: _showCreateContextFlow,
+                        ),
                       ],
                     ),
                     const SizedBox(height: SpacingTokens.lg),
@@ -110,13 +116,6 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
                           fillColor: colors.surface.withValues(alpha: 0.7),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: SpacingTokens.lg),
-                    AsmblButton.accent(
-                      text: 'Add Context',
-                      icon: Icons.add,
-                      onPressed: () => setState(() => _showCreateFlow = true),
-                      size: AsmblButtonSize.medium,
                     ),
                   ],
                 ),
@@ -247,6 +246,50 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
             child: ContextHubWidget(),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showCreateContextFlow() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: ContextCreationFlow(
+          onSave: (contextDocument) async {
+            Navigator.of(context).pop();
+            try {
+              final notifier = ref.read(contextDocumentNotifierProvider.notifier);
+              await notifier.createDocument(
+                title: contextDocument.title,
+                content: contextDocument.content,
+                type: contextDocument.type,
+                tags: contextDocument.tags,
+                metadata: contextDocument.metadata,
+              );
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Context document "${contextDocument.title}" created successfully'),
+                    backgroundColor: ThemeColors(context).success,
+                  ),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to create context document: $e'),
+                    backgroundColor: ThemeColors(context).error,
+                  ),
+                );
+              }
+            }
+          },
+          onCancel: () => Navigator.of(context).pop(),
+        ),
       ),
     );
   }
