@@ -286,6 +286,8 @@ enum MCPAuthType {
   bearerToken,
   basicAuth,
   oauth,
+  database,
+  complex,
   custom,
 }
 

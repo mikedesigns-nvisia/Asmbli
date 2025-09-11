@@ -1,11 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-/// Supported OAuth 2.0 providers for secure authentication
+/// Supported OAuth 2.0 providers and authentication methods for MCP tools
 enum OAuthProvider {
   github('GitHub', 'github.com'),
   slack('Slack', 'slack.com'),
   linear('Linear', 'linear.app'),
-  microsoft('Microsoft', 'microsoft.com');
+  microsoft('Microsoft', 'microsoft.com'),
+  notion('Notion', 'notion.so'),
+  braveSearch('Brave Search', 'search.brave.com');
 
   const OAuthProvider(this.displayName, this.domain);
 
@@ -112,6 +114,38 @@ const Map<OAuthProvider, OAuthProviderInfo> _providerInfoMap = {
     ],
     requiresApproval: true,
     documentationUrl: 'https://docs.microsoft.com/en-us/graph/auth-v2-user',
+  ),
+  
+  OAuthProvider.notion: OAuthProviderInfo(
+    provider: OAuthProvider.notion,
+    name: 'Notion',
+    description: 'Connect to Notion for page management, database operations, and content creation',
+    iconPath: 'assets/icons/notion.png',
+    capabilities: [
+      'Page management',
+      'Database operations',
+      'Block editing',
+      'Content creation',
+      'Template management',
+    ],
+    requiresApproval: true,
+    documentationUrl: 'https://developers.notion.com/docs/authorization',
+  ),
+  
+  OAuthProvider.braveSearch: OAuthProviderInfo(
+    provider: OAuthProvider.braveSearch,
+    name: 'Brave Search',
+    description: 'Connect to Brave Search for privacy-focused web search and real-time results',
+    iconPath: 'assets/icons/brave.png',
+    capabilities: [
+      'Web search',
+      'Real-time results',
+      'Privacy-focused',
+      'API integration',
+      'Search analytics',
+    ],
+    requiresApproval: false,
+    documentationUrl: 'https://api.search.brave.com/app/documentation/web-search/get-started',
   ),
 };
 

@@ -250,8 +250,9 @@ class OAuthIntegrationService {
       final expiresAtStr = await _authService.getCredential('$keyPrefix:expires_at');
       if (expiresAtStr != null) {
         final expiresAt = DateTime.parse(expiresAtStr);
-        if (DateTime.now().isAfter(expiresAt.subtract(const Duration(minutes: 5)))) {
-          // Token expires in 5 minutes, try to refresh
+        // Use a 15-minute buffer to be consistent with refresh service
+        if (DateTime.now().isAfter(expiresAt.subtract(const Duration(minutes: 15)))) {
+          // Token expires within 15 minutes, try to refresh
           final refreshResult = await refreshToken(provider);
           return refreshResult.isSuccess;
         }
