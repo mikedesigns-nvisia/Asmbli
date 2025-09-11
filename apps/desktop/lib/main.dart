@@ -10,6 +10,7 @@ import 'core/design_system/components/asmbli_card_enhanced.dart';
 import 'core/constants/routes.dart';
 import 'core/di/service_locator.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
+import 'features/chat/presentation/screens/chat_screen_with_contextual.dart';
 // import 'features/chat/presentation/screens/modern_chat_screen_v2.dart'; // Temporarily disabled
 import 'features/chat/presentation/screens/demo_chat_screen.dart'; // Remove after video
 import 'features/settings/presentation/screens/modern_settings_screen.dart';
@@ -30,12 +31,14 @@ import 'core/services/api_config_service.dart';
 import 'core/services/feature_flag_service.dart';
 import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
 import 'features/tools/presentation/screens/tools_screen.dart';
+import 'features/chat/presentation/demo/contextual_context_demo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/services/desktop/hive_cleanup_service.dart';
 import 'core/error/app_error_handler.dart';
 import 'core/services/production_logger.dart';
 import 'core/config/environment_config.dart';
 import 'core/services/vector_integration_service.dart';
+import 'core/services/oauth_auto_refresh_initializer.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
@@ -235,6 +238,9 @@ class AsmblDesktopApp extends ConsumerWidget {
  final themeState = ref.watch(themeServiceProvider);
  final themeService = ref.read(themeServiceProvider.notifier);
  
+ // Initialize OAuth auto-refresh service when app starts
+ OAuthAutoRefreshInitializer.initialize(ref);
+ 
  return MaterialApp.router(
  title: 'Asmbli - AI Agents Made Easy',
  theme: themeService.getLightTheme(),
@@ -266,7 +272,7 @@ final _router = GoRouter(
  path: AppRoutes.chat,
  builder: (context, state) {
    final template = state.uri.queryParameters['template'];
-   return ChatScreen(selectedTemplate: template);
+   return ChatScreenWithContextual(selectedTemplate: template);
  },
  ),
  // Temporarily disabled - missing file
@@ -278,6 +284,11 @@ final _router = GoRouter(
  GoRoute(
  path: AppRoutes.demoChat,
  builder: (context, state) => const DemoChatScreen(),
+ ),
+ // Contextual Context Demo
+ GoRoute(
+ path: '/contextual-context-demo',
+ builder: (context, state) => const ContextualContextDemo(),
  ),
  // OAuth settings route
  GoRoute(

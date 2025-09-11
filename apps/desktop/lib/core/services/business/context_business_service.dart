@@ -1,17 +1,17 @@
 import 'dart:async';
 import '../../../features/context/data/models/context_document.dart';
 import '../../../features/context/data/repositories/context_repository.dart';
-import '../context_vector_ingestion_service.dart';
+// import '../context_vector_ingestion_service.dart';
 import 'base_business_service.dart';
 
 /// Business service for context operations - abstracts vector integration from UI
 class ContextBusinessService extends BaseBusinessService {
   final ContextRepository _repository;
-  final ContextVectorIngestionService? _vectorService;
+  final dynamic _vectorService; // Accept any vector service (streamlined or legacy)
   
   ContextBusinessService({
     required ContextRepository repository,
-    ContextVectorIngestionService? vectorService,
+    dynamic vectorService,
   }) : _repository = repository, _vectorService = vectorService;
 
   /// Get all context documents
@@ -254,7 +254,7 @@ class ContextBusinessService extends BaseBusinessService {
 class ContextBusinessServiceFactory {
   static Future<ContextBusinessService> create({
     required ContextRepository repository,
-    ContextVectorIngestionService? vectorService,
+    dynamic vectorService,
   }) async {
     return ContextBusinessService(
       repository: repository,

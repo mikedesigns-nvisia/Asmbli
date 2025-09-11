@@ -25,17 +25,17 @@ import '../widgets/context_sidebar_section.dart';
 import '../widgets/contextual_context_widget.dart';
 import '../components/model_warmup_status_indicator.dart';
 
-/// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
-class ChatScreen extends ConsumerStatefulWidget {
+/// Chat screen with contextual context integration
+class ChatScreenWithContextual extends ConsumerStatefulWidget {
  final String? selectedTemplate;
   
-  const ChatScreen({super.key, this.selectedTemplate});
+  const ChatScreenWithContextual({super.key, this.selectedTemplate});
 
  @override
- ConsumerState<ChatScreen> createState() => _ChatScreenState();
+ ConsumerState<ChatScreenWithContextual> createState() => _ChatScreenWithContextualState();
 }
 
-class _ChatScreenState extends ConsumerState<ChatScreen> {
+class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContextual> {
  bool isSidebarCollapsed = false;
  final TextEditingController messageController = TextEditingController();
  
@@ -657,15 +657,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
              ),
            ),
          )).toList(),
-         onChanged: (String? modelId) {
+         onChanged: (String? modelId) async {
            final currentConversationId = ref.read(selectedConversationIdProvider);
            if (modelId != null && currentConversationId != null) {
              final service = ref.read(modelConfigServiceProvider);
              final model = service.allModelConfigs[modelId];
              if (model != null) {
-               // Set model for specific conversation
-               final setConversationModel = ref.read(setConversationModelProvider);
-               setConversationModel(currentConversationId, model);
+               // Create a new chat with the selected model
+               await _startNewChatWithModel(model);
              }
            }
          },
@@ -875,8 +874,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  child: _buildMessagesArea(context),
  ),
  
- // Input Area
- Container(
+        // Contextual Input Area
+        _buildContextualInput(),
+ /* Container(
  padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Row(
  children: [
@@ -961,7 +961,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ],
  ),
- ),
+ */
  ],
  ),
  );
@@ -2184,6 +2184,64 @@ Future<void> _updateConversationPrimingAfterSuccess(String conversationId, Model
       onSendMessage: _sendMessage,
       isLoading: ref.watch(isLoadingProvider),
     );
+  }
+
+  /// Create a new chat conversation with a specific model
+  Future<void> _startNewChatWithModel(ModelConfig model) async {
+    try {
+      // Show feedback about creating new chat with selected model
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Starting new chat with ${model.name}'),
+            backgroundColor: ThemeColors(context).primary,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+
+      // Create a new direct conversation with the specific model
+      final conversationService = ref.read(conversationServiceProvider);
+      final newConversation = core.Conversation(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: 'Chat with ${model.name}',
+        messages: [],
+        createdAt: DateTime.now(),
+        lastModified: DateTime.now(),
+        metadata: {
+          'model_id': model.id,
+          'model_name': model.name,
+          'model_type': model.isLocal ? 'local' : 'api',
+          'model_provider': model.provider,
+          'created_from': 'model_switch',
+          'type': 'direct', // Mark as direct conversation (not agent-based)
+        },
+      );
+
+      // Save the conversation
+      await conversationService.createConversation(newConversation);
+
+      // Refresh the conversations list to show the new conversation
+      ref.invalidate(conversationsProvider);
+
+      // Select the new conversation to enable chatting
+      ref.read(selectedConversationIdProvider.notifier).state = newConversation.id;
+
+      // Update the global selected model to match the new conversation
+      ref.read(selectedModelProvider.notifier).state = model;
+
+    } catch (e) {
+      // Show error message if conversation creation fails
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to start new chat with ${model.name}: $e'),
+            backgroundColor: ThemeColors(context).error,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 }
 

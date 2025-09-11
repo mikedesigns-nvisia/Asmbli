@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'vector_database_service.dart';
-import 'context_vector_ingestion_service.dart';
-import 'vector_context_retrieval_service.dart';
+import 'streamlined_vector_context_service.dart';
 import '../di/service_locator.dart';
 import '../../features/context/presentation/providers/context_provider.dart';
 
@@ -25,6 +23,7 @@ class RefWrapper implements RefInterface {
 }
 
 /// Production service that initializes and manages the complete vector integration system
+/// Now uses StreamlinedVectorContextService instead of separate services
 class VectorIntegrationService {
   static VectorIntegrationService? _instance;
   
@@ -36,65 +35,49 @@ class VectorIntegrationService {
   }
 
   bool _isInitialized = false;
-  VectorDatabaseService? _databaseService;
+  StreamlinedVectorContextService? _streamlinedService;
   Timer? _syncTimer;
   
-  /// Initialize the complete vector integration system  
+  /// Initialize the complete vector integration system using streamlined service
   Future<void> initialize(RefInterface ref) async {
     if (_isInitialized) return;
 
     try {
-      print('🚀 Initializing Vector Integration System...');
+      print('🚀 Initializing Streamlined Vector Integration System...');
       
-      // Step 1: Initialize vector database
-      print('📝 Step 1/6: Creating vector database service...');
-      _databaseService = ref.read(vectorDatabaseServiceProvider);
+      // Step 1: Get streamlined service
+      print('📝 Step 1/3: Getting streamlined vector context service...');
+      _streamlinedService = ref.read(streamlinedVectorContextServiceProvider);
       
-      print('📝 Step 2/6: Initializing vector database...');
-      await _databaseService!.initialize();
+      print('📝 Step 2/3: Initializing streamlined service...');
+      await _streamlinedService!.initialize();
       
-      // Step 2: Wait for database to be available
-      print('📝 Step 3/6: Waiting for database provider...');
-      final vectorDB = await ref.read(vectorDatabaseProvider.future);
-      
-      // Step 3: Initialize ingestion service
-      print('📝 Step 4/6: Initializing ingestion service...');
-      final ingestionService = ref.read(contextVectorIngestionServiceProvider);
-      
-      // Step 4: Perform initial sync of all active context documents (with timeout)
-      print('📝 Step 5/6: Performing initial context document sync...');
-      if (ingestionService != null) {
-        try {
-          await ingestionService.ingestAllActiveDocuments().timeout(
-            const Duration(seconds: 30),
-            onTimeout: () {
-              print('⏰ Initial document sync timed out after 30s - continuing without sync');
-            },
-          );
-          print('✅ Initial document sync completed successfully');
-        } catch (e) {
-          print('⚠️ Initial document sync failed: $e - continuing anyway');
-        }
-      } else {
-        print('⚠️ Ingestion service not available, skipping initial sync');
+      // Step 2: Perform initial sync of all active context documents (with timeout)
+      print('📝 Step 3/3: Performing initial context document sync...');
+      try {
+        await _streamlinedService!.ingestAllActiveDocuments().timeout(
+          const Duration(seconds: 30),
+          onTimeout: () {
+            print('⏰ Initial document sync timed out after 30s - continuing without sync');
+          },
+        );
+        print('✅ Initial document sync completed successfully');
+      } catch (e) {
+        print('⚠️ Initial document sync failed: $e - continuing anyway');
       }
       
-      // Step 5: Initialize retrieval service (lazy initialization via provider)
-      print('📝 Step 6/6: Initializing retrieval service...');
-      final retrievalService = ref.read(vectorContextRetrievalServiceProvider);
-      
-      // Step 6: Setup periodic sync
+      // Setup periodic sync
       _setupPeriodicSync(ref);
       
       _isInitialized = true;
-      print('✅ Vector Integration System initialized successfully');
+      print('✅ Streamlined Vector Integration System initialized successfully');
       
       // Log initialization stats
-      final stats = await _databaseService!.getStats();
-      print('📊 Vector DB Stats: ${stats.totalDocuments} docs, ${stats.totalChunks} chunks');
+      final stats = await _streamlinedService!.getStats();
+      print('📊 Vector Stats: ${stats['total_vector_documents']} docs, ${stats['total_chunks']} chunks');
       
     } catch (e) {
-      print('❌ Vector Integration System initialization failed: $e');
+      print('❌ Streamlined Vector Integration System initialization failed: $e');
       rethrow;
     }
   }
@@ -111,19 +94,14 @@ class VectorIntegrationService {
     });
   }
 
-  /// Perform periodic synchronization
+  /// Perform periodic synchronization using streamlined service
   Future<void> _performPeriodicSync(RefInterface ref) async {
     try {
       print('🔄 Performing periodic vector sync...');
       
-      final ingestionService = ref.read(contextVectorIngestionServiceProvider);
-      if (ingestionService != null) {
-        await ingestionService.syncAllDocuments();
-      }
-      
-      // Optimize database performance
-      if (_databaseService != null) {
-        await _databaseService!.optimize();
+      if (_streamlinedService != null) {
+        await _streamlinedService!.syncAllDocuments();
+        await _streamlinedService!.optimize();
       }
       
       print('✅ Periodic sync completed');
@@ -133,14 +111,13 @@ class VectorIntegrationService {
     }
   }
 
-  /// Force full synchronization of all context documents
+  /// Force full synchronization of all context documents using streamlined service
   Future<void> forceSyncAll(RefInterface ref) async {
     try {
       print('🔄 Forcing full vector sync...');
       
-      final ingestionService = ref.read(contextVectorIngestionServiceProvider);
-      if (ingestionService != null) {
-        await ingestionService.syncAllDocuments();
+      if (_streamlinedService != null) {
+        await _streamlinedService!.syncAllDocuments();
       }
       
       // Invalidate providers to refresh UI
@@ -155,7 +132,7 @@ class VectorIntegrationService {
     }
   }
 
-  /// Get comprehensive system status
+  /// Get comprehensive system status using streamlined service
   Future<Map<String, dynamic>> getSystemStatus(RefInterface ref) async {
     try {
       final status = <String, dynamic>{
@@ -163,24 +140,10 @@ class VectorIntegrationService {
         'sync_active': _syncTimer?.isActive ?? false,
       };
       
-      if (_isInitialized && _databaseService != null) {
-        // Vector database stats
-        final dbStats = await _databaseService!.getStats();
-        status['vector_database'] = dbStats.toJson();
-        
-        // Ingestion stats
-        final ingestionService = ref.read(contextVectorIngestionServiceProvider);
-        if (ingestionService != null) {
-          final ingestionStats = await ingestionService.getIngestionStats();
-          status['ingestion'] = ingestionStats;
-        }
-        
-        // Retrieval stats
-        final retrievalService = ref.read(vectorContextRetrievalServiceProvider);
-        if (retrievalService != null) {
-          final retrievalStats = await retrievalService.getContextStats();
-          status['retrieval'] = retrievalStats;
-        }
+      if (_isInitialized && _streamlinedService != null) {
+        // Get all stats from streamlined service
+        final streamlinedStats = await _streamlinedService!.getStats();
+        status.addAll(streamlinedStats);
       }
       
       return status;
@@ -193,21 +156,21 @@ class VectorIntegrationService {
     }
   }
 
-  /// Check if system is healthy and ready
+  /// Check if system is healthy and ready using streamlined service
   Future<bool> isHealthy(RefInterface ref) async {
     try {
       if (!_isInitialized) return false;
       
-      // Check database connectivity
-      if (_databaseService == null || !_databaseService!.isInitialized) {
+      // Check streamlined service availability
+      if (_streamlinedService == null || !_streamlinedService!.isInitialized) {
         return false;
       }
       
-      // Check if we have context documents
-      final stats = await _databaseService!.getStats();
+      // Get stats to verify system is working
+      final stats = await _streamlinedService!.getStats();
       
-      // System is healthy if database is accessible
-      return stats.totalDocuments >= 0; // Even 0 is valid
+      // System is healthy if we can get stats without error
+      return stats.containsKey('initialized') && stats['initialized'] == true;
       
     } catch (e) {
       print('⚠️ Health check failed: $e');
@@ -231,22 +194,22 @@ class VectorIntegrationService {
     }
   }
 
-  /// Dispose and cleanup
+  /// Dispose and cleanup streamlined service
   Future<void> dispose() async {
     try {
-      print('🧹 Disposing Vector Integration System...');
+      print('🧹 Disposing Streamlined Vector Integration System...');
       
       _syncTimer?.cancel();
       _syncTimer = null;
       
-      if (_databaseService != null) {
-        await _databaseService!.dispose();
-        _databaseService = null;
+      if (_streamlinedService != null) {
+        await _streamlinedService!.dispose();
+        _streamlinedService = null;
       }
       
       _isInitialized = false;
       
-      print('✅ Vector Integration System disposed');
+      print('✅ Streamlined Vector Integration System disposed');
       
     } catch (e) {
       print('⚠️ Error during disposal: $e');
@@ -256,12 +219,12 @@ class VectorIntegrationService {
   /// Get initialization status
   bool get isInitialized => _isInitialized;
 
-  /// Get database service (throws if not initialized)
-  VectorDatabaseService get databaseService {
-    if (_databaseService == null) {
-      throw StateError('Vector Integration System not initialized');
+  /// Get streamlined service (throws if not initialized)
+  StreamlinedVectorContextService get streamlinedService {
+    if (_streamlinedService == null) {
+      throw StateError('Streamlined Vector Integration System not initialized');
     }
-    return _databaseService!;
+    return _streamlinedService!;
   }
 }
 

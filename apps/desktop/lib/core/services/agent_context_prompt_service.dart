@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/context/data/models/context_document.dart';
 import '../../features/context/presentation/providers/context_provider.dart';
 import '../vector/models/vector_models.dart';
-import 'vector_context_retrieval_service.dart';
+import 'streamlined_vector_context_service.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 
 /// Service to integrate context documents into agent system prompts
@@ -43,25 +43,31 @@ class AgentContextPromptService {
     int maxContextChunks = 5,
   }) async {
     try {
-      final retrievalService = ref.read(vectorContextRetrievalServiceProvider);
+      final retrievalServiceAsync = ref.watch(streamlinedVectorContextInitializedProvider);
       
-      if (retrievalService != null) {
-        // Get relevant context using vector search
-        final contextResults = await retrievalService!.getContextForMessage(
-          userMessage,
-          agentId: agentId,
-          sessionContextIds: sessionContextIds,
-          maxResults: maxContextChunks,
-        );
-        
-        if (contextResults.isEmpty) {
-          return basePrompt;
-        }
+      return await retrievalServiceAsync.when(
+        data: (retrievalService) async {
+          // Get relevant context using vector search
+          final contextResults = await retrievalService.getContextForMessage(
+            userMessage,
+            agentId: agentId,
+            sessionContextIds: sessionContextIds,
+            maxResults: maxContextChunks,
+          );
+          
+          if (contextResults.isEmpty) {
+            return basePrompt;
+          }
 
-        return _buildVectorEnhancedPrompt(basePrompt, contextResults, userMessage);
-      } else {
-        return basePrompt;
-      }
+          return _buildVectorEnhancedPrompt(basePrompt, contextResults, userMessage);
+        },
+        loading: () => basePrompt,
+        error: (error, stack) async {
+          print('⚠️ Vector service error: $error');
+          // Fallback to traditional context enhancement
+          return await enhancePromptWithContext(basePrompt, agentId, ref);
+        },
+      );
     } catch (e) {
       print('⚠️ Vector context enhancement failed: $e');
       // Fallback to traditional context enhancement
@@ -146,11 +152,12 @@ class AgentContextPromptService {
       // Combine recent messages for context search
       final combinedQuery = userMessages.join(' ');
       
-      final retrievalService = ref.read(vectorContextRetrievalServiceProvider);
+      final retrievalServiceAsync = ref.watch(streamlinedVectorContextInitializedProvider);
       
-      if (retrievalService != null) {
-        final contextResults = await retrievalService!.getContextForMessage(
-          combinedQuery,
+      return await retrievalServiceAsync.when(
+        data: (retrievalService) async {
+          final contextResults = await retrievalService.getContextForMessage(
+            combinedQuery,
           agentId: agentId,
           sessionContextIds: sessionContextIds,
           maxResults: 3,
@@ -174,10 +181,11 @@ class AgentContextPromptService {
           }
         }
         
-        return buffer.toString();
-      } else {
-        return '';
-      }
+          return buffer.toString();
+        },
+        loading: () => '',
+        error: (error, stack) => '',
+      );
       
     } catch (e) {
       print('⚠️ Message context building failed: $e');
@@ -192,19 +200,29 @@ class AgentContextPromptService {
     List<String>? sessionContextIds,
   }) async {
     try {
-      final retrievalService = ref.read(vectorContextRetrievalServiceProvider);
-      if (retrievalService != null) {
-        return await retrievalService!.getContextStats(
-          agentId: agentId,
-          sessionContextIds: sessionContextIds,
-        );
-      } else {
-        return {
-          'error': 'Vector context retrieval service not available',
+      final retrievalServiceAsync = ref.watch(streamlinedVectorContextInitializedProvider);
+      
+      return await retrievalServiceAsync.when(
+        data: (retrievalService) async {
+          final stats = await retrievalService.getStats();
+          return {
+            'totalContextDocuments': stats['context_documents_ingested'] ?? 0,
+            'availableChunks': stats['total_chunks'] ?? 0,
+            'agent_id': agentId,
+            'session_context_count': sessionContextIds?.length ?? 0,
+          };
+        },
+        loading: () => {
+          'error': 'Vector context retrieval service loading',
           'totalContextDocuments': 0,
           'availableChunks': 0,
-        };
-      }
+        },
+        error: (error, stack) => {
+          'error': error.toString(),
+          'totalContextDocuments': 0,
+          'availableChunks': 0,
+        },
+      );
     } catch (e) {
       return {
         'error': e.toString(),

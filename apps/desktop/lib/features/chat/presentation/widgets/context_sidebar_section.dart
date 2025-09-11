@@ -985,25 +985,50 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       ],
                     ),
                   ),
-                  if (doc.isActive)
-                    GestureDetector(
-                      onTap: () => _addDocumentToSession(doc.id),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: ThemeColors(context).primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                        child: Text(
-                          'Add',
-                          style: GoogleFonts.fustat(
-                            fontSize: 9,
-                            color: ThemeColors(context).primary,
-                            fontWeight: FontWeight.w600,
+                  if (doc.isActive) ...[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () => _addDocumentToSession(doc.id),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              'Add',
+                              style: GoogleFonts.fustat(
+                                fontSize: 9,
+                                color: ThemeColors(context).primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () => _showDeleteDocumentConfirmation(doc),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              'Delete',
+                              style: GoogleFonts.fustat(
+                                fontSize: 9,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ],
                 ],
               ),
             );
@@ -2504,6 +2529,104 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         _showError('Failed to load template: ${e.toString()}');
       }
     }
+  }
+  
+  /// Show delete document confirmation dialog
+  void _showDeleteDocumentConfirmation(ContextDocument doc) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: ThemeColors(context).surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        title: Text(
+          'Delete Context Document',
+          style: GoogleFonts.fustat(
+            fontWeight: FontWeight.w600,
+            color: ThemeColors(context).onSurface,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete "${doc.title}"? This action cannot be undone.',
+          style: GoogleFonts.fustat(
+            color: ThemeColors(context).onSurfaceVariant,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.fustat(
+                color: ThemeColors(context).onSurfaceVariant,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // Close confirmation dialog
+              
+              try {
+                final deleteAction = ref.read(deleteContextDocumentActionProvider);
+                await deleteAction(doc.id);
+                
+                // Remove from session context if present
+                setState(() {
+                  _sessionContextIds.remove(doc.id);
+                });
+                
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.check_circle, color: Colors.white, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Context document "${doc.title}" deleted',
+                              style: GoogleFonts.fustat(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: ThemeColors(context).primary,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.error, color: Colors.white, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Failed to delete document: $e',
+                              style: GoogleFonts.fustat(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              }
+            },
+            child: Text(
+              'Delete',
+              style: GoogleFonts.fustat(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
