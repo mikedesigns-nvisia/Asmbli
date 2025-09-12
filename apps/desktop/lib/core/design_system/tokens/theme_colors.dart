@@ -165,16 +165,16 @@ class ThemeColors {
  Color get border => theme.colorScheme.outline;
  Color get borderSubtle => theme.colorScheme.outline.withValues(alpha: 0.5);
  
- // Semantic colors
- Color get success => isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
- Color get warning => const Color(0xFFFAAF00);
+ // Semantic colors - Enhanced contrast for better accessibility
+ Color get success => isDark ? const Color(0xFF22C55E) : const Color(0xFF15803D);
+ Color get warning => isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
  Color get error => theme.colorScheme.error;
- Color get info => isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+ Color get info => isDark ? const Color(0xFF3B82F6) : const Color(0xFF1D4ED8);
  
- // Interactive states
- Color get hover => primary.withValues(alpha: 0.04);
- Color get pressed => primary.withValues(alpha: 0.08);
- Color get focus => primary.withValues(alpha: 0.12);
+ // Interactive states - Enhanced for better visibility
+ Color get hover => primary.withValues(alpha: isDark ? 0.08 : 0.06);
+ Color get pressed => primary.withValues(alpha: isDark ? 0.12 : 0.10);
+ Color get focus => primary.withValues(alpha: isDark ? 0.16 : 0.14);
  
  // Special colors
  Color get headerBackground {

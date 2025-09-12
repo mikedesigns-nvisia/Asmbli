@@ -77,8 +77,8 @@ class AppColorSchemes {
     const surface = Color(0xFFFCFBF9); // Lighter cream surface
     const primary = Color(0xFF8B6F47); // Warm brown primary
     const accent = Color(0xFFD4B896); // Warm beige accent
-    const onSurface = Color(0xFF4A3E2F); // Dark brown text
-    const onSurfaceVariant = Color(0xFF6B5D4F); // Medium brown text
+    const onSurface = Color(0xFF2D1F12); // Darker brown text for better contrast
+    const onSurfaceVariant = Color(0xFF4A3E2F); // Darker medium brown text for WCAG AA compliance
     const border = Color(0xFFE8DDD0); // Soft beige border
 
     return _buildThemeData(
@@ -103,8 +103,8 @@ class AppColorSchemes {
     const surface = Color(0xFF423126); // Slightly lighter warm brown surface for better contrast
     const primary = Color(0xFFE6C794); // Warm cream accent
     const accent = Color(0xFFD4B896); // Warm beige accent
-    const onSurface = Color(0xFFF5F0E8); // Light warm white
-    const onSurfaceVariant = Color(0xFFCFBFA8); // Muted warm beige
+    const onSurface = Color(0xFFFFFCF8); // Brighter warm white for better contrast
+    const onSurfaceVariant = Color(0xFFE6D5C4); // Brighter warm beige for WCAG AA compliance
     const border = Color(0xFF5A4738);
 
     return _buildThemeData(
@@ -131,8 +131,8 @@ class AppColorSchemes {
     const surface = Color(0xFFFAFCFF); // Lighter blue surface
     const primary = Color(0xFF1E3A8A); // Deep blue primary
     const accent = Color(0xFF3B82F6); // Bright blue accent
-    const onSurface = Color(0xFF1E3A8A); // Deep blue text
-    const onSurfaceVariant = Color(0xFF475569); // Muted blue-gray text
+    const onSurface = Color(0xFF0F1A44); // Darker blue text for better contrast
+    const onSurfaceVariant = Color(0xFF1E3A8A); // Darker blue-gray text for WCAG AA compliance
     const border = Color(0xFFDDEAF7); // Soft blue border
 
     return _buildThemeData(
@@ -157,8 +157,8 @@ class AppColorSchemes {
     const surface = Color(0xFF1E293B); // Blue-gray surface
     const primary = Color(0xFF60A5FA); // Bright blue accent
     const accent = Color(0xFF93C5FD); // Lighter blue accent
-    const onSurface = Color(0xFFF1F5F9); // Light blue-white
-    const onSurfaceVariant = Color(0xFFCBD5E1); // Muted light blue
+    const onSurface = Color(0xFFFDFDFF); // Brighter blue-white for better contrast
+    const onSurfaceVariant = Color(0xFFE2E8F0); // Brighter light blue for WCAG AA compliance
     const border = Color(0xFF374151);
 
     return _buildThemeData(
@@ -185,8 +185,8 @@ class AppColorSchemes {
     const surface = Color(0xFFF7FCFA); // Lighter mint surface (from old mint)
     const primary = Color(0xFF1E3B2B); // Deep forest green primary (from old mint)
     const accent = Color(0xFF6B9080); // Sage green accent (from old mint)
-    const onSurface = Color(0xFF1E3B2B); // Deep forest green text (from old mint)
-    const onSurfaceVariant = Color(0xFF4A6B5A); // Muted forest green text (from old mint)
+    const onSurface = Color(0xFF0F1D16); // Darker forest green text for better contrast
+    const onSurfaceVariant = Color(0xFF1E3B2B); // Darker muted forest green text for WCAG AA compliance
     const border = Color(0xFFD3E8DC); // Soft mint border (from old mint)
 
     return _buildThemeData(
@@ -211,8 +211,8 @@ class AppColorSchemes {
     const surface = Color(0xFF1F3325); // Slightly lighter forest surface for better contrast
     const primary = Color(0xFFB8E6C8); // Bright mint accent (from old mint)
     const accent = Color(0xFF8DBF9E); // Brighter sage accent (from old mint)
-    const onSurface = Color(0xFFF0F8F3); // Light mint (from old mint)
-    const onSurfaceVariant = Color(0xFFA0BDA8); // Muted mint (from old mint)
+    const onSurface = Color(0xFFF8FFFA); // Brighter light mint for better contrast
+    const onSurfaceVariant = Color(0xFFD0E8D6); // Brighter muted mint for WCAG AA compliance
     const border = Color(0xFF334A38);
 
     return _buildThemeData(
@@ -239,8 +239,8 @@ class AppColorSchemes {
     const surface = Color(0xFFFFFBF7); // Almost white orange
     const primary = Color(0xFF9A3412); // Deep orange-red
     const accent = Color(0xFFF97316); // Bright orange accent
-    const onSurface = Color(0xFF9A3412); // Deep orange text
-    const onSurfaceVariant = Color(0xFFEA580C); // Medium orange text
+    const onSurface = Color(0xFF4A1908); // Darker orange text for better contrast
+    const onSurfaceVariant = Color(0xFF9A3412); // Darker medium orange text for WCAG AA compliance
     const border = Color(0xFFFED7AA); // Light orange border
 
     return _buildThemeData(
@@ -265,8 +265,8 @@ class AppColorSchemes {
     const surface = Color(0xFF664029); // Lighter desaturated orange-brown surface for better contrast
     const primary = Color(0xFFD4956B); // Desaturated warm orange
     const accent = Color(0xFFB8845C); // Desaturated beige-orange accent
-    const onSurface = Color(0xFFF5EDE4); // Soft warm white
-    const onSurfaceVariant = Color(0xFFE6C5A6); // Desaturated light orange
+    const onSurface = Color(0xFFFFF8F2); // Brighter warm white for better contrast
+    const onSurfaceVariant = Color(0xFFF5E1C7); // Brighter desaturated light orange for WCAG AA compliance
     const border = Color(0xFF7D4E35);
 
     return _buildThemeData(
@@ -318,12 +318,10 @@ class AppColorSchemes {
         onTertiary: onAccent,
         surface: surface,
         onSurface: onSurface,
-        background: background,
-        onBackground: onSurface,
         error: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
         onError: Colors.white,
         outline: border,
-        surfaceVariant: surfaceVariant,
+        surfaceContainerHighest: surfaceVariant,
         onSurfaceVariant: onSurfaceVariant,
       ),
 

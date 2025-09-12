@@ -13,10 +13,10 @@ class ColorTokens {
  static const Color muted = Color(0xFFEEF6F2); // Muted mint background
  static const Color secondary = Color(0xFFEDF5F1); // Secondary surface
  
- // Text Colors
- static const Color foreground = Color(0xFF1E3B2B); // Deep forest green text
- static const Color mutedForeground = Color(0xFF4A6B5A); // Muted forest green text
- static const Color foregroundVariant = Color(0xFF4A6B5A); // Variant forest green text
+ // Text Colors - Enhanced contrast for WCAG AA compliance
+ static const Color foreground = Color(0xFF0F1D16); // Darker forest green text for better contrast
+ static const Color mutedForeground = Color(0xFF1E3B2B); // Darker muted forest green text
+ static const Color foregroundVariant = Color(0xFF1E3B2B); // Darker variant forest green text
  
  // Primary (Deep Forest Green)
  static const Color primary = Color(0xFF1E3B2B); // Primary action color
@@ -31,9 +31,9 @@ class ColorTokens {
  static const Color pressed = Color(0x141E3B2B); // 8% primary overlay
  static const Color focus = Color(0x1A1E3B2B); // 10% primary overlay
  
- // Semantic Colors (harmonious with mint/forest palette)
- static const Color success = Color(0xFF16A34A);
- static const Color warning = Color(0xFFFAAF00);
+ // Semantic Colors (harmonious with mint/forest palette) - Enhanced contrast
+ static const Color success = Color(0xFF15803D);
+ static const Color warning = Color(0xFFD97706);
  static const Color error = Color(0xFFDC2626);
  
  // Forest Palette (Dark Theme)
@@ -43,9 +43,9 @@ class ColorTokens {
  static const Color darkMuted = Color(0xFF1F2F25); // Muted forest surface
  static const Color darkBorder = Color(0xFF2B3F33); // Forest border
  
- // Forest text (soft mint greens)
- static const Color darkForeground = Color(0xFFF0F8F3); // Light mint
- static const Color darkMutedForeground = Color(0xFFA0BDA8); // Muted mint
+ // Forest text (soft mint greens) - Enhanced contrast for WCAG AA compliance
+ static const Color darkForeground = Color(0xFFF8FFFA); // Brighter light mint for better contrast
+ static const Color darkMutedForeground = Color(0xFFD0E8D6); // Brighter muted mint for better visibility
  
  // Forest primary (bright mint accent)
  static const Color darkPrimary = Color(0xFFB8E6C8); // Bright mint accent
