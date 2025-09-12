@@ -78,8 +78,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             // Context Actions
             _buildContextActions(theme),
             
-            // Vector search status indicator
-            _buildVectorStatusIndicator(theme, ingestionStatus),
+            // Show helpful context status instead of technical vector DB info
+            _buildContextStatusIndicator(theme),
             
             // Context Browser (if expanded)
             if (_showContextBrowser) ...[
@@ -620,81 +620,74 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
     );
   }
 
-  /// Build vector search status indicator
-  Widget _buildVectorStatusIndicator(ThemeData theme, AsyncValue<Map<String, dynamic>> ingestionStatus) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-      ),
-      child: ingestionStatus.when(
-        data: (status) {
-          final contextDocs = status['context_documents_ingested'] as int? ?? 0;
-          final totalChunks = status['total_chunks'] as int? ?? 0;
-          final hasError = status.containsKey('error');
-          
-          return Row(
-            children: [
-              Icon(
-                hasError ? Icons.warning_amber : Icons.memory,
-                size: 12,
-                color: hasError ? Colors.orange : ThemeColors(context).primary,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  hasError 
-                      ? 'Vector DB: Error'
-                      : 'Vector DB: $contextDocs docs, $totalChunks chunks',
-                  style: GoogleFonts.fustat(
-                    fontSize: 10,
-                    color: hasError ? Colors.orange : theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-        loading: () => Row(
-          children: [
-            SizedBox(
-              width: 12,
-              height: 12,
-              child: CircularProgressIndicator(
-                strokeWidth: 1.5,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              'Loading vector database...',
-              style: GoogleFonts.fustat(
-                fontSize: 10,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+  /// Build user-friendly context status indicator
+  Widget _buildContextStatusIndicator(ThemeData theme) {
+    final hasAgentContext = false; // TODO: Get from current conversation 
+    final hasSessionContext = _sessionContextIds.isNotEmpty;
+    final totalContextItems = (hasAgentContext ? 1 : 0) + _sessionContextIds.length;
+    
+    if (totalContextItems == 0) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
         ),
-        error: (_, __) => Row(
+        child: Row(
           children: [
             Icon(
-              Icons.error_outline,
+              Icons.lightbulb_outline,
               size: 12,
-              color: Colors.red,
+              color: ThemeColors(context).primary.withValues(alpha: 0.7),
             ),
             const SizedBox(width: 6),
-            Text(
-              'Vector DB: Connection failed',
-              style: GoogleFonts.fustat(
-                fontSize: 10,
-                color: Colors.red,
+            Expanded(
+              child: Text(
+                '💡 Add documents to help your assistant understand your needs',
+                style: GoogleFonts.fustat(
+                  fontSize: 10,
+                  color: ThemeColors(context).primary.withValues(alpha: 0.8),
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ),
           ],
         ),
+      );
+    }
+    
+    // Show encouraging context status
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: ThemeColors(context).primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.check_circle_outline,
+            size: 12,
+            color: ThemeColors(context).primary,
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              totalContextItems == 1 
+                ? '✨ Your assistant has context to help you'
+                : '✨ Your assistant has $totalContextItems sources of context',
+              style: GoogleFonts.fustat(
+                fontSize: 10,
+                color: ThemeColors(context).primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

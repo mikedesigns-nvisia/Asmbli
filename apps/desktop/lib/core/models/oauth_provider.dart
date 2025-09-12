@@ -175,6 +175,12 @@ class OAuthProviderState extends Equatable {
   final DateTime? connectedAt;
   final DateTime? lastUsed;
   final String? errorMessage;
+  // Additional properties for enhanced functionality
+  final DateTime? expiresAt;
+  final DateTime? lastRefresh;
+  final List<String> grantedScopes;
+  final bool isRefreshable;
+  final String? error;
 
   const OAuthProviderState({
     required this.provider,
@@ -182,6 +188,11 @@ class OAuthProviderState extends Equatable {
     this.connectedAt,
     this.lastUsed,
     this.errorMessage,
+    this.expiresAt,
+    this.lastRefresh,
+    this.grantedScopes = const [],
+    this.isRefreshable = false,
+    this.error,
   });
 
   /// Create a copy with updated values
@@ -191,6 +202,11 @@ class OAuthProviderState extends Equatable {
     DateTime? connectedAt,
     DateTime? lastUsed,
     String? errorMessage,
+    DateTime? expiresAt,
+    DateTime? lastRefresh,
+    List<String>? grantedScopes,
+    bool? isRefreshable,
+    String? error,
   }) {
     return OAuthProviderState(
       provider: provider ?? this.provider,
@@ -198,8 +214,19 @@ class OAuthProviderState extends Equatable {
       connectedAt: connectedAt ?? this.connectedAt,
       lastUsed: lastUsed ?? this.lastUsed,
       errorMessage: errorMessage ?? this.errorMessage,
+      expiresAt: expiresAt ?? this.expiresAt,
+      lastRefresh: lastRefresh ?? this.lastRefresh,
+      grantedScopes: grantedScopes ?? this.grantedScopes,
+      isRefreshable: isRefreshable ?? this.isRefreshable,
+      error: error ?? this.error,
     );
   }
+
+  // Helper getters for enhanced functionality
+  bool get isConnected => status == OAuthConnectionStatus.connected;
+  bool get isExpired => expiresAt != null && DateTime.now().isAfter(expiresAt!);
+  bool get isExpiringSoon => expiresAt != null && 
+      DateTime.now().add(const Duration(days: 7)).isAfter(expiresAt!);
 
   @override
   List<Object?> get props => [
@@ -208,5 +235,10 @@ class OAuthProviderState extends Equatable {
     connectedAt,
     lastUsed,
     errorMessage,
+    expiresAt,
+    lastRefresh,
+    grantedScopes,
+    isRefreshable,
+    error,
   ];
 }

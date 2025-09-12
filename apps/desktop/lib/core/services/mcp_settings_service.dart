@@ -361,6 +361,24 @@ class MCPSettingsService {
     }
   }
 
+  /// Reset all MCP settings to defaults
+  Future<void> resetToDefaults() async {
+    _globalMCPConfigs.clear();
+    _directAPIConfigs.clear();
+    _agentApiMappings.clear();
+    _serverStatuses.clear();
+    _globalContextDocuments.clear();
+    
+    await Future.wait([
+      _saveMCPConfigs(),
+      _saveDirectAPIConfigs(),
+      _saveAgentApiMappings(),
+      _saveGlobalContext(),
+    ]);
+    
+    _settingsUpdatesController.add({'reset': true});
+  }
+
   // ==================== Private Methods ====================
 
   Future<void> _loadMCPConfigs() async {

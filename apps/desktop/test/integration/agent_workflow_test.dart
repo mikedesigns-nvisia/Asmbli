@@ -2,8 +2,10 @@ import 'package:test/test.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:agentengine_desktop/core/agents/workflow_engine.dart';
+import 'package:agentengine_desktop/core/agents/workflow_node.dart';
+import 'package:agentengine_desktop/core/agents/models/workflow_models.dart';
 import 'package:agentengine_desktop/core/agents/graph/directed_graph.dart';
-import 'package:agentengine_desktop/core/agents/vector_database.dart';
+import 'package:agentengine_desktop/core/vector/database/vector_database.dart';
 import 'package:agentengine_desktop/core/models/model_interfaces.dart';
 
 void main() {
@@ -27,28 +29,34 @@ void main() {
       workflow.addNode(WorkflowNode(
         id: 'search',
         type: WorkflowNodeType.agent,
-        config: {'agent_id': 'search', 'timeout': 5000},
-        inputMapping: {'query': 'input.query'},
-        outputMapping: {'results': 'search_results'},
+        agent: searchAgent,
+        config: NodeConfig(
+          parameters: {'query': 'input.query'},
+          timeout: Duration(seconds: 5),
+        ),
       ));
       
       workflow.addNode(WorkflowNode(
         id: 'summary',
         type: WorkflowNodeType.agent,
-        config: {'agent_id': 'summary', 'timeout': 3000},
-        inputMapping: {'data': 'search.results'},
-        outputMapping: {'summary': 'final_summary'},
+        agent: summaryAgent,
+        config: NodeConfig(
+          parameters: {'data': 'search.results'},
+          timeout: Duration(seconds: 3),
+        ),
       ), dependencies: ['search']);
       
       workflow.addNode(WorkflowNode(
         id: 'analysis',
         type: WorkflowNodeType.agent,
-        config: {'agent_id': 'analysis', 'timeout': 4000},
-        inputMapping: {
-          'summary': 'summary.summary',
-          'raw_data': 'search.results'
-        },
-        outputMapping: {'insights': 'analysis_insights'},
+        agent: analysisAgent,
+        config: NodeConfig(
+          parameters: {
+            'summary': 'summary.summary',
+            'raw_data': 'search.results'
+          },
+          timeout: Duration(seconds: 4),
+        ),
       ), dependencies: ['search', 'summary']);
     });
     
@@ -70,15 +78,16 @@ void main() {
     
     test('handles parallel execution correctly', () async {
       // Add parallel branch
+      final parallelAgent = MockAgent('parallel');
       workflow.addNode(WorkflowNode(
         id: 'parallel_task',
         type: WorkflowNodeType.agent,
-        config: {'agent_id': 'parallel', 'timeout': 2000},
-        inputMapping: {'data': 'search.results'},
-        outputMapping: {'result': 'parallel_result'},
+        agent: parallelAgent,
+        config: NodeConfig(
+          parameters: {'data': 'search.results'},
+          timeout: Duration(seconds: 2),
+        ),
       ), dependencies: ['search']);
-      
-      final parallelAgent = MockAgent('parallel');
       parallelAgent.delay = const Duration(milliseconds: 1500);
       summaryAgent.delay = const Duration(milliseconds: 1000);
       

@@ -182,7 +182,7 @@ class MCPSecurityValidator {
     }
     
     // Validate server signature/hash if available
-    if (catalogEntry.metadata.containsKey('signature')) {
+    if (catalogEntry.metadata?.containsKey('signature') == true) {
       final isValidSignature = await _verifyServerSignature(catalogEntry);
       if (!isValidSignature) {
         issues.add(SecurityIssue(
@@ -211,7 +211,7 @@ class MCPSecurityValidator {
     
     // Check for dangerous commands
     for (final dangerous in _dangerousCommands) {
-      if (command.toLowerCase().contains(dangerous.toLowerCase())) {
+      if (command?.toLowerCase().contains(dangerous.toLowerCase()) == true) {
         issues.add(SecurityIssue(
           type: SecurityIssueType.dangerousCommand,
           severity: SecuritySeverity.critical,
@@ -223,7 +223,7 @@ class MCPSecurityValidator {
     
     // Check for suspicious paths
     for (final path in _suspiciousPaths) {
-      if (command.contains(path)) {
+      if (command?.contains(path) == true) {
         issues.add(SecurityIssue(
           type: SecurityIssueType.suspiciousPath,
           severity: SecuritySeverity.high,
@@ -234,7 +234,7 @@ class MCPSecurityValidator {
     }
     
     // Validate file extensions
-    final extensions = RegExp(r'\.(.*?)(?:\s|$)').allMatches(command);
+    final extensions = RegExp(r'\.(.*?)(?:\s|$)').allMatches(command ?? '');
     for (final match in extensions) {
       final ext = '.${match.group(1)}';
       if (!_allowedFileExtensions.contains(ext.toLowerCase())) {
@@ -268,7 +268,7 @@ class MCPSecurityValidator {
     // Check for TLS requirements
     if (catalogEntry.transport == MCPTransportType.sse) {
       // SSE should use HTTPS in production
-      if (catalogEntry.metadata['url']?.toString().startsWith('http://') == true) {
+      if (catalogEntry.metadata?['url']?.toString().startsWith('http://') == true) {
         issues.add(SecurityIssue(
           type: SecurityIssueType.insecureTransport,
           severity: SecuritySeverity.high,
@@ -319,7 +319,7 @@ class MCPSecurityValidator {
     // Check for network-based servers
     if (catalogEntry.transport != MCPTransportType.stdio) {
       // Validate any URLs in metadata
-      final urls = _extractURLsFromMetadata(catalogEntry.metadata);
+      final urls = _extractURLsFromMetadata(catalogEntry.metadata ?? {});
       for (final url in urls) {
         issues.addAll(_validateURL(url));
       }

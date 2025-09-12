@@ -7,10 +7,7 @@ import '../../../../core/services/mcp_servers_notifier.dart';
 import '../../../../core/services/adapters/mcp_adapter_registry.dart';
 import '../../../../core/services/mcp_registry.dart';
 import '../../../../core/services/mcp_adapter.dart' as adapter;
-import '../../../../core/services/mcp_settings_service.dart' as settings;
-
-
-import '../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart';
 
 class MCPServersTab extends ConsumerWidget {
   const MCPServersTab({super.key});
@@ -131,17 +128,18 @@ class MCPServersTab extends ConsumerWidget {
                   final raw = cfgCtrl.text.trim();
                   if (id.isEmpty || raw.isEmpty) return;
                   final registry = ref.read(mcpRegistryProvider);
-                  settings.MCPServerConfig config;
+                  MCPServerConfig config;
                   try {
                     final parsed = json.decode(raw);
                     if (parsed is Map<String, dynamic>) {
                       if (selectedAdapter.isNotEmpty) parsed['transport'] = selectedAdapter;
-                      config = settings.MCPServerConfig.fromJson(parsed);
+                      config = MCPServerConfig.fromJson(parsed);
                     } else {
-                      config = settings.MCPServerConfig(
+                      config = MCPServerConfig(
                         id: id,
                         name: id,
-                        command: raw,
+                        url: raw.startsWith('http') ? raw : 'stdio://localhost',
+                        command: raw.startsWith('http') ? '' : raw,
                         args: [],
                         description: id,
                         createdAt: DateTime.now(),
@@ -149,10 +147,11 @@ class MCPServersTab extends ConsumerWidget {
                       );
                     }
                   } catch (_) {
-                    config = settings.MCPServerConfig(
+                    config = MCPServerConfig(
                       id: id,
                       name: id,
-                      command: raw,
+                      url: raw.startsWith('http') ? raw : 'stdio://localhost',
+                      command: raw.startsWith('http') ? '' : raw,
                       args: [],
                       description: id,
                       createdAt: DateTime.now(),
@@ -403,18 +402,19 @@ class _ServerCardState extends State<_ServerCard> {
                   final raw = cfgCtrl.text.trim();
                   if (newId.isEmpty || raw.isEmpty) return;
 
-                  settings.MCPServerConfig config;
+                  MCPServerConfig config;
                   try {
                     final parsed = json.decode(raw);
                     if (parsed is Map<String, dynamic>) {
                       // ensure adapter field is present when user selected one
                       if (selectedAdapter.isNotEmpty) parsed['transport'] = selectedAdapter;
-                      config = settings.MCPServerConfig.fromJson(parsed);
+                      config = MCPServerConfig.fromJson(parsed);
                     } else {
-                      config = settings.MCPServerConfig(
+                      config = MCPServerConfig(
                         id: newId,
                         name: newId,
-                        command: raw,
+                        url: raw.startsWith('http') ? raw : 'stdio://localhost',
+                        command: raw.startsWith('http') ? '' : raw,
                         args: [],
                         description: newId,
                         createdAt: DateTime.now(),
@@ -422,10 +422,11 @@ class _ServerCardState extends State<_ServerCard> {
                       );
                     }
                   } catch (_) {
-                    config = settings.MCPServerConfig(
+                    config = MCPServerConfig(
                       id: newId,
                       name: newId,
-                      command: raw,
+                      url: raw.startsWith('http') ? raw : 'stdio://localhost',
+                      command: raw.startsWith('http') ? '' : raw,
                       args: [],
                       description: newId,
                       createdAt: DateTime.now(),

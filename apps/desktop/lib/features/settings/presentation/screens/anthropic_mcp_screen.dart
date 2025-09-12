@@ -534,7 +534,7 @@ class _AnthropicMCPScreenState extends ConsumerState<AnthropicMCPScreen> {
       case MCPTrustLevel.communityVerified:
         return (
           color: Colors.orange,
-          icon: Icons.community,
+          icon: Icons.people,
           label: 'Community'
         );
       case MCPTrustLevel.experimental:

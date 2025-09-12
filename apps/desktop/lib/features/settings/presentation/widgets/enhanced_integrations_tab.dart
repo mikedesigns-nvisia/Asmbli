@@ -676,7 +676,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
   }
 
   Widget _buildDetectedIntegrationCard(DetectedIntegration integration, ThemeColors colors) {
-    final availableServers = MCPServerConfigurationService.getServersForIntegration(integration.id);
+    final availableServers = MCPServerLibraryConfigurationService.getServersForIntegration(integration.id);
     
     return AsmblCard(
       child: Row(
@@ -744,7 +744,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
     }
   }
 
-  List<MCPServerConfig> _getFilteredServers() {
+  List<MCPServerLibraryConfig> _getFilteredServers() {
     var servers = MCPServerLibrary.servers;
     
     if (_searchQuery.isNotEmpty) {
@@ -862,7 +862,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
   }
 
   void _showServerSelectionForIntegration(String integrationId) {
-    final availableServers = MCPServerConfigurationService.getServersForIntegration(integrationId);
+    final availableServers = MCPServerLibraryConfigurationService.getServersForIntegration(integrationId);
     
     if (availableServers.length == 1) {
       // Direct configuration for single server

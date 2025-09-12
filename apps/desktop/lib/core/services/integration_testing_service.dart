@@ -878,7 +878,7 @@ class IntegrationTestingService {
     // Check prerequisites
     if (integration.prerequisites.isNotEmpty) {
       for (final prereq in integration.prerequisites) {
-        if (!_isPrerequisiteMet(prereq)) {
+        if (!await _isPrerequisiteMet(prereq)) {
           issues.add(ValidationIssue(
             severity: ValidationSeverity.warning,
             integrationId: integration.id,
@@ -892,7 +892,7 @@ class IntegrationTestingService {
     return issues;
   }
   
-  bool _isPrerequisiteMet(String prerequisite) {
+  Future<bool> _isPrerequisiteMet(String prerequisite) async {
     // Production prerequisite checking - validate actual system requirements
     final prereqLower = prerequisite.toLowerCase();
     

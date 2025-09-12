@@ -123,7 +123,7 @@ class _TestMaterialAppState extends State<TestMaterialApp> {
     if (widget.storageService != null && widget.apiConfigService != null) {
       final onboardingCompleted = widget.storageService!.getPreference<bool>('onboarding_completed') ?? false;
       final hasApiKeys = widget.apiConfigService!.allApiConfigs.values.any((config) => 
-        config['apiKey']?.toString().isNotEmpty ?? false);
+        config.apiKey.isNotEmpty);
       
       if (!onboardingCompleted && !hasApiKeys) {
         return '/onboarding';

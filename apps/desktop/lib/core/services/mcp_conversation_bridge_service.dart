@@ -40,13 +40,15 @@ class MCPConversationBridgeService {
         _setupServerMessageForwarding(server, conversationId);
       }
       
-      return MCPConversationSession(
+      final session = MCPConversationSession(
         conversationId: conversationId,
         agentId: agent.id,
         serverProcesses: serverProcesses,
         messageStream: messageStream.stream,
         startTime: DateTime.now(),
       );
+      
+      return session;
       
     } catch (e) {
       print('❌ Failed to initialize MCP for conversation $conversationId: $e');
@@ -122,6 +124,16 @@ class MCPConversationBridgeService {
   
   /// Execute MCP tool on behalf of the agent
   Future<MCPToolResult> executeMCPTool(
+    String conversationId,
+    String serverId,
+    String toolName,
+    Map<String, dynamic> arguments,
+  ) async {
+    return await _executeToolInternal(conversationId, serverId, toolName, arguments);
+  }
+  
+  /// Internal tool execution method
+  Future<MCPToolResult> _executeToolInternal(
     String conversationId,
     String serverId,
     String toolName,
@@ -300,6 +312,7 @@ class MCPConversationBridgeService {
   /// Cleanup conversation MCP session
   Future<void> cleanupConversationMCP(String conversationId) async {
     try {
+      
       // Close message stream
       final messageStream = _messageStreams[conversationId];
       if (messageStream != null) {

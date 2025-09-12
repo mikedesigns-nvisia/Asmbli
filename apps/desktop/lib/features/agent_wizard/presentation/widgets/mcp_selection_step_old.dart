@@ -700,7 +700,16 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
   void _showAddServerDialog() {
     showDialog(
       context: context,
-      builder: (context) => const MCPServerDialog(),
+      builder: (context) => AlertDialog(
+        title: Text('Add Server'),
+        content: Text('Server dialog placeholder'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -719,5 +728,15 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
         ],
       ),
     );
+  }
+
+  Widget _buildBrowseCatalogSection(BuildContext context) {
+    return Container(
+      child: Text('Browse catalog section - legacy placeholder'),
+    );
+  }
+
+  List<dynamic> _getRecommendedEntries() {
+    return [];
   }
 }

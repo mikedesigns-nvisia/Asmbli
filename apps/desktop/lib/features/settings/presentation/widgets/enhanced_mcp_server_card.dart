@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/anthropic_style_mcp_service.dart';
+import '../../../../core/services/oauth_integration_service.dart';
+import '../../../../core/models/oauth_provider.dart';
 
-class EnhancedMCPServerCard extends StatefulWidget {
+class EnhancedMCPServerCard extends ConsumerStatefulWidget {
   final CuratedMCPServer server;
   final VoidCallback? onInstall;
   final VoidCallback? onLearnMore;
@@ -15,10 +18,10 @@ class EnhancedMCPServerCard extends StatefulWidget {
   });
 
   @override
-  State<EnhancedMCPServerCard> createState() => _EnhancedMCPServerCardState();
+  ConsumerState<EnhancedMCPServerCard> createState() => _EnhancedMCPServerCardState();
 }
 
-class _EnhancedMCPServerCardState extends State<EnhancedMCPServerCard>
+class _EnhancedMCPServerCardState extends ConsumerState<EnhancedMCPServerCard>
     with SingleTickerProviderStateMixin {
   bool _isHovered = false;
   late AnimationController _animationController;
@@ -294,7 +297,7 @@ class _EnhancedMCPServerCardState extends State<EnhancedMCPServerCard>
               child: AsmblButton.primary(
                 text: _getActionButtonText(),
                 icon: _getActionButtonIcon(),
-                onPressed: widget.onInstall,
+                onPressed: () => _handleActionButton(),
                 size: AsmblButtonSize.small,
               ),
             ),
@@ -320,6 +323,125 @@ class _EnhancedMCPServerCardState extends State<EnhancedMCPServerCard>
       _animationController.forward();
     } else {
       _animationController.reverse();
+    }
+  }
+
+  void _handleActionButton() {
+    if (widget.server.setupComplexity == MCPSetupComplexity.oauth) {
+      _handleOAuthConnect();
+    } else {
+      // Handle regular installation
+      widget.onInstall?.call();
+    }
+  }
+
+  Future<void> _handleOAuthConnect() async {
+    // Map server names to OAuth providers using proper enum
+    OAuthProvider? provider = _getOAuthProviderForServer(widget.server.name);
+
+    if (provider == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('OAuth not configured for ${widget.server.name}'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    try {
+      final oauthService = ref.read(oauthIntegrationServiceProvider);
+      
+      // Check if already connected
+      final hasToken = await oauthService.hasValidToken(provider);
+      if (hasToken) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${widget.server.name} is already connected!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        return;
+      }
+
+      // Show loading dialog
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 16),
+              Text('Connecting to ${widget.server.name}...'),
+            ],
+          ),
+        ),
+      );
+
+      // Start OAuth flow
+      final result = await oauthService.authenticate(provider);
+
+      // Close loading dialog
+      if (!mounted) return;
+      Navigator.of(context).pop();
+
+      if (result.isSuccess) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Successfully connected to ${widget.server.name}!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to connect: ${result.error}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading dialog if still open
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+      
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Connection error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Map server names to OAuth providers using the actual enum values
+  OAuthProvider? _getOAuthProviderForServer(String serverName) {
+    final normalizedName = serverName.toLowerCase().replaceAll(' ', '');
+    
+    // Map to actual OAuthProvider enum values
+    switch (normalizedName) {
+      case 'github':
+        return OAuthProvider.github;
+      case 'slack':
+        return OAuthProvider.slack;
+      case 'linear':
+        return OAuthProvider.linear;
+      case 'microsoft':
+        return OAuthProvider.microsoft;
+      case 'notion':
+        return OAuthProvider.notion;
+      case 'bravesearch':
+      case 'brave-search':
+        return OAuthProvider.braveSearch;
+      default:
+        return null;
     }
   }
 

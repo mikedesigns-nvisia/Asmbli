@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/oauth_provider.dart';
 import '../../../../core/services/oauth_extensions.dart';
+import '../../../../core/services/oauth_integration_service.dart';
 
 /// Apple-style permissions screen with progressive disclosure
 class AppleStylePermissionsScreen extends ConsumerStatefulWidget {
@@ -220,7 +221,7 @@ class _AppleStylePermissionsScreenState extends ConsumerState<AppleStylePermissi
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Icon(
-                  widget.provider.icon,
+                  Icons.account_circle,
                   color: colors.primary,
                   size: 24,
                 ),

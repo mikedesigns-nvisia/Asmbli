@@ -193,7 +193,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  final colors = ThemeColors(context);
  
  return Center(
- child: AsmblCardEnhanced.accent(
+ child: AsmblCard(
  isInteractive: false,
  child: Column(
  mainAxisSize: MainAxisSize.min,

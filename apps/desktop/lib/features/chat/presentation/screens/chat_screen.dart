@@ -787,7 +787,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Text(
- 'Agent Control Panel',
+ '🤖 Your AI Assistant',
  style: GoogleFonts.fustat(
   fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
@@ -796,7 +796,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  softWrap: true,
  ),
  Text(
- 'What your agent sees & can access',
+ 'See what your assistant knows & can help with',
  style: GoogleFonts.fustat(
   color: theme.colorScheme.onSurfaceVariant,
   fontSize: 12,

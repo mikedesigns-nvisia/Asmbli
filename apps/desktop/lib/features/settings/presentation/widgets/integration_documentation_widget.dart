@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/integration_documentation_service.dart';
@@ -483,7 +484,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   setState(() => _selectedCategory = category.name);
                   _tabController.animateTo(4); // Go to search tab
                 },
-                size: ButtonSize.small,
+                size: AsmblButtonSize.small,
               ),
             ],
           ),

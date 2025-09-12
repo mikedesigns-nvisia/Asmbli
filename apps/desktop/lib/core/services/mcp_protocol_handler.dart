@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/mcp_message.dart';
 import '../models/mcp_server_process.dart';
 import '../models/mcp_connection.dart';
+import '../models/mcp_catalog_entry.dart';
 import 'mcp_error_handler.dart';
 
 /// Production-grade MCP JSON-RPC 2.0 protocol handler
@@ -24,7 +25,7 @@ class MCPProtocolHandler {
 
   /// Establish MCP connection with server process
   Future<MCPConnection> establishConnection(MCPServerProcess serverProcess) async {
-    final connectionId = '${serverProcess.agentId}:${serverProcess.serverId}';
+    final connectionId = serverProcess.id;
     
     // Check if connection already exists
     if (_connections.containsKey(connectionId)) {
@@ -51,22 +52,20 @@ class MCPProtocolHandler {
   /// Create connection based on transport type
   Future<MCPConnection> _createConnection(MCPServerProcess serverProcess) async {
     switch (serverProcess.transport) {
-      case MCPTransportType.stdio:
+      case MCPTransport.stdio:
         return await _createStdioConnection(serverProcess);
-      case MCPTransportType.sse:
+      case MCPTransport.sse:
         return await _createSSEConnection(serverProcess);
-      case MCPTransportType.websocket:
-        return await _createWebSocketConnection(serverProcess);
     }
   }
 
   /// Create stdio-based connection
   Future<MCPStdioConnection> _createStdioConnection(MCPServerProcess serverProcess) async {
-    final processId = '${serverProcess.agentId}:${serverProcess.serverId}';
+    final processId = serverProcess.id;
     final process = await Process.start(
-      serverProcess.catalogEntry.command,
-      serverProcess.catalogEntry.args,
-      environment: serverProcess.environment,
+      serverProcess.config.command,
+      serverProcess.config.args,
+      environment: serverProcess.config.env,
       mode: ProcessStartMode.normal,
     );
 
@@ -85,11 +84,10 @@ class MCPProtocolHandler {
 
   /// Create SSE-based connection
   Future<MCPSSEConnection> _createSSEConnection(MCPServerProcess serverProcess) async {
-    final baseUrl = serverProcess.catalogEntry.metadata['url'] as String? ?? 
-                   'http://localhost:3000';
+    final baseUrl = serverProcess.config.url;
     
     final connection = MCPSSEConnection(
-      id: '${serverProcess.agentId}:${serverProcess.serverId}',
+      id: serverProcess.id,
       serverProcess: serverProcess,
       baseUrl: baseUrl,
       protocolHandler: this,
@@ -101,11 +99,10 @@ class MCPProtocolHandler {
 
   /// Create WebSocket-based connection
   Future<MCPWebSocketConnection> _createWebSocketConnection(MCPServerProcess serverProcess) async {
-    final url = serverProcess.catalogEntry.metadata['url'] as String? ?? 
-               'ws://localhost:3001';
+    final url = serverProcess.config.url;
     
     final connection = MCPWebSocketConnection(
-      id: '${serverProcess.agentId}:${serverProcess.serverId}',
+      id: serverProcess.id,
       serverProcess: serverProcess,
       url: url,
       protocolHandler: this,
@@ -156,7 +153,7 @@ class MCPProtocolHandler {
       ));
 
       connection.markAsConnected(serverInfo);
-      print('✅ MCP session initialized with ${connection.serverProcess.serverId}');
+      print('✅ MCP session initialized with ${connection.serverProcess.id}');
       
     } catch (e) {
       await _errorHandler.handleError(e, context: 'MCP Initialization');

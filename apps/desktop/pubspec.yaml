@@ -30,9 +30,18 @@ dependencies:
   hive_flutter: ^1.1.0
   path_provider: ^2.1.0
   
+  # Production Database & Security
+  sqflite_common_ffi: ^2.3.0
+  encrypt: ^5.0.1
+  crypto: ^3.0.3
+  pointycastle: ^3.7.3
+  
   # File System & Git
   file_picker: ^8.0.0
   path: ^1.8.3
+  
+  # Network & HTTP
+  http: ^1.1.0
   
   # JSON & Serialization
   json_annotation: ^4.8.1
@@ -41,6 +50,7 @@ dependencies:
   uuid: ^4.5.1
   equatable: ^2.0.5
   url_launcher: ^6.2.0
+  meta: ^1.9.1
   
   # Desktop Integration
   window_manager: ^0.3.7
@@ -52,11 +62,6 @@ dependencies:
   yaru: ^1.2.0       # Ubuntu/Linux Design
   google_fonts: ^6.1.0  # Google Fonts integration
   web_socket_channel: ^3.0.3
-
-  crypto: any
-  pointycastle: ^3.7.3
-  http: ^1.1.0
-  meta: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

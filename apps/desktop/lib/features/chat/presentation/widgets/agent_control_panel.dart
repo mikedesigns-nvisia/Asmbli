@@ -157,14 +157,14 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Agent Control Panel',
+                      '🤖 Your AI Assistant',
                       style: TextStyles.cardTitle.copyWith(
                         color: ThemeColors(context).primary,
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      'What your agent sees & can access',
+                      'See what your assistant knows & can help with',
                       style: TextStyles.bodySmall.copyWith(
                         color: ThemeColors(context).onSurfaceVariant,
                       ),
@@ -282,10 +282,10 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
 
   Widget _buildNavigationTabs() {
     final tabs = [
-      {'icon': Icons.view_list, 'label': 'Context', 'count': null},
-      {'icon': Icons.extension, 'label': 'Tools', 'count': 0}, // Will be dynamic
-      {'icon': Icons.memory, 'label': 'Memory', 'count': null},
-      {'icon': Icons.assignment, 'label': 'Instructions', 'count': null},
+      {'icon': Icons.school, 'label': 'Knowledge', 'count': null},
+      {'icon': Icons.build_circle, 'label': 'Tools', 'count': 0}, // Will be dynamic
+      {'icon': Icons.psychology, 'label': 'Memory', 'count': null},
+      {'icon': Icons.lightbulb, 'label': 'Personality', 'count': null},
     ];
 
     return Container(
@@ -402,7 +402,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Context Documents
-              _buildSectionHeader('Context Documents', Icons.description, contextDocs.length),
+              _buildSectionHeader('📚 What I Know About', Icons.description, contextDocs.length),
               const SizedBox(height: SpacingTokens.md),
               
               if (contextDocs.isEmpty)
@@ -446,7 +446,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSectionHeader('Active MCP Tools', Icons.extension, mcpServers.length),
+              _buildSectionHeader('🛠️ My Capabilities', Icons.extension, mcpServers.length),
               const SizedBox(height: SpacingTokens.md),
               
               if (mcpServers.isEmpty)
@@ -1004,23 +1004,63 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
   }
 
   Widget _buildNoConversationState() {
-    return Center(
+    return Container(
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.chat_bubble_outline, size: 48, color: ThemeColors(context).onSurfaceVariant),
-          const SizedBox(height: SpacingTokens.md),
+          // Magical welcome illustration
+          Container(
+            padding: const EdgeInsets.all(SpacingTokens.lg),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  ThemeColors(context).primary.withValues(alpha: 0.1),
+                  ThemeColors(context).accent.withValues(alpha: 0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              Icons.auto_awesome,
+              size: 48,
+              color: ThemeColors(context).primary,
+            ),
+          ),
+          
+          const SizedBox(height: SpacingTokens.lg),
+          
           Text(
-            'No conversation selected',
+            '✨ Ready to chat!',
+            style: TextStyles.cardTitle.copyWith(
+              color: ThemeColors(context).onSurface,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          
+          const SizedBox(height: SpacingTokens.sm),
+          
+          Text(
+            'Start a conversation to see the magic happen',
             style: TextStyles.bodyMedium.copyWith(
               color: ThemeColors(context).onSurfaceVariant,
             ),
+            textAlign: TextAlign.center,
           ),
-          Text(
-            'Select a conversation to see agent context',
-            style: TextStyles.bodySmall.copyWith(
-              color: ThemeColors(context).onSurfaceVariant,
-            ),
+          
+          const SizedBox(height: SpacingTokens.lg),
+          
+          // Magical start button
+          AsmblButton.primary(
+            text: 'Start Your First Chat',
+            icon: Icons.rocket_launch,
+            onPressed: () {
+              // Navigate to create new conversation
+            },
+            size: AsmblButtonSize.medium,
           ),
         ],
       ),
@@ -1030,14 +1070,66 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
   Widget _buildEmptyContextState() {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
+      decoration: BoxDecoration(
+        color: ThemeColors(context).primary.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: ThemeColors(context).primary.withValues(alpha: 0.1),
+        ),
+      ),
       child: Column(
         children: [
-          Icon(Icons.description_outlined, size: 32, color: ThemeColors(context).onSurfaceVariant),
+          Icon(Icons.lightbulb_outline, size: 32, color: ThemeColors(context).primary),
           const SizedBox(height: SpacingTokens.md),
           Text(
-            'No context documents',
+            '💡 Teach me about your work!',
+            style: TextStyles.bodyMedium.copyWith(
+              color: ThemeColors(context).onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: SpacingTokens.sm),
+          Text(
+            'Upload files, share links, or tell me about your project so I can help you better',
             style: TextStyles.bodySmall.copyWith(
               color: ThemeColors(context).onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: SpacingTokens.md),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildQuickActionChip('📄 Upload Files', Icons.upload_file),
+              _buildQuickActionChip('🔗 Add Link', Icons.link),
+              _buildQuickActionChip('💭 Tell Me', Icons.chat),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionChip(String label, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: ThemeColors(context).surface.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: ThemeColors(context).border.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: ThemeColors(context).primary),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyles.bodySmall.copyWith(
+              color: ThemeColors(context).onSurface,
+              fontSize: 10,
             ),
           ),
         ],
@@ -1066,21 +1158,40 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
   Widget _buildNoToolsState() {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
+      decoration: BoxDecoration(
+        color: ThemeColors(context).accent.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: ThemeColors(context).accent.withValues(alpha: 0.1),
+        ),
+      ),
       child: Column(
         children: [
-          Icon(Icons.extension_outlined, size: 32, color: ThemeColors(context).onSurfaceVariant),
+          Icon(Icons.auto_awesome_outlined, size: 32, color: ThemeColors(context).accent),
           const SizedBox(height: SpacingTokens.md),
           Text(
-            'No MCP tools configured',
-            style: TextStyles.bodySmall.copyWith(
-              color: ThemeColors(context).onSurfaceVariant,
+            '🚀 Ready to unlock more capabilities?',
+            style: TextStyles.bodyMedium.copyWith(
+              color: ThemeColors(context).onSurface,
+              fontWeight: FontWeight.w600,
             ),
           ),
+          const SizedBox(height: SpacingTokens.sm),
           Text(
-            'This is a basic API conversation',
+            'I can help you with basic conversations right now, but with additional tools I can do so much more!',
             style: TextStyles.bodySmall.copyWith(
               color: ThemeColors(context).onSurfaceVariant,
             ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: SpacingTokens.md),
+          AsmblButton.secondary(
+            text: 'Add Tools & Skills',
+            icon: Icons.add_circle_outline,
+            onPressed: () {
+              // Navigate to capabilities/tools screen
+            },
+            size: AsmblButtonSize.small,
           ),
         ],
       ),

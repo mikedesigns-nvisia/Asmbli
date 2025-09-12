@@ -80,7 +80,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
         child: Column(
           children: [
             // Main app navigation bar
-            AppNavigationBar(currentRoute: AppRoutes.oauthSettings),
+            AppNavigationBar(currentRoute: AppRoutes.settings),
             _buildSimpleHeader(colors),
             Expanded(
               child: _isLoading 

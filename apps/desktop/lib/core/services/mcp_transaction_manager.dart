@@ -325,7 +325,7 @@ class MCPTransactionManager {
       
       // Start the server process
       final serverProcess = await _processManager.startServer(
-        serverId: serverId,
+        id: serverId,
         agentId: agentId,
         credentials: authConfig,
       );
@@ -335,7 +335,7 @@ class MCPTransactionManager {
         'serverId': serverId,
         'agentId': agentId,
         'processId': serverProcess.id,
-        'status': serverProcess.status.name,
+        'status': serverProcess.isHealthy ? 'healthy' : 'unhealthy',
       };
     } catch (e) {
       throw Exception('Failed to enable server: $e');

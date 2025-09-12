@@ -66,15 +66,6 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
       priority: 4,
     ),
     SettingsCategory(
-      id: 'oauth',
-      title: 'OAuth Connections',
-      description: 'Configure GitHub, Google, Microsoft and other OAuth providers',
-      icon: Icons.security,
-      color: Colors.cyan,
-      priority: 5,
-      searchKeywords: ['oauth', 'github', 'google', 'microsoft', 'authentication', 'login', 'provider', 'integration', 'connection'],
-    ),
-    SettingsCategory(
       id: 'privacy',
       title: 'Privacy & Security',
       description: 'Data handling and security preferences',
@@ -589,9 +580,6 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const AppearanceSettingsScreen()),
         );
-        break;
-      case 'oauth':
-        context.go(AppRoutes.oauthSettings);
         break;
       case 'privacy':
         _showComingSoonDialog(category.title);

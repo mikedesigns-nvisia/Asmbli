@@ -310,7 +310,7 @@ class _OAuthSecurityPanelState extends ConsumerState<OAuthSecurityPanel> {
           Row(
             children: [
               Icon(
-                provider.icon,
+                Icons.account_circle,
                 size: 20,
                 color: colors.primary,
               ),
@@ -372,7 +372,7 @@ class _OAuthSecurityPanelState extends ConsumerState<OAuthSecurityPanel> {
             Row(
               children: [
                 Icon(
-                  Icons.settings_shield,
+                  Icons.security,
                   color: colors.primary,
                 ),
                 SizedBox(width: SpacingTokens.md),

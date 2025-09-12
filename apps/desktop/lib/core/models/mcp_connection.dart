@@ -110,7 +110,7 @@ class MCPStdioConnection extends MCPConnection {
     }
 
     final jsonString = message.toJsonString();
-    print('📤 Sending to ${serverProcess.serverId}: $jsonString');
+    print('📤 Sending to ${serverProcess.id}: $jsonString');
     
     process.stdin.writeln(jsonString);
     await process.stdin.flush();
@@ -219,7 +219,7 @@ class MCPSSEConnection extends MCPConnection {
       request.headers.set('Content-Type', 'application/json');
       
       final jsonString = message.toJsonString();
-      print('📤 Sending to ${serverProcess.serverId}: $jsonString');
+      print('📤 Sending to ${serverProcess.id}: $jsonString');
       
       request.write(jsonString);
       
@@ -305,7 +305,7 @@ class MCPWebSocketConnection extends MCPConnection {
     }
 
     final jsonString = message.toJsonString();
-    print('📤 Sending to ${serverProcess.serverId}: $jsonString');
+    print('📤 Sending to ${serverProcess.id}: $jsonString');
     
     _channel!.sink.add(jsonString);
   }

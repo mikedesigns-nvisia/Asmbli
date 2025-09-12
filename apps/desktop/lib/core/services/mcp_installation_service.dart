@@ -4,7 +4,6 @@ import 'package:agent_engine_core/models/agent.dart';
 import '../data/mcp_server_configs.dart';
 
 
-import '../models/mcp_server_config.dart';
 
 /// Service for managing MCP server installation lifecycle
 /// Based on Model Context Protocol documentation and best practices
@@ -45,13 +44,6 @@ class MCPInstallationService {
           return await _checkCommunityServerStatus(server);
         case MCPServerType.experimental:
           return await _checkExperimentalServerStatus(server);
-        default:
-          return MCPServerInstallation(
-            server: server,
-            requiresInstallation: true,
-            installationMethod: MCPInstallationMethod.npm,
-            reason: 'Unknown server type: ${server.type}',
-          );
       }
     } catch (e) {
       return MCPServerInstallation(
@@ -65,6 +57,18 @@ class MCPInstallationService {
   
   /// Check official Anthropic MCP server status
   static Future<MCPServerInstallation> _checkOfficialServerStatus(MCPServerLibraryConfig server) async {
+    // First check if npx is available
+    final isNpxAvailable = await _isCommandAvailable('npx');
+    if (!isNpxAvailable) {
+      return MCPServerInstallation(
+        server: server,
+        requiresInstallation: true,
+        installationMethod: MCPInstallationMethod.npm,
+        reason: 'npx not available - Node.js needs to be installed',
+        installCommand: ['npm', 'install', '-g', 'npm@latest'],
+      );
+    }
+    
     // Official servers use npx with @modelcontextprotocol packages
     final args = server.configuration['args'] as List?;
     final packageName = args != null && args.length > 1 ? args[1] : null;
@@ -77,16 +81,26 @@ class MCPInstallationService {
       );
     }
     
-    // Check if npx can resolve the package
-    final result = await Process.run('npx', ['--dry-run', packageName], runInShell: true);
-    
-    return MCPServerInstallation(
-      server: server,
-      requiresInstallation: result.exitCode != 0,
-      installationMethod: MCPInstallationMethod.npm,
-      reason: result.exitCode != 0 ? 'Package not available via npx' : 'Already available',
-      installCommand: ['npx', '-y', packageName],
-    );
+    try {
+      // Check if npx can resolve the package
+      final result = await Process.run('npx', ['--dry-run', packageName], runInShell: true);
+      
+      return MCPServerInstallation(
+        server: server,
+        requiresInstallation: result.exitCode != 0,
+        installationMethod: MCPInstallationMethod.npm,
+        reason: result.exitCode != 0 ? 'Package not available via npx' : 'Already available',
+        installCommand: result.exitCode != 0 ? ['npm', 'install', '-g', packageName] : null,
+      );
+    } catch (e) {
+      return MCPServerInstallation(
+        server: server,
+        requiresInstallation: true,
+        installationMethod: MCPInstallationMethod.npm,
+        reason: 'Failed to check package availability: $e',
+        installCommand: ['npm', 'install', '-g', packageName],
+      );
+    }
   }
   
   /// Check community MCP server status
@@ -104,29 +118,43 @@ class MCPInstallationService {
       );
     }
     
-    // Check if command is available
-    final result = await Process.run('where', [command], runInShell: true);
-    if (result.exitCode != 0) {
+    // Check if command is available using cross-platform approach
+    final isCommandAvailable = await _isCommandAvailable(command);
+    if (!isCommandAvailable) {
       return MCPServerInstallation(
         server: server,
         requiresInstallation: true,
         installationMethod: _getInstallationMethod(command),
         reason: 'Command not found: $command',
+        installCommand: _getInstallCommandForMethod(_getInstallationMethod(command), command),
       );
     }
     
     // For npx packages, check if package exists
     if (command == 'npx' && args.length > 1) {
       final packageName = args[1];
-      final packageResult = await Process.run('npx', ['--dry-run', packageName], runInShell: true);
       
-      return MCPServerInstallation(
-        server: server,
-        requiresInstallation: packageResult.exitCode != 0,
-        installationMethod: MCPInstallationMethod.npm,
-        reason: packageResult.exitCode != 0 ? 'Package not available: $packageName' : 'Already available',
-        installCommand: ['npx', '-y', packageName],
-      );
+      try {
+        // Use npx --dry-run to check if package is available
+        final packageResult = await Process.run('npx', ['--dry-run', packageName], runInShell: true);
+        
+        return MCPServerInstallation(
+          server: server,
+          requiresInstallation: packageResult.exitCode != 0,
+          installationMethod: MCPInstallationMethod.npm,
+          reason: packageResult.exitCode != 0 ? 'Package not available: $packageName' : 'Already available',
+          installCommand: packageResult.exitCode != 0 ? ['npm', 'install', '-g', packageName] : null,
+        );
+      } catch (e) {
+        // If npx check fails, assume installation is needed
+        return MCPServerInstallation(
+          server: server,
+          requiresInstallation: true,
+          installationMethod: MCPInstallationMethod.npm,
+          reason: 'Unable to verify package: $e',
+          installCommand: ['npm', 'install', '-g', packageName],
+        );
+      }
     }
     
     return MCPServerInstallation(
@@ -193,39 +221,105 @@ class MCPInstallationService {
   static Future<bool> _installNpmServer(MCPServerInstallation installation) async {
     final command = installation.installCommand ?? ['npm', 'install', '-g'];
     
-    // For npx packages, we don't need to pre-install them
-    // npx will install on demand
-    if (command[0] == 'npx') {
-      return true; // npx handles installation automatically
+    // If no install command is provided, assume no installation needed
+    if (installation.installCommand == null || installation.installCommand!.isEmpty) {
+      return true; // No installation required
     }
     
-    final result = await Process.run(
-      command[0], 
-      command.sublist(1),
-      runInShell: true,
-    );
-    
-    return result.exitCode == 0;
+    try {
+      final result = await Process.run(
+        command[0], 
+        command.sublist(1),
+        runInShell: true,
+      );
+      
+      if (result.exitCode != 0) {
+        print('NPM installation failed for ${installation.server.id}:');
+        print('stdout: ${result.stdout}');
+        print('stderr: ${result.stderr}');
+      }
+      
+      return result.exitCode == 0;
+    } catch (e) {
+      print('Exception during NPM installation for ${installation.server.id}: $e');
+      return false;
+    }
   }
   
   /// Install Python-based MCP server
   static Future<bool> _installPipServer(MCPServerInstallation installation) async {
     final command = installation.installCommand ?? ['pip', 'install'];
     
-    final result = await Process.run(
-      command[0],
-      command.sublist(1),
-      runInShell: true,
-    );
+    // If no install command is provided, assume no installation needed
+    if (installation.installCommand == null || installation.installCommand!.isEmpty) {
+      return true;
+    }
     
-    return result.exitCode == 0;
+    try {
+      // First check if pip is available
+      final isPipAvailable = await _isCommandAvailable('pip');
+      if (!isPipAvailable) {
+        // Try pip3 as fallback
+        final isPip3Available = await _isCommandAvailable('pip3');
+        if (!isPip3Available) {
+          print('Neither pip nor pip3 is available for installing ${installation.server.id}');
+          return false;
+        }
+      }
+      
+      final result = await Process.run(
+        command[0],
+        command.sublist(1),
+        runInShell: true,
+      );
+      
+      if (result.exitCode != 0) {
+        print('Pip installation failed for ${installation.server.id}:');
+        print('stdout: ${result.stdout}');
+        print('stderr: ${result.stderr}');
+      }
+      
+      return result.exitCode == 0;
+    } catch (e) {
+      print('Exception during pip installation for ${installation.server.id}: $e');
+      return false;
+    }
   }
   
   /// Install Git-based MCP server
   static Future<bool> _installGitServer(MCPServerInstallation installation) async {
-    // Implementation for git-based installations
-    // This would clone repositories and set up the server
-    return false; // Placeholder
+    final command = installation.installCommand ?? ['git', 'clone'];
+    
+    // If no install command is provided, assume no installation needed
+    if (installation.installCommand == null || installation.installCommand!.isEmpty) {
+      return true;
+    }
+    
+    try {
+      // Check if git is available
+      final isGitAvailable = await _isCommandAvailable('git');
+      if (!isGitAvailable) {
+        print('Git is not available for installing ${installation.server.id}');
+        return false;
+      }
+      
+      final result = await Process.run(
+        command[0],
+        command.sublist(1),
+        runInShell: true,
+      );
+      
+      if (result.exitCode != 0) {
+        print('Git installation failed for ${installation.server.id}:');
+        print('stdout: ${result.stdout}');
+        print('stderr: ${result.stderr}');
+      }
+      
+      return result.exitCode == 0;
+    } catch (e) {
+      print('Exception during git installation for ${installation.server.id}: $e');
+      return false;
+    }
   }
   
   /// Determine installation method based on command
@@ -243,6 +337,40 @@ class MCPInstallationService {
         return MCPInstallationMethod.git;
       default:
         return MCPInstallationMethod.manual;
+    }
+  }
+  
+  /// Check if a command is available on the system (cross-platform)
+  static Future<bool> _isCommandAvailable(String command) async {
+    try {
+      // Use 'where' on Windows, 'which' on Unix-like systems
+      final checkCommand = Platform.isWindows ? 'where' : 'which';
+      final result = await Process.run(checkCommand, [command], runInShell: true);
+      return result.exitCode == 0;
+    } catch (e) {
+      // If the check command itself fails, try to run the command with --version
+      try {
+        final result = await Process.run(command, ['--version'], runInShell: true);
+        return result.exitCode == 0;
+      } catch (e) {
+        return false;
+      }
+    }
+  }
+  
+  /// Get install command for a specific installation method
+  static List<String>? _getInstallCommandForMethod(MCPInstallationMethod method, String? packageName) {
+    if (packageName == null) return null;
+    
+    switch (method) {
+      case MCPInstallationMethod.npm:
+        return ['npm', 'install', '-g', packageName];
+      case MCPInstallationMethod.pip:
+        return ['pip', 'install', packageName];
+      case MCPInstallationMethod.git:
+        return ['git', 'clone', packageName]; // Assuming packageName is a repository URL
+      case MCPInstallationMethod.manual:
+        return null; // Manual installation can't be automated
     }
   }
   

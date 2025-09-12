@@ -104,8 +104,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  text: 'New Chat',
  icon: Icons.add,
  onPressed: _startNewChat,
- isFullWidth: true,
- ),
+  ),
  ],
  ),
  ),
@@ -132,8 +131,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  text: 'View Archived',
  icon: Icons.archive_outlined,
  onPressed: () => _showArchiveModal(context),
- isFullWidth: true,
- ),
+  ),
  const SizedBox(height: SpacingTokens.iconSpacing),
  
  // Export conversations button
@@ -149,8 +147,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  ),
  );
  },
- isFullWidth: true,
- ),
+  ),
  ],
  ),
  ),

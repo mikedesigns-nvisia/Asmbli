@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'desktop/desktop_storage_service.dart';
@@ -175,7 +176,7 @@ class SecureCredentialsService {
     // Use PBKDF2-like approach with multiple rounds of hashing
     var key = utf8.encode(combined);
     for (int i = 0; i < 1000; i++) {
-      key = sha256.convert(key).bytes;
+      key = Uint8List.fromList(sha256.convert(key).bytes);
     }
     
     return base64Encode(key.take(32).toList()); // Use first 32 bytes as key

@@ -6,6 +6,7 @@ import '../providers/tools_provider.dart';
 import '../widgets/server_management_tab.dart';
 import '../widgets/catalogue_tab.dart';
 import '../widgets/agent_connections_tab.dart';
+import '../widgets/working_agent_connections_tab.dart';
 
 class ToolsScreen extends ConsumerStatefulWidget {
   const ToolsScreen({super.key});
@@ -67,7 +68,7 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
                 children: const [
                   ServerManagementTab(),
                   CatalogueTab(),
-                  AgentConnectionsTab(),
+                  WorkingAgentConnectionsTab(),
                 ],
               ),
             ),
@@ -110,14 +111,14 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Tools & Integrations',
+                  '✨ Give Your AI New Skills',
                   style: TextStyles.pageTitle.copyWith(
                     color: colors.onSurface,
                   ),
                 ),
                 const SizedBox(height: SpacingTokens.xs),
                 Text(
-                  'Manage MCP servers and connect them to your agents',
+                  'Help your assistant do more by connecting it to useful tools',
                   style: TextStyles.bodyMedium.copyWith(
                     color: colors.onSurfaceVariant,
                   ),
@@ -130,17 +131,17 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
           if (state.isInitialized) ...[
             _buildStatusCard(
               colors,
-              'Installed',
+              'Skills Available',
               state.installedServers.length.toString(),
-              Icons.dns,
+              Icons.auto_awesome,
               colors.primary,
             ),
             const SizedBox(width: SpacingTokens.lg),
             _buildStatusCard(
               colors,
-              'Running',
+              'Skills Active',
               state.installedServers.where((s) => s.isRunning).length.toString(),
-              Icons.play_circle,
+              Icons.check_circle,
               colors.success,
             ),
             const SizedBox(width: SpacingTokens.lg),
@@ -178,9 +179,9 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
                 ),
               const SizedBox(width: SpacingTokens.sm),
               AsmblButton.primary(
-                text: 'Install Server',
-                icon: Icons.add,
-                onPressed: () => _tabController.animateTo(1), // Navigate to marketplace
+                text: 'Browse Catalogue',
+                icon: Icons.store,
+                onPressed: () => _tabController.animateTo(1), // Navigate to catalogue tab
               ),
             ],
           ),

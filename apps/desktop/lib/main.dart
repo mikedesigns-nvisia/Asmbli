@@ -290,11 +290,6 @@ final _router = GoRouter(
  path: '/contextual-context-demo',
  builder: (context, state) => const ContextualContextDemo(),
  ),
- // OAuth settings route
- GoRoute(
- path: AppRoutes.oauthSettings,
- builder: (context, state) => const AppleStyleOAuthScreen(),
- ),
  GoRoute(
  path: AppRoutes.settings,
  builder: (context, state) => const ModernSettingsScreen(),

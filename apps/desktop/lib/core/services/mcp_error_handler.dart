@@ -17,7 +17,7 @@ import 'oauth_integration_service.dart';
 /// Implements comprehensive error classification, recovery strategies, and telemetry
 class MCPErrorHandler {
   final DesktopStorageService _storageService;
-  final MCPProcessManager? _processManager;
+  MCPProcessManager? _processManager;
   final MCPCatalogService? _catalogService;
   final SecureAuthService? _authService;
   final OAuthIntegrationService? _oauthService;
@@ -44,6 +44,11 @@ class MCPErrorHandler {
        _authService = authService,
        _oauthService = oauthService {
     _initializeRecoveryStrategies();
+  }
+
+  /// Set process manager (used to break circular dependency)
+  void setProcessManager(MCPProcessManager processManager) {
+    _processManager = processManager;
   }
 
   /// Stream of errors for monitoring
@@ -394,18 +399,17 @@ class MCPErrorHandler {
         final processId = '$agentId:$serverId';
         final process = _processManager!.getRunningServer(processId);
         
-        if (process != null && process.status == MCPServerStatus.error) {
+        if (process != null && !process.isHealthy) {
           // Restart the server process
           print('🔄 Attempting to restart MCP server $serverId (attempt $attempt)');
           
           final restarted = await _processManager!.startServer(
-            serverId: serverId,
+            id: serverId,
             agentId: agentId,
-            credentials: process.credentials,
-            environment: process.environment,
+            credentials: const <String, String>{},
           );
           
-          return restarted.status == MCPServerStatus.running;
+          return restarted.isHealthy;
         }
       }
       
@@ -538,12 +542,12 @@ class MCPErrorHandler {
       
       // Attempt to start the server with fresh config
       final serverProcess = await _processManager!.startServer(
-        serverId: serverId,
+        id: serverId,
         agentId: agentId,
         credentials: credentials,
       );
       
-      final success = serverProcess.status == MCPServerStatus.running;
+      final success = serverProcess.isHealthy;
       if (success) {
         print('✅ Process start recovery successful for $serverId');
       }
@@ -775,13 +779,13 @@ final mcpErrorHandlerProvider = Provider<MCPErrorHandler>((ref) {
   final storageService = ref.read(desktopStorageServiceProvider);
   
   // Optional service dependencies for enhanced recovery
-  MCPProcessManager? processManager;
+  MCPProcessManager? processManager; // Will be set later via setProcessManager
   MCPCatalogService? catalogService;
   SecureAuthService? authService;
   OAuthIntegrationService? oauthService;
   
   try {
-    processManager = ref.read(mcpProcessManagerProvider);
+    // Don't read process manager here to break circular dependency
     catalogService = ref.read(mcpCatalogServiceProvider);
     authService = ref.read(secureAuthServiceProvider);
     oauthService = ref.read(oauthIntegrationServiceProvider);
