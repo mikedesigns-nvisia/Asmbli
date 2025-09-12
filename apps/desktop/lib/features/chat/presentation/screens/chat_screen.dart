@@ -98,19 +98,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  // Header
  const AppNavigationBar(currentRoute: AppRoutes.chat),
  
- // Model warmup status notification
- const Padding(
-   padding: EdgeInsets.symmetric(
-     horizontal: SpacingTokens.headerPadding,
-     vertical: SpacingTokens.xs,
-   ),
-   child: Row(
-     children: [
-       ModelWarmupStatusIndicator(),
-     ],
-   ),
- ),
- 
  // Main Content
  Expanded(
  child: Row(
@@ -132,7 +119,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  child: Column(
  children: [
- const SizedBox(height: SpacingTokens.elementSpacing),
  IconButton(
  onPressed: () => setState(() => isSidebarCollapsed = false),
  icon: const Icon(Icons.chevron_right, size: 20),
@@ -779,7 +765,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  // Sidebar Header (fixed)
  Padding(
- padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
  child: Row(
  children: [
  Flexible(

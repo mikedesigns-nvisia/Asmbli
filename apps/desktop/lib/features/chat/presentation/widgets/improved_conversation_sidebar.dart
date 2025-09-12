@@ -33,7 +33,6 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
             ),
             child: Column(
               children: [
-                const SizedBox(height: SpacingTokens.elementSpacing),
                 IconButton(
                   onPressed: () => setState(() => isCollapsed = false),
                   icon: const Icon(Icons.chevron_left, size: 20),
@@ -71,7 +70,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
         children: [
           // Header with hierarchical layout
           Container(
-            padding: const EdgeInsets.all(SpacingTokens.cardPadding),
+            padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

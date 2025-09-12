@@ -47,7 +47,7 @@ class AppNavigationBar extends ConsumerWidget {
  ],
  ),
  ),
- const Spacer(),
+ const SizedBox(width: SpacingTokens.xxl),
  
  // Navigation Buttons
  HeaderButton(
