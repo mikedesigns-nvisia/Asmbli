@@ -20,15 +20,21 @@ class AppNavigationBar extends ConsumerWidget {
  Widget build(BuildContext context, WidgetRef ref) {
  final colors = ThemeColors(context);
  return Container(
- padding: const EdgeInsets.symmetric(
- horizontal: SpacingTokens.headerPadding,
- vertical: SpacingTokens.pageVertical,
+ padding: const EdgeInsets.only(
+ left: SpacingTokens.headerPadding,
+ right: SpacingTokens.headerPadding,
+ top: SpacingTokens.pageVertical,
+ bottom: 0,  // No bottom padding to eliminate gap
  ),
  decoration: BoxDecoration(
  color: colors.headerBackground,
  border: Border(bottom: BorderSide(color: colors.headerBorder)),
  ),
+ child: Container(
+ height: 60, // Explicit height to maintain header size
  child: Row(
+ mainAxisAlignment: MainAxisAlignment.start,
+ crossAxisAlignment: CrossAxisAlignment.center,
  children: [
  // Brand Title
  GestureDetector(
@@ -89,6 +95,7 @@ class AppNavigationBar extends ConsumerWidget {
  isActive: currentRoute == AppRoutes.settings,
  ),
  ],
+ ),
  ),
  );
  }
