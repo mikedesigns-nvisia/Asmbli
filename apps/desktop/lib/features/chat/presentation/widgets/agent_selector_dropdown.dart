@@ -110,11 +110,17 @@ class AgentSelectorDropdown extends ConsumerWidget {
   }
 
   Widget _buildAgentDropdown(BuildContext context, WidgetRef ref, List<Agent> agents, Agent? activeAgent) {
+    // Ensure activeAgent exists in the agents list, otherwise set to null
+    final validActiveAgentId = activeAgent != null && 
+                              agents.any((agent) => agent.id == activeAgent.id) 
+                              ? activeAgent.id 
+                              : null;
+    
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: activeAgent?.id,
+          value: validActiveAgentId,
           isExpanded: true,
           hint: _buildDropdownHint(context),
           onChanged: (agentId) async {

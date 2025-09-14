@@ -15,6 +15,7 @@ class MCPServer {
   final bool isOfficial;
   final String? iconUrl;
   final String? version;
+  final List<String> capabilities;
   final DateTime? lastStarted;
   final DateTime? installedAt;
 
@@ -30,6 +31,7 @@ class MCPServer {
     this.isOfficial = false,
     this.iconUrl,
     this.version,
+    this.capabilities = const [],
     this.lastStarted,
     this.installedAt,
   });
@@ -51,6 +53,7 @@ class MCPServer {
     bool? isOfficial,
     String? iconUrl,
     String? version,
+    List<String>? capabilities,
     DateTime? lastStarted,
     DateTime? installedAt,
   }) {
@@ -66,6 +69,7 @@ class MCPServer {
       isOfficial: isOfficial ?? this.isOfficial,
       iconUrl: iconUrl ?? this.iconUrl,
       version: version ?? this.version,
+      capabilities: capabilities ?? this.capabilities,
       lastStarted: lastStarted ?? this.lastStarted,
       installedAt: installedAt ?? this.installedAt,
     );

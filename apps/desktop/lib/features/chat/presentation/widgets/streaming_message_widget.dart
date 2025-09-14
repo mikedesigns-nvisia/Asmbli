@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
+import 'rich_text_message_widget.dart';
 
 /// Represents a streaming message state
 class StreamingMessageState {
@@ -286,6 +287,22 @@ class StreamingMessageWidget extends ConsumerWidget {
   }
 
   Widget _buildMessageContent(BuildContext context, StreamingMessageState state, bool isUser) {
+    print('DEBUG STREAMING: isComplete=${state.isComplete}, isUser=$isUser, contentLength=${state.fullContent.length}');
+    print('DEBUG STREAMING: fullContent preview: ${state.fullContent.length > 50 ? state.fullContent.substring(0, 50) : state.fullContent}...');
+    
+    // If streaming is complete and it's an AI response, use rich text widget
+    if (state.isComplete && !isUser && state.fullContent.isNotEmpty) {
+      print('DEBUG STREAMING: Using RichTextMessageWidget');
+      return RichTextMessageWidget(
+        content: state.fullContent,
+        isStreaming: false,
+        isDarkTheme: Theme.of(context).brightness == Brightness.dark,
+      );
+    }
+    
+    print('DEBUG STREAMING: Using fallback RichText widget');
+    
+    // For streaming or user messages, use the current approach
     return RichText(
       text: TextSpan(
         children: [

@@ -158,7 +158,9 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                value: _selectedApiProvider.isEmpty ? null : _selectedApiProvider,
+                value: _selectedApiProvider.isEmpty || !availableProviders.contains(_selectedApiProvider) 
+                       ? null 
+                       : _selectedApiProvider,
                 hint: Text(
                   'Select AI Model',
                   style: TextStyles.bodyMedium.copyWith(

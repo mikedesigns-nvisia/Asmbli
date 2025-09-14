@@ -39,6 +39,9 @@ import 'core/services/production_logger.dart';
 import 'core/config/environment_config.dart';
 import 'core/services/vector_integration_service.dart';
 import 'core/services/oauth_auto_refresh_initializer.dart';
+import 'core/services/sample_agent_creator.dart';
+import 'core/security/os_trust_manager.dart';
+import 'core/services/trust_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
@@ -142,6 +145,11 @@ void main() async {
 
  // Initialize SharedPreferences for feature flags
  final prefs = await SharedPreferences.getInstance();
+
+ // Create sample agents for testing (run in background)
+ SampleAgentCreator.createSampleAgents().catchError((e) {
+   print('⚠️ Sample agent creation failed: $e');
+ });
  
     runApp(
       ProviderScope(
@@ -230,26 +238,84 @@ class VectorInitializedApp extends ConsumerWidget {
   }
 }
 
-class AsmblDesktopApp extends ConsumerWidget {
- const AsmblDesktopApp({super.key});
+class AsmblDesktopApp extends ConsumerStatefulWidget {
+  const AsmblDesktopApp({super.key});
 
- @override
- Widget build(BuildContext context, WidgetRef ref) {
- final themeState = ref.watch(themeServiceProvider);
- final themeService = ref.read(themeServiceProvider.notifier);
- 
- // Initialize OAuth auto-refresh service when app starts
- OAuthAutoRefreshInitializer.initialize(ref);
- 
- return MaterialApp.router(
- title: 'Asmbli - AI Agents Made Easy',
- theme: themeService.getLightTheme(),
- darkTheme: themeService.getDarkTheme(),
- themeMode: themeState.mode,
- routerConfig: _router,
- debugShowCheckedModeBanner: false,
- );
- }
+  @override
+  ConsumerState<AsmblDesktopApp> createState() => _AsmblDesktopAppState();
+}
+
+class _AsmblDesktopAppState extends ConsumerState<AsmblDesktopApp> {
+  bool _isCheckingTrust = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOSTrust();
+  }
+
+  Future<void> _checkOSTrust() async {
+    try {
+      final osTrustManager = OSTrustManager();
+      final trustStatus = await osTrustManager.checkTrustStatus();
+      final trustInfo = TrustInfo.fromStatus(trustStatus);
+      
+      // Log trust status for development/deployment insights
+      print('🔒 OS Trust Status: ${trustStatus.name}');
+      print('🔒 ${trustInfo.message}');
+      
+      if (trustInfo.requiresUserAction) {
+        print('🔒 Trust Recommendations:');
+        for (final rec in trustInfo.recommendations) {
+          print('  • $rec');
+        }
+      }
+      
+      // For apps that don't store/transmit user data, we proceed regardless of trust
+      // The OS handles the actual security decisions (SmartScreen, UAC, etc.)
+      if (mounted) {
+        setState(() {
+          _isCheckingTrust = false;
+        });
+      }
+    } catch (e) {
+      print('🔒 OS trust check failed: $e');
+      if (mounted) {
+        setState(() {
+          _isCheckingTrust = false; // Proceed normally
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeState = ref.watch(themeServiceProvider);
+    final themeService = ref.read(themeServiceProvider.notifier);
+
+    // Initialize OAuth auto-refresh service when app starts
+    OAuthAutoRefreshInitializer.initialize(ref);
+
+    if (_isCheckingTrust) {
+      return MaterialApp(
+        title: 'Asmbli - Starting',
+        theme: themeService.getLightTheme(),
+        darkTheme: themeService.getDarkTheme(),
+        themeMode: themeState.mode,
+        debugShowCheckedModeBanner: false,
+        home: const _StartupScreen(),
+      );
+    }
+
+    return MaterialApp.router(
+      title: 'Asmbli - AI Agents Made Easy',
+      theme: themeService.getLightTheme(),
+      darkTheme: themeService.getDarkTheme(),
+      themeMode: themeState.mode,
+      routerConfig: _router,
+      debugShowCheckedModeBanner: false,
+    );
+  }
 }
 
 // Create router outside of the widget to avoid global key issues
@@ -788,6 +854,113 @@ class _DashboardSectionEnhanced extends StatelessWidget {
  ),
  );
  }
+}
+
+/// Startup screen shown during trust checking
+class _StartupScreen extends StatelessWidget {
+  const _StartupScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+    
+    return Scaffold(
+      backgroundColor: colors.background,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.5,
+            colors: [
+              colors.backgroundGradientStart,
+              colors.backgroundGradientMiddle,
+              colors.backgroundGradientEnd,
+            ],
+            stops: const [0.0, 0.6, 1.0],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: colors.surface.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
+                  border: Border.all(
+                    color: colors.border.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // App logo/icon
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: colors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+                      ),
+                      child: Icon(
+                        Icons.security,
+                        size: 32,
+                        color: colors.primary,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.lg),
+                    
+                    // Loading indicator
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: colors.primary,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.lg),
+                    
+                    // Status text
+                    Text(
+                      'Checking OS Trust Status...',
+                      style: TextStyles.headlineMedium.copyWith(
+                        color: colors.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.sm),
+                    
+                    Text(
+                      'Verifying application trust with your operating system',
+                      style: TextStyles.bodyMedium.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.lg),
+                    
+                    // App branding
+                    Text(
+                      'Asmbli',
+                      style: TextStyles.brandTitle.copyWith(
+                        color: colors.primary,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 

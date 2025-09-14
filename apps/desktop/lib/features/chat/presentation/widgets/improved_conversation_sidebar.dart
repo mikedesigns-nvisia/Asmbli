@@ -96,13 +96,6 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
                     ),
                   ],
                 ),
-                const SizedBox(height: SpacingTokens.iconSpacing),
-                // New Chat Button on its own row
-                AsmblButton.primary(
-                  text: 'New Chat',
-                  icon: Icons.add,
-                  onPressed: _startNewChat,
-                ),
               ],
             ),
           ),
@@ -341,47 +334,4 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
     );
   }
 
-  void _startNewChat() async {
-    if (!mounted) return; // Check mounted before starting async operation
-    
-    try {
-      // Create a new conversation
-      final createConversation = ref.read(createConversationProvider);
-      final conversation = await createConversation(title: 'New Chat');
-      
-      // Always check mounted after async operations
-      if (!mounted) return;
-      
-      // Set as selected conversation
-      ref.read(selectedConversationIdProvider.notifier).state = conversation.id;
-      
-      // Refresh conversations list
-      ref.invalidate(conversationsProvider);
-      
-      // Show success feedback
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Row(
-            children: [
-              Icon(Icons.chat_bubble, color: Colors.white, size: 16),
-              SizedBox(width: 8),
-              Text('New conversation started'),
-            ],
-          ),
-          backgroundColor: ThemeColors(context).success,
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create new chat: $e'),
-            backgroundColor: ThemeColors(context).error,
-          ),
-        );
-      }
-    }
-  }
 }

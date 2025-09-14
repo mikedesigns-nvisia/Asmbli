@@ -27,7 +27,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  final _descriptionController = TextEditingController();
  final _systemPromptController = TextEditingController();
  
- String selectedModel = 'Default API Model';
+ String selectedModel = 'Default Model';
  String selectedCategory = 'Research';
  double temperature = 0.7;
  int maxTokens = 2048;
@@ -117,6 +117,15 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
    // Get available models from model config service
    final modelConfigs = ref.watch(allModelConfigsProvider);
    final availableModels = ['Default Model', ...modelConfigs.values.where((m) => m.isConfigured).map((m) => m.name)];
+   
+   // Ensure selectedModel exists in availableModels, otherwise reset to default
+   if (!availableModels.contains(selectedModel)) {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       setState(() {
+         selectedModel = availableModels.isNotEmpty ? availableModels.first : 'Default Model';
+       });
+     });
+   }
 
  return Scaffold(
  body: Container(

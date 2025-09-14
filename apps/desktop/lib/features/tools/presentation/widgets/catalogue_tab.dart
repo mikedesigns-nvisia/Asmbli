@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/services/anthropic_style_mcp_service.dart';
+import '../../../../core/services/mcp_catalog_service.dart';
+import '../../../../core/models/mcp_catalog_entry.dart';
 import '../providers/tools_provider.dart';
 import '../../../settings/presentation/widgets/enhanced_mcp_server_card.dart';
 
@@ -14,16 +16,15 @@ class CatalogueTab extends ConsumerStatefulWidget {
 
 class _CatalogueTabState extends ConsumerState<CatalogueTab> {
   String _searchQuery = '';
-  MCPCategory? _selectedCategory;
-  MCPTrustLevel? _selectedTrustLevel;
-  MCPSetupComplexity? _selectedComplexity;
+  MCPServerCategory? _selectedCategory;
+  String? _selectedTrustLevel; // Changed to String to handle different trust models
   bool _showOnlyVerified = false;
 
   @override
   Widget build(BuildContext context) {
     final colors = ThemeColors(context);
-    final allServers = AnthropicStyleMCPService.essentialServers;
-    final filteredServers = _filterServers(allServers);
+    final catalogEntries = ref.watch(mcpCatalogEntriesProvider);
+    final filteredServers = _filterServers(catalogEntries);
 
     return Padding(
       padding: const EdgeInsets.all(SpacingTokens.xxl),
@@ -100,11 +101,11 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
             const SizedBox(width: SpacingTokens.md),
             
             // Trust level filter
-            _buildDropdownFilter<MCPTrustLevel>(
+            _buildDropdownFilter<String>(
               'Trust Level',
               _selectedTrustLevel,
-              MCPTrustLevel.values,
-              (level) => _getTrustLevelLabel(level),
+              ['Official', 'Community'],
+              (level) => level,
               (value) => setState(() => _selectedTrustLevel = value),
               colors,
             ),
@@ -117,24 +118,12 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
         Row(
           children: [
             // Category filter
-            _buildDropdownFilter<MCPCategory>(
+            _buildDropdownFilter<MCPServerCategory>(
               'Category',
               _selectedCategory,
-              MCPCategory.values,
+              MCPServerCategory.values,
               (cat) => _getCategoryLabel(cat),
               (value) => setState(() => _selectedCategory = value),
-              colors,
-            ),
-            
-            const SizedBox(width: SpacingTokens.md),
-            
-            // Complexity filter
-            _buildDropdownFilter<MCPSetupComplexity>(
-              'Setup Complexity',
-              _selectedComplexity,
-              MCPSetupComplexity.values,
-              (comp) => _getComplexityLabel(comp),
-              (value) => setState(() => _selectedComplexity = value),
               colors,
             ),
             
@@ -149,7 +138,6 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   _searchQuery = '';
                   _selectedCategory = null;
                   _selectedTrustLevel = null;
-                  _selectedComplexity = null;
                   _showOnlyVerified = false;
                 });
               } : null,
@@ -229,7 +217,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
     );
   }
 
-  Widget _buildServerGrid(List<CuratedMCPServer> servers, ThemeColors colors) {
+  Widget _buildServerGrid(List<MCPCatalogEntry> servers, ThemeColors colors) {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Responsive grid: 3-4 columns based on width
@@ -245,11 +233,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
             children: servers.map((server) {
               return SizedBox(
                 width: columnWidth,
-                child: EnhancedMCPServerCard(
-                  server: server,
-                  onInstall: () => _showInstallDialog(server),
-                  onLearnMore: () => _showServerDetails(server),
-                ),
+                child: _buildCatalogEntryCard(server, colors),
               );
             }).toList(),
           ),
@@ -303,10 +287,9 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
       _searchQuery.isNotEmpty ||
       _selectedCategory != null ||
       _selectedTrustLevel != null ||
-      _selectedComplexity != null ||
       _showOnlyVerified;
 
-  List<CuratedMCPServer> _filterServers(List<CuratedMCPServer> servers) {
+  List<MCPCatalogEntry> _filterServers(List<MCPCatalogEntry> servers) {
     return servers.where((server) {
       // Search filter
       if (_searchQuery.isNotEmpty) {
@@ -314,8 +297,6 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
         final matchesSearch = 
             server.name.toLowerCase().contains(query) ||
             server.description.toLowerCase().contains(query) ||
-            server.valueProposition.toLowerCase().contains(query) ||
-            server.installCommand.toLowerCase().contains(query) ||
             server.capabilities.any((cap) => cap.toLowerCase().contains(query));
         if (!matchesSearch) return false;
       }
@@ -326,69 +307,602 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
       }
 
       // Trust level filter
-      if (_selectedTrustLevel != null && server.trustLevel != _selectedTrustLevel) {
-        return false;
-      }
-
-      // Complexity filter
-      if (_selectedComplexity != null && server.setupComplexity != _selectedComplexity) {
-        return false;
+      if (_selectedTrustLevel != null) {
+        final isOfficial = server.isOfficial;
+        if (_selectedTrustLevel == 'Official' && !isOfficial) {
+          return false;
+        } else if (_selectedTrustLevel == 'Community' && isOfficial) {
+          return false;
+        }
       }
 
       return true;
     }).toList();
   }
 
-  String _getTrustLevelLabel(MCPTrustLevel level) {
-    switch (level) {
-      case MCPTrustLevel.anthropicOfficial:
-        return 'Anthropic Official';
-      case MCPTrustLevel.enterpriseVerified:
-        return 'Enterprise Verified';
-      case MCPTrustLevel.communityVerified:
-        return 'Community Verified';
-      case MCPTrustLevel.experimental:
-        return 'Experimental';
-      case MCPTrustLevel.unknown:
-        return 'Unknown';
-    }
-  }
 
-  String _getCategoryLabel(MCPCategory category) {
+  String _getCategoryLabel(MCPServerCategory category) {
     switch (category) {
-      case MCPCategory.development:
-        return 'Development';
-      case MCPCategory.productivity:
-        return 'Productivity';
-      case MCPCategory.information:
-        return 'Information';
-      case MCPCategory.communication:
+      case MCPServerCategory.ai:
+        return 'AI & Machine Learning';
+      case MCPServerCategory.cloud:
+        return 'Cloud Services';
+      case MCPServerCategory.communication:
         return 'Communication';
-      case MCPCategory.reasoning:
-        return 'AI Reasoning';
-      case MCPCategory.utility:
-        return 'System Utility';
-      case MCPCategory.creative:
-        return 'Creative';
+      case MCPServerCategory.database:
+        return 'Database';
+      case MCPServerCategory.design:
+        return 'Design';
+      case MCPServerCategory.development:
+        return 'Development';
+      case MCPServerCategory.filesystem:
+        return 'File System';
+      case MCPServerCategory.productivity:
+        return 'Productivity';
+      case MCPServerCategory.security:
+        return 'Security';
+      case MCPServerCategory.web:
+        return 'Web';
     }
   }
 
-  String _getComplexityLabel(MCPSetupComplexity complexity) {
-    switch (complexity) {
-      case MCPSetupComplexity.oneClick:
-        return 'One Command';
-      case MCPSetupComplexity.oauth:
-        return 'OAuth Setup';
-      case MCPSetupComplexity.minimal:
-        return 'API Key Required';
-      case MCPSetupComplexity.guided:
-        return 'Guided Setup';
-      case MCPSetupComplexity.advanced:
-        return 'Advanced Config';
+  Widget _buildCatalogEntryCard(MCPCatalogEntry server, ThemeColors colors) {
+    return AsmblCard(
+      child: Padding(
+        padding: const EdgeInsets.all(SpacingTokens.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with icon and status
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: server.isOfficial ? colors.primary.withOpacity(0.1) : colors.accent.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+                  ),
+                  child: Icon(
+                    _getCategoryIcon(server.category),
+                    color: server.isOfficial ? colors.primary : colors.accent,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: SpacingTokens.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        server.name,
+                        style: TextStyles.titleMedium.copyWith(color: colors.onSurface),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        server.isOfficial ? 'Official' : 'Community',
+                        style: TextStyles.caption.copyWith(
+                          color: server.isOfficial ? colors.primary : colors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: SpacingTokens.md),
+            
+            // Description
+            Text(
+              server.description,
+              style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+            
+            const SizedBox(height: SpacingTokens.md),
+            
+            // Requirements section
+            _buildRequirementsSection(server, colors),
+            
+            // Capabilities
+            if (server.capabilities.isNotEmpty) ...[
+              Wrap(
+                spacing: SpacingTokens.xs,
+                runSpacing: SpacingTokens.xs,
+                children: server.capabilities.take(3).map((capability) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SpacingTokens.sm,
+                      vertical: SpacingTokens.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.surface.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                      border: Border.all(color: colors.border.withOpacity(0.5)),
+                    ),
+                    child: Text(
+                      capability,
+                      style: TextStyles.caption.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: SpacingTokens.md),
+            ],
+            
+            // Actions
+            Row(
+              children: [
+                Expanded(
+                  child: AsmblButton.secondary(
+                    text: 'Install',
+                    icon: Icons.download,
+                    onPressed: () => _showInstallDialog(server),
+                  ),
+                ),
+                const SizedBox(width: SpacingTokens.sm),
+                IconButton(
+                  onPressed: () => _showServerDetails(server),
+                  icon: Icon(Icons.info_outline, color: colors.onSurfaceVariant),
+                  tooltip: 'Learn More',
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getCategoryIcon(MCPServerCategory category) {
+    switch (category) {
+      case MCPServerCategory.ai:
+        return Icons.psychology;
+      case MCPServerCategory.cloud:
+        return Icons.cloud;
+      case MCPServerCategory.communication:
+        return Icons.chat;
+      case MCPServerCategory.database:
+        return Icons.storage;
+      case MCPServerCategory.design:
+        return Icons.design_services;
+      case MCPServerCategory.development:
+        return Icons.code;
+      case MCPServerCategory.filesystem:
+        return Icons.folder;
+      case MCPServerCategory.productivity:
+        return Icons.task_alt;
+      case MCPServerCategory.security:
+        return Icons.security;
+      case MCPServerCategory.web:
+        return Icons.web;
     }
   }
 
-  void _showInstallDialog(CuratedMCPServer server) {
+  Widget _buildRequirementsSection(MCPCatalogEntry server, ThemeColors colors) {
+    final requirements = <Widget>[];
+    
+    // Check for account requirements
+    final accountRequirements = _getAccountRequirements(server);
+    if (accountRequirements.isNotEmpty) {
+      requirements.add(_buildAccountRequirementGroup(
+        'Account Required',
+        accountRequirements,
+        Icons.account_circle,
+        colors.primary,
+        colors,
+      ));
+    }
+    
+    // Check for software dependencies
+    final softwareDeps = _getSoftwareDependencies(server);
+    if (softwareDeps.isNotEmpty) {
+      requirements.add(_buildSoftwareRequirementGroup(
+        'Software Required',
+        softwareDeps,
+        Icons.computer,
+        colors.accent,
+        colors,
+      ));
+    }
+    
+    // Check for API key requirements
+    if (server.hasAuth) {
+      final apiKeyReqs = server.requiredAuth.map((auth) => auth.displayName).toList();
+      requirements.add(_buildRequirementGroup(
+        'API Key Required',
+        apiKeyReqs,
+        Icons.key,
+        const Color(0xFFF59E0B), // Amber for auth requirements
+        colors,
+      ));
+    }
+    
+    if (requirements.isEmpty) return const SizedBox.shrink();
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ...requirements.map((req) => Padding(
+          padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
+          child: req,
+        )),
+        const SizedBox(height: SpacingTokens.sm),
+      ],
+    );
+  }
+  
+  Widget _buildRequirementGroup(
+    String title,
+    List<String> items,
+    IconData icon,
+    Color iconColor,
+    ThemeColors colors,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(SpacingTokens.sm),
+      decoration: BoxDecoration(
+        color: iconColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(
+          color: iconColor.withOpacity(0.2),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: iconColor,
+          ),
+          const SizedBox(width: SpacingTokens.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyles.caption.copyWith(
+                    color: colors.onSurface,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                ...items.map((item) => Text(
+                  '• $item',
+                  style: TextStyles.caption.copyWith(
+                    color: colors.onSurfaceVariant,
+                    fontSize: 11,
+                  ),
+                )),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  List<({String name, String? signupUrl})> _getAccountRequirements(MCPCatalogEntry server) {
+    final accounts = <({String name, String? signupUrl})>[];
+    
+    switch (server.id) {
+      case 'github':
+        accounts.add((name: 'GitHub Account', signupUrl: 'https://github.com/join'));
+        break;
+      case 'linear':
+        accounts.add((name: 'Linear Account', signupUrl: 'https://linear.app/signup'));
+        break;
+      case 'slack':
+        accounts.add((name: 'Slack Workspace Access', signupUrl: 'https://slack.com/get-started#/createnew'));
+        break;
+      case 'notion':
+        accounts.add((name: 'Notion Account', signupUrl: 'https://www.notion.so/signup'));
+        break;
+      case 'figma':
+        accounts.add((name: 'Figma Account', signupUrl: 'https://www.figma.com/signup'));
+        break;
+      case 'brave-search':
+        accounts.add((name: 'Brave Search API Account', signupUrl: 'https://api.search.brave.com/'));
+        break;
+      case 'aws':
+        accounts.add((name: 'AWS Account with IAM Permissions', signupUrl: 'https://portal.aws.amazon.com/billing/signup'));
+        break;
+    }
+    
+    return accounts;
+  }
+
+  Widget _buildAccountRequirementGroup(
+    String title,
+    List<({String name, String? signupUrl})> accountItems,
+    IconData icon,
+    Color iconColor,
+    ThemeColors colors,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(SpacingTokens.sm),
+      decoration: BoxDecoration(
+        color: iconColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(
+          color: iconColor.withOpacity(0.2),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: iconColor,
+          ),
+          const SizedBox(width: SpacingTokens.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyles.caption.copyWith(
+                    color: colors.onSurface,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                ...accountItems.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '• ${item.name}',
+                          style: TextStyles.caption.copyWith(
+                            color: colors.onSurfaceVariant,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                      if (item.signupUrl != null) ...[
+                        const SizedBox(width: SpacingTokens.xs),
+                        GestureDetector(
+                          onTap: () => _launchSignupUrl(item.signupUrl!),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: SpacingTokens.xs,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: iconColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: iconColor.withOpacity(0.3),
+                                width: 0.5,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.person_add,
+                                  size: 10,
+                                  color: iconColor,
+                                ),
+                                const SizedBox(width: 2),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  size: 10,
+                                  color: iconColor,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                )),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _launchSignupUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Could not open signup link: $url'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening signup link: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+  
+  List<({String name, String? downloadUrl})> _getSoftwareDependencies(MCPCatalogEntry server) {
+    final software = <({String name, String? downloadUrl})>[];
+    
+    switch (server.id) {
+      case 'git':
+        software.add((name: 'Git (installed locally)', downloadUrl: 'https://git-scm.com/downloads'));
+        break;
+      case 'postgres':
+        software.add((name: 'PostgreSQL Database', downloadUrl: 'https://www.postgresql.org/download/'));
+        break;
+      case 'sqlite':
+        software.add((name: 'SQLite Database File', downloadUrl: 'https://www.sqlite.org/download.html'));
+        break;
+      case 'filesystem':
+        software.add((name: 'Local File System Access', downloadUrl: null)); // No download needed
+        break;
+    }
+    
+    // Check for uvx/npx requirements
+    if (server.command?.contains('uvx') == true) {
+      software.add((name: 'Python with uv package manager', downloadUrl: 'https://docs.astral.sh/uv/getting-started/installation/'));
+    } else if (server.command?.contains('npx') == true) {
+      software.add((name: 'Node.js with npm', downloadUrl: 'https://nodejs.org/en/download/'));
+    }
+    
+    return software;
+  }
+
+  Widget _buildSoftwareRequirementGroup(
+    String title,
+    List<({String name, String? downloadUrl})> softwareItems,
+    IconData icon,
+    Color iconColor,
+    ThemeColors colors,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(SpacingTokens.sm),
+      decoration: BoxDecoration(
+        color: iconColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(
+          color: iconColor.withOpacity(0.2),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: iconColor,
+          ),
+          const SizedBox(width: SpacingTokens.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyles.caption.copyWith(
+                    color: colors.onSurface,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                ...softwareItems.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '• ${item.name}',
+                          style: TextStyles.caption.copyWith(
+                            color: colors.onSurfaceVariant,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                      if (item.downloadUrl != null) ...[
+                        const SizedBox(width: SpacingTokens.xs),
+                        GestureDetector(
+                          onTap: () => _launchDownloadUrl(item.downloadUrl!),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: SpacingTokens.xs,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colors.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: colors.primary.withOpacity(0.3),
+                                width: 0.5,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.download,
+                                  size: 10,
+                                  color: colors.primary,
+                                ),
+                                const SizedBox(width: 2),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  size: 10,
+                                  color: colors.primary,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                )),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _launchDownloadUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Could not open download link: $url'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening download link: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showInstallDialog(MCPCatalogEntry server) {
     if (!mounted) return;
     
     final toolsNotifier = ref.read(toolsProvider.notifier);
@@ -402,7 +916,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
     );
   }
 
-  void _showServerDetails(CuratedMCPServer server) {
+  void _showServerDetails(MCPCatalogEntry server) {
     if (!mounted) return;
     
     showDialog(
@@ -416,17 +930,27 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
             children: [
               Text(server.description),
               const SizedBox(height: SpacingTokens.md),
-              Text('Value Proposition:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(server.valueProposition),
-              const SizedBox(height: SpacingTokens.md),
               Text('Capabilities:', style: TextStyle(fontWeight: FontWeight.bold)),
               ...server.capabilities.map((cap) => Text('• $cap')),
               const SizedBox(height: SpacingTokens.md),
-              Text('Data Access:', style: TextStyle(fontWeight: FontWeight.bold)),
-              ...server.dataAccess.map((data) => Text('• $data')),
+              Text('Category:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(_getCategoryLabel(server.category)),
+              const SizedBox(height: SpacingTokens.md),
+              Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(server.isOfficial ? 'Official' : 'Community'),
+              if (server.hasAuth) ...[
+                const SizedBox(height: SpacingTokens.md),
+                Text('Authentication Required:', style: TextStyle(fontWeight: FontWeight.bold)),
+                ...server.requiredAuth.map((auth) => Text('• ${auth.displayName}')),
+              ],
               if (server.documentationUrl != null) ...[
                 const SizedBox(height: SpacingTokens.md),
                 Text('Documentation: ${server.documentationUrl}'),
+              ],
+              if (server.command != null) ...[
+                const SizedBox(height: SpacingTokens.md),
+                Text('Install Command:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(server.command!, style: TextStyle(fontFamily: 'monospace')),
               ],
             ],
           ),
@@ -444,7 +968,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
 
 /// Dialog for installing MCP servers with proper tools provider integration
 class _InstallServerDialog extends ConsumerStatefulWidget {
-  final CuratedMCPServer server;
+  final MCPCatalogEntry server;
   final Future<void> Function() onInstall;
 
   const _InstallServerDialog({
@@ -481,7 +1005,7 @@ class _InstallServerDialogState extends ConsumerState<_InstallServerDialog> {
           children: [
             if (!_installationComplete) ...[
               Text(
-                widget.server.valueProposition,
+                widget.server.description,
                 style: TextStyle(color: colors.onSurface),
               ),
               const SizedBox(height: SpacingTokens.md),
@@ -502,7 +1026,7 @@ class _InstallServerDialogState extends ConsumerState<_InstallServerDialog> {
                   border: Border.all(color: colors.border),
                 ),
                 child: Text(
-                  widget.server.installCommand,
+                  widget.server.command ?? 'Installation command not available',
                   style: TextStyle(
                     fontFamily: 'monospace',
                     color: colors.onSurface,
@@ -517,10 +1041,16 @@ class _InstallServerDialogState extends ConsumerState<_InstallServerDialog> {
                   color: colors.onSurface,
                 ),
               ),
-              ...widget.server.dataAccess.map((access) => Text(
-                '• $access',
-                style: TextStyle(color: colors.onSurfaceVariant),
-              )),
+              if (widget.server.hasAuth) 
+                ...widget.server.requiredAuth.map((auth) => Text(
+                  '• ${auth.displayName}: ${auth.description}',
+                  style: TextStyle(color: colors.onSurfaceVariant),
+                ))
+              else
+                Text(
+                  '• No special permissions required',
+                  style: TextStyle(color: colors.onSurfaceVariant),
+                ),
             ] else ...[
               Container(
                 padding: EdgeInsets.all(SpacingTokens.md),

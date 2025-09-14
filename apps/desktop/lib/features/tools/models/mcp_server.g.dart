@@ -20,6 +20,10 @@ MCPServer _$MCPServerFromJson(Map<String, dynamic> json) => MCPServer(
       isOfficial: json['isOfficial'] as bool? ?? false,
       iconUrl: json['iconUrl'] as String?,
       version: json['version'] as String?,
+      capabilities: (json['capabilities'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       lastStarted: json['lastStarted'] == null
           ? null
           : DateTime.parse(json['lastStarted'] as String),
@@ -40,6 +44,7 @@ Map<String, dynamic> _$MCPServerToJson(MCPServer instance) => <String, dynamic>{
       'isOfficial': instance.isOfficial,
       'iconUrl': instance.iconUrl,
       'version': instance.version,
+      'capabilities': instance.capabilities,
       'lastStarted': instance.lastStarted?.toIso8601String(),
       'installedAt': instance.installedAt?.toIso8601String(),
     };

@@ -97,7 +97,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  // Header
  const AppNavigationBar(currentRoute: AppRoutes.chat),
- 
  // Main Content
  Expanded(
  child: Row(

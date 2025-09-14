@@ -191,6 +191,31 @@ class MCPServerRegistry {
         documentationUrl: 'https://github.com/modelcontextprotocol/servers/tree/main/src/fetch',
         isFeatured: false,
       ),
+
+      'linear': const MCPCatalogEntry(
+        id: 'linear',
+        name: 'Linear Project Management',
+        description: 'Create issues, manage projects, and track development in Linear.',
+        transport: MCPTransportType.stdio,
+        command: 'uvx @modelcontextprotocol/server-linear',
+        requiredAuth: [
+          MCPAuthRequirement(
+            type: MCPAuthType.apiKey,
+            name: 'LINEAR_API_KEY',
+            displayName: 'Linear API Key',
+            description: 'Personal API key for Linear',
+          ),
+        ],
+        capabilities: ['issue-management', 'project-tracking', 'team-management'],
+        category: MCPServerCategory.productivity,
+        isOfficial: true,
+        version: '1.0.0',
+        supportedPlatforms: ['web', 'desktop'],
+        pricing: MCPPricingModel.paid,
+        setupInstructions: 'Get your API key from Linear Settings > API',
+        documentationUrl: 'https://developers.linear.app/docs/graphql/working-with-the-graphql-api',
+        isFeatured: false,
+      ),
     };
   }
 
@@ -248,29 +273,31 @@ class MCPServerRegistry {
         isFeatured: false,
       ),
 
-      'linear': const MCPCatalogEntry(
-        id: 'linear',
-        name: 'Linear Project Management',
-        description: 'Create issues, manage projects, and track development in Linear. (Coming Soon)',
+      'figma': const MCPCatalogEntry(
+        id: 'figma',
+        name: 'Figma Integration',
+        description: 'Access Figma files, components, and design systems. (Coming Soon)',
         transport: MCPTransportType.stdio,
-        command: 'uvx @modelcontextprotocol/server-linear',
+        command: 'uvx @modelcontextprotocol/server-figma',
         requiredAuth: [
           MCPAuthRequirement(
-            type: MCPAuthType.apiKey,
-            name: 'LINEAR_API_KEY',
-            displayName: 'Linear API Key',
-            description: 'Personal API key for Linear',
+            type: MCPAuthType.bearerToken,
+            name: 'FIGMA_ACCESS_TOKEN',
+            displayName: 'Figma Personal Access Token',
+            description: 'Personal access token for Figma API',
+            placeholder: 'figd_xxxxxxxxxxxxxxxxxxxx',
           ),
         ],
-        capabilities: ['issue-management', 'project-tracking', 'team-management'],
-        category: MCPServerCategory.productivity,
+        capabilities: ['file-access', 'component-management', 'design-system-integration', 'export-assets'],
+        category: MCPServerCategory.design,
         isOfficial: false,
         version: '0.1.0-planned',
         supportedPlatforms: ['web', 'desktop'],
-        pricing: MCPPricingModel.paid,
-        setupInstructions: 'Linear MCP server is planned for Q2 2025.',
+        pricing: MCPPricingModel.freemium,
+        setupInstructions: 'Figma MCP server is planned for Q3 2025.',
         isFeatured: false,
       ),
+
 
       // Cloud providers - require more complex authentication
       'aws': const MCPCatalogEntry(
