@@ -26,7 +26,7 @@ import '../tabs/general_settings_tab.dart';
 import '../widgets/model_download_manager.dart';
 
 
-import '../../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart' show MCPServerConfig, MCPServerCategory, AgentMCPServerConfig;
 
 // Integration model for unified display
 class Integration {

@@ -135,7 +135,7 @@ class EnhancedMCPTestingService {
           metadata: {
             'serverRunning': true,
             'communicationTest': 'passed',
-            'transport': serverProcess.transport.name,
+            'transport': serverProcess.config.transportType.name,
           },
         ));
       } catch (commError) {

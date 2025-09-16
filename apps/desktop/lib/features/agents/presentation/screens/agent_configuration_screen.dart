@@ -9,6 +9,9 @@ import '../../../../core/services/agent_context_prompt_service.dart';
 import '../../../../core/services/model_config_service.dart';
 import '../../../../providers/agent_provider.dart';
 import 'package:agent_engine_core/models/agent.dart';
+import '../widgets/agent_terminal_widget.dart';
+import '../widgets/mcp_server_status_widget.dart';
+import '../widgets/mcp_server_logs_widget.dart';
 
 class AgentConfigurationScreen extends ConsumerStatefulWidget {
  final String? agentId;
@@ -27,7 +30,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  final _descriptionController = TextEditingController();
  final _systemPromptController = TextEditingController();
  
- String selectedModel = 'Default Model';
+ String selectedModel = 'Default API Model';
  String selectedCategory = 'Research';
  double temperature = 0.7;
  int maxTokens = 2048;
@@ -117,15 +120,6 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
    // Get available models from model config service
    final modelConfigs = ref.watch(allModelConfigsProvider);
    final availableModels = ['Default Model', ...modelConfigs.values.where((m) => m.isConfigured).map((m) => m.name)];
-   
-   // Ensure selectedModel exists in availableModels, otherwise reset to default
-   if (!availableModels.contains(selectedModel)) {
-     WidgetsBinding.instance.addPostFrameCallback((_) {
-       setState(() {
-         selectedModel = availableModels.isNotEmpty ? availableModels.first : 'Default Model';
-       });
-     });
-   }
 
  return Scaffold(
  body: Container(
@@ -444,6 +438,155 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  ),
  ),
  );
+ }
+
+ Widget _buildRightPanel() {
+   return DefaultTabController(
+     length: 4,
+     child: Column(
+       children: [
+         // Tab bar
+         Container(
+           decoration: BoxDecoration(
+             color: ThemeColors(context).surfaceVariant,
+             borderRadius: const BorderRadius.only(
+               topLeft: Radius.circular(BorderRadiusTokens.md),
+               topRight: Radius.circular(BorderRadiusTokens.md),
+             ),
+           ),
+           child: TabBar(
+             tabs: const [
+               Tab(icon: Icon(Icons.library_books), text: 'Context'),
+               Tab(icon: Icon(Icons.terminal), text: 'Terminal'),
+               Tab(icon: Icon(Icons.extension), text: 'Tools'),
+               Tab(icon: Icon(Icons.bug_report), text: 'Logs'),
+             ],
+             labelColor: ThemeColors(context).primary,
+             unselectedLabelColor: ThemeColors(context).onSurfaceVariant,
+             indicatorColor: ThemeColors(context).primary,
+           ),
+         ),
+         
+         // Tab content
+         Expanded(
+           child: TabBarView(
+             children: [
+               // Context tab
+               Padding(
+                 padding: const EdgeInsets.all(SpacingTokens.lg),
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: [
+                     const _CompactSectionHeader(
+                       title: 'Give your agent knowledge',
+                       icon: Icons.library_books_outlined,
+                       tooltip: 'Add context documents, examples, and knowledge to make your agent smarter about specific topics or tasks.',
+                     ),
+                     const SizedBox(height: SpacingTokens.componentSpacing),
+                     const Expanded(
+                       child: ContextHubWidget(),
+                     ),
+                   ],
+                 ),
+               ),
+               
+               // Terminal tab
+               Padding(
+                 padding: const EdgeInsets.all(SpacingTokens.lg),
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: [
+                     const _CompactSectionHeader(
+                       title: 'Agent Terminal',
+                       icon: Icons.terminal,
+                       tooltip: 'Execute commands in your agent\'s isolated terminal environment.',
+                     ),
+                     const SizedBox(height: SpacingTokens.componentSpacing),
+                     Expanded(
+                       child: currentAgent != null
+                           ? AgentTerminalWidget(
+                               agentId: currentAgent!.id,
+                               height: double.infinity,
+                             )
+                           : Center(
+                               child: Text(
+                                 'Save agent to access terminal',
+                                 style: TextStyles.bodyMedium.copyWith(
+                                   color: ThemeColors(context).onSurfaceVariant,
+                                 ),
+                               ),
+                             ),
+                     ),
+                   ],
+                 ),
+               ),
+               
+               // MCP Tools tab
+               Padding(
+                 padding: const EdgeInsets.all(SpacingTokens.lg),
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: [
+                     const _CompactSectionHeader(
+                       title: 'MCP Tools',
+                       icon: Icons.extension,
+                       tooltip: 'Manage MCP servers that provide tools and capabilities to your agent.',
+                     ),
+                     const SizedBox(height: SpacingTokens.componentSpacing),
+                     Expanded(
+                       child: currentAgent != null
+                           ? MCPServerStatusWidget(
+                               agentId: currentAgent!.id,
+                             )
+                           : Center(
+                               child: Text(
+                                 'Save agent to manage MCP tools',
+                                 style: TextStyles.bodyMedium.copyWith(
+                                   color: ThemeColors(context).onSurfaceVariant,
+                                 ),
+                               ),
+                             ),
+                     ),
+                   ],
+                 ),
+               ),
+
+               // Logs tab
+               Padding(
+                 padding: const EdgeInsets.all(SpacingTokens.lg),
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: [
+                     const _CompactSectionHeader(
+                       title: 'MCP Server Logs',
+                       icon: Icons.bug_report,
+                       tooltip: 'View detailed logs and debug information from MCP servers.',
+                     ),
+                     const SizedBox(height: SpacingTokens.componentSpacing),
+                     Expanded(
+                       child: currentAgent != null
+                           ? MCPServerLogsWidget(
+                               agentId: currentAgent!.id,
+                               height: double.infinity,
+                             )
+                           : Center(
+                               child: Text(
+                                 'Save agent to access server logs',
+                                 style: TextStyles.bodyMedium.copyWith(
+                                   color: ThemeColors(context).onSurfaceVariant,
+                                 ),
+                               ),
+                             ),
+                     ),
+                   ],
+                 ),
+               ),
+             ],
+           ),
+         ),
+       ],
+     ),
+   );
  }
 
  String _generateSystemPrompt() {

@@ -7,6 +7,7 @@ import 'package:stack_trace/stack_trace.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
 import '../models/mcp_error.dart';
+import '../models/mcp_connection.dart';
 import '../models/oauth_provider.dart';
 import 'mcp_process_manager.dart';
 import 'mcp_catalog_service.dart';
@@ -404,7 +405,7 @@ class MCPErrorHandler {
           print('🔄 Attempting to restart MCP server $serverId (attempt $attempt)');
           
           final restarted = await _processManager!.startServer(
-            id: serverId,
+            serverId: serverId,
             agentId: agentId,
             credentials: const <String, String>{},
           );
@@ -438,7 +439,7 @@ class MCPErrorHandler {
         final processId = '$agentId:$serverId';
         final connection = _processManager!.getConnection(processId);
         
-        if (connection != null && connection.isConnected) {
+        if (connection != null && connection.status == MCPConnectionStatus.connected) {
           return true; // Connection is healthy, timeout was transient
         }
       }
@@ -542,7 +543,7 @@ class MCPErrorHandler {
       
       // Attempt to start the server with fresh config
       final serverProcess = await _processManager!.startServer(
-        id: serverId,
+        serverId: serverId,
         agentId: agentId,
         credentials: credentials,
       );
@@ -699,6 +700,24 @@ class MCPErrorHandler {
   /// Generate error ID
   String _generateErrorId() {
     return 'err_${DateTime.now().millisecondsSinceEpoch}_${_recentErrors.length}';
+  }
+
+  /// Handle connection specific errors
+  Future<void> handleConnectionError(String serverId, dynamic error) async {
+    await handleError(
+      error,
+      context: 'Connection error for server: $serverId',
+      metadata: {'serverId': serverId, 'errorType': 'connection'},
+    );
+  }
+
+  /// Handle communication specific errors
+  Future<void> handleCommunicationError(String context, dynamic error) async {
+    await handleError(
+      error,
+      context: 'Communication error: $context',
+      metadata: {'errorType': 'communication'},
+    );
   }
 
   /// Dispose resources

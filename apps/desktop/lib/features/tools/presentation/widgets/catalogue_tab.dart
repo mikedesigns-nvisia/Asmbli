@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/mcp_catalog_service.dart';
 import '../../../../core/models/mcp_catalog_entry.dart';
+import '../../../../core/models/mcp_server_category.dart';
 import '../providers/tools_provider.dart';
 import '../../../settings/presentation/widgets/enhanced_mcp_server_card.dart';
 
@@ -322,28 +323,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
 
 
   String _getCategoryLabel(MCPServerCategory category) {
-    switch (category) {
-      case MCPServerCategory.ai:
-        return 'AI & Machine Learning';
-      case MCPServerCategory.cloud:
-        return 'Cloud Services';
-      case MCPServerCategory.communication:
-        return 'Communication';
-      case MCPServerCategory.database:
-        return 'Database';
-      case MCPServerCategory.design:
-        return 'Design';
-      case MCPServerCategory.development:
-        return 'Development';
-      case MCPServerCategory.filesystem:
-        return 'File System';
-      case MCPServerCategory.productivity:
-        return 'Productivity';
-      case MCPServerCategory.security:
-        return 'Security';
-      case MCPServerCategory.web:
-        return 'Web';
-    }
+    return category.displayName;
   }
 
   Widget _buildCatalogEntryCard(MCPCatalogEntry server, ThemeColors colors) {
@@ -364,7 +344,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
-                    _getCategoryIcon(server.category),
+                    _getCategoryIcon(server.category ?? MCPServerCategory.custom),
                     color: server.isOfficial ? colors.primary : colors.accent,
                     size: 20,
                   ),
@@ -462,26 +442,36 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
 
   IconData _getCategoryIcon(MCPServerCategory category) {
     switch (category) {
-      case MCPServerCategory.ai:
-        return Icons.psychology;
-      case MCPServerCategory.cloud:
-        return Icons.cloud;
-      case MCPServerCategory.communication:
-        return Icons.chat;
-      case MCPServerCategory.database:
-        return Icons.storage;
-      case MCPServerCategory.design:
-        return Icons.design_services;
       case MCPServerCategory.development:
         return Icons.code;
-      case MCPServerCategory.filesystem:
-        return Icons.folder;
       case MCPServerCategory.productivity:
-        return Icons.task_alt;
+        return Icons.trending_up;
+      case MCPServerCategory.communication:
+        return Icons.chat;
+      case MCPServerCategory.dataAnalysis:
+        return Icons.analytics;
+      case MCPServerCategory.automation:
+        return Icons.auto_awesome;
+      case MCPServerCategory.fileManagement:
+        return Icons.folder;
+      case MCPServerCategory.webServices:
+        return Icons.language;
+      case MCPServerCategory.cloud:
+        return Icons.cloud;
+      case MCPServerCategory.database:
+        return Icons.storage;
       case MCPServerCategory.security:
         return Icons.security;
-      case MCPServerCategory.web:
-        return Icons.web;
+      case MCPServerCategory.monitoring:
+        return Icons.monitor;
+      case MCPServerCategory.ai:
+        return Icons.psychology;
+      case MCPServerCategory.utility:
+        return Icons.build;
+      case MCPServerCategory.experimental:
+        return Icons.science;
+      case MCPServerCategory.custom:
+        return Icons.extension;
     }
   }
 
@@ -514,7 +504,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
     
     // Check for API key requirements
     if (server.hasAuth) {
-      final apiKeyReqs = server.requiredAuth.map((auth) => auth.displayName).toList();
+      final apiKeyReqs = server.requiredAuth.map((auth) => auth['displayName'] as String? ?? auth['name'] as String? ?? 'API Key').toList();
       requirements.add(_buildRequirementGroup(
         'API Key Required',
         apiKeyReqs,
@@ -934,14 +924,14 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
               ...server.capabilities.map((cap) => Text('• $cap')),
               const SizedBox(height: SpacingTokens.md),
               Text('Category:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(_getCategoryLabel(server.category)),
+              Text(server.category != null ? _getCategoryLabel(server.category!) : 'Uncategorized'),
               const SizedBox(height: SpacingTokens.md),
               Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
               Text(server.isOfficial ? 'Official' : 'Community'),
               if (server.hasAuth) ...[
                 const SizedBox(height: SpacingTokens.md),
                 Text('Authentication Required:', style: TextStyle(fontWeight: FontWeight.bold)),
-                ...server.requiredAuth.map((auth) => Text('• ${auth.displayName}')),
+                ...server.requiredAuth.map((auth) => Text('• ${auth['displayName'] as String? ?? auth['name'] as String? ?? 'API Key'}')),
               ],
               if (server.documentationUrl != null) ...[
                 const SizedBox(height: SpacingTokens.md),
@@ -1043,7 +1033,7 @@ class _InstallServerDialogState extends ConsumerState<_InstallServerDialog> {
               ),
               if (widget.server.hasAuth) 
                 ...widget.server.requiredAuth.map((auth) => Text(
-                  '• ${auth.displayName}: ${auth.description}',
+                  '• ${auth['displayName'] as String? ?? auth['name'] as String? ?? 'API Key'}: ${auth['description'] as String? ?? 'Required for authentication'}',
                   style: TextStyle(color: colors.onSurfaceVariant),
                 ))
               else

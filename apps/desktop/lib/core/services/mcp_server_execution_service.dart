@@ -5,9 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import '../data/mcp_server_configs.dart';
 import 'desktop/desktop_storage_service.dart';
-import '../models/mcp_server_config.dart';
-import '../models/mcp_server_process.dart';
-import '../models/mcp_catalog_entry.dart';
+import '../models/mcp_server_process.dart' show MCPServerConfig, MCPServerProcess, MCPServerStatus;
+import '../models/mcp_catalog_entry.dart' show MCPCatalogEntry, MCPTransportType;
 import 'mcp_catalog_service.dart';
 import 'mcp_settings_service.dart';
 import '../di/service_locator.dart';
@@ -206,8 +205,9 @@ class MCPServerExecutionService {
     // For SSE servers, we don't spawn a process but create a connection
     return MCPServerProcess(
       id: serverConfig.id,
+      serverId: serverConfig.id,
+      agentId: 'default', // Or get from context
       config: serverConfig,
-      process: null, // No local process for remote servers
       startTime: DateTime.now(),
     );
   }
@@ -387,17 +387,20 @@ class MCPServerExecutionService {
       print('🤝 Initializing MCP server ${server.id}...');
       
       // Send initialize request directly via the server
-      final initResponse = await server.sendJsonRpcRequest('initialize', {
-        'protocolVersion': '2024-11-05',
-        'capabilities': {
-          'tools': {},
-          'resources': {},
-          'prompts': {},
-          'sampling': {},
-        },
-        'clientInfo': {
-          'name': 'AgentEngine',
-          'version': '1.0.0',
+      final initResponse = await server.sendJsonRpcRequest({
+        'method': 'initialize',
+        'params': {
+          'protocolVersion': '2024-11-05',
+          'capabilities': {
+            'tools': {},
+            'resources': {},
+            'prompts': {},
+            'sampling': {},
+          },
+          'clientInfo': {
+            'name': 'AgentEngine',
+            'version': '1.0.0',
+          },
         },
       });
       
@@ -458,7 +461,10 @@ class MCPServerExecutionService {
     }
     
     // Use the real MCPServerProcess JSON-RPC communication
-    return await server.sendJsonRpcRequest(method, params);
+    return await server.sendJsonRpcRequest({
+      'method': method,
+      'params': params,
+    });
   }
   
   /// Send notification (no response expected)
@@ -701,7 +707,7 @@ class MCPServerExecutionService {
     
     try {
       // Get enabled servers from catalog
-      final enabledServerIds = _catalogService.getEnabledServerIds(agentId);
+      final enabledServerIds = _catalogService.getEnabledServerIds();
       
       for (final serverId in enabledServerIds) {
         try {
@@ -764,7 +770,7 @@ class MCPServerExecutionService {
       await startMCPServer(serverConfig, env);
       
       // Mark as used for analytics
-      await _catalogService.markServerUsed(agentId, catalogEntryId);
+      _catalogService.markServerUsed(catalogEntryId);
       
       return true;
       
@@ -789,7 +795,7 @@ class MCPServerExecutionService {
   /// Validate agent MCP server configuration
   Future<Map<String, String>> validateAgentMCPServers(String agentId) async {
     final results = <String, String>{};
-    final enabledServerIds = _catalogService.getEnabledServerIds(agentId);
+    final enabledServerIds = _catalogService.getEnabledServerIds();
     
     for (final serverId in enabledServerIds) {
       final catalogEntry = _catalogService.getCatalogEntry(serverId);
@@ -830,7 +836,7 @@ class MCPServerExecutionService {
 
   /// Stop all MCP servers for an agent
   Future<void> stopAgentMCPServers(String agentId) async {
-    final enabledServerIds = _catalogService.getEnabledServerIds(agentId);
+    final enabledServerIds = _catalogService.getEnabledServerIds();
     
     for (final serverId in enabledServerIds) {
       final serverInstanceId = '${agentId}_$serverId';

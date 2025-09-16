@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/mcp_catalog_entry.dart';
+import '../../../../core/models/mcp_server_category.dart';
 import '../../../../core/services/mcp_catalog_service.dart';
 
 class MCPServerSetupDialog extends ConsumerStatefulWidget {
@@ -31,7 +32,8 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
     super.initState();
     // Initialize controllers for each auth requirement
     for (final authReq in widget.catalogEntry.requiredAuth) {
-      _authControllers[authReq.name] = TextEditingController();
+      final authName = authReq['name'] as String? ?? authReq['displayName'] as String? ?? 'auth_${_authControllers.length}';
+      _authControllers[authName] = TextEditingController();
     }
   }
 
@@ -240,25 +242,25 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  authReq.displayName,
+                  authReq['displayName'] as String? ?? authReq['name'] as String? ?? 'Auth Field',
                   style: TextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w500,
                     color: colors.onSurface,
                   ),
                 ),
-                if (authReq.description.isNotEmpty) ...[
+                if ((authReq['description'] as String? ?? '').isNotEmpty) ...[
                   SizedBox(height: SpacingTokens.xs),
                   Text(
-                    authReq.description,
+                    authReq['description'] as String? ?? '',
                     style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
                   ),
                 ],
                 SizedBox(height: SpacingTokens.sm),
                 TextFormField(
-                  controller: _authControllers[authReq.name],
-                  obscureText: authReq.isSecret,
+                  controller: _authControllers[authReq['name'] as String? ?? authReq['displayName'] as String? ?? 'auth_field'],
+                  obscureText: authReq['isSecret'] as bool? ?? false,
                   decoration: InputDecoration(
-                    hintText: authReq.placeholder ?? 'Enter ${authReq.displayName.toLowerCase()}',
+                    hintText: authReq['placeholder'] as String? ?? 'Enter ${(authReq['displayName'] as String? ?? 'auth field').toLowerCase()}',
                     hintStyle: TextStyle(color: colors.onSurfaceVariant),
                     filled: true,
                     fillColor: colors.surface.withOpacity(0.3),
@@ -278,7 +280,7 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                       borderSide: const BorderSide(color: Colors.red),
                     ),
-                    suffixIcon: authReq.isSecret
+                    suffixIcon: (authReq['isSecret'] as bool? ?? false)
                         ? IconButton(
                             onPressed: () {
                               // Toggle password visibility
@@ -289,8 +291,8 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
                   ),
                   style: TextStyle(color: colors.onSurface),
                   validator: (value) {
-                    if (authReq.required && (value == null || value.isEmpty)) {
-                      return '${authReq.displayName} is required';
+                    if ((authReq['required'] as bool? ?? false) && (value == null || value.isEmpty)) {
+                      return '${authReq['displayName'] as String? ?? authReq['name'] as String? ?? 'This field'} is required';
                     }
                     return null;
                   },
@@ -445,9 +447,10 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
     try {
       final authConfig = <String, String>{};
       for (final authReq in widget.catalogEntry.requiredAuth) {
-        final value = _authControllers[authReq.name]?.text ?? '';
+        final authName = authReq['name'] as String? ?? authReq['displayName'] as String? ?? 'auth_field';
+        final value = _authControllers[authName]?.text ?? '';
         if (value.isNotEmpty) {
-          authConfig[authReq.name] = value;
+          authConfig[authName] = value;
         }
       }
 
@@ -488,27 +491,25 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
   }
 
   IconData _getServerIcon() {
-    switch (widget.catalogEntry.category) {
-      case MCPServerCategory.ai:
-        return Icons.psychology;
-      case MCPServerCategory.cloud:
-        return Icons.cloud;
-      case MCPServerCategory.communication:
-        return Icons.chat;
-      case MCPServerCategory.database:
-        return Icons.storage;
-      case MCPServerCategory.design:
-        return Icons.palette;
-      case MCPServerCategory.development:
-        return Icons.code;
-      case MCPServerCategory.filesystem:
-        return Icons.folder;
-      case MCPServerCategory.productivity:
-        return Icons.work;
-      case MCPServerCategory.security:
-        return Icons.security;
-      case MCPServerCategory.web:
-        return Icons.web;
-    }
+    final category = widget.catalogEntry.category;
+    if (category == null) return Icons.extension;
+
+    if (category == MCPServerCategory.development) return Icons.code;
+    if (category == MCPServerCategory.productivity) return Icons.trending_up;
+    if (category == MCPServerCategory.communication) return Icons.chat;
+    if (category == MCPServerCategory.dataAnalysis) return Icons.analytics;
+    if (category == MCPServerCategory.automation) return Icons.auto_awesome;
+    if (category == MCPServerCategory.fileManagement) return Icons.folder;
+    if (category == MCPServerCategory.webServices) return Icons.language;
+    if (category == MCPServerCategory.cloud) return Icons.cloud;
+    if (category == MCPServerCategory.database) return Icons.storage;
+    if (category == MCPServerCategory.security) return Icons.security;
+    if (category == MCPServerCategory.monitoring) return Icons.monitor;
+    if (category == MCPServerCategory.ai) return Icons.psychology;
+    if (category == MCPServerCategory.utility) return Icons.build;
+    if (category == MCPServerCategory.experimental) return Icons.science;
+    if (category == MCPServerCategory.custom) return Icons.extension;
+
+    return Icons.extension; // fallback
   }
 }

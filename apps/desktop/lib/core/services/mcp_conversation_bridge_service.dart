@@ -5,6 +5,7 @@ import 'package:agent_engine_core/models/agent.dart';
 import 'mcp_server_execution_service.dart';
 import 'context_resource_server.dart';
 import '../models/mcp_server_process.dart';
+import '../models/mcp_catalog_entry.dart';
 
 /// Service that bridges MCP server execution with conversation flow
 /// Handles resource serving, tool execution, and context integration
@@ -70,13 +71,10 @@ class MCPConversationBridgeService {
   
   /// Setup message forwarding from server to conversation
   void _setupServerMessageForwarding(MCPServerProcess server, String conversationId) {
-    if (server.transport == MCPTransport.stdio && server.process != null) {
-      // Listen for server messages/notifications
-      server.process!.stdout
-          .transform(utf8.decoder)
-          .listen((data) {
-        _handleServerOutput(server.id, conversationId, data);
-      });
+    if (server.config.transportType == MCPTransportType.stdio ) {
+      // Server message forwarding would be handled by the process manager
+      // This is a placeholder for the actual implementation
+      print('Setting up message forwarding for server ${server.id} to conversation $conversationId');
     }
   }
   

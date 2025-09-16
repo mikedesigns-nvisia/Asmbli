@@ -5,7 +5,7 @@ import '../../../../core/data/mcp_server_configs.dart';
 import '../../../../core/services/mcp_server_configuration_service.dart';
 
 
-import '../../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart' show MCPServerConfig;
 
 /// Modal for manually selecting and configuring MCP servers from our curated library
 class ManualMCPServerModal extends ConsumerStatefulWidget {

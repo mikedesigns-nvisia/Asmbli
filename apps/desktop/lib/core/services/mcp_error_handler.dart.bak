@@ -1,0 +1,822 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stack_trace/stack_trace.dart';
+import 'desktop/desktop_storage_service.dart';
+import 'desktop/desktop_service_provider.dart';
+import '../models/mcp_error.dart';\nimport '../models/mcp_connection.dart';
+import '../models/oauth_provider.dart';
+import 'mcp_process_manager.dart';
+import 'mcp_catalog_service.dart';
+import 'secure_auth_service.dart';
+import 'oauth_integration_service.dart';
+
+/// Production-grade error handling and recovery system for MCP operations
+/// Implements comprehensive error classification, recovery strategies, and telemetry
+class MCPErrorHandler {
+  final DesktopStorageService _storageService;
+  MCPProcessManager? _processManager;
+  final MCPCatalogService? _catalogService;
+  final SecureAuthService? _authService;
+  final OAuthIntegrationService? _oauthService;
+  final Map<String, ErrorRecoveryStrategy> _recoveryStrategies = {};
+  final List<MCPError> _recentErrors = [];
+  final Map<String, int> _errorCounts = {};
+  final Map<String, DateTime> _lastErrorTimes = {};
+  final StreamController<MCPError> _errorStreamController = StreamController.broadcast();
+  
+  // Configuration
+  static const int _maxRecentErrors = 100;
+  static const Duration _errorCountWindow = Duration(minutes: 15);
+  static const int _maxRetryAttempts = 3;
+  static const String _errorLogKey = 'mcp_error_log';
+
+  MCPErrorHandler(
+    this._storageService, {
+    MCPProcessManager? processManager,
+    MCPCatalogService? catalogService,
+    SecureAuthService? authService,
+    OAuthIntegrationService? oauthService,
+  }) : _processManager = processManager,
+       _catalogService = catalogService,
+       _authService = authService,
+       _oauthService = oauthService {
+    _initializeRecoveryStrategies();
+  }
+
+  /// Set process manager (used to break circular dependency)
+  void setProcessManager(MCPProcessManager processManager) {
+    _processManager = processManager;
+  }
+
+  /// Stream of errors for monitoring
+  Stream<MCPError> get errorStream => _errorStreamController.stream;
+
+  /// Handle and classify MCP errors with automatic recovery
+  Future<MCPErrorResult> handleError(
+    dynamic error, {
+    StackTrace? stackTrace,
+    String? context,
+    Map<String, dynamic>? metadata,
+    bool attemptRecovery = true,
+  }) async {
+    final mcpError = await _classifyError(error, stackTrace, context, metadata);
+    
+    // Log error
+    await _logError(mcpError);
+    
+    // Update error statistics
+    _updateErrorStatistics(mcpError);
+    
+    // Emit error event
+    _errorStreamController.add(mcpError);
+    
+    // Attempt recovery if enabled
+    MCPErrorRecoveryResult? recoveryResult;
+    if (attemptRecovery && mcpError.isRecoverable) {
+      recoveryResult = await _attemptRecovery(mcpError);
+    }
+    
+    return MCPErrorResult(
+      error: mcpError,
+      recovery: recoveryResult,
+      wasRecovered: recoveryResult?.success == true,
+    );
+  }
+
+  /// Classify error into specific MCP error types
+  Future<MCPError> _classifyError(
+    dynamic error,
+    StackTrace? stackTrace,
+    String? context,
+    Map<String, dynamic>? metadata,
+  ) async {
+    final errorId = _generateErrorId();
+    final timestamp = DateTime.now();
+    final trace = Trace.from(stackTrace ?? StackTrace.current);
+    
+    // Determine error category and type
+    final classification = _classifyErrorType(error);
+    
+    // Extract relevant information
+    final errorMessage = error.toString();
+    final severity = _determineSeverity(classification, error);
+    
+    return MCPError(
+      id: errorId,
+      timestamp: timestamp,
+      category: classification.category,
+      type: classification.type,
+      severity: severity,
+      message: errorMessage,
+      context: context,
+      stackTrace: trace.toString(),
+      metadata: {
+        ...?metadata,
+        'errorClass': error.runtimeType.toString(),
+        'platform': Platform.operatingSystem,
+        'isDebugMode': kDebugMode,
+      },
+      isRecoverable: classification.isRecoverable,
+      suggestedAction: classification.suggestedAction,
+    );
+  }
+
+  /// Classify error into category and type
+  MCPErrorClassification _classifyErrorType(dynamic error) {
+    if (error is SocketException) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.network,
+        type: MCPErrorType.connectionFailed,
+        isRecoverable: true,
+        suggestedAction: 'Retry connection with exponential backoff',
+      );
+    }
+    
+    if (error is TimeoutException) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.network,
+        type: MCPErrorType.timeout,
+        isRecoverable: true,
+        suggestedAction: 'Increase timeout or retry with longer timeout',
+      );
+    }
+    
+    if (error is HttpException) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.network,
+        type: MCPErrorType.httpError,
+        isRecoverable: _isRecoverableHttpError(error),
+        suggestedAction: 'Check HTTP status and retry if appropriate',
+      );
+    }
+    
+    if (error is ProcessException) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.process,
+        type: MCPErrorType.processStartFailed,
+        isRecoverable: true,
+        suggestedAction: 'Verify process path and permissions',
+      );
+    }
+    
+    if (error is FileSystemException) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.filesystem,
+        type: MCPErrorType.fileNotFound,
+        isRecoverable: false,
+        suggestedAction: 'Check file path and permissions',
+      );
+    }
+    
+    if (error is FormatException) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.protocol,
+        type: MCPErrorType.invalidJson,
+        isRecoverable: false,
+        suggestedAction: 'Fix JSON format or validate data source',
+      );
+    }
+    
+    // Check error message for specific patterns
+    final message = error.toString().toLowerCase();
+    
+    if (message.contains('connection refused') || message.contains('connection reset')) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.network,
+        type: MCPErrorType.connectionRefused,
+        isRecoverable: true,
+        suggestedAction: 'Check server availability and retry',
+      );
+    }
+    
+    if (message.contains('authentication') || message.contains('unauthorized')) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.auth,
+        type: MCPErrorType.authenticationFailed,
+        isRecoverable: true,
+        suggestedAction: 'Refresh credentials and retry',
+      );
+    }
+    
+    if (message.contains('permission denied') || message.contains('access denied')) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.auth,
+        type: MCPErrorType.insufficientPermissions,
+        isRecoverable: false,
+        suggestedAction: 'Check permissions and grant necessary access',
+      );
+    }
+    
+    if (message.contains('rate limit') || message.contains('too many requests')) {
+      return MCPErrorClassification(
+        category: MCPErrorCategory.rateLimit,
+        type: MCPErrorType.rateLimitExceeded,
+        isRecoverable: true,
+        suggestedAction: 'Wait for rate limit reset and retry',
+      );
+    }
+    
+    // Default classification for unknown errors
+    return MCPErrorClassification(
+      category: MCPErrorCategory.unknown,
+      type: MCPErrorType.unknownError,
+      isRecoverable: false,
+      suggestedAction: 'Contact support with error details',
+    );
+  }
+
+  /// Determine error severity
+  MCPErrorSeverity _determineSeverity(MCPErrorClassification classification, dynamic error) {
+    // Critical errors that prevent core functionality
+    if (classification.category == MCPErrorCategory.process && 
+        classification.type == MCPErrorType.processStartFailed) {
+      return MCPErrorSeverity.critical;
+    }
+    
+    if (classification.category == MCPErrorCategory.auth &&
+        classification.type == MCPErrorType.insufficientPermissions) {
+      return MCPErrorSeverity.critical;
+    }
+    
+    // High severity for network issues that affect functionality
+    if (classification.category == MCPErrorCategory.network) {
+      return MCPErrorSeverity.high;
+    }
+    
+    // Medium severity for protocol and data issues
+    if (classification.category == MCPErrorCategory.protocol) {
+      return MCPErrorSeverity.medium;
+    }
+    
+    // Low severity for rate limiting and temporary issues
+    if (classification.category == MCPErrorCategory.rateLimit) {
+      return MCPErrorSeverity.low;
+    }
+    
+    return MCPErrorSeverity.medium;
+  }
+
+  /// Check if HTTP error is recoverable
+  bool _isRecoverableHttpError(HttpException error) {
+    final message = error.message.toLowerCase();
+    
+    // 5xx server errors are typically recoverable
+    if (message.contains('500') || message.contains('502') || 
+        message.contains('503') || message.contains('504')) {
+      return true;
+    }
+    
+    // 429 rate limit is recoverable
+    if (message.contains('429')) {
+      return true;
+    }
+    
+    // 4xx client errors are typically not recoverable
+    return false;
+  }
+
+  /// Initialize recovery strategies
+  void _initializeRecoveryStrategies() {
+    _recoveryStrategies[MCPErrorType.connectionFailed.name] = ErrorRecoveryStrategy(
+      maxAttempts: 3,
+      backoffStrategy: BackoffStrategy.exponential,
+      initialDelay: const Duration(seconds: 1),
+      maxDelay: const Duration(seconds: 30),
+      recoveryAction: _recoverConnectionFailure,
+    );
+    
+    _recoveryStrategies[MCPErrorType.timeout.name] = ErrorRecoveryStrategy(
+      maxAttempts: 2,
+      backoffStrategy: BackoffStrategy.linear,
+      initialDelay: const Duration(seconds: 5),
+      maxDelay: const Duration(seconds: 15),
+      recoveryAction: _recoverTimeout,
+    );
+    
+    _recoveryStrategies[MCPErrorType.authenticationFailed.name] = ErrorRecoveryStrategy(
+      maxAttempts: 1,
+      backoffStrategy: BackoffStrategy.none,
+      initialDelay: Duration.zero,
+      maxDelay: Duration.zero,
+      recoveryAction: _recoverAuthFailure,
+    );
+    
+    _recoveryStrategies[MCPErrorType.rateLimitExceeded.name] = ErrorRecoveryStrategy(
+      maxAttempts: 3,
+      backoffStrategy: BackoffStrategy.exponential,
+      initialDelay: const Duration(seconds: 60),
+      maxDelay: const Duration(minutes: 15),
+      recoveryAction: _recoverRateLimit,
+    );
+    
+    _recoveryStrategies[MCPErrorType.processStartFailed.name] = ErrorRecoveryStrategy(
+      maxAttempts: 2,
+      backoffStrategy: BackoffStrategy.linear,
+      initialDelay: const Duration(seconds: 2),
+      maxDelay: const Duration(seconds: 10),
+      recoveryAction: _recoverProcessStart,
+    );
+  }
+
+  /// Attempt error recovery
+  Future<MCPErrorRecoveryResult> _attemptRecovery(MCPError error) async {
+    final strategy = _recoveryStrategies[error.type.name];
+    if (strategy == null) {
+      return MCPErrorRecoveryResult(
+        success: false,
+        message: 'No recovery strategy available for ${error.type.name}',
+        attemptCount: 0,
+      );
+    }
+    
+    for (int attempt = 1; attempt <= strategy.maxAttempts; attempt++) {
+      try {
+        // Apply backoff delay
+        if (attempt > 1) {
+          final delay = _calculateBackoffDelay(strategy, attempt);
+          await Future.delayed(delay);
+        }
+        
+        // Attempt recovery
+        final success = await strategy.recoveryAction(error, attempt);
+        
+        if (success) {
+          return MCPErrorRecoveryResult(
+            success: true,
+            message: 'Recovery successful after $attempt attempt(s)',
+            attemptCount: attempt,
+          );
+        }
+      } catch (recoveryError) {
+        if (attempt == strategy.maxAttempts) {
+          return MCPErrorRecoveryResult(
+            success: false,
+            message: 'Recovery failed: ${recoveryError.toString()}',
+            attemptCount: attempt,
+          );
+        }
+      }
+    }
+    
+    return MCPErrorRecoveryResult(
+      success: false,
+      message: 'Recovery failed after ${strategy.maxAttempts} attempts',
+      attemptCount: strategy.maxAttempts,
+    );
+  }
+
+  /// Calculate backoff delay
+  Duration _calculateBackoffDelay(ErrorRecoveryStrategy strategy, int attempt) {
+    switch (strategy.backoffStrategy) {
+      case BackoffStrategy.none:
+        return Duration.zero;
+        
+      case BackoffStrategy.linear:
+        final delay = strategy.initialDelay * attempt;
+        return delay > strategy.maxDelay ? strategy.maxDelay : delay;
+        
+      case BackoffStrategy.exponential:
+        final delay = Duration(
+          milliseconds: (strategy.initialDelay.inMilliseconds * 
+                        (1 << (attempt - 1))).round(),
+        );
+        return delay > strategy.maxDelay ? strategy.maxDelay : delay;
+    }
+  }
+
+  // ==================== Recovery Actions ====================
+
+  Future<bool> _recoverConnectionFailure(MCPError error, int attempt) async {
+    try {
+      // Extract connection information from error metadata
+      final serverId = error.metadata['serverId'] as String?;
+      final agentId = error.metadata['agentId'] as String?;
+      
+      if (serverId != null && agentId != null && _processManager != null) {
+        final processId = '$agentId:$serverId';
+        final process = _processManager!.getRunningServer(processId);
+        
+        if (process != null && !process.isHealthy) {
+          // Restart the server process
+          print('🔄 Attempting to restart MCP server $serverId (attempt $attempt)');
+          
+          final restarted = await _processManager!.startServer(
+            serverId: serverId,
+            agentId: agentId,
+            credentials: const <String, String>{},
+          );
+          
+          return restarted.isHealthy;
+        }
+      }
+      
+      // Fallback: just wait and indicate recovery (connection might self-heal)
+      await Future.delayed(Duration(seconds: attempt));
+      return attempt <= 2;
+    } catch (e) {
+      print('❌ Connection recovery failed: $e');
+      return false;
+    }
+  }
+
+  Future<bool> _recoverTimeout(MCPError error, int attempt) async {
+    try {
+      // For timeout errors, we typically want to retry with exponential backoff
+      final backoffDelay = Duration(seconds: attempt * 2);
+      print('⏱️ Timeout recovery: waiting ${backoffDelay.inSeconds}s before retry $attempt');
+      
+      await Future.delayed(backoffDelay);
+      
+      // Check if the underlying service/connection is still viable
+      final serverId = error.metadata['serverId'] as String?;
+      final agentId = error.metadata['agentId'] as String?;
+      
+      if (serverId != null && agentId != null && _processManager != null) {
+        final processId = '$agentId:$serverId';
+        final connection = _processManager!.getConnection(processId);
+        
+        if (connection != null && connection.status == MCPConnectionStatus.connected) {
+          return true; // Connection is healthy, timeout was transient
+        }
+      }
+      
+      return attempt == 1; // Allow one retry for timeouts
+    } catch (e) {
+      print('❌ Timeout recovery failed: $e');
+      return false;
+    }
+  }
+
+  Future<bool> _recoverAuthFailure(MCPError error, int attempt) async {
+    try {
+      // Try to refresh OAuth tokens if available
+      final oauthProvider = error.metadata['oauthProvider'] as String?;
+      
+      if (oauthProvider != null && _oauthService != null) {
+        print('🔐 Attempting OAuth token refresh for $oauthProvider (attempt $attempt)');
+        
+        // Map string to enum
+        OAuthProvider? provider;
+        for (final p in OAuthProvider.values) {
+          if (p.name == oauthProvider) {
+            provider = p;
+            break;
+          }
+        }
+        
+        if (provider != null) {
+          final refreshResult = await _oauthService!.refreshToken(provider);
+          if (refreshResult.isSuccess) {
+            print('✅ OAuth token refreshed successfully');
+            return true;
+          }
+        }
+      }
+      
+      return false; // Most auth failures require user intervention
+    } catch (e) {
+      print('❌ Auth recovery failed: $e');
+      return false;
+    }
+  }
+
+  Future<bool> _recoverRateLimit(MCPError error, int attempt) async {
+    try {
+      // Extract rate limit information from error
+      final resetTime = error.metadata['resetTime'] as String?;
+      final retryAfter = error.metadata['retryAfter'] as int?;
+      
+      Duration waitTime;
+      if (resetTime != null) {
+        final reset = DateTime.parse(resetTime);
+        waitTime = reset.difference(DateTime.now());
+        if (waitTime.isNegative) waitTime = Duration.zero;
+      } else if (retryAfter != null) {
+        waitTime = Duration(seconds: retryAfter);
+      } else {
+        // Default exponential backoff for rate limits
+        waitTime = Duration(minutes: attempt * 2);
+      }
+      
+      // Cap wait time to reasonable maximum
+      if (waitTime > const Duration(minutes: 15)) {
+        waitTime = const Duration(minutes: 15);
+      }
+      
+      print('🚫 Rate limit hit, waiting ${waitTime.inMinutes}m ${waitTime.inSeconds % 60}s');
+      await Future.delayed(waitTime);
+      
+      return true; // Rate limits typically resolve with time
+    } catch (e) {
+      print('❌ Rate limit recovery failed: $e');
+      return false;
+    }
+  }
+
+  Future<bool> _recoverProcessStart(MCPError error, int attempt) async {
+    try {
+      final serverId = error.metadata['serverId'] as String?;
+      final agentId = error.metadata['agentId'] as String?;
+      
+      if (serverId == null || agentId == null || _processManager == null || _catalogService == null) {
+        return false;
+      }
+      
+      print('🔧 Attempting process start recovery for $serverId (attempt $attempt)');
+      
+      // Get fresh configuration
+      final catalogEntry = _catalogService!.getCatalogEntry(serverId);
+      if (catalogEntry == null) {
+        print('❌ Catalog entry not found for $serverId');
+        return false;
+      }
+      
+      // Get credentials
+      final credentials = await _catalogService!.getAgentServerCredentials(agentId, serverId);
+      
+      // Wait before retry to avoid rapid restarts
+      await Future.delayed(Duration(seconds: attempt * 2));
+      
+      // Attempt to start the server with fresh config
+      final serverProcess = await _processManager!.startServer(
+        serverId: serverId,
+        agentId: agentId,
+        credentials: credentials,
+      );
+      
+      final success = serverProcess.isHealthy;
+      if (success) {
+        print('✅ Process start recovery successful for $serverId');
+      }
+      
+      return success;
+    } catch (e) {
+      print('❌ Process start recovery failed: $e');
+      return false;
+    }
+  }
+
+  // ==================== Error Logging and Statistics ====================
+
+  Future<void> _logError(MCPError error) async {
+    try {
+      _recentErrors.add(error);
+      if (_recentErrors.length > _maxRecentErrors) {
+        _recentErrors.removeAt(0);
+      }
+      
+      // Persist critical errors
+      if (error.severity == MCPErrorSeverity.critical) {
+        await _persistError(error);
+      }
+    } catch (e) {
+      // Avoid recursive error handling
+      debugPrint('Failed to log error: $e');
+    }
+  }
+
+  Future<void> _persistError(MCPError error) async {
+    try {
+      final existingLog = _storageService.getPreference<String>(_errorLogKey) ?? '{}';
+      final Map<String, dynamic> errorLog = json.decode(existingLog);
+      
+      errorLog[error.id] = error.toJson();
+      
+      // Keep only last 50 critical errors
+      if (errorLog.length > 50) {
+        final sortedKeys = errorLog.keys.toList()..sort();
+        for (int i = 0; i < errorLog.length - 50; i++) {
+          errorLog.remove(sortedKeys[i]);
+        }
+      }
+      
+      await _storageService.setPreference(_errorLogKey, json.encode(errorLog));
+    } catch (e) {
+      debugPrint('Failed to persist error: $e');
+    }
+  }
+
+  void _updateErrorStatistics(MCPError error) {
+    final key = '${error.category.name}:${error.type.name}';
+    _errorCounts[key] = (_errorCounts[key] ?? 0) + 1;
+    _lastErrorTimes[key] = error.timestamp;
+    
+    // Clean old statistics
+    _cleanupOldStatistics();
+  }
+
+  void _cleanupOldStatistics() {
+    final cutoff = DateTime.now().subtract(_errorCountWindow);
+    final keysToRemove = <String>[];
+    
+    for (final entry in _lastErrorTimes.entries) {
+      if (entry.value.isBefore(cutoff)) {
+        keysToRemove.add(entry.key);
+      }
+    }
+    
+    for (final key in keysToRemove) {
+      _errorCounts.remove(key);
+      _lastErrorTimes.remove(key);
+    }
+  }
+
+  // ==================== Public Query Methods ====================
+
+  /// Get recent errors
+  List<MCPError> getRecentErrors({int? limit}) {
+    final errors = List<MCPError>.from(_recentErrors.reversed);
+    return limit != null && limit < errors.length 
+        ? errors.sublist(0, limit) 
+        : errors;
+  }
+
+  /// Get error statistics
+  Map<String, int> getErrorStatistics() {
+    _cleanupOldStatistics();
+    return Map<String, int>.from(_errorCounts);
+  }
+
+  /// Get error trends
+  Map<MCPErrorCategory, int> getErrorTrends() {
+    final trends = <MCPErrorCategory, int>{};
+    
+    for (final error in _recentErrors) {
+      trends[error.category] = (trends[error.category] ?? 0) + 1;
+    }
+    
+    return trends;
+  }
+
+  /// Check if error pattern suggests system issue
+  bool isSystemUnstable() {
+    final criticalErrors = _recentErrors
+        .where((e) => e.severity == MCPErrorSeverity.critical)
+        .where((e) => DateTime.now().difference(e.timestamp) < const Duration(minutes: 5))
+        .length;
+    
+    return criticalErrors >= 3;
+  }
+
+  /// Generate error report
+  String generateErrorReport({Duration? timeWindow}) {
+    final window = timeWindow ?? const Duration(hours: 1);
+    final cutoff = DateTime.now().subtract(window);
+    
+    final relevantErrors = _recentErrors
+        .where((e) => e.timestamp.isAfter(cutoff))
+        .toList();
+    
+    final buffer = StringBuffer();
+    buffer.writeln('MCP Error Report - Last ${window.inHours}h');
+    buffer.writeln('Generated: ${DateTime.now()}');
+    buffer.writeln('Total Errors: ${relevantErrors.length}');
+    buffer.writeln();
+    
+    // Group by category
+    final byCategory = <MCPErrorCategory, List<MCPError>>{};
+    for (final error in relevantErrors) {
+      byCategory.putIfAbsent(error.category, () => []).add(error);
+    }
+    
+    for (final entry in byCategory.entries) {
+      buffer.writeln('${entry.key.name.toUpperCase()}: ${entry.value.length} errors');
+      for (final error in entry.value.take(5)) {
+        buffer.writeln('  - ${error.message} (${error.type.name})');
+      }
+      if (entry.value.length > 5) {
+        buffer.writeln('  - ... and ${entry.value.length - 5} more');
+      }
+      buffer.writeln();
+    }
+    
+    return buffer.toString();
+  }
+
+  /// Generate error ID
+  String _generateErrorId() {
+    return 'err_${DateTime.now().millisecondsSinceEpoch}_${_recentErrors.length}';
+  }
+
+  /// Handle connection specific errors
+  Future<void> handleConnectionError(String serverId, dynamic error) async {
+    await handleError(
+      error,
+      context: 'Connection error for server: $serverId',
+      metadata: {'serverId': serverId, 'errorType': 'connection'},
+    );
+  }
+
+  /// Handle communication specific errors
+  Future<void> handleCommunicationError(String context, dynamic error) async {
+    await handleError(
+      error,
+      context: 'Communication error: $context',
+      metadata: {'errorType': 'communication'},
+    );
+  }
+
+  /// Dispose resources
+  Future<void> dispose() async {
+    await _errorStreamController.close();
+    _recentErrors.clear();
+    _errorCounts.clear();
+    _lastErrorTimes.clear();
+    _recoveryStrategies.clear();
+  }
+}
+
+// ==================== Data Models ====================
+
+class MCPErrorClassification {
+  final MCPErrorCategory category;
+  final MCPErrorType type;
+  final bool isRecoverable;
+  final String suggestedAction;
+
+  const MCPErrorClassification({
+    required this.category,
+    required this.type,
+    required this.isRecoverable,
+    required this.suggestedAction,
+  });
+}
+
+class ErrorRecoveryStrategy {
+  final int maxAttempts;
+  final BackoffStrategy backoffStrategy;
+  final Duration initialDelay;
+  final Duration maxDelay;
+  final Future<bool> Function(MCPError error, int attempt) recoveryAction;
+
+  const ErrorRecoveryStrategy({
+    required this.maxAttempts,
+    required this.backoffStrategy,
+    required this.initialDelay,
+    required this.maxDelay,
+    required this.recoveryAction,
+  });
+}
+
+enum BackoffStrategy {
+  none,
+  linear,
+  exponential,
+}
+
+class MCPErrorResult {
+  final MCPError error;
+  final MCPErrorRecoveryResult? recovery;
+  final bool wasRecovered;
+
+  const MCPErrorResult({
+    required this.error,
+    this.recovery,
+    required this.wasRecovered,
+  });
+}
+
+class MCPErrorRecoveryResult {
+  final bool success;
+  final String message;
+  final int attemptCount;
+
+  const MCPErrorRecoveryResult({
+    required this.success,
+    required this.message,
+    required this.attemptCount,
+  });
+}
+
+// ==================== Riverpod Provider ====================
+
+final mcpErrorHandlerProvider = Provider<MCPErrorHandler>((ref) {
+  final storageService = ref.read(desktopStorageServiceProvider);
+  
+  // Optional service dependencies for enhanced recovery
+  MCPProcessManager? processManager; // Will be set later via setProcessManager
+  MCPCatalogService? catalogService;
+  SecureAuthService? authService;
+  OAuthIntegrationService? oauthService;
+  
+  try {
+    // Don't read process manager here to break circular dependency
+    catalogService = ref.read(mcpCatalogServiceProvider);
+    authService = ref.read(secureAuthServiceProvider);
+    oauthService = ref.read(oauthIntegrationServiceProvider);
+  } catch (e) {
+    // Services might not be available during initialization
+    print('⚠️ Some error recovery services unavailable: $e');
+  }
+  
+  return MCPErrorHandler(
+    storageService,
+    processManager: processManager,
+    catalogService: catalogService,
+    authService: authService,
+    oauthService: oauthService,
+  );
+});

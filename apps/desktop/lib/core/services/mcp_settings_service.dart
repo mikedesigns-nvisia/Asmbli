@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
-import '../models/mcp_server_config.dart';
-import '../models/mcp_catalog_entry.dart';
+import '../models/mcp_server_process.dart' show MCPServerConfig;
+import '../models/mcp_catalog_entry.dart' show MCPCatalogEntry, MCPTransportType;
 import 'mcp_catalog_service.dart';
 
 
@@ -299,7 +299,7 @@ class MCPSettingsService {
     final apiConfigId = _agentApiMappings[agentId];
     
     // Get enabled MCP servers from catalog service
-    final enabledServerIds = _catalogService.getEnabledServerIds(agentId);
+    final enabledServerIds = _catalogService.getEnabledServerIds();
     final agentConfigs = _catalogService.getAgentMCPConfigs(agentId);
     
     // Build MCP server configs with catalog entries and auth

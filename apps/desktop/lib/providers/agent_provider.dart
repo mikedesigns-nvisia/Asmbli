@@ -193,28 +193,23 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
   /// Load agent for conversation with MCP installation check and context resources
   Future<void> loadAgentForConversation(Agent agent, String conversationId) async {
     try {
+      // Get MCP installation service
+      final mcpInstallationService = _ref.read(mcpInstallationServiceProvider);
+
       // Check if MCP servers need installation
-      final shouldInstall = await MCPInstallationService.shouldInstallMCPOnAgentLoad(agent, conversationId);
-      
+      final shouldInstall = mcpInstallationService.shouldInstallMCPOnAgentLoad(agent.id);
+
       if (shouldInstall) {
         // Get installation requirements
-        final requirements = await MCPInstallationService.checkAgentMCPRequirements(agent);
-        
+        final requirements = await mcpInstallationService.checkAgentMCPRequirements(agent.id);
+
         if (requirements.isNotEmpty) {
           // Install required MCP servers
-          final installResult = await MCPInstallationService.installMCPServers(requirements);
-          
-          if (!installResult.success) {
-            // Log installation failures but don't block agent loading
-            print('MCP installation warnings for agent ${agent.id}:');
-            installResult.failedServers.forEach((serverId, error) {
-              print('  - $serverId: $error');
-            });
-          }
+          await mcpInstallationService.installMCPServers(agent.id, requirements);
         }
-        
+
         // Mark agent as used in this conversation
-        await MCPInstallationService.markAgentUsedInConversation(agent.id, conversationId);
+        mcpInstallationService.markAgentUsedInConversation(agent.id);
       }
       
       // Setup context resources for the agent

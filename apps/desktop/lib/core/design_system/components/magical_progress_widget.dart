@@ -5,7 +5,7 @@ import '../../models/mcp_capability.dart';
 import '../../services/mcp_user_interface_service.dart';
 
 /// ✨ Magical Progress Widget - Makes Installation Feel Like Magic
-/// 
+///
 /// This widget turns boring technical progress into delightful moments:
 /// - Animated progress with personality
 /// - Encouraging messages that build excitement
@@ -38,30 +38,30 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
   @override
   void initState() {
     super.initState();
-    
+
     _progressController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    
+
     _celebrationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _progressController, curve: Curves.easeInOut),
     );
-    
+
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(parent: _celebrationController, curve: Curves.elasticOut),
     );
-    
+
     _colorAnimation = ColorTween(
       begin: Colors.blue,
       end: Colors.green,
     ).animate(_progressController);
-    
+
     _startAnimations();
   }
 
@@ -78,7 +78,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
         _progressController.stop();
         break;
       case MCPProgressStatus.partialSuccess:
-        _progressController.forward(to: 0.7);
+        _progressController.forward();
         break;
     }
   }
@@ -86,7 +86,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
   @override
   void didUpdateWidget(MagicalProgressWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (oldWidget.progress.status != widget.progress.status) {
       _startAnimations();
     }
@@ -95,7 +95,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
   @override
   Widget build(BuildContext context) {
     final colors = ThemeColors(context);
-    
+
     return AnimatedBuilder(
       animation: Listenable.merge([_progressController, _celebrationController]),
       builder: (context, child) {
@@ -105,16 +105,16 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
             child: Container(
               decoration: _getCardDecoration(colors),
               child: Padding(
-                padding: SpacingTokens.lg,
+                padding: const EdgeInsets.all(SpacingTokens.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildMagicalHeader(colors),
-                    SizedBox(height: SpacingTokens.md.vertical),
+                    const SizedBox(height: SpacingTokens.md),
                     _buildProgressContent(colors),
                     if (_shouldShowActions()) ...[
-                      SizedBox(height: SpacingTokens.lg.vertical),
+                      const SizedBox(height: SpacingTokens.lg),
                       _buildActions(colors),
                     ],
                   ],
@@ -131,7 +131,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
     switch (widget.progress.status) {
       case MCPProgressStatus.completed:
         return BoxDecoration(
-          borderRadius: BorderRadiusTokens.xl,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
           gradient: LinearGradient(
             colors: [
               Colors.green.withOpacity(0.1),
@@ -147,7 +147,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
         );
       case MCPProgressStatus.failed:
         return BoxDecoration(
-          borderRadius: BorderRadiusTokens.xl,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
           border: Border.all(
             color: Colors.red.withOpacity(0.3),
             width: 1,
@@ -155,7 +155,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
         );
       default:
         return BoxDecoration(
-          borderRadius: BorderRadiusTokens.xl,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
           gradient: LinearGradient(
             colors: [
               colors.primary.withOpacity(0.05),
@@ -170,7 +170,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
     return Row(
       children: [
         _buildMagicalIcon(colors),
-        SizedBox(width: SpacingTokens.md.horizontal),
+        const SizedBox(width: SpacingTokens.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +181,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
                     widget.progress.capability.iconEmoji,
                     style: const TextStyle(fontSize: 20),
                   ),
-                  SizedBox(width: SpacingTokens.sm.horizontal),
+                  const SizedBox(width: SpacingTokens.sm),
                   Expanded(
                     child: Text(
                       widget.progress.capability.displayName,
@@ -203,357 +203,262 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
             ],
           ),
         ),
-        if (_shouldShowDismiss()) _buildDismissButton(colors),
+        if (widget.onDismiss != null && _canDismiss())
+          IconButton(
+            onPressed: widget.onDismiss,
+            icon: Icon(
+              Icons.close,
+              color: colors.onSurfaceVariant,
+              size: 20,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildProgressContent(ThemeColors colors) {
+    switch (widget.progress.status) {
+      case MCPProgressStatus.inProgress:
+        return _buildInProgressContent(colors);
+      case MCPProgressStatus.completed:
+        return _buildCompletedContent(colors);
+      case MCPProgressStatus.failed:
+        return _buildFailedContent(colors);
+      case MCPProgressStatus.partialSuccess:
+        return _buildPartialSuccessContent(colors);
+    }
+  }
+
+  Widget _buildInProgressContent(ThemeColors colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildAnimatedProgressBar(colors),
+        const SizedBox(height: SpacingTokens.md),
+        Text(
+          widget.progress.message,
+          style: TextStyles.bodySmall.copyWith(
+            color: colors.onSurface,
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.md),
+        _buildInstallationSteps(colors),
+      ],
+    );
+  }
+
+  Widget _buildAnimatedProgressBar(ThemeColors colors) {
+    final progress = _progressAnimation.value;
+
+    return Container(
+      height: 8,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
+        color: colors.border,
+      ),
+      child: Stack(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width * progress,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
+              gradient: LinearGradient(
+                colors: [colors.primary, colors.accent],
+              ),
+            ),
+          ),
+          if (widget.progress.status == MCPProgressStatus.inProgress)
+            AnimatedBuilder(
+              animation: _progressController,
+              builder: (context, child) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
+                    gradient: LinearGradient(
+                      colors: [
+                        colors.primary.withOpacity(0.3),
+                        Colors.transparent,
+                      ],
+                      stops: [_progressAnimation.value, _progressAnimation.value + 0.1],
+                    ),
+                  ),
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInstallationSteps(ThemeColors colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: SpacingTokens.sm),
+        Text(
+          '✨ Making magic happen...',
+          style: TextStyles.bodySmall.copyWith(
+            color: colors.primary,
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.sm),
+      ],
+    );
+  }
+
+  Widget _buildCompletedContent(ThemeColors colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(SpacingTokens.md),
+          decoration: BoxDecoration(
+            color: Colors.green.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+            border: Border.all(
+              color: Colors.green.withOpacity(0.2),
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.celebration,
+                color: Colors.green,
+                size: 24,
+              ),
+              const SizedBox(width: SpacingTokens.sm),
+              Expanded(
+                child: Text(
+                  '${widget.progress.capability.displayName} is ready!',
+                  style: TextStyles.bodyMedium.copyWith(
+                    color: Colors.green.shade700,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.lg),
+        Text(
+          _getCompletionMessage(),
+          style: TextStyles.bodySmall.copyWith(
+            color: colors.onSurface,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFailedContent(ThemeColors colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(SpacingTokens.md),
+          decoration: BoxDecoration(
+            color: Colors.red.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+            border: Border.all(
+              color: Colors.red.withOpacity(0.2),
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: 24,
+              ),
+              const SizedBox(width: SpacingTokens.sm),
+              Expanded(
+                child: Text(
+                  'Installation failed',
+                  style: TextStyles.bodyMedium.copyWith(
+                    color: Colors.red.shade700,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.sm),
+        if (widget.progress.recoverySuggestions.isNotEmpty)
+          Text(
+            widget.progress.recoverySuggestions.first,
+            style: TextStyles.bodySmall.copyWith(
+              color: colors.onSurface,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildPartialSuccessContent(ThemeColors colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(SpacingTokens.md),
+          decoration: BoxDecoration(
+            color: Colors.orange.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+            border: Border.all(
+              color: Colors.orange.withOpacity(0.2),
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.warning_amber,
+                color: Colors.orange,
+                size: 24,
+              ),
+              const SizedBox(width: SpacingTokens.sm),
+              Expanded(
+                child: Text(
+                  'Partially installed',
+                  style: TextStyles.bodyMedium.copyWith(
+                    color: Colors.orange.shade700,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.sm),
+        Text(
+          'Some features may not work correctly. You can retry the installation.',
+          style: TextStyles.bodySmall.copyWith(
+            color: colors.onSurface,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildMagicalIcon(ThemeColors colors) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: _getStatusColor(colors).withOpacity(0.1),
-        borderRadius: BorderRadiusTokens.full,
-        border: Border.all(
-          color: _getStatusColor(colors).withOpacity(0.3),
-          width: 2,
-        ),
-      ),
-      child: Center(
-        child: _buildStatusIcon(colors),
-      ),
-    );
-  }
-
-  Widget _buildStatusIcon(ThemeColors colors) {
-    switch (widget.progress.status) {
-      case MCPProgressStatus.inProgress:
-        return SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 3,
-            valueColor: AlwaysStoppedAnimation(_colorAnimation.value ?? colors.primary),
-          ),
-        );
-      case MCPProgressStatus.completed:
-        return Icon(
-          Icons.celebration,
-          color: Colors.green,
-          size: 26,
-        );
-      case MCPProgressStatus.partialSuccess:
-        return Icon(
-          Icons.warning_amber_rounded,
-          color: Colors.orange,
-          size: 26,
-        );
-      case MCPProgressStatus.failed:
-        return Icon(
-          Icons.refresh,
-          color: Colors.red,
-          size: 26,
-        );
-    }
-  }
-
-  Widget _buildProgressContent(ThemeColors colors) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.progress.message,
-          style: TextStyles.bodyMedium.copyWith(
-            color: colors.onSurface,
-            height: 1.4,
-          ),
-        ),
-        if (widget.progress.status == MCPProgressStatus.inProgress) ...[
-          SizedBox(height: SpacingTokens.md.vertical),
-          _buildMagicalProgressBar(colors),
-        ],
-        if (widget.progress.status == MCPProgressStatus.completed) ...[
-          SizedBox(height: SpacingTokens.sm.vertical),
-          _buildSuccessCelebration(colors),
-        ],
-        if (widget.progress.recoverySuggestions.isNotEmpty) ...[
-          SizedBox(height: SpacingTokens.md.vertical),
-          _buildHelpfulSuggestions(colors),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildMagicalProgressBar(ThemeColors colors) {
-    return Column(
-      children: [
-        Container(
-          height: 6,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadiusTokens.full,
-            color: colors.border.withOpacity(0.3),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadiusTokens.full,
-            child: LinearProgressIndicator(
-              value: null, // Indeterminate for magical effect
-              backgroundColor: Colors.transparent,
-              valueColor: AlwaysStoppedAnimation(_colorAnimation.value ?? colors.primary),
-            ),
-          ),
-        ),
-        SizedBox(height: SpacingTokens.sm.vertical),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _getDurationText(),
-              style: TextStyles.bodySmall.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
-            ),
-            Text(
-              '✨ Working magic...',
-              style: TextStyles.bodySmall.copyWith(
-                color: colors.primary,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSuccessCelebration(ThemeColors colors) {
-    return Container(
-      padding: SpacingTokens.sm,
-      decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.1),
-        borderRadius: BorderRadiusTokens.md,
-        border: Border.all(
-          color: Colors.green.withOpacity(0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.party_mode,
-            color: Colors.green,
-            size: 16,
-          ),
-          SizedBox(width: SpacingTokens.sm.horizontal),
-          Expanded(
-            child: Text(
-              'Ready to supercharge your workflow! 🚀',
-              style: TextStyles.bodySmall.copyWith(
-                color: Colors.green.shade700,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHelpfulSuggestions(ThemeColors colors) {
-    return Container(
-      padding: SpacingTokens.md,
-      decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.05),
-        borderRadius: BorderRadiusTokens.md,
-        border: Border.all(
-          color: Colors.blue.withOpacity(0.2),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.lightbulb_outline,
-                color: Colors.blue,
-                size: 16,
-              ),
-              SizedBox(width: SpacingTokens.sm.horizontal),
-              Text(
-                'Here\'s how to fix this:',
-                style: TextStyles.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.blue.shade800,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: SpacingTokens.sm.vertical),
-          ...widget.progress.recoverySuggestions.take(2).map((suggestion) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.xs.vertical),
-            child: Text(
-              suggestion,
-              style: TextStyles.bodySmall.copyWith(
-                color: Colors.blue.shade700,
-                height: 1.3,
-              ),
-            ),
-          )),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActions(ThemeColors colors) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        if (widget.progress.status == MCPProgressStatus.failed && widget.onRetry != null)
-          AsmblButton.secondary(
-            text: '🔄 Try Again',
-            onPressed: widget.onRetry,
-            size: ButtonSize.small,
-          ),
-        if (_shouldShowDismiss() && widget.onDismiss != null) ...[
-          if (widget.onRetry != null) SizedBox(width: SpacingTokens.sm.horizontal),
-          AsmblButton.tertiary(
-            text: widget.progress.isCompleted ? '✨ Awesome!' : 'Maybe Later',
-            onPressed: widget.onDismiss,
-            size: ButtonSize.small,
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildDismissButton(ThemeColors colors) {
-    return IconButton(
-      onPressed: widget.onDismiss,
-      icon: Icon(
-        Icons.close,
-        size: 18,
-        color: colors.onSurfaceVariant,
-      ),
-      constraints: const BoxConstraints(
-        minWidth: 32,
-        minHeight: 32,
-      ),
-    );
-  }
-
-  Color _getStatusColor(ThemeColors colors) {
-    switch (widget.progress.status) {
-      case MCPProgressStatus.inProgress:
-        return _colorAnimation.value ?? colors.primary;
-      case MCPProgressStatus.completed:
-        return Colors.green;
-      case MCPProgressStatus.partialSuccess:
-        return Colors.orange;
-      case MCPProgressStatus.failed:
-        return Colors.red;
-    }
-  }
-
-  String _getStatusMessage() {
-    switch (widget.progress.status) {
-      case MCPProgressStatus.inProgress:
-        return 'Setting up your superpowers...';
-      case MCPProgressStatus.completed:
-        return 'Ready to rock! 🎉';
-      case MCPProgressStatus.partialSuccess:
-        return 'Mostly ready (some parts need attention)';
-      case MCPProgressStatus.failed:
-        return 'Oops, hit a snag - but we can fix this!';
-    }
-  }
-
-  String _getDurationText() {
-    final duration = widget.progress.duration;
-    if (duration.inMinutes > 0) {
-      return '${duration.inMinutes}m ${duration.inSeconds % 60}s';
-    }
-    return '${duration.inSeconds}s';
-  }
-
-  bool _shouldShowDismiss() => widget.progress.isCompleted || widget.progress.status == MCPProgressStatus.failed;
-  bool _shouldShowActions() => _shouldShowDismiss() || widget.progress.status == MCPProgressStatus.failed;
-
-  @override
-  void dispose() {
-    _progressController.dispose();
-    _celebrationController.dispose();
-    super.dispose();
-  }
-}
-
-/// 🎨 Enhanced Capability Permission Dialog - Makes Security Feel Empowering
-class MagicalCapabilityPermissionDialog extends StatefulWidget {
-  final AgentCapability capability;
-  final String explanation;
-  final List<String> benefits;
-  final List<String> risks;
-  final VoidCallback onApprove;
-  final VoidCallback onDeny;
-
-  const MagicalCapabilityPermissionDialog({
-    super.key,
-    required this.capability,
-    required this.explanation,
-    required this.benefits,
-    required this.risks,
-    required this.onApprove,
-    required this.onDeny,
-  });
-
-  @override
-  State<MagicalCapabilityPermissionDialog> createState() => _MagicalCapabilityPermissionDialogState();
-}
-
-class _MagicalCapabilityPermissionDialogState extends State<MagicalCapabilityPermissionDialog>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
-    );
-    
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-    
-    _animationController.forward();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = ThemeColors(context);
-    
     return AnimatedBuilder(
-      animation: _animationController,
+      animation: _progressController,
       builder: (context, child) {
-        return Opacity(
-          opacity: _fadeAnimation.value,
-          child: Transform.scale(
-            scale: _scaleAnimation.value,
-            child: AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadiusTokens.xl,
-              ),
-              backgroundColor: colors.surface,
-              title: _buildMagicalTitle(),
-              content: _buildMagicalContent(colors),
-              actions: _buildMagicalActions(),
+        return Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [colors.primary, colors.accent],
+              transform: GradientRotation(_progressAnimation.value * 2 * 3.14159),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              widget.progress.capability.iconEmoji,
+              style: const TextStyle(fontSize: 24),
             ),
           ),
         );
@@ -561,189 +466,92 @@ class _MagicalCapabilityPermissionDialogState extends State<MagicalCapabilityPer
     );
   }
 
-  Widget _buildMagicalTitle() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: ThemeColors(context).primary.withOpacity(0.1),
-            borderRadius: BorderRadiusTokens.full,
-          ),
-          child: Text(
-            widget.capability.iconEmoji,
-            style: const TextStyle(fontSize: 24),
-          ),
-        ),
-        SizedBox(width: SpacingTokens.md.horizontal),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Enable ${widget.capability.displayName}?',
-                style: TextStyles.pageTitle.copyWith(fontSize: 20),
+  Widget _buildActions(ThemeColors colors) {
+    switch (widget.progress.status) {
+      case MCPProgressStatus.failed:
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (widget.onDismiss != null)
+              AsmblButton.secondary(
+                text: 'Dismiss',
+                onPressed: widget.onDismiss!,
               ),
-              Text(
-                'This will supercharge your AI assistant!',
-                style: TextStyles.bodySmall.copyWith(
-                  color: ThemeColors(context).onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
-                ),
+            if (widget.onRetry != null) const SizedBox(width: SpacingTokens.sm),
+            if (widget.onRetry != null)
+              AsmblButton.primary(
+                text: 'Retry',
+                onPressed: widget.onRetry!,
               ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMagicalContent(ThemeColors colors) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: SpacingTokens.md,
-            decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.05),
-              borderRadius: BorderRadiusTokens.md,
-            ),
-            child: Text(
-              widget.explanation,
-              style: TextStyles.bodyMedium.copyWith(
-                color: colors.onSurface,
-                height: 1.4,
-              ),
-            ),
-          ),
-          SizedBox(height: SpacingTokens.lg.vertical),
-          _buildBenefitsSection(colors),
-          if (widget.risks.isNotEmpty) ...[
-            SizedBox(height: SpacingTokens.lg.vertical),
-            _buildPrivacySection(colors),
           ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBenefitsSection(ThemeColors colors) {
-    return Container(
-      padding: SpacingTokens.md,
-      decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.05),
-        borderRadius: BorderRadiusTokens.md,
-        border: Border.all(color: Colors.green.withOpacity(0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.auto_awesome, color: Colors.green, size: 18),
-              SizedBox(width: SpacingTokens.sm.horizontal),
-              Text(
-                'What you\'ll get:',
-                style: TextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.green.shade800,
-                ),
+        );
+      case MCPProgressStatus.partialSuccess:
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (widget.onDismiss != null)
+              AsmblButton.secondary(
+                text: 'Continue',
+                onPressed: widget.onDismiss!,
               ),
-            ],
-          ),
-          SizedBox(height: SpacingTokens.sm.vertical),
-          ...widget.benefits.map((benefit) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.xs.vertical),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('✨ ', style: TextStyle(color: Colors.green.shade600)),
-                Expanded(
-                  child: Text(
-                    benefit,
-                    style: TextStyles.bodySmall.copyWith(
-                      color: Colors.green.shade700,
-                      height: 1.3,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPrivacySection(ThemeColors colors) {
-    return Container(
-      padding: SpacingTokens.md,
-      decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.05),
-        borderRadius: BorderRadiusTokens.md,
-        border: Border.all(color: Colors.blue.withOpacity(0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.privacy_tip_outlined, color: Colors.blue, size: 18),
-              SizedBox(width: SpacingTokens.sm.horizontal),
-              Text(
-                'Privacy & Security:',
-                style: TextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.blue.shade800,
-                ),
+            const SizedBox(width: SpacingTokens.md),
+            if (widget.onRetry != null)
+              AsmblButton.primary(
+                text: 'Retry',
+                onPressed: widget.onRetry!,
               ),
-            ],
-          ),
-          SizedBox(height: SpacingTokens.sm.vertical),
-          ...widget.risks.map((risk) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.xs.vertical),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('🛡️ ', style: TextStyle(color: Colors.blue.shade600)),
-                Expanded(
-                  child: Text(
-                    risk,
-                    style: TextStyles.bodySmall.copyWith(
-                      color: Colors.blue.shade700,
-                      height: 1.3,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )),
-        ],
-      ),
-    );
+          ],
+        );
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
-  List<Widget> _buildMagicalActions() {
-    return [
-      AsmblButton.secondary(
-        text: 'Maybe Later',
-        onPressed: widget.onDeny,
-        size: ButtonSize.small,
-      ),
-      SizedBox(width: SpacingTokens.md.horizontal),
-      AsmblButton.primary(
-        text: '✨ Enable Magic!',
-        onPressed: widget.onApprove,
-        size: ButtonSize.small,
-      ),
-    ];
+  String _getStatusMessage() {
+    switch (widget.progress.status) {
+      case MCPProgressStatus.inProgress:
+        return widget.progress.message;
+      case MCPProgressStatus.completed:
+        return 'Ready to use!';
+      case MCPProgressStatus.failed:
+        return 'Installation failed';
+      case MCPProgressStatus.partialSuccess:
+        return 'Partially installed';
+    }
+  }
+
+  Color _getStatusColor(ThemeColors colors) {
+    switch (widget.progress.status) {
+      case MCPProgressStatus.inProgress:
+        return colors.primary;
+      case MCPProgressStatus.completed:
+        return Colors.green;
+      case MCPProgressStatus.failed:
+        return Colors.red;
+      case MCPProgressStatus.partialSuccess:
+        return Colors.orange;
+    }
+  }
+
+  String _getCompletionMessage() {
+    return '${widget.progress.capability.displayName} is now available for use in AI conversations.';
+  }
+
+  bool _shouldShowActions() {
+    return widget.progress.status == MCPProgressStatus.failed ||
+           widget.progress.status == MCPProgressStatus.partialSuccess;
+  }
+
+  bool _canDismiss() {
+    return widget.progress.status == MCPProgressStatus.completed ||
+           widget.progress.status == MCPProgressStatus.failed ||
+           widget.progress.status == MCPProgressStatus.partialSuccess;
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _progressController.dispose();
+    _celebrationController.dispose();
     super.dispose();
   }
 }

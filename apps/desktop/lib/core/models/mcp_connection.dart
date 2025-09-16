@@ -2,361 +2,253 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:equatable/equatable.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import '../services/mcp_protocol_handler.dart';
-import 'mcp_server_process.dart';
-import 'mcp_message.dart';
 
-/// Abstract base class for MCP connections
-abstract class MCPConnection extends Equatable {
-  final String id;
-  final MCPServerProcess serverProcess;
-  final MCPProtocolHandler protocolHandler;
-  bool _isConnected = false;
-  Map<String, dynamic>? _serverCapabilities;
+/// Status of MCP connection
+enum MCPConnectionStatus {
+  connecting,
+  connected,
+  disconnected,
+  error,
+  closed,
+}
 
-  MCPConnection({
-    required this.id,
-    required this.serverProcess,
-    required this.protocolHandler,
+/// MCP JSON-RPC message
+class MCPMessage extends Equatable {
+  final String? id;
+  final String? method;
+  final Map<String, dynamic>? params;
+  final Map<String, dynamic>? result;
+  final Map<String, dynamic>? error;
+  final String jsonrpc;
+
+  const MCPMessage({
+    this.id,
+    this.method,
+    this.params,
+    this.result,
+    this.error,
+    this.jsonrpc = '2.0',
   });
 
-  /// Initialize the connection
-  Future<void> initialize();
-
-  /// Send a message through the connection
-  Future<void> sendMessage(MCPMessage message);
-
-  /// Close the connection
-  Future<void> close();
-
-  /// Check if connection is active
-  bool get isConnected => _isConnected;
-
-  /// Get server capabilities
-  Map<String, dynamic>? get serverCapabilities => _serverCapabilities;
-
-  /// Mark connection as connected
-  void markAsConnected(Map<String, dynamic>? capabilities) {
-    _isConnected = true;
-    _serverCapabilities = capabilities;
+  factory MCPMessage.request(String id, String method, [Map<String, dynamic>? params]) {
+    return MCPMessage(
+      id: id,
+      method: method,
+      params: params,
+    );
   }
 
-  /// Mark connection as disconnected
-  void markAsDisconnected() {
-    _isConnected = false;
-    _serverCapabilities = null;
+  factory MCPMessage.response(String id, Map<String, dynamic> result) {
+    return MCPMessage(
+      id: id,
+      result: result,
+    );
   }
+
+  factory MCPMessage.error(String id, Map<String, dynamic> error) {
+    return MCPMessage(
+      id: id,
+      error: error,
+    );
+  }
+
+  factory MCPMessage.notification(String method, [Map<String, dynamic>? params]) {
+    return MCPMessage(
+      method: method,
+      params: params,
+    );
+  }
+
+  factory MCPMessage.fromJson(Map<String, dynamic> json) {
+    return MCPMessage(
+      id: json['id']?.toString(),
+      method: json['method']?.toString(),
+      params: json['params'] as Map<String, dynamic>?,
+      result: json['result'] as Map<String, dynamic>?,
+      error: json['error'] as Map<String, dynamic>?,
+      jsonrpc: json['jsonrpc']?.toString() ?? '2.0',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'jsonrpc': jsonrpc,
+    };
+
+    if (id != null) json['id'] = id;
+    if (method != null) json['method'] = method;
+    if (params != null) json['params'] = params;
+    if (result != null) json['result'] = result;
+    if (error != null) json['error'] = error;
+
+    return json;
+  }
+
+  bool get isRequest => method != null && id != null;
+  bool get isResponse => id != null && (result != null || error != null);
+  bool get isNotification => method != null && id == null;
+  bool get isError => error != null;
 
   @override
-  List<Object?> get props => [id, serverProcess, _isConnected];
+  List<Object?> get props => [id, method, params, result, error, jsonrpc];
+}
+
+/// MCP connection for JSON-RPC communication
+abstract class MCPConnection {
+  String get id;
+  MCPConnectionStatus get status;
+  Stream<MCPMessage> get messages;
+  
+  Future<void> connect();
+  Future<void> close();
+  Future<void> send(MCPMessage message);
+  Future<MCPMessage> request(String method, [Map<String, dynamic>? params]);
 }
 
 /// Stdio-based MCP connection
-class MCPStdioConnection extends MCPConnection {
-  final Process process;
-  StreamSubscription<String>? _outputSubscription;
-  StreamSubscription<String>? _errorSubscription;
-  final StreamController<String> _messageController = StreamController.broadcast();
-
-  MCPStdioConnection({
-    required super.id,
-    required super.serverProcess,
-    required super.protocolHandler,
-    required this.process,
-  });
-
+class MCPStdioConnection implements MCPConnection {
   @override
-  Future<void> initialize() async {
-    // Setup stdout listener for incoming messages
-    _outputSubscription = process.stdout
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen(
-      (line) async {
-        if (line.trim().isNotEmpty) {
-          await protocolHandler.handleIncomingMessage(this, line);
-        }
-      },
-      onError: (error) {
-        print('❌ Stdio connection error: $error');
-        markAsDisconnected();
-      },
-    );
-
-    // Setup stderr listener for error messages
-    _errorSubscription = process.stderr
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen(
-      (line) {
-        if (line.trim().isNotEmpty) {
-          print('🚨 MCP Server stderr: $line');
-        }
-      },
-    );
-
-    // Monitor process exit
-    process.exitCode.then((exitCode) {
-      print('📤 MCP process exited with code: $exitCode');
-      markAsDisconnected();
-    });
+  final String id;
+  
+  final Process _process;
+  final StreamController<MCPMessage> _messageController = StreamController<MCPMessage>.broadcast();
+  final Map<String, Completer<MCPMessage>> _pendingRequests = {};
+  
+  MCPConnectionStatus _status = MCPConnectionStatus.connecting;
+  int _requestId = 0;
+  
+  MCPStdioConnection(this.id, this._process) {
+    _setupStreams();
   }
 
   @override
-  Future<void> sendMessage(MCPMessage message) async {
-    if (!isConnected && message.method != 'initialize') {
-      throw Exception('Connection not established');
-    }
+  MCPConnectionStatus get status => _status;
 
-    final jsonString = message.toJsonString();
-    print('📤 Sending to ${serverProcess.id}: $jsonString');
-    
-    process.stdin.writeln(jsonString);
-    await process.stdin.flush();
+  @override
+  Stream<MCPMessage> get messages => _messageController.stream;
+
+  void _setupStreams() {
+    // Listen to stdout for JSON-RPC messages
+    _process.stdout
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(
+      _handleStdoutLine,
+      onError: _handleError,
+      onDone: _handleDisconnect,
+    );
+
+    // Listen to stderr for errors
+    _process.stderr
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(
+      _handleStderrLine,
+      onError: _handleError,
+    );
+
+    // Listen to process exit
+    _process.exitCode.then(_handleProcessExit);
+  }
+
+  void _handleStdoutLine(String line) {
+    if (line.trim().isEmpty) return;
+
+    try {
+      final json = jsonDecode(line) as Map<String, dynamic>;
+      final message = MCPMessage.fromJson(json);
+      
+      // Handle responses to pending requests
+      if (message.isResponse && message.id != null) {
+        final completer = _pendingRequests.remove(message.id);
+        if (completer != null) {
+          completer.complete(message);
+          return;
+        }
+      }
+      
+      // Broadcast other messages
+      _messageController.add(message);
+      
+      // Update status on successful communication
+      if (_status == MCPConnectionStatus.connecting) {
+        _status = MCPConnectionStatus.connected;
+      }
+    } catch (e) {
+      print('Failed to parse MCP message: $line - Error: $e');
+    }
+  }
+
+  void _handleStderrLine(String line) {
+    print('MCP Server stderr: $line');
+  }
+
+  void _handleError(dynamic error) {
+    print('MCP Connection error: $error');
+    _status = MCPConnectionStatus.error;
+  }
+
+  void _handleDisconnect() {
+    _status = MCPConnectionStatus.disconnected;
+    _completeAllPendingRequests();
+  }
+
+  void _handleProcessExit(int exitCode) {
+    print('MCP Process exited with code: $exitCode');
+    _status = MCPConnectionStatus.closed;
+    _completeAllPendingRequests();
+  }
+
+  void _completeAllPendingRequests() {
+    for (final completer in _pendingRequests.values) {
+      if (!completer.isCompleted) {
+        completer.completeError(Exception('Connection closed'));
+      }
+    }
+    _pendingRequests.clear();
+  }
+
+  @override
+  Future<void> connect() async {
+    // Connection is established when process starts
+    _status = MCPConnectionStatus.connecting;
   }
 
   @override
   Future<void> close() async {
-    markAsDisconnected();
-    
-    await _outputSubscription?.cancel();
-    await _errorSubscription?.cancel();
+    _status = MCPConnectionStatus.closed;
+    _process.kill();
     await _messageController.close();
-    
-    // Send graceful shutdown if process is still alive
-    try {
-      if (!process.kill(ProcessSignal.sigterm)) {
-        // Process already dead
-        return;
-      }
-      
-      // Wait for graceful shutdown
-      await process.exitCode.timeout(const Duration(seconds: 5), onTimeout: () {
-        // Force kill if graceful shutdown failed
-        process.kill(ProcessSignal.sigkill);
-        return -1;
-      });
-    } catch (e) {
-      print('⚠️ Error during connection cleanup: $e');
-    }
-  }
-}
-
-/// Server-Sent Events (SSE) based MCP connection
-class MCPSSEConnection extends MCPConnection {
-  final String baseUrl;
-  HttpClient? _httpClient;
-  HttpClientRequest? _sseRequest;
-  StreamSubscription<String>? _sseSubscription;
-
-  MCPSSEConnection({
-    required super.id,
-    required super.serverProcess,
-    required super.protocolHandler,
-    required this.baseUrl,
-  });
-
-  @override
-  Future<void> initialize() async {
-    _httpClient = HttpClient();
-    
-    // Connect to SSE endpoint
-    await _connectSSE();
-  }
-
-  Future<void> _connectSSE() async {
-    try {
-      final uri = Uri.parse('$baseUrl/sse');
-      _sseRequest = await _httpClient!.getUrl(uri);
-      _sseRequest!.headers.set('Accept', 'text/event-stream');
-      _sseRequest!.headers.set('Cache-Control', 'no-cache');
-      
-      final response = await _sseRequest!.close();
-      
-      if (response.statusCode != 200) {
-        throw Exception('SSE connection failed: ${response.statusCode}');
-      }
-
-      _sseSubscription = response
-          .transform(utf8.decoder)
-          .transform(const LineSplitter())
-          .where((line) => line.startsWith('data: '))
-          .map((line) => line.substring(6)) // Remove 'data: ' prefix
-          .listen(
-        (data) async {
-          if (data.trim().isNotEmpty && data != '[DONE]') {
-            await protocolHandler.handleIncomingMessage(this, data);
-          }
-        },
-        onError: (error) {
-          print('❌ SSE connection error: $error');
-          markAsDisconnected();
-        },
-        onDone: () {
-          print('📤 SSE connection closed');
-          markAsDisconnected();
-        },
-      );
-      
-    } catch (e) {
-      print('❌ Failed to connect SSE: $e');
-      markAsDisconnected();
-      rethrow;
-    }
   }
 
   @override
-  Future<void> sendMessage(MCPMessage message) async {
-    if (!isConnected && message.method != 'initialize') {
-      throw Exception('Connection not established');
+  Future<void> send(MCPMessage message) async {
+    if (_status != MCPConnectionStatus.connected && _status != MCPConnectionStatus.connecting) {
+      throw Exception('Connection not available');
     }
 
-    try {
-      final uri = Uri.parse('$baseUrl/message');
-      final request = await _httpClient!.postUrl(uri);
-      
-      request.headers.set('Content-Type', 'application/json');
-      
-      final jsonString = message.toJsonString();
-      print('📤 Sending to ${serverProcess.id}: $jsonString');
-      
-      request.write(jsonString);
-      
-      final response = await request.close();
-      
-      if (response.statusCode != 200) {
-        final responseBody = await response.transform(utf8.decoder).join();
-        throw Exception('HTTP ${response.statusCode}: $responseBody');
-      }
-      
-    } catch (e) {
-      print('❌ Failed to send message via SSE: $e');
-      rethrow;
-    }
+    final json = jsonEncode(message.toJson());
+    _process.stdin.writeln(json);
+    await _process.stdin.flush();
   }
 
   @override
-  Future<void> close() async {
-    markAsDisconnected();
+  Future<MCPMessage> request(String method, [Map<String, dynamic>? params]) async {
+    final id = (_requestId++).toString();
+    final message = MCPMessage.request(id, method, params);
     
-    await _sseSubscription?.cancel();
-    _httpClient?.close();
+    final completer = Completer<MCPMessage>();
+    _pendingRequests[id] = completer;
     
-    _sseSubscription = null;
-    _httpClient = null;
-    _sseRequest = null;
+    await send(message);
+    
+    // Add timeout
+    return completer.future.timeout(
+      const Duration(seconds: 30),
+      onTimeout: () {
+        _pendingRequests.remove(id);
+        throw TimeoutException('MCP request timeout', const Duration(seconds: 30));
+      },
+    );
   }
-}
-
-/// WebSocket-based MCP connection
-class MCPWebSocketConnection extends MCPConnection {
-  final String url;
-  WebSocketChannel? _channel;
-  StreamSubscription<dynamic>? _messageSubscription;
-
-  MCPWebSocketConnection({
-    required super.id,
-    required super.serverProcess,
-    required super.protocolHandler,
-    required this.url,
-  });
-
-  @override
-  Future<void> initialize() async {
-    try {
-      final uri = Uri.parse(url);
-      _channel = WebSocketChannel.connect(uri);
-      
-      await _channel!.ready;
-      
-      _messageSubscription = _channel!.stream.listen(
-        (data) async {
-          final message = data.toString();
-          if (message.trim().isNotEmpty) {
-            await protocolHandler.handleIncomingMessage(this, message);
-          }
-        },
-        onError: (error) {
-          print('❌ WebSocket connection error: $error');
-          markAsDisconnected();
-        },
-        onDone: () {
-          print('📤 WebSocket connection closed');
-          markAsDisconnected();
-        },
-      );
-      
-    } catch (e) {
-      print('❌ Failed to connect WebSocket: $e');
-      markAsDisconnected();
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> sendMessage(MCPMessage message) async {
-    if (_channel == null) {
-      throw Exception('WebSocket not connected');
-    }
-
-    if (!isConnected && message.method != 'initialize') {
-      throw Exception('Connection not established');
-    }
-
-    final jsonString = message.toJsonString();
-    print('📤 Sending to ${serverProcess.id}: $jsonString');
-    
-    _channel!.sink.add(jsonString);
-  }
-
-  @override
-  Future<void> close() async {
-    markAsDisconnected();
-    
-    await _messageSubscription?.cancel();
-    await _channel?.sink.close();
-    
-    _messageSubscription = null;
-    _channel = null;
-  }
-}
-
-/// Connection status enumeration
-enum MCPConnectionStatus {
-  disconnected('Disconnected'),
-  connecting('Connecting'),
-  connected('Connected'),
-  error('Error'),
-  closed('Closed');
-
-  const MCPConnectionStatus(this.displayName);
-
-  final String displayName;
-}
-
-/// Connection statistics
-class MCPConnectionStats extends Equatable {
-  final int messagesSent;
-  final int messagesReceived;
-  final int errorsCount;
-  final DateTime connectedAt;
-  final Duration uptime;
-
-  const MCPConnectionStats({
-    required this.messagesSent,
-    required this.messagesReceived,
-    required this.errorsCount,
-    required this.connectedAt,
-    required this.uptime,
-  });
-
-  @override
-  List<Object?> get props => [
-    messagesSent,
-    messagesReceived,
-    errorsCount,
-    connectedAt,
-    uptime,
-  ];
 }

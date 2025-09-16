@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/mcp_catalog_entry.dart';
+import '../../../../core/models/mcp_server_category.dart';
 
 class MCPCatalogEntryCard extends StatefulWidget {
   final MCPCatalogEntry entry;
@@ -378,39 +379,34 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard>
   }
 
   IconData _getServerIcon() {
-    switch (widget.entry.category) {
-      case MCPServerCategory.ai:
-        return Icons.psychology;
-      case MCPServerCategory.cloud:
-        return Icons.cloud;
-      case MCPServerCategory.communication:
-        return Icons.chat;
-      case MCPServerCategory.database:
-        return Icons.storage;
-      case MCPServerCategory.design:
-        return Icons.palette;
-      case MCPServerCategory.development:
-        return Icons.code;
-      case MCPServerCategory.filesystem:
-        return Icons.folder;
-      case MCPServerCategory.productivity:
-        return Icons.work;
-      case MCPServerCategory.security:
-        return Icons.security;
-      case MCPServerCategory.web:
-        return Icons.web;
-    }
+    final category = widget.entry.category;
+    if (category == null) return Icons.extension;
+
+    if (category == MCPServerCategory.development) return Icons.code;
+    if (category == MCPServerCategory.productivity) return Icons.trending_up;
+    if (category == MCPServerCategory.communication) return Icons.chat;
+    if (category == MCPServerCategory.dataAnalysis) return Icons.analytics;
+    if (category == MCPServerCategory.automation) return Icons.auto_awesome;
+    if (category == MCPServerCategory.fileManagement) return Icons.folder;
+    if (category == MCPServerCategory.webServices) return Icons.language;
+    if (category == MCPServerCategory.cloud) return Icons.cloud;
+    if (category == MCPServerCategory.database) return Icons.storage;
+    if (category == MCPServerCategory.security) return Icons.security;
+    if (category == MCPServerCategory.monitoring) return Icons.monitor;
+    if (category == MCPServerCategory.ai) return Icons.psychology;
+    if (category == MCPServerCategory.utility) return Icons.build;
+    if (category == MCPServerCategory.experimental) return Icons.science;
+    if (category == MCPServerCategory.custom) return Icons.extension;
+
+    return Icons.extension; // fallback
   }
 
   IconData _getTransportIcon() {
-    switch (widget.entry.transport) {
-      case MCPTransportType.stdio:
-        return Icons.terminal;
-      case MCPTransportType.sse:
-        return Icons.stream;
-      case MCPTransportType.http:
-        return Icons.http;
-    }
+    final transport = widget.entry.transport;
+    if (transport == MCPTransportType.stdio) return Icons.terminal;
+    if (transport == MCPTransportType.sse) return Icons.stream;
+    if (transport == MCPTransportType.http) return Icons.http;
+    return Icons.help_outline; // fallback
   }
 
   String _getTimeAgo(DateTime dateTime) {
@@ -442,7 +438,7 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard>
       case MCPServerCategory.database:
         baseColor = colors.success; // Green for databases
         break;
-      case MCPServerCategory.web:
+      case MCPServerCategory.webServices:
         baseColor = colors.accent; // Accent color for web/APIs
         break;
       case MCPServerCategory.development:
@@ -460,10 +456,10 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard>
       case MCPServerCategory.productivity:
         baseColor = colors.accent; // Accent for productivity
         break;
-      case MCPServerCategory.filesystem:
+      case MCPServerCategory.fileManagement:
         baseColor = colors.warning; // Orange for filesystem
         break;
-      case MCPServerCategory.design:
+      case MCPServerCategory.utility:
         baseColor = colors.primary; // Primary for design tools
         break;
       default:

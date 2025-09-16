@@ -21,6 +21,14 @@ import '../services/mcp_server_execution_service.dart';
 import '../services/mcp_catalog_service.dart';
 import '../services/secure_auth_service.dart';
 
+// New agent-terminal architecture services
+import '../services/mcp_installation_service.dart';
+import '../services/mcp_process_manager.dart';
+import '../services/mcp_protocol_handler.dart';
+import '../services/agent_terminal_manager.dart';
+import '../services/agent_mcp_integration_service.dart';
+import '../services/mcp_error_handler.dart';
+
 // Business services
 import '../services/business/base_business_service.dart';
 import '../services/business/agent_business_service.dart';
@@ -148,8 +156,7 @@ class ServiceLocator {
     registerSingleton<ConversationService>(DesktopConversationService());
 
     // Register MCP catalog service first (needed by other MCP services)
-    final secureAuthService = SecureAuthService(storageService);
-    final mcpCatalogService = MCPCatalogService(storageService, secureAuthService);
+    final mcpCatalogService = MCPCatalogService();
     registerSingleton<MCPCatalogService>(mcpCatalogService);
     
     // Register infrastructure services with proper dependencies
@@ -182,6 +189,31 @@ class ServiceLocator {
     
     // Use the existing singleton BusinessEventBus
     registerSingleton<BusinessEventBus>(BusinessEventBus());
+    
+    // Register core MCP installation service
+    final mcpInstallationService = MCPInstallationService(mcpCatalogService);
+    registerSingleton<MCPInstallationService>(mcpInstallationService);
+
+    // TODO: Re-enable these services once constructors are fixed
+    // final mcpErrorHandler = MCPErrorHandler();
+    // registerSingleton<MCPErrorHandler>(mcpErrorHandler);
+    //
+    // final mcpProtocolHandler = MCPProtocolHandler(mcpErrorHandler);
+    // registerSingleton<MCPProtocolHandler>(mcpProtocolHandler);
+    //
+    // final mcpProcessManager = MCPProcessManager(mcpCatalogService, mcpProtocolHandler);
+    // registerSingleton<MCPProcessManager>(mcpProcessManager);
+    //
+    // final agentTerminalManager = AgentTerminalManager(mcpInstallationService, mcpProcessManager);
+    // registerSingleton<AgentTerminalManager>(agentTerminalManager);
+    //
+    // final agentMCPIntegrationService = AgentMCPIntegrationService(
+    //   agentTerminalManager,
+    //   mcpInstallationService,
+    //   mcpProcessManager,
+    //   mcpCatalogService,
+    // );
+    // registerSingleton<AgentMCPIntegrationService>(agentMCPIntegrationService);
   }
 
   /// Register all business services
@@ -194,6 +226,7 @@ class ServiceLocator {
       contextService: get<ContextMCPResourceService>(),
       promptService: get<AgentContextPromptService>(),
       eventBus: get<BusinessEventBus>(),
+      integrationService: get<AgentMCPIntegrationService>(),
     ));
 
     // Conversation business service

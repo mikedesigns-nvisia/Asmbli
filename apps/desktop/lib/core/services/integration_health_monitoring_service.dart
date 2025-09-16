@@ -4,7 +4,7 @@ import 'mcp_settings_service.dart';
 import 'integration_service.dart';
 
 
-import '../models/mcp_server_config.dart';
+import '../models/mcp_server_config.dart' show MCPServerConfig;
 
 /// Service for monitoring the health and status of all integrations
 class IntegrationHealthMonitoringService {

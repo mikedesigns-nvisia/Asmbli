@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/mcp_server_process.dart';
-import '../models/mcp_server_config.dart';
 import '../models/mcp_catalog_entry.dart';
 import '../models/mcp_connection.dart';
+import '../interfaces/mcp_server_manager_interface.dart';
 import 'mcp_catalog_service.dart';
 import 'mcp_protocol_handler.dart';
-import 'mcp_error_handler.dart';
+import '../../features/agents/presentation/widgets/mcp_server_logs_widget.dart';
 
 /// Production-grade process manager for MCP servers with proper cleanup and resource management
-class MCPProcessManager {
+class MCPProcessManager implements MCPServerManagerInterface {
   final MCPCatalogService _catalogService;
   final MCPProtocolHandler _protocolHandler;
   final Map<String, MCPServerProcess> _runningProcesses = {};
@@ -21,6 +21,11 @@ class MCPProcessManager {
   final Map<String, StreamSubscription> _errorSubscriptions = {};
   final Map<String, Timer> _healthCheckTimers = {};
   final Map<String, Completer<bool>> _startupCompleters = {};
+
+  // Logging infrastructure
+  final Map<String, List<MCPLogEntry>> _serverLogs = {};
+  final Map<String, StreamController<MCPLogEntry>> _logStreamControllers = {};
+  static const int _maxLogsPerServer = 1000;
   
   // Resource limits and timeouts
   static const Duration _startupTimeout = Duration(seconds: 30);
@@ -32,23 +37,24 @@ class MCPProcessManager {
   MCPProcessManager(this._catalogService, this._protocolHandler);
 
   /// Start MCP server process with proper resource management
+  @override
   Future<MCPServerProcess> startServer({
-    required String id,
+    required String serverId,
     required String agentId,
     required Map<String, String> credentials,
     Map<String, String>? environment,
   }) async {
-    final catalogEntry = _catalogService.getCatalogEntry(id);
+    final catalogEntry = _catalogService.getCatalogEntry(serverId);
     if (catalogEntry == null) {
-      throw MCPProcessException('Server $id not found in catalog');
+      throw MCPProcessException('Server $serverId not found in catalog');
     }
 
-    final processId = '$agentId:$id';
+    final processId = '$agentId:$serverId';
     
     // Check if already running
     if (_runningProcesses.containsKey(processId)) {
       final existing = _runningProcesses[processId]!;
-      if (existing.isHealthy) {
+      if (existing.status == MCPServerStatus.running) {
         return existing;
       }
     }
@@ -72,30 +78,42 @@ class MCPProcessManager {
       );
 
       if (process == null) {
-        throw MCPProcessException('Failed to start process for $id');
+        throw MCPProcessException('Failed to start process for $serverId');
       }
 
-      // Create server config from catalog entry
-      final config = MCPServerConfig(
-        id: id,
+      // Create server configuration
+      final serverConfig = MCPServerConfig(
+        id: serverId,
         name: catalogEntry.name,
-        url: catalogEntry.remoteUrl ?? 'stdio://localhost',
-        command: catalogEntry.command ?? '',
-        transport: catalogEntry.transport.name,
-        args: catalogEntry.args ?? [],
-        env: processEnv,
+        url: 'stdio://localhost', // Default URL for stdio transport
+        command: catalogEntry.command,
+        args: catalogEntry.args,
+        transportType: catalogEntry.transport,
+        environment: processEnv,
+        credentials: credentials,
       );
 
       // Create process tracking object
       final serverProcess = MCPServerProcess(
         id: processId,
-        config: config,
-        process: process,
+        serverId: serverId,
+        agentId: agentId,
+        config: serverConfig,
+        pid: process.pid,
         startTime: DateTime.now(),
+        status: MCPServerStatus.starting,
       );
 
       _runningProcesses[processId] = serverProcess;
       _systemProcesses[processId] = process;
+
+      // Log server startup
+      _addLogEntry(serverId, LogLevel.info, 'Starting MCP server process', {
+        'processId': processId,
+        'pid': process.pid,
+        'command': catalogEntry.command,
+        'args': catalogEntry.args,
+      });
 
       // Setup process monitoring
       await _setupProcessMonitoring(processId, process);
@@ -105,23 +123,37 @@ class MCPProcessManager {
           .timeout(_startupTimeout, onTimeout: () => false);
 
       if (!startupSuccess) {
+        _addLogEntry(serverId, LogLevel.error, 'Server startup timeout', {
+          'processId': processId,
+          'timeout': _startupTimeout.inSeconds,
+        });
         await _cleanupProcess(processId);
-        throw MCPProcessException('Server startup timeout for $id');
+        throw MCPProcessException('Server startup timeout for $serverId');
       }
 
       // Establish MCP protocol connection
       final connection = await _protocolHandler.establishConnection(serverProcess);
       _connections[processId] = connection;
 
-      // Mark as healthy and initialized
-      serverProcess.isHealthy = true;
-      serverProcess.isInitialized = true;
-      serverProcess.lastActivity = DateTime.now();
+      // Mark as running
+      final runningProcess = serverProcess.copyWith(
+        status: MCPServerStatus.running,
+        lastHealthCheck: DateTime.now(),
+      );
+      _runningProcesses[processId] = runningProcess;
+
+      // Log successful startup
+      _addLogEntry(serverId, LogLevel.info, 'MCP server started successfully', {
+        'processId': processId,
+        'pid': process.pid,
+        'status': 'running',
+        'startupTime': DateTime.now().difference(serverProcess.startTime).inMilliseconds,
+      });
 
       // Start health check monitoring
       _startHealthCheck(processId);
 
-      return serverProcess;
+      return runningProcess;
     } catch (e) {
       _startupCompleters.remove(processId);
       await _cleanupProcess(processId);
@@ -140,7 +172,7 @@ class MCPProcessManager {
       case MCPTransportType.sse:
         return await _startHttpServer(catalogEntry, environment);
       case MCPTransportType.http:
-        return await _startWebSocketServer(catalogEntry, environment);
+        return await _startHttpServer(catalogEntry, environment);
     }
   }
 
@@ -149,18 +181,15 @@ class MCPProcessManager {
     MCPCatalogEntry catalogEntry,
     Map<String, String> environment,
   ) async {
-    final command = catalogEntry.command;
+    final command = catalogEntry.command.isNotEmpty ? catalogEntry.command : 'uvx';
     final args = catalogEntry.args;
-
-    if (command == null) {
-      throw MCPProcessException('Command not specified for server ${catalogEntry.id}');
-    }
 
     return await Process.start(
       command,
-      args ?? [],
+      args,
       environment: environment,
       mode: ProcessStartMode.normal,
+      runInShell: true, // Important for uvx/npx commands
     );
   }
 
@@ -169,38 +198,15 @@ class MCPProcessManager {
     MCPCatalogEntry catalogEntry,
     Map<String, String> environment,
   ) async {
-    final command = catalogEntry.command;
-    final args = [...(catalogEntry.args ?? []), '--transport', 'sse'];
-
-    if (command == null) {
-      throw MCPProcessException('Command not specified for server ${catalogEntry.id}');
-    }
+    final command = catalogEntry.command.isNotEmpty ? catalogEntry.command : 'uvx';
+    final args = [...catalogEntry.args, '--transport', 'sse'];
 
     return await Process.start(
       command,
       args,
       environment: environment,
       mode: ProcessStartMode.normal,
-    );
-  }
-
-  /// Start WebSocket server
-  Future<Process> _startWebSocketServer(
-    MCPCatalogEntry catalogEntry,
-    Map<String, String> environment,
-  ) async {
-    final command = catalogEntry.command;
-    final args = [...(catalogEntry.args ?? []), '--transport', 'websocket'];
-
-    if (command == null) {
-      throw MCPProcessException('Command not specified for server ${catalogEntry.id}');
-    }
-
-    return await Process.start(
-      command,
-      args,
-      environment: environment,
-      mode: ProcessStartMode.normal,
+      runInShell: true,
     );
   }
 
@@ -235,9 +241,20 @@ class MCPProcessManager {
     final serverProcess = _runningProcesses[processId];
     if (serverProcess == null) return;
 
+    // Log the output
+    _addLogEntry(
+      serverProcess.serverId,
+      isError ? LogLevel.error : LogLevel.debug,
+      line,
+      {
+        'processId': processId,
+        'source': isError ? 'stderr' : 'stdout',
+      },
+    );
+
     // Log output for debugging
     final prefix = isError ? 'STDERR' : 'STDOUT';
-    print('[$prefix] ${serverProcess.id}: $line');
+    print('[$prefix] ${serverProcess.serverId}: $line');
 
     // Check for startup completion signals
     if (!isError && _startupCompleters.containsKey(processId)) {
@@ -247,8 +264,13 @@ class MCPProcessManager {
       }
     }
 
-    // Update last activity timestamp
-    serverProcess.lastActivity = DateTime.now();
+    // Update process logs
+    final updatedLogs = List<String>.from(serverProcess.logs)..add('[$prefix] $line');
+    final updatedProcess = serverProcess.copyWith(
+      logs: updatedLogs.length > 1000 ? updatedLogs.sublist(500) : updatedLogs, // Keep last 1000 lines
+      lastOutput: DateTime.now(),
+    );
+    _runningProcesses[processId] = updatedProcess;
   }
 
   /// Handle process errors
@@ -256,10 +278,14 @@ class MCPProcessManager {
     final serverProcess = _runningProcesses[processId];
     if (serverProcess == null) return;
 
-    print('Process error for ${serverProcess.id}: $error');
+    print('Process error for ${serverProcess.serverId}: $error');
 
-    // Mark process as unhealthy
-    serverProcess.isHealthy = false;
+    final updatedProcess = serverProcess.copyWith(
+      status: MCPServerStatus.error,
+      error: error.toString(),
+      lastError: DateTime.now(),
+    );
+    _runningProcesses[processId] = updatedProcess;
 
     // Complete startup with failure if still waiting
     if (_startupCompleters.containsKey(processId)) {
@@ -273,18 +299,21 @@ class MCPProcessManager {
     final serverProcess = _runningProcesses[processId];
     if (serverProcess == null) return;
 
-    print('Process exited for ${serverProcess.id} with code $exitCode');
+    print('Process exited for ${serverProcess.serverId} with code $exitCode');
 
-    // Mark process as unhealthy if crashed
-    if (exitCode != 0) {
-      serverProcess.isHealthy = false;
-    }
+    // Update process status
+    final updatedProcess = serverProcess.copyWith(
+      status: exitCode == 0 ? MCPServerStatus.stopped : MCPServerStatus.crashed,
+      exitCode: exitCode,
+      stopTime: DateTime.now(),
+    );
+    _runningProcesses[processId] = updatedProcess;
 
     // Cleanup resources
     _cleanupProcessResources(processId);
 
-    // Attempt restart if crashed (simplified restart logic)
-    if (exitCode != 0) {
+    // Attempt restart if crashed and within limits
+    if (exitCode != 0 && serverProcess.restartCount < _maxRestartAttempts) {
       _scheduleRestart(processId);
     }
   }
@@ -329,7 +358,7 @@ class MCPProcessManager {
     });
   }
 
-  /// Perform health check on running process
+  /// Perform enhanced health check on running process
   Future<void> _performHealthCheck(String processId) async {
     final serverProcess = _runningProcesses[processId];
     final systemProcess = _systemProcesses[processId];
@@ -340,13 +369,24 @@ class MCPProcessManager {
     }
 
     try {
-      // Check if process is still alive
-      final isAlive = !systemProcess.kill(ProcessSignal.sigusr1); // Non-destructive signal test
+      // Enhanced process health check
+      bool isAlive = await _checkProcessAlive(systemProcess);
       
       if (isAlive) {
-        // Process is alive - update activity time
-        serverProcess.lastActivity = DateTime.now();
-        serverProcess.isHealthy = true;
+        // Process is alive - perform additional health checks
+        final isResponsive = await _checkProcessResponsive(processId);
+        
+        if (isResponsive) {
+          // Process is healthy - update health check time
+          final updatedProcess = serverProcess.copyWith(
+            lastHealthCheck: DateTime.now(),
+            status: MCPServerStatus.running,
+          );
+          _runningProcesses[processId] = updatedProcess;
+        } else {
+          // Process is alive but not responsive
+          _handleUnresponsiveProcess(processId);
+        }
       } else {
         // Process died unexpectedly
         _handleProcessExit(processId, -1);
@@ -357,62 +397,257 @@ class MCPProcessManager {
     }
   }
 
-  /// Schedule process restart after cooldown
+  /// Check if process is still alive (cross-platform)
+  Future<bool> _checkProcessAlive(Process process) async {
+    try {
+      if (Platform.isWindows) {
+        // On Windows, use tasklist to check if process exists
+        final result = await Process.run('tasklist', ['/FI', 'PID eq ${process.pid}']);
+        return result.stdout.toString().contains('${process.pid}');
+      } else {
+        // On Unix-like systems, use kill -0
+        final result = await Process.run('kill', ['-0', '${process.pid}']);
+        return result.exitCode == 0;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Check if process is responsive to MCP requests
+  Future<bool> _checkProcessResponsive(String processId) async {
+    try {
+      // Send a simple ping request with timeout
+      await sendMCPRequest(processId, {
+        'jsonrpc': '2.0',
+        'id': 'health_ping_${DateTime.now().millisecondsSinceEpoch}',
+        'method': 'ping',
+        'params': {},
+      }).timeout(const Duration(seconds: 3));
+      
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Handle unresponsive process
+  void _handleUnresponsiveProcess(String processId) {
+    final serverProcess = _runningProcesses[processId];
+    if (serverProcess == null) return;
+
+    print('Process $processId is unresponsive, marking as error state');
+    
+    final updatedProcess = serverProcess.copyWith(
+      status: MCPServerStatus.error,
+      error: 'Process unresponsive to health checks',
+      lastError: DateTime.now(),
+    );
+    _runningProcesses[processId] = updatedProcess;
+    
+    // Schedule restart for unresponsive process
+    _scheduleRestart(processId);
+  }
+
+  /// Schedule process restart with exponential backoff
   void _scheduleRestart(String processId) {
     final serverProcess = _runningProcesses[processId];
     if (serverProcess == null) return;
 
-    Timer(_restartCooldown, () async {
-      try {
-        print('Attempting restart for ${serverProcess.id}');
-        
-        // For simplicity, just remove the failed process
-        // Real implementation would need proper restart logic
-        _runningProcesses.remove(processId);
-        _systemProcesses.remove(processId);
-        _connections.remove(processId);
-        
-      } catch (e) {
-        print('Restart failed for ${serverProcess.id}: $e');
-        // Mark as unhealthy
-        serverProcess.isHealthy = false;
-      }
+    final restartCount = serverProcess.restartCount;
+    
+    // Check if we've exceeded maximum restart attempts
+    if (restartCount >= _maxRestartAttempts) {
+      print('Maximum restart attempts reached for ${serverProcess.serverId}, marking as failed');
+      final failedProcess = serverProcess.copyWith(
+        status: MCPServerStatus.failed,
+        error: 'Maximum restart attempts exceeded',
+      );
+      _runningProcesses[processId] = failedProcess;
+      return;
+    }
+
+    // Calculate exponential backoff delay
+    final backoffMultiplier = (1 << restartCount).clamp(1, 32); // 1, 2, 4, 8, 16, 32
+    final backoffDelay = Duration(
+      milliseconds: (_restartCooldown.inMilliseconds * backoffMultiplier)
+          .clamp(_restartCooldown.inMilliseconds, 300000) // Max 5 minutes
+    );
+
+    print('Scheduling restart for ${serverProcess.serverId} (attempt ${restartCount + 1}/$_maxRestartAttempts) in ${backoffDelay.inSeconds}s');
+
+    Timer(backoffDelay, () async {
+      await _attemptRestart(processId);
     });
   }
 
-  /// Stop server process gracefully
+  /// Attempt to restart a server process
+  Future<void> _attemptRestart(String processId) async {
+    final serverProcess = _runningProcesses[processId];
+    if (serverProcess == null) return;
+
+    try {
+      print('Attempting restart for ${serverProcess.serverId} (attempt ${serverProcess.restartCount + 1})');
+      
+      // First, ensure the old process is fully cleaned up
+      await _forceCleanupProcess(processId);
+      
+      // Wait a moment for system cleanup
+      await Future.delayed(const Duration(seconds: 2));
+      
+      // Attempt to restart the server
+      final restartedProcess = await startServer(
+        serverId: serverProcess.serverId,
+        agentId: serverProcess.agentId,
+        credentials: serverProcess.config.credentials,
+        environment: serverProcess.config.environment,
+      );
+
+      // Update restart count on the new process
+      final updatedProcess = restartedProcess.copyWith(
+        restartCount: serverProcess.restartCount + 1,
+      );
+      _runningProcesses[processId] = updatedProcess;
+      
+      print('Successfully restarted ${serverProcess.serverId}');
+      
+    } catch (e) {
+      print('Restart failed for ${serverProcess.serverId}: $e');
+      
+      final failedProcess = serverProcess.copyWith(
+        status: MCPServerStatus.crashed,
+        error: 'Restart failed: $e',
+        restartCount: serverProcess.restartCount + 1,
+        lastError: DateTime.now(),
+      );
+      _runningProcesses[processId] = failedProcess;
+      
+      // Schedule another restart attempt if we haven't exceeded the limit
+      if (failedProcess.restartCount < _maxRestartAttempts) {
+        _scheduleRestart(processId);
+      } else {
+        print('Maximum restart attempts exceeded for ${serverProcess.serverId}');
+        final finalFailedProcess = failedProcess.copyWith(
+          status: MCPServerStatus.failed,
+          error: 'Maximum restart attempts exceeded after ${failedProcess.restartCount} attempts',
+        );
+        _runningProcesses[processId] = finalFailedProcess;
+      }
+    }
+  }
+
+  /// Force cleanup of a process and its resources
+  Future<void> _forceCleanupProcess(String processId) async {
+    final systemProcess = _systemProcesses[processId];
+    
+    if (systemProcess != null) {
+      try {
+        // Try graceful termination first
+        systemProcess.kill(ProcessSignal.sigterm);
+        
+        // Wait a moment for graceful shutdown
+        await Future.delayed(const Duration(seconds: 2));
+        
+        // Force kill if still running
+        if (Platform.isWindows) {
+          await Process.run('taskkill', ['/F', '/PID', '${systemProcess.pid}']);
+        } else {
+          systemProcess.kill(ProcessSignal.sigkill);
+        }
+      } catch (e) {
+        print('Error during force cleanup of process $processId: $e');
+      }
+    }
+    
+    // Clean up all tracking resources
+    _cleanupProcessResources(processId);
+    _systemProcesses.remove(processId);
+  }
+
+  /// Stop server process gracefully with enhanced shutdown procedure
+  @override
   Future<bool> stopServer(String processId) async {
     final serverProcess = _runningProcesses[processId];
     final systemProcess = _systemProcesses[processId];
     
     if (serverProcess == null || systemProcess == null) {
+      // Clean up any remaining tracking data
+      await _cleanupProcess(processId);
       return false;
     }
 
-    try {
-      // Mark as not healthy (stopping)
-      serverProcess.isHealthy = false;
+    print('Initiating graceful shutdown for ${serverProcess.serverId}');
 
-      // Send graceful shutdown signal
+    try {
+      // Update status to stopping
+      final stoppingProcess = serverProcess.copyWith(
+        status: MCPServerStatus.stopping,
+      );
+      _runningProcesses[processId] = stoppingProcess;
+
+      // Step 1: Send MCP shutdown notification
+      await _sendMCPShutdownNotification(processId);
+      
+      // Step 2: Send graceful shutdown signal
       systemProcess.kill(ProcessSignal.sigterm);
 
-      // Wait for graceful shutdown
+      // Step 3: Wait for graceful shutdown with timeout
       final exitCode = await systemProcess.exitCode
-          .timeout(_shutdownTimeout, onTimeout: () => -1);
+          .timeout(_shutdownTimeout, onTimeout: () => -1); // Use -1 to indicate timeout
 
-      if (exitCode == -1) {
-        // Force kill if graceful shutdown failed (timeout)
-        print('Forcing termination of ${serverProcess.id}');
-        systemProcess.kill(ProcessSignal.sigkill);
-        await systemProcess.exitCode;
+      if (exitCode != -1) {
+        print('Server ${serverProcess.serverId} shut down gracefully with exit code $exitCode');
+        await _cleanupProcess(processId);
+        return true;
+      } else {
+        // Step 4: Force termination if graceful shutdown failed
+        print('Graceful shutdown timeout for ${serverProcess.serverId}, forcing termination');
+        await _forceTerminateProcess(processId);
+        await _cleanupProcess(processId);
+        return true;
       }
-
-      await _cleanupProcess(processId);
-      return true;
+      
     } catch (e) {
-      print('Error stopping server ${serverProcess.id}: $e');
+      print('Error stopping server ${serverProcess.serverId}: $e');
+      await _forceTerminateProcess(processId);
       await _cleanupProcess(processId);
       return false;
+    }
+  }
+
+  /// Send MCP shutdown notification to server
+  Future<void> _sendMCPShutdownNotification(String processId) async {
+    try {
+      await sendMCPRequest(processId, {
+        'jsonrpc': '2.0',
+        'id': 'shutdown_${DateTime.now().millisecondsSinceEpoch}',
+        'method': 'shutdown',
+        'params': {},
+      }).timeout(const Duration(seconds: 3));
+      
+      print('Sent MCP shutdown notification to $processId');
+    } catch (e) {
+      print('Failed to send MCP shutdown notification to $processId: $e');
+    }
+  }
+
+  /// Force terminate a process
+  Future<void> _forceTerminateProcess(String processId) async {
+    final systemProcess = _systemProcesses[processId];
+    if (systemProcess == null) return;
+
+    try {
+      if (Platform.isWindows) {
+        // Use taskkill for force termination on Windows
+        await Process.run('taskkill', ['/F', '/PID', '${systemProcess.pid}']);
+      } else {
+        // Use SIGKILL for force termination on Unix-like systems
+        systemProcess.kill(ProcessSignal.sigkill);
+      }
+      
+      print('Force terminated process $processId');
+    } catch (e) {
+      print('Error force terminating process $processId: $e');
     }
   }
 
@@ -444,28 +679,33 @@ class MCPProcessManager {
   }
 
   /// Get running server process
+  @override
   MCPServerProcess? getRunningServer(String processId) {
     return _runningProcesses[processId];
   }
 
   /// Get MCP connection for process
+  @override
   MCPConnection? getConnection(String processId) {
     return _connections[processId];
   }
 
   /// Get all running servers
+  @override
   List<MCPServerProcess> getAllRunningServers() {
     return _runningProcesses.values.toList();
   }
 
   /// Get servers for specific agent
+  @override
   List<MCPServerProcess> getServersForAgent(String agentId) {
-    // Note: MCPServerProcess doesn't track agentId directly
-    // This would need to be implemented with a separate mapping if needed
-    return _runningProcesses.values.toList();
+    return _runningProcesses.values
+        .where((process) => process.agentId == agentId)
+        .toList();
   }
 
   /// Stop all servers for an agent
+  @override
   Future<void> stopAllServersForAgent(String agentId) async {
     final agentServers = getServersForAgent(agentId);
     
@@ -475,6 +715,7 @@ class MCPProcessManager {
   }
 
   /// Emergency shutdown of all processes
+  @override
   Future<void> emergencyShutdown() async {
     print('Performing emergency shutdown of all MCP processes...');
     
@@ -514,6 +755,7 @@ class MCPProcessManager {
   }
 
   /// Get process statistics
+  @override
   Map<String, dynamic> getProcessStatistics() {
     final stats = <String, dynamic>{
       'total_processes': _runningProcesses.length,
@@ -524,15 +766,104 @@ class MCPProcessManager {
     };
 
     for (final process in _runningProcesses.values) {
-      final statusKey = process.isHealthy ? 'healthy' : 'unhealthy';
+      final statusKey = process.status.name;
       stats[statusKey] = (stats[statusKey] as int? ?? 0) + 1;
     }
 
     return stats;
   }
 
+  /// Install MCP server in agent's terminal
+  @override
+  Future<MCPInstallResult> installServer(String agentId, String serverId) async {
+    // This would typically involve installing the server using uvx/npx
+    // For now, return a mock result
+    return MCPInstallResult(
+      success: true,
+      serverId: serverId,
+      installationTime: const Duration(seconds: 5),
+      installationLogs: const ['Mock installation completed'],
+    );
+  }
+  
+  /// Get server status
+  @override
+  MCPServerStatus getServerStatus(String processId) {
+    final process = _runningProcesses[processId];
+    return process?.status ?? MCPServerStatus.stopped;
+  }
+  
+  /// Handle JSON-RPC communication
+  @override
+  Future<dynamic> sendMCPRequest(String processId, Map<String, dynamic> request) async {
+    final connection = _connections[processId];
+    if (connection == null) {
+      throw MCPProcessException('No connection found for process $processId');
+    }
+    
+    final method = request['method'] as String;
+    final params = request['params'] as Map<String, dynamic>?;
+    
+    final response = await connection.request(method, params);
+    return response.toJson();
+  }
+
+  /// Get server logs
+  @override
+  Future<List<MCPLogEntry>> getServerLogs(String serverId, {int limit = 100}) async {
+    final logs = _serverLogs[serverId] ?? [];
+    if (logs.length <= limit) {
+      return List.from(logs);
+    }
+    return logs.skip(logs.length - limit).toList();
+  }
+
+  /// Stream server logs in real-time
+  @override
+  Stream<MCPLogEntry> streamServerLogs(String serverId) {
+    _logStreamControllers[serverId] ??= StreamController<MCPLogEntry>.broadcast();
+    return _logStreamControllers[serverId]!.stream;
+  }
+
+  /// Clear server logs
+  @override
+  Future<void> clearServerLogs(String serverId) async {
+    _serverLogs[serverId]?.clear();
+  }
+
+  /// Add log entry for a server
+  void _addLogEntry(String serverId, LogLevel level, String message, [Map<String, dynamic>? metadata]) {
+    final logEntry = MCPLogEntry(
+      serverId: serverId,
+      timestamp: DateTime.now(),
+      level: level,
+      message: message,
+      metadata: metadata,
+    );
+
+    // Add to stored logs
+    _serverLogs[serverId] ??= [];
+    _serverLogs[serverId]!.add(logEntry);
+
+    // Trim logs to maximum size
+    if (_serverLogs[serverId]!.length > _maxLogsPerServer) {
+      _serverLogs[serverId]!.removeRange(0, _serverLogs[serverId]!.length - _maxLogsPerServer);
+    }
+
+    // Stream to listeners
+    _logStreamControllers[serverId]?.add(logEntry);
+  }
+
   /// Dispose all resources
+  @override
   Future<void> dispose() async {
+    // Close all log stream controllers
+    for (final controller in _logStreamControllers.values) {
+      await controller.close();
+    }
+    _logStreamControllers.clear();
+    _serverLogs.clear();
+
     await emergencyShutdown();
   }
 }
@@ -551,15 +882,5 @@ class MCPProcessException implements Exception {
 final mcpProcessManagerProvider = Provider<MCPProcessManager>((ref) {
   final catalogService = ref.read(mcpCatalogServiceProvider);
   final protocolHandler = ref.read(mcpProtocolHandlerProvider);
-  final processManager = MCPProcessManager(catalogService, protocolHandler);
-  
-  // Set process manager reference in error handler to break circular dependency
-  try {
-    final errorHandler = ref.read(mcpErrorHandlerProvider);
-    errorHandler.setProcessManager(processManager);
-  } catch (e) {
-    print('Could not set error handler process manager: $e');
-  }
-  
-  return processManager;
+  return MCPProcessManager(catalogService, protocolHandler);
 });

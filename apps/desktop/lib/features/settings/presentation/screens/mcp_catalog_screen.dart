@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/mcp_catalog_service.dart';
 import '../../../../core/models/mcp_catalog_entry.dart';
+import '../../../../core/models/mcp_server_category.dart';
 import '../widgets/mcp_catalog_entry_card.dart';
 import '../widgets/mcp_server_setup_dialog.dart';
 
@@ -227,7 +228,8 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
     // Group entries by category
     for (final entry in entries) {
       if (!entry.isFeatured || _searchQuery.isNotEmpty) {
-        categorizedEntries.putIfAbsent(entry.category, () => []).add(entry);
+        final category = entry.category ?? MCPServerCategory.custom;
+        categorizedEntries.putIfAbsent(category, () => []).add(entry);
       }
     }
 
@@ -345,52 +347,41 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
   }
 
   String _getCategoryDisplayName(MCPServerCategory category) {
-    switch (category) {
-      case MCPServerCategory.ai:
-        return 'AI & ML';
-      case MCPServerCategory.cloud:
-        return 'Cloud';
-      case MCPServerCategory.communication:
-        return 'Communication';
-      case MCPServerCategory.database:
-        return 'Database';
-      case MCPServerCategory.design:
-        return 'Design';
-      case MCPServerCategory.development:
-        return 'Development';
-      case MCPServerCategory.filesystem:
-        return 'Filesystem';
-      case MCPServerCategory.productivity:
-        return 'Productivity';
-      case MCPServerCategory.security:
-        return 'Security';
-      case MCPServerCategory.web:
-        return 'Web';
-    }
+    return category.displayName;
   }
 
   IconData _getCategoryIcon(MCPServerCategory category) {
     switch (category) {
-      case MCPServerCategory.ai:
-        return Icons.psychology;
-      case MCPServerCategory.cloud:
-        return Icons.cloud;
-      case MCPServerCategory.communication:
-        return Icons.chat;
-      case MCPServerCategory.database:
-        return Icons.storage;
-      case MCPServerCategory.design:
-        return Icons.palette;
       case MCPServerCategory.development:
         return Icons.code;
-      case MCPServerCategory.filesystem:
-        return Icons.folder;
       case MCPServerCategory.productivity:
-        return Icons.work;
+        return Icons.trending_up;
+      case MCPServerCategory.communication:
+        return Icons.chat;
+      case MCPServerCategory.dataAnalysis:
+        return Icons.analytics;
+      case MCPServerCategory.automation:
+        return Icons.auto_awesome;
+      case MCPServerCategory.fileManagement:
+        return Icons.folder;
+      case MCPServerCategory.webServices:
+        return Icons.language;
+      case MCPServerCategory.cloud:
+        return Icons.cloud;
+      case MCPServerCategory.database:
+        return Icons.storage;
       case MCPServerCategory.security:
         return Icons.security;
-      case MCPServerCategory.web:
-        return Icons.web;
+      case MCPServerCategory.monitoring:
+        return Icons.monitor;
+      case MCPServerCategory.ai:
+        return Icons.psychology;
+      case MCPServerCategory.utility:
+        return Icons.build;
+      case MCPServerCategory.experimental:
+        return Icons.science;
+      case MCPServerCategory.custom:
+        return Icons.extension;
     }
   }
 }
