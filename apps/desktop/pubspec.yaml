@@ -60,6 +60,7 @@ dependencies:
   # Desktop Integration
   window_manager: ^0.3.7
   desktop_drop: ^0.6.1
+  flutter_secure_storage: ^9.0.0
   
   # UI Enhancements
   fluent_ui: ^4.7.7  # Windows Fluent Design

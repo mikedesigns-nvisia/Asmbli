@@ -1,27 +1,45 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
+import 'desktop/macos_keychain_service.dart';
 
-/// Service for secure storage and retrieval of API credentials and tokens
-/// Uses encryption for sensitive data with key derivation from system info
+/// Unified service for secure storage and retrieval of API credentials and tokens
+/// Uses native macOS Keychain on macOS, fallback to encrypted storage on other platforms
 class SecureCredentialsService {
   final DesktopStorageService _storageService;
+  final MacOSKeychainService? _keychainService;
+
   static const String _credentialsBox = 'secure_credentials';
   static const String _saltKey = 'mcp_credential_salt';
-  
+
   // Cache for decrypted credentials to avoid repeated decryption
   final Map<String, String> _credentialCache = {};
   String? _encryptionKey;
 
-  SecureCredentialsService(this._storageService);
+  SecureCredentialsService(
+    this._storageService, [
+    this._keychainService,
+  ]);
+
+  /// Check if native secure storage (Keychain) is available
+  bool get useNativeKeychain =>
+      !kIsWeb && Platform.isMacOS && _keychainService != null;
 
   /// Initialize secure storage with encryption key
   Future<void> initialize() async {
-    await _initializeEncryptionKey();
+    if (useNativeKeychain) {
+      await _keychainService!.initialize();
+      print('✓ Using macOS Keychain for credential storage');
+    } else {
+      await _initializeEncryptionKey();
+      print('✓ Using encrypted storage for credentials');
+    }
   }
 
   /// Store encrypted credential
@@ -31,17 +49,27 @@ class SecureCredentialsService {
       return;
     }
 
-    final encryptedValue = await _encrypt(value);
-    await _storageService.setHiveData(_credentialsBox, key, encryptedValue);
-    
+    if (useNativeKeychain) {
+      await _keychainService!.storeCredential(key, value);
+    } else {
+      final encryptedValue = await _encrypt(value);
+      await _storageService.setHiveData(_credentialsBox, key, encryptedValue);
+    }
+
     // Update cache
     _credentialCache[key] = value;
   }
 
   /// Store multiple credentials in a batch
   Future<void> storeCredentials(Map<String, String> credentials) async {
-    for (final entry in credentials.entries) {
-      await storeCredential(entry.key, entry.value);
+    if (useNativeKeychain) {
+      await _keychainService!.storeCredentials(credentials);
+      // Update cache
+      _credentialCache.addAll(credentials);
+    } else {
+      for (final entry in credentials.entries) {
+        await storeCredential(entry.key, entry.value);
+      }
     }
   }
 
@@ -52,33 +80,50 @@ class SecureCredentialsService {
       return _credentialCache[key];
     }
 
-    final encryptedValue = _storageService.getHiveData(_credentialsBox, key) as String?;
-    if (encryptedValue == null) {
-      return null;
+    String? value;
+
+    if (useNativeKeychain) {
+      value = await _keychainService!.getCredential(key);
+    } else {
+      final encryptedValue = _storageService.getHiveData(_credentialsBox, key) as String?;
+      if (encryptedValue == null) {
+        return null;
+      }
+
+      try {
+        value = await _decrypt(encryptedValue);
+      } catch (e) {
+        print('Failed to decrypt credential $key: $e');
+        // Remove corrupted credential
+        await removeCredential(key);
+        return null;
+      }
     }
 
-    try {
-      final decryptedValue = await _decrypt(encryptedValue);
-      _credentialCache[key] = decryptedValue;
-      return decryptedValue;
-    } catch (e) {
-      print('Failed to decrypt credential $key: $e');
-      // Remove corrupted credential
-      await removeCredential(key);
-      return null;
+    if (value != null) {
+      _credentialCache[key] = value;
     }
+
+    return value;
   }
 
   /// Retrieve multiple credentials
   Future<Map<String, String>> getCredentials(List<String> keys) async {
-    final result = <String, String>{};
-    for (final key in keys) {
-      final value = await getCredential(key);
-      if (value != null) {
-        result[key] = value;
+    if (useNativeKeychain) {
+      final result = await _keychainService!.getCredentials(keys);
+      // Update cache
+      _credentialCache.addAll(result);
+      return result;
+    } else {
+      final result = <String, String>{};
+      for (final key in keys) {
+        final value = await getCredential(key);
+        if (value != null) {
+          result[key] = value;
+        }
       }
+      return result;
     }
-    return result;
   }
 
   /// Check if credential exists
@@ -86,29 +131,50 @@ class SecureCredentialsService {
     if (_credentialCache.containsKey(key)) {
       return true;
     }
-    return _storageService.getHiveData(_credentialsBox, key) != null;
+
+    if (useNativeKeychain) {
+      return await _keychainService!.hasCredential(key);
+    } else {
+      return _storageService.getHiveData(_credentialsBox, key) != null;
+    }
   }
 
   /// Remove credential
   Future<void> removeCredential(String key) async {
-    await _storageService.removeHiveData(_credentialsBox, key);
+    if (useNativeKeychain) {
+      await _keychainService!.removeCredential(key);
+    } else {
+      await _storageService.removeHiveData(_credentialsBox, key);
+    }
     _credentialCache.remove(key);
   }
 
   /// Clear all credentials
   Future<void> clearAllCredentials() async {
-    await _storageService.clearHiveBox(_credentialsBox);
+    if (useNativeKeychain) {
+      await _keychainService!.clearAllCredentials();
+    } else {
+      await _storageService.clearHiveBox(_credentialsBox);
+    }
     _credentialCache.clear();
   }
 
   /// Get all stored credential keys (for management)
-  List<String> getStoredCredentialKeys() {
-    final box = _storageService.getAllHiveData(_credentialsBox);
-    return box.keys.cast<String>().toList();
+  Future<List<String>> getStoredCredentialKeys() async {
+    if (useNativeKeychain) {
+      return await _keychainService!.getStoredCredentialKeys();
+    } else {
+      final box = _storageService.getAllHiveData(_credentialsBox);
+      return box.keys.cast<String>().toList();
+    }
   }
 
   /// Validate credential format (basic validation)
   bool validateCredential(String key, String value) {
+    if (useNativeKeychain) {
+      return _keychainService!.validateCredential(key, value);
+    }
+
     if (value.isEmpty) return false;
 
     // Basic validation patterns for common credential types
@@ -332,7 +398,19 @@ class MCPCredentialsService {
 
 final secureCredentialsServiceProvider = Provider<SecureCredentialsService>((ref) {
   final storageService = ref.read(desktopStorageServiceProvider);
-  return SecureCredentialsService(storageService);
+
+  // Try to get macOS Keychain service if available
+  MacOSKeychainService? keychainService;
+  if (!kIsWeb && Platform.isMacOS) {
+    try {
+      keychainService = ref.read(macOSKeychainServiceProvider);
+    } catch (e) {
+      // Keychain service not available, fall back to encrypted storage
+      print('Keychain service not available, using encrypted storage: $e');
+    }
+  }
+
+  return SecureCredentialsService(storageService, keychainService);
 });
 
 final mcpCredentialsServiceProvider = Provider<MCPCredentialsService>((ref) {
