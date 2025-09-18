@@ -1,0 +1,47 @@
+Asmbli Desktop v1.0.0
+
+Build Information:
+==================
+Version: 1.0.0+1
+Build Date: 2025-09-18
+Platform: Windows x64
+Flutter Version: 3.24.x
+Dart Version: 3.5.x
+
+File Checksums (SHA256):
+========================
+agentengine_desktop.exe: 777449c04e7e4d256b608e0b605a3da8f95d79a00b55efd8e9dafb1a182420fc
+flutter_windows.dll: [Core Flutter runtime]
+
+Package Contents:
+=================
+agentengine_desktop.exe      - Main application executable
+flutter_windows.dll         - Flutter runtime library
+data/                        - Application resources and assets
+*.dll                        - Plugin libraries for Windows integration
+
+Total Package Size: ~19MB
+
+Release Notes v1.0.0:
+=====================
+🎉 Initial release of Asmbli Desktop
+✅ Complete Flutter desktop application
+✅ 60+ MCP server integrations
+✅ Multi-color scheme design system
+✅ Real-time chat with streaming
+✅ Enterprise security features
+✅ Vector knowledge base
+✅ Cross-platform agent templates
+
+Known Issues:
+=============
+- Database locks may occur if multiple instances run simultaneously
+- Some integrations require OAuth setup on first use
+- Vector database initialization may take a few moments on first run
+
+Next Version Preview (v1.1.0):
+==============================
+🔮 Enhanced mobile support
+🔮 Advanced analytics dashboard
+🔮 Multi-user collaboration
+🔮 Plugin marketplace
