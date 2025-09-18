@@ -299,15 +299,15 @@ class MCPSettingsService {
     final apiConfigId = _agentApiMappings[agentId];
     
     // Get enabled MCP servers from catalog service
-    final enabledServerIds = _catalogService.getEnabledServerIds();
+    final enabledServerIds = await _catalogService.getEnabledServerIds();
     final agentConfigs = _catalogService.getAgentMCPConfigs(agentId);
     
     // Build MCP server configs with catalog entries and auth
     final mcpConfigs = <String, Map<String, dynamic>>{};
     for (final serverId in enabledServerIds) {
-      final catalogEntry = _catalogService.getCatalogEntry(serverId);
+      final catalogEntry = await _catalogService.getCatalogEntry(serverId);
       final agentConfig = agentConfigs[serverId];
-      
+
       if (catalogEntry != null && agentConfig != null) {
         // Convert catalog entry to MCPServerConfig for deployment
         final serverConfig = MCPServerConfig(

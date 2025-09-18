@@ -91,7 +91,7 @@ class AgentMCPIntegrationService {
       );
 
       // Get catalog entry
-      final catalogEntry = _catalogService.getCatalogEntry(serverId);
+      final catalogEntry = await _catalogService.getCatalogEntry(serverId);
       if (catalogEntry == null) {
         throw MCPIntegrationException('MCP server not found in catalog: $serverId');
       }

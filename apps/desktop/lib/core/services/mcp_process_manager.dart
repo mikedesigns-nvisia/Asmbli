@@ -10,6 +10,57 @@ import 'mcp_catalog_service.dart';
 import 'mcp_protocol_handler.dart';
 import '../../features/agents/presentation/widgets/mcp_server_logs_widget.dart';
 
+/// Installation progress tracking
+class InstallationProgress {
+  final String serverId;
+  final InstallationPhase phase;
+  final String message;
+  final double progress; // 0.0 to 1.0
+  final bool isComplete;
+  final String? errorMessage;
+  final List<String> logOutput;
+
+  const InstallationProgress({
+    required this.serverId,
+    required this.phase,
+    required this.message,
+    required this.progress,
+    this.isComplete = false,
+    this.errorMessage,
+    this.logOutput = const [],
+  });
+
+  InstallationProgress copyWith({
+    InstallationPhase? phase,
+    String? message,
+    double? progress,
+    bool? isComplete,
+    String? errorMessage,
+    List<String>? logOutput,
+  }) {
+    return InstallationProgress(
+      serverId: serverId,
+      phase: phase ?? this.phase,
+      message: message ?? this.message,
+      progress: progress ?? this.progress,
+      isComplete: isComplete ?? this.isComplete,
+      errorMessage: errorMessage ?? this.errorMessage,
+      logOutput: logOutput ?? this.logOutput,
+    );
+  }
+}
+
+/// Installation phases
+enum InstallationPhase {
+  preparing,
+  downloading,
+  installing,
+  configuring,
+  starting,
+  completed,
+  failed,
+}
+
 /// Production-grade process manager for MCP servers with proper cleanup and resource management
 class MCPProcessManager implements MCPServerManagerInterface {
   final MCPCatalogService _catalogService;
@@ -26,6 +77,10 @@ class MCPProcessManager implements MCPServerManagerInterface {
   final Map<String, List<MCPLogEntry>> _serverLogs = {};
   final Map<String, StreamController<MCPLogEntry>> _logStreamControllers = {};
   static const int _maxLogsPerServer = 1000;
+
+  // Installation progress tracking
+  final Map<String, StreamController<InstallationProgress>> _installationProgressControllers = {};
+  final Map<String, InstallationProgress> _currentInstallationProgress = {};
   
   // Resource limits and timeouts
   static const Duration _startupTimeout = Duration(seconds: 30);
@@ -44,7 +99,7 @@ class MCPProcessManager implements MCPServerManagerInterface {
     required Map<String, String> credentials,
     Map<String, String>? environment,
   }) async {
-    final catalogEntry = _catalogService.getCatalogEntry(serverId);
+    final catalogEntry = await _catalogService.getCatalogEntry(serverId);
     if (catalogEntry == null) {
       throw MCPProcessException('Server $serverId not found in catalog');
     }
@@ -63,7 +118,14 @@ class MCPProcessManager implements MCPServerManagerInterface {
     final startupCompleter = Completer<bool>();
     _startupCompleters[processId] = startupCompleter;
 
+    // Initialize installation progress tracking
+    _initializeInstallationProgress(serverId);
+
     try {
+      // Update progress: Preparing
+      _updateInstallationProgress(serverId, InstallationPhase.preparing,
+        'Preparing server installation...', 0.1);
+
       // Prepare environment variables
       final processEnv = <String, String>{
         ...Platform.environment,
@@ -71,10 +133,15 @@ class MCPProcessManager implements MCPServerManagerInterface {
         ...(environment ?? {}),
       };
 
+      // Update progress: Starting installation
+      _updateInstallationProgress(serverId, InstallationPhase.installing,
+        'Starting ${catalogEntry.name}...', 0.3);
+
       // Start the process based on transport type
-      final process = await _startProcessForTransport(
+      final process = await _startProcessForTransportWithProgress(
         catalogEntry,
         processEnv,
+        serverId,
       );
 
       if (process == null) {
@@ -714,20 +781,242 @@ class MCPProcessManager implements MCPServerManagerInterface {
     );
   }
 
+  // ==================== Installation Progress Tracking ====================
+
+  /// Initialize installation progress tracking for a server
+  void _initializeInstallationProgress(String serverId) {
+    final controller = StreamController<InstallationProgress>.broadcast();
+    _installationProgressControllers[serverId] = controller;
+
+    final initialProgress = InstallationProgress(
+      serverId: serverId,
+      phase: InstallationPhase.preparing,
+      message: 'Initializing server installation...',
+      progress: 0.0,
+    );
+
+    _currentInstallationProgress[serverId] = initialProgress;
+    controller.add(initialProgress);
+  }
+
+  /// Update installation progress
+  void _updateInstallationProgress(String serverId, InstallationPhase phase, String message, double progress) {
+    final controller = _installationProgressControllers[serverId];
+    if (controller == null || controller.isClosed) return;
+
+    final currentProgress = _currentInstallationProgress[serverId];
+    if (currentProgress == null) return;
+
+    final newProgress = currentProgress.copyWith(
+      phase: phase,
+      message: message,
+      progress: progress,
+      isComplete: phase == InstallationPhase.completed,
+      errorMessage: phase == InstallationPhase.failed ? message : null,
+    );
+
+    _currentInstallationProgress[serverId] = newProgress;
+    controller.add(newProgress);
+
+    // Auto-close completed/failed installations after a delay
+    if (phase == InstallationPhase.completed || phase == InstallationPhase.failed) {
+      Timer(const Duration(seconds: 5), () {
+        _cleanupInstallationProgress(serverId);
+      });
+    }
+  }
+
+  /// Add log output to installation progress
+  void _addInstallationLogOutput(String serverId, String logLine) {
+    final currentProgress = _currentInstallationProgress[serverId];
+    if (currentProgress == null) return;
+
+    final updatedLogs = [...currentProgress.logOutput, logLine];
+    final newProgress = currentProgress.copyWith(logOutput: updatedLogs);
+
+    _currentInstallationProgress[serverId] = newProgress;
+    final controller = _installationProgressControllers[serverId];
+    if (controller != null && !controller.isClosed) {
+      controller.add(newProgress);
+    }
+  }
+
+  /// Get installation progress stream for a server
+  Stream<InstallationProgress>? getInstallationProgressStream(String serverId) {
+    return _installationProgressControllers[serverId]?.stream;
+  }
+
+  /// Get current installation progress for a server
+  InstallationProgress? getCurrentInstallationProgress(String serverId) {
+    return _currentInstallationProgress[serverId];
+  }
+
+  /// Clean up installation progress tracking
+  void _cleanupInstallationProgress(String serverId) {
+    final controller = _installationProgressControllers.remove(serverId);
+    if (controller != null && !controller.isClosed) {
+      controller.close();
+    }
+    _currentInstallationProgress.remove(serverId);
+  }
+
+  /// Enhanced process starting with progress tracking
+  Future<Process?> _startProcessForTransportWithProgress(
+    MCPCatalogEntry catalogEntry,
+    Map<String, String> environment,
+    String serverId,
+  ) async {
+    try {
+      switch (catalogEntry.transport) {
+        case MCPTransportType.stdio:
+          return await _startStdioProcessWithProgress(catalogEntry, environment, serverId);
+        case MCPTransportType.sse:
+          return await _startHttpServerWithProgress(catalogEntry, environment, serverId);
+        case MCPTransportType.http:
+          return await _startHttpServerWithProgress(catalogEntry, environment, serverId);
+      }
+    } catch (e) {
+      _updateInstallationProgress(serverId, InstallationPhase.failed,
+        'Failed to start process: $e', 1.0);
+      rethrow;
+    }
+  }
+
+  /// Start stdio process with progress tracking
+  Future<Process> _startStdioProcessWithProgress(
+    MCPCatalogEntry catalogEntry,
+    Map<String, String> environment,
+    String serverId,
+  ) async {
+    _updateInstallationProgress(serverId, InstallationPhase.starting,
+      'Starting ${catalogEntry.command}...', 0.7);
+
+    final command = catalogEntry.command.isNotEmpty ? catalogEntry.command : 'uvx';
+    final args = catalogEntry.args;
+
+    // For uvx/npx commands, we might need to handle installation first
+    if (command == 'uvx' || command == 'npx') {
+      _updateInstallationProgress(serverId, InstallationPhase.downloading,
+        'Installing dependencies...', 0.5);
+    }
+
+    final process = await Process.start(
+      command,
+      args,
+      environment: environment,
+      mode: ProcessStartMode.normal,
+      runInShell: true,
+    );
+
+    // Monitor process output for installation feedback
+    _monitorProcessForInstallation(process, serverId);
+
+    _updateInstallationProgress(serverId, InstallationPhase.configuring,
+      'Configuring server...', 0.9);
+
+    return process;
+  }
+
+  /// Start HTTP server with progress tracking
+  Future<Process> _startHttpServerWithProgress(
+    MCPCatalogEntry catalogEntry,
+    Map<String, String> environment,
+    String serverId,
+  ) async {
+    _updateInstallationProgress(serverId, InstallationPhase.starting,
+      'Starting HTTP server...', 0.7);
+
+    final command = catalogEntry.command.isNotEmpty ? catalogEntry.command : 'uvx';
+    final args = [...catalogEntry.args, '--transport', 'sse'];
+
+    final process = await Process.start(
+      command,
+      args,
+      environment: environment,
+      mode: ProcessStartMode.normal,
+      runInShell: true,
+    );
+
+    // Monitor process output for installation feedback
+    _monitorProcessForInstallation(process, serverId);
+
+    return process;
+  }
+
+  /// Monitor process output during installation
+  void _monitorProcessForInstallation(Process process, String serverId) {
+    // Monitor stdout for installation progress
+    process.stdout.transform(utf8.decoder).listen((data) {
+      final lines = data.split('\n');
+      for (final line in lines) {
+        if (line.trim().isNotEmpty) {
+          _addInstallationLogOutput(serverId, line.trim());
+
+          // Parse common installation messages
+          if (line.contains('Installing') || line.contains('Downloading')) {
+            _updateInstallationProgress(serverId, InstallationPhase.downloading,
+              'Installing: ${line.trim()}', 0.6);
+          } else if (line.contains('Starting') || line.contains('Ready')) {
+            _updateInstallationProgress(serverId, InstallationPhase.starting,
+              'Server starting...', 0.8);
+          } else if (line.contains('listening') || line.contains('server started')) {
+            _updateInstallationProgress(serverId, InstallationPhase.completed,
+              'Server started successfully!', 1.0);
+          }
+        }
+      }
+    });
+
+    // Monitor stderr for errors
+    process.stderr.transform(utf8.decoder).listen((data) {
+      final lines = data.split('\n');
+      for (final line in lines) {
+        if (line.trim().isNotEmpty) {
+          _addInstallationLogOutput(serverId, '[ERROR] ${line.trim()}');
+
+          // Check for common error patterns
+          if (line.contains('Error') || line.contains('Failed') || line.contains('not found')) {
+            _updateInstallationProgress(serverId, InstallationPhase.failed,
+              'Installation failed: ${line.trim()}', 1.0);
+          }
+        }
+      }
+    });
+
+    // Set a timeout to mark as completed if no explicit completion signal
+    Timer(const Duration(seconds: 10), () {
+      final currentProgress = _currentInstallationProgress[serverId];
+      if (currentProgress != null && !currentProgress.isComplete && currentProgress.phase != InstallationPhase.failed) {
+        _updateInstallationProgress(serverId, InstallationPhase.completed,
+          'Server installation completed', 1.0);
+      }
+    });
+  }
+
   /// Emergency shutdown of all processes
   @override
   Future<void> emergencyShutdown() async {
     print('Performing emergency shutdown of all MCP processes...');
-    
+
     final shutdownFutures = _runningProcesses.keys
         .map((processId) => stopServer(processId))
         .toList();
 
     await Future.wait(shutdownFutures);
-    
+
     // Force cleanup any remaining resources
     _runningProcesses.clear();
     _systemProcesses.clear();
+
+    // Close installation progress controllers
+    for (final controller in _installationProgressControllers.values) {
+      if (!controller.isClosed) {
+        controller.close();
+      }
+    }
+    _installationProgressControllers.clear();
+    _currentInstallationProgress.clear();
+
     _cleanupAllResources();
   }
 
@@ -800,10 +1089,10 @@ class MCPProcessManager implements MCPServerManagerInterface {
     if (connection == null) {
       throw MCPProcessException('No connection found for process $processId');
     }
-    
+
     final method = request['method'] as String;
     final params = request['params'] as Map<String, dynamic>?;
-    
+
     final response = await connection.request(method, params);
     return response.toJson();
   }
@@ -883,4 +1172,14 @@ final mcpProcessManagerProvider = Provider<MCPProcessManager>((ref) {
   final catalogService = ref.read(mcpCatalogServiceProvider);
   final protocolHandler = ref.read(mcpProtocolHandlerProvider);
   return MCPProcessManager(catalogService, protocolHandler);
+});
+
+/// Provider for watching running MCP servers
+final runningMCPServersProvider = StreamProvider<List<MCPServerProcess>>((ref) {
+  final processManager = ref.read(mcpProcessManagerProvider);
+
+  // Create a stream that emits the current running servers every second
+  return Stream.periodic(const Duration(seconds: 1), (_) {
+    return processManager.getAllRunningServers();
+  });
 });

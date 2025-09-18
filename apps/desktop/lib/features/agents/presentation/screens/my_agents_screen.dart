@@ -708,7 +708,7 @@ _buildCompactHeaderWithTabs(),
    context.go('/agents/configure/${newAgent.id}');
  } catch (e) {
    // If agent creation fails, just navigate to new agent screen
-   context.go('/agents/configure');
+   context.go(AppRoutes.agentBuilder);
  }
  }
  
@@ -1200,7 +1200,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  AsmblButton.primary(
  text: 'Create Agent',
  onPressed: () {
- context.go('/agents/configure');
+ context.go(AppRoutes.agentBuilder);
  },
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),

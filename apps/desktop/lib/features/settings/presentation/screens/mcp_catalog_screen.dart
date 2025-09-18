@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/mcp_catalog_service.dart';
+import '../../../../core/services/github_mcp_registry_service.dart';
 import '../../../../core/models/mcp_catalog_entry.dart';
 import '../../../../core/models/mcp_server_category.dart';
+import '../../../../core/models/github_mcp_registry_models.dart';
 import '../widgets/mcp_catalog_entry_card.dart';
 import '../widgets/mcp_server_setup_dialog.dart';
 
@@ -20,12 +22,14 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
   String _searchQuery = '';
   MCPServerCategory? _selectedCategory;
   bool _showOnlyFeatured = false;
+  bool _showTrending = false;
+  bool _showPopular = false;
+  InstallationDifficulty? _selectedDifficulty;
 
   @override
   Widget build(BuildContext context) {
     final colors = ThemeColors(context);
-    final catalogEntries = ref.watch(mcpCatalogEntriesProvider);
-    final filteredEntries = _filterEntries(catalogEntries);
+    final catalogEntriesAsync = ref.watch(mcpCatalogEntriesProvider);
     
     return Scaffold(
       body: Container(
@@ -44,20 +48,34 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
           children: [
             _buildHeader(context, colors),
             Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(SpacingTokens.pageHorizontalPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: SpacingTokens.lg),
-                    _buildSearchAndFilters(colors),
-                    SizedBox(height: SpacingTokens.xl),
-                    if (_showOnlyFeatured || _searchQuery.isEmpty)
-                      _buildFeaturedSection(filteredEntries, colors),
-                    if (!_showOnlyFeatured)
-                      _buildCategoriesSection(filteredEntries, colors),
-                    SizedBox(height: SpacingTokens.xxl),
-                  ],
+              child: catalogEntriesAsync.when(
+                data: (catalogEntries) {
+                  final filteredEntries = _filterEntries(catalogEntries);
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.all(SpacingTokens.pageHorizontalPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: SpacingTokens.lg),
+                        _buildSearchAndFilters(colors),
+                        SizedBox(height: SpacingTokens.xl),
+                        if (_showTrending)
+                          _buildTrendingSection(colors),
+                        if (_showPopular)
+                          _buildPopularSection(colors),
+                        if (_showOnlyFeatured)
+                          _buildFeaturedSection(filteredEntries, colors),
+                        if (!_showOnlyFeatured && !_showTrending && !_showPopular && _searchQuery.isEmpty)
+                          _buildAllSections(colors),
+                        if (_searchQuery.isNotEmpty || _selectedCategory != null || _selectedDifficulty != null)
+                          _buildFilteredSection(filteredEntries, colors),
+                      ],
+                    ),
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(
+                  child: Text('Failed to load catalog: $error'),
                 ),
               ),
             ),
@@ -82,12 +100,12 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'MCP Tool Catalog',
+                  'MCP Registry',
                   style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
                 ),
                 SizedBox(height: SpacingTokens.xs),
                 Text(
-                  'Browse and add MCP servers to extend your agents\' capabilities',
+                  'Discover and install Model Context Protocol servers',
                   style: TextStyles.bodyMedium.copyWith(
                     color: colors.onSurfaceVariant,
                   ),
@@ -137,9 +155,43 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
               _buildFilterChip(
                 'Featured',
                 _showOnlyFeatured,
-                () => setState(() => _showOnlyFeatured = !_showOnlyFeatured),
+                () => setState(() {
+                  _showOnlyFeatured = !_showOnlyFeatured;
+                  if (_showOnlyFeatured) {
+                    _showTrending = false;
+                    _showPopular = false;
+                  }
+                }),
                 colors,
               ),
+              SizedBox(width: SpacingTokens.sm),
+              _buildFilterChip(
+                '🆕 Latest',
+                _showTrending,
+                () => setState(() {
+                  _showTrending = !_showTrending;
+                  if (_showTrending) {
+                    _showOnlyFeatured = false;
+                    _showPopular = false;
+                  }
+                }),
+                colors,
+              ),
+              SizedBox(width: SpacingTokens.sm),
+              _buildFilterChip(
+                '📊 Most Used',
+                _showPopular,
+                () => setState(() {
+                  _showPopular = !_showPopular;
+                  if (_showPopular) {
+                    _showOnlyFeatured = false;
+                    _showTrending = false;
+                  }
+                }),
+                colors,
+              ),
+              SizedBox(width: SpacingTokens.sm),
+              ..._buildDifficultyChips(colors),
               SizedBox(width: SpacingTokens.sm),
               ..._buildCategoryChips(colors),
             ],
@@ -166,6 +218,39 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
         width: selected ? 2 : 1,
       ),
     );
+  }
+
+  List<Widget> _buildDifficultyChips(ThemeColors colors) {
+    return InstallationDifficulty.values.map((difficulty) {
+      final isSelected = _selectedDifficulty == difficulty;
+      final difficultyName = _getDifficultyDisplayName(difficulty);
+      final difficultyIcon = _getDifficultyIcon(difficulty);
+
+      return Padding(
+        padding: EdgeInsets.only(right: SpacingTokens.sm),
+        child: FilterChip(
+          avatar: Icon(difficultyIcon, size: 16),
+          label: Text(difficultyName),
+          selected: isSelected,
+          onSelected: (selected) {
+            setState(() {
+              _selectedDifficulty = selected ? difficulty : null;
+            });
+          },
+          backgroundColor: colors.surface.withOpacity(0.3),
+          selectedColor: colors.primary.withOpacity(0.2),
+          checkmarkColor: colors.primary,
+          labelStyle: TextStyle(
+            color: isSelected ? colors.primary : colors.onSurfaceVariant,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
+          side: BorderSide(
+            color: isSelected ? colors.primary : colors.border,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+      );
+    }).toList();
   }
 
   List<Widget> _buildCategoryChips(ThemeColors colors) {
@@ -195,6 +280,189 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
         ),
       );
     }).toList();
+  }
+
+  Widget _buildTrendingSection(ThemeColors colors) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final trendingAsync = ref.watch(trendingServersProvider);
+
+        return trendingAsync.when(
+          data: (githubEntries) {
+            if (githubEntries.isEmpty) return const SizedBox.shrink();
+
+            // Convert to catalog entries for display
+            final trendingEntries = githubEntries.map((githubEntry) =>
+              ref.read(mcpCatalogServiceProvider).convertGitHubToCatalogEntry(githubEntry)
+            ).toList();
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.local_fire_department, color: colors.accent, size: 20),
+                    SizedBox(width: SpacingTokens.sm),
+                    Text(
+                      'Newly Released & Updated',
+                      style: TextStyles.headingMedium.copyWith(color: colors.onSurface),
+                    ),
+                    SizedBox(width: SpacingTokens.sm),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: colors.accent.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Latest Updates',
+                        style: TextStyles.bodySmall.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SpacingTokens.md),
+                _buildEntriesGrid(trendingEntries, colors),
+                SizedBox(height: SpacingTokens.xl),
+              ],
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => const SizedBox.shrink(),
+        );
+      },
+    );
+  }
+
+  Widget _buildPopularSection(ThemeColors colors) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final popularAsync = ref.watch(popularServersProvider);
+
+        return popularAsync.when(
+          data: (githubEntries) {
+            if (githubEntries.isEmpty) return const SizedBox.shrink();
+
+            // Convert to catalog entries for display
+            final popularEntries = githubEntries.map((githubEntry) =>
+              ref.read(mcpCatalogServiceProvider).convertGitHubToCatalogEntry(githubEntry)
+            ).toList();
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.star, color: colors.accent, size: 20),
+                    SizedBox(width: SpacingTokens.sm),
+                    Text(
+                      'Most Downloaded',
+                      style: TextStyles.headingMedium.copyWith(color: colors.onSurface),
+                    ),
+                    SizedBox(width: SpacingTokens.sm),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: colors.accent.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Proven & Reliable',
+                        style: TextStyles.bodySmall.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SpacingTokens.md),
+                _buildEntriesGrid(popularEntries, colors),
+                SizedBox(height: SpacingTokens.xl),
+              ],
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => const SizedBox.shrink(),
+        );
+      },
+    );
+  }
+
+  Widget _buildAllSections(ThemeColors colors) {
+    return Column(
+      children: [
+        _buildTrendingSection(colors),
+        _buildPopularSection(colors),
+        Consumer(
+          builder: (context, ref, child) {
+            final catalogEntriesAsync = ref.watch(mcpCatalogEntriesProvider);
+            return catalogEntriesAsync.when(
+              data: (entries) {
+                final featuredEntries = entries.where((entry) => entry.isFeatured).toList();
+                return Column(
+                  children: [
+                    _buildFeaturedSection(featuredEntries, colors),
+                    _buildCategoriesSection(entries, colors),
+                  ],
+                );
+              },
+              loading: () => const SizedBox.shrink(),
+              error: (error, stack) => const SizedBox.shrink(),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilteredSection(List<MCPCatalogEntry> filteredEntries, ThemeColors colors) {
+    if (filteredEntries.isEmpty) {
+      return Center(
+        child: Column(
+          children: [
+            SizedBox(height: SpacingTokens.xxl),
+            Icon(Icons.search_off, size: 64, color: colors.onSurfaceVariant),
+            SizedBox(height: SpacingTokens.md),
+            Text(
+              'No servers found',
+              style: TextStyles.headingMedium.copyWith(color: colors.onSurfaceVariant),
+            ),
+            SizedBox(height: SpacingTokens.sm),
+            Text(
+              'Try adjusting your search or filter criteria',
+              style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.filter_list, color: colors.onSurfaceVariant, size: 20),
+            SizedBox(width: SpacingTokens.sm),
+            Text(
+              'Filtered Results',
+              style: TextStyles.headingMedium.copyWith(color: colors.onSurface),
+            ),
+            SizedBox(width: SpacingTokens.sm),
+            Text(
+              '(${filteredEntries.length})',
+              style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
+            ),
+          ],
+        ),
+        SizedBox(height: SpacingTokens.md),
+        _buildEntriesGrid(filteredEntries, colors),
+      ],
+    );
   }
 
   Widget _buildFeaturedSection(List<MCPCatalogEntry> entries, ThemeColors colors) {
@@ -268,35 +536,17 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
   }
 
   Widget _buildEntriesGrid(List<MCPCatalogEntry> entries, ThemeColors colors) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Fixed 4-column grid regardless of screen size
-        int crossAxisCount = 4;
-        
-        // Debug print to see what's happening
-        print('📐 Grid Debug: width=${constraints.maxWidth}, columns=$crossAxisCount (fixed 4-column)');
-        
-        // Fixed aspect ratio for 4-column compact cards (made smaller for better fit)
-        double aspectRatio = 0.6;
-        
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: constraints.maxWidth / 4, // Force exactly 4 columns
-            crossAxisSpacing: SpacingTokens.md,
-            mainAxisSpacing: SpacingTokens.md,
-            childAspectRatio: aspectRatio,
+    // GitHub-style single column list layout
+    return Column(
+      children: entries.map((entry) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: SpacingTokens.md),
+          child: MCPCatalogEntryCard(
+            entry: entry,
+            onTap: () => _showServerSetupDialog(entry),
           ),
-          itemCount: entries.length,
-          itemBuilder: (context, index) {
-            return MCPCatalogEntryCard(
-              entry: entries[index],
-              onTap: () => _showServerSetupDialog(entries[index]),
-            );
-          },
         );
-      },
+      }).toList(),
     );
   }
 
@@ -343,6 +593,24 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
       filtered = filtered.where((entry) => entry.isFeatured).toList();
     }
 
+    // Filter by installation difficulty
+    if (_selectedDifficulty != null) {
+      filtered = filtered.where((entry) {
+        final difficulty = _getDifficultyForEntry(entry);
+        return difficulty == _selectedDifficulty;
+      }).toList();
+    }
+
+    // Sort by quality score if no specific filters are applied
+    if (_searchQuery.isEmpty && _selectedCategory == null && !_showOnlyFeatured && _selectedDifficulty == null) {
+      filtered.sort((a, b) {
+        // Simple quality scoring based on available data
+        int scoreA = _calculateEntryScore(a);
+        int scoreB = _calculateEntryScore(b);
+        return scoreB.compareTo(scoreA);
+      });
+    }
+
     return filtered;
   }
 
@@ -383,5 +651,95 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
       case MCPServerCategory.custom:
         return Icons.extension;
     }
+  }
+
+  String _getDifficultyDisplayName(InstallationDifficulty difficulty) {
+    switch (difficulty) {
+      case InstallationDifficulty.beginner:
+        return 'Easy';
+      case InstallationDifficulty.intermediate:
+        return 'Medium';
+      case InstallationDifficulty.advanced:
+        return 'Advanced';
+    }
+  }
+
+  IconData _getDifficultyIcon(InstallationDifficulty difficulty) {
+    switch (difficulty) {
+      case InstallationDifficulty.beginner:
+        return Icons.sentiment_very_satisfied;
+      case InstallationDifficulty.intermediate:
+        return Icons.sentiment_neutral;
+      case InstallationDifficulty.advanced:
+        return Icons.sentiment_very_dissatisfied;
+    }
+  }
+
+  InstallationDifficulty _getDifficultyForEntry(MCPCatalogEntry entry) {
+    final command = entry.command.toLowerCase();
+    final hasEnvVars = entry.requiredEnvVars.isNotEmpty;
+    final hasComplexSetup = entry.setupInstructions?.isNotEmpty == true;
+
+    // Easy: Simple command, no env vars needed
+    if ((command.contains('npx') || command.contains('uvx')) && !hasEnvVars && !hasComplexSetup) {
+      return InstallationDifficulty.beginner;
+    }
+
+    // Hard: Requires compilation, complex setup, or many dependencies
+    if (command.contains('git') ||
+        command.contains('build') ||
+        command.contains('compile') ||
+        hasComplexSetup ||
+        entry.requiredEnvVars.length > 3) {
+      return InstallationDifficulty.advanced;
+    }
+
+    // Medium: Everything else (Docker, some env vars, etc.)
+    return InstallationDifficulty.intermediate;
+  }
+
+  int _calculateEntryScore(MCPCatalogEntry entry) {
+    int score = 0;
+
+    // Base score
+    score += 10;
+
+    // Bonus for having version info
+    if (entry.version?.isNotEmpty == true) score += 5;
+
+    // Bonus for having documentation
+    if (entry.documentationUrl?.isNotEmpty == true) score += 10;
+    if (entry.setupInstructions?.isNotEmpty == true) score += 8;
+
+    // Bonus for capabilities
+    score += entry.capabilities.length * 3;
+
+    // Bonus for being official or featured
+    if (entry.isOfficial) score += 20;
+    if (entry.isFeatured) score += 15;
+
+    // Bonus for recent updates
+    if (entry.lastUpdated != null) {
+      final daysSinceUpdate = DateTime.now().difference(entry.lastUpdated!).inDays;
+      if (daysSinceUpdate < 30) score += 15;
+      else if (daysSinceUpdate < 90) score += 10;
+      else if (daysSinceUpdate < 180) score += 5;
+    }
+
+    // Installation difficulty penalty/bonus
+    final difficulty = _getDifficultyForEntry(entry);
+    switch (difficulty) {
+      case InstallationDifficulty.beginner:
+        score += 10; // Easy to install
+        break;
+      case InstallationDifficulty.intermediate:
+        score += 5; // Moderate complexity
+        break;
+      case InstallationDifficulty.advanced:
+        score -= 5; // Complex setup might deter users
+        break;
+    }
+
+    return score;
   }
 }

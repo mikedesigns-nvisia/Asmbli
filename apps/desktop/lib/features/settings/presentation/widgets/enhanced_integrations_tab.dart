@@ -180,7 +180,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
           const IntegrationRecommendationsWidget(),
           const SizedBox(height: SpacingTokens.sectionSpacing),
           
-          // Popular MCP servers
+          // Most Downloaded MCP servers
           _buildPopularServersSection(colors),
         ],
       ),
@@ -426,7 +426,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
         Row(
           children: [
             Text(
-              'Popular MCP Servers',
+              'Most Downloaded MCP Servers',
               style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
             ),
             const Spacer(),
@@ -897,7 +897,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
         backgroundColor: Colors.green,
       ),
     );
-    
+
     // Refresh the configured servers tab
     setState(() {});
     _tabController.animateTo(3);

@@ -19,6 +19,7 @@ import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'features/agents/presentation/screens/agent_configuration_screen.dart';
 import 'features/context/presentation/screens/context_library_screen.dart';
 import 'features/agent_wizard/presentation/screens/agent_wizard_screen.dart';
+import 'features/agents/presentation/screens/agent_builder_screen.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'providers/conversation_provider.dart';
 import 'package:agent_engine_core/models/conversation.dart';
@@ -39,7 +40,6 @@ import 'core/services/production_logger.dart';
 import 'core/config/environment_config.dart';
 import 'core/services/vector_integration_service.dart';
 import 'core/services/oauth_auto_refresh_initializer.dart';
-import 'core/services/sample_agent_creator.dart';
 import 'core/security/os_trust_manager.dart';
 import 'core/services/trust_service.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -146,10 +146,6 @@ void main() async {
  // Initialize SharedPreferences for feature flags
  final prefs = await SharedPreferences.getInstance();
 
- // Create sample agents for testing (run in background)
- SampleAgentCreator.createSampleAgents().catchError((e) {
-   print('⚠️ Sample agent creation failed: $e');
- });
  
     runApp(
       ProviderScope(
@@ -395,6 +391,10 @@ final _router = GoRouter(
     return AgentWizardScreen(selectedTemplate: template);
   },
  ),
+ GoRoute(
+  path: AppRoutes.agentBuilder,
+  builder: (context, state) => const AgentBuilderScreen(),
+ ),
  ],
 );
 
@@ -513,7 +513,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  icon: Icons.build,
  title: 'Build Agent',
  description: 'Create custom AI agent',
- onTap: () => context.go(AppRoutes.agentWizard),
+ onTap: () => context.go(AppRoutes.agentBuilder),
  ),
  ),
  ],

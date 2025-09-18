@@ -13,8 +13,6 @@ class AppearanceSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScreen> {
-  String _selectedColorScheme = AppColorSchemes.warmNeutral;
-
   @override
   Widget build(BuildContext context) {
     final themeState = ref.watch(themeServiceProvider);
@@ -40,7 +38,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
             const AppNavigationBar(currentRoute: AppRoutes.settings),
             _buildHeader(colors),
             Expanded(
-              child: _buildMainContent(colors, currentThemeMode, themeService),
+              child: _buildMainContent(colors, currentThemeMode, themeService, themeState),
             ),
           ],
         ),
@@ -89,7 +87,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
     );
   }
 
-  Widget _buildMainContent(ThemeColors colors, ThemeMode currentThemeMode, ThemeService themeService) {
+  Widget _buildMainContent(ThemeColors colors, ThemeMode currentThemeMode, ThemeService themeService, ThemeState themeState) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       child: Column(
@@ -97,7 +95,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
         children: [
           _buildThemeSection(colors, currentThemeMode, themeService),
           const SizedBox(height: SpacingTokens.sectionSpacing),
-          _buildColorSchemeSection(colors),
+          _buildColorSchemeSection(colors, themeState),
         ],
       ),
     );
@@ -187,7 +185,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
     );
   }
 
-  Widget _buildColorSchemeSection(ThemeColors colors) {
+  Widget _buildColorSchemeSection(ThemeColors colors, ThemeState themeState) {
     return AsmblCard(
       child: Padding(
         padding: const EdgeInsets.all(SpacingTokens.lg),
@@ -216,33 +214,27 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
             ),
             const SizedBox(height: SpacingTokens.componentSpacing),
             Text(
-              'Select your preferred color palette (currently using warm neutral)',
+              'Select your preferred color palette (currently using ${_getCurrentThemeName(themeState.colorScheme)})',
               style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
             ),
             const SizedBox(height: SpacingTokens.componentSpacing),
-            _buildColorSchemeGrid(colors),
+            _buildColorSchemeGrid(colors, themeState),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildColorSchemeGrid(ThemeColors colors) {
-    final schemes = [
-      const ColorSchemeOption('warm-neutral', 'Warm Neutral', [Color(0xFF3D3328), Color(0xFF736B5F), Color(0xFFFBF9F5)]),
-      const ColorSchemeOption('cool-blue', 'Cool Blue', [Color(0xFF1E3A8A), Color(0xFF3B82F6), Color(0xFFF0F9FF)]),
-      const ColorSchemeOption('forest-green', 'Forest Green', [Color(0xFF14532D), Color(0xFF22C55E), Color(0xFFF0FDF4)]),
-      const ColorSchemeOption('sunset-orange', 'Sunset Orange', [Color(0xFF9A3412), Color(0xFFF97316), Color(0xFFFFF7ED)]),
-    ];
+  Widget _buildColorSchemeGrid(ThemeColors colors, ThemeState themeState) {
+    final schemes = AppColorSchemes.all;
 
     return Wrap(
       spacing: SpacingTokens.componentSpacing,
       runSpacing: SpacingTokens.componentSpacing,
       children: schemes.map((scheme) {
-        final isSelected = _selectedColorScheme == scheme.id;
+        final isSelected = themeState.colorScheme == scheme.id;
         return InkWell(
           onTap: () {
-            setState(() => _selectedColorScheme = scheme.id);
             ref.read(themeServiceProvider.notifier).setColorScheme(scheme.id);
           },
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -290,13 +282,18 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
 
 
   void _resetToDefaults() {
-    setState(() {
-      _selectedColorScheme = AppColorSchemes.warmNeutral;
-    });
-    
     final themeService = ref.read(themeServiceProvider.notifier);
     themeService.setTheme(ThemeMode.system);
     themeService.setColorScheme(AppColorSchemes.warmNeutral);
+  }
+
+  String _getCurrentThemeName(String colorSchemeId) {
+    final schemes = AppColorSchemes.all;
+    final scheme = schemes.firstWhere(
+      (s) => s.id == colorSchemeId,
+      orElse: () => schemes.first,
+    );
+    return scheme.name.toLowerCase();
   }
 }
 

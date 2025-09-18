@@ -51,7 +51,10 @@
       "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services\\desktop/**)",
       "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services/**)",
       "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services\\adapters/**)",
-      "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services/**)"
+      "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services/**)",
+      "WebFetch(domain:github.blog)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(flutter run:*)"
     ],
     "deny": [],
     "ask": [],

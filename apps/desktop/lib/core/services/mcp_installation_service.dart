@@ -27,7 +27,7 @@ class MCPInstallationService {
     AgentTerminal terminal, {
     Map<String, String>? additionalEnvironment,
   }) async {
-    final catalogEntry = _catalogService.getCatalogEntry(serverId);
+    final catalogEntry = await _catalogService.getCatalogEntry(serverId);
     if (catalogEntry == null) {
       throw MCPInstallationException('Server not found in catalog: $serverId');
     }
@@ -673,7 +673,7 @@ class MCPInstallationService {
     AgentTerminal terminal,
     String serverId,
   ) async {
-    final catalogEntry = _catalogService.getCatalogEntry(serverId);
+    final catalogEntry = await _catalogService.getCatalogEntry(serverId);
     if (catalogEntry == null) {
       return false;
     }
@@ -701,7 +701,7 @@ class MCPInstallationService {
     AgentTerminal terminal,
     String serverId,
   ) async {
-    final catalogEntry = _catalogService.getCatalogEntry(serverId);
+    final catalogEntry = await _catalogService.getCatalogEntry(serverId);
     if (catalogEntry == null) {
       return false;
     }
@@ -812,7 +812,7 @@ class MCPInstallationService {
     // Install multiple MCP servers for an agent
     for (final serverId in serverIds) {
       try {
-        final catalogEntry = _catalogService.getCatalogEntry(serverId);
+        final catalogEntry = await _catalogService.getCatalogEntry(serverId);
         if (catalogEntry != null) {
           await installServer(serverId, catalogEntry);
         }

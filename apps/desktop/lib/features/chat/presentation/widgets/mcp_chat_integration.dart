@@ -4,8 +4,29 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/mcp_capability.dart';
 import '../../../../core/services/mcp_orchestrator.dart';
 import '../../../../core/services/mcp_user_interface_service.dart';
+import '../../../../core/services/mcp_catalog_service.dart';
 import '../../../../core/design_system/components/mcp_progress_widget.dart';
 import 'package:agent_engine_core/models/agent.dart';
+
+/// Server recommendation for contextual suggestions
+class ServerRecommendation {
+  final String id;
+  final String name;
+  final String description;
+  final IconData icon;
+  final String reason; // Why this server is recommended
+  final double relevanceScore; // 0.0 to 1.0
+
+  const ServerRecommendation({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.icon,
+    required this.reason,
+    required this.relevanceScore,
+  });
+}
+
 
 /// MCP Chat Integration Widget
 /// 
@@ -48,7 +69,7 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
         // Chat Messages
         Expanded(
           child: Container(
-            padding: SpacingTokens.lg,
+            padding: EdgeInsets.all(SpacingTokens.lg),
             child: ListView.builder(
               itemCount: _messages.length,
               itemBuilder: (context, index) => _buildMessage(_messages[index]),
@@ -63,9 +84,103 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
   }
 
   Widget _buildProgressArea() {
-    return Container(
-      padding: SpacingTokens.lg,
-      child: const MCPProgressListWidget(),
+    return Column(
+      children: [
+        // Existing progress widget
+        Container(
+          padding: EdgeInsets.all(SpacingTokens.lg),
+          child: const MCPProgressListWidget(),
+        ),
+
+        // Contextual server recommendations
+        _buildServerRecommendations(),
+      ],
+    );
+  }
+
+  Widget _buildServerRecommendations() {
+    return Consumer(
+      builder: (context, ref, child) {
+        final colors = ThemeColors(context);
+
+        // Get contextual recommendations based on current conversation
+        final recommendations = _getContextualRecommendations();
+
+        if (recommendations.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
+          padding: EdgeInsets.all(SpacingTokens.md),
+          decoration: BoxDecoration(
+            color: colors.surface.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+            border: Border.all(color: colors.border.withOpacity(0.5)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.lightbulb_outline,
+                    color: colors.accent, size: 18),
+                  SizedBox(width: SpacingTokens.sm),
+                  Text(
+                    'Suggested Tools',
+                    style: TextStyles.bodyMedium.copyWith(
+                      color: colors.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: SpacingTokens.sm),
+              Wrap(
+                spacing: SpacingTokens.sm,
+                runSpacing: SpacingTokens.xs,
+                children: recommendations.map((rec) =>
+                  _buildRecommendationChip(rec, colors)).toList(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRecommendationChip(ServerRecommendation recommendation, ThemeColors colors) {
+    return GestureDetector(
+      onTap: () => _onRecommendationSelected(recommendation),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: SpacingTokens.sm,
+          vertical: SpacingTokens.xs,
+        ),
+        decoration: BoxDecoration(
+          color: colors.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+          border: Border.all(color: colors.primary.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(recommendation.icon,
+              color: colors.primary, size: 14),
+            SizedBox(width: SpacingTokens.xs),
+            Text(
+              recommendation.name,
+              style: TextStyles.bodySmall.copyWith(
+                color: colors.primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(width: SpacingTokens.xs),
+            Icon(Icons.add_circle_outline,
+              color: colors.primary, size: 12),
+          ],
+        ),
+      ),
     );
   }
 
@@ -74,23 +189,23 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
     final isUser = message.sender == MessageSender.user;
     
     return Padding(
-      padding: EdgeInsets.only(bottom: SpacingTokens.md.vertical),
+      padding: EdgeInsets.only(bottom: SpacingTokens.md),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) ...[
             _buildAvatar(message.sender, colors),
-            SizedBox(width: SpacingTokens.md.horizontal),
+            SizedBox(width: SpacingTokens.md),
           ],
           Expanded(
             child: Column(
               crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: SpacingTokens.md,
+                  padding: EdgeInsets.all(SpacingTokens.md),
                   decoration: BoxDecoration(
                     color: isUser ? colors.primary : colors.surface,
-                    borderRadius: BorderRadiusTokens.lg,
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                   ),
                   child: Text(
                     message.content,
@@ -100,14 +215,14 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
                   ),
                 ),
                 if (message.suggestedCapabilities.isNotEmpty) ...[
-                  SizedBox(height: SpacingTokens.sm.vertical),
+                  SizedBox(height: SpacingTokens.sm),
                   _buildCapabilitySuggestions(message.suggestedCapabilities),
                 ],
               ],
             ),
           ),
           if (isUser) ...[
-            SizedBox(width: SpacingTokens.md.horizontal),
+            SizedBox(width: SpacingTokens.md),
             _buildAvatar(message.sender, colors),
           ],
         ],
@@ -121,7 +236,7 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
       height: 32,
       decoration: BoxDecoration(
         color: sender == MessageSender.user ? colors.accent : colors.primary,
-        borderRadius: BorderRadiusTokens.full,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
       ),
       child: Center(
         child: Text(
@@ -134,8 +249,8 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
 
   Widget _buildCapabilitySuggestions(List<AgentCapability> capabilities) {
     return Wrap(
-      spacing: SpacingTokens.sm.horizontal,
-      runSpacing: SpacingTokens.sm.vertical,
+      spacing: SpacingTokens.sm,
+      runSpacing: SpacingTokens.sm,
       children: capabilities.map((capability) => 
         _buildCapabilitySuggestionChip(capability)
       ).toList(),
@@ -147,12 +262,12 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
     
     return InkWell(
       onTap: () => _enableCapability(capability),
-      borderRadius: BorderRadiusTokens.lg,
+      borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: colors.primary.withOpacity(0.1),
-          borderRadius: BorderRadiusTokens.lg,
+          borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           border: Border.all(
             color: colors.primary.withOpacity(0.3),
           ),
@@ -164,7 +279,7 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
               capability.iconEmoji,
               style: const TextStyle(fontSize: 14),
             ),
-            SizedBox(width: SpacingTokens.xs.horizontal),
+            SizedBox(width: SpacingTokens.xs),
             Text(
               'Enable ${capability.displayName}',
               style: TextStyles.bodySmall.copyWith(
@@ -180,7 +295,7 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
 
   Widget _buildMessageInput(ThemeColors colors) {
     return Container(
-      padding: SpacingTokens.lg,
+      padding: EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
         color: colors.surface,
         border: Border(
@@ -198,21 +313,20 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
               decoration: InputDecoration(
                 hintText: 'Ask me to help with something...',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadiusTokens.lg,
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
                 fillColor: colors.background,
-                contentPadding: SpacingTokens.md,
+                contentPadding: EdgeInsets.all(SpacingTokens.md),
               ),
               onSubmitted: _sendMessage,
             ),
           ),
-          SizedBox(width: SpacingTokens.md.horizontal),
+          SizedBox(width: SpacingTokens.md),
           AsmblButton.primary(
             text: 'Send',
             onPressed: () => _sendMessage(_messageController.text),
-            size: ButtonSize.small,
           ),
         ],
       ),
@@ -353,6 +467,170 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
       content: content,
       sender: MessageSender.agent,
     );
+  }
+
+  // ==================== Contextual Recommendations ====================
+
+  /// Get contextual server recommendations based on conversation content
+  List<ServerRecommendation> _getContextualRecommendations() {
+    if (_messages.isEmpty) {
+      return _getDefaultRecommendations();
+    }
+
+    // Analyze recent messages for context
+    final recentMessages = _messages.take(5).toList();
+    final conversationContext = recentMessages
+        .map((msg) => msg.content.toLowerCase())
+        .join(' ');
+
+    final recommendations = <ServerRecommendation>[];
+
+    // File system operations
+    if (_containsKeywords(conversationContext, ['file', 'read', 'write', 'directory', 'folder', 'upload'])) {
+      recommendations.add(const ServerRecommendation(
+        id: 'filesystem',
+        name: 'File System',
+        description: 'Read, write, and manage files',
+        icon: Icons.folder,
+        reason: 'Detected file operations in conversation',
+        relevanceScore: 0.9,
+      ));
+    }
+
+    // Git operations
+    if (_containsKeywords(conversationContext, ['git', 'commit', 'branch', 'repository', 'merge', 'pull'])) {
+      recommendations.add(const ServerRecommendation(
+        id: 'git',
+        name: 'Git Integration',
+        description: 'Version control operations',
+        icon: Icons.source,
+        reason: 'Git operations mentioned',
+        relevanceScore: 0.8,
+      ));
+    }
+
+    // Database queries
+    if (_containsKeywords(conversationContext, ['database', 'sql', 'query', 'table', 'data', 'postgres', 'mysql'])) {
+      recommendations.add(const ServerRecommendation(
+        id: 'database',
+        name: 'Database Query',
+        description: 'Execute SQL queries and manage databases',
+        icon: Icons.storage,
+        reason: 'Database operations discussed',
+        relevanceScore: 0.85,
+      ));
+    }
+
+    // Web search and research
+    if (_containsKeywords(conversationContext, ['search', 'research', 'google', 'web', 'find', 'lookup'])) {
+      recommendations.add(const ServerRecommendation(
+        id: 'web-search',
+        name: 'Web Search',
+        description: 'Search the web for information',
+        icon: Icons.search,
+        reason: 'Research or search mentioned',
+        relevanceScore: 0.7,
+      ));
+    }
+
+    // API calls and HTTP requests
+    if (_containsKeywords(conversationContext, ['api', 'http', 'request', 'endpoint', 'rest', 'webhook'])) {
+      recommendations.add(const ServerRecommendation(
+        id: 'http-client',
+        name: 'HTTP Client',
+        description: 'Make API calls and HTTP requests',
+        icon: Icons.http,
+        reason: 'API operations detected',
+        relevanceScore: 0.8,
+      ));
+    }
+
+    // Terminal/shell operations
+    if (_containsKeywords(conversationContext, ['terminal', 'shell', 'command', 'execute', 'script', 'bash'])) {
+      recommendations.add(const ServerRecommendation(
+        id: 'terminal',
+        name: 'Terminal',
+        description: 'Execute shell commands',
+        icon: Icons.terminal,
+        reason: 'Terminal operations mentioned',
+        relevanceScore: 0.9,
+      ));
+    }
+
+    // Sort by relevance score and return top 3
+    recommendations.sort((a, b) => b.relevanceScore.compareTo(a.relevanceScore));
+    return recommendations.take(3).toList();
+  }
+
+  /// Get default recommendations when no context is available
+  List<ServerRecommendation> _getDefaultRecommendations() {
+    return const [
+      ServerRecommendation(
+        id: 'filesystem',
+        name: 'File System',
+        description: 'Read and write files',
+        icon: Icons.folder,
+        reason: 'Popular general-purpose tool',
+        relevanceScore: 0.6,
+      ),
+      ServerRecommendation(
+        id: 'web-search',
+        name: 'Web Search',
+        description: 'Search for information',
+        icon: Icons.search,
+        reason: 'Helpful for research tasks',
+        relevanceScore: 0.5,
+      ),
+    ];
+  }
+
+  /// Check if conversation context contains any of the given keywords
+  bool _containsKeywords(String context, List<String> keywords) {
+    return keywords.any((keyword) => context.contains(keyword));
+  }
+
+  /// Handle recommendation selection
+  void _onRecommendationSelected(ServerRecommendation recommendation) async {
+    // Add a system message about enabling the tool
+    _addSystemMessage('🔧 Enabling ${recommendation.name}...');
+
+    try {
+      // Here we would integrate with the actual MCP service to enable the server
+      // For now, we'll simulate the process
+      await Future.delayed(const Duration(seconds: 1));
+
+      _addSystemMessage('✅ ${recommendation.name} is now available! You can now ${recommendation.description.toLowerCase()}.');
+
+      // Suggest some sample commands
+      _suggestSampleCommands(recommendation);
+
+    } catch (e) {
+      _addSystemMessage('❌ Failed to enable ${recommendation.name}: $e');
+    }
+  }
+
+  /// Suggest sample commands for the newly enabled server
+  void _suggestSampleCommands(ServerRecommendation recommendation) {
+    switch (recommendation.id) {
+      case 'filesystem':
+        _addSystemMessage('💡 Try: "Read the contents of my README.md file" or "List all files in the project directory"');
+        break;
+      case 'git':
+        _addSystemMessage('💡 Try: "Show me the git status" or "Create a new branch called feature-xyz"');
+        break;
+      case 'database':
+        _addSystemMessage('💡 Try: "Show me all tables in the database" or "Query users where status is active"');
+        break;
+      case 'web-search':
+        _addSystemMessage('💡 Try: "Search for the latest news about AI" or "Find documentation for React hooks"');
+        break;
+      case 'http-client':
+        _addSystemMessage('💡 Try: "Make a GET request to example.com/api" or "Test the webhook endpoint"');
+        break;
+      case 'terminal':
+        _addSystemMessage('💡 Try: "Run npm install" or "Check the system uptime"');
+        break;
+    }
   }
 
   @override

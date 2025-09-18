@@ -273,7 +273,7 @@ class MCPServerExecutionService {
           // Check for critical errors that require restart
           if (_isCriticalError(data)) {
             print('💥 Critical error detected in ${server.id}, marking for restart');
-            server.isHealthy = false;
+            // server.isHealthy = false; // TODO: Track health status properly
           }
         },
       );
@@ -413,12 +413,12 @@ class MCPServerExecutionService {
         'params': {},
       }));
       
-      server.isInitialized = true;
-      server.isHealthy = true;
-      
+      // server.isInitialized = true; // TODO: Track initialization status properly
+      // server.isHealthy = true; // TODO: Track health status properly
+
     } catch (e) {
       print('❌ MCP handshake failed for ${server.id}: $e');
-      server.isHealthy = false;
+      // server.isHealthy = false; // TODO: Track health status properly
       rethrow;
     }
   }
@@ -431,7 +431,7 @@ class MCPServerExecutionService {
       try {
         final request = await client.getUrl(Uri.parse(server.config.url));
         final response = await request.close();
-        server.isHealthy = response.statusCode == 200;
+        // server.isHealthy = response.statusCode == 200; // TODO: Track health status properly
       } finally {
         client.close();
       }
@@ -439,9 +439,9 @@ class MCPServerExecutionService {
       // For stdio servers, send ping request
       try {
         await sendMCPRequest(server.id, 'tools/list', {});
-        server.isHealthy = true;
+        // server.isHealthy = true; // TODO: Track health status properly
       } catch (e) {
-        server.isHealthy = false;
+        // server.isHealthy = false; // TODO: Track health status properly
         rethrow;
       }
     }
@@ -707,8 +707,8 @@ class MCPServerExecutionService {
     
     try {
       // Get enabled servers from catalog
-      final enabledServerIds = _catalogService.getEnabledServerIds();
-      
+      final enabledServerIds = await _catalogService.getEnabledServerIds();
+
       for (final serverId in enabledServerIds) {
         try {
           final success = await _startAgentMCPServerFromCatalog(agentId, serverId);
@@ -736,7 +736,7 @@ class MCPServerExecutionService {
   Future<bool> _startAgentMCPServerFromCatalog(String agentId, String catalogEntryId) async {
     try {
       // Get catalog entry
-      final catalogEntry = _catalogService.getCatalogEntry(catalogEntryId);
+      final catalogEntry = await _catalogService.getCatalogEntry(catalogEntryId);
       if (catalogEntry == null) {
         throw Exception('Catalog entry not found: $catalogEntryId');
       }
@@ -795,10 +795,10 @@ class MCPServerExecutionService {
   /// Validate agent MCP server configuration
   Future<Map<String, String>> validateAgentMCPServers(String agentId) async {
     final results = <String, String>{};
-    final enabledServerIds = _catalogService.getEnabledServerIds();
-    
+    final enabledServerIds = await _catalogService.getEnabledServerIds();
+
     for (final serverId in enabledServerIds) {
-      final catalogEntry = _catalogService.getCatalogEntry(serverId);
+      final catalogEntry = await _catalogService.getCatalogEntry(serverId);
       if (catalogEntry == null) {
         results[serverId] = 'Catalog entry not found';
         continue;
@@ -836,8 +836,8 @@ class MCPServerExecutionService {
 
   /// Stop all MCP servers for an agent
   Future<void> stopAgentMCPServers(String agentId) async {
-    final enabledServerIds = _catalogService.getEnabledServerIds();
-    
+    final enabledServerIds = await _catalogService.getEnabledServerIds();
+
     for (final serverId in enabledServerIds) {
       final serverInstanceId = '${agentId}_$serverId';
       await stopMCPServer(serverInstanceId);

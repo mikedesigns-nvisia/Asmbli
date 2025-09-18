@@ -33,7 +33,14 @@ class EnvironmentConfig {
       
       _initialized = true;
       print('🌍 Environment: ${_currentEnvironment.name}');
-      print('🔧 Config loaded: ${_config.keys.join(', ')}');
+      // Only log actual loaded configuration, not placeholder keys
+      final realConfigKeys = _config.keys.where((key) =>
+        Platform.environment.containsKey(key) ||
+        !_getDefaultConfiguration().containsKey(key)
+      ).toList();
+      if (realConfigKeys.isNotEmpty) {
+        print('🔧 Config loaded: ${realConfigKeys.join(', ')}');
+      }
       
     } catch (e) {
       print('❌ Environment initialization failed: $e');

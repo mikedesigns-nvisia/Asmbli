@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../providers/tools_provider.dart';
@@ -139,8 +140,8 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
                         text: 'My Servers',
                       ),
                       Tab(
-                        icon: Icon(Icons.store, size: 16),
-                        text: 'Catalogue',
+                        icon: Icon(Icons.hub, size: 16),
+                        text: 'GitHub Registry',
                       ),
                       Tab(
                         icon: Icon(Icons.hub, size: 16),
@@ -213,9 +214,18 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
                       ),
                     const SizedBox(width: SpacingTokens.xs),
                     AsmblButton.primary(
-                      text: 'Browse',
-                      icon: Icons.store,
-                      onPressed: () => _tabController.animateTo(1),
+                      text: 'Browse Registry',
+                      icon: Icons.hub,
+                      onPressed: () async {
+                        // Switch to GitHub Registry tab
+                        _tabController.animateTo(1);
+
+                        // Also open the external GitHub MCP Registry URL
+                        final url = Uri.parse('https://github.com/modelcontextprotocol/servers');
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
                       size: AsmblButtonSize.small,
                     ),
                   ],

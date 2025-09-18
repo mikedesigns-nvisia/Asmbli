@@ -467,6 +467,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     );
   }
 
+
   void _handleAgentAction(Agent agent, String action) {
     // TODO: Implement agent actions
     showDialog(

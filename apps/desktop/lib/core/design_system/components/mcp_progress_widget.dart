@@ -29,16 +29,16 @@ class MCPProgressWidget extends ConsumerWidget {
     
     return AsmblCard(
       child: Padding(
-        padding: SpacingTokens.lg,
+        padding: EdgeInsets.all(SpacingTokens.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildHeader(colors),
-            SizedBox(height: SpacingTokens.md.vertical),
+            SizedBox(height: SpacingTokens.md),
             _buildProgressContent(colors),
             if (_showActions) ...[
-              SizedBox(height: SpacingTokens.lg.vertical),
+              SizedBox(height: SpacingTokens.lg),
               _buildActions(colors),
             ],
           ],
@@ -55,13 +55,13 @@ class MCPProgressWidget extends ConsumerWidget {
           height: 40,
           decoration: BoxDecoration(
             color: _getStatusColor(colors).withOpacity(0.1),
-            borderRadius: BorderRadiusTokens.md,
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           ),
           child: Center(
             child: _buildStatusIcon(colors),
           ),
         ),
-        SizedBox(width: SpacingTokens.md.horizontal),
+        SizedBox(width: SpacingTokens.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,11 +98,11 @@ class MCPProgressWidget extends ConsumerWidget {
           ),
         ),
         if (progress.status == MCPProgressStatus.inProgress) ...[
-          SizedBox(height: SpacingTokens.md.vertical),
+          SizedBox(height: SpacingTokens.md),
           _buildProgressBar(colors),
         ],
         if (progress.recoverySuggestions.isNotEmpty) ...[
-          SizedBox(height: SpacingTokens.md.vertical),
+          SizedBox(height: SpacingTokens.md),
           _buildRecoverySuggestions(colors),
         ],
       ],
@@ -148,7 +148,7 @@ class MCPProgressWidget extends ConsumerWidget {
           backgroundColor: colors.border.withOpacity(0.3),
           valueColor: AlwaysStoppedAnimation(colors.primary),
         ),
-        SizedBox(height: SpacingTokens.sm.vertical),
+        SizedBox(height: SpacingTokens.sm),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -172,10 +172,10 @@ class MCPProgressWidget extends ConsumerWidget {
 
   Widget _buildRecoverySuggestions(ThemeColors colors) {
     return Container(
-      padding: SpacingTokens.md,
+      padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: Colors.orange.withOpacity(0.05),
-        borderRadius: BorderRadiusTokens.md,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: Colors.orange.withOpacity(0.2),
         ),
@@ -190,7 +190,7 @@ class MCPProgressWidget extends ConsumerWidget {
                 color: Colors.orange,
                 size: 16,
               ),
-              SizedBox(width: SpacingTokens.sm.horizontal),
+              SizedBox(width: SpacingTokens.sm),
               Text(
                 'Suggestions:',
                 style: TextStyles.bodySmall.copyWith(
@@ -200,9 +200,9 @@ class MCPProgressWidget extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm.vertical),
+          SizedBox(height: SpacingTokens.sm),
           ...progress.recoverySuggestions.map((suggestion) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.xs.vertical),
+            padding: EdgeInsets.only(bottom: SpacingTokens.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -231,14 +231,12 @@ class MCPProgressWidget extends ConsumerWidget {
           AsmblButton.secondary(
             text: 'Try Again',
             onPressed: onRetry,
-            size: ButtonSize.small,
           ),
         if (_showDismiss && onDismiss != null) ...[
-          SizedBox(width: SpacingTokens.sm.horizontal),
-          AsmblButton.tertiary(
+          SizedBox(width: SpacingTokens.sm),
+          AsmblButton.secondary(
             text: progress.isCompleted ? 'Done' : 'Cancel',
             onPressed: onDismiss,
-            size: ButtonSize.small,
           ),
         ],
       ],
@@ -313,7 +311,7 @@ class MCPProgressListWidget extends ConsumerWidget {
 
     return Column(
       children: activeProgress.map((progress) => Padding(
-        padding: EdgeInsets.only(bottom: SpacingTokens.md.vertical),
+        padding: EdgeInsets.only(bottom: SpacingTokens.md),
         child: MCPProgressWidget(
           progress: progress,
           onDismiss: () => _dismissProgress(ref, progress.id),
@@ -361,7 +359,7 @@ class CapabilityPermissionDialog extends StatelessWidget {
     
     return AlertDialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusTokens.xl,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
       ),
       title: Row(
         children: [
@@ -369,7 +367,7 @@ class CapabilityPermissionDialog extends StatelessWidget {
             capability.iconEmoji,
             style: const TextStyle(fontSize: 24),
           ),
-          SizedBox(width: SpacingTokens.md.horizontal),
+          SizedBox(width: SpacingTokens.md),
           Expanded(
             child: Text(
               'Enable ${capability.displayName}?',
@@ -392,7 +390,7 @@ class CapabilityPermissionDialog extends StatelessWidget {
               ),
             ),
             if (benefits.isNotEmpty) ...[
-              SizedBox(height: SpacingTokens.lg.vertical),
+              SizedBox(height: SpacingTokens.lg),
               _buildSection(
                 'Benefits',
                 benefits,
@@ -401,7 +399,7 @@ class CapabilityPermissionDialog extends StatelessWidget {
               ),
             ],
             if (risks.isNotEmpty) ...[
-              SizedBox(height: SpacingTokens.lg.vertical),
+              SizedBox(height: SpacingTokens.lg),
               _buildSection(
                 'Important to know',
                 risks,
@@ -416,13 +414,11 @@ class CapabilityPermissionDialog extends StatelessWidget {
         AsmblButton.secondary(
           text: 'Not Now',
           onPressed: onDeny,
-          size: ButtonSize.small,
         ),
-        SizedBox(width: SpacingTokens.md.horizontal),
+        SizedBox(width: SpacingTokens.md),
         AsmblButton.primary(
           text: 'Enable',
           onPressed: onApprove,
-          size: ButtonSize.small,
         ),
       ],
     );
@@ -430,10 +426,10 @@ class CapabilityPermissionDialog extends StatelessWidget {
 
   Widget _buildSection(String title, List<String> items, Color color, IconData icon) {
     return Container(
-      padding: SpacingTokens.md,
+      padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: color.withOpacity(0.05),
-        borderRadius: BorderRadiusTokens.md,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: color.withOpacity(0.2),
         ),
@@ -448,28 +444,28 @@ class CapabilityPermissionDialog extends StatelessWidget {
                 color: color,
                 size: 16,
               ),
-              SizedBox(width: SpacingTokens.sm.horizontal),
+              SizedBox(width: SpacingTokens.sm),
               Text(
                 title,
                 style: TextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: color.shade800,
+                  color: Color.lerp(color, Colors.black, 0.3) ?? color,
                 ),
               ),
             ],
           ),
-          SizedBox(height: SpacingTokens.sm.vertical),
+          SizedBox(height: SpacingTokens.sm),
           ...items.map((item) => Padding(
-            padding: EdgeInsets.only(bottom: SpacingTokens.xs.vertical),
+            padding: EdgeInsets.only(bottom: SpacingTokens.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('• ', style: TextStyles.bodySmall.copyWith(color: color.shade800)),
+                Text('• ', style: TextStyles.bodySmall.copyWith(color: Color.lerp(color, Colors.black, 0.3) ?? color)),
                 Expanded(
                   child: Text(
                     item,
                     style: TextStyles.bodySmall.copyWith(
-                      color: color.shade800,
+                      color: Color.lerp(color, Colors.black, 0.3) ?? color,
                     ),
                   ),
                 ),

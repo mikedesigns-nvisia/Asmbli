@@ -438,9 +438,6 @@ class MCPServerProcess extends Equatable {
     );
   }
 
-  /// Get process reference (compatibility - returns null since we manage processes differently)
-  dynamic get process => null;
-
   /// Send JSON-RPC request (compatibility method)
   Future<Map<String, dynamic>> sendJsonRpcRequest(Map<String, dynamic> request) async {
     throw UnimplementedError('Use MCPProtocolHandler.sendRequest instead');
@@ -451,15 +448,8 @@ class MCPServerProcess extends Equatable {
     throw UnimplementedError('Use MCPProtocolHandler.sendNotification instead');
   }
 
-  /// Set initialization status (compatibility)
-  set isInitialized(bool value) {
-    // This is handled by the status field in the new architecture
-  }
-
-  /// Set healthy status (compatibility)
-  set isHealthy(bool value) {
-    // This is handled by the status field in the new architecture
-  }
+  /// Get process reference (compatibility - returns null since we manage processes differently)
+  dynamic get process => null;
 
   /// Start a new MCP server process
   static Future<MCPServerProcess> start({

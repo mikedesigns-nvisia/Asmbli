@@ -382,7 +382,7 @@ class ProcessCleanupService {
       data: {'server_id': serverId},
       category: 'process_cleanup',
     );
-    
+
     // TODO: Implement actual MCP server shutdown
     // This would involve:
     // 1. Sending a shutdown message via JSON-RPC

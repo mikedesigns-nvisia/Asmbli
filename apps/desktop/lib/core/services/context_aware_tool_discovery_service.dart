@@ -350,7 +350,7 @@ class ContextAwareToolDiscoveryService {
   Future<ToolRecommendations> _getRecommendationsForContext(ProjectContext context) async {
     final recommended = <MCPCatalogEntry>[];
     final optional = <MCPCatalogEntry>[];
-    final allTools = _catalogService.getAllCatalogEntries();
+    final allTools = await _catalogService.getAllCatalogEntries();
 
     // Always recommend filesystem tools
     _addToolIfExists(allTools, 'filesystem', recommended);

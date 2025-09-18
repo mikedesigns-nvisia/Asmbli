@@ -145,7 +145,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  description: 'Build custom AI agent',
  onTap: () {
  _closeDropdown();
- context.go(AppRoutes.agentWizard);
+ context.go(AppRoutes.agentBuilder);
  },
  color: colors.primary,
  ),

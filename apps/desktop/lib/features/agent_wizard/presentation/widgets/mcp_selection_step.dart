@@ -31,32 +31,38 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
 
   @override
   Widget build(BuildContext context) {
-    final catalogEntries = ref.watch(mcpFeaturedEntriesProvider);
+    final catalogEntriesAsync = ref.watch(mcpFeaturedEntriesProvider);
     final agentId = widget.wizardState.id ?? 'temp-agent';
     final agentConfigs = ref.watch(agentMCPConfigsProvider(agentId));
     final colors = ThemeColors(context);
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 1000),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildStepHeader(context, colors),
-              const SizedBox(height: SpacingTokens.xxl),
-              
-              if (_showRecommendations) ...[
-                _buildRecommendationsSection(context, catalogEntries, colors),
+          child: catalogEntriesAsync.when(
+            data: (catalogEntries) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildStepHeader(context, colors),
                 const SizedBox(height: SpacingTokens.xxl),
+
+                if (_showRecommendations) ...[
+                  _buildRecommendationsSection(context, catalogEntries, colors),
+                  const SizedBox(height: SpacingTokens.xxl),
+                ],
+
+                _buildSelectedServersSection(context, agentConfigs, catalogEntries, colors),
+                const SizedBox(height: SpacingTokens.xxl),
+
+                _buildBrowseCatalogSection(context, colors),
               ],
-              
-              _buildSelectedServersSection(context, agentConfigs, catalogEntries, colors),
-              const SizedBox(height: SpacingTokens.xxl),
-              
-              _buildBrowseCatalogSection(context, colors),
-            ],
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Text('Failed to load MCP tools: $error'),
+            ),
           ),
         ),
       ),

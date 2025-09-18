@@ -12,6 +12,7 @@ class AppRoutes {
  static const String context = '/context';
  static const String wizard = '/wizard';
  static const String agentWizard = '/agent-wizard';
+ static const String agentBuilder = '/agent-builder';
  static const String integrations = '/integrations';
  static const String integrationHub = '/integration-hub';
  static const String marketplace = '/marketplace';
@@ -29,6 +30,7 @@ class AppRoutes {
  context: 'Context',
  wizard: 'Wizard',
  agentWizard: 'Create Agent',
+ agentBuilder: 'Build Agent',
  integrations: 'Add Integrations',
  integrationHub: 'Integration Hub',
  marketplace: 'Marketplace',
@@ -50,6 +52,7 @@ class AppRoutes {
  context,
  wizard,
  agentWizard,
+ agentBuilder,
  integrations,
  integrationHub,
  marketplace,

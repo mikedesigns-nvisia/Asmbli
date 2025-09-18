@@ -16,6 +16,9 @@ class AppColorSchemes {
   // Sunset Orange
   static const String sunsetOrange = 'sunset-orange';
 
+  // Silver Onyx
+  static const String silverOnyx = 'silver-onyx';
+
   /// Get all available color scheme options for UI
   static List<ColorSchemeOption> get all => [
     const ColorSchemeOption(warmNeutral, 'Warm Neutral', [
@@ -38,6 +41,11 @@ class AppColorSchemes {
       Color(0xFFF97316), // accent
       Color(0xFFFFF7ED), // background
     ]),
+    const ColorSchemeOption(silverOnyx, 'Silver Onyx', [
+      Color(0xFF4A4A4A), // primary - charcoal gray
+      Color(0xFF8A8A8A), // accent - medium silver
+      Color(0xFFF8F8F8), // background - light silver
+    ]),
   ];
 
   /// Get unique app background color for a specific color scheme
@@ -49,6 +57,8 @@ class AppColorSchemes {
         return isDark ? const Color(0xFF0F1C14) : const Color(0xFFF5FBF8);
       case sunsetOrange:
         return isDark ? const Color(0xFF4A2117) : const Color(0xFFFFF7ED);
+      case silverOnyx:
+        return isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF8F8F8);
       case warmNeutral:
       default:
         return isDark ? const Color(0xFF2B1F14) : const Color(0xFFFAF8F5);
@@ -64,6 +74,8 @@ class AppColorSchemes {
         return isDark ? _forestGreenDarkTheme : _forestGreenLightTheme;
       case sunsetOrange:
         return isDark ? _sunsetOrangeDarkTheme : _sunsetOrangeLightTheme;
+      case silverOnyx:
+        return isDark ? _silverOnyxDarkTheme : _silverOnyxLightTheme;
       case warmNeutral:
       default:
         return isDark ? _warmNeutralDarkTheme : _warmNeutralLightTheme;
@@ -283,6 +295,60 @@ class AppColorSchemes {
       surfaceVariant: const Color(0xFF7A4B33),
       backgroundGradientStart: const Color(0xFF5C2D1F),
       backgroundGradientEnd: const Color(0xFF2E1810),
+    );
+  }
+
+  // SILVER ONYX THEMES
+
+  static ThemeData get _silverOnyxLightTheme {
+    const background = Color(0xFFF8F8F8); // Very light silver background
+    const surface = Color(0xFFFAFAFA); // Lighter silver surface
+    const primary = Color(0xFF4A4A4A); // Charcoal gray primary
+    const accent = Color(0xFF8A8A8A); // Medium silver accent
+    const onSurface = Color(0xFF1A1A1A); // Near black text for maximum contrast
+    const onSurfaceVariant = Color(0xFF4A4A4A); // Charcoal gray text for WCAG AA compliance
+    const border = Color(0xFFE0E0E0); // Light gray border
+
+    return _buildThemeData(
+      brightness: Brightness.light,
+      background: background,
+      surface: surface,
+      primary: primary,
+      onPrimary: Colors.white,
+      accent: accent,
+      onAccent: Colors.white,
+      onSurface: onSurface,
+      onSurfaceVariant: onSurfaceVariant,
+      border: border,
+      surfaceVariant: const Color(0xFFF0F0F0),
+      backgroundGradientStart: const Color(0xFFFAFAFA),
+      backgroundGradientEnd: const Color(0xFFE8E8E8),
+    );
+  }
+
+  static ThemeData get _silverOnyxDarkTheme {
+    const background = Color(0xFF1A1A1A); // Deep onyx background
+    const surface = Color(0xFF2D2D2D); // Lighter charcoal surface for better contrast
+    const primary = Color(0xFFB8B8B8); // Light silver accent
+    const accent = Color(0xFF9A9A9A); // Medium silver accent
+    const onSurface = Color(0xFFFAFAFA); // Very light gray for better contrast
+    const onSurfaceVariant = Color(0xFFD0D0D0); // Light silver for WCAG AA compliance
+    const border = Color(0xFF3D3D3D);
+
+    return _buildThemeData(
+      brightness: Brightness.dark,
+      background: background,
+      surface: surface,
+      primary: primary,
+      onPrimary: const Color(0xFF1A1A1A),
+      accent: accent,
+      onAccent: const Color(0xFF1A1A1A),
+      onSurface: onSurface,
+      onSurfaceVariant: onSurfaceVariant,
+      border: border,
+      surfaceVariant: const Color(0xFF404040),
+      backgroundGradientStart: const Color(0xFF2D2D2D),
+      backgroundGradientEnd: const Color(0xFF0D0D0D),
     );
   }
 

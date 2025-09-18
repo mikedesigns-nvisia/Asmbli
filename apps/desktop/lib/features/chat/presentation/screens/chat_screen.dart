@@ -23,7 +23,10 @@ import '../widgets/streaming_message_widget.dart';
 import '../widgets/editable_conversation_title.dart';
 import '../widgets/context_sidebar_section.dart';
 import '../widgets/contextual_context_widget.dart';
+import '../widgets/mcp_chat_integration.dart';
 import '../components/model_warmup_status_indicator.dart';
+import '../../../../core/services/mcp_process_manager.dart';
+import '../../../../core/models/mcp_server_process.dart' as mcp_models;
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
 class ChatScreen extends ConsumerStatefulWidget {
@@ -853,8 +856,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  // Chat Header - shows current conversation/agent
  _buildChatHeader(theme),
- 
- 
+
+ // MCP Contextual Recommendations
+ _buildMCPRecommendations(context),
+ // Active MCP Servers Status
+ _buildMCPServerStatus(context),
+
  // Messages Area or Empty State
  Expanded(
  child: _buildMessagesArea(context),
@@ -1535,6 +1542,145 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                 color: Colors.red,
          ),
        ),
+     ),
+   );
+ }
+
+ /// Build MCP contextual recommendations widget
+ Widget _buildMCPRecommendations(BuildContext context) {
+   final colors = ThemeColors(context);
+   final selectedConversationId = ref.watch(selectedConversationIdProvider);
+
+   if (selectedConversationId == null) return const SizedBox.shrink();
+
+   return ref.watch(conversationProvider(selectedConversationId)).when(
+     data: (conversation) => _buildMCPRecommendationsContent(context, conversation, colors),
+     loading: () => const SizedBox.shrink(),
+     error: (_, __) => const SizedBox.shrink(),
+   );
+ }
+
+ /// Build MCP recommendations content
+ Widget _buildMCPRecommendationsContent(BuildContext context, core.Conversation conversation, ThemeColors colors) {
+   // For now, show MCP integration for all conversations
+   return Consumer(
+     builder: (context, ref, child) {
+       return MCPChatIntegration(currentAgent: null);
+     },
+   );
+ }
+
+ /// Build MCP server status widget showing currently running servers
+ Widget _buildMCPServerStatus(BuildContext context) {
+   final colors = ThemeColors(context);
+   final runningServersAsync = ref.watch(runningMCPServersProvider);
+
+   return runningServersAsync.when(
+     data: (List<mcp_models.MCPServerProcess> servers) {
+       if (servers.isEmpty) return const SizedBox.shrink();
+
+       return Container(
+         margin: const EdgeInsets.symmetric(
+           horizontal: SpacingTokens.elementSpacing,
+           vertical: SpacingTokens.xs,
+         ),
+         padding: const EdgeInsets.all(SpacingTokens.cardPadding),
+         decoration: BoxDecoration(
+           color: colors.surface.withValues(alpha: 0.8),
+           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+           border: Border.all(color: colors.border.withValues(alpha: 0.5)),
+         ),
+         child: Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Row(
+               children: [
+                 Icon(
+                   Icons.settings_applications,
+                   color: colors.primary,
+                   size: 16,
+                 ),
+                 const SizedBox(width: SpacingTokens.xs),
+                 Text(
+                   'Active MCP Servers (${servers.length})',
+                   style: TextStyles.bodySmall.copyWith(
+                     color: colors.onSurfaceVariant,
+                     fontWeight: FontWeight.w600,
+                   ),
+                 ),
+               ],
+             ),
+             const SizedBox(height: SpacingTokens.xs),
+             Wrap(
+               spacing: SpacingTokens.xs,
+               runSpacing: SpacingTokens.xs,
+               children: servers.map((server) => _buildServerStatusChip(server, colors)).toList(),
+             ),
+           ],
+         ),
+       );
+     },
+     loading: () => const SizedBox.shrink(),
+     error: (error, stack) => const SizedBox.shrink(),
+   );
+ }
+
+ /// Build individual server status chip
+ Widget _buildServerStatusChip(mcp_models.MCPServerProcess server, ThemeColors colors) {
+   Color statusColor;
+   IconData statusIcon;
+
+   switch (server.status) {
+     case mcp_models.MCPServerStatus.running:
+       statusColor = Colors.green;
+       statusIcon = Icons.check_circle;
+       break;
+     case mcp_models.MCPServerStatus.starting:
+       statusColor = Colors.orange;
+       statusIcon = Icons.access_time;
+       break;
+     case mcp_models.MCPServerStatus.stopping:
+       statusColor = Colors.orange;
+       statusIcon = Icons.stop_circle;
+       break;
+     case mcp_models.MCPServerStatus.error:
+       statusColor = Colors.red;
+       statusIcon = Icons.error;
+       break;
+     case mcp_models.MCPServerStatus.stopped:
+     default:
+       statusColor = Colors.grey;
+       statusIcon = Icons.stop;
+       break;
+   }
+
+   return Container(
+     padding: const EdgeInsets.symmetric(
+       horizontal: SpacingTokens.sm,
+       vertical: SpacingTokens.xs,
+     ),
+     decoration: BoxDecoration(
+       color: statusColor.withValues(alpha: 0.1),
+       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+       border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+     ),
+     child: Row(
+       mainAxisSize: MainAxisSize.min,
+       children: [
+         Icon(
+           statusIcon,
+           color: statusColor,
+           size: 12,
+         ),
+         const SizedBox(width: SpacingTokens.xs),
+         Text(
+           server.serverId,
+           style: TextStyles.bodySmall.copyWith(
+             color: colors.onSurface,
+             fontSize: 11,
+           ),
+         ),
+       ],
      ),
    );
  }

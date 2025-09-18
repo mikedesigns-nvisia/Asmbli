@@ -44,6 +44,7 @@ class MCPCatalogEntry extends Equatable {
   final DateTime? lastUpdated;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final int? starCount;
 
   const MCPCatalogEntry({
     required this.id,
@@ -72,6 +73,7 @@ class MCPCatalogEntry extends Equatable {
     this.lastUpdated,
     this.createdAt,
     this.updatedAt,
+    this.starCount,
   });
 
   /// Check if this server requires authentication
@@ -104,6 +106,7 @@ class MCPCatalogEntry extends Equatable {
     DateTime? lastUpdated,
     DateTime? createdAt,
     DateTime? updatedAt,
+    int? starCount,
   }) {
     return MCPCatalogEntry(
       id: id ?? this.id,
@@ -132,6 +135,7 @@ class MCPCatalogEntry extends Equatable {
       lastUpdated: lastUpdated ?? this.lastUpdated,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      starCount: starCount ?? this.starCount,
     );
   }
 
@@ -176,6 +180,7 @@ class MCPCatalogEntry extends Equatable {
       lastUpdated: json['lastUpdated'] != null ? DateTime.parse(json['lastUpdated'] as String) : null,
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : null,
       updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
+      starCount: json['starCount'] as int?,
     );
   }
 
@@ -207,6 +212,7 @@ class MCPCatalogEntry extends Equatable {
       'lastUpdated': lastUpdated?.toIso8601String(),
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'starCount': starCount,
     };
   }
 
@@ -238,5 +244,6 @@ class MCPCatalogEntry extends Equatable {
         lastUpdated,
         createdAt,
         updatedAt,
+        starCount,
       ];
 }

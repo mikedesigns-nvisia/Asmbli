@@ -12,6 +12,7 @@ import 'package:agent_engine_core/models/agent.dart';
 import '../widgets/agent_terminal_widget.dart';
 import '../widgets/mcp_server_status_widget.dart';
 import '../widgets/mcp_server_logs_widget.dart';
+import '../widgets/recommended_tools_widget.dart';
 
 class AgentConfigurationScreen extends ConsumerStatefulWidget {
  final String? agentId;
@@ -30,7 +31,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  final _descriptionController = TextEditingController();
  final _systemPromptController = TextEditingController();
  
- String selectedModel = 'Default API Model';
+ String selectedModel = 'Default Model';
  String selectedCategory = 'Research';
  double temperature = 0.7;
  int maxTokens = 2048;
@@ -347,63 +348,25 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  
  const SizedBox(height: SpacingTokens.sectionSpacing),
  
- // Tools Section
+ // Master Prompt Preview Section
  const _CompactSectionHeader(
- title: 'Connect helpful tools', 
- icon: Icons.build_circle_outlined,
- tooltip: 'Connect external tools and services (MCP servers) to extend your agent with specialized functions like file access, databases, and APIs.',
+ title: 'Master Prompt Preview', 
+ icon: Icons.preview_outlined,
+ tooltip: 'Preview the complete prompt that will be sent to the AI model, including personality, expertise, and context.',
  ),
  const SizedBox(height: SpacingTokens.xs),
  
- // Setup Guide Button
- if (selectedMCPServers.isEmpty) 
- _MCPSetupGuideButton(
- onPressed: () => _showMCPSetupDialog(),
- )
- else
- Container(
- padding: const EdgeInsets.symmetric(
- horizontal: SpacingTokens.sm,
- vertical: SpacingTokens.xs,
- ),
- decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
- borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- ),
- child: Text(
- '${selectedMCPServers.length}/${availableMCPServers.length} selected',
- style: TextStyles.caption.copyWith(
- color: ThemeColors(context).primary,
- fontWeight: FontWeight.w600,
- ),
- ),
- ),
- const SizedBox(height: SpacingTokens.componentSpacing),
- 
- Expanded(
- child: ListView.separated(
- itemCount: availableMCPServers.length,
- separatorBuilder: (_, __) => const SizedBox(height: 2),
- itemBuilder: (context, index) {
- final server = availableMCPServers[index];
- final isSelected = selectedMCPServers.contains(server.name);
- 
- return _CompactMCPServerItem(
- server: server,
- isSelected: isSelected,
- onToggle: () {
- setState(() {
- if (isSelected) {
- selectedMCPServers.remove(server.name);
- } else {
- selectedMCPServers.add(server.name);
- }
- });
- },
- );
- },
- ),
- ),
+                Expanded(
+                  child: _MasterPromptPreview(
+                    name: _nameController.text.isNotEmpty ? _nameController.text : 'Your Agent',
+                    description: _descriptionController.text,
+                    personality: selectedPersonality,
+                    tone: selectedTone,
+                    expertise: selectedExpertise,
+                    systemPrompt: _systemPromptController.text,
+                    showAdvancedPrompt: showAdvancedPrompt,
+                  ),
+                ),
  ],
  ),
  ),
@@ -521,31 +484,73 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
                  ),
                ),
                
-               // MCP Tools tab
+               // MCP Tools tab with recommendations
                Padding(
                  padding: const EdgeInsets.all(SpacingTokens.lg),
-                 child: Column(
+                 child: Row(
                    crossAxisAlignment: CrossAxisAlignment.start,
                    children: [
-                     const _CompactSectionHeader(
-                       title: 'MCP Tools',
-                       icon: Icons.extension,
-                       tooltip: 'Manage MCP servers that provide tools and capabilities to your agent.',
-                     ),
-                     const SizedBox(height: SpacingTokens.componentSpacing),
+                     // Left side - Recommended Tools
                      Expanded(
-                       child: currentAgent != null
-                           ? MCPServerStatusWidget(
-                               agentId: currentAgent!.id,
-                             )
-                           : Center(
-                               child: Text(
-                                 'Save agent to manage MCP tools',
-                                 style: TextStyles.bodyMedium.copyWith(
-                                   color: ThemeColors(context).onSurfaceVariant,
-                                 ),
-                               ),
+                       flex: 2,
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           const _CompactSectionHeader(
+                             title: 'Recommended Tools',
+                             icon: Icons.recommend,
+                             tooltip: 'Tools recommended for your agent\'s category and use case.',
+                           ),
+                           const SizedBox(height: SpacingTokens.componentSpacing),
+                           Expanded(
+                             child: RecommendedToolsWidget(
+                               category: selectedCategory,
+                               onToolSelected: (tool) {
+                                 // TODO: Implement tool installation/selection
+                                 ScaffoldMessenger.of(context).showSnackBar(
+                                   SnackBar(
+                                     content: Text('Selected: ${tool.name}'),
+                                     duration: const Duration(seconds: 2),
+                                   ),
+                                 );
+                               },
                              ),
+                           ),
+                         ],
+                       ),
+                     ),
+
+                     const SizedBox(width: SpacingTokens.lg),
+
+                     // Right side - Current MCP Servers
+                     Expanded(
+                       flex: 1,
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           const _CompactSectionHeader(
+                             title: 'Active Tools',
+                             icon: Icons.extension,
+                             tooltip: 'Currently installed and active MCP servers for this agent.',
+                           ),
+                           const SizedBox(height: SpacingTokens.componentSpacing),
+                           Expanded(
+                             child: currentAgent != null
+                                 ? MCPServerStatusWidget(
+                                     agentId: currentAgent!.id,
+                                   )
+                                 : Center(
+                                     child: Text(
+                                       'Save agent to manage active tools',
+                                       style: TextStyles.bodyMedium.copyWith(
+                                         color: ThemeColors(context).onSurfaceVariant,
+                                       ),
+                                       textAlign: TextAlign.center,
+                                     ),
+                                   ),
+                           ),
+                         ],
+                       ),
                      ),
                    ],
                  ),
@@ -2143,4 +2148,90 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  ),
  );
  }
+}
+
+class _MasterPromptPreview extends StatelessWidget {
+  final String name;
+  final String description;
+  final String personality;
+  final String tone;
+  final String expertise;
+  final String systemPrompt;
+  final bool showAdvancedPrompt;
+
+  const _MasterPromptPreview({
+    required this.name,
+    required this.description,
+    required this.personality,
+    required this.tone,
+    required this.expertise,
+    required this.systemPrompt,
+    required this.showAdvancedPrompt,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+    final masterPrompt = _buildMasterPrompt();
+
+    return Container(
+      height: 300,
+      decoration: BoxDecoration(
+        color: colors.surface.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+        border: Border.all(color: colors.border.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(SpacingTokens.sm),
+            decoration: BoxDecoration(
+              color: colors.primary.withValues(alpha: 0.1),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(BorderRadiusTokens.lg),
+                topRight: Radius.circular(BorderRadiusTokens.lg),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.smart_toy_outlined, size: 16, color: colors.primary),
+                const SizedBox(width: SpacingTokens.xs),
+                Text('Master Prompt for $name', style: TextStyles.bodySmall.copyWith(color: colors.primary, fontWeight: FontWeight.w600)),
+                const Spacer(),
+                Text('${masterPrompt.length} characters', style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant)),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(SpacingTokens.sm),
+              child: SingleChildScrollView(
+                child: SelectableText(masterPrompt, style: TextStyles.bodySmall.copyWith(fontFamily: 'monospace', color: colors.onSurface, height: 1.4)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _buildMasterPrompt() {
+    final buffer = StringBuffer();
+    buffer.writeln('You are $name, an AI assistant.');
+    if (description.isNotEmpty) buffer.writeln('\nRole: $description');
+    buffer.writeln('\nPersonality: $personality');
+    buffer.writeln('Communication Style: $tone');
+    buffer.writeln('Expertise: $expertise');
+    if (showAdvancedPrompt && systemPrompt.isNotEmpty) {
+      buffer.writeln('\nAdditional Instructions:');
+      buffer.writeln(systemPrompt);
+    }
+    buffer.writeln('\nGuidelines:');
+    buffer.writeln('- Always be helpful, accurate, and respectful');
+    buffer.writeln('- Provide clear, well-structured responses');
+    buffer.writeln('- Ask for clarification when needed');
+    buffer.writeln('- Stay within your area of expertise');
+    return buffer.toString();
+  }
 }

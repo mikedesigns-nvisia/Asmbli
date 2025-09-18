@@ -6,6 +6,7 @@ import '../data/mcp_server_configs.dart';
 import 'mcp_installation_service.dart';
 import 'mcp_safety_service.dart';
 import 'mcp_user_interface_service.dart';
+import '../di/service_locator.dart';
 
 /// Anthropic PM-style MCP Orchestrator
 /// 
@@ -175,22 +176,23 @@ class MCPOrchestrator {
 
   /// Install a server safely with progress updates
   Future<bool> _installServerSafely(MCPServerLibraryConfig server, Agent agent) async {
-    // Check if already installed
-    final requirements = await MCPInstallationService.checkAgentMCPRequirements(agent);
-    MCPServerInstallation? serverRequirement;
     try {
-      serverRequirement = requirements.firstWhere((req) => req.server.id == server.id);
+      // Check if already installed
+      final installationService = ServiceLocator.instance.get<MCPInstallationService>();
+      final requirements = await installationService.checkAgentMCPRequirements(agent.id);
+
+      // Check if server is already in requirements
+      if (requirements.contains(server.id)) {
+        return true; // Already installed
+      }
+
+      // Install the server
+      await installationService.installMCPServers(agent.id, [server.id]);
+      return true;
     } catch (e) {
-      serverRequirement = null;
+      print('Error installing server ${server.id}: $e');
+      return false;
     }
-    
-    if (serverRequirement == null || !serverRequirement.requiresInstallation) {
-      return true; // Already installed
-    }
-    
-    // Install with safety checks
-    final installResult = await MCPInstallationService.installMCPServers([serverRequirement]);
-    return installResult.success;
   }
 
   /// Get MCP servers required for a capability
