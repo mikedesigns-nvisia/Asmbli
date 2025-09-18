@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
-import '../models/mcp_server_config.dart';
-import '../models/mcp_catalog_entry.dart';
+import '../models/mcp_server_process.dart' show MCPServerConfig;
+import '../models/mcp_catalog_entry.dart' show MCPCatalogEntry, MCPTransportType;
 import 'mcp_catalog_service.dart';
 
 
@@ -299,15 +299,15 @@ class MCPSettingsService {
     final apiConfigId = _agentApiMappings[agentId];
     
     // Get enabled MCP servers from catalog service
-    final enabledServerIds = _catalogService.getEnabledServerIds(agentId);
+    final enabledServerIds = await _catalogService.getEnabledServerIds();
     final agentConfigs = _catalogService.getAgentMCPConfigs(agentId);
     
     // Build MCP server configs with catalog entries and auth
     final mcpConfigs = <String, Map<String, dynamic>>{};
     for (final serverId in enabledServerIds) {
-      final catalogEntry = _catalogService.getCatalogEntry(serverId);
+      final catalogEntry = await _catalogService.getCatalogEntry(serverId);
       final agentConfig = agentConfigs[serverId];
-      
+
       if (catalogEntry != null && agentConfig != null) {
         // Convert catalog entry to MCPServerConfig for deployment
         final serverConfig = MCPServerConfig(
@@ -359,6 +359,24 @@ class MCPSettingsService {
       case MCPTransportType.http:
         return 'http';
     }
+  }
+
+  /// Reset all MCP settings to defaults
+  Future<void> resetToDefaults() async {
+    _globalMCPConfigs.clear();
+    _directAPIConfigs.clear();
+    _agentApiMappings.clear();
+    _serverStatuses.clear();
+    _globalContextDocuments.clear();
+    
+    await Future.wait([
+      _saveMCPConfigs(),
+      _saveDirectAPIConfigs(),
+      _saveAgentApiMappings(),
+      _saveGlobalContext(),
+    ]);
+    
+    _settingsUpdatesController.add({'reset': true});
   }
 
   // ==================== Private Methods ====================

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../providers/tools_provider.dart';
 import '../widgets/server_management_tab.dart';
 import '../widgets/catalogue_tab.dart';
 import '../widgets/agent_connections_tab.dart';
+import '../widgets/working_agent_connections_tab.dart';
 
 class ToolsScreen extends ConsumerStatefulWidget {
   const ToolsScreen({super.key});
@@ -54,11 +56,8 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
             // Navigation
             const AppNavigationBar(currentRoute: AppRoutes.integrationHub),
             
-            // Header
-            _buildHeader(colors, state),
-            
-            // Tab Bar
-            _buildTabBar(colors),
+            // Combined Header with Tabs
+            _buildHeaderWithTabs(colors, state),
             
             // Content
             Expanded(
@@ -67,7 +66,7 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
                 children: const [
                   ServerManagementTab(),
                   CatalogueTab(),
-                  AgentConnectionsTab(),
+                  WorkingAgentConnectionsTab(),
                 ],
               ),
             ),
@@ -77,119 +76,169 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
     );
   }
 
-  Widget _buildHeader(ThemeColors colors, ToolsState state) {
+  Widget _buildHeaderWithTabs(ThemeColors colors, ToolsState state) {
     return Container(
-      padding: const EdgeInsets.all(SpacingTokens.xxl),
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.1),
+        color: colors.surface.withOpacity( 0.1),
         border: Border(
           bottom: BorderSide(
-            color: colors.border.withValues(alpha: 0.2),
+            color: colors.border.withOpacity( 0.2),
           ),
         ),
       ),
-      child: Row(
+      child: Column(
         children: [
-          // Icon and Title
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: colors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-            ),
-            child: Icon(
-              Icons.precision_manufacturing,
-              size: 24,
-              color: colors.primary,
-            ),
-          ),
-          const SizedBox(width: SpacingTokens.lg),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Main header with integrated tabs on same line
+          Padding(
+            padding: const EdgeInsets.fromLTRB(SpacingTokens.xxl, SpacingTokens.lg, SpacingTokens.xxl, SpacingTokens.sm),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'Tools & Integrations',
-                  style: TextStyles.pageTitle.copyWith(
-                    color: colors.onSurface,
+                // Icon and Title
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: colors.primary.withOpacity( 0.1),
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+                  ),
+                  child: Icon(
+                    Icons.precision_manufacturing,
+                    size: 20,
+                    color: colors.primary,
                   ),
                 ),
-                const SizedBox(height: SpacingTokens.xs),
-                Text(
-                  'Manage MCP servers and connect them to your agents',
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: colors.onSurfaceVariant,
+                const SizedBox(width: SpacingTokens.md),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Give Your AI New Skills',
+                      style: TextStyles.headingMedium.copyWith(
+                        color: colors.onSurface,
+                      ),
+                    ),
+                    Text(
+                      'Connect your assistant to useful tools and services',
+                      style: TextStyles.bodySmall.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(width: SpacingTokens.lg),
+                
+                // Tab bar inline with title
+                Expanded(
+                  child: TabBar(
+                    controller: _tabController,
+                    tabs: const [
+                      Tab(
+                        icon: Icon(Icons.dns, size: 16),
+                        text: 'My Servers',
+                      ),
+                      Tab(
+                        icon: Icon(Icons.hub, size: 16),
+                        text: 'GitHub Registry',
+                      ),
+                      Tab(
+                        icon: Icon(Icons.hub, size: 16),
+                        text: 'Connections',
+                      ),
+                    ],
+                    indicatorColor: colors.primary,
+                    labelColor: colors.onSurface,
+                    unselectedLabelColor: colors.onSurfaceVariant,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelStyle: TextStyles.caption.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    unselectedLabelStyle: TextStyles.caption,
+                    indicatorPadding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm),
                   ),
+                ),
+                
+                const SizedBox(width: SpacingTokens.lg),
+                
+                // Compact status indicators  
+                if (state.isInitialized) ...[
+                  _buildCompactStatusCard(
+                    colors,
+                    'Available',
+                    state.installedServers.length.toString(),
+                    Icons.auto_awesome,
+                    colors.primary,
+                  ),
+                  const SizedBox(width: SpacingTokens.sm),
+                  _buildCompactStatusCard(
+                    colors,
+                    'Active',
+                    state.installedServers.where((s) => s.isRunning).length.toString(),
+                    Icons.check_circle,
+                    colors.success,
+                  ),
+                  const SizedBox(width: SpacingTokens.sm),
+                  _buildCompactStatusCard(
+                    colors,
+                    'Connected',
+                    state.agentConnections.fold<int>(
+                      0,
+                      (sum, connection) => sum + connection.connectedServerIds.length,
+                    ).toString(),
+                    Icons.hub,
+                    colors.accent,
+                  ),
+                ],
+                
+                const SizedBox(width: SpacingTokens.md),
+                
+                // Compact actions
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (state.isLoading)
+                      const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    else
+                      IconButton(
+                        onPressed: () => ref.read(toolsProvider.notifier).refresh(),
+                        icon: const Icon(Icons.refresh, size: 20),
+                        tooltip: 'Refresh',
+                        padding: EdgeInsets.all(SpacingTokens.xs),
+                        constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                      ),
+                    const SizedBox(width: SpacingTokens.xs),
+                    AsmblButton.primary(
+                      text: 'Browse Registry',
+                      icon: Icons.hub,
+                      onPressed: () async {
+                        // Switch to GitHub Registry tab
+                        _tabController.animateTo(1);
+
+                        // Also open the external GitHub MCP Registry URL
+                        final url = Uri.parse('https://github.com/modelcontextprotocol/servers');
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      size: AsmblButtonSize.small,
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
-          
-          // Status indicators
-          if (state.isInitialized) ...[
-            _buildStatusCard(
-              colors,
-              'Installed',
-              state.installedServers.length.toString(),
-              Icons.dns,
-              colors.primary,
-            ),
-            const SizedBox(width: SpacingTokens.lg),
-            _buildStatusCard(
-              colors,
-              'Running',
-              state.installedServers.where((s) => s.isRunning).length.toString(),
-              Icons.play_circle,
-              colors.success,
-            ),
-            const SizedBox(width: SpacingTokens.lg),
-            _buildStatusCard(
-              colors,
-              'Connections',
-              state.agentConnections.fold<int>(
-                0,
-                (sum, connection) => sum + connection.connectedServerIds.length,
-              ).toString(),
-              Icons.hub,
-              colors.accent,
-            ),
-          ],
-          
-          const SizedBox(width: SpacingTokens.lg),
-          
-          // Actions
-          Row(
-            children: [
-              if (state.isLoading)
-                Container(
-                  padding: const EdgeInsets.all(SpacingTokens.sm),
-                  child: const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
-              else
-                IconButton(
-                  onPressed: () => ref.read(toolsProvider.notifier).refresh(),
-                  icon: const Icon(Icons.refresh),
-                  tooltip: 'Refresh',
-                ),
-              const SizedBox(width: SpacingTokens.sm),
-              AsmblButton.primary(
-                text: 'Install Server',
-                icon: Icons.add,
-                onPressed: () => _tabController.animateTo(1), // Navigate to marketplace
-              ),
-            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatusCard(
+  Widget _buildCompactStatusCard(
     ThemeColors colors,
     String label,
     String value,
@@ -198,14 +247,14 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: SpacingTokens.md,
-        vertical: SpacingTokens.sm,
+        horizontal: SpacingTokens.sm,
+        vertical: SpacingTokens.xs,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+        color: color.withOpacity( 0.1),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: color.withValues(alpha: 0.2),
+          color: color.withOpacity( 0.2),
         ),
       ),
       child: Row(
@@ -213,7 +262,7 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
         children: [
           Icon(
             icon,
-            size: 16,
+            size: 14,
             color: color,
           ),
           const SizedBox(width: SpacingTokens.xs),
@@ -223,7 +272,7 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
             children: [
               Text(
                 value,
-                style: TextStyles.bodyMedium.copyWith(
+                style: TextStyles.bodySmall.copyWith(
                   color: color,
                   fontWeight: FontWeight.bold,
                 ),
@@ -232,6 +281,7 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
                 label,
                 style: TextStyles.caption.copyWith(
                   color: colors.onSurfaceVariant,
+                  fontSize: 10,
                 ),
               ),
             ],
@@ -241,34 +291,4 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
     );
   }
 
-  Widget _buildTabBar(ThemeColors colors) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.xxl),
-      child: TabBar(
-        controller: _tabController,
-        tabs: const [
-          Tab(
-            icon: Icon(Icons.dns),
-            text: 'My Servers',
-          ),
-          Tab(
-            icon: Icon(Icons.store),
-            text: 'Catalogue',
-          ),
-          Tab(
-            icon: Icon(Icons.hub),
-            text: 'Agent Connections',
-          ),
-        ],
-        indicatorColor: colors.primary,
-        labelColor: colors.onSurface,
-        unselectedLabelColor: colors.onSurfaceVariant,
-        indicatorSize: TabBarIndicatorSize.tab,
-        labelStyle: TextStyles.bodyMedium.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: TextStyles.bodyMedium,
-      ),
-    );
-  }
 }

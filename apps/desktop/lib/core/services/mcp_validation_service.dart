@@ -288,6 +288,10 @@ class MCPValidationService {
         return credential.contains(':') && credential.length >= 8;
       case MCPAuthType.oauth:
         return credential.length >= 32; // OAuth tokens are typically long
+      case MCPAuthType.database:
+        return credential.contains(':') && credential.length >= 8; // Similar to basic auth
+      case MCPAuthType.complex:
+        return credential.isNotEmpty && credential.length >= 8;
       case MCPAuthType.custom:
         return credential.isNotEmpty;
     }

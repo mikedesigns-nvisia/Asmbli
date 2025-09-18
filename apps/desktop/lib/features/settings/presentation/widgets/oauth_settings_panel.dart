@@ -232,7 +232,7 @@ class _OAuthSettingsPanelState extends ConsumerState<OAuthSettingsPanel> {
           Row(
             children: [
               Icon(
-                provider.icon,
+                Icons.account_circle,
                 color: colors.primary,
                 size: 20,
               ),

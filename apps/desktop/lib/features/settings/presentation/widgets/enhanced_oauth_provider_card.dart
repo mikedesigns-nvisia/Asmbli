@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/models/oauth_provider.dart';
-import '../screens/enhanced_oauth_settings_screen.dart';
+import '../../../../core/models/oauth_provider.dart' as core;
+import '../screens/enhanced_oauth_settings_screen.dart' as enhanced;
 
 /// Enhanced OAuth provider card with comprehensive status display and actions
 class EnhancedOAuthProviderCard extends StatefulWidget {
-  final OAuthProvider provider;
-  final OAuthProviderState state;
+  final core.OAuthProvider provider;
+  final core.OAuthProviderState state;
   final VoidCallback? onConnect;
   final VoidCallback? onDisconnect;
   final VoidCallback? onRefresh;
@@ -103,7 +103,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: _getProviderColor(widget.provider).withValues(alpha: 0.1),
+                      color: _getProviderColor(widget.provider).withOpacity( 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     ),
                     child: Icon(
@@ -125,8 +125,8 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
                         shape: BoxShape.circle,
                         border: Border.all(color: colors.surface, width: 2),
                       ),
-                      child: widget.state.status == OAuthConnectionStatus.connecting ||
-                             widget.state.status == OAuthConnectionStatus.refreshing
+                      child: widget.state.status == core.OAuthConnectionStatus.connecting ||
+                             widget.state.status == core.core.OAuthConnectionStatus.connecting
                           ? const SizedBox(
                               width: 8,
                               height: 8,
@@ -205,7 +205,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
       padding: const EdgeInsets.only(top: SpacingTokens.md),
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(color: colors.border.withValues(alpha: 0.3)),
+          top: BorderSide(color: colors.border.withOpacity( 0.3)),
         ),
       ),
       child: Column(
@@ -218,7 +218,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
           ],
           
           // Error details
-          if (widget.state.status == OAuthConnectionStatus.error) ...[
+          if (widget.state.status == core.OAuthConnectionStatus.error) ...[
             _buildErrorDetails(colors),
             const SizedBox(height: SpacingTokens.md),
           ],
@@ -287,9 +287,9 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
           width: double.infinity,
           padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.error.withValues(alpha: 0.1),
+            color: colors.error.withOpacity( 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-            border: Border.all(color: colors.error.withValues(alpha: 0.3)),
+            border: Border.all(color: colors.error.withOpacity( 0.3)),
           ),
           child: Text(
             widget.state.error ?? 'Unknown error occurred',
@@ -332,9 +332,9 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
                 vertical: SpacingTokens.xs,
               ),
               decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: 0.1),
+                color: colors.primary.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
-                border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+                border: Border.all(color: colors.primary.withOpacity( 0.3)),
               ),
               child: Text(
                 _formatScopeName(scope),
@@ -395,7 +395,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: colors.primary.withValues(alpha: 0.1),
+        color: colors.primary.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
       ),
       child: Text(
@@ -425,7 +425,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
 
   Widget _buildPrimaryActionButton(ThemeColors colors) {
     switch (widget.state.status) {
-      case OAuthConnectionStatus.connected:
+      case core.OAuthConnectionStatus.connected:
         return AsmblButton.outline(
           text: 'Disconnect',
           icon: Icons.link_off,
@@ -433,8 +433,8 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
           onPressed: widget.onDisconnect,
         );
       
-      case OAuthConnectionStatus.disconnected:
-      case OAuthConnectionStatus.error:
+      case core.OAuthConnectionStatus.disconnected:
+      case core.OAuthConnectionStatus.error:
         return AsmblButton.primary(
           text: 'Connect',
           icon: Icons.link,
@@ -442,7 +442,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
           onPressed: widget.onConnect,
         );
       
-      case OAuthConnectionStatus.connecting:
+      case core.OAuthConnectionStatus.connecting:
         return AsmblButton.primary(
           text: 'Connecting...',
           isLoading: true,
@@ -450,7 +450,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
           onPressed: null,
         );
       
-      case OAuthConnectionStatus.refreshing:
+      case core.core.OAuthConnectionStatus.connecting:
         return AsmblButton.secondary(
           text: 'Refreshing...',
           isLoading: true,
@@ -525,26 +525,26 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
     }
   }
 
-  Color _getStatusColor(OAuthConnectionStatus status) {
+  Color _getStatusColor(core.OAuthConnectionStatus status) {
     final colors = ThemeColors(context);
     switch (status) {
-      case OAuthConnectionStatus.connected:
+      case core.OAuthConnectionStatus.connected:
         return colors.success;
-      case OAuthConnectionStatus.disconnected:
-        return colors.onSurfaceVariant.withValues(alpha: 0.5);
-      case OAuthConnectionStatus.error:
+      case core.OAuthConnectionStatus.disconnected:
+        return colors.onSurfaceVariant.withOpacity( 0.5);
+      case core.OAuthConnectionStatus.error:
         return colors.error;
-      case OAuthConnectionStatus.connecting:
-      case OAuthConnectionStatus.refreshing:
+      case core.OAuthConnectionStatus.connecting:
+      case core.core.OAuthConnectionStatus.connecting:
         return colors.warning;
     }
   }
 
   Color _getStatusTextColor(ThemeColors colors) {
     switch (widget.state.status) {
-      case OAuthConnectionStatus.connected:
+      case core.OAuthConnectionStatus.connected:
         return widget.state.isExpired ? colors.error : colors.success;
-      case OAuthConnectionStatus.error:
+      case core.OAuthConnectionStatus.error:
         return colors.error;
       default:
         return colors.onSurfaceVariant;
@@ -553,7 +553,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
 
   String _getStatusText() {
     switch (widget.state.status) {
-      case OAuthConnectionStatus.connected:
+      case core.OAuthConnectionStatus.connected:
         if (widget.state.isExpired) {
           return 'Token expired';
         } else if (widget.state.isExpiringSoon) {
@@ -561,16 +561,16 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
         }
         return 'Connected • Active';
       
-      case OAuthConnectionStatus.disconnected:
+      case core.OAuthConnectionStatus.disconnected:
         return 'Not connected';
       
-      case OAuthConnectionStatus.error:
+      case core.OAuthConnectionStatus.error:
         return 'Connection error';
       
-      case OAuthConnectionStatus.connecting:
+      case core.OAuthConnectionStatus.connecting:
         return 'Connecting...';
       
-      case OAuthConnectionStatus.refreshing:
+      case core.core.OAuthConnectionStatus.connecting:
         return 'Refreshing token...';
     }
   }

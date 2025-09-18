@@ -44,12 +44,14 @@ class ThemeColors {
      if (primaryColor == const Color(0xFF60A5FA)) return 'cool-blue';
      if (primaryColor == const Color(0xFFB8E6C8)) return 'forest-green';
      if (primaryColor == const Color(0xFFD4956B)) return 'sunset-orange';
+     if (primaryColor == const Color(0xFFB8B8B8)) return 'silver-onyx';
      return 'warm-neutral'; // E6C794
    } else {
      // Detect based on light mode primary colors
      if (primaryColor == const Color(0xFF1E3A8A)) return 'cool-blue';
      if (primaryColor == const Color(0xFF1E3B2B)) return 'forest-green';
      if (primaryColor == const Color(0xFF9A3412)) return 'sunset-orange';
+     if (primaryColor == const Color(0xFF4A4A4A)) return 'silver-onyx';
      return 'warm-neutral'; // 8B6F47
    }
  }
@@ -74,6 +76,8 @@ class ThemeColors {
  return const Color(0xFF142019); // Lighter forest center (from old mint)
  case 'sunset-orange':
  return const Color(0xFF5C2D1F); // Desaturated orange center
+ case 'silver-onyx':
+ return const Color(0xFF2D2D2D); // Lighter charcoal center
  default: // warm-neutral
  return const Color(0xFF3D2B1F); // Warm brown center
  }
@@ -85,6 +89,8 @@ class ThemeColors {
  return const Color(0xFFF8FCFA); // Lighter mint center (from old mint)
  case 'sunset-orange':
  return const Color(0xFFFFFBF7); // Almost white orange center
+ case 'silver-onyx':
+ return const Color(0xFFFAFAFA); // Lighter silver center
  default: // warm-neutral
  return const Color(0xFFFCFBF9); // Lighter cream center
  }
@@ -102,6 +108,8 @@ class ThemeColors {
  return const Color(0xFF0F1C14); // Main forest (from old mint)
  case 'sunset-orange':
  return const Color(0xFF4A2117); // Main desaturated orange
+ case 'silver-onyx':
+ return const Color(0xFF1A1A1A); // Main onyx
  default: // warm-neutral
  return const Color(0xFF2B1F14); // Main warm brown
  }
@@ -113,6 +121,8 @@ class ThemeColors {
  return const Color(0xFFF5FBF8); // Main mint (from old mint)
  case 'sunset-orange':
  return const Color(0xFFFFF7ED); // Main light orange
+ case 'silver-onyx':
+ return const Color(0xFFF8F8F8); // Main silver
  default: // warm-neutral
  return const Color(0xFFFAF8F5); // Main warm cream
  }
@@ -130,6 +140,8 @@ class ThemeColors {
  return const Color(0xFF0A140F); // Darker forest edges (from old mint)
  case 'sunset-orange':
  return const Color(0xFF2E1810); // Darker desaturated orange edges
+ case 'silver-onyx':
+ return const Color(0xFF0D0D0D); // Darker onyx edges
  default: // warm-neutral
  return const Color(0xFF1F1611); // Darker warm brown edges
  }
@@ -141,6 +153,8 @@ class ThemeColors {
  return const Color(0xFFE8F3ED); // Darker mint edges (from old mint)
  case 'sunset-orange':
  return const Color(0xFFFED7AA); // Darker orange edges
+ case 'silver-onyx':
+ return const Color(0xFFE8E8E8); // Darker silver edges
  default: // warm-neutral
  return const Color(0xFFF0E6D6); // Darker cream edges
  }
@@ -163,18 +177,18 @@ class ThemeColors {
  
  // Border colors
  Color get border => theme.colorScheme.outline;
- Color get borderSubtle => theme.colorScheme.outline.withValues(alpha: 0.5);
+ Color get borderSubtle => theme.colorScheme.outline.withOpacity( 0.5);
  
- // Semantic colors
- Color get success => isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
- Color get warning => const Color(0xFFFAAF00);
+ // Semantic colors - Enhanced contrast for better accessibility
+ Color get success => isDark ? const Color(0xFF22C55E) : const Color(0xFF15803D);
+ Color get warning => isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
  Color get error => theme.colorScheme.error;
- Color get info => isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+ Color get info => isDark ? const Color(0xFF3B82F6) : const Color(0xFF1D4ED8);
  
- // Interactive states
- Color get hover => primary.withValues(alpha: 0.04);
- Color get pressed => primary.withValues(alpha: 0.08);
- Color get focus => primary.withValues(alpha: 0.12);
+ // Interactive states - Enhanced for better visibility
+ Color get hover => primary.withOpacity( isDark ? 0.08 : 0.06);
+ Color get pressed => primary.withOpacity( isDark ? 0.12 : 0.10);
+ Color get focus => primary.withOpacity( isDark ? 0.16 : 0.14);
  
  // Special colors
  Color get headerBackground {
@@ -183,23 +197,25 @@ class ThemeColors {
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
- return const Color(0xFF1E293B).withValues(alpha: 0.90); // Blue navigation background
+ return const Color(0xFF1E293B).withOpacity( 0.90); // Blue navigation background
  case 'forest-green':
- return const Color(0xFF1F3325).withValues(alpha: 0.90); // Forest navigation background 
+ return const Color(0xFF1F3325).withOpacity( 0.90); // Forest navigation background 
  case 'sunset-orange':
- return const Color(0xFF664029).withValues(alpha: 0.90); // Warm orange navigation background
+ return const Color(0xFF664029).withOpacity( 0.90); // Warm orange navigation background
+ case 'silver-onyx':
+ return const Color(0xFF2D2D2D).withOpacity( 0.90); // Charcoal navigation background
  default: // warm-neutral
- return const Color(0xFF423126).withValues(alpha: 0.90); // Warm brown navigation background
+ return const Color(0xFF423126).withOpacity( 0.90); // Warm brown navigation background
  }
  } else {
  return const Color(0x80FFFFFF); // Semi-transparent white
  }
  }
  
- Color get headerBorder => border.withValues(alpha: 0.3);
+ Color get headerBorder => border.withOpacity( 0.3);
  
  Color get cardBackground => surface;
- Color get cardBorder => border.withValues(alpha: 0.5);
+ Color get cardBorder => border.withOpacity( 0.5);
  
  Color get inputBackground => isDark
  ? backgroundGradientStart

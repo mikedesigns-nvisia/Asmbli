@@ -33,7 +33,14 @@ class EnvironmentConfig {
       
       _initialized = true;
       print('🌍 Environment: ${_currentEnvironment.name}');
-      print('🔧 Config loaded: ${_config.keys.join(', ')}');
+      // Only log actual loaded configuration, not placeholder keys
+      final realConfigKeys = _config.keys.where((key) =>
+        Platform.environment.containsKey(key) ||
+        !_getDefaultConfiguration().containsKey(key)
+      ).toList();
+      if (realConfigKeys.isNotEmpty) {
+        print('🔧 Config loaded: ${realConfigKeys.join(', ')}');
+      }
       
     } catch (e) {
       print('❌ Environment initialization failed: $e');
@@ -51,7 +58,7 @@ class EnvironmentConfig {
   }
 
   /// Get configuration value
-  T get<T>(String key, {T? defaultValue}) {
+  T get<T>(String key, {T? defaultValue, bool hasDefault = false}) {
     if (!_initialized) throw Exception('EnvironmentConfig not initialized');
     
     // Check environment variables first
@@ -61,9 +68,16 @@ class EnvironmentConfig {
     }
     
     // Check config file
-    final configValue = _config[key] as T?;
-    if (configValue != null) return configValue;
-    if (defaultValue != null) return defaultValue;
+    final configValue = _config[key];
+    if (configValue != null) {
+      return _convertType<T>(configValue.toString(), defaultValue);
+    }
+    
+    // Return default value if provided (even if null)
+    if (hasDefault || defaultValue != null) {
+      return defaultValue as T;
+    }
+    
     throw Exception('Configuration value not found for key: $key');
   }
 
@@ -72,9 +86,9 @@ class EnvironmentConfig {
     final config = <String, String>{};
     
     // Standard OAuth environment variable patterns
-    final clientId = get<String>('${provider.toUpperCase()}_CLIENT_ID');
-    final clientSecret = get<String>('${provider.toUpperCase()}_CLIENT_SECRET');
-    final redirectUri = get<String>('${provider.toUpperCase()}_REDIRECT_URI');
+    final clientId = get<String?>('${provider.toUpperCase()}_CLIENT_ID', defaultValue: null, hasDefault: true);
+    final clientSecret = get<String?>('${provider.toUpperCase()}_CLIENT_SECRET', defaultValue: null, hasDefault: true);
+    final redirectUri = get<String?>('${provider.toUpperCase()}_REDIRECT_URI', defaultValue: null, hasDefault: true);
     
     if (clientId != null) config['client_id'] = clientId;
     if (clientSecret != null) config['client_secret'] = clientSecret;
@@ -87,8 +101,8 @@ class EnvironmentConfig {
   Map<String, dynamic> get databaseConfig {
     return {
       'name': get<String>('DATABASE_NAME', defaultValue: 'asmbli_desktop.db'),
-      'path': get<String>('DATABASE_PATH'),
-      'encryption_key': get<String>('DATABASE_ENCRYPTION_KEY'),
+      'path': get<String?>('DATABASE_PATH', defaultValue: null, hasDefault: true),
+      'encryption_key': get<String?>('DATABASE_ENCRYPTION_KEY', defaultValue: null, hasDefault: true),
       'backup_enabled': get<bool>('DATABASE_BACKUP_ENABLED', defaultValue: true),
       'backup_interval_hours': get<int>('DATABASE_BACKUP_INTERVAL_HOURS', defaultValue: 24),
     };
@@ -103,7 +117,7 @@ class EnvironmentConfig {
           : 'https://api.asmbli.com'),
       'timeout_seconds': get<int>('API_TIMEOUT_SECONDS', defaultValue: 30),
       'retry_attempts': get<int>('API_RETRY_ATTEMPTS', defaultValue: 3),
-      'api_key': get<String>('API_KEY'),
+      'api_key': get<String?>('API_KEY', defaultValue: null, hasDefault: true),
       'user_agent': 'Asmbli-Desktop/${get<String>('APP_VERSION', defaultValue: '1.0.0')}',
     };
   }
@@ -113,7 +127,7 @@ class EnvironmentConfig {
     return {
       'level': get<String>('LOG_LEVEL', defaultValue: environment.logLevel.name),
       'file_enabled': get<bool>('LOG_FILE_ENABLED', defaultValue: !environment.isDevelopment),
-      'file_path': get<String>('LOG_FILE_PATH'),
+      'file_path': get<String?>('LOG_FILE_PATH', defaultValue: null, hasDefault: true),
       'max_file_size_mb': get<int>('LOG_MAX_FILE_SIZE_MB', defaultValue: 10),
       'max_files': get<int>('LOG_MAX_FILES', defaultValue: 5),
       'console_enabled': get<bool>('LOG_CONSOLE_ENABLED', defaultValue: environment.isDevelopment),
@@ -277,17 +291,51 @@ class EnvironmentConfig {
   /// Convert string value to typed value
   T _convertType<T>(String value, T? defaultValue) {
     try {
-      if (T == bool) {
-        return (['true', '1', 'yes', 'on'].contains(value.toLowerCase())) as T;
-      } else if (T == int) {
+      final typeStr = T.toString();
+      
+      // Handle bool and bool?
+      if (typeStr == 'bool' || typeStr == 'bool?') {
+        final boolValue = ['true', '1', 'yes', 'on'].contains(value.toLowerCase());
+        return boolValue as T;
+      } 
+      // Handle int and int?
+      else if (typeStr == 'int' || typeStr == 'int?') {
         return int.parse(value) as T;
-      } else if (T == double) {
+      } 
+      // Handle double and double?
+      else if (typeStr == 'double' || typeStr == 'double?') {
         return double.parse(value) as T;
-      } else {
+      } 
+      // Handle String and String?
+      else if (typeStr == 'String' || typeStr == 'String?') {
+        return value as T;
+      } 
+      // Default fallback - try direct cast first
+      else {
+        // If it's a nullable type and value conversion fails, return null
+        if (typeStr.endsWith('?')) {
+          try {
+            return value as T;
+          } catch (_) {
+            return null as T;
+          }
+        }
         return value as T;
       }
-    } catch (e) {
-      return defaultValue ?? value as T;
+    } catch (e, stackTrace) {
+      // Debug logging
+      print('⚠️ Type conversion failed: $value -> $T (${T.toString()}), error: $e');
+      print('Stack: ${stackTrace.toString().split('\n').take(3).join('\n')}');
+      
+      if (defaultValue != null) return defaultValue;
+      
+      // For nullable types, return null if conversion fails
+      if (T.toString().endsWith('?')) {
+        return null as T;
+      }
+      
+      // Last resort - try to cast or throw
+      return value as T;
     }
   }
 

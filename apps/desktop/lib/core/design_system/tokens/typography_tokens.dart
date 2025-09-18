@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 // Typography tokens using Google Fonts Fustat
 class TypographyTokens {
- static String get fontFamily => GoogleFonts.fustat().fontFamily!;
+ static String get fontFamily => GoogleFonts.fustat().fontFamily ?? 'SF Pro Display';
  
  // Font Weights 
  static const FontWeight regular = FontWeight.w400;

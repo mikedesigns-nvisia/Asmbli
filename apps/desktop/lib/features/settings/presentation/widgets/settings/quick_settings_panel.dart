@@ -182,7 +182,7 @@ class _QuickSettingsCard extends StatelessWidget {
         border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.05),
+            color: colors.onSurface.withOpacity( 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -197,7 +197,7 @@ class _QuickSettingsCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Icon(

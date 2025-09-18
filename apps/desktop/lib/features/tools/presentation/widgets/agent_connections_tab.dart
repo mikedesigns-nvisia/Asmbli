@@ -58,7 +58,7 @@ class AgentConnectionsTab extends ConsumerWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: colors.accent.withValues(alpha: 0.1),
+              color: colors.accent.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
             child: Icon(
@@ -107,7 +107,7 @@ class AgentConnectionsTab extends ConsumerWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: colors.accent.withValues(alpha: 0.1),
+                      color: colors.accent.withOpacity( 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     ),
                     child: Icon(
@@ -156,7 +156,7 @@ class AgentConnectionsTab extends ConsumerWidget {
               
               if (connectedServers.isNotEmpty) ...[
                 const SizedBox(height: SpacingTokens.lg),
-                Divider(color: colors.border.withValues(alpha: 0.3)),
+                Divider(color: colors.border.withOpacity( 0.3)),
                 const SizedBox(height: SpacingTokens.lg),
                 
                 Text(
@@ -179,13 +179,13 @@ class AgentConnectionsTab extends ConsumerWidget {
                       ),
                       decoration: BoxDecoration(
                         color: server.isRunning 
-                            ? colors.success.withValues(alpha: 0.1)
-                            : colors.onSurfaceVariant.withValues(alpha: 0.1),
+                            ? colors.success.withOpacity( 0.1)
+                            : colors.onSurfaceVariant.withOpacity( 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                         border: Border.all(
                           color: server.isRunning 
-                              ? colors.success.withValues(alpha: 0.3)
-                              : colors.onSurfaceVariant.withValues(alpha: 0.3),
+                              ? colors.success.withOpacity( 0.3)
+                              : colors.onSurfaceVariant.withOpacity( 0.3),
                         ),
                       ),
                       child: Row(

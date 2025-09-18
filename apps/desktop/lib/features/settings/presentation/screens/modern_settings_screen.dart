@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../widgets/settings/settings_search_bar.dart';
 import '../widgets/settings/settings_category_card.dart';
-import '../../../../core/services/api_config_service.dart';
-import '../../../../providers/agent_provider.dart';
-import '../../../../providers/conversation_provider.dart';
-import '../../../../core/services/integration_service.dart';
 import 'agent_settings_screen.dart';
 import 'appearance_settings_screen.dart';
 import 'llm_configuration_screen.dart';
@@ -28,9 +23,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
   String _searchQuery = '';
   String? _expandedCategory;
   
-  // Animation controllers for live indicators
-  late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
+  // Animation controllers removed - no longer needed after removing stats
 
   final List<SettingsCategory> _categories = [
     SettingsCategory(
@@ -64,15 +57,6 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
       icon: Icons.palette,
       color: Colors.orange,
       priority: 4,
-    ),
-    SettingsCategory(
-      id: 'oauth',
-      title: 'OAuth Connections',
-      description: 'Configure GitHub, Google, Microsoft and other OAuth providers',
-      icon: Icons.security,
-      color: Colors.cyan,
-      priority: 5,
-      searchKeywords: ['oauth', 'github', 'google', 'microsoft', 'authentication', 'login', 'provider', 'integration', 'connection'],
     ),
     SettingsCategory(
       id: 'privacy',
@@ -113,26 +97,13 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
-    
-    // Initialize animations
-    _pulseController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-    _pulseAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
-    _pulseController.repeat(reverse: true);
+    // Animation controllers removed - no longer needed after removing stats
   }
 
   @override
   void dispose() {
     _searchController.dispose();
-    _pulseController.dispose();
+    // Animation controllers removed - no longer needed after removing stats
     super.dispose();
   }
 
@@ -156,7 +127,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
             end: Alignment.bottomRight,
             colors: [
               colors.background,
-              colors.background.withValues(alpha: 0.8),
+              colors.background.withOpacity( 0.8),
             ],
           ),
         ),
@@ -190,9 +161,9 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.8),
+        color: colors.surface.withOpacity( 0.8),
         border: Border(
-          bottom: BorderSide(color: colors.border.withValues(alpha: 0.5)),
+          bottom: BorderSide(color: colors.border.withOpacity( 0.5)),
         ),
       ),
       child: Column(
@@ -230,196 +201,199 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
             ],
           ),
           
-          // Quick Stats
-          if (_searchQuery.isEmpty) ...[
-            const SizedBox(height: SpacingTokens.sectionSpacing),
-            _buildQuickStats(colors),
-          ],
+          // Quick Stats - REMOVED per user request
+          // if (_searchQuery.isEmpty) ...[
+          //   const SizedBox(height: SpacingTokens.sectionSpacing),
+          //   _buildQuickStats(colors),
+          // ],
         ],
       ),
     );
   }
 
-  Widget _buildQuickStats(ThemeColors colors) {
-    return Consumer(
-      builder: (context, ref, child) {
-        // Get live data from providers
-        final apiConfigs = ref.watch(apiConfigsProvider);
-        final agentsAsync = ref.watch(agentsProvider);  
-        final conversationsAsync = ref.watch(conversationsProvider);
-        final integrationService = ref.watch(integrationServiceProvider);
-        
-        final apiCount = apiConfigs.length;
-        final connectedApis = apiConfigs.values.where((config) => config.isConfigured).length;
-        final integrationStats = integrationService.getStats();
-        
-        return Row(
-          children: [
-            // Live API Keys count with connection status
-            _buildLiveStatChip(
-              '$apiCount API Key${apiCount != 1 ? 's' : ''}',
-              '$connectedApis connected',
-              Icons.key,
-              connectedApis > 0 ? colors.primary : colors.onSurfaceVariant,
-              colors,
-              isLive: connectedApis > 0,
-            ),
-            const SizedBox(width: SpacingTokens.componentSpacing),
-            
-            // Live Agents count
-            agentsAsync.when(
-              data: (agents) => _buildLiveStatChip(
-                '${agents.length} Agent${agents.length != 1 ? 's' : ''}',
-                agents.isEmpty ? 'none configured' : 'configured',
-                Icons.smart_toy,
-                colors.success,
-                colors,
-                isLive: agents.isNotEmpty,
-              ),
-              loading: () => _buildStatChip('... Agents', Icons.smart_toy, colors.onSurfaceVariant, colors),
-              error: (_, __) => _buildStatChip('0 Agents', Icons.smart_toy, colors.error, colors),
-            ),
-            const SizedBox(width: SpacingTokens.componentSpacing),
-            
-            // Live Integrations count  
-            _buildLiveStatChip(
-              '${integrationStats.total} Integration${integrationStats.total != 1 ? 's' : ''}',
-              '${integrationStats.enabled} enabled',
-              Icons.hub,
-              colors.accent,
-              colors,
-              isLive: integrationStats.enabled > 0,
-            ),
-            const SizedBox(width: SpacingTokens.componentSpacing),
-            
-            // Live Activity indicator
-            conversationsAsync.when(
-              data: (conversations) => _buildLiveStatChip(
-                '${conversations.length} Active Chat${conversations.length != 1 ? 's' : ''}',
-                conversations.isEmpty ? 'no activity' : 'live',
-                Icons.chat_bubble,
-                conversations.isNotEmpty ? colors.success : colors.onSurfaceVariant,
-                colors,
-                isLive: conversations.isNotEmpty,
-              ),
-              loading: () => _buildStatChip('... Chats', Icons.chat_bubble, colors.onSurfaceVariant, colors),
-              error: (_, __) => _buildStatChip('0 Chats', Icons.chat_bubble, colors.error, colors),
-            ),
-            
-            const Spacer(),
-          ],
-        );
-      },
-    );
-  }
+  // REMOVED: _buildQuickStats method - stats overview section removed per user request
+  // Widget _buildQuickStats(ThemeColors colors) {
+  //   return Consumer(
+  //     builder: (context, ref, child) {
+  //       // Get live data from providers
+  //       final apiConfigs = ref.watch(apiConfigsProvider);
+  //       final agentsAsync = ref.watch(agentsProvider);  
+  //       final conversationsAsync = ref.watch(conversationsProvider);
+  //       final integrationService = ref.watch(integrationServiceProvider);
+  //       
+  //       final apiCount = apiConfigs.length;
+  //       final connectedApis = apiConfigs.values.where((config) => config.isConfigured).length;
+  //       final integrationStats = integrationService.getStats();
+  //       
+  //       return Row(
+  //         children: [
+  //           // Live API Keys count with connection status
+  //           _buildLiveStatChip(
+  //             '$apiCount API Key${apiCount != 1 ? 's' : ''}',
+  //             '$connectedApis connected',
+  //             Icons.key,
+  //             connectedApis > 0 ? colors.primary : colors.onSurfaceVariant,
+  //             colors,
+  //             isLive: connectedApis > 0,
+  //           ),
+  //           const SizedBox(width: SpacingTokens.componentSpacing),
+  //           
+  //           // Live Agents count
+  //           agentsAsync.when(
+  //             data: (agents) => _buildLiveStatChip(
+  //               '${agents.length} Agent${agents.length != 1 ? 's' : ''}',
+  //               agents.isEmpty ? 'none configured' : 'configured',
+  //               Icons.smart_toy,
+  //               colors.success,
+  //               colors,
+  //               isLive: agents.isNotEmpty,
+  //             ),
+  //             loading: () => _buildStatChip('... Agents', Icons.smart_toy, colors.onSurfaceVariant, colors),
+  //             error: (_, __) => _buildStatChip('0 Agents', Icons.smart_toy, colors.error, colors),
+  //           ),
+  //           const SizedBox(width: SpacingTokens.componentSpacing),
+  //           
+  //           // Live Integrations count  
+  //           _buildLiveStatChip(
+  //             '${integrationStats.total} Integration${integrationStats.total != 1 ? 's' : ''}',
+  //             '${integrationStats.enabled} enabled',
+  //             Icons.hub,
+  //             colors.accent,
+  //             colors,
+  //             isLive: integrationStats.enabled > 0,
+  //           ),
+  //           const SizedBox(width: SpacingTokens.componentSpacing),
+  //           
+  //           // Live Activity indicator
+  //           conversationsAsync.when(
+  //             data: (conversations) => _buildLiveStatChip(
+  //               '${conversations.length} Active Chat${conversations.length != 1 ? 's' : ''}',
+  //               conversations.isEmpty ? 'no activity' : 'live',
+  //               Icons.chat_bubble,
+  //               conversations.isNotEmpty ? colors.success : colors.onSurfaceVariant,
+  //               colors,
+  //               isLive: conversations.isNotEmpty,
+  //             ),
+  //             loading: () => _buildStatChip('... Chats', Icons.chat_bubble, colors.onSurfaceVariant, colors),
+  //             error: (_, __) => _buildStatChip('0 Chats', Icons.chat_bubble, colors.error, colors),
+  //           ),
+  //           
+  //           const Spacer(),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
-  Widget _buildStatChip(String label, IconData icon, Color color, ThemeColors colors) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: SpacingTokens.componentSpacing,
-        vertical: SpacingTokens.iconSpacing,
-      ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: color),
-          const SizedBox(width: SpacingTokens.iconSpacing),
-          Text(
-            label,
-            style: TextStyles.caption.copyWith(
-              color: colors.onSurface,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // REMOVED: _buildStatChip method - no longer used after removing stats overview
+  // Widget _buildStatChip(String label, IconData icon, Color color, ThemeColors colors) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(
+  //       horizontal: SpacingTokens.componentSpacing,
+  //       vertical: SpacingTokens.iconSpacing,
+  //     ),
+  //     decoration: BoxDecoration(
+  //       color: color.withOpacity( 0.1),
+  //       borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
+  //       border: Border.all(color: color.withOpacity( 0.3)),
+  //     ),
+  //     child: Row(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Icon(icon, size: 16, color: color),
+  //         const SizedBox(width: SpacingTokens.iconSpacing),
+  //         Text(
+  //           label,
+  //           style: TextStyles.caption.copyWith(
+  //             color: colors.onSurface,
+  //             fontWeight: FontWeight.w600,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildLiveStatChip(String label, String subtitle, IconData icon, Color color, ThemeColors colors, {bool isLive = false}) {
-    return AnimatedBuilder(
-      animation: _pulseAnimation,
-      builder: (context, child) {
-        return Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: SpacingTokens.componentSpacing,
-            vertical: SpacingTokens.iconSpacing,
-          ),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
-            border: Border.all(
-              color: color.withValues(alpha: isLive ? _pulseAnimation.value * 0.5 + 0.3 : 0.3),
-              width: isLive ? 1.5 : 1.0,
-            ),
-            boxShadow: isLive ? [
-              BoxShadow(
-                color: color.withValues(alpha: _pulseAnimation.value * 0.2),
-                blurRadius: 3,
-                spreadRadius: 0,
-              )
-            ] : null,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Stack(
-                children: [
-                  Icon(icon, size: 16, color: color),
-                  if (isLive)
-                    Positioned(
-                      right: -2,
-                      top: -2,
-                      child: Container(
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: colors.success,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: colors.success.withValues(alpha: _pulseAnimation.value),
-                              blurRadius: 2,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(width: SpacingTokens.iconSpacing),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyles.caption.copyWith(
-                      color: colors.onSurface,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  if (subtitle.isNotEmpty)
-                    Text(
-                      subtitle,
-                      style: TextStyles.caption.copyWith(
-                        color: colors.onSurfaceVariant,
-                        fontSize: 10,
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // REMOVED: _buildLiveStatChip method - no longer used after removing stats overview
+  // Widget _buildLiveStatChip(String label, String subtitle, IconData icon, Color color, ThemeColors colors, {bool isLive = false}) {
+  //   return AnimatedBuilder(
+  //     animation: _pulseAnimation,
+  //     builder: (context, child) {
+  //       return Container(
+  //         padding: const EdgeInsets.symmetric(
+  //           horizontal: SpacingTokens.componentSpacing,
+  //           vertical: SpacingTokens.iconSpacing,
+  //         ),
+  //         decoration: BoxDecoration(
+  //           color: color.withOpacity( 0.1),
+  //           borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
+  //           border: Border.all(
+  //             color: color.withOpacity( isLive ? _pulseAnimation.value * 0.5 + 0.3 : 0.3),
+  //             width: isLive ? 1.5 : 1.0,
+  //           ),
+  //           boxShadow: isLive ? [
+  //             BoxShadow(
+  //               color: color.withOpacity( _pulseAnimation.value * 0.2),
+  //               blurRadius: 3,
+  //               spreadRadius: 0,
+  //             )
+  //           ] : null,
+  //         ),
+  //         child: Row(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Stack(
+  //               children: [
+  //                 Icon(icon, size: 16, color: color),
+  //                 if (isLive)
+  //                   Positioned(
+  //                     right: -2,
+  //                     top: -2,
+  //                     child: Container(
+  //                       width: 5,
+  //                       height: 5,
+  //                       decoration: BoxDecoration(
+  //                         color: colors.success,
+  //                         shape: BoxShape.circle,
+  //                         boxShadow: [
+  //                           BoxShadow(
+  //                             color: colors.success.withOpacity( _pulseAnimation.value),
+  //                             blurRadius: 2,
+  //                           )
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //               ],
+  //             ),
+  //             const SizedBox(width: SpacingTokens.iconSpacing),
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: [
+  //                 Text(
+  //                   label,
+  //                   style: TextStyles.caption.copyWith(
+  //                     color: colors.onSurface,
+  //                     fontWeight: FontWeight.w600,
+  //                   ),
+  //                 ),
+  //                 if (subtitle.isNotEmpty)
+  //                   Text(
+  //                     subtitle,
+  //                     style: TextStyles.caption.copyWith(
+  //                       color: colors.onSurfaceVariant,
+  //                       fontSize: 10,
+  //                     ),
+  //                   ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildMainContent(ThemeColors colors, List<SettingsCategory> categories) {
     if (_searchQuery.isNotEmpty && categories.isEmpty) {
@@ -473,7 +447,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
             Icon(
               Icons.search_off,
               size: 64,
-              color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+              color: colors.onSurfaceVariant.withOpacity( 0.5),
             ),
             const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(
@@ -589,9 +563,6 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const AppearanceSettingsScreen()),
         );
-        break;
-      case 'oauth':
-        context.go(AppRoutes.oauthSettings);
         break;
       case 'privacy':
         _showComingSoonDialog(category.title);

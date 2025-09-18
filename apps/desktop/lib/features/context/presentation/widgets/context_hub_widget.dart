@@ -9,6 +9,7 @@ import '../../data/repositories/context_repository.dart';
 import '../../../../core/services/vector_database_service.dart';
 import '../../../../core/vector/models/vector_models.dart';
 import 'context_document_card.dart';
+import 'context_creation_flow.dart';
 
 class ContextHubWidget extends ConsumerStatefulWidget {
   const ContextHubWidget({super.key});
@@ -76,50 +77,62 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
       width: double.infinity,
       padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.8),
+        color: colors.surface.withOpacity( 0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Vector Database Stats
-          vectorStats.when(
-            data: (vectorDB) => FutureBuilder<VectorDatabaseStats>(
-              future: vectorDB.getStats(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final stats = snapshot.data!;
-                  return Container(
-                    padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
-                    decoration: BoxDecoration(
-                      color: colors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
+          // Vector Database Stats - only show when there are documents
+          contextDocuments.when(
+            data: (documents) {
+              if (documents.isNotEmpty) {
+                return Column(
+                  children: [
+                    vectorStats.when(
+                      data: (vectorDB) => FutureBuilder<VectorDatabaseStats>(
+                        future: vectorDB.getStats(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final stats = snapshot.data!;
+                            return Container(
+                              padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
+                              decoration: BoxDecoration(
+                                color: colors.primary.withOpacity( 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: colors.primary.withOpacity( 0.2)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.storage, size: 16, color: colors.primary),
+                                  const SizedBox(width: SpacingTokens.iconSpacing),
+                                  Text(
+                                    'Vector DB: ${stats.totalDocuments} docs, ${stats.totalChunks} chunks',
+                                    style: TextStyles.bodySmall.copyWith(
+                                      color: colors.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, __) => const SizedBox.shrink(),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.storage, size: 16, color: colors.primary),
-                        const SizedBox(width: SpacingTokens.iconSpacing),
-                        Text(
-                          'Vector DB: ${stats.totalDocuments} docs, ${stats.totalChunks} chunks',
-                          style: TextStyles.bodySmall.copyWith(
-                            color: colors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
+                    const SizedBox(height: SpacingTokens.componentSpacing),
+                  ],
+                );
+              }
+              return const SizedBox.shrink();
+            },
             loading: () => const SizedBox.shrink(),
             error: (_, __) => const SizedBox.shrink(),
           ),
-          
-          const SizedBox(height: SpacingTokens.componentSpacing),
           
           // Context Documents
           contextDocuments.when(
@@ -231,42 +244,69 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
   }
 
   void _handleEditDocument(ContextDocument document) {
-    // Show edit dialog or navigate to edit screen
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: ThemeColors(context).surface,
-        title: Text(
-          'Edit Document',
-          style: TextStyles.cardTitle.copyWith(
-            color: ThemeColors(context).onSurface,
-          ),
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: ContextCreationFlow(
+          initialDocument: document,
+          onSave: (updatedDocument) async {
+            Navigator.of(context).pop();
+            try {
+              final notifier = ref.read(contextDocumentNotifierProvider.notifier);
+              await notifier.updateDocument(updatedDocument);
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Context document "${updatedDocument.title}" updated successfully'),
+                    backgroundColor: ThemeColors(context).success,
+                  ),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to update context document: $e'),
+                    backgroundColor: ThemeColors(context).error,
+                  ),
+                );
+              }
+            }
+          },
+          onCancel: () => Navigator.of(context).pop(),
         ),
-        content: Text(
-          'Edit functionality for "${document.title}" will be implemented here.',
-          style: TextStyles.bodyMedium.copyWith(
-            color: ThemeColors(context).onSurfaceVariant,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
       ),
     );
   }
 
-  void _handleDeleteDocument(String documentId) {
-    // Implementation will depend on your context service
-    // For now, show confirmation that delete was triggered
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Delete document $documentId'),
-        backgroundColor: ThemeColors(context).warning,
-      ),
-    );
+  void _handleDeleteDocument(String documentId) async {
+    print('🎯 Hub widget delete called for: $documentId');
+    try {
+      final deleteAction = ref.read(deleteContextDocumentActionProvider);
+      await deleteAction(documentId);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Document deleted successfully'),
+            backgroundColor: ThemeColors(context).success,
+          ),
+        );
+      }
+    } catch (e) {
+      print('❌ Hub widget delete failed: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete document: $e'),
+            backgroundColor: ThemeColors(context).error,
+          ),
+        );
+      }
+    }
   }
 
   void _handleAssignToAgent(String documentId) {

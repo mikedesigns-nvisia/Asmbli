@@ -224,7 +224,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
         const SizedBox(height: SpacingTokens.iconSpacing),
         Container(
           decoration: BoxDecoration(
-            color: widget.isEnabled ? colors.surfaceVariant : colors.surfaceVariant.withValues(alpha: 0.5),
+            color: widget.isEnabled ? colors.surfaceVariant : colors.surfaceVariant.withOpacity( 0.5),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             border: Border.all(
               color: error != null ? colors.error : colors.border,
@@ -265,7 +265,7 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
         const SizedBox(height: SpacingTokens.iconSpacing),
         Container(
           decoration: BoxDecoration(
-            color: widget.isEnabled ? colors.surfaceVariant : colors.surfaceVariant.withValues(alpha: 0.5),
+            color: widget.isEnabled ? colors.surfaceVariant : colors.surfaceVariant.withOpacity( 0.5),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             border: Border.all(
               color: error != null ? colors.error : colors.border,
@@ -358,14 +358,14 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
         const SizedBox(height: SpacingTokens.iconSpacing),
         Container(
           decoration: BoxDecoration(
-            color: widget.isEnabled ? colors.surfaceVariant : colors.surfaceVariant.withValues(alpha: 0.5),
+            color: widget.isEnabled ? colors.surfaceVariant : colors.surfaceVariant.withOpacity( 0.5),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             border: Border.all(
               color: error != null ? colors.error : colors.border,
             ),
           ),
           child: DropdownButtonFormField<dynamic>(
-            initialValue: value,
+            value: value,
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
@@ -573,9 +573,9 @@ class _StructuredFormRendererState extends State<StructuredFormRenderer> {
         Container(
           padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           decoration: BoxDecoration(
-            color: colors.primary.withValues(alpha: 0.05),
+            color: colors.primary.withOpacity( 0.05),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-            border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
+            border: Border.all(color: colors.primary.withOpacity( 0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

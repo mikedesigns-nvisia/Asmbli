@@ -74,15 +74,15 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                 border: Border.all(
                   color: _isHovered 
-                    ? statusConfig.borderColor.withValues(alpha: 0.5)
+                    ? statusConfig.borderColor.withOpacity( 0.5)
                     : colors.border,
                   width: _isHovered ? 2 : 1,
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: _isHovered
-                      ? statusConfig.shadowColor.withValues(alpha: 0.15)
-                      : colors.onSurface.withValues(alpha: 0.05),
+                      ? statusConfig.shadowColor.withOpacity( 0.15)
+                      : colors.onSurface.withOpacity( 0.05),
                     blurRadius: _isHovered ? 16 : 8,
                     offset: Offset(0, _isHovered ? 4 : 2),
                   ),
@@ -124,7 +124,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
         Container(
           padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
           decoration: BoxDecoration(
-            color: widget.integration.brandColor.withValues(alpha: 0.1),
+            color: widget.integration.brandColor.withOpacity( 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           ),
           child: Icon(
@@ -168,7 +168,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
       decoration: BoxDecoration(
         color: statusConfig.backgroundColor,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
-        border: Border.all(color: statusConfig.borderColor.withValues(alpha: 0.3)),
+        border: Border.all(color: statusConfig.borderColor.withOpacity( 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -265,7 +265,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
         return IntegrationStatusConfig(
           label: 'Available',
           primaryActionLabel: 'Install',
-          backgroundColor: colors.success.withValues(alpha: 0.1),
+          backgroundColor: colors.success.withOpacity( 0.1),
           borderColor: colors.success,
           shadowColor: colors.success,
           textColor: colors.success,
@@ -276,7 +276,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
         return IntegrationStatusConfig(
           label: 'Configured',
           primaryActionLabel: 'Configure',
-          backgroundColor: colors.primary.withValues(alpha: 0.1),
+          backgroundColor: colors.primary.withOpacity( 0.1),
           borderColor: colors.primary,
           shadowColor: colors.primary,
           textColor: colors.primary,
@@ -290,7 +290,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
         return IntegrationStatusConfig(
           label: 'Active',
           primaryActionLabel: 'Manage',
-          backgroundColor: colors.success.withValues(alpha: 0.1),
+          backgroundColor: colors.success.withOpacity( 0.1),
           borderColor: colors.success,
           shadowColor: colors.success,
           textColor: colors.success,
@@ -304,7 +304,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
         return IntegrationStatusConfig(
           label: 'Installing...',
           primaryActionLabel: 'Installing',
-          backgroundColor: colors.warning.withValues(alpha: 0.1),
+          backgroundColor: colors.warning.withOpacity( 0.1),
           borderColor: colors.warning,
           shadowColor: colors.warning,
           textColor: colors.warning,
@@ -315,7 +315,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
         return IntegrationStatusConfig(
           label: 'Error',
           primaryActionLabel: 'Fix Issues',
-          backgroundColor: colors.error.withValues(alpha: 0.1),
+          backgroundColor: colors.error.withOpacity( 0.1),
           borderColor: colors.error,
           shadowColor: colors.error,
           textColor: colors.error,
@@ -329,7 +329,7 @@ class _UniversalIntegrationCardState extends State<UniversalIntegrationCard>
         return IntegrationStatusConfig(
           label: 'Needs Setup',
           primaryActionLabel: 'Complete Setup',
-          backgroundColor: colors.warning.withValues(alpha: 0.1),
+          backgroundColor: colors.warning.withOpacity( 0.1),
           borderColor: colors.warning,
           shadowColor: colors.warning,
           textColor: colors.warning,

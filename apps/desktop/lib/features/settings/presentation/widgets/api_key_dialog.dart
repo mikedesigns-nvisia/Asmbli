@@ -123,7 +123,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: SemanticColors.primary.withValues(alpha: 0.1),
+                      color: SemanticColors.primary.withOpacity( 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
@@ -158,7 +158,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                     icon: const Icon(Icons.close),
                     style: IconButton.styleFrom(
                       foregroundColor: theme.colorScheme.onSurfaceVariant,
-                      overlayColor: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
+                      overlayColor: theme.colorScheme.onSurfaceVariant.withOpacity( 0.1),
                     ),
                   ),
                 ],
@@ -315,7 +315,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
         ),
         const SizedBox(height: 6),
         DropdownButtonFormField<String>(
-          initialValue: value,
+          value: value,
           items: items.map((item) {
             return DropdownMenuItem(
               value: item,
@@ -366,7 +366,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
             onPressed: () => setState(() => _isObscured = !_isObscured),
             icon: Icon(_isObscured ? Icons.visibility : Icons.visibility_off),
             style: IconButton.styleFrom(
-              overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
+              overlayColor: ThemeColors(context).primary.withOpacity( 0.1),
             ),
           ),
           IconButton(
@@ -374,7 +374,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
             icon: const Icon(Icons.paste),
             tooltip: 'Paste from clipboard',
             style: IconButton.styleFrom(
-              overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
+              overlayColor: ThemeColors(context).primary.withOpacity( 0.1),
             ),
           ),
         ],
@@ -388,13 +388,13 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity( 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: _isTestSuccessful 
-            ? SemanticColors.success.withValues(alpha: 0.5)
+            ? SemanticColors.success.withOpacity( 0.5)
             : _testError != null 
-              ? SemanticColors.error.withValues(alpha: 0.5)
+              ? SemanticColors.error.withOpacity( 0.5)
               : theme.colorScheme.outline,
         ),
       ),

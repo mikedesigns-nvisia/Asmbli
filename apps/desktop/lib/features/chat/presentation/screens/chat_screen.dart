@@ -22,7 +22,11 @@ import '../widgets/agent_deployment_section.dart';
 import '../widgets/streaming_message_widget.dart';
 import '../widgets/editable_conversation_title.dart';
 import '../widgets/context_sidebar_section.dart';
+import '../widgets/contextual_context_widget.dart';
+import '../widgets/mcp_chat_integration.dart';
 import '../components/model_warmup_status_indicator.dart';
+import '../../../../core/services/mcp_process_manager.dart';
+import '../../../../core/models/mcp_server_process.dart' as mcp_models;
 
 /// Chat screen that matches the screenshot with collapsible sidebar and MCP servers
 class ChatScreen extends ConsumerStatefulWidget {
@@ -96,20 +100,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  // Header
  const AppNavigationBar(currentRoute: AppRoutes.chat),
- 
- // Model warmup status notification
- const Padding(
-   padding: EdgeInsets.symmetric(
-     horizontal: SpacingTokens.headerPadding,
-     vertical: SpacingTokens.xs,
-   ),
-   child: Row(
-     children: [
-       ModelWarmupStatusIndicator(),
-     ],
-   ),
- ),
- 
  // Main Content
  Expanded(
  child: Row(
@@ -126,19 +116,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Container(
  width: 48,
  decoration: BoxDecoration(
- color: theme.colorScheme.surface.withValues(alpha: 0.7),
- border: Border(right: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))),
+ color: theme.colorScheme.surface.withOpacity( 0.7),
+ border: Border(right: BorderSide(color: theme.colorScheme.outline.withOpacity( 0.3))),
  ),
  child: Column(
  children: [
- const SizedBox(height: SpacingTokens.elementSpacing),
  IconButton(
  onPressed: () => setState(() => isSidebarCollapsed = false),
  icon: const Icon(Icons.chevron_right, size: 20),
  style: IconButton.styleFrom(
- backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
+ backgroundColor: theme.colorScheme.surface.withOpacity( 0.8),
  foregroundColor: theme.colorScheme.onSurfaceVariant,
- side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
+ side: BorderSide(color: theme.colorScheme.outline.withOpacity( 0.5)),
  ),
  ),
  ],
@@ -214,7 +203,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Container(
  padding: const EdgeInsets.all(6),
  decoration: BoxDecoration(
- color: _getConversationTypeColor(conversation, theme).withValues(alpha: 0.1),
+ color: _getConversationTypeColor(conversation, theme).withOpacity( 0.1),
  borderRadius: BorderRadius.circular(8),
  ),
  child: Icon(
@@ -274,10 +263,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
- color: _getConversationTypeColor(conversation, theme).withValues(alpha: 0.1),
+ color: _getConversationTypeColor(conversation, theme).withOpacity( 0.1),
  borderRadius: BorderRadius.circular(12),
  border: Border.all(
- color: _getConversationTypeColor(conversation, theme).withValues(alpha: 0.3),
+ color: _getConversationTypeColor(conversation, theme).withOpacity( 0.3),
  ),
  ),
  child: Row(
@@ -306,10 +295,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
  decoration: BoxDecoration(
- color: ThemeColors(context).success.withValues(alpha: 0.1),
+ color: ThemeColors(context).success.withOpacity( 0.1),
  borderRadius: BorderRadius.circular(8),
  border: Border.all(
- color: ThemeColors(context).success.withValues(alpha: 0.3),
+ color: ThemeColors(context).success.withOpacity( 0.3),
  ),
  ),
  child: Row(
@@ -514,11 +503,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        
        // Dropdown
        DropdownButtonFormField<String>(
-         initialValue: selectedModel?.id,
+         value: selectedModel?.id,
          decoration: InputDecoration(
            contentPadding: const EdgeInsets.symmetric(
              horizontal: SpacingTokens.sm,
-             vertical: SpacingTokens.xs,
+             vertical: SpacingTokens.sm, // Increased from xs to sm for better text space
            ),
            border: OutlineInputBorder(
              borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -529,6 +518,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
              borderSide: BorderSide(color: ThemeColors(context).primary),
            ),
          ),
+         selectedItemBuilder: (context) {
+           return models.map<Widget>((model) {
+             return Container(
+               alignment: Alignment.centerLeft,
+               constraints: const BoxConstraints(minHeight: 40),
+               child: Text(
+                 model.name,
+                 style: TextStyles.bodyMedium.copyWith(
+                   color: theme.colorScheme.onSurface,
+                   fontWeight: FontWeight.w500,
+                 ),
+                 maxLines: 1,
+                 overflow: TextOverflow.ellipsis,
+               ),
+             );
+           }).toList();
+         },
          hint: Text(
            'Choose model...',
            style: TextStyles.bodyMedium.copyWith(
@@ -538,61 +544,105 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
          isExpanded: true,
          items: models.map((model) => DropdownMenuItem<String>(
            value: model.id,
-           child: Row(
-             children: [
-               Icon(
-                 model.isLocal ? Icons.computer : Icons.cloud,
-                 size: 14,
-                 color: model.isLocal
-                     ? ThemeColors(context).accent
-                     : ThemeColors(context).primary,
-               ),
-               const SizedBox(width: SpacingTokens.xs),
-               Expanded(
-                 child: Text(
-                   model.name,
-                   style: TextStyles.bodySmall.copyWith(
-                     color: theme.colorScheme.onSurface,
+           child: Container(
+             height: 56, // Increased height to prevent cramping
+             child: Row(
+               children: [
+                 Icon(
+                   model.isLocal ? Icons.computer : Icons.cloud,
+                   size: 16, // Slightly larger icon
+                   color: model.isLocal
+                       ? ThemeColors(context).accent
+                       : ThemeColors(context).primary,
+                 ),
+                 const SizedBox(width: SpacingTokens.sm), // Increased spacing
+                 Expanded(
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     children: [
+                       Text(
+                         model.name,
+                         style: TextStyles.bodyMedium.copyWith(
+                           color: theme.colorScheme.onSurface,
+                           fontWeight: FontWeight.w500,
+                         ),
+                         maxLines: 1,
+                         overflow: TextOverflow.ellipsis,
+                       ),
+                       if (model.provider.isNotEmpty && !model.isLocal)
+                         Text(
+                           model.provider,
+                           style: TextStyles.bodySmall.copyWith(
+                             color: theme.colorScheme.onSurfaceVariant,
+                             fontSize: 11,
+                           ),
+                         ),
+                     ],
                    ),
                  ),
-               ),
-               
-               // Warm-up status indicator
-               Consumer(
-                 builder: (context, ref, _) {
-                   final isReady = ref.watch(isModelReadyProvider(model.id));
-                   return Container(
-                     width: 8,
-                     height: 8,
-                     decoration: BoxDecoration(
-                       color: isReady 
-                         ? ThemeColors(context).success
-                         : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                       shape: BoxShape.circle,
+                 
+                 const SizedBox(width: SpacingTokens.sm), // More space before badges
+                 
+                 // Status indicators row
+                 Row(
+                   mainAxisSize: MainAxisSize.min,
+                   children: [
+                     // Warm-up status indicator
+                     Consumer(
+                       builder: (context, ref, _) {
+                         final isReady = ref.watch(isModelReadyProvider(model.id));
+                         return Container(
+                           width: 8,
+                           height: 8,
+                           decoration: BoxDecoration(
+                             color: isReady 
+                               ? ThemeColors(context).success
+                               : theme.colorScheme.onSurfaceVariant.withOpacity( 0.5),
+                             shape: BoxShape.circle,
+                           ),
+                         );
+                       },
                      ),
-                   );
-                 },
-               ),
-               if (model.isLocal) ...[
-                 const SizedBox(width: SpacingTokens.xs),
-                 Text(
-                   'LOCAL',
-                   style: TextStyle(
-                                         fontWeight: FontWeight.w600,
-                     color: ThemeColors(context).accent,
-                   ),
-                 ),
-               ] else if (model.provider.isNotEmpty) ...[
-                 const SizedBox(width: SpacingTokens.xs),
-                 Text(
-                   model.provider.toUpperCase(),
-                   style: TextStyle(
-                                         fontWeight: FontWeight.w600,
-                     color: ThemeColors(context).primary,
-                   ),
+                     if (model.isLocal) ...[
+                       const SizedBox(width: SpacingTokens.sm),
+                       Container(
+                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                         decoration: BoxDecoration(
+                           color: ThemeColors(context).accent.withOpacity( 0.15),
+                           borderRadius: BorderRadius.circular(8),
+                         ),
+                         child: Text(
+                           'LOCAL',
+                           style: TextStyle(
+                             fontSize: 9,
+                             fontWeight: FontWeight.w600,
+                             color: ThemeColors(context).accent,
+                           ),
+                         ),
+                       ),
+                     ] else if (model.provider.isNotEmpty) ...[
+                       const SizedBox(width: SpacingTokens.sm),
+                       Container(
+                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                         decoration: BoxDecoration(
+                           color: ThemeColors(context).primary.withOpacity( 0.15),
+                           borderRadius: BorderRadius.circular(8),
+                         ),
+                         child: Text(
+                           model.provider.toUpperCase(),
+                           style: TextStyle(
+                             fontSize: 9,
+                             fontWeight: FontWeight.w600,
+                             color: ThemeColors(context).primary,
+                           ),
+                         ),
+                       ),
+                     ],
+                   ],
                  ),
                ],
-             ],
+             ),
            ),
          )).toList(),
          onChanged: (String? modelId) {
@@ -629,7 +679,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
      return theme.colorScheme.onSurfaceVariant; // API models
    }
  default:
- return theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7);
+ return theme.colorScheme.onSurfaceVariant.withOpacity( 0.7);
  }
  }
 
@@ -709,15 +759,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final theme = Theme.of(context);
  return Container(
  decoration: BoxDecoration(
- color: theme.colorScheme.surface.withValues(alpha: 0.7),
- border: Border(right: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))),
+ color: theme.colorScheme.surface.withOpacity( 0.7),
+ border: Border(right: BorderSide(color: theme.colorScheme.outline.withOpacity( 0.3))),
  ),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  // Sidebar Header (fixed)
  Padding(
- padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
+ padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
  child: Row(
  children: [
  Flexible(
@@ -725,7 +775,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Text(
- 'Agent Control Panel',
+ '🤖 Your AI Assistant',
  style: GoogleFonts.fustat(
   fontWeight: FontWeight.w600,
  color: theme.colorScheme.onSurface,
@@ -734,9 +784,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  softWrap: true,
  ),
  Text(
- 'What your agent sees & can access',
+ 'See what your assistant knows & can help with',
  style: GoogleFonts.fustat(
   color: theme.colorScheme.onSurfaceVariant,
+  fontSize: 12,
  ),
  overflow: TextOverflow.visible,
  softWrap: true,
@@ -805,8 +856,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  // Chat Header - shows current conversation/agent
  _buildChatHeader(theme),
- 
- 
+
+ // MCP Contextual Recommendations
+ _buildMCPRecommendations(context),
+ // Active MCP Servers Status
+ _buildMCPServerStatus(context),
+
  // Messages Area or Empty State
  Expanded(
  child: _buildMessagesArea(context),
@@ -820,7 +875,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Expanded(
  child: Container(
  decoration: BoxDecoration(
- color: theme.colorScheme.surface.withValues(alpha: 0.8),
+ color: theme.colorScheme.surface.withOpacity( 0.8),
  borderRadius: BorderRadius.circular(8),
  border: Border.all(color: theme.colorScheme.outline),
  ),
@@ -950,6 +1005,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  textAlign: TextAlign.center,
  ),
+
+ const SizedBox(height: SpacingTokens.sectionSpacing),
+
+ // Start New Chat Button
+ AsmblButton.primary(
+   text: 'Start New Chat',
+   icon: Icons.chat_bubble_outline,
+   onPressed: () async {
+     await _startNewDirectChat();
+   },
+ ),
  ],
  ),
  ),
@@ -1043,7 +1109,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  color: isUser ? colorScheme.primary : colorScheme.surface,
  borderRadius: BorderRadius.circular(8),
  border: !isUser ? Border.all(
- color: colorScheme.outline.withValues(alpha: 0.3),
+ color: colorScheme.outline.withOpacity( 0.3),
  ) : null,
  ),
  child: Column(
@@ -1059,7 +1125,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  _formatTime(message.timestamp),
  style: theme.textTheme.bodySmall?.copyWith(
- color: (isUser ? colorScheme.onPrimary : colorScheme.onSurface).withValues(alpha: 0.7),
+ color: (isUser ? colorScheme.onPrimary : colorScheme.onSurface).withOpacity( 0.7),
   ),
  ),
  ],
@@ -1144,13 +1210,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
          color: agentType == 'agent' 
-           ? theme.colorScheme.primary.withValues(alpha: 0.08)
-           : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
+           ? theme.colorScheme.primary.withOpacity( 0.08)
+           : theme.colorScheme.onSurfaceVariant.withOpacity( 0.05),
          borderRadius: BorderRadius.circular(12),
          border: Border.all(
            color: agentType == 'agent' 
-             ? theme.colorScheme.primary.withValues(alpha: 0.2)
-             : theme.colorScheme.outline.withValues(alpha: 0.2),
+             ? theme.colorScheme.primary.withOpacity( 0.2)
+             : theme.colorScheme.outline.withOpacity( 0.2),
          ),
        ),
        child: Column(
@@ -1163,8 +1229,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                  padding: const EdgeInsets.all(8),
                  decoration: BoxDecoration(
                    color: agentType == 'agent'
-                     ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                     : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
+                     ? theme.colorScheme.primary.withOpacity( 0.1)
+                     : theme.colorScheme.onSurfaceVariant.withOpacity( 0.1),
                    borderRadius: BorderRadius.circular(8),
                  ),
                  child: Icon(
@@ -1305,7 +1371,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
    return Container(
      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
      decoration: BoxDecoration(
-       color: color.withValues(alpha: 0.1),
+       color: color.withOpacity( 0.1),
        borderRadius: BorderRadius.circular(12),
      ),
      child: Row(
@@ -1405,10 +1471,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
      child: Container(
        padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
-         color: theme.colorScheme.surface.withValues(alpha: 0.5),
+         color: theme.colorScheme.surface.withOpacity( 0.5),
          borderRadius: BorderRadius.circular(12),
          border: Border.all(
-           color: theme.colorScheme.outline.withValues(alpha: 0.2),
+           color: theme.colorScheme.outline.withOpacity( 0.2),
          ),
        ),
        child: Column(
@@ -1438,7 +1504,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
      child: Container(
        padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
-         color: theme.colorScheme.surface.withValues(alpha: 0.5),
+         color: theme.colorScheme.surface.withOpacity( 0.5),
          borderRadius: BorderRadius.circular(12),
        ),
        child: Row(
@@ -1467,7 +1533,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
      child: Container(
        padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
-         color: Colors.red.withValues(alpha: 0.1),
+         color: Colors.red.withOpacity( 0.1),
          borderRadius: BorderRadius.circular(12),
        ),
        child: Text(
@@ -1478,6 +1544,199 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        ),
      ),
    );
+ }
+
+ /// Build MCP contextual recommendations widget
+ Widget _buildMCPRecommendations(BuildContext context) {
+   final colors = ThemeColors(context);
+   final selectedConversationId = ref.watch(selectedConversationIdProvider);
+
+   if (selectedConversationId == null) return const SizedBox.shrink();
+
+   return ref.watch(conversationProvider(selectedConversationId)).when(
+     data: (conversation) => _buildMCPRecommendationsContent(context, conversation, colors),
+     loading: () => const SizedBox.shrink(),
+     error: (_, __) => const SizedBox.shrink(),
+   );
+ }
+
+ /// Build MCP recommendations content
+ Widget _buildMCPRecommendationsContent(BuildContext context, core.Conversation conversation, ThemeColors colors) {
+   // For now, show MCP integration for all conversations
+   return Consumer(
+     builder: (context, ref, child) {
+       return MCPChatIntegration(currentAgent: null);
+     },
+   );
+ }
+
+ /// Build MCP server status widget showing currently running servers
+ Widget _buildMCPServerStatus(BuildContext context) {
+   final colors = ThemeColors(context);
+   final runningServersAsync = ref.watch(runningMCPServersProvider);
+
+   return runningServersAsync.when(
+     data: (List<mcp_models.MCPServerProcess> servers) {
+       if (servers.isEmpty) return const SizedBox.shrink();
+
+       return Container(
+         margin: const EdgeInsets.symmetric(
+           horizontal: SpacingTokens.elementSpacing,
+           vertical: SpacingTokens.xs,
+         ),
+         padding: const EdgeInsets.all(SpacingTokens.cardPadding),
+         decoration: BoxDecoration(
+           color: colors.surface.withOpacity( 0.8),
+           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+           border: Border.all(color: colors.border.withOpacity( 0.5)),
+         ),
+         child: Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Row(
+               children: [
+                 Icon(
+                   Icons.settings_applications,
+                   color: colors.primary,
+                   size: 16,
+                 ),
+                 const SizedBox(width: SpacingTokens.xs),
+                 Text(
+                   'Active MCP Servers (${servers.length})',
+                   style: TextStyles.bodySmall.copyWith(
+                     color: colors.onSurfaceVariant,
+                     fontWeight: FontWeight.w600,
+                   ),
+                 ),
+               ],
+             ),
+             const SizedBox(height: SpacingTokens.xs),
+             Wrap(
+               spacing: SpacingTokens.xs,
+               runSpacing: SpacingTokens.xs,
+               children: servers.map((server) => _buildServerStatusChip(server, colors)).toList(),
+             ),
+           ],
+         ),
+       );
+     },
+     loading: () => const SizedBox.shrink(),
+     error: (error, stack) => const SizedBox.shrink(),
+   );
+ }
+
+ /// Build individual server status chip
+ Widget _buildServerStatusChip(mcp_models.MCPServerProcess server, ThemeColors colors) {
+   Color statusColor;
+   IconData statusIcon;
+
+   switch (server.status) {
+     case mcp_models.MCPServerStatus.running:
+       statusColor = Colors.green;
+       statusIcon = Icons.check_circle;
+       break;
+     case mcp_models.MCPServerStatus.starting:
+       statusColor = Colors.orange;
+       statusIcon = Icons.access_time;
+       break;
+     case mcp_models.MCPServerStatus.stopping:
+       statusColor = Colors.orange;
+       statusIcon = Icons.stop_circle;
+       break;
+     case mcp_models.MCPServerStatus.error:
+       statusColor = Colors.red;
+       statusIcon = Icons.error;
+       break;
+     case mcp_models.MCPServerStatus.stopped:
+     default:
+       statusColor = Colors.grey;
+       statusIcon = Icons.stop;
+       break;
+   }
+
+   return Container(
+     padding: const EdgeInsets.symmetric(
+       horizontal: SpacingTokens.sm,
+       vertical: SpacingTokens.xs,
+     ),
+     decoration: BoxDecoration(
+       color: statusColor.withOpacity( 0.1),
+       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+       border: Border.all(color: statusColor.withOpacity( 0.3)),
+     ),
+     child: Row(
+       mainAxisSize: MainAxisSize.min,
+       children: [
+         Icon(
+           statusIcon,
+           color: statusColor,
+           size: 12,
+         ),
+         const SizedBox(width: SpacingTokens.xs),
+         Text(
+           server.serverId,
+           style: TextStyles.bodySmall.copyWith(
+             color: colors.onSurface,
+             fontSize: 11,
+           ),
+         ),
+       ],
+     ),
+   );
+ }
+
+ /// Create a new direct chat conversation with the selected model
+ Future<void> _startNewDirectChat() async {
+   try {
+     // Get the selected model (default if none selected)
+     final selectedModel = ref.read(selectedModelProvider) ?? ref.read(defaultModelConfigProvider);
+     
+     if (selectedModel == null) {
+       // Show error if no model is configured
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(
+           content: Text('Please configure at least one AI model in Settings'),
+           backgroundColor: ThemeColors(context).primary,
+         ),
+       );
+       return;
+     }
+
+     // Create a new direct conversation (not agent-based)
+     final conversationService = ref.read(conversationServiceProvider);
+     final newConversation = core.Conversation(
+       id: DateTime.now().millisecondsSinceEpoch.toString(),
+       title: 'Chat with ${selectedModel.name}',
+       messages: [],
+       createdAt: DateTime.now(),
+       lastModified: DateTime.now(),
+       metadata: {
+         'model_id': selectedModel.id,
+         'model_name': selectedModel.name,
+         'model_type': selectedModel.isLocal ? 'local' : 'api',
+         'created_from': 'start_new_chat_button',
+         'type': 'direct', // Mark as direct conversation (not agent-based)
+       },
+     );
+
+     // Save the conversation
+     await conversationService.createConversation(newConversation);
+
+     // Refresh the conversations list to show the new conversation
+     ref.invalidate(conversationsProvider);
+
+     // Select the new conversation to enable chatting
+     ref.read(selectedConversationIdProvider.notifier).state = newConversation.id;
+
+   } catch (e) {
+     // Show error message if conversation creation fails
+     ScaffoldMessenger.of(context).showSnackBar(
+       SnackBar(
+         content: Text('Failed to start new chat: $e'),
+         backgroundColor: Colors.red,
+       ),
+     );
+   }
  }
 
  void _sendMessage() async {
@@ -1943,10 +2202,10 @@ Widget _buildPrimingStatusIndicator(BuildContext context, core.Conversation conv
  return Container(
    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
    decoration: BoxDecoration(
-     color: indicatorColor.withValues(alpha: 0.1),
+     color: indicatorColor.withOpacity( 0.1),
      borderRadius: BorderRadius.circular(8),
      border: Border.all(
-       color: indicatorColor.withValues(alpha: 0.3),
+       color: indicatorColor.withOpacity( 0.3),
      ),
    ),
    child: Row(
@@ -2048,6 +2307,15 @@ Future<void> _updateConversationPrimingAfterSuccess(String conversationId, Model
      ),
    );
  }
+
+  /// New contextual input area implementation  
+  Widget _buildContextualInput() {
+    return ContextualInputArea(
+      messageController: messageController,
+      onSendMessage: _sendMessage,
+      isLoading: ref.watch(isLoadingProvider),
+    );
+  }
 }
 
 

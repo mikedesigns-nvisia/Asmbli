@@ -27,9 +27,9 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  Container(
  width: 48,
  decoration: BoxDecoration(
- color: ThemeColors(context).surface.withValues(alpha: 0.7),
+ color: ThemeColors(context).surface.withOpacity( 0.7),
  border: Border(
- left: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
+ left: BorderSide(color: ThemeColors(context).border.withOpacity( 0.3)),
  ),
  ),
  child: Column(
@@ -39,9 +39,9 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  onPressed: () => setState(() => isCollapsed = false),
  icon: const Icon(Icons.chevron_left, size: 20),
  style: IconButton.styleFrom(
- backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.8),
+ backgroundColor: ThemeColors(context).surface.withOpacity( 0.8),
  foregroundColor: ThemeColors(context).onSurfaceVariant,
- side: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.5)),
+ side: BorderSide(color: ThemeColors(context).border.withOpacity( 0.5)),
  ),
  tooltip: 'Show Conversations',
  ),
@@ -62,9 +62,9 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  Widget _buildSidebarContent() {
  return Container(
  decoration: BoxDecoration(
- color: ThemeColors(context).surface.withValues(alpha: 0.7),
+ color: ThemeColors(context).surface.withOpacity( 0.7),
  border: Border(
- left: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
+ left: BorderSide(color: ThemeColors(context).border.withOpacity( 0.3)),
  ),
  ),
  child: Column(
@@ -104,8 +104,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  text: 'New Chat',
  icon: Icons.add,
  onPressed: _startNewChat,
- isFullWidth: true,
- ),
+  ),
  ],
  ),
  ),
@@ -122,7 +121,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  padding: const EdgeInsets.all(SpacingTokens.cardPadding),
  decoration: BoxDecoration(
  border: Border(
- top: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
+ top: BorderSide(color: ThemeColors(context).border.withOpacity( 0.3)),
  ),
  ),
  child: Column(
@@ -132,8 +131,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  text: 'View Archived',
  icon: Icons.archive_outlined,
  onPressed: () => _showArchiveModal(context),
- isFullWidth: true,
- ),
+  ),
  const SizedBox(height: SpacingTokens.iconSpacing),
  
  // Export conversations button
@@ -149,8 +147,7 @@ class _ConversationSidebarState extends ConsumerState<ConversationSidebar> {
  ),
  );
  },
- isFullWidth: true,
- ),
+  ),
  ],
  ),
  ),

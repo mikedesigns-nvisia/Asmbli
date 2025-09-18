@@ -146,7 +146,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Icon(icon, color: color, size: 12),
@@ -342,10 +342,10 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withOpacity( 0.3),
           width: 1,
         ),
       ),
@@ -484,7 +484,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
             return Container(
               padding: const EdgeInsets.symmetric(vertical: SpacingTokens.sm),
               decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: SemanticColors.border.withValues(alpha: 0.3))),
+                border: Border(bottom: BorderSide(color: SemanticColors.border.withOpacity( 0.3))),
               ),
               child: Row(
                 children: [
@@ -517,7 +517,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
       width: 20,
       height: 20,
       decoration: BoxDecoration(
-        color: SemanticColors.primary.withValues(alpha: 0.1),
+        color: SemanticColors.primary.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Icon(
@@ -539,7 +539,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -559,7 +559,7 @@ class IntegrationAnalyticsDashboard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: SemanticColors.primary.withValues(alpha: 0.1),
+        color: SemanticColors.primary.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(

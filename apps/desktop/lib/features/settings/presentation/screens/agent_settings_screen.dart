@@ -78,7 +78,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
             end: Alignment.bottomRight,
             colors: [
               colors.background,
-              colors.background.withValues(alpha: 0.8),
+              colors.background.withOpacity( 0.8),
             ],
           ),
         ),
@@ -111,9 +111,9 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.8),
+        color: colors.surface.withOpacity( 0.8),
         border: Border(
-          bottom: BorderSide(color: colors.border.withValues(alpha: 0.5)),
+          bottom: BorderSide(color: colors.border.withOpacity( 0.5)),
         ),
       ),
       child: Column(
@@ -211,7 +211,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
               });
             },
             backgroundColor: colors.surface,
-            selectedColor: colors.primary.withValues(alpha: 0.1),
+            selectedColor: colors.primary.withOpacity( 0.1),
             labelStyle: TextStyles.caption.copyWith(
               color: isSelected ? colors.primary : colors.onSurfaceVariant,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
@@ -261,7 +261,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
                   decoration: BoxDecoration(
-                    color: colors.primary.withValues(alpha: 0.1),
+                    color: colors.primary.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
@@ -291,7 +291,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: _getAgentStatusColor(agent.status).withValues(alpha: 0.1),
+                              color: _getAgentStatusColor(agent.status).withOpacity( 0.1),
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                             ),
                             child: Text(
@@ -334,7 +334,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               decoration: BoxDecoration(
-                color: colors.surfaceVariant.withValues(alpha: 0.3),
+                color: colors.surfaceVariant.withOpacity( 0.3),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Column(
@@ -423,7 +423,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
             Icon(
               Icons.smart_toy_outlined,
               size: 64,
-              color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+              color: colors.onSurfaceVariant.withOpacity( 0.5),
             ),
             const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(
@@ -466,6 +466,7 @@ class _AgentSettingsScreenState extends ConsumerState<AgentSettingsScreen> {
       ),
     );
   }
+
 
   void _handleAgentAction(Agent agent, String action) {
     // TODO: Implement agent actions

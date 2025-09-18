@@ -78,8 +78,8 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             // Context Actions
             _buildContextActions(theme),
             
-            // Vector search status indicator
-            _buildVectorStatusIndicator(theme, ingestionStatus),
+            // Show helpful context status instead of technical vector DB info
+            _buildContextStatusIndicator(theme),
             
             // Context Browser (if expanded)
             if (_showContextBrowser) ...[
@@ -119,9 +119,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: ThemeColors(context).primary.withValues(alpha: 0.1),
+              color: ThemeColors(context).primary.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
+              border: Border.all(color: ThemeColors(context).primary.withOpacity( 0.3)),
             ),
             child: Text(
               '${((currentConversation?.metadata?['contextDocuments'] as List?)?.length ?? 0) + _sessionContextIds.length}',
@@ -160,9 +160,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withValues(alpha: 0.8),
+          color: theme.colorScheme.surface.withOpacity( 0.8),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+          border: Border.all(color: theme.colorScheme.outline.withOpacity( 0.3)),
         ),
         child: Column(
           children: [
@@ -205,9 +205,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.8),
+        color: theme.colorScheme.surface.withOpacity( 0.8),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity( 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +245,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  color: ThemeColors(context).primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -317,9 +317,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withValues(alpha: 0.8),
+          color: theme.colorScheme.surface.withOpacity( 0.8),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+          border: Border.all(color: theme.colorScheme.outline.withOpacity( 0.3)),
         ),
         child: Column(
           children: [
@@ -364,9 +364,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.8),
+        color: theme.colorScheme.surface.withOpacity( 0.8),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity( 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -481,7 +481,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline),
               borderRadius: BorderRadius.circular(6),
-              color: theme.colorScheme.surface.withValues(alpha: 0.8),
+              color: theme.colorScheme.surface.withOpacity( 0.8),
             ),
             child: Row(
               children: [
@@ -523,7 +523,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   decoration: BoxDecoration(
                     border: Border.all(color: theme.colorScheme.outline),
                     borderRadius: BorderRadius.circular(6),
-                    color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                    color: theme.colorScheme.surface.withOpacity( 0.8),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -555,7 +555,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   decoration: BoxDecoration(
                     border: Border.all(color: theme.colorScheme.outline),
                     borderRadius: BorderRadius.circular(6),
-                    color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                    color: theme.colorScheme.surface.withOpacity( 0.8),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -590,9 +590,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
+                border: Border.all(color: ThemeColors(context).primary.withOpacity( 0.3)),
                 borderRadius: BorderRadius.circular(6),
-                color: ThemeColors(context).primary.withValues(alpha: 0.05),
+                color: ThemeColors(context).primary.withOpacity( 0.05),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -620,81 +620,74 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
     );
   }
 
-  /// Build vector search status indicator
-  Widget _buildVectorStatusIndicator(ThemeData theme, AsyncValue<Map<String, dynamic>> ingestionStatus) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-      ),
-      child: ingestionStatus.when(
-        data: (status) {
-          final contextDocs = status['context_documents_ingested'] as int? ?? 0;
-          final totalChunks = status['total_chunks'] as int? ?? 0;
-          final hasError = status.containsKey('error');
-          
-          return Row(
-            children: [
-              Icon(
-                hasError ? Icons.warning_amber : Icons.memory,
-                size: 12,
-                color: hasError ? Colors.orange : ThemeColors(context).primary,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  hasError 
-                      ? 'Vector DB: Error'
-                      : 'Vector DB: $contextDocs docs, $totalChunks chunks',
-                  style: GoogleFonts.fustat(
-                    fontSize: 10,
-                    color: hasError ? Colors.orange : theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-        loading: () => Row(
-          children: [
-            SizedBox(
-              width: 12,
-              height: 12,
-              child: CircularProgressIndicator(
-                strokeWidth: 1.5,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              'Loading vector database...',
-              style: GoogleFonts.fustat(
-                fontSize: 10,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+  /// Build user-friendly context status indicator
+  Widget _buildContextStatusIndicator(ThemeData theme) {
+    final hasAgentContext = false; // TODO: Get from current conversation 
+    final hasSessionContext = _sessionContextIds.isNotEmpty;
+    final totalContextItems = (hasAgentContext ? 1 : 0) + _sessionContextIds.length;
+    
+    if (totalContextItems == 0) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface.withOpacity( 0.3),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: theme.colorScheme.outline.withOpacity( 0.2)),
         ),
-        error: (_, __) => Row(
+        child: Row(
           children: [
             Icon(
-              Icons.error_outline,
+              Icons.lightbulb_outline,
               size: 12,
-              color: Colors.red,
+              color: ThemeColors(context).primary.withOpacity( 0.7),
             ),
             const SizedBox(width: 6),
-            Text(
-              'Vector DB: Connection failed',
-              style: GoogleFonts.fustat(
-                fontSize: 10,
-                color: Colors.red,
+            Expanded(
+              child: Text(
+                '💡 Add documents to help your assistant understand your needs',
+                style: GoogleFonts.fustat(
+                  fontSize: 10,
+                  color: ThemeColors(context).primary.withOpacity( 0.8),
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ),
           ],
         ),
+      );
+    }
+    
+    // Show encouraging context status
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: ThemeColors(context).primary.withOpacity( 0.1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: ThemeColors(context).primary.withOpacity( 0.2)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.check_circle_outline,
+            size: 12,
+            color: ThemeColors(context).primary,
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              totalContextItems == 1 
+                ? '✨ Your assistant has context to help you'
+                : '✨ Your assistant has $totalContextItems sources of context',
+              style: GoogleFonts.fustat(
+                fontSize: 10,
+                color: ThemeColors(context).primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -705,9 +698,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
       width: double.infinity,
       constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.8),
+        color: theme.colorScheme.surface.withOpacity( 0.8),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity( 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -717,7 +710,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                bottom: BorderSide(color: theme.colorScheme.outline.withOpacity( 0.3)),
               ),
             ),
             child: Column(
@@ -741,7 +734,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                          color: ThemeColors(context).primary.withOpacity( 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Row(
@@ -825,9 +818,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surface.withValues(alpha: 0.3),
+              color: theme.colorScheme.surface.withOpacity( 0.3),
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+              border: Border.all(color: theme.colorScheme.outline.withOpacity( 0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -880,7 +873,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                          color: ThemeColors(context).primary.withOpacity( 0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
@@ -946,13 +939,13 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: doc.isActive
-                    ? theme.colorScheme.surface.withValues(alpha: 0.3)
-                    : theme.colorScheme.surface.withValues(alpha: 0.1),
+                    ? theme.colorScheme.surface.withOpacity( 0.3)
+                    : theme.colorScheme.surface.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
                   color: doc.isActive
-                      ? ThemeColors(context).primary.withValues(alpha: 0.3)
-                      : theme.colorScheme.outline.withValues(alpha: 0.2),
+                      ? ThemeColors(context).primary.withOpacity( 0.3)
+                      : theme.colorScheme.outline.withOpacity( 0.2),
                 ),
               ),
               child: Row(
@@ -985,25 +978,50 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       ],
                     ),
                   ),
-                  if (doc.isActive)
-                    GestureDetector(
-                      onTap: () => _addDocumentToSession(doc.id),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: ThemeColors(context).primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                        child: Text(
-                          'Add',
-                          style: GoogleFonts.fustat(
-                            fontSize: 9,
-                            color: ThemeColors(context).primary,
-                            fontWeight: FontWeight.w600,
+                  if (doc.isActive) ...[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () => _addDocumentToSession(doc.id),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: ThemeColors(context).primary.withOpacity( 0.1),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              'Add',
+                              style: GoogleFonts.fustat(
+                                fontSize: 9,
+                                color: ThemeColors(context).primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () => _showDeleteDocumentConfirmation(doc),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity( 0.1),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              'Delete',
+                              style: GoogleFonts.fustat(
+                                fontSize: 9,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ],
                 ],
               ),
             );
@@ -1185,7 +1203,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                color: ThemeColors(context).surface.withOpacity( 0.5),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
                   topRight: Radius.circular(12),
@@ -1256,12 +1274,12 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             width: double.infinity,
             decoration: BoxDecoration(
               border: Border.all(
-                color: ThemeColors(context).primary.withValues(alpha: 0.3),
+                color: ThemeColors(context).primary.withOpacity( 0.3),
                 width: 2,
                 style: BorderStyle.solid,
               ),
               borderRadius: BorderRadius.circular(8),
-              color: ThemeColors(context).primary.withValues(alpha: 0.05),
+              color: ThemeColors(context).primary.withOpacity( 0.05),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1322,7 +1340,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: ThemeColors(context).primary.withValues(alpha: 0.1),
+            color: ThemeColors(context).primary.withOpacity( 0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Row(
@@ -1508,7 +1526,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                  color: ThemeColors(context).surface.withOpacity( 0.5),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
@@ -1782,7 +1800,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                    color: ThemeColors(context).surface.withOpacity( 0.5),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),
@@ -1964,7 +1982,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                                 margin: const EdgeInsets.only(bottom: 4),
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                                  color: ThemeColors(context).primary.withOpacity( 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Row(
@@ -2215,7 +2233,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                    color: ThemeColors(context).surface.withOpacity( 0.5),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),
@@ -2282,7 +2300,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                              color: ThemeColors(context).primary.withOpacity( 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Icon(
@@ -2319,7 +2337,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                                      color: ThemeColors(context).primary.withOpacity( 0.1),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
@@ -2335,7 +2353,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                       decoration: BoxDecoration(
-                                        color: Colors.orange.withValues(alpha: 0.1),
+                                        color: Colors.orange.withOpacity( 0.1),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
@@ -2404,7 +2422,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                  color: ThemeColors(context).surface.withOpacity( 0.5),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
@@ -2504,6 +2522,104 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         _showError('Failed to load template: ${e.toString()}');
       }
     }
+  }
+  
+  /// Show delete document confirmation dialog
+  void _showDeleteDocumentConfirmation(ContextDocument doc) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: ThemeColors(context).surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        title: Text(
+          'Delete Context Document',
+          style: GoogleFonts.fustat(
+            fontWeight: FontWeight.w600,
+            color: ThemeColors(context).onSurface,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete "${doc.title}"? This action cannot be undone.',
+          style: GoogleFonts.fustat(
+            color: ThemeColors(context).onSurfaceVariant,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.fustat(
+                color: ThemeColors(context).onSurfaceVariant,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // Close confirmation dialog
+              
+              try {
+                final deleteAction = ref.read(deleteContextDocumentActionProvider);
+                await deleteAction(doc.id);
+                
+                // Remove from session context if present
+                setState(() {
+                  _sessionContextIds.remove(doc.id);
+                });
+                
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.check_circle, color: Colors.white, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Context document "${doc.title}" deleted',
+                              style: GoogleFonts.fustat(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: ThemeColors(context).primary,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.error, color: Colors.white, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Failed to delete document: $e',
+                              style: GoogleFonts.fustat(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              }
+            },
+            child: Text(
+              'Delete',
+              style: GoogleFonts.fustat(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

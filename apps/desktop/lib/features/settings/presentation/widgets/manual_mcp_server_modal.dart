@@ -5,7 +5,7 @@ import '../../../../core/data/mcp_server_configs.dart';
 import '../../../../core/services/mcp_server_configuration_service.dart';
 
 
-import '../../../../core/models/mcp_server_config.dart';
+import '../../../../core/models/mcp_server_config.dart' show MCPServerConfig;
 
 /// Modal for manually selecting and configuring MCP servers from our curated library
 class ManualMCPServerModal extends ConsumerStatefulWidget {
@@ -138,7 +138,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                   decoration: BoxDecoration(
-                    color: colors.primary.withValues(alpha: 0.1),
+                    color: colors.primary.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(
@@ -357,7 +357,7 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
                         vertical: SpacingTokens.xs_precise,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.primary.withValues(alpha: 0.1),
+                        color: colors.primary.withOpacity( 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                       ),
                       child: Text(
@@ -422,9 +422,9 @@ class _ManualMCPServerModalState extends ConsumerState<ManualMCPServerModal> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: 0.05),
+                color: colors.primary.withOpacity( 0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
+                border: Border.all(color: colors.primary.withOpacity( 0.2)),
               ),
               child: Text(
                 server.setupInstructions ?? 'No setup instructions available',
@@ -669,7 +669,7 @@ class _FilterChip extends StatelessWidget {
           vertical: SpacingTokens.iconSpacing,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? colors.primary.withValues(alpha: 0.1) : colors.surfaceVariant,
+          color: isSelected ? colors.primary.withOpacity( 0.1) : colors.surfaceVariant,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           border: Border.all(
             color: isSelected ? colors.primary : colors.border,
@@ -770,7 +770,7 @@ class _ServerTypeChip extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: isOfficial 
-          ? colors.primary.withValues(alpha: 0.1)
+          ? colors.primary.withOpacity( 0.1)
           : colors.surfaceVariant,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
@@ -813,7 +813,7 @@ class _ServerStatusChip extends StatelessWidget {
         vertical: SpacingTokens.xs_precise,
       ),
       decoration: BoxDecoration(
-        color: getStatusColor().withValues(alpha: 0.1),
+        color: getStatusColor().withOpacity( 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Text(

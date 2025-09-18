@@ -56,6 +56,30 @@ class OAuthConfig {
         'prompt': 'select_account',
       },
     ),
+    
+    'notion': OAuthClientConfig(
+      clientId: '', // Loaded from environment: NOTION_CLIENT_ID
+      clientSecret: '', // Loaded from environment: NOTION_CLIENT_SECRET
+      redirectUri: '', // Loaded from environment: NOTION_REDIRECT_URI or default
+      authUrl: 'https://api.notion.com/v1/oauth/authorize',
+      tokenUrl: 'https://api.notion.com/v1/oauth/token',
+      scopes: ['read_content', 'update_content', 'insert_content'],
+      additionalParams: {
+        'owner': 'user',
+      },
+    ),
+    
+    'brave-search': OAuthClientConfig(
+      clientId: '', // Not OAuth - uses API key directly
+      clientSecret: '', // Not used for Brave Search
+      redirectUri: '', // Not used
+      authUrl: '', // Not OAuth-based
+      tokenUrl: '', // Not OAuth-based
+      scopes: [],
+      additionalParams: {
+        'auth_type': 'api_key', // Custom flag to indicate API key auth
+      },
+    ),
   };
 
   /// Get OAuth configuration for a service with environment loading
@@ -110,6 +134,10 @@ class OAuthConfig {
         return 'asmbli-desktop-dev'; // Development Linear App ID
       case 'microsoft':
         return '12345678-dev-client-id'; // Development Azure App ID
+      case 'notion':
+        return 'notion-dev-client-id'; // Development Notion App ID
+      case 'brave-search':
+        return 'dev-api-key-placeholder'; // Development Brave API key placeholder
       default:
         return '';
     }

@@ -39,10 +39,10 @@ class ServiceDetectionField extends MCPField {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity( 0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+              color: Theme.of(context).colorScheme.outline.withOpacity( 0.3),
             ),
           ),
           child: Column(
@@ -187,13 +187,13 @@ class ServiceDetectionField extends MCPField {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isSelected 
-                    ? SemanticColors.primary.withValues(alpha: 0.1)
-                    : Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+                    ? SemanticColors.primary.withOpacity( 0.1)
+                    : Theme.of(context).colorScheme.surface.withOpacity( 0.5),
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: isSelected 
-                      ? SemanticColors.primary.withValues(alpha: 0.5)
-                      : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                      ? SemanticColors.primary.withOpacity( 0.5)
+                      : Theme.of(context).colorScheme.outline.withOpacity( 0.3),
                   ),
                 ),
                 child: Row(
@@ -202,7 +202,7 @@ class ServiceDetectionField extends MCPField {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: _getStatusColor(service.status).withValues(alpha: 0.1),
+                        color: _getStatusColor(service.status).withOpacity( 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Icon(
@@ -231,7 +231,7 @@ class ServiceDetectionField extends MCPField {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: _getStatusColor(service.status).withValues(alpha: 0.1),
+                                  color: _getStatusColor(service.status).withOpacity( 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -424,10 +424,10 @@ class _PortScannerFieldState extends State<PortScannerField> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity( 0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                color: Theme.of(context).colorScheme.outline.withOpacity( 0.3),
               ),
             ),
             child: Column(
@@ -454,7 +454,7 @@ class _PortScannerFieldState extends State<PortScannerField> {
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+        color: Theme.of(context).colorScheme.surface.withOpacity( 0.5),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(

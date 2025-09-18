@@ -7,6 +7,10 @@ import '../mcp_bridge_service.dart';
 import '../llm/unified_llm_service.dart';
 import '../context_mcp_resource_service.dart';
 import '../agent_context_prompt_service.dart';
+import '../agent_mcp_integration_service.dart';
+import '../agent_terminal_provisioning_service.dart';
+import '../agent_mcp_communication_bridge.dart';
+import '../production_logger.dart';
 
 /// Business service for agent management
 /// Encapsulates all business logic related to agents
@@ -17,6 +21,9 @@ class AgentBusinessService extends BaseBusinessService {
   final ContextMCPResourceService _contextService;
   final AgentContextPromptService _promptService;
   final BusinessEventBus _eventBus;
+  final AgentMCPIntegrationService? _integrationService;
+  final AgentTerminalProvisioningService? _provisioningService;
+  final AgentMCPCommunicationBridge? _communicationBridge;
 
   AgentBusinessService({
     required AgentService agentRepository,
@@ -25,12 +32,23 @@ class AgentBusinessService extends BaseBusinessService {
     required ContextMCPResourceService contextService,
     required AgentContextPromptService promptService,
     BusinessEventBus? eventBus,
+    AgentMCPIntegrationService? integrationService,
+    AgentTerminalProvisioningService? provisioningService,
+    AgentMCPCommunicationBridge? communicationBridge,
   })  : _agentRepository = agentRepository,
         _mcpService = mcpService,
         _modelService = modelService,
         _contextService = contextService,
         _promptService = promptService,
-        _eventBus = eventBus ?? BusinessEventBus();
+        _eventBus = eventBus ?? BusinessEventBus(),
+        _integrationService = integrationService,
+        _provisioningService = provisioningService,
+        _communicationBridge = communicationBridge;
+
+  /// Log error (compatibility method)
+  void logError(String message, dynamic error) {
+    print('AgentBusinessService Error: $message - $error');
+  }
 
   /// Creates a new agent with full validation and configuration
   Future<BusinessResult<Agent>> createAgent({
@@ -106,9 +124,100 @@ class AgentBusinessService extends BaseBusinessService {
       // Persist the agent
       final createdAgent = await _agentRepository.createAgent(agentWithPrompt);
 
-      // Publish event
-      _eventBus.publish(EntityCreatedEvent(createdAgent));
+      // Create agent terminal with automatic provisioning (if service available)
+      if (_provisioningService != null) {
+        try {
+          await _provisioningService!.provisionTerminalForAgent(
+            createdAgent.id,
+            requiredMCPServers: mcpServers,
+          );
+          
+          // Update agent configuration to indicate terminal is ready
+          final agentWithTerminal = createdAgent.copyWith(
+            configuration: {
+              ...createdAgent.configuration,
+              'terminalReady': true,
+              'terminalCreatedAt': DateTime.now().toIso8601String(),
+              'terminalProvisioned': true,
+            },
+          );
+          
+          // Update the persisted agent
+          await _agentRepository.updateAgent(agentWithTerminal);
+          
+          // Publish event with terminal-enabled agent
+          _eventBus.publish(EntityCreatedEvent(agentWithTerminal));
+          
+          return BusinessResult.success(agentWithTerminal);
+        } catch (e) {
+          // Log terminal creation failure but don't fail agent creation
+          logError('Failed to provision terminal for agent ${createdAgent.id}', e);
+          
+          // Update agent to indicate terminal creation failed
+          final agentWithError = createdAgent.copyWith(
+            configuration: {
+              ...createdAgent.configuration,
+              'terminalReady': false,
+              'terminalError': e.toString(),
+              'terminalProvisioned': false,
+            },
+          );
+          
+          await _agentRepository.updateAgent(agentWithError);
+          
+          // Still return success - agent was created, just without terminal
+          _eventBus.publish(EntityCreatedEvent(agentWithError));
+          return BusinessResult.success(agentWithError);
+        }
+      }
+      
+      // Fallback: use legacy integration service if available
+      else if (_integrationService != null) {
+        try {
+          await _integrationService!.createAgentWithTerminal(
+            createdAgent.id,
+            defaultMCPServers: mcpServers,
+          );
+          
+          // Update agent configuration to indicate terminal is ready
+          final agentWithTerminal = createdAgent.copyWith(
+            configuration: {
+              ...createdAgent.configuration,
+              'terminalReady': true,
+              'terminalCreatedAt': DateTime.now().toIso8601String(),
+            },
+          );
+          
+          // Update the persisted agent
+          await _agentRepository.updateAgent(agentWithTerminal);
+          
+          // Publish event with terminal-enabled agent
+          _eventBus.publish(EntityCreatedEvent(agentWithTerminal));
+          
+          return BusinessResult.success(agentWithTerminal);
+        } catch (e) {
+          // Log terminal creation failure but don't fail agent creation
+          logError('Failed to create terminal for agent ${createdAgent.id}', e);
+          
+          // Update agent to indicate terminal creation failed
+          final agentWithError = createdAgent.copyWith(
+            configuration: {
+              ...createdAgent.configuration,
+              'terminalReady': false,
+              'terminalError': e.toString(),
+            },
+          );
+          
+          await _agentRepository.updateAgent(agentWithError);
+          
+          // Still return success - agent was created, just without terminal
+          _eventBus.publish(EntityCreatedEvent(agentWithError));
+          return BusinessResult.success(agentWithError);
+        }
+      }
 
+      // Fallback: agent created without new terminal system
+      _eventBus.publish(EntityCreatedEvent(createdAgent));
       return BusinessResult.success(createdAgent);
     });
   }
@@ -314,6 +423,174 @@ class AgentBusinessService extends BaseBusinessService {
     });
   }
 
+  /// Restore terminals for all agents on application restart
+  Future<BusinessResult<List<String>>> restoreAgentTerminals() async {
+    return handleBusinessOperation('restoreAgentTerminals', () async {
+      if (_provisioningService == null) {
+        return BusinessResult.failure('Terminal provisioning service not available');
+      }
+
+      final agents = await _agentRepository.listAgents();
+      final restoredAgents = <String>[];
+      final failedAgents = <String>[];
+
+      for (final agent in agents) {
+        // Only restore terminals for agents that had them before
+        final hadTerminal = agent.configuration['terminalReady'] == true ||
+                           agent.configuration['terminalProvisioned'] == true;
+        
+        if (hadTerminal) {
+          try {
+            await _provisioningService!.restoreTerminalForAgent(agent.id);
+            restoredAgents.add(agent.id);
+            
+            // Update agent to indicate terminal was restored
+            final updatedAgent = agent.copyWith(
+              configuration: {
+                ...agent.configuration,
+                'terminalRestored': true,
+                'terminalRestoredAt': DateTime.now().toIso8601String(),
+              },
+            );
+            await _agentRepository.updateAgent(updatedAgent);
+            
+          } catch (e) {
+            logError('Failed to restore terminal for agent ${agent.id}', e);
+            failedAgents.add(agent.id);
+            
+            // Update agent to indicate restoration failed
+            final updatedAgent = agent.copyWith(
+              configuration: {
+                ...agent.configuration,
+                'terminalRestored': false,
+                'terminalRestoreError': e.toString(),
+              },
+            );
+            await _agentRepository.updateAgent(updatedAgent);
+          }
+        }
+      }
+
+      ProductionLogger.instance.info(
+        'Terminal restoration completed',
+        data: {
+          'restored_count': restoredAgents.length,
+          'failed_count': failedAgents.length,
+          'restored_agents': restoredAgents,
+          'failed_agents': failedAgents,
+        },
+        category: 'agent_business',
+      );
+
+      return BusinessResult.success(restoredAgents);
+    });
+  }
+
+  /// Get terminal provisioning status for agent
+  ProvisioningStatus? getAgentTerminalStatus(String agentId) {
+    return _provisioningService?.getProvisioningStatus(agentId);
+  }
+
+  /// Execute MCP tool for agent
+  Future<BusinessResult<MCPToolResult>> executeAgentTool({
+    required String agentId,
+    required String serverId,
+    required String toolName,
+    required Map<String, dynamic> parameters,
+    Duration? timeout,
+  }) async {
+    return handleBusinessOperation('executeAgentTool', () async {
+      validateRequired({
+        'agentId': agentId,
+        'serverId': serverId,
+        'toolName': toolName,
+        'parameters': parameters,
+      });
+
+      if (_communicationBridge == null) {
+        return BusinessResult.failure('MCP communication bridge not available');
+      }
+
+      // Validate agent exists and is active
+      final agent = await _agentRepository.getAgent(agentId);
+      if (agent.status != AgentStatus.active) {
+        return BusinessResult.failure('Agent must be active to execute tools');
+      }
+
+      // Execute the tool
+      final result = await _communicationBridge!.executeMCPTool(
+        agentId,
+        serverId,
+        toolName,
+        parameters,
+        timeout: timeout,
+      );
+
+      // Log the execution
+      ProductionLogger.instance.info(
+        'Agent tool execution completed',
+        data: {
+          'agent_id': agentId,
+          'server_id': serverId,
+          'tool_name': toolName,
+          'success': result.success,
+          'execution_time_ms': result.executionTime.inMilliseconds,
+        },
+        category: 'agent_business',
+      );
+
+      return BusinessResult.success(result);
+    });
+  }
+
+  /// Get available tools for agent
+  Future<BusinessResult<List<MCPToolInfo>>> getAgentTools(String agentId) async {
+    return handleBusinessOperation('getAgentTools', () async {
+      validateRequired({'agentId': agentId});
+
+      if (_communicationBridge == null) {
+        return BusinessResult.failure('MCP communication bridge not available');
+      }
+
+      final tools = await _communicationBridge!.getAvailableToolsForAgent(agentId);
+
+      return BusinessResult.success(tools);
+    });
+  }
+
+  /// Setup credentials for agent's MCP server
+  Future<BusinessResult<void>> setupAgentCredentials({
+    required String agentId,
+    required String serverId,
+    required Map<String, String> credentials,
+  }) async {
+    return handleBusinessOperation('setupAgentCredentials', () async {
+      validateRequired({
+        'agentId': agentId,
+        'serverId': serverId,
+        'credentials': credentials,
+      });
+
+      if (_communicationBridge == null) {
+        return BusinessResult.failure('MCP communication bridge not available');
+      }
+
+      await _communicationBridge!.setupCredentialsForAgent(
+        agentId,
+        serverId,
+        credentials,
+      );
+
+      return BusinessResult.success(null);
+    });
+  }
+
+  /// Stream MCP output for agent
+  Stream<MCPServerOutput>? streamAgentMCPOutput(String agentId) {
+    if (_communicationBridge == null) return null;
+    return _communicationBridge!.streamMCPOutputForAgent(agentId);
+  }
+
   // Private helper methods
 
   Future<ValidationResult> _validateAgentCreation({
@@ -428,6 +705,16 @@ class AgentBusinessService extends BaseBusinessService {
     }
 
     await _contextService.unassignContextFromAgent(agent.id, []);
+
+    // Cleanup communication bridge resources
+    if (_communicationBridge != null) {
+      await _communicationBridge!.cleanupAgent(agent.id);
+    }
+
+    // Cleanup provisioning service resources
+    if (_provisioningService != null) {
+      await _provisioningService!.removeAgentConfiguration(agent.id);
+    }
   }
 
   bool _requiresPromptRegeneration(Agent oldAgent, Agent newAgent) {

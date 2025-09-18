@@ -153,10 +153,10 @@ class MCPHealthStatusWidget extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: ThemeColors(context).error.withValues(alpha: 0.1),
+                color: ThemeColors(context).error.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(
-                  color: ThemeColors(context).error.withValues(alpha: 0.3),
+                  color: ThemeColors(context).error.withOpacity( 0.3),
                 ),
               ),
               child: Row(
@@ -319,10 +319,10 @@ class MCPHealthStatusWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity( 0.1),
         shape: BoxShape.circle,
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withOpacity( 0.3),
         ),
       ),
       child: Icon(

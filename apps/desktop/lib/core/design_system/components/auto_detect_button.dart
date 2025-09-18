@@ -27,10 +27,10 @@ class AutoDetectButton extends ConsumerWidget {
   Widget _buildCompactButton(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: SemanticColors.primary.withValues(alpha: 0.1),
+        color: SemanticColors.primary.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: SemanticColors.primary.withValues(alpha: 0.3),
+          color: SemanticColors.primary.withOpacity( 0.3),
         ),
       ),
       child: Material(
@@ -69,13 +69,13 @@ class AutoDetectButton extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            SemanticColors.primary.withValues(alpha: 0.1),
-            SemanticColors.primary.withValues(alpha: 0.05),
+            SemanticColors.primary.withOpacity( 0.1),
+            SemanticColors.primary.withOpacity( 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: SemanticColors.primary.withValues(alpha: 0.2),
+          color: SemanticColors.primary.withOpacity( 0.2),
         ),
       ),
       child: Column(

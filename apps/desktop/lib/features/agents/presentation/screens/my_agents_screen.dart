@@ -20,6 +20,10 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  int selectedTab = 0; // 0 = My Agents, 1 = Agent Library
  String searchQuery = '';
  String selectedCategory = 'All';
+ String agentSearchQuery = '';
+ AgentStatus? selectedAgentStatus;
+ String agentSortBy = 'name'; // 'name', 'created', 'status', 'lastUsed'
+ bool sortAscending = true;
 
  final List<String> categories = [
  'All', 'Research', 'Development', 'Writing', 'Data Analysis', 
@@ -444,55 +448,14 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  // Header
  const AppNavigationBar(currentRoute: AppRoutes.agents),
 
- // Main Content
+// Compact Header with Inline Tabs
+_buildCompactHeaderWithTabs(),
+
+ // Main Content - Direct content without redundant wrapper
  Expanded(
  child: Padding(
- padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
- child: Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- children: [
- // Page Title
- Text(
- selectedTab == 0 ? 'My AI Agents' : 'Agent Library',
- style: TextStyles.pageTitle.copyWith(
- color: ThemeColors(context).onSurface,
- ),
- ),
- const SizedBox(height: SpacingTokens.iconSpacing),
- Text(
- selectedTab == 0 
- ? 'Manage and organize your AI-powered assistants'
- : 'Start with a pre-built template and customize it to your needs',
- style: TextStyles.bodyLarge.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- ),
- ),
- const SizedBox(height: SpacingTokens.sectionSpacing),
-
- // Tab Selector
- Row(
- children: [
- _TabButton(
- text: 'My Agents',
- isSelected: selectedTab == 0,
- onTap: () => setState(() => selectedTab = 0),
- ),
- const SizedBox(width: SpacingTokens.componentSpacing),
- _TabButton(
- text: 'Agent Library',
- isSelected: selectedTab == 1,
- onTap: () => setState(() => selectedTab = 1),
- ),
- ],
- ),
- const SizedBox(height: SpacingTokens.sectionSpacing),
-
- // Content based on selected tab
- Expanded(
+ padding: const EdgeInsets.fromLTRB(SpacingTokens.xxl, SpacingTokens.sm, SpacingTokens.xxl, SpacingTokens.xxl),
  child: selectedTab == 0 ? _buildMyAgentsContent() : _buildAgentLibraryContent(),
- ),
- ],
- ),
  ),
  ),
  ],
@@ -503,7 +466,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  }
 
  Widget _buildMyAgentsContent() {
- final agentsAsync = ref.watch(agentsProvider);
+ final agentsAsync = ref.watch(agentNotifierProvider);
  
  return agentsAsync.when(
  data: (agents) {
@@ -511,20 +474,28 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  return _buildEmptyAgentsState();
  }
  
+ final filteredAgents = _filterAndSortAgents(agents);
+ 
  return Column(
  children: [
+ // Search and Filter Section for My Agents
+ _buildAgentSearchAndFilter(),
+ const SizedBox(height: SpacingTokens.elementSpacing),
+ 
  // Agents Grid
  Expanded(
- child: GridView.builder(
+ child: filteredAgents.isEmpty 
+ ? _buildNoAgentsFoundState()
+ : GridView.builder(
  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
  crossAxisCount: 4,
  crossAxisSpacing: SpacingTokens.componentSpacing,
  mainAxisSpacing: SpacingTokens.componentSpacing,
  childAspectRatio: 0.9,
  ),
- itemCount: agents.length,
+ itemCount: filteredAgents.length,
  itemBuilder: (context, index) {
- final agent = agents[index];
+ final agent = filteredAgents[index];
  return EnhancedAgentCard(
    agent: agent,
    onEdit: () => _editAgent(agent),
@@ -737,7 +708,7 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
    context.go('/agents/configure/${newAgent.id}');
  } catch (e) {
    // If agent creation fails, just navigate to new agent screen
-   context.go('/agents/configure');
+   context.go(AppRoutes.agentBuilder);
  }
  }
  
@@ -1122,7 +1093,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  decoration: BoxDecoration(
  color: isSelected 
  ? ThemeColors(context).primary 
- : ThemeColors(context).surfaceVariant.withValues(alpha: 0.7),
+ : ThemeColors(context).surfaceVariant.withOpacity( 0.7),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
  border: Border.all(
  color: isSelected 
@@ -1168,7 +1139,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  Icon(
  Icons.search_off,
  size: 48,
- color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
+ color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.5),
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
@@ -1207,7 +1178,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  Icon(
  Icons.smart_toy_outlined,
  size: 64,
- color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
+ color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.5),
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
@@ -1229,7 +1200,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  AsmblButton.primary(
  text: 'Create Agent',
  onPressed: () {
- context.go('/agents/configure');
+ context.go(AppRoutes.agentBuilder);
  },
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
@@ -1242,6 +1213,333 @@ This template gives you a starting point - modify it to create your perfect AI a
  ],
  ),
  );
+ }
+
+ // Helper methods for agent search and filtering
+ List<Agent> _filterAndSortAgents(List<Agent> agents) {
+ var filtered = agents.where((agent) {
+ final matchesSearch = agentSearchQuery.isEmpty ||
+     agent.name.toLowerCase().contains(agentSearchQuery.toLowerCase()) ||
+     agent.description.toLowerCase().contains(agentSearchQuery.toLowerCase()) ||
+     agent.capabilities.any((cap) => cap.toLowerCase().contains(agentSearchQuery.toLowerCase()));
+
+ final matchesStatus = selectedAgentStatus == null || agent.status == selectedAgentStatus;
+
+ return matchesSearch && matchesStatus;
+ }).toList();
+
+ // Sort agents
+ filtered.sort((a, b) {
+ int comparison = 0;
+ 
+ switch (agentSortBy) {
+ case 'name':
+ comparison = a.name.compareTo(b.name);
+ break;
+ case 'status':
+ comparison = a.status.toString().compareTo(b.status.toString());
+ break;
+ case 'created':
+ final aCreated = a.configuration['createdAt'] as String? ?? '';
+ final bCreated = b.configuration['createdAt'] as String? ?? '';
+ comparison = aCreated.compareTo(bCreated);
+ break;
+ case 'lastUsed':
+ final aUsed = a.configuration['lastUsed'] as String? ?? '';
+ final bUsed = b.configuration['lastUsed'] as String? ?? '';
+ comparison = aUsed.compareTo(bUsed);
+ break;
+ default:
+ comparison = a.name.compareTo(b.name);
+ }
+
+ return sortAscending ? comparison : -comparison;
+ });
+
+ return filtered;
+ }
+
+ Widget _buildAgentSearchAndFilter() {
+ return Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ // Search bar
+ Row(
+ children: [
+ Expanded(
+ child: AsmblCard(
+ child: TextField(
+ onChanged: (value) => setState(() => agentSearchQuery = value),
+ decoration: InputDecoration(
+ hintText: 'Search your agents...',
+ hintStyle: TextStyles.bodyMedium.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ prefixIcon: Icon(
+ Icons.search,
+ color: ThemeColors(context).onSurfaceVariant,
+ size: 18,
+ ),
+ border: InputBorder.none,
+ contentPadding: const EdgeInsets.symmetric(
+ horizontal: SpacingTokens.componentSpacing,
+ vertical: SpacingTokens.sm,
+ ),
+ ),
+ style: TextStyles.bodyMedium.copyWith(
+ color: ThemeColors(context).onSurface,
+ ),
+ ),
+ ),
+ ),
+ const SizedBox(width: SpacingTokens.componentSpacing),
+ 
+ // Sort dropdown
+ AsmblCard(
+ child: DropdownButton<String>(
+ value: ['name', 'status', 'created', 'lastUsed'].contains(agentSortBy) ? agentSortBy : 'name',
+ onChanged: (value) => setState(() => agentSortBy = value ?? 'name'),
+ underline: Container(),
+ icon: Icon(
+ sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
+ size: 16,
+ color: ThemeColors(context).primary,
+ ),
+ items: const [
+ DropdownMenuItem(value: 'name', child: Text('Name')),
+ DropdownMenuItem(value: 'status', child: Text('Status')),
+ DropdownMenuItem(value: 'created', child: Text('Created')),
+ DropdownMenuItem(value: 'lastUsed', child: Text('Last Used')),
+ ],
+ ),
+ ),
+ 
+ const SizedBox(width: SpacingTokens.xs),
+ 
+ // Sort direction toggle
+ IconButton(
+ onPressed: () => setState(() => sortAscending = !sortAscending),
+ icon: Icon(
+ sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
+ size: 18,
+ color: ThemeColors(context).primary,
+ ),
+ ),
+ ],
+ ),
+ 
+ const SizedBox(height: SpacingTokens.sm),
+ 
+ // Status filter chips
+ Wrap(
+ spacing: SpacingTokens.xs,
+ children: [
+ _buildStatusFilterChip('All', null),
+ _buildStatusFilterChip('Active', AgentStatus.active),
+ _buildStatusFilterChip('Idle', AgentStatus.idle),
+ ],
+ ),
+ ],
+ );
+ }
+
+ Widget _buildStatusFilterChip(String label, AgentStatus? status) {
+ final isSelected = selectedAgentStatus == status;
+ return GestureDetector(
+ onTap: () => setState(() => selectedAgentStatus = status),
+ child: Container(
+ padding: const EdgeInsets.symmetric(
+ horizontal: SpacingTokens.componentSpacing,
+ vertical: SpacingTokens.xs,
+ ),
+ decoration: BoxDecoration(
+ color: isSelected 
+ ? ThemeColors(context).primary 
+ : ThemeColors(context).surfaceVariant.withOpacity(0.7),
+ borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
+ border: Border.all(
+ color: isSelected 
+ ? ThemeColors(context).primary 
+ : ThemeColors(context).border,
+ width: 1,
+ ),
+ ),
+ child: Text(
+ label,
+ style: TextStyles.caption.copyWith(
+ color: isSelected 
+ ? Colors.white 
+ : ThemeColors(context).onSurfaceVariant,
+ fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+ ),
+ ),
+ ),
+ );
+ }
+
+ Widget _buildCompactHeaderWithTabs() {
+   final colors = ThemeColors(context);
+   
+   return Container(
+     decoration: BoxDecoration(
+       color: colors.surface.withOpacity( 0.1),
+       border: Border(
+         bottom: BorderSide(
+           color: colors.border.withOpacity( 0.2),
+         ),
+       ),
+     ),
+     child: Column(
+       children: [
+         // Main header with integrated tabs on same line
+         Padding(
+           padding: const EdgeInsets.fromLTRB(SpacingTokens.xxl, SpacingTokens.lg, SpacingTokens.xxl, SpacingTokens.sm),
+           child: Row(
+             crossAxisAlignment: CrossAxisAlignment.center,
+             children: [
+               // Icon and Title
+               Container(
+                 width: 40,
+                 height: 40,
+                 decoration: BoxDecoration(
+                   color: colors.primary.withOpacity( 0.1),
+                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+                 ),
+                 child: Icon(
+                   Icons.smart_toy,
+                   size: 20,
+                   color: colors.primary,
+                 ),
+               ),
+               const SizedBox(width: SpacingTokens.md),
+               Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 mainAxisSize: MainAxisSize.min,
+                 children: [
+                   Text(
+                     selectedTab == 0 ? 'My AI Agents' : 'Agent Library',
+                     style: TextStyles.headingMedium.copyWith(
+                       color: colors.onSurface,
+                     ),
+                   ),
+                   Text(
+                     selectedTab == 0 
+                       ? 'Manage and organize your AI-powered assistants'
+                       : 'Start with a pre-built template and customize it to your needs',
+                     style: TextStyles.bodySmall.copyWith(
+                       color: colors.onSurfaceVariant,
+                     ),
+                   ),
+                 ],
+               ),
+               
+               const SizedBox(width: SpacingTokens.lg),
+               
+               // Tab buttons inline with title
+               Expanded(
+                 child: Row(
+                   children: [
+                     const Spacer(),
+                     _TabButton(
+                       text: 'My Agents',
+                       isSelected: selectedTab == 0,
+                       onTap: () => setState(() => selectedTab = 0),
+                     ),
+                     const SizedBox(width: SpacingTokens.sm),
+                     _TabButton(
+                       text: 'Agent Library',
+                       isSelected: selectedTab == 1,
+                       onTap: () => setState(() => selectedTab = 1),
+                     ),
+                   ],
+                 ),
+               ),
+             ],
+           ),
+         ),
+       ],
+     ),
+   );
+ }
+
+ Widget _buildNoAgentsFoundState() {
+ return Center(
+ child: Column(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ Icon(
+ Icons.search_off,
+ size: 48,
+ color: ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
+ ),
+ const SizedBox(height: SpacingTokens.componentSpacing),
+ Text(
+ 'No agents found',
+ style: TextStyles.bodyLarge.copyWith(
+ color: ThemeColors(context).onSurface,
+ fontWeight: FontWeight.bold,
+ ),
+ ),
+ const SizedBox(height: SpacingTokens.xs),
+ Text(
+ 'Try adjusting your search or filters',
+ style: TextStyles.bodyMedium.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ textAlign: TextAlign.center,
+ ),
+ const SizedBox(height: SpacingTokens.componentSpacing),
+ AsmblButton.secondary(
+ text: 'Clear Search',
+ onPressed: () {
+ setState(() {
+ agentSearchQuery = '';
+ selectedAgentStatus = null;
+ agentSortBy = 'name';
+ sortAscending = true;
+ });
+ },
+ ),
+ ],
+ ),
+ );
+ }
+
+ void _toggleAgentStatus(Agent agent) async {
+ try {
+ final agentNotifier = ref.read(agentNotifierProvider.notifier);
+ final newStatus = agent.status == AgentStatus.active 
+ ? AgentStatus.idle 
+ : AgentStatus.active;
+ 
+ await agentNotifier.setAgentStatus(agent.id, newStatus);
+ 
+ if (mounted) {
+ ScaffoldMessenger.of(context).showSnackBar(
+ SnackBar(
+ content: Text(
+ newStatus == AgentStatus.active 
+ ? 'Activated "${agent.name}"' 
+ : 'Deactivated "${agent.name}"'
+ ),
+ backgroundColor: ThemeColors(context).success,
+ ),
+ );
+ }
+ } catch (e) {
+ if (mounted) {
+ ScaffoldMessenger.of(context).showSnackBar(
+ SnackBar(
+ content: Text('Failed to change agent status: $e'),
+ backgroundColor: ThemeColors(context).error,
+ ),
+ );
+ }
+ }
+ }
+
+ void _openAgentChat(Agent agent) {
+ context.go('${AppRoutes.chat}?agent=${agent.id}');
  }
 }
 
@@ -1416,10 +1714,10 @@ class _AgentCard extends StatelessWidget {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
- color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
+ color: ThemeColors(context).surfaceVariant.withOpacity( 0.3),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  border: Border.all(
- color: ThemeColors(context).border.withValues(alpha: 0.5),
+ color: ThemeColors(context).border.withOpacity( 0.5),
  width: 0.5,
  ),
  ),

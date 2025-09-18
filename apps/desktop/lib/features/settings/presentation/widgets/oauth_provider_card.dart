@@ -67,7 +67,7 @@ class OAuthProviderCard extends StatelessWidget {
                 children: [
                   Text(
                     info.name,
-                    style: TextStyles.headingSmall.copyWith(color: colors.onSurface),
+                    style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
                   ),
                   if (info.requiresApproval) ...[ 
                     SizedBox(width: SpacingTokens.sm),
@@ -104,6 +104,12 @@ class OAuthProviderCard extends StatelessWidget {
         break;
       case OAuthProvider.microsoft:
         iconData = Icons.business;
+        break;
+      case OAuthProvider.notion:
+        iconData = Icons.note;
+        break;
+      case OAuthProvider.braveSearch:
+        iconData = Icons.search;
         break;
     }
 

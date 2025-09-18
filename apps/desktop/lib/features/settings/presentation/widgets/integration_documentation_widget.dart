@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/integration_documentation_service.dart';
@@ -95,7 +96,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Container(
             padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withValues(alpha: 0.1),
+              color: SemanticColors.primary.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Row(
@@ -179,7 +180,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         labelColor: SemanticColors.primary,
         unselectedLabelColor: SemanticColors.onSurfaceVariant,
         indicator: BoxDecoration(
-          color: SemanticColors.primary.withValues(alpha: 0.1),
+          color: SemanticColors.primary.withOpacity( 0.1),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         ),
       ),
@@ -483,7 +484,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   setState(() => _selectedCategory = category.name);
                   _tabController.animateTo(4); // Go to search tab
                 },
-                size: ButtonSize.small,
+                size: AsmblButtonSize.small,
               ),
             ],
           ),
@@ -534,7 +535,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
-                          color: SemanticColors.primary.withValues(alpha: 0.1),
+                          color: SemanticColors.primary.withOpacity( 0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
@@ -722,7 +723,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getDifficultyColor(guide.difficulty).withValues(alpha: 0.1),
+                  color: _getDifficultyColor(guide.difficulty).withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -773,7 +774,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         color: SemanticColors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: prereq.isRequired ? SemanticColors.warning.withValues(alpha: 0.3) : SemanticColors.border,
+          color: prereq.isRequired ? SemanticColors.warning.withOpacity( 0.3) : SemanticColors.border,
         ),
       ),
       child: Row(
@@ -800,7 +801,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
-                          color: SemanticColors.error.withValues(alpha: 0.1),
+                          color: SemanticColors.error.withOpacity( 0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: const Text(
@@ -906,10 +907,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: SemanticColors.primary.withValues(alpha: 0.05),
+                    color: SemanticColors.primary.withOpacity( 0.05),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     border: Border.all(
-                      color: SemanticColors.primary.withValues(alpha: 0.2),
+                      color: SemanticColors.primary.withOpacity( 0.2),
                     ),
                   ),
                   child: Column(
@@ -1000,10 +1001,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               width: double.infinity,
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: SemanticColors.success.withValues(alpha: 0.05),
+                color: SemanticColors.success.withOpacity( 0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(
-                  color: SemanticColors.success.withValues(alpha: 0.2),
+                  color: SemanticColors.success.withOpacity( 0.2),
                 ),
               ),
               child: Column(
@@ -1196,7 +1197,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(
-                    color: _getDifficultyColor(example.difficulty).withValues(alpha: 0.1),
+                    color: _getDifficultyColor(example.difficulty).withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
@@ -1223,7 +1224,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               width: double.infinity,
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: SemanticColors.onSurface.withValues(alpha: 0.05),
+                color: SemanticColors.onSurface.withOpacity( 0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(color: SemanticColors.border),
               ),
@@ -1322,7 +1323,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                             Container(
                               padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
-                                color: SemanticColors.warning.withValues(alpha: 0.1),
+                                color: SemanticColors.warning.withOpacity( 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
@@ -1384,7 +1385,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(
-                    color: SemanticColors.primary.withValues(alpha: 0.1),
+                    color: SemanticColors.primary.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
@@ -1601,7 +1602,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.xs),
                   decoration: BoxDecoration(
-                    color: SemanticColors.onSurface.withValues(alpha: 0.05),
+                    color: SemanticColors.onSurface.withOpacity( 0.05),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
@@ -1729,7 +1730,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getMethodColor(endpoint.method).withValues(alpha: 0.1),
+                  color: _getMethodColor(endpoint.method).withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(

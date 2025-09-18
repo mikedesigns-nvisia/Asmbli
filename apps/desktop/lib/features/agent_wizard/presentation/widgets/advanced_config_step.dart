@@ -247,9 +247,9 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: ThemeColors(context).info.withValues(alpha: 0.1),
+        color: ThemeColors(context).info.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: ThemeColors(context).info.withValues(alpha: 0.3)),
+        border: Border.all(color: ThemeColors(context).info.withOpacity( 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,7 +259,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).info.withValues(alpha: 0.2),
+                  color: ThemeColors(context).info.withOpacity( 0.2),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Icon(
@@ -299,7 +299,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: ThemeColors(context).warning.withValues(alpha: 0.1),
+              color: ThemeColors(context).warning.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Row(
@@ -382,7 +382,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             color: ThemeColors(context).surface,
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             border: Border.all(
-              color: ThemeColors(context).border.withValues(alpha: 0.5),
+              color: ThemeColors(context).border.withOpacity( 0.5),
               style: BorderStyle.solid,
               width: 2,
             ),
@@ -392,7 +392,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.lg),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  color: ThemeColors(context).primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                 ),
                 child: Icon(
@@ -488,7 +488,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  color: ThemeColors(context).primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Icon(
@@ -518,7 +518,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                            color: ThemeColors(context).primary.withOpacity( 0.1),
                             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                           ),
                           child: Text(
@@ -582,7 +582,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: ThemeColors(context).warning.withValues(alpha: 0.1),
+                    color: ThemeColors(context).warning.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Row(
@@ -627,7 +627,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             decoration: InputDecoration(
               hintText: _getEnvVariableHint(key),
               hintStyle: TextStyles.bodyMedium.copyWith(
-                color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.6),
+                color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.6),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -726,9 +726,9 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: ThemeColors(context).warning.withValues(alpha: 0.1),
+                color: ThemeColors(context).warning.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                border: Border.all(color: ThemeColors(context).warning.withValues(alpha: 0.3)),
+                border: Border.all(color: ThemeColors(context).warning.withOpacity( 0.3)),
               ),
               child: Row(
                 children: [
@@ -790,7 +790,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           Container(
             padding: const EdgeInsets.all(SpacingTokens.sm),
             decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.1),
+              color: statusColor.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Icon(
@@ -826,7 +826,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.1),
+              color: statusColor.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Text(
@@ -954,7 +954,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           Icon(
             Icons.description,
             size: 48,
-            color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
+            color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.5),
           ),
           const SizedBox(height: SpacingTokens.sm),
           Text(
@@ -966,7 +966,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
           Text(
             'Add global context documents in Settings to make them available to agents.',
             style: TextStyles.bodySmall.copyWith(
-              color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.7),
+              color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -1000,7 +1000,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
                     _showAdvancedSettings = value;
                   });
                 },
-                activeThumbColor: ThemeColors(context).primary,
+                thumbColor: MaterialStateProperty.all(ThemeColors(context).primary),
               ),
             ],
           ),
@@ -1164,7 +1164,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
             widget.wizardState.setAdvancedSetting(key, value);
             widget.onChanged();
           },
-          activeThumbColor: ThemeColors(context).primary,
+          thumbColor: MaterialStateProperty.all(ThemeColors(context).primary),
         ),
       ],
     );

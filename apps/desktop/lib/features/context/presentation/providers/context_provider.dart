@@ -4,9 +4,9 @@ import '../../data/models/context_document.dart';
 import '../../data/models/context_assignment.dart';
 import '../../data/repositories/context_repository.dart';
 import '../../../../core/services/business/context_business_service.dart';
-import '../../../../core/services/context_vector_ingestion_service.dart';
-import '../../../../core/services/vector_database_service.dart';
+import '../../../../core/services/streamlined_vector_context_service.dart';
 import '../../../../core/vector/models/vector_models.dart';
+import '../../../chat/presentation/widgets/contextual_context_widget.dart';
 
 /// Provider for context documents
 final contextDocumentsProvider = FutureProvider<List<ContextDocument>>((ref) async {
@@ -52,26 +52,22 @@ final searchContextDocumentsProvider = FutureProvider.family<List<ContextDocumen
 final contextBusinessServiceProvider = Provider<ContextBusinessService>((ref) {
   final repository = ref.read(contextRepositoryProvider);
   
-  // Get vector service (might be null during initialization)
-  final vectorService = ref.read(contextVectorIngestionServiceProvider);
+  // Use streamlined vector service instead of separate ingestion service
+  final vectorServiceAsync = ref.watch(streamlinedVectorContextInitializedProvider);
   
   return ContextBusinessService(
     repository: repository,
-    vectorService: vectorService,
+    vectorService: vectorServiceAsync.when(
+      data: (service) => _VectorServiceAdapter(service),
+      loading: () => null,
+      error: (_, __) => null,
+    ),
   );
 });
 
 /// Enhanced provider for context documents with vector database integration
 final contextDocumentsWithVectorProvider = FutureProvider<List<ContextDocument>>((ref) async {
   try {
-    // DEBUG: Sync missing vector database document (one-time fix)
-    final repository = ref.read(contextRepositoryProvider);
-    final currentDocs = await repository.getDocuments();
-    if (currentDocs.isEmpty) {
-      print('🔧 DEBUG: Context repository is empty, syncing vector database document...');
-      await repository.syncVectorDatabaseDocument();
-    }
-    
     final businessService = ref.read(contextBusinessServiceProvider);
     final result = await businessService.getDocuments();
     
@@ -86,39 +82,26 @@ final contextDocumentsWithVectorProvider = FutureProvider<List<ContextDocument>>
   }
 });
 
-/// Provider for vector search within context documents
+/// Provider for vector search within context documents using streamlined service
 final vectorSearchContextProvider = FutureProvider.family<List<VectorSearchResult>, VectorSearchParams>((ref, params) async {
   try {
-    final vectorDB = await ref.read(vectorDatabaseProvider.future);
+    final vectorService = await ref.read(streamlinedVectorContextInitializedProvider.future);
     
-    final searchQuery = VectorSearchQuery(
-      query: params.query,
-      limit: params.limit,
-      documentIds: params.documentIds,
-      filter: params.filter,
-      minSimilarity: params.minSimilarity,
-      enableReranking: params.enableReranking,
+    return await vectorService.getContextForMessage(
+      params.query,
+      maxResults: params.limit,
     );
-    
-    return await vectorDB.search(searchQuery);
   } catch (e) {
     print('❌ Vector search failed: $e');
     return [];
   }
 });
 
-/// Provider for context document ingestion status
+/// Provider for context document ingestion status using streamlined service
 final contextIngestionStatusProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   try {
-    final ingestionService = ref.read(contextVectorIngestionServiceProvider);
-    if (ingestionService != null) {
-      return await ingestionService.getIngestionStats();
-    } else {
-      return {
-        'error': 'Vector ingestion service not available',
-        'status': 'unavailable',
-      };
-    }
+    final vectorService = await ref.read(streamlinedVectorContextInitializedProvider.future);
+    return await vectorService.getStats();
   } catch (e) {
     return {
       'error': e.toString(),
@@ -127,15 +110,11 @@ final contextIngestionStatusProvider = FutureProvider<Map<String, dynamic>>((ref
   }
 });
 
-/// Provider to trigger full context sync
+/// Provider to trigger full context sync using streamlined service
 final syncAllContextProvider = FutureProvider<void>((ref) async {
   try {
-    final ingestionService = ref.read(contextVectorIngestionServiceProvider);
-    if (ingestionService != null) {
-      await ingestionService.syncAllDocuments();
-    } else {
-      print('⚠️ Vector ingestion service not available for sync');
-    }
+    final vectorService = await ref.read(streamlinedVectorContextInitializedProvider.future);
+    await vectorService.syncAllDocuments();
     
     // Invalidate related providers to refresh UI
     ref.invalidate(contextDocumentsProvider);
@@ -262,6 +241,115 @@ class ContextDocumentNotifier extends AsyncNotifier<List<ContextDocument>> {
 /// Provider for context document notifier
 final contextDocumentNotifierProvider = AsyncNotifierProvider<ContextDocumentNotifier, List<ContextDocument>>(() {
   return ContextDocumentNotifier();
+});
+
+/// Adapter to make StreamlinedVectorContextService compatible with ContextBusinessService
+class _VectorServiceAdapter {
+  final StreamlinedVectorContextService _service;
+  
+  _VectorServiceAdapter(this._service);
+  
+  Future<void> ingestContextDocument(ContextDocument contextDoc) async {
+    await _service.ingestContextDocument(contextDoc);
+  }
+  
+  Future<void> removeContextDocument(String contextDocumentId) async {
+    await _service.removeContextDocument(contextDocumentId);
+  }
+  
+  Future<void> updateContextDocument(ContextDocument contextDoc) async {
+    await _service.updateContextDocument(contextDoc);
+  }
+  
+  Future<void> syncAllDocuments() async {
+    await _service.syncAllDocuments();
+  }
+  
+  Future<Map<String, dynamic>> getIngestionStats() async {
+    return await _service.getStats();
+  }
+  
+  bool isIngesting(String contextDocumentId) {
+    return _service.isIngesting(contextDocumentId);
+  }
+  
+  Future<void> ingestMultipleDocuments(List<ContextDocument> documents) async {
+    for (final doc in documents) {
+      await _service.ingestContextDocument(doc);
+    }
+  }
+}
+
+/// Provider for deleting a context document - DIRECT REPOSITORY VERSION
+final deleteContextDocumentProvider = FutureProvider.family<void, String>((ref, documentId) async {
+  try {
+    print('🗑️ [DIRECT] Starting delete for document: $documentId');
+    final repository = ref.read(contextRepositoryProvider);
+    
+    // Get documents before deletion for debugging
+    final beforeDocs = await repository.getDocuments();
+    print('📊 [DIRECT] Documents before deletion: ${beforeDocs.length}');
+    final targetDoc = beforeDocs.where((doc) => doc.id == documentId).toList();
+    print('📊 [DIRECT] Target document found: ${targetDoc.isNotEmpty ? targetDoc.first.title : 'NOT FOUND'}');
+    
+    // Call repository delete directly (bypass business service)
+    await repository.deleteDocument(documentId);
+    
+    // Get documents after deletion for debugging
+    final afterDocs = await repository.getDocuments();
+    print('📊 [DIRECT] Documents after deletion: ${afterDocs.length}');
+    final stillExists = afterDocs.where((doc) => doc.id == documentId).toList();
+    print('📊 [DIRECT] Document still exists after deletion: ${stillExists.isNotEmpty}');
+    
+    // Invalidate related providers to refresh UI
+    ref.invalidate(contextDocumentsProvider);
+    ref.invalidate(contextDocumentsByTypeProvider);
+    ref.invalidate(searchContextDocumentsProvider);
+    ref.invalidate(contextDocumentsWithVectorProvider); // This is the key missing invalidation!
+    ref.invalidate(contextDocumentNotifierProvider);
+    ref.invalidate(contextIngestionStatusProvider);
+    
+    print('✅ [DIRECT] Document deletion completed successfully');
+  } catch (e, stackTrace) {
+    print('❌ [DIRECT] Document deletion failed: $e');
+    print('Stack trace: $stackTrace');
+    rethrow;
+  }
+});
+
+/// Provider for deleting a context assignment
+final deleteContextAssignmentProvider = FutureProvider.family<void, String>((ref, assignmentId) async {
+  final repository = ref.read(contextRepositoryProvider);
+  await repository.removeAssignment(assignmentId);
+  
+  // Invalidate related providers to refresh UI
+  ref.invalidate(contextAssignmentsProvider);
+  ref.invalidate(contextAssignmentsForAgentProvider);
+  ref.invalidate(contextForAgentProvider);
+});
+
+/// Action provider for deleting context documents (for UI actions)
+final deleteContextDocumentActionProvider = Provider.autoDispose((ref) {
+  return (String documentId) async {
+    try {
+      print('🎯 Action provider called for document: $documentId');
+      await ref.read(deleteContextDocumentProvider(documentId).future);
+      print('🎯 Action provider completed successfully');
+    } catch (e) {
+      print('🎯 Action provider error: $e');
+      rethrow;
+    }
+  };
+});
+
+/// Action provider for removing context from session
+final removeSessionContextProvider = StateProvider.family<Function(String), String?>((ref, conversationId) {
+  return (String contextId) {
+    // This will be used to remove context from the current session
+    final sessionContext = ref.read(sessionContextProvider(conversationId));
+    final updatedContext = sessionContext.where((id) => id != contextId).toList();
+    ref.read(sessionContextProvider(conversationId).notifier).state = updatedContext;
+  };
 });
 
 /// Parameters for vector search

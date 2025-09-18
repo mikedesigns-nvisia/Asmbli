@@ -21,11 +21,13 @@ class AppErrorHandler {
   Future<void> initialize() async {
     if (_initialized) return;
 
-    _logger = ProductionLogger.instance;
-    await _logger.initialize();
-
+    // Initialize EnvironmentConfig first
     final env = EnvironmentConfig.instance;
     await env.initialize();
+
+    // Then initialize logger (which depends on EnvironmentConfig)
+    _logger = ProductionLogger.instance;
+    await _logger.initialize();
     
     _crashReportingEnabled = env.featureFlags['crash_reporting'] ?? false;
 

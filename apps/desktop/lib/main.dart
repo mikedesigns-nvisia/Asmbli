@@ -10,6 +10,7 @@ import 'core/design_system/components/asmbli_card_enhanced.dart';
 import 'core/constants/routes.dart';
 import 'core/di/service_locator.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
+import 'features/chat/presentation/screens/chat_screen_with_contextual.dart';
 // import 'features/chat/presentation/screens/modern_chat_screen_v2.dart'; // Temporarily disabled
 import 'features/chat/presentation/screens/demo_chat_screen.dart'; // Remove after video
 import 'features/settings/presentation/screens/modern_settings_screen.dart';
@@ -18,6 +19,7 @@ import 'features/agents/presentation/screens/my_agents_screen.dart';
 import 'features/agents/presentation/screens/agent_configuration_screen.dart';
 import 'features/context/presentation/screens/context_library_screen.dart';
 import 'features/agent_wizard/presentation/screens/agent_wizard_screen.dart';
+import 'features/agents/presentation/screens/agent_builder_screen.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'providers/conversation_provider.dart';
 import 'package:agent_engine_core/models/conversation.dart';
@@ -30,12 +32,16 @@ import 'core/services/api_config_service.dart';
 import 'core/services/feature_flag_service.dart';
 import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
 import 'features/tools/presentation/screens/tools_screen.dart';
+import 'features/chat/presentation/demo/contextual_context_demo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/services/desktop/hive_cleanup_service.dart';
 import 'core/error/app_error_handler.dart';
 import 'core/services/production_logger.dart';
 import 'core/config/environment_config.dart';
 import 'core/services/vector_integration_service.dart';
+import 'core/services/oauth_auto_refresh_initializer.dart';
+import 'core/security/os_trust_manager.dart';
+import 'core/services/trust_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
@@ -139,6 +145,7 @@ void main() async {
 
  // Initialize SharedPreferences for feature flags
  final prefs = await SharedPreferences.getInstance();
+
  
     runApp(
       ProviderScope(
@@ -154,6 +161,23 @@ void main() async {
   }, (error, stackTrace) {
     // Global error handler delegates to AppErrorHandler
     try {
+      // Filter out non-critical errors like Google Fonts loading failures
+      final errorStr = error.toString().toLowerCase();
+      if (errorStr.contains('google_fonts') ||
+          errorStr.contains('fonts.gstatic.com') ||
+          errorStr.contains('failed to load font') ||
+          errorStr.contains('fustat-regular') ||
+          errorStr.contains('fustat-bold') ||
+          errorStr.contains('fustat-medium') ||
+          errorStr.contains('fustat-semibold') ||
+          errorStr.contains('socketexception') ||
+          errorStr.contains('clientexception') ||
+          errorStr.contains('operation not permitted')) {
+        // Google Fonts errors are non-critical - just log them
+        print('⚠️ Font loading failed (non-critical): $error');
+        return;
+      }
+
       AppErrorHandler.handleBusinessError(
         error,
         operation: 'main_zone_error',
@@ -199,7 +223,7 @@ class VectorInitializedApp extends ConsumerWidget {
                       Text(
                         'Setting up your workspace...',
                         style: GoogleFonts.fustat(
-                                                   fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
@@ -207,7 +231,7 @@ class VectorInitializedApp extends ConsumerWidget {
                       Text(
                         'Preparing your knowledge base and context',
                         style: GoogleFonts.fustat(
-                                                   color: Colors.white70,
+                          color: Colors.white70,
                         ),
                       ),
                     ],
@@ -227,23 +251,84 @@ class VectorInitializedApp extends ConsumerWidget {
   }
 }
 
-class AsmblDesktopApp extends ConsumerWidget {
- const AsmblDesktopApp({super.key});
+class AsmblDesktopApp extends ConsumerStatefulWidget {
+  const AsmblDesktopApp({super.key});
 
- @override
- Widget build(BuildContext context, WidgetRef ref) {
- final themeState = ref.watch(themeServiceProvider);
- final themeService = ref.read(themeServiceProvider.notifier);
- 
- return MaterialApp.router(
- title: 'Asmbli - AI Agents Made Easy',
- theme: themeService.getLightTheme(),
- darkTheme: themeService.getDarkTheme(),
- themeMode: themeState.mode,
- routerConfig: _router,
- debugShowCheckedModeBanner: false,
- );
- }
+  @override
+  ConsumerState<AsmblDesktopApp> createState() => _AsmblDesktopAppState();
+}
+
+class _AsmblDesktopAppState extends ConsumerState<AsmblDesktopApp> {
+  bool _isCheckingTrust = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOSTrust();
+  }
+
+  Future<void> _checkOSTrust() async {
+    try {
+      final osTrustManager = OSTrustManager();
+      final trustStatus = await osTrustManager.checkTrustStatus();
+      final trustInfo = TrustInfo.fromStatus(trustStatus);
+      
+      // Log trust status for development/deployment insights
+      print('🔒 OS Trust Status: ${trustStatus.name}');
+      print('🔒 ${trustInfo.message}');
+      
+      if (trustInfo.requiresUserAction) {
+        print('🔒 Trust Recommendations:');
+        for (final rec in trustInfo.recommendations) {
+          print('  • $rec');
+        }
+      }
+      
+      // For apps that don't store/transmit user data, we proceed regardless of trust
+      // The OS handles the actual security decisions (SmartScreen, UAC, etc.)
+      if (mounted) {
+        setState(() {
+          _isCheckingTrust = false;
+        });
+      }
+    } catch (e) {
+      print('🔒 OS trust check failed: $e');
+      if (mounted) {
+        setState(() {
+          _isCheckingTrust = false; // Proceed normally
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeState = ref.watch(themeServiceProvider);
+    final themeService = ref.read(themeServiceProvider.notifier);
+
+    // Initialize OAuth auto-refresh service when app starts
+    OAuthAutoRefreshInitializer.initialize(ref);
+
+    if (_isCheckingTrust) {
+      return MaterialApp(
+        title: 'Asmbli - Starting',
+        theme: themeService.getLightTheme(),
+        darkTheme: themeService.getDarkTheme(),
+        themeMode: themeState.mode,
+        debugShowCheckedModeBanner: false,
+        home: const _StartupScreen(),
+      );
+    }
+
+    return MaterialApp.router(
+      title: 'Asmbli - AI Agents Made Easy',
+      theme: themeService.getLightTheme(),
+      darkTheme: themeService.getDarkTheme(),
+      themeMode: themeState.mode,
+      routerConfig: _router,
+      debugShowCheckedModeBanner: false,
+    );
+  }
 }
 
 // Create router outside of the widget to avoid global key issues
@@ -266,7 +351,7 @@ final _router = GoRouter(
  path: AppRoutes.chat,
  builder: (context, state) {
    final template = state.uri.queryParameters['template'];
-   return ChatScreen(selectedTemplate: template);
+   return ChatScreenWithContextual(selectedTemplate: template);
  },
  ),
  // Temporarily disabled - missing file
@@ -279,10 +364,10 @@ final _router = GoRouter(
  path: AppRoutes.demoChat,
  builder: (context, state) => const DemoChatScreen(),
  ),
- // OAuth settings route
+ // Contextual Context Demo
  GoRoute(
- path: AppRoutes.oauthSettings,
- builder: (context, state) => const AppleStyleOAuthScreen(),
+ path: '/contextual-context-demo',
+ builder: (context, state) => const ContextualContextDemo(),
  ),
  GoRoute(
  path: AppRoutes.settings,
@@ -322,6 +407,10 @@ final _router = GoRouter(
     final template = state.uri.queryParameters['template'];
     return AgentWizardScreen(selectedTemplate: template);
   },
+ ),
+ GoRoute(
+  path: AppRoutes.agentBuilder,
+  builder: (context, state) => const AgentBuilderScreen(),
  ),
  ],
 );
@@ -441,7 +530,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  icon: Icons.build,
  title: 'Build Agent',
  description: 'Create custom AI agent',
- onTap: () => context.go(AppRoutes.agentWizard),
+ onTap: () => context.go(AppRoutes.agentBuilder),
  ),
  ),
  ],
@@ -487,7 +576,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  Icon(
  Icons.chat_bubble_outline,
  size: 32,
- color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+ color: colors.onSurfaceVariant.withOpacity( 0.5),
  ),
  const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
@@ -587,8 +676,8 @@ class _ConversationItem extends StatelessWidget {
  child: InkWell(
  onTap: onTap,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- hoverColor: colors.primary.withValues(alpha: 0.04),
- splashColor: colors.primary.withValues(alpha: 0.12),
+ hoverColor: colors.primary.withOpacity( 0.04),
+ splashColor: colors.primary.withOpacity( 0.12),
  child: Container(
  padding: const EdgeInsets.symmetric(
  vertical: SpacingTokens.componentSpacing,
@@ -600,7 +689,7 @@ class _ConversationItem extends StatelessWidget {
  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
  color: isAgentConversation 
- ? colors.primary.withValues(alpha: 0.1)
+ ? colors.primary.withOpacity( 0.1)
  : colors.surfaceVariant,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
@@ -724,7 +813,7 @@ class _QuickActionCard extends StatelessWidget {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
+ color: ThemeColors(context).primary.withOpacity( 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Icon(
@@ -782,6 +871,113 @@ class _DashboardSectionEnhanced extends StatelessWidget {
  ),
  );
  }
+}
+
+/// Startup screen shown during trust checking
+class _StartupScreen extends StatelessWidget {
+  const _StartupScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+    
+    return Scaffold(
+      backgroundColor: colors.background,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.5,
+            colors: [
+              colors.backgroundGradientStart,
+              colors.backgroundGradientMiddle,
+              colors.backgroundGradientEnd,
+            ],
+            stops: const [0.0, 0.6, 1.0],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: colors.surface.withOpacity( 0.9),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
+                  border: Border.all(
+                    color: colors.border.withOpacity( 0.2),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // App logo/icon
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: colors.primary.withOpacity( 0.1),
+                        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+                      ),
+                      child: Icon(
+                        Icons.security,
+                        size: 32,
+                        color: colors.primary,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.lg),
+                    
+                    // Loading indicator
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: colors.primary,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.lg),
+                    
+                    // Status text
+                    Text(
+                      'Checking OS Trust Status...',
+                      style: TextStyles.headlineMedium.copyWith(
+                        color: colors.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.sm),
+                    
+                    Text(
+                      'Verifying application trust with your operating system',
+                      style: TextStyles.bodyMedium.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    
+                    const SizedBox(height: SpacingTokens.lg),
+                    
+                    // App branding
+                    Text(
+                      'Asmbli',
+                      style: TextStyles.brandTitle.copyWith(
+                        color: colors.primary,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 

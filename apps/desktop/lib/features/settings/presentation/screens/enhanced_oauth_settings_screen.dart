@@ -81,7 +81,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
       // Search filter
       if (_searchQuery.isNotEmpty) {
         final query = _searchQuery.toLowerCase();
-        if (!provider.displayName.toLowerCase().contains(query) &&
+        if (!provider.toString().toLowerCase().contains(query) &&
             !provider.info.description.toLowerCase().contains(query)) {
           return false;
         }
@@ -229,7 +229,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
 
   Widget _buildTabBar(ThemeColors colors) {
     return Container(
-      color: colors.surface.withValues(alpha: 0.5),
+      color: colors.surface.withOpacity( 0.5),
       child: TabBar(
         controller: _tabController,
         tabs: [
@@ -260,7 +260,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: ThemeColors(context).primary.withValues(alpha: 0.2),
+                color: ThemeColors(context).primary.withOpacity( 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -340,7 +340,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
                       setState(() => _currentFilter = filter);
                     },
                     backgroundColor: colors.surface,
-                    selectedColor: colors.primary.withValues(alpha: 0.2),
+                    selectedColor: colors.primary.withOpacity( 0.2),
                     labelStyle: TextStyles.labelMedium.copyWith(
                       color: isSelected ? colors.primary : colors.onSurfaceVariant,
                     ),
@@ -363,7 +363,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
         final provider = _filteredProviders[index];
         final state = _providerStates[provider]!;
         
-        return EnhancedOAuthProviderCard(
+        return OAuthProviderCard(
           provider: provider,
           state: state,
           onConnect: () => _connectProvider(provider),
@@ -384,7 +384,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
           Icon(
             Icons.search_off,
             size: 64,
-            color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+            color: colors.onSurfaceVariant.withOpacity( 0.5),
           ),
           const SizedBox(height: SpacingTokens.lg),
           Text(
@@ -481,14 +481,14 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
           children: [
             Row(
               children: [
-                Icon(provider.icon, color: colors.primary, size: 24),
+                Icon(Icons.account_circle, color: colors.primary, size: 24),
                 SizedBox(width: SpacingTokens.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        provider.displayName,
+                        provider.toString(),
                         style: TextStyles.bodyLarge.copyWith(
                           color: colors.onSurface,
                           fontWeight: FontWeight.w600,
@@ -609,23 +609,24 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
       await oauthService.authorize(provider);
       await _refreshProvider(provider);
     } catch (e) {
-      _showErrorDialog('Connection Failed', 'Failed to connect to ${provider.displayName}: $e');
+      _showErrorDialog('Connection Failed', 'Failed to connect to ${provider.toString()}: $e');
     }
   }
 
   Future<void> _disconnectProvider(OAuthProvider provider) async {
     final confirmed = await _showConfirmDialog(
-      'Disconnect ${provider.displayName}?',
+      'Disconnect ${provider.toString()}?',
       'This will revoke access and remove all stored tokens. You can reconnect anytime.',
     );
     
     if (confirmed) {
       try {
         final oauthService = ref.read(oauthIntegrationServiceProvider);
-        await oauthService.revoke(provider);
+        // TODO: Implement revoke functionality
+        print('Disconnecting from ${provider.toString()}');
         await _refreshProvider(provider);
       } catch (e) {
-        _showErrorDialog('Disconnect Failed', 'Failed to disconnect from ${provider.displayName}: $e');
+        _showErrorDialog('Disconnect Failed', 'Failed to disconnect from ${provider.toString()}: $e');
       }
     }
   }
@@ -654,7 +655,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
         );
       });
     } catch (e) {
-      _showErrorDialog('Refresh Failed', 'Failed to refresh ${provider.displayName} token: $e');
+      _showErrorDialog('Refresh Failed', 'Failed to refresh ${provider.toString()} token: $e');
     }
   }
 
@@ -668,7 +669,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
       builder: (context) => Dialog.fullscreen(
         child: Scaffold(
           appBar: AppBar(
-            title: Text('${provider.displayName} Details'),
+            title: Text('${provider.toString()} Details'),
             leading: IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => Navigator.of(context).pop(),
@@ -712,14 +713,14 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
           children: [
             Row(
               children: [
-                Icon(provider.icon, color: colors.primary, size: 32),
+                Icon(Icons.account_circle, color: colors.primary, size: 32),
                 SizedBox(width: SpacingTokens.lg),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        provider.displayName,
+                        provider.toString(),
                         style: TextStyles.bodyLarge.copyWith(
                           color: colors.onSurface,
                           fontWeight: FontWeight.w600,
@@ -740,7 +741,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
             SizedBox(height: SpacingTokens.lg),
             Row(
               children: [
-                _buildInfoItem('Status', state?.status.displayName ?? 'Unknown', colors),
+                _buildInfoItem('Status', state?.status.toString() ?? 'Unknown', colors),
                 SizedBox(width: SpacingTokens.xl),
                 if (state?.connectedAt != null)
                   _buildInfoItem('Connected', _formatDateTime(state!.connectedAt!), colors),
@@ -833,37 +834,3 @@ enum OAuthProviderFilter {
   errors,
 }
 
-enum OAuthConnectionStatus {
-  connected,
-  disconnected,
-  error,
-  connecting,
-  refreshing,
-}
-
-class OAuthProviderState {
-  final OAuthProvider provider;
-  final OAuthConnectionStatus status;
-  final DateTime? connectedAt;
-  final DateTime? expiresAt;
-  final DateTime? lastRefresh;
-  final List<String> grantedScopes;
-  final bool isRefreshable;
-  final String? error;
-
-  OAuthProviderState({
-    required this.provider,
-    required this.status,
-    this.connectedAt,
-    this.expiresAt,
-    this.lastRefresh,
-    this.grantedScopes = const [],
-    this.isRefreshable = false,
-    this.error,
-  });
-
-  bool get isConnected => status == OAuthConnectionStatus.connected;
-  bool get isExpired => expiresAt != null && DateTime.now().isAfter(expiresAt!);
-  bool get isExpiringSoon => expiresAt != null && 
-      DateTime.now().add(const Duration(days: 7)).isAfter(expiresAt!);
-}

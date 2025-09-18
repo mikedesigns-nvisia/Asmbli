@@ -4,6 +4,7 @@ import 'package:agent_engine_core/models/conversation.dart' as core;
 import '../../../../core/design_system/design_system.dart';
 import '../../../../providers/conversation_provider.dart';
 import '../widgets/streaming_message_widget.dart';
+import '../widgets/rich_text_message_widget.dart';
 
 /// Message display area - service-driven, design system compliant
 class MessageDisplayArea extends ConsumerWidget {
@@ -244,8 +245,14 @@ class MessageDisplayArea extends ConsumerWidget {
 
   Widget _buildMessageContent(BuildContext context, core.Message message) {
     final isStreaming = message.metadata?['streaming'] == true;
+    final isUser = message.role == core.MessageRole.user;
+    
+    print('DEBUG: Message - Role: ${message.role.name}, IsUser: $isUser, IsStreaming: $isStreaming, ContentLength: ${message.content.length}');
+    print('DEBUG: Role check - Is Assistant: ${message.role == core.MessageRole.assistant}');
+    print('DEBUG: Message metadata: ${message.metadata}');
     
     if (isStreaming) {
+      print('DEBUG: Using StreamingMessageWidget');
       // Use existing streaming widget for real-time updates
       return StreamingMessageWidget(
         messageId: message.id,
@@ -253,6 +260,18 @@ class MessageDisplayArea extends ConsumerWidget {
       );
     }
 
+    // Use rich text widget for AI responses, plain text for user messages
+    if (message.role == core.MessageRole.assistant && message.content.isNotEmpty) {
+      print('DEBUG: Using RichTextMessageWidget for assistant message: ${message.content.substring(0, message.content.length > 50 ? 50 : message.content.length)}...');
+      return RichTextMessageWidget(
+        content: message.content,
+        isStreaming: isStreaming,
+        isDarkTheme: Theme.of(context).brightness == Brightness.dark,
+      );
+    }
+
+    print('DEBUG: Using fallback SelectableText');
+    // Fallback for user messages or empty content
     return SelectableText(
       message.content,
       style: TextStyles.bodyMedium.copyWith(

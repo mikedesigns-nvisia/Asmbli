@@ -85,7 +85,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
         Container(
           padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
           decoration: BoxDecoration(
-            color: colors.primary.withValues(alpha: 0.1),
+            color: colors.primary.withOpacity( 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
           ),
           child: Icon(
@@ -148,7 +148,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
         labelColor: colors.primary,
         unselectedLabelColor: colors.onSurfaceVariant,
         indicator: BoxDecoration(
-          color: colors.primary.withValues(alpha: 0.1),
+          color: colors.primary.withOpacity( 0.1),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         ),
         indicatorPadding: const EdgeInsets.all(4),
@@ -180,7 +180,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
           const IntegrationRecommendationsWidget(),
           const SizedBox(height: SpacingTokens.sectionSpacing),
           
-          // Popular MCP servers
+          // Most Downloaded MCP servers
           _buildPopularServersSection(colors),
         ],
       ),
@@ -368,7 +368,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: colors.primary.withValues(alpha: 0.1),
+            color: colors.primary.withOpacity( 0.1),
             borderRadius: BorderRadius.circular(24),
           ),
           child: Stack(
@@ -426,7 +426,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
         Row(
           children: [
             Text(
-              'Popular MCP Servers',
+              'Most Downloaded MCP Servers',
               style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
             ),
             const Spacer(),
@@ -515,7 +515,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
                 padding: const EdgeInsets.all(SpacingTokens.xs_precise),
                 decoration: BoxDecoration(
                   color: server.type == MCPServerType.official
-                    ? colors.primary.withValues(alpha: 0.1)
+                    ? colors.primary.withOpacity( 0.1)
                     : colors.surfaceVariant,
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
@@ -578,7 +578,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: getStatusColor().withValues(alpha: 0.1),
+        color: getStatusColor().withOpacity( 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Text(
@@ -676,7 +676,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
   }
 
   Widget _buildDetectedIntegrationCard(DetectedIntegration integration, ThemeColors colors) {
-    final availableServers = MCPServerConfigurationService.getServersForIntegration(integration.id);
+    final availableServers = MCPServerLibraryConfigurationService.getServersForIntegration(integration.id);
     
     return AsmblCard(
       child: Row(
@@ -684,7 +684,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
           Container(
             padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
             decoration: BoxDecoration(
-              color: _getStatusColor(integration.status).withValues(alpha: 0.1),
+              color: _getStatusColor(integration.status).withOpacity( 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Icon(
@@ -744,7 +744,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
     }
   }
 
-  List<MCPServerConfig> _getFilteredServers() {
+  List<MCPServerLibraryConfig> _getFilteredServers() {
     var servers = MCPServerLibrary.servers;
     
     if (_searchQuery.isNotEmpty) {
@@ -862,7 +862,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
   }
 
   void _showServerSelectionForIntegration(String integrationId) {
-    final availableServers = MCPServerConfigurationService.getServersForIntegration(integrationId);
+    final availableServers = MCPServerLibraryConfigurationService.getServersForIntegration(integrationId);
     
     if (availableServers.length == 1) {
       // Direct configuration for single server
@@ -897,7 +897,7 @@ class _EnhancedIntegrationsTabState extends ConsumerState<EnhancedIntegrationsTa
         backgroundColor: Colors.green,
       ),
     );
-    
+
     // Refresh the configured servers tab
     setState(() {});
     _tabController.animateTo(3);

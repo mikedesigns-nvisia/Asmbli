@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../models/mcp_server.dart';
 import '../providers/tools_provider.dart';
+import 'mcp_script_terminal.dart';
 
 class ServerManagementTab extends ConsumerWidget {
   const ServerManagementTab({super.key});
@@ -17,7 +18,7 @@ class ServerManagementTab extends ConsumerWidget {
     }
 
     if (state.installedServers.isEmpty) {
-      return _buildEmptyState(colors);
+      return _buildEmptyState(colors, ref);
     }
 
     return Padding(
@@ -40,13 +41,19 @@ class ServerManagementTab extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
+          
           Expanded(
-            child: ListView.builder(
-              itemCount: state.installedServers.length,
-              itemBuilder: (context, index) {
-                final server = state.installedServers[index];
-                return _buildServerCard(context, ref, colors, server);
-              },
+            child: ListView(
+              children: [
+                // MCP Script Terminal
+                const MCPScriptTerminal(),
+                const SizedBox(height: SpacingTokens.lg),
+                
+                // Server cards
+                ...state.installedServers.map((server) => 
+                  _buildServerCard(context, ref, colors, server)
+                ),
+              ],
             ),
           ),
         ],
@@ -54,33 +61,69 @@ class ServerManagementTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(ThemeColors colors) {
-    return Center(
+  Widget _buildEmptyState(ThemeColors colors, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: colors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-            ),
-            child: Icon(
-              Icons.dns_outlined,
-              size: 40,
-              color: colors.primary,
-            ),
+          Row(
+            children: [
+              Text(
+                'My MCP Servers',
+                style: TextStyles.headingMedium.copyWith(color: colors.onSurface),
+              ),
+              const Spacer(),
+              AsmblButton.secondary(
+                text: 'Refresh',
+                icon: Icons.refresh,
+                onPressed: () => ref.read(toolsProvider.notifier).refresh(),
+              ),
+            ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          Text(
-            'No MCP servers installed',
-            style: TextStyles.headlineSmall.copyWith(color: colors.onSurface),
-          ),
-          const SizedBox(height: SpacingTokens.sm),
-          Text(
-            'Browse the marketplace to install your first MCP server',
-            style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+          
+          Expanded(
+            child: ListView(
+              children: [
+                // MCP Script Terminal
+                const MCPScriptTerminal(),
+                
+                const SizedBox(height: SpacingTokens.xxl),
+                
+                // Empty state content
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: colors.primary.withOpacity( 0.1),
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+                    ),
+                    child: Icon(
+                      Icons.dns_outlined,
+                      size: 40,
+                      color: colors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: SpacingTokens.lg),
+                  Text(
+                    'No MCP servers installed',
+                    style: TextStyles.headlineSmall.copyWith(color: colors.onSurface),
+                  ),
+                  const SizedBox(height: SpacingTokens.sm),
+                  Text(
+                    'Browse the marketplace or use the terminal above to create your first MCP server',
+                    style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+                    textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+              ],
+            ),
           ),
         ],
       ),
@@ -121,11 +164,11 @@ class ServerManagementTab extends ConsumerWidget {
       height: 48,
       decoration: BoxDecoration(
         color: (isRunning ? colors.success : colors.onSurfaceVariant)
-            .withValues(alpha: 0.1),
+            .withOpacity( 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: (isRunning ? colors.success : colors.onSurfaceVariant)
-              .withValues(alpha: 0.2),
+              .withOpacity( 0.2),
         ),
       ),
       child: Icon(
@@ -158,7 +201,7 @@ class ServerManagementTab extends ConsumerWidget {
                   vertical: SpacingTokens.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.success.withValues(alpha: 0.1),
+                  color: colors.success.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(
@@ -191,7 +234,7 @@ class ServerManagementTab extends ConsumerWidget {
               ),
               decoration: BoxDecoration(
                 color: (server.isRunning ? colors.success : colors.onSurfaceVariant)
-                    .withValues(alpha: 0.1),
+                    .withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Row(
@@ -224,7 +267,7 @@ class ServerManagementTab extends ConsumerWidget {
                   vertical: SpacingTokens.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(

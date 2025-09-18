@@ -45,7 +45,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
       decoration: BoxDecoration(
         border: Border.all(color: theme.colorScheme.outline),
         borderRadius: BorderRadius.circular(6),
-        color: theme.colorScheme.surface.withValues(alpha: 0.8),
+        color: theme.colorScheme.surface.withOpacity( 0.8),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -173,7 +173,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  color: ThemeColors(context).primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(
@@ -216,7 +216,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  color: ThemeColors(context).primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(
@@ -232,7 +232,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).error.withValues(alpha: 0.1),
+                  color: ThemeColors(context).error.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(

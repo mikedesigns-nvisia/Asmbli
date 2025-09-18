@@ -19,7 +19,23 @@ import '../services/claude_api_service.dart';
 import '../services/ollama_service.dart';
 import '../services/mcp_server_execution_service.dart';
 import '../services/mcp_catalog_service.dart';
+import '../services/github_mcp_registry_service.dart';
+import '../services/featured_mcp_servers_service.dart';
+import '../services/mcp_error_handler.dart';
+import '../services/json_rpc_communication_service.dart';
+import '../services/mcp_protocol_handler.dart';
+import '../services/mcp_process_manager.dart';
+import '../services/production_logger.dart';
+import 'package:dio/dio.dart';
 import '../services/secure_auth_service.dart';
+
+// New agent-terminal architecture services
+import '../services/mcp_installation_service.dart';
+import '../services/agent_terminal_manager.dart';
+import '../services/agent_mcp_integration_service.dart';
+import '../services/agent_mcp_configuration_service.dart';
+import '../services/agent_aware_mcp_installer.dart';
+import '../services/agent_mcp_session_service.dart';
 
 // Business services
 import '../services/business/base_business_service.dart';
@@ -147,9 +163,14 @@ class ServiceLocator {
     registerSingleton<AgentService>(DesktopAgentService());
     registerSingleton<ConversationService>(DesktopConversationService());
 
-    // Register MCP catalog service first (needed by other MCP services)
-    final secureAuthService = SecureAuthService(storageService);
-    final mcpCatalogService = MCPCatalogService(storageService, secureAuthService);
+    // Register GitHub MCP registry service first
+    final githubApi = GitHubMCPRegistryApi(Dio());
+    final githubMCPService = GitHubMCPRegistryService(githubApi);
+    registerSingleton<GitHubMCPRegistryService>(githubMCPService);
+
+    // Register MCP catalog service (needed by other MCP services)
+    final featuredService = FeaturedMCPServersService();
+    final mcpCatalogService = MCPCatalogService(githubMCPService, featuredService);
     registerSingleton<MCPCatalogService>(mcpCatalogService);
     
     // Register infrastructure services with proper dependencies
@@ -182,6 +203,46 @@ class ServiceLocator {
     
     // Use the existing singleton BusinessEventBus
     registerSingleton<BusinessEventBus>(BusinessEventBus());
+    
+    // Register core MCP installation service
+    final mcpInstallationService = MCPInstallationService(mcpCatalogService);
+    registerSingleton<MCPInstallationService>(mcpInstallationService);
+
+    // Register agent MCP configuration service
+    final agentMCPConfigService = AgentMCPConfigurationService(mcpCatalogService, storageService);
+    registerSingleton<AgentMCPConfigurationService>(agentMCPConfigService);
+
+    // Register agent-aware MCP installer
+    final agentAwareMCPInstaller = AgentAwareMCPInstaller(
+      mcpInstallationService,
+      agentMCPConfigService,
+      get<AgentService>() as DesktopAgentService,
+    );
+    registerSingleton<AgentAwareMCPInstaller>(agentAwareMCPInstaller);
+
+    // Register MCP error handler
+    final mcpErrorHandler = MCPErrorHandler(storageService);
+    registerSingleton<MCPErrorHandler>(mcpErrorHandler);
+
+    // Register JSON-RPC communication service
+    final jsonRpcService = JsonRpcCommunicationService(ProductionLogger.instance, mcpErrorHandler);
+    registerSingleton<JsonRpcCommunicationService>(jsonRpcService);
+
+    // Register MCP protocol handler
+    final mcpProtocolHandler = MCPProtocolHandler(mcpErrorHandler, jsonRpcService);
+    registerSingleton<MCPProtocolHandler>(mcpProtocolHandler);
+
+    // Register MCP process manager
+    final mcpProcessManager = MCPProcessManager(mcpCatalogService, mcpProtocolHandler);
+    registerSingleton<MCPProcessManager>(mcpProcessManager);
+
+    // Register agent MCP session service for tool execution
+    final agentMCPSessionService = AgentMCPSessionService(
+      agentMCPConfigService,
+      mcpProcessManager,
+      mcpProtocolHandler,
+    );
+    registerSingleton<AgentMCPSessionService>(agentMCPSessionService);
   }
 
   /// Register all business services
@@ -194,6 +255,7 @@ class ServiceLocator {
       contextService: get<ContextMCPResourceService>(),
       promptService: get<AgentContextPromptService>(),
       eventBus: get<BusinessEventBus>(),
+      integrationService: null, // Temporarily disabled until dependencies are fixed
     ));
 
     // Conversation business service

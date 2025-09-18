@@ -121,14 +121,20 @@ class LocalEmbeddingService extends EmbeddingService {
 
   /// Preprocess text for embedding
   String _preprocessText(String text) {
-    return text
+    if (text.isEmpty) return text;
+    
+    final processed = text
         // Remove excessive whitespace
         .replaceAll(RegExp(r'\s+'), ' ')
         // Remove special characters that might interfere
         .replaceAll(RegExp(r'[^\w\s.,!?-]'), '')
-        .trim()
-        // Limit length to prevent issues
-        .substring(0, min(text.length, 512));
+        .trim();
+    
+    // Safely limit length to prevent issues
+    final maxLength = min(processed.length, 512);
+    if (maxLength <= 0) return '';
+    
+    return processed.substring(0, maxLength);
   }
 
   /// Generate a mock embedding (deterministic based on text)

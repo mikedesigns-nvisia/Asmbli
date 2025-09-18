@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "agentengine_desktop" "\0"
+            VALUE "CompanyName", "AgentEngine Inc." "\0"
+            VALUE "FileDescription", "AgentEngine Desktop - AI Agent Platform" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "agentengine_desktop" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 AgentEngine Inc. All rights reserved." "\0"
             VALUE "OriginalFilename", "agentengine_desktop.exe" "\0"
-            VALUE "ProductName", "agentengine_desktop" "\0"
+            VALUE "ProductName", "AgentEngine Desktop" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

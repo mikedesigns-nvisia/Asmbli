@@ -22,11 +22,13 @@ enum CreationSource {
 class ContextCreationFlow extends StatefulWidget {
  final Function(ContextDocument) onSave;
  final VoidCallback onCancel;
+ final ContextDocument? initialDocument;
 
  const ContextCreationFlow({
  super.key,
  required this.onSave,
  required this.onCancel,
+ this.initialDocument,
  });
 
  @override
@@ -46,6 +48,21 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  final List<PlatformFile> _uploadedFiles = [];
  final bool _isProcessing = false;
  String? _validationMessage;
+
+ @override
+ void initState() {
+   super.initState();
+   if (widget.initialDocument != null) {
+     final doc = widget.initialDocument!;
+     _titleController.text = doc.title;
+     _contentController.text = doc.content;
+     _selectedType = doc.type;
+     _tags = List.from(doc.tags);
+     _tagsController.text = _tags.join(', ');
+     _selectedSource = CreationSource.manual;
+     _currentStep = CreationStep.contentInput;
+   }
+ }
 
  @override
  void dispose() {
@@ -96,7 +113,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  vertical: SpacingTokens.componentSpacing,
  ),
  decoration: BoxDecoration(
- color: colors.surface.withValues(alpha: 0.95),
+ color: colors.surface.withOpacity( 0.95),
  borderRadius: const BorderRadius.only(
  topLeft: Radius.circular(BorderRadiusTokens.xl),
  topRight: Radius.circular(BorderRadiusTokens.xl),
@@ -118,7 +135,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Text(
- 'Create Context Document',
+ widget.initialDocument != null ? 'Edit Context Document' : 'Create Context Document',
  style: TextStyles.bodyLarge.copyWith(
  fontWeight: FontWeight.w600,
  color: colors.onSurface,
@@ -585,10 +602,10 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  decoration: InputDecoration(
  hintText: 'Enter a descriptive title...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+ color: colors.onSurfaceVariant.withOpacity( 0.6),
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
+ fillColor: colors.surfaceVariant.withOpacity( 0.3),
  contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.iconSpacing,
@@ -635,10 +652,10 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  decoration: InputDecoration(
  hintText: 'Enter your ${_selectedType.displayName.toLowerCase()} content here...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+ color: colors.onSurfaceVariant.withOpacity( 0.6),
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
+ fillColor: colors.surfaceVariant.withOpacity( 0.3),
  contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -746,7 +763,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.primary,
  ),
  ),
- backgroundColor: colors.primary.withValues(alpha: 0.1),
+ backgroundColor: colors.primary.withOpacity( 0.1),
  side: BorderSide(color: colors.primary),
  ),
  ],
@@ -808,10 +825,10 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  decoration: InputDecoration(
  hintText: 'api, documentation, reference...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+ color: colors.onSurfaceVariant.withOpacity( 0.6),
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
+ fillColor: colors.surfaceVariant.withOpacity( 0.3),
  contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.iconSpacing,
@@ -920,7 +937,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  vertical: SpacingTokens.componentSpacing,
  ),
  decoration: BoxDecoration(
- color: colors.surface.withValues(alpha: 0.95),
+ color: colors.surface.withOpacity( 0.95),
  borderRadius: const BorderRadius.only(
  bottomLeft: Radius.circular(BorderRadiusTokens.xl),
  bottomRight: Radius.circular(BorderRadiusTokens.xl),
@@ -949,7 +966,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  
  // Next/Create Button
  AsmblButton.primary(
- text: isLastStep ? 'Create Document' : 'Next',
+ text: isLastStep ? (widget.initialDocument != null ? 'Update Document' : 'Create Document') : 'Next',
  icon: isLastStep ? Icons.check : Icons.arrow_forward,
  onPressed: canGoNext ? (isLastStep ? _createDocument : _goToNextStep) : null,
  ),
@@ -1300,16 +1317,16 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  
  if (isError) {
  messageColor = colors.error;
- backgroundColor = colors.error.withValues(alpha: 0.1);
+ backgroundColor = colors.error.withOpacity( 0.1);
  icon = Icons.error_outline;
  } else if (isWarning) {
  messageColor = SemanticColors.warning;
- backgroundColor = SemanticColors.warning.withValues(alpha: 0.1);
+ backgroundColor = SemanticColors.warning.withOpacity( 0.1);
  icon = Icons.warning_amber;
  } else {
  // Success message with warnings
  messageColor = colors.primary;
- backgroundColor = colors.primary.withValues(alpha: 0.1);
+ backgroundColor = colors.primary.withOpacity( 0.1);
  icon = Icons.info_outline;
  }
  
@@ -1318,7 +1335,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  decoration: BoxDecoration(
  color: backgroundColor,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- border: Border.all(color: messageColor.withValues(alpha: 0.5)),
+ border: Border.all(color: messageColor.withOpacity( 0.5)),
  ),
  child: Row(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -1339,19 +1356,23 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  }
 
  void _createDocument() {
+ final isEditing = widget.initialDocument != null;
+ final originalDoc = widget.initialDocument;
+ 
  final document = ContextDocument(
- id: '',
+ id: isEditing ? originalDoc!.id : '',
  title: _titleController.text.trim(),
  content: _contentController.text.trim(),
  type: _selectedType,
  tags: _tags,
- createdAt: DateTime.now(),
+ createdAt: isEditing ? originalDoc!.createdAt : DateTime.now(),
  updatedAt: DateTime.now(),
- isActive: true,
+ isActive: isEditing ? originalDoc!.isActive : true,
  metadata: {
  'source': _selectedSource?.name ?? 'manual',
  'hasFiles': _uploadedFiles.isNotEmpty,
  'fileCount': _uploadedFiles.length,
+ if (isEditing && originalDoc!.metadata.isNotEmpty) ...originalDoc.metadata,
  },
  );
 

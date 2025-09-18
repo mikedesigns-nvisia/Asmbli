@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +23,7 @@ class OllamaService {
   final Dio _dio;
   bool _isInitialized = false;
   String? _ollamaBinaryPath;
+  Completer<void>? _initializationCompleter;
 
   OllamaService(this._desktopService) : _dio = Dio() {
     _dio.options.baseUrl = 'http://127.0.0.1:11434';
@@ -42,13 +44,24 @@ class OllamaService {
 
   /// Initialize the embedded Ollama service
   Future<void> initialize() async {
+    // Return early if already initialized
     if (_isInitialized) return;
-    
+
+    // If initialization is in progress, wait for it to complete
+    if (_initializationCompleter != null) {
+      return _initializationCompleter!.future;
+    }
+
+    // Start initialization
+    _initializationCompleter = Completer<void>();
+    debugPrint('DEBUG: OllamaService.initialize() called');
+
     try {
       // First check if Ollama is already running externally
       if (await isAvailable) {
         debugPrint('Found existing Ollama instance');
         _isInitialized = true;
+        _initializationCompleter!.complete();
         return;
       }
 
@@ -59,22 +72,27 @@ class OllamaService {
         await _waitForStartup();
       } catch (e) {
         debugPrint('Failed to start embedded Ollama, trying system installation: $e');
-        
+
         // Try to use system-installed Ollama as fallback
         if (await _trySystemOllama()) {
           debugPrint('Using system-installed Ollama');
         } else {
           debugPrint('No Ollama installation found. Local models will not be available.');
           // Don't throw - just mark as not initialized so local models aren't available
+          _initializationCompleter!.complete();
           return;
         }
       }
-      
+
       _isInitialized = true;
-      debugPrint('Ollama service initialized successfully');
+      debugPrint('DEBUG: Ollama service initialization complete');
+      _initializationCompleter!.complete();
     } catch (e) {
       debugPrint('Failed to initialize Ollama service: $e');
-      // Don't throw - gracefully handle missing Ollama
+      _initializationCompleter!.completeError(e);
+      // Don't rethrow - gracefully handle missing Ollama
+    } finally {
+      _initializationCompleter = null;
     }
   }
 

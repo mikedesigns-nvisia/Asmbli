@@ -51,15 +51,15 @@ class _HeaderButtonState extends State<HeaderButton> {
  ),
  decoration: BoxDecoration(
  color: widget.isActive
- ? colors.accent.withValues(alpha: 0.12)
+ ? colors.accent.withOpacity( 0.12)
  : _isPressed
- ? colors.accent.withValues(alpha: 0.1)
+ ? colors.accent.withOpacity( 0.1)
  : _isHovered
- ? colors.accent.withValues(alpha: 0.06)
+ ? colors.accent.withOpacity( 0.06)
  : Colors.transparent,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  border: widget.isActive ? Border.all(
- color: colors.accent.withValues(alpha: 0.3),
+ color: colors.accent.withOpacity( 0.3),
  width: 1.0,
  ) : null,
  ),

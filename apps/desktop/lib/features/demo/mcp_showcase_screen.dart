@@ -57,7 +57,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             end: Alignment.bottomRight,
             colors: [
               SemanticColors.background,
-              SemanticColors.background.withValues(alpha: 0.95),
+              SemanticColors.background.withOpacity( 0.95),
             ],
           ),
         ),
@@ -97,13 +97,13 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            SemanticColors.primary.withValues(alpha: 0.15),
-            SemanticColors.primary.withValues(alpha: 0.05),
+            SemanticColors.primary.withOpacity( 0.15),
+            SemanticColors.primary.withOpacity( 0.05),
           ],
         ),
         border: Border(
           bottom: BorderSide(
-            color: SemanticColors.primary.withValues(alpha: 0.2),
+            color: SemanticColors.primary.withOpacity( 0.2),
           ),
         ),
       ),
@@ -189,10 +189,10 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withOpacity( 0.3),
         ),
       ),
       child: Column(
@@ -224,7 +224,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+          color: Theme.of(context).colorScheme.surface.withOpacity( 0.5),
           borderRadius: BorderRadius.circular(12),
         ),
         child: TabBar(
@@ -367,10 +367,10 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+        color: Theme.of(context).colorScheme.surface.withOpacity( 0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+          color: Theme.of(context).colorScheme.outline.withOpacity( 0.3),
         ),
       ),
       child: Column(
@@ -379,7 +379,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withValues(alpha: 0.1),
+              color: SemanticColors.primary.withOpacity( 0.1),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Text(
@@ -403,7 +403,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: SemanticColors.error.withValues(alpha: 0.1),
+                          color: SemanticColors.error.withOpacity( 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text(
@@ -431,7 +431,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                   width: 1,
                   height: 200,
                   margin: const EdgeInsets.symmetric(horizontal: 16),
-                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                  color: Theme.of(context).colorScheme.outline.withOpacity( 0.3),
                 ),
                 Expanded(
                   child: Column(
@@ -440,7 +440,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: SemanticColors.success.withValues(alpha: 0.1),
+                          color: SemanticColors.success.withOpacity( 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text(
@@ -477,7 +477,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
       margin: const EdgeInsets.only(top: 4),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.8),
+        color: Colors.black.withOpacity( 0.8),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -544,7 +544,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                 onSelected: (selected) {
                   setState(() => _selectedRole = role);
                 },
-                selectedColor: SemanticColors.primary.withValues(alpha: 0.2),
+                selectedColor: SemanticColors.primary.withOpacity( 0.2),
               );
             }).toList(),
           ),
@@ -625,10 +625,10 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withValues(alpha: 0.1),
+              color: SemanticColors.primary.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: SemanticColors.primary.withValues(alpha: 0.3),
+                color: SemanticColors.primary.withOpacity( 0.3),
               ),
             ),
             child: Row(
@@ -658,10 +658,10 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: recommendation.category.color.withValues(alpha: 0.05),
+        color: recommendation.category.color.withOpacity( 0.05),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: recommendation.category.color.withValues(alpha: 0.3),
+          color: recommendation.category.color.withOpacity( 0.3),
         ),
       ),
       child: Row(
@@ -670,7 +670,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: (recommendation.template.brandColor ?? SemanticColors.primary).withValues(alpha: 0.1),
+              color: (recommendation.template.brandColor ?? SemanticColors.primary).withOpacity( 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -698,7 +698,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: recommendation.category.color.withValues(alpha: 0.1),
+                        color: recommendation.category.color.withOpacity( 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -723,7 +723,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: recommendation.relevanceScore,
-                  backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                  backgroundColor: Colors.grey.withOpacity( 0.2),
                   valueColor: AlwaysStoppedAnimation(recommendation.category.color),
                 ),
                 const SizedBox(height: 4),

@@ -40,7 +40,7 @@ class AsmblCard extends StatelessWidget {
  final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(12);
  final effectiveBackgroundColor = backgroundColor ?? 
  (isSelected 
- ? colorScheme.primary.withValues(alpha: 0.05)
+ ? colorScheme.primary.withOpacity( 0.05)
  : colorScheme.surface);
 
  Widget cardContent = Container(
@@ -49,11 +49,11 @@ class AsmblCard extends StatelessWidget {
  borderRadius: effectiveBorderRadius,
  border: border ?? 
  (isSelected 
- ? Border.all(color: colorScheme.primary.withValues(alpha: 0.3))
- : Border.all(color: colorScheme.outline.withValues(alpha: 0.2))),
+ ? Border.all(color: colorScheme.primary.withOpacity( 0.3))
+ : Border.all(color: colorScheme.outline.withOpacity( 0.2))),
  boxShadow: [
  BoxShadow(
- color: Colors.black.withValues(alpha: 0.08),
+ color: Colors.black.withOpacity( 0.08),
  blurRadius: effectiveElevation * 2,
  offset: Offset(0, effectiveElevation),
  ),
@@ -94,8 +94,8 @@ class AsmblCard extends StatelessWidget {
  child: InkWell(
  onTap: onTap,
  borderRadius: effectiveBorderRadius,
- hoverColor: colorScheme.primary.withValues(alpha: 0.04),
- splashColor: colorScheme.primary.withValues(alpha: 0.12),
+ hoverColor: colorScheme.primary.withOpacity( 0.04),
+ splashColor: colorScheme.primary.withOpacity( 0.12),
  child: cardContent,
  ),
  );
@@ -172,7 +172,7 @@ class AsmblCardDescription extends StatelessWidget {
  return Text(
  text,
  style: style ?? Theme.of(context).textTheme.bodyMedium?.copyWith(
- color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+ color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.7),
   ),
  );
  }

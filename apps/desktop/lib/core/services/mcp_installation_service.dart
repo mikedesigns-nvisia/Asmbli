@@ -1,324 +1,862 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:agent_engine_core/models/agent.dart';
-import '../data/mcp_server_configs.dart';
+import '../models/mcp_server_process.dart';
+import '../models/mcp_catalog_entry.dart';
+import '../models/agent_terminal.dart';
+import 'production_logger.dart';
+import 'mcp_catalog_service.dart';
 
-
-import '../models/mcp_server_config.dart';
-
-/// Service for managing MCP server installation lifecycle
-/// Based on Model Context Protocol documentation and best practices
+/// Service for installing MCP servers using uvx/npx in agent terminals
 class MCPInstallationService {
-  
-  /// Check if MCP servers for an agent need installation
-  static Future<List<MCPServerInstallation>> checkAgentMCPRequirements(Agent agent) async {
-    final requiredInstallations = <MCPServerInstallation>[];
-    
-    // Extract MCP servers from agent configuration
-    final mcpServers = agent.configuration['mcpServers'] as List<dynamic>? ?? [];
-    
-    for (final serverRef in mcpServers) {
-      final serverId = serverRef is String ? serverRef : serverRef['id'] as String?;
-      if (serverId == null) continue;
+  static const Duration _installTimeout = Duration(minutes: 5);
+  static const Duration _checkTimeout = Duration(seconds: 30);
+  static const int _maxRetries = 3;
+  static const Duration _retryDelay = Duration(seconds: 2);
+
+  final MCPCatalogService _catalogService;
+  final Map<String, StreamController<MCPInstallationProgress>> _progressStreams = {};
+
+  MCPInstallationService(this._catalogService);
+
+  /// Install MCP server in agent terminal with progress tracking and retry logic
+  Future<MCPInstallResult> installServerInTerminal(
+    String agentId,
+    String serverId,
+    AgentTerminal terminal, {
+    Map<String, String>? additionalEnvironment,
+  }) async {
+    final catalogEntry = await _catalogService.getCatalogEntry(serverId);
+    if (catalogEntry == null) {
+      throw MCPInstallationException('Server not found in catalog: $serverId');
+    }
+
+    return await _installWithRetry(
+      agentId,
+      serverId,
+      catalogEntry,
+      terminal,
+      additionalEnvironment: additionalEnvironment,
+    );
+  }
+
+  /// Install MCP server using appropriate package manager (legacy method)
+  Future<MCPInstallResult> installServer(
+    String serverId,
+    MCPCatalogEntry catalogEntry, {
+    String? workingDirectory,
+    Map<String, String>? environment,
+  }) async {
+    final startTime = DateTime.now();
+    final installationLogs = <String>[];
+
+    try {
+      ProductionLogger.instance.info(
+        'Starting MCP server installation',
+        data: {
+          'server_id': serverId,
+          'server_name': catalogEntry.name,
+          'command': catalogEntry.command,
+        },
+        category: 'mcp_installation',
+      );
+
+      // Determine installation method
+      final installMethod = _determineInstallMethod(catalogEntry);
       
-      final serverConfig = MCPServerLibrary.getServer(serverId);
-      if (serverConfig == null) continue;
+      // Check if package manager is available
+      await _checkPackageManagerAvailability(installMethod);
+
+      // Perform installation
+      final installResult = await _performInstallation(
+        catalogEntry,
+        installMethod,
+        workingDirectory: workingDirectory,
+        environment: environment,
+        logs: installationLogs,
+      );
+
+      if (!installResult) {
+        throw MCPInstallationException('Installation failed for $serverId');
+      }
+
+      // Verify installation
+      final verificationResult = await _verifyInstallation(catalogEntry, installationLogs);
       
-      // Check if server needs installation
-      final installationStatus = await _checkServerInstallationStatus(serverConfig);
-      if (installationStatus.requiresInstallation) {
-        requiredInstallations.add(installationStatus);
+      if (!verificationResult) {
+        throw MCPInstallationException('Installation verification failed for $serverId');
+      }
+
+      final installationTime = DateTime.now().difference(startTime);
+      
+      ProductionLogger.instance.info(
+        'MCP server installation completed successfully',
+        data: {
+          'server_id': serverId,
+          'installation_time_ms': installationTime.inMilliseconds,
+        },
+        category: 'mcp_installation',
+      );
+
+      return MCPInstallResult(
+        success: true,
+        serverId: serverId,
+        installationTime: installationTime,
+        installationLogs: installationLogs,
+      );
+    } catch (e) {
+      final installationTime = DateTime.now().difference(startTime);
+      
+      ProductionLogger.instance.error(
+        'MCP server installation failed',
+        error: e,
+        data: {
+          'server_id': serverId,
+          'installation_time_ms': installationTime.inMilliseconds,
+          'logs': installationLogs,
+        },
+        category: 'mcp_installation',
+      );
+
+      return MCPInstallResult(
+        success: false,
+        serverId: serverId,
+        error: e.toString(),
+        installationTime: installationTime,
+        installationLogs: installationLogs,
+      );
+    }
+  }
+
+  /// Determine the installation method based on the command
+  MCPInstallMethod _determineInstallMethod(MCPCatalogEntry catalogEntry) {
+    final command = catalogEntry.command?.toLowerCase() ?? '';
+    
+    if (command.startsWith('uvx') || command.contains('uvx')) {
+      return MCPInstallMethod.uvx;
+    } else if (command.startsWith('npx') || command.contains('npx')) {
+      return MCPInstallMethod.npx;
+    } else if (command.startsWith('pip') || command.contains('pip')) {
+      return MCPInstallMethod.pip;
+    } else {
+      // Default to uvx for official MCP servers
+      return MCPInstallMethod.uvx;
+    }
+  }
+
+  /// Check if the required package manager is available
+  Future<void> _checkPackageManagerAvailability(MCPInstallMethod method) async {
+    String command;
+    List<String> args;
+
+    switch (method) {
+      case MCPInstallMethod.uvx:
+        command = 'uvx';
+        args = ['--version'];
+        break;
+      case MCPInstallMethod.npx:
+        command = 'npx';
+        args = ['--version'];
+        break;
+      case MCPInstallMethod.pip:
+        command = 'pip';
+        args = ['--version'];
+        break;
+    }
+
+    try {
+      final result = await Process.run(
+        command,
+        args,
+        runInShell: true,
+      ).timeout(_checkTimeout);
+
+      if (result.exitCode != 0) {
+        throw MCPInstallationException(
+          '$command is not available or not working properly. '
+          'Exit code: ${result.exitCode}, Error: ${result.stderr}',
+        );
+      }
+
+      print('✅ $command is available: ${result.stdout.toString().trim()}');
+    } catch (e) {
+      if (e is TimeoutException) {
+        throw MCPInstallationException('$command check timed out');
+      }
+      throw MCPInstallationException('$command is not available: $e');
+    }
+  }
+
+  /// Perform the actual installation
+  Future<bool> _performInstallation(
+    MCPCatalogEntry catalogEntry,
+    MCPInstallMethod method,
+    {
+    String? workingDirectory,
+    Map<String, String>? environment,
+    required List<String> logs,
+  }) async {
+    // Parse the command to extract package name
+    final packageName = _extractPackageName(catalogEntry, method);
+    
+    String command;
+    List<String> args;
+
+    switch (method) {
+      case MCPInstallMethod.uvx:
+        command = 'uvx';
+        args = ['--help']; // First check if uvx works
+        break;
+      case MCPInstallMethod.npx:
+        command = 'npm';
+        args = ['install', '-g', packageName]; // Install globally with npm
+        break;
+      case MCPInstallMethod.pip:
+        command = 'pip';
+        args = ['install', packageName];
+        break;
+    }
+
+    // For uvx, we don't need to install - it runs packages directly
+    if (method == MCPInstallMethod.uvx) {
+      logs.add('Using uvx - no installation required, will run package directly');
+      return true;
+    }
+
+    try {
+      logs.add('Starting installation: $command ${args.join(' ')}');
+      
+      final process = await Process.start(
+        command,
+        args,
+        workingDirectory: workingDirectory,
+        environment: environment != null 
+            ? {...Platform.environment, ...environment}
+            : null,
+        runInShell: true,
+      );
+
+      // Capture output
+      final stdoutCompleter = Completer<String>();
+      final stderrCompleter = Completer<String>();
+
+      process.stdout
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen((line) {
+        logs.add('STDOUT: $line');
+        print('Installation STDOUT: $line');
+      }, onDone: () => stdoutCompleter.complete(''));
+
+      process.stderr
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen((line) {
+        logs.add('STDERR: $line');
+        print('Installation STDERR: $line');
+      }, onDone: () => stderrCompleter.complete(''));
+
+      // Wait for process completion with timeout
+      final exitCode = await process.exitCode.timeout(_installTimeout);
+      
+      await Future.wait([stdoutCompleter.future, stderrCompleter.future]);
+
+      logs.add('Installation completed with exit code: $exitCode');
+      
+      return exitCode == 0;
+    } catch (e) {
+      logs.add('Installation error: $e');
+      return false;
+    }
+  }
+
+  /// Extract package name from catalog entry
+  String _extractPackageName(MCPCatalogEntry catalogEntry, MCPInstallMethod method) {
+    final command = catalogEntry.command ?? '';
+    
+    // For uvx commands like "uvx @modelcontextprotocol/server-filesystem"
+    if (command.startsWith('uvx ')) {
+      final parts = command.split(' ');
+      if (parts.length > 1) {
+        return parts[1]; // Return the package name
       }
     }
     
-    return requiredInstallations;
+    // For npx commands
+    if (command.startsWith('npx ')) {
+      final parts = command.split(' ');
+      if (parts.length > 1) {
+        return parts[1];
+      }
+    }
+
+    // Default fallback - try to extract from args
+    if (catalogEntry.args.isNotEmpty) {
+      return catalogEntry.args.first;
+    }
+
+    throw MCPInstallationException('Could not determine package name for ${catalogEntry.id}');
   }
-  
-  /// Check installation status of a specific MCP server
-  static Future<MCPServerInstallation> _checkServerInstallationStatus(MCPServerLibraryConfig server) async {
+
+  /// Verify that the installation was successful
+  Future<bool> _verifyInstallation(MCPCatalogEntry catalogEntry, List<String> logs) async {
     try {
-      // Handle different server types
-      switch (server.type) {
-        case MCPServerType.official:
-          return await _checkOfficialServerStatus(server);
-        case MCPServerType.community:
-          return await _checkCommunityServerStatus(server);
-        case MCPServerType.experimental:
-          return await _checkExperimentalServerStatus(server);
-        default:
-          return MCPServerInstallation(
-            server: server,
-            requiresInstallation: true,
-            installationMethod: MCPInstallationMethod.npm,
-            reason: 'Unknown server type: ${server.type}',
-          );
+      logs.add('Verifying installation...');
+      
+      // For uvx, we can test by running the command with --help
+      final command = catalogEntry.command ?? 'uvx';
+      final args = [...catalogEntry.args, '--help'];
+
+      final result = await Process.run(
+        command,
+        args,
+        runInShell: true,
+      ).timeout(_checkTimeout);
+
+      logs.add('Verification exit code: ${result.exitCode}');
+      
+      if (result.exitCode == 0) {
+        logs.add('✅ Installation verified successfully');
+        return true;
+      } else {
+        logs.add('❌ Verification failed: ${result.stderr}');
+        return false;
       }
     } catch (e) {
-      return MCPServerInstallation(
-        server: server,
-        requiresInstallation: true,
-        installationMethod: MCPInstallationMethod.npm,
-        reason: 'Failed to check installation status: $e',
-      );
+      logs.add('❌ Verification error: $e');
+      return false;
     }
   }
-  
-  /// Check official Anthropic MCP server status
-  static Future<MCPServerInstallation> _checkOfficialServerStatus(MCPServerLibraryConfig server) async {
-    // Official servers use npx with @modelcontextprotocol packages
-    final args = server.configuration['args'] as List?;
-    final packageName = args != null && args.length > 1 ? args[1] : null;
-    if (packageName == null) {
-      return MCPServerInstallation(
-        server: server,
-        requiresInstallation: true,
-        installationMethod: MCPInstallationMethod.npm,
-        reason: 'Package name not found in configuration',
-      );
-    }
-    
-    // Check if npx can resolve the package
-    final result = await Process.run('npx', ['--dry-run', packageName], runInShell: true);
-    
-    return MCPServerInstallation(
-      server: server,
-      requiresInstallation: result.exitCode != 0,
-      installationMethod: MCPInstallationMethod.npm,
-      reason: result.exitCode != 0 ? 'Package not available via npx' : 'Already available',
-      installCommand: ['npx', '-y', packageName],
-    );
-  }
-  
-  /// Check community MCP server status
-  static Future<MCPServerInstallation> _checkCommunityServerStatus(MCPServerLibraryConfig server) async {
-    // Community servers may use different package managers
-    final command = server.configuration['command'] as String? ?? '';
-    final args = server.configuration['args'] as List? ?? [];
-    
-    if (command.isEmpty || args.isEmpty) {
-      return MCPServerInstallation(
-        server: server,
-        requiresInstallation: true,
-        installationMethod: MCPInstallationMethod.npm,
-        reason: 'Invalid server configuration',
-      );
-    }
-    
-    // Check if command is available
-    final result = await Process.run('where', [command], runInShell: true);
-    if (result.exitCode != 0) {
-      return MCPServerInstallation(
-        server: server,
-        requiresInstallation: true,
-        installationMethod: _getInstallationMethod(command),
-        reason: 'Command not found: $command',
-      );
-    }
-    
-    // For npx packages, check if package exists
-    if (command == 'npx' && args.length > 1) {
-      final packageName = args[1];
-      final packageResult = await Process.run('npx', ['--dry-run', packageName], runInShell: true);
+
+  /// Check if a server is already installed
+  Future<bool> isServerInstalled(MCPCatalogEntry catalogEntry) async {
+    try {
+      final method = _determineInstallMethod(catalogEntry);
       
-      return MCPServerInstallation(
-        server: server,
-        requiresInstallation: packageResult.exitCode != 0,
-        installationMethod: MCPInstallationMethod.npm,
-        reason: packageResult.exitCode != 0 ? 'Package not available: $packageName' : 'Already available',
-        installCommand: ['npx', '-y', packageName],
-      );
+      // For uvx, we don't need to check installation - it handles packages dynamically
+      if (method == MCPInstallMethod.uvx) {
+        return true;
+      }
+
+      // For other methods, try to run the command
+      final command = catalogEntry.command ?? '';
+      final args = [...catalogEntry.args, '--help'];
+
+      final result = await Process.run(
+        command,
+        args,
+        runInShell: true,
+      ).timeout(_checkTimeout);
+
+      return result.exitCode == 0;
+    } catch (e) {
+      return false;
     }
-    
-    return MCPServerInstallation(
-      server: server,
-      requiresInstallation: false,
-      installationMethod: _getInstallationMethod(command),
-      reason: 'Command available',
-    );
   }
-  
-  /// Check experimental MCP server status
-  static Future<MCPServerInstallation> _checkExperimentalServerStatus(MCPServerLibraryConfig server) async {
-    // Experimental servers may require special handling
-    return MCPServerInstallation(
-      server: server,
-      requiresInstallation: true,
-      installationMethod: MCPInstallationMethod.manual,
-      reason: 'Experimental server - manual installation required',
-    );
-  }
-  
-  /// Install required MCP servers
-  static Future<MCPInstallationResult> installMCPServers(List<MCPServerInstallation> installations) async {
-    final results = <String, bool>{};
-    final errors = <String, String>{};
-    
-    for (final installation in installations) {
-      try {
-        final success = await _installSingleServer(installation);
-        results[installation.server.id] = success;
-        
-        if (!success) {
-          errors[installation.server.id] = 'Installation failed';
+
+  /// Install with retry mechanism
+  Future<MCPInstallResult> _installWithRetry(
+    String agentId,
+    String serverId,
+    MCPCatalogEntry catalogEntry,
+    AgentTerminal terminal, {
+    Map<String, String>? additionalEnvironment,
+  }) async {
+    final startTime = DateTime.now();
+    final installationLogs = <String>[];
+    Exception? lastException;
+
+    // Create progress stream
+    final progressController = StreamController<MCPInstallationProgress>.broadcast();
+    _progressStreams[agentId] = progressController;
+
+    try {
+      _emitProgress(agentId, MCPInstallationProgress(
+        agentId: agentId,
+        serverId: serverId,
+        stage: MCPInstallationStage.starting,
+        progress: 0.0,
+        message: 'Starting MCP server installation',
+      ));
+
+      ProductionLogger.instance.info(
+        'Starting MCP server installation in agent terminal',
+        data: {
+          'agent_id': agentId,
+          'server_id': serverId,
+          'server_name': catalogEntry.name,
+          'command': catalogEntry.command,
+        },
+        category: 'mcp_installation',
+      );
+
+      // Determine installation method
+      final installMethod = _determineInstallMethod(catalogEntry);
+      
+      _emitProgress(agentId, MCPInstallationProgress(
+        agentId: agentId,
+        serverId: serverId,
+        stage: MCPInstallationStage.checkingDependencies,
+        progress: 0.1,
+        message: 'Checking package manager availability',
+      ));
+
+      // Check if package manager is available
+      await _checkPackageManagerInTerminal(terminal, installMethod, installationLogs);
+
+      // Attempt installation with retries
+      for (int attempt = 1; attempt <= _maxRetries; attempt++) {
+        try {
+          _emitProgress(agentId, MCPInstallationProgress(
+            agentId: agentId,
+            serverId: serverId,
+            stage: MCPInstallationStage.installing,
+            progress: 0.2 + (attempt - 1) * 0.2,
+            message: 'Installation attempt $attempt of $_maxRetries',
+          ));
+
+          installationLogs.add('=== Installation Attempt $attempt ===');
+          
+          final installResult = await _performInstallationInTerminal(
+            terminal,
+            catalogEntry,
+            installMethod,
+            additionalEnvironment: additionalEnvironment,
+            logs: installationLogs,
+          );
+
+          if (installResult) {
+            _emitProgress(agentId, MCPInstallationProgress(
+              agentId: agentId,
+              serverId: serverId,
+              stage: MCPInstallationStage.verifying,
+              progress: 0.8,
+              message: 'Verifying installation',
+            ));
+
+            // Verify installation
+            final verificationResult = await _verifyInstallationInTerminal(
+              terminal, 
+              catalogEntry, 
+              installationLogs,
+            );
+            
+            if (verificationResult) {
+              final installationTime = DateTime.now().difference(startTime);
+              
+              _emitProgress(agentId, MCPInstallationProgress(
+                agentId: agentId,
+                serverId: serverId,
+                stage: MCPInstallationStage.completed,
+                progress: 1.0,
+                message: 'Installation completed successfully',
+              ));
+
+              ProductionLogger.instance.info(
+                'MCP server installation completed successfully',
+                data: {
+                  'agent_id': agentId,
+                  'server_id': serverId,
+                  'installation_time_ms': installationTime.inMilliseconds,
+                  'attempts': attempt,
+                },
+                category: 'mcp_installation',
+              );
+
+              return MCPInstallResult(
+                success: true,
+                serverId: serverId,
+                installationTime: installationTime,
+                installationLogs: installationLogs,
+              );
+            }
+          }
+
+          // If we get here, installation or verification failed
+          if (attempt < _maxRetries) {
+            installationLogs.add('Installation attempt $attempt failed, retrying in ${_retryDelay.inSeconds} seconds...');
+            await Future.delayed(_retryDelay);
+          }
+
+        } catch (e) {
+          lastException = e is Exception ? e : Exception(e.toString());
+          installationLogs.add('Installation attempt $attempt failed with error: $e');
+          
+          if (attempt < _maxRetries) {
+            installationLogs.add('Retrying in ${_retryDelay.inSeconds} seconds...');
+            await Future.delayed(_retryDelay);
+          }
         }
-      } catch (e) {
-        results[installation.server.id] = false;
-        errors[installation.server.id] = e.toString();
+      }
+
+      // All attempts failed
+      final installationTime = DateTime.now().difference(startTime);
+      final error = lastException?.toString() ?? 'Installation failed after $_maxRetries attempts';
+      
+      _emitProgress(agentId, MCPInstallationProgress(
+        agentId: agentId,
+        serverId: serverId,
+        stage: MCPInstallationStage.failed,
+        progress: 0.0,
+        message: 'Installation failed after $_maxRetries attempts',
+        error: error,
+      ));
+
+      ProductionLogger.instance.error(
+        'MCP server installation failed after all retries',
+        error: lastException,
+        data: {
+          'agent_id': agentId,
+          'server_id': serverId,
+          'installation_time_ms': installationTime.inMilliseconds,
+          'attempts': _maxRetries,
+          'logs': installationLogs,
+        },
+        category: 'mcp_installation',
+      );
+
+      return MCPInstallResult(
+        success: false,
+        serverId: serverId,
+        error: error,
+        installationTime: installationTime,
+        installationLogs: installationLogs,
+      );
+
+    } finally {
+      // Clean up progress stream
+      progressController.close();
+      _progressStreams.remove(agentId);
+    }
+  }
+
+  /// Check package manager availability in terminal
+  Future<void> _checkPackageManagerInTerminal(
+    AgentTerminal terminal,
+    MCPInstallMethod method,
+    List<String> logs,
+  ) async {
+    String command;
+    List<String> args;
+
+    switch (method) {
+      case MCPInstallMethod.uvx:
+        command = 'uvx --version';
+        break;
+      case MCPInstallMethod.npx:
+        command = 'npx --version';
+        break;
+      case MCPInstallMethod.pip:
+        command = 'pip --version';
+        break;
+    }
+
+    try {
+      logs.add('Checking package manager: $command');
+      final result = await terminal.execute(command);
+
+      if (result.exitCode != 0) {
+        throw MCPInstallationException(
+          '${method.name} is not available or not working properly. '
+          'Exit code: ${result.exitCode}, Error: ${result.stderr}',
+        );
+      }
+
+      logs.add('✅ ${method.name} is available: ${result.stdout.trim()}');
+    } catch (e) {
+      logs.add('❌ ${method.name} check failed: $e');
+      throw MCPInstallationException('${method.name} is not available: $e');
+    }
+  }
+
+  /// Perform installation in agent terminal
+  Future<bool> _performInstallationInTerminal(
+    AgentTerminal terminal,
+    MCPCatalogEntry catalogEntry,
+    MCPInstallMethod method, {
+    Map<String, String>? additionalEnvironment,
+    required List<String> logs,
+  }) async {
+    // Set additional environment variables if provided
+    if (additionalEnvironment != null) {
+      for (final entry in additionalEnvironment.entries) {
+        await terminal.setEnvironment(entry.key, entry.value);
+        logs.add('Set environment variable: ${entry.key}');
       }
     }
+
+    // Parse the command to extract package name
+    final packageName = _extractPackageName(catalogEntry, method);
     
-    return MCPInstallationResult(
-      success: errors.isEmpty,
-      installedServers: results.keys.where((id) => results[id] == true).toList(),
-      failedServers: errors,
-    );
+    String command;
+
+    switch (method) {
+      case MCPInstallMethod.uvx:
+        // For uvx, we don't need to install - it runs packages directly
+        logs.add('Using uvx - no installation required, will run package directly');
+        return true;
+      case MCPInstallMethod.npx:
+        command = 'npm install -g $packageName';
+        break;
+      case MCPInstallMethod.pip:
+        command = 'pip install $packageName';
+        break;
+    }
+
+    try {
+      logs.add('Starting installation: $command');
+      
+      final result = await terminal.execute(command);
+      
+      logs.add('Installation completed with exit code: ${result.exitCode}');
+      
+      if (result.stdout.isNotEmpty) {
+        logs.add('STDOUT: ${result.stdout}');
+      }
+      
+      if (result.stderr.isNotEmpty) {
+        logs.add('STDERR: ${result.stderr}');
+      }
+      
+      return result.exitCode == 0;
+    } catch (e) {
+      logs.add('Installation error: $e');
+      return false;
+    }
   }
-  
-  /// Install a single MCP server
-  static Future<bool> _installSingleServer(MCPServerInstallation installation) async {
-    switch (installation.installationMethod) {
-      case MCPInstallationMethod.npm:
-        return await _installNpmServer(installation);
-      case MCPInstallationMethod.pip:
-        return await _installPipServer(installation);
-      case MCPInstallationMethod.manual:
-        // Manual installation requires user intervention
+
+  /// Verify installation in agent terminal
+  Future<bool> _verifyInstallationInTerminal(
+    AgentTerminal terminal,
+    MCPCatalogEntry catalogEntry,
+    List<String> logs,
+  ) async {
+    try {
+      logs.add('Verifying installation...');
+      
+      // For uvx, we can test by running the command with --help
+      final command = '${catalogEntry.command} ${catalogEntry.args.join(' ')} --help';
+
+      final result = await terminal.execute(command);
+
+      logs.add('Verification exit code: ${result.exitCode}');
+      
+      if (result.exitCode == 0) {
+        logs.add('✅ Installation verified successfully');
+        return true;
+      } else {
+        logs.add('❌ Verification failed: ${result.stderr}');
         return false;
-      case MCPInstallationMethod.git:
-        return await _installGitServer(installation);
+      }
+    } catch (e) {
+      logs.add('❌ Verification error: $e');
+      return false;
     }
   }
-  
-  /// Install NPM-based MCP server
-  static Future<bool> _installNpmServer(MCPServerInstallation installation) async {
-    final command = installation.installCommand ?? ['npm', 'install', '-g'];
-    
-    // For npx packages, we don't need to pre-install them
-    // npx will install on demand
-    if (command[0] == 'npx') {
-      return true; // npx handles installation automatically
-    }
-    
-    final result = await Process.run(
-      command[0], 
-      command.sublist(1),
-      runInShell: true,
-    );
-    
-    return result.exitCode == 0;
+
+  /// Get installation progress stream for an agent
+  Stream<MCPInstallationProgress>? getInstallationProgress(String agentId) {
+    return _progressStreams[agentId]?.stream;
   }
-  
-  /// Install Python-based MCP server
-  static Future<bool> _installPipServer(MCPServerInstallation installation) async {
-    final command = installation.installCommand ?? ['pip', 'install'];
-    
-    final result = await Process.run(
-      command[0],
-      command.sublist(1),
-      runInShell: true,
-    );
-    
-    return result.exitCode == 0;
-  }
-  
-  /// Install Git-based MCP server
-  static Future<bool> _installGitServer(MCPServerInstallation installation) async {
-    // Implementation for git-based installations
-    // This would clone repositories and set up the server
-    return false; // Placeholder
-  }
-  
-  /// Determine installation method based on command
-  static MCPInstallationMethod _getInstallationMethod(String command) {
-    switch (command.toLowerCase()) {
-      case 'npx':
-      case 'npm':
-      case 'node':
-        return MCPInstallationMethod.npm;
-      case 'python':
-      case 'python3':
-      case 'pip':
-        return MCPInstallationMethod.pip;
-      case 'git':
-        return MCPInstallationMethod.git;
-      default:
-        return MCPInstallationMethod.manual;
+
+  /// Emit progress update
+  void _emitProgress(String agentId, MCPInstallationProgress progress) {
+    final controller = _progressStreams[agentId];
+    if (controller != null && !controller.isClosed) {
+      controller.add(progress);
     }
   }
-  
-  /// Check if agent should trigger MCP installation on load
-  static Future<bool> shouldInstallMCPOnAgentLoad(Agent agent, String conversationId) async {
-    // Check if this is the first time this agent is used in this conversation
-    final isFirstUse = await _isFirstAgentUseInConversation(agent.id, conversationId);
-    
-    if (!isFirstUse) {
-      return false; // Don't install if agent was already used
+
+  /// Check if server is installed in agent terminal
+  Future<bool> isServerInstalledInTerminal(
+    AgentTerminal terminal,
+    String serverId,
+  ) async {
+    final catalogEntry = await _catalogService.getCatalogEntry(serverId);
+    if (catalogEntry == null) {
+      return false;
     }
-    
-    // Check if agent has MCP servers configured
-    final mcpServers = agent.configuration['mcpServers'] as List<dynamic>? ?? [];
-    if (mcpServers.isEmpty) {
-      return false; // No MCP servers to install
+
+    try {
+      final method = _determineInstallMethod(catalogEntry);
+      
+      // For uvx, we don't need to check installation - it handles packages dynamically
+      if (method == MCPInstallMethod.uvx) {
+        return true;
+      }
+
+      // For other methods, try to run the command
+      final command = '${catalogEntry.command} ${catalogEntry.args.join(' ')} --help';
+
+      final result = await terminal.execute(command);
+      return result.exitCode == 0;
+    } catch (e) {
+      return false;
     }
-    
-    // Check if any servers need installation
-    final requirements = await checkAgentMCPRequirements(agent);
-    return requirements.any((req) => req.requiresInstallation);
   }
-  
-  /// Track agent usage in conversations
-  static Future<bool> _isFirstAgentUseInConversation(String agentId, String conversationId) async {
-    // This would typically check a database or cache
-    // For now, return true (always install on first conversation load)
-    // Track installation via metrics service when available
+
+  /// Uninstall MCP server from agent terminal
+  Future<bool> uninstallServerFromTerminal(
+    AgentTerminal terminal,
+    String serverId,
+  ) async {
+    final catalogEntry = await _catalogService.getCatalogEntry(serverId);
+    if (catalogEntry == null) {
+      return false;
+    }
+
+    try {
+      final method = _determineInstallMethod(catalogEntry);
+      
+      // For uvx, no uninstallation needed
+      if (method == MCPInstallMethod.uvx) {
+        return true;
+      }
+
+      final packageName = _extractPackageName(catalogEntry, method);
+      
+      String command;
+
+      switch (method) {
+        case MCPInstallMethod.uvx:
+          return true; // No uninstall needed
+        case MCPInstallMethod.npx:
+          command = 'npm uninstall -g $packageName';
+          break;
+        case MCPInstallMethod.pip:
+          command = 'pip uninstall -y $packageName';
+          break;
+      }
+
+      final result = await terminal.execute(command);
+      return result.exitCode == 0;
+    } catch (e) {
+      ProductionLogger.instance.error(
+        'Uninstallation error',
+        error: e,
+        data: {'server_id': serverId},
+        category: 'mcp_installation',
+      );
+      return false;
+    }
+  }
+
+  /// Uninstall MCP server (legacy method)
+  Future<bool> uninstallServer(MCPCatalogEntry catalogEntry) async {
+    try {
+      final method = _determineInstallMethod(catalogEntry);
+      
+      // For uvx, no uninstallation needed
+      if (method == MCPInstallMethod.uvx) {
+        return true;
+      }
+
+      final packageName = _extractPackageName(catalogEntry, method);
+      
+      String command;
+      List<String> args;
+
+      switch (method) {
+        case MCPInstallMethod.uvx:
+          return true; // No uninstall needed
+        case MCPInstallMethod.npx:
+          command = 'npm';
+          args = ['uninstall', '-g', packageName];
+          break;
+        case MCPInstallMethod.pip:
+          command = 'pip';
+          args = ['uninstall', '-y', packageName];
+          break;
+      }
+
+      final result = await Process.run(
+        command,
+        args,
+        runInShell: true,
+      ).timeout(_installTimeout);
+
+      return result.exitCode == 0;
+    } catch (e) {
+      print('Uninstallation error: $e');
+      return false;
+    }
+  }
+
+  /// Dispose resources
+  void dispose() {
+    for (final controller in _progressStreams.values) {
+      if (!controller.isClosed) {
+        controller.close();
+      }
+    }
+    _progressStreams.clear();
+  }
+
+  /// Check if MCP should be installed when agent loads
+  bool shouldInstallMCPOnAgentLoad(String agentId) {
+    // Check if agent has MCP servers that need installation
+    // This is a simplified implementation
     return true;
   }
-  
-  /// Mark agent as used in conversation
-  static Future<void> markAgentUsedInConversation(String agentId, String conversationId) async {
-    // Usage tracking implemented via telemetry service
-  }
-}
 
-/// Represents an MCP server installation requirement
-class MCPServerInstallation {
-  final MCPServerLibraryConfig server;
-  final bool requiresInstallation;
-  final MCPInstallationMethod installationMethod;
-  final String reason;
-  final List<String>? installCommand;
-  
-  const MCPServerInstallation({
-    required this.server,
-    required this.requiresInstallation,
-    required this.installationMethod,
-    required this.reason,
-    this.installCommand,
-  });
+  /// Check agent MCP requirements
+  Future<List<String>> checkAgentMCPRequirements(String agentId) async {
+    // Return list of required MCP server IDs for this agent
+    // This is a simplified implementation
+    return [];
+  }
+
+  /// Install MCP servers for an agent
+  Future<void> installMCPServers(String agentId, List<String> serverIds) async {
+    // Install multiple MCP servers for an agent
+    for (final serverId in serverIds) {
+      try {
+        final catalogEntry = await _catalogService.getCatalogEntry(serverId);
+        if (catalogEntry != null) {
+          await installServer(serverId, catalogEntry);
+        }
+      } catch (e) {
+        ProductionLogger.instance.error(
+          'Failed to install MCP server',
+          error: e,
+          data: {'agent_id': agentId, 'server_id': serverId},
+          category: 'mcp_installation',
+        );
+      }
+    }
+  }
+
+  /// Mark agent as used in conversation
+  void markAgentUsedInConversation(String agentId) {
+    // Track agent usage for analytics
+    ProductionLogger.instance.info(
+      'Agent used in conversation',
+      data: {'agent_id': agentId},
+      category: 'agent_usage',
+    );
+  }
 }
 
 /// Installation methods for MCP servers
-enum MCPInstallationMethod {
-  npm,    // Node.js package manager
-  pip,    // Python package manager
-  git,    // Git repository
-  manual, // Manual installation required
+enum MCPInstallMethod {
+  uvx,  // Python uvx (recommended)
+  npx,  // Node.js npx
+  pip,  // Python pip
 }
 
-/// Result of MCP server installations
-class MCPInstallationResult {
-  final bool success;
-  final List<String> installedServers;
-  final Map<String, String> failedServers;
-  
-  const MCPInstallationResult({
-    required this.success,
-    required this.installedServers,
-    required this.failedServers,
-  });
+/// Exception thrown during MCP installation
+class MCPInstallationException implements Exception {
+  final String message;
+  MCPInstallationException(this.message);
+
+  @override
+  String toString() => 'MCPInstallationException: $message';
 }
 
-/// Provider for MCP installation service
+// ==================== Riverpod Provider ====================
+
 final mcpInstallationServiceProvider = Provider<MCPInstallationService>((ref) {
-  return MCPInstallationService();
+  final catalogService = ref.watch(mcpCatalogServiceProvider);
+  return MCPInstallationService(catalogService);
 });

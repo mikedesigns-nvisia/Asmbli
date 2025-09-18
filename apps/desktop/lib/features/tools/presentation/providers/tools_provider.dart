@@ -120,6 +120,15 @@ class ToolsNotifier extends StateNotifier<ToolsState> {
     }
   }
 
+  Future<void> addCustomServer(MCPServer server) async {
+    try {
+      await _toolsService.addCustomServer(server);
+      // The server will be automatically added to the list via the stream listener
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+    }
+  }
+
   Future<void> updateAgentConnections(String agentId, List<String> serverIds) async {
     try {
       await _toolsService.updateAgentConnections(agentId, serverIds);

@@ -80,7 +80,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
         child: Column(
           children: [
             // Main app navigation bar
-            AppNavigationBar(currentRoute: AppRoutes.oauthSettings),
+            AppNavigationBar(currentRoute: AppRoutes.settings),
             _buildSimpleHeader(colors),
             Expanded(
               child: _isLoading 
@@ -737,11 +737,11 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
     // Navigate to permissions screen
   }
 
-  void _showCompatibleMCPTools(OAuthProvider provider) {
+  void _showCompatibleMCPTools(OAuthProvider provider) async {
     Navigator.of(context).pop(); // Close bottom sheet
-    
+
     final mcpService = ref.read(mcpCatalogServiceProvider);
-    final allEntries = mcpService.getAllCatalogEntries();
+    final allEntries = await mcpService.getAllCatalogEntries();
     final compatibleServers = allEntries.where((entry) {
       return _isOAuthProviderCompatible(provider, entry.id);
     }).toList();
@@ -845,8 +845,8 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
   Future<void> _syncOAuthWithMCPServers(OAuthProvider provider) async {
     try {
       final mcpService = ref.read(mcpCatalogServiceProvider);
-      final allEntries = mcpService.getAllCatalogEntries();
-      
+      final allEntries = await mcpService.getAllCatalogEntries();
+
       // Find MCP servers that can use this OAuth provider
       final compatibleServers = allEntries.where((entry) {
         return _isOAuthProviderCompatible(provider, entry.id);

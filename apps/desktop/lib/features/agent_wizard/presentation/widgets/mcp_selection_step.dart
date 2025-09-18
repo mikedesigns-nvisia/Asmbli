@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/mcp_catalog_service.dart';
 import '../../../../core/models/mcp_catalog_entry.dart';
+import '../../../../core/models/mcp_server_category.dart';
+import '../../../../core/models/agent_mcp_server_config.dart';
 import '../../../settings/presentation/widgets/mcp_server_setup_dialog.dart';
 import '../../../settings/presentation/widgets/mcp_catalog_entry_card.dart';
 import '../../../settings/presentation/screens/mcp_catalog_screen.dart';
@@ -29,32 +31,38 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
 
   @override
   Widget build(BuildContext context) {
-    final catalogEntries = ref.watch(mcpFeaturedEntriesProvider);
+    final catalogEntriesAsync = ref.watch(mcpFeaturedEntriesProvider);
     final agentId = widget.wizardState.id ?? 'temp-agent';
     final agentConfigs = ref.watch(agentMCPConfigsProvider(agentId));
     final colors = ThemeColors(context);
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 1000),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildStepHeader(context, colors),
-              const SizedBox(height: SpacingTokens.xxl),
-              
-              if (_showRecommendations) ...[
-                _buildRecommendationsSection(context, catalogEntries, colors),
+          child: catalogEntriesAsync.when(
+            data: (catalogEntries) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildStepHeader(context, colors),
                 const SizedBox(height: SpacingTokens.xxl),
+
+                if (_showRecommendations) ...[
+                  _buildRecommendationsSection(context, catalogEntries, colors),
+                  const SizedBox(height: SpacingTokens.xxl),
+                ],
+
+                _buildSelectedServersSection(context, agentConfigs, catalogEntries, colors),
+                const SizedBox(height: SpacingTokens.xxl),
+
+                _buildBrowseCatalogSection(context, colors),
               ],
-              
-              _buildSelectedServersSection(context, agentConfigs, catalogEntries, colors),
-              const SizedBox(height: SpacingTokens.xxl),
-              
-              _buildBrowseCatalogSection(context, colors),
-            ],
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Text('Failed to load MCP tools: $error'),
+            ),
           ),
         ),
       ),
@@ -263,7 +271,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Icon(
-              _getServerIcon(entry.category),
+              _getServerIcon(entry.category ?? MCPServerCategory.custom),
               size: 20,
               color: colors.primary,
             ),
@@ -423,26 +431,36 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
 
   IconData _getServerIcon(MCPServerCategory category) {
     switch (category) {
-      case MCPServerCategory.ai:
-        return Icons.psychology;
-      case MCPServerCategory.cloud:
-        return Icons.cloud;
-      case MCPServerCategory.communication:
-        return Icons.chat;
-      case MCPServerCategory.database:
-        return Icons.storage;
-      case MCPServerCategory.design:
-        return Icons.palette;
       case MCPServerCategory.development:
         return Icons.code;
-      case MCPServerCategory.filesystem:
-        return Icons.folder;
       case MCPServerCategory.productivity:
-        return Icons.work;
+        return Icons.trending_up;
+      case MCPServerCategory.communication:
+        return Icons.chat;
+      case MCPServerCategory.dataAnalysis:
+        return Icons.analytics;
+      case MCPServerCategory.automation:
+        return Icons.auto_awesome;
+      case MCPServerCategory.fileManagement:
+        return Icons.folder;
+      case MCPServerCategory.webServices:
+        return Icons.language;
+      case MCPServerCategory.cloud:
+        return Icons.cloud;
+      case MCPServerCategory.database:
+        return Icons.storage;
       case MCPServerCategory.security:
         return Icons.security;
-      case MCPServerCategory.web:
-        return Icons.web;
+      case MCPServerCategory.monitoring:
+        return Icons.monitor;
+      case MCPServerCategory.ai:
+        return Icons.psychology;
+      case MCPServerCategory.utility:
+        return Icons.build;
+      case MCPServerCategory.experimental:
+        return Icons.science;
+      case MCPServerCategory.custom:
+        return Icons.extension;
     }
   }
 }

@@ -7,6 +7,7 @@ import 'package:stack_trace/stack_trace.dart';
 import 'desktop/desktop_storage_service.dart';
 import 'desktop/desktop_service_provider.dart';
 import '../models/mcp_error.dart';
+import '../models/mcp_connection.dart';
 import '../models/oauth_provider.dart';
 import 'mcp_process_manager.dart';
 import 'mcp_catalog_service.dart';
@@ -17,7 +18,7 @@ import 'oauth_integration_service.dart';
 /// Implements comprehensive error classification, recovery strategies, and telemetry
 class MCPErrorHandler {
   final DesktopStorageService _storageService;
-  final MCPProcessManager? _processManager;
+  MCPProcessManager? _processManager;
   final MCPCatalogService? _catalogService;
   final SecureAuthService? _authService;
   final OAuthIntegrationService? _oauthService;
@@ -44,6 +45,11 @@ class MCPErrorHandler {
        _authService = authService,
        _oauthService = oauthService {
     _initializeRecoveryStrategies();
+  }
+
+  /// Set process manager (used to break circular dependency)
+  void setProcessManager(MCPProcessManager processManager) {
+    _processManager = processManager;
   }
 
   /// Stream of errors for monitoring
@@ -394,18 +400,17 @@ class MCPErrorHandler {
         final processId = '$agentId:$serverId';
         final process = _processManager!.getRunningServer(processId);
         
-        if (process != null && process.status == MCPServerStatus.error) {
+        if (process != null && !process.isHealthy) {
           // Restart the server process
           print('🔄 Attempting to restart MCP server $serverId (attempt $attempt)');
           
           final restarted = await _processManager!.startServer(
             serverId: serverId,
             agentId: agentId,
-            credentials: process.credentials,
-            environment: process.environment,
+            credentials: const <String, String>{},
           );
           
-          return restarted.status == MCPServerStatus.running;
+          return restarted.isHealthy;
         }
       }
       
@@ -434,7 +439,7 @@ class MCPErrorHandler {
         final processId = '$agentId:$serverId';
         final connection = _processManager!.getConnection(processId);
         
-        if (connection != null && connection.isConnected) {
+        if (connection != null && connection.status == MCPConnectionStatus.connected) {
           return true; // Connection is healthy, timeout was transient
         }
       }
@@ -543,7 +548,7 @@ class MCPErrorHandler {
         credentials: credentials,
       );
       
-      final success = serverProcess.status == MCPServerStatus.running;
+      final success = serverProcess.isHealthy;
       if (success) {
         print('✅ Process start recovery successful for $serverId');
       }
@@ -697,6 +702,24 @@ class MCPErrorHandler {
     return 'err_${DateTime.now().millisecondsSinceEpoch}_${_recentErrors.length}';
   }
 
+  /// Handle connection specific errors
+  Future<void> handleConnectionError(String serverId, dynamic error) async {
+    await handleError(
+      error,
+      context: 'Connection error for server: $serverId',
+      metadata: {'serverId': serverId, 'errorType': 'connection'},
+    );
+  }
+
+  /// Handle communication specific errors
+  Future<void> handleCommunicationError(String context, dynamic error) async {
+    await handleError(
+      error,
+      context: 'Communication error: $context',
+      metadata: {'errorType': 'communication'},
+    );
+  }
+
   /// Dispose resources
   Future<void> dispose() async {
     await _errorStreamController.close();
@@ -775,13 +798,13 @@ final mcpErrorHandlerProvider = Provider<MCPErrorHandler>((ref) {
   final storageService = ref.read(desktopStorageServiceProvider);
   
   // Optional service dependencies for enhanced recovery
-  MCPProcessManager? processManager;
+  MCPProcessManager? processManager; // Will be set later via setProcessManager
   MCPCatalogService? catalogService;
   SecureAuthService? authService;
   OAuthIntegrationService? oauthService;
   
   try {
-    processManager = ref.read(mcpProcessManagerProvider);
+    // Don't read process manager here to break circular dependency
     catalogService = ref.read(mcpCatalogServiceProvider);
     authService = ref.read(secureAuthServiceProvider);
     oauthService = ref.read(oauthIntegrationServiceProvider);

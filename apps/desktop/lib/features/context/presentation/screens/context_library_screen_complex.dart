@@ -1531,7 +1531,7 @@ module.exports = {
                 end: Alignment.bottomCenter,
                 colors: [
                   SemanticColors.background,
-                  SemanticColors.background.withValues(alpha: 0.95),
+                  SemanticColors.background.withOpacity( 0.95),
                 ],
               ),
             ),
@@ -1564,7 +1564,7 @@ module.exports = {
                 // Tab selector
                 Container(
                   decoration: BoxDecoration(
-                    color: SemanticColors.surface.withValues(alpha: 0.7),
+                    color: SemanticColors.surface.withOpacity( 0.7),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                     border: Border.all(color: SemanticColors.border),
                   ),
@@ -1576,7 +1576,7 @@ module.exports = {
                           child: Container(
                             padding: const EdgeInsets.all(SpacingTokens.md),
                             decoration: BoxDecoration(
-                              color: selectedTab == 0 ? SemanticColors.primary.withValues(alpha: 0.1) : null,
+                              color: selectedTab == 0 ? SemanticColors.primary.withOpacity( 0.1) : null,
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                             ),
                             child: Text(
@@ -1596,7 +1596,7 @@ module.exports = {
                           child: Container(
                             padding: const EdgeInsets.all(SpacingTokens.md),
                             decoration: BoxDecoration(
-                              color: selectedTab == 1 ? SemanticColors.primary.withValues(alpha: 0.1) : null,
+                              color: selectedTab == 1 ? SemanticColors.primary.withOpacity( 0.1) : null,
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                             ),
                             child: Text(
@@ -1735,7 +1735,7 @@ module.exports = {
                                   return Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: SemanticColors.surfaceVariant.withValues(alpha: 0.5),
+                                      color: SemanticColors.surfaceVariant.withOpacity( 0.5),
                                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                                     ),
                                     child: Text(
@@ -1801,7 +1801,7 @@ module.exports = {
             Icon(
               Icons.library_books_outlined,
               size: 64,
-              color: SemanticColors.onSurfaceVariant.withValues(alpha: 0.6),
+              color: SemanticColors.onSurfaceVariant.withOpacity( 0.6),
             ),
             const SizedBox(height: SpacingTokens.xl),
             Text(
@@ -1930,7 +1930,7 @@ class _TemplateCardState extends State<TemplateCard> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: SemanticColors.primary.withValues(alpha: 0.1),
+                  color: SemanticColors.primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(
@@ -1980,7 +1980,7 @@ class _TemplateCardState extends State<TemplateCard> {
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: SemanticColors.surfaceVariant.withValues(alpha: 0.5),
+                        color: SemanticColors.surfaceVariant.withOpacity( 0.5),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                       ),
                       child: Text(
@@ -2066,7 +2066,7 @@ class _TemplateCardState extends State<TemplateCard> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(SpacingTokens.lg),
                   decoration: BoxDecoration(
-                    color: SemanticColors.surfaceVariant.withValues(alpha: 0.3),
+                    color: SemanticColors.surfaceVariant.withOpacity( 0.3),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     border: Border.all(color: SemanticColors.border),
                   ),

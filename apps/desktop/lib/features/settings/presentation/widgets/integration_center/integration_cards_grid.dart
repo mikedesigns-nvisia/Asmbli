@@ -102,7 +102,7 @@ class IntegrationCardsGrid extends StatelessWidget {
             Icon(
               isSearching ? Icons.search_off : Icons.hub_outlined,
               size: 64,
-              color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+              color: colors.onSurfaceVariant.withOpacity( 0.5),
             ),
             const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(

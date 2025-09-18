@@ -12,13 +12,13 @@ class AppRoutes {
  static const String context = '/context';
  static const String wizard = '/wizard';
  static const String agentWizard = '/agent-wizard';
+ static const String agentBuilder = '/agent-builder';
  static const String integrations = '/integrations';
  static const String integrationHub = '/integration-hub';
  static const String marketplace = '/marketplace';
  
  // Demo routes (remove after video recording)
  static const String demoChat = '/demo-chat';
- static const String oauthSettings = '/oauth-settings';
  
  // Route names for easier identification
  static const Map<String, String> routeNames = {
@@ -30,11 +30,11 @@ class AppRoutes {
  context: 'Context',
  wizard: 'Wizard',
  agentWizard: 'Create Agent',
+ agentBuilder: 'Build Agent',
  integrations: 'Add Integrations',
  integrationHub: 'Integration Hub',
  marketplace: 'Marketplace',
  demoChat: 'Demo Chat', // Remove after video
- oauthSettings: 'OAuth Settings',
  };
  
  // Helper method to get route name
@@ -52,10 +52,10 @@ class AppRoutes {
  context,
  wizard,
  agentWizard,
+ agentBuilder,
  integrations,
  integrationHub,
  marketplace,
  demoChat, // Remove after video
- oauthSettings,
  ];
 }

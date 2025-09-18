@@ -1,11 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-/// Supported OAuth 2.0 providers for secure authentication
+/// Supported OAuth 2.0 providers and authentication methods for MCP tools
 enum OAuthProvider {
   github('GitHub', 'github.com'),
   slack('Slack', 'slack.com'),
   linear('Linear', 'linear.app'),
-  microsoft('Microsoft', 'microsoft.com');
+  microsoft('Microsoft', 'microsoft.com'),
+  notion('Notion', 'notion.so'),
+  braveSearch('Brave Search', 'search.brave.com');
 
   const OAuthProvider(this.displayName, this.domain);
 
@@ -113,6 +115,38 @@ const Map<OAuthProvider, OAuthProviderInfo> _providerInfoMap = {
     requiresApproval: true,
     documentationUrl: 'https://docs.microsoft.com/en-us/graph/auth-v2-user',
   ),
+  
+  OAuthProvider.notion: OAuthProviderInfo(
+    provider: OAuthProvider.notion,
+    name: 'Notion',
+    description: 'Connect to Notion for page management, database operations, and content creation',
+    iconPath: 'assets/icons/notion.png',
+    capabilities: [
+      'Page management',
+      'Database operations',
+      'Block editing',
+      'Content creation',
+      'Template management',
+    ],
+    requiresApproval: true,
+    documentationUrl: 'https://developers.notion.com/docs/authorization',
+  ),
+  
+  OAuthProvider.braveSearch: OAuthProviderInfo(
+    provider: OAuthProvider.braveSearch,
+    name: 'Brave Search',
+    description: 'Connect to Brave Search for privacy-focused web search and real-time results',
+    iconPath: 'assets/icons/brave.png',
+    capabilities: [
+      'Web search',
+      'Real-time results',
+      'Privacy-focused',
+      'API integration',
+      'Search analytics',
+    ],
+    requiresApproval: false,
+    documentationUrl: 'https://api.search.brave.com/app/documentation/web-search/get-started',
+  ),
 };
 
 /// OAuth connection status
@@ -141,6 +175,12 @@ class OAuthProviderState extends Equatable {
   final DateTime? connectedAt;
   final DateTime? lastUsed;
   final String? errorMessage;
+  // Additional properties for enhanced functionality
+  final DateTime? expiresAt;
+  final DateTime? lastRefresh;
+  final List<String> grantedScopes;
+  final bool isRefreshable;
+  final String? error;
 
   const OAuthProviderState({
     required this.provider,
@@ -148,6 +188,11 @@ class OAuthProviderState extends Equatable {
     this.connectedAt,
     this.lastUsed,
     this.errorMessage,
+    this.expiresAt,
+    this.lastRefresh,
+    this.grantedScopes = const [],
+    this.isRefreshable = false,
+    this.error,
   });
 
   /// Create a copy with updated values
@@ -157,6 +202,11 @@ class OAuthProviderState extends Equatable {
     DateTime? connectedAt,
     DateTime? lastUsed,
     String? errorMessage,
+    DateTime? expiresAt,
+    DateTime? lastRefresh,
+    List<String>? grantedScopes,
+    bool? isRefreshable,
+    String? error,
   }) {
     return OAuthProviderState(
       provider: provider ?? this.provider,
@@ -164,8 +214,19 @@ class OAuthProviderState extends Equatable {
       connectedAt: connectedAt ?? this.connectedAt,
       lastUsed: lastUsed ?? this.lastUsed,
       errorMessage: errorMessage ?? this.errorMessage,
+      expiresAt: expiresAt ?? this.expiresAt,
+      lastRefresh: lastRefresh ?? this.lastRefresh,
+      grantedScopes: grantedScopes ?? this.grantedScopes,
+      isRefreshable: isRefreshable ?? this.isRefreshable,
+      error: error ?? this.error,
     );
   }
+
+  // Helper getters for enhanced functionality
+  bool get isConnected => status == OAuthConnectionStatus.connected;
+  bool get isExpired => expiresAt != null && DateTime.now().isAfter(expiresAt!);
+  bool get isExpiringSoon => expiresAt != null && 
+      DateTime.now().add(const Duration(days: 7)).isAfter(expiresAt!);
 
   @override
   List<Object?> get props => [
@@ -174,5 +235,10 @@ class OAuthProviderState extends Equatable {
     connectedAt,
     lastUsed,
     errorMessage,
+    expiresAt,
+    lastRefresh,
+    grantedScopes,
+    isRefreshable,
+    error,
   ];
 }

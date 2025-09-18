@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 // Core system imports (only the ones we built)
-import 'core/models/model_management_example.dart';
-import 'core/performance_optimization_example.dart';
+// import 'core/models/model_management_example.dart';
+// import 'core/performance_optimization_example.dart';
 import 'core/cache/cache_manager.dart';
 import 'core/cache/file_cache.dart';
 
@@ -39,9 +39,10 @@ Future<void> initializeCoreSystems() async {
   await fileCache.initialize();
   
   final cacheManager = CacheManager(
-    diskCache: fileCache,
-    memoryMaxSize: 100,
-    enableRedis: false,
+    config: CacheManagerConfig(
+      memoryMaxSize: 100,
+      enableRedis: false,
+    ),
   );
   await cacheManager.initialize();
   
@@ -351,8 +352,8 @@ class _PlatformDashboardState extends State<PlatformDashboard> {
 
 💰 Cost Analysis:
 - Total requests: 150
-- Total cost: $2.47
-- Average cost per request: $0.016
+- Total cost: \$2.47
+- Average cost per request: \$0.016
 - Cheapest provider: Ollama (local)
 - Most used: GPT-3.5-turbo
 

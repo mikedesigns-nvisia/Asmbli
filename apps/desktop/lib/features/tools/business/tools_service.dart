@@ -2,8 +2,7 @@ import 'dart:async';
 import '../models/mcp_server.dart';
 import '../../../core/services/mcp_settings_service.dart';
 import '../../../core/services/mcp_server_execution_service.dart';
-import '../../../core/models/mcp_server_config.dart';
-import '../../../core/models/mcp_server_process.dart';
+import '../../../core/models/mcp_server_process.dart' show MCPServerConfig, MCPServerProcess;
 import '../../../core/data/mcp_server_configs.dart';
 import '../../../core/di/service_locator.dart';
 import 'package:agent_engine_core/services/agent_service.dart';
@@ -67,6 +66,7 @@ class ToolsService {
         autoStart: config.enabled,
         category: _getCategoryFromConfig(config),
         isOfficial: _isOfficialServer(config.id),
+        capabilities: config.capabilities,
         lastStarted: process?.startTime,
         installedAt: config.createdAt,
       );
@@ -142,6 +142,7 @@ class ToolsService {
           autoStart: false,
           category: config.type == MCPServerType.official ? 'official' : 'community',
           isOfficial: config.type == MCPServerType.official,
+          capabilities: config.capabilities,
         ))
         .toList();
   }
@@ -276,7 +277,7 @@ class ToolsService {
         protocol: 'stdio',
         autoReconnect: false,
         enablePolling: false,
-        capabilities: [],
+        capabilities: server.capabilities,
         requiredAuth: [],
       );
       
@@ -289,6 +290,60 @@ class ToolsService {
       
     } catch (e) {
       print('Error updating server config ${server.id}: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> addCustomServer(MCPServer server) async {
+    try {
+      // Convert MCPServer to MCPServerConfig
+      final config = MCPServerConfig(
+        id: server.id,
+        name: server.name,
+        description: server.description,
+        command: server.command,
+        args: server.args,
+        enabled: server.autoStart,
+        url: '', // Required but may be empty for stdio servers
+        protocol: 'stdio',
+        autoReconnect: false,
+        enablePolling: false,
+        capabilities: server.capabilities,
+        requiredAuth: [],
+        type: 'custom', // Mark as custom server
+      );
+      
+      // Add to settings service
+      await _settingsService.setMCPServer(server.id, config);
+      
+      // Auto-connect this server to all available agents (as requested by user)
+      try {
+        final agents = await _agentService.listAgents();
+        for (final agent in agents) {
+          final agentMcpServers = List<String>.from(
+            agent.configuration['mcpServers'] as List<dynamic>? ?? []
+          );
+          
+          // Add this server if not already connected
+          if (!agentMcpServers.contains(server.id)) {
+            agentMcpServers.add(server.id);
+            await updateAgentConnections(agent.id, agentMcpServers);
+          }
+        }
+        print('Auto-connected MCP server "${server.name}" to ${agents.length} agents');
+      } catch (e) {
+        print('Warning: Failed to auto-connect server to agents: $e');
+        // Don't fail the entire operation if auto-connection fails
+      }
+      
+      // Reload installed servers and agent connections
+      await _loadInstalledServers();
+      await _loadAgentConnections();
+      _serversController.add(_installedServers);
+      _connectionsController.add(_agentConnections);
+      
+    } catch (e) {
+      print('Error adding custom server ${server.id}: $e');
       rethrow;
     }
   }

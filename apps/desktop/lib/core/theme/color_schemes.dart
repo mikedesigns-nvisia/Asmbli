@@ -6,39 +6,47 @@ import 'package:google_fonts/google_fonts.dart';
 class AppColorSchemes {
   // Warm Neutral (New Default)
   static const String warmNeutral = 'warm-neutral';
-  
+
   // Cool Blue
   static const String coolBlue = 'cool-blue';
-  
+
   // Forest Green
   static const String forestGreen = 'forest-green';
-  
+
   // Sunset Orange
   static const String sunsetOrange = 'sunset-orange';
 
+  // Silver Onyx
+  static const String silverOnyx = 'silver-onyx';
+
   /// Get all available color scheme options for UI
   static List<ColorSchemeOption> get all => [
-    const ColorSchemeOption(warmNeutral, 'Warm Neutral', [
-      Color(0xFF8B6F47), // primary - warm brown
-      Color(0xFFD4B896), // accent - warm beige
-      Color(0xFFFAF8F5), // background - cream
-    ]),
-    const ColorSchemeOption(coolBlue, 'Cool Blue', [
-      Color(0xFF1E3A8A), // primary
-      Color(0xFF3B82F6), // accent
-      Color(0xFFF0F9FF), // background
-    ]),
-    const ColorSchemeOption(forestGreen, 'Forest Green', [
-      Color(0xFF1E3B2B), // primary - moved from mint green
-      Color(0xFF6B9080), // accent - moved from mint green
-      Color(0xFFF5FBF8), // background - moved from mint green
-    ]),
-    const ColorSchemeOption(sunsetOrange, 'Sunset Orange', [
-      Color(0xFF9A3412), // primary
-      Color(0xFFF97316), // accent
-      Color(0xFFFFF7ED), // background
-    ]),
-  ];
+        const ColorSchemeOption(warmNeutral, 'Warm Neutral', [
+          Color(0xFF8B6F47), // primary - warm brown
+          Color(0xFFD4B896), // accent - warm beige
+          Color(0xFFFAF8F5), // background - cream
+        ]),
+        const ColorSchemeOption(coolBlue, 'Cool Blue', [
+          Color(0xFF1E3A8A), // primary
+          Color(0xFF3B82F6), // accent
+          Color(0xFFF0F9FF), // background
+        ]),
+        const ColorSchemeOption(forestGreen, 'Forest Green', [
+          Color(0xFF1E3B2B), // primary - moved from mint green
+          Color(0xFF6B9080), // accent - moved from mint green
+          Color(0xFFF5FBF8), // background - moved from mint green
+        ]),
+        const ColorSchemeOption(sunsetOrange, 'Sunset Orange', [
+          Color(0xFF9A3412), // primary
+          Color(0xFFF97316), // accent
+          Color(0xFFFFF7ED), // background
+        ]),
+        const ColorSchemeOption(silverOnyx, 'Silver Onyx', [
+          Color(0xFF4A4A4A), // primary - charcoal gray
+          Color(0xFF8A8A8A), // accent - medium silver
+          Color(0xFFF8F8F8), // background - light silver
+        ]),
+      ];
 
   /// Get unique app background color for a specific color scheme
   static Color getAppBackgroundColor(String schemeId, bool isDark) {
@@ -49,6 +57,8 @@ class AppColorSchemes {
         return isDark ? const Color(0xFF0F1C14) : const Color(0xFFF5FBF8);
       case sunsetOrange:
         return isDark ? const Color(0xFF4A2117) : const Color(0xFFFFF7ED);
+      case silverOnyx:
+        return isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF8F8F8);
       case warmNeutral:
       default:
         return isDark ? const Color(0xFF2B1F14) : const Color(0xFFFAF8F5);
@@ -64,6 +74,8 @@ class AppColorSchemes {
         return isDark ? _forestGreenDarkTheme : _forestGreenLightTheme;
       case sunsetOrange:
         return isDark ? _sunsetOrangeDarkTheme : _sunsetOrangeLightTheme;
+      case silverOnyx:
+        return isDark ? _silverOnyxDarkTheme : _silverOnyxLightTheme;
       case warmNeutral:
       default:
         return isDark ? _warmNeutralDarkTheme : _warmNeutralLightTheme;
@@ -71,14 +83,16 @@ class AppColorSchemes {
   }
 
   // WARM NEUTRAL THEMES (New Default)
-  
+
   static ThemeData get _warmNeutralLightTheme {
     const background = Color(0xFFFAF8F5); // Warm cream background
     const surface = Color(0xFFFCFBF9); // Lighter cream surface
     const primary = Color(0xFF8B6F47); // Warm brown primary
     const accent = Color(0xFFD4B896); // Warm beige accent
-    const onSurface = Color(0xFF4A3E2F); // Dark brown text
-    const onSurfaceVariant = Color(0xFF6B5D4F); // Medium brown text
+    const onSurface =
+        Color(0xFF2D1F12); // Darker brown text for better contrast
+    const onSurfaceVariant =
+        Color(0xFF4A3E2F); // Darker medium brown text for WCAG AA compliance
     const border = Color(0xFFE8DDD0); // Soft beige border
 
     return _buildThemeData(
@@ -100,11 +114,14 @@ class AppColorSchemes {
 
   static ThemeData get _warmNeutralDarkTheme {
     const background = Color(0xFF2B1F14); // Deep warm brown background
-    const surface = Color(0xFF423126); // Slightly lighter warm brown surface for better contrast
+    const surface = Color(
+        0xFF423126); // Slightly lighter warm brown surface for better contrast
     const primary = Color(0xFFE6C794); // Warm cream accent
     const accent = Color(0xFFD4B896); // Warm beige accent
-    const onSurface = Color(0xFFF5F0E8); // Light warm white
-    const onSurfaceVariant = Color(0xFFCFBFA8); // Muted warm beige
+    const onSurface =
+        Color(0xFFFFFCF8); // Brighter warm white for better contrast
+    const onSurfaceVariant =
+        Color(0xFFE6D5C4); // Brighter warm beige for WCAG AA compliance
     const border = Color(0xFF5A4738);
 
     return _buildThemeData(
@@ -131,8 +148,9 @@ class AppColorSchemes {
     const surface = Color(0xFFFAFCFF); // Lighter blue surface
     const primary = Color(0xFF1E3A8A); // Deep blue primary
     const accent = Color(0xFF3B82F6); // Bright blue accent
-    const onSurface = Color(0xFF1E3A8A); // Deep blue text
-    const onSurfaceVariant = Color(0xFF475569); // Muted blue-gray text
+    const onSurface = Color(0xFF0F1A44); // Darker blue text for better contrast
+    const onSurfaceVariant =
+        Color(0xFF1E3A8A); // Darker blue-gray text for WCAG AA compliance
     const border = Color(0xFFDDEAF7); // Soft blue border
 
     return _buildThemeData(
@@ -157,8 +175,10 @@ class AppColorSchemes {
     const surface = Color(0xFF1E293B); // Blue-gray surface
     const primary = Color(0xFF60A5FA); // Bright blue accent
     const accent = Color(0xFF93C5FD); // Lighter blue accent
-    const onSurface = Color(0xFFF1F5F9); // Light blue-white
-    const onSurfaceVariant = Color(0xFFCBD5E1); // Muted light blue
+    const onSurface =
+        Color(0xFFFDFDFF); // Brighter blue-white for better contrast
+    const onSurfaceVariant =
+        Color(0xFFE2E8F0); // Brighter light blue for WCAG AA compliance
     const border = Color(0xFF374151);
 
     return _buildThemeData(
@@ -181,12 +201,16 @@ class AppColorSchemes {
   // FOREST GREEN THEMES
 
   static ThemeData get _forestGreenLightTheme {
-    const background = Color(0xFFF5FBF8); // Soft mint background (from old mint)
+    const background =
+        Color(0xFFF5FBF8); // Soft mint background (from old mint)
     const surface = Color(0xFFF7FCFA); // Lighter mint surface (from old mint)
-    const primary = Color(0xFF1E3B2B); // Deep forest green primary (from old mint)
+    const primary =
+        Color(0xFF1E3B2B); // Deep forest green primary (from old mint)
     const accent = Color(0xFF6B9080); // Sage green accent (from old mint)
-    const onSurface = Color(0xFF1E3B2B); // Deep forest green text (from old mint)
-    const onSurfaceVariant = Color(0xFF4A6B5A); // Muted forest green text (from old mint)
+    const onSurface =
+        Color(0xFF0F1D16); // Darker forest green text for better contrast
+    const onSurfaceVariant = Color(
+        0xFF1E3B2B); // Darker muted forest green text for WCAG AA compliance
     const border = Color(0xFFD3E8DC); // Soft mint border (from old mint)
 
     return _buildThemeData(
@@ -207,12 +231,16 @@ class AppColorSchemes {
   }
 
   static ThemeData get _forestGreenDarkTheme {
-    const background = Color(0xFF0F1C14); // Deep forest background (from old mint)
-    const surface = Color(0xFF1F3325); // Slightly lighter forest surface for better contrast
+    const background =
+        Color(0xFF0F1C14); // Deep forest background (from old mint)
+    const surface = Color(
+        0xFF1F3325); // Slightly lighter forest surface for better contrast
     const primary = Color(0xFFB8E6C8); // Bright mint accent (from old mint)
     const accent = Color(0xFF8DBF9E); // Brighter sage accent (from old mint)
-    const onSurface = Color(0xFFF0F8F3); // Light mint (from old mint)
-    const onSurfaceVariant = Color(0xFFA0BDA8); // Muted mint (from old mint)
+    const onSurface =
+        Color(0xFFF8FFFA); // Brighter light mint for better contrast
+    const onSurfaceVariant =
+        Color(0xFFD0E8D6); // Brighter muted mint for WCAG AA compliance
     const border = Color(0xFF334A38);
 
     return _buildThemeData(
@@ -239,8 +267,10 @@ class AppColorSchemes {
     const surface = Color(0xFFFFFBF7); // Almost white orange
     const primary = Color(0xFF9A3412); // Deep orange-red
     const accent = Color(0xFFF97316); // Bright orange accent
-    const onSurface = Color(0xFF9A3412); // Deep orange text
-    const onSurfaceVariant = Color(0xFFEA580C); // Medium orange text
+    const onSurface =
+        Color(0xFF4A1908); // Darker orange text for better contrast
+    const onSurfaceVariant =
+        Color(0xFF9A3412); // Darker medium orange text for WCAG AA compliance
     const border = Color(0xFFFED7AA); // Light orange border
 
     return _buildThemeData(
@@ -262,11 +292,14 @@ class AppColorSchemes {
 
   static ThemeData get _sunsetOrangeDarkTheme {
     const background = Color(0xFF4A2117); // Desaturated deep orange-brown
-    const surface = Color(0xFF664029); // Lighter desaturated orange-brown surface for better contrast
+    const surface = Color(
+        0xFF664029); // Lighter desaturated orange-brown surface for better contrast
     const primary = Color(0xFFD4956B); // Desaturated warm orange
     const accent = Color(0xFFB8845C); // Desaturated beige-orange accent
-    const onSurface = Color(0xFFF5EDE4); // Soft warm white
-    const onSurfaceVariant = Color(0xFFE6C5A6); // Desaturated light orange
+    const onSurface =
+        Color(0xFFFFF8F2); // Brighter warm white for better contrast
+    const onSurfaceVariant = Color(
+        0xFFF5E1C7); // Brighter desaturated light orange for WCAG AA compliance
     const border = Color(0xFF7D4E35);
 
     return _buildThemeData(
@@ -283,6 +316,63 @@ class AppColorSchemes {
       surfaceVariant: const Color(0xFF7A4B33),
       backgroundGradientStart: const Color(0xFF5C2D1F),
       backgroundGradientEnd: const Color(0xFF2E1810),
+    );
+  }
+
+  // SILVER ONYX THEMES
+
+  static ThemeData get _silverOnyxLightTheme {
+    const background = Color(0xFFF8F8F8); // Very light silver background
+    const surface = Color(0xFFFAFAFA); // Lighter silver surface
+    const primary = Color(0xFF4A4A4A); // Charcoal gray primary
+    const accent = Color(0xFF8A8A8A); // Medium silver accent
+    const onSurface = Color(0xFF1A1A1A); // Near black text for maximum contrast
+    const onSurfaceVariant =
+        Color(0xFF4A4A4A); // Charcoal gray text for WCAG AA compliance
+    const border = Color(0xFFE0E0E0); // Light gray border
+
+    return _buildThemeData(
+      brightness: Brightness.light,
+      background: background,
+      surface: surface,
+      primary: primary,
+      onPrimary: Colors.white,
+      accent: accent,
+      onAccent: Colors.white,
+      onSurface: onSurface,
+      onSurfaceVariant: onSurfaceVariant,
+      border: border,
+      surfaceVariant: const Color(0xFFF0F0F0),
+      backgroundGradientStart: const Color(0xFFFAFAFA),
+      backgroundGradientEnd: const Color(0xFFE8E8E8),
+    );
+  }
+
+  static ThemeData get _silverOnyxDarkTheme {
+    const background = Color(0xFF1A1A1A); // Deep onyx background
+    const surface =
+        Color(0xFF2D2D2D); // Lighter charcoal surface for better contrast
+    const primary = Color(0xFFB8B8B8); // Light silver accent
+    const accent = Color(0xFF9A9A9A); // Medium silver accent
+    const onSurface = Color(0xFFFAFAFA); // Very light gray for better contrast
+    const onSurfaceVariant =
+        Color(0xFFD0D0D0); // Light silver for WCAG AA compliance
+    const border = Color(0xFF3D3D3D);
+
+    return _buildThemeData(
+      brightness: Brightness.dark,
+      background: background,
+      surface: surface,
+      primary: primary,
+      onPrimary: const Color(0xFF1A1A1A),
+      accent: accent,
+      onAccent: const Color(0xFF1A1A1A),
+      onSurface: onSurface,
+      onSurfaceVariant: onSurfaceVariant,
+      border: border,
+      surfaceVariant: const Color(0xFF404040),
+      backgroundGradientStart: const Color(0xFF2D2D2D),
+      backgroundGradientEnd: const Color(0xFF0D0D0D),
     );
   }
 
@@ -303,7 +393,7 @@ class AppColorSchemes {
     required Color backgroundGradientEnd,
   }) {
     final isDark = brightness == Brightness.dark;
-    
+
     return ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: background,
@@ -312,18 +402,16 @@ class AppColorSchemes {
         brightness: brightness,
         primary: primary,
         onPrimary: onPrimary,
-        secondary: isDark ? surface.withValues(alpha: 0.8) : surfaceVariant,
+        secondary: isDark ? surface.withOpacity(0.8) : surfaceVariant,
         onSecondary: onSurface,
         tertiary: accent,
         onTertiary: onAccent,
         surface: surface,
         onSurface: onSurface,
-        background: background,
-        onBackground: onSurface,
         error: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
         onError: Colors.white,
         outline: border,
-        surfaceVariant: surfaceVariant,
+        surfaceContainerHighest: surfaceVariant,
         onSurfaceVariant: onSurfaceVariant,
       ),
 
@@ -335,7 +423,7 @@ class AppColorSchemes {
         foregroundColor: onSurface,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: TextStyle(
-                    fontSize: 24,
+          fontSize: 24,
           fontWeight: FontWeight.bold,
           fontStyle: FontStyle.italic,
           color: onSurface,
@@ -343,16 +431,17 @@ class AppColorSchemes {
       ),
 
       // Card Theme
-      cardTheme: CardThemeData(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: border.withValues(alpha: 0.5)),
-        ),
-        color: surface,
-        surfaceTintColor: Colors.transparent,
-        margin: EdgeInsets.zero,
-      ),
+      // TODO: Fix CardThemeData constructor issue
+      // cardTheme: CardThemeData(
+      //   elevation: 0,
+      //   shape: RoundedRectangleBorder(
+      //     borderRadius: BorderRadius.circular(12),
+      //     side: BorderSide(color: border.withOpacity(0.5)),
+      //   ),
+      //   color: surface,
+      //   surfaceTintColor: Colors.transparent,
+      //   margin: EdgeInsets.zero,
+      // ),
 
       // Button Themes
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -366,7 +455,7 @@ class AppColorSchemes {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           textStyle: GoogleFonts.fustat(
-                        fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w500,
             fontSize: 14,
           ),
         ),
@@ -383,7 +472,7 @@ class AppColorSchemes {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           textStyle: GoogleFonts.fustat(
-                        fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w500,
             fontSize: 14,
           ),
         ),
@@ -405,11 +494,12 @@ class AppColorSchemes {
         ),
         filled: true,
         fillColor: isDark ? surface : surfaceVariant,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
 
       // Typography
-            textTheme: _buildTextTheme(onSurface, onSurfaceVariant),
+      textTheme: _buildTextTheme(onSurface, onSurfaceVariant),
     );
   }
 
@@ -417,87 +507,87 @@ class AppColorSchemes {
   static TextTheme _buildTextTheme(Color onSurface, Color onSurfaceVariant) {
     return TextTheme(
       displayLarge: TextStyle(
-                fontSize: 57,
+        fontSize: 57,
         fontWeight: FontWeight.w400,
         letterSpacing: -0.25,
         color: onSurface,
       ),
       displayMedium: TextStyle(
-                fontSize: 45,
+        fontSize: 45,
         fontWeight: FontWeight.w400,
         color: onSurface,
       ),
       displaySmall: TextStyle(
-                fontSize: 36,
+        fontSize: 36,
         fontWeight: FontWeight.w400,
         color: onSurface,
       ),
       headlineLarge: TextStyle(
-                fontSize: 32,
+        fontSize: 32,
         fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
         color: onSurface,
       ),
       headlineMedium: TextStyle(
-                fontSize: 28,
+        fontSize: 28,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.25,
         color: onSurface,
       ),
       headlineSmall: TextStyle(
-                fontSize: 24,
+        fontSize: 24,
         fontWeight: FontWeight.w600,
         color: onSurface,
       ),
       titleLarge: TextStyle(
-                fontSize: 22,
+        fontSize: 22,
         fontWeight: FontWeight.w500,
         color: onSurface,
       ),
       titleMedium: TextStyle(
-                fontSize: 16,
+        fontSize: 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.15,
         color: onSurface,
       ),
       titleSmall: TextStyle(
-                fontSize: 14,
+        fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1,
         color: onSurface,
       ),
       bodyLarge: TextStyle(
-                fontSize: 16,
+        fontSize: 16,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.5,
         color: onSurface,
       ),
       bodyMedium: TextStyle(
-                fontSize: 14,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.25,
         color: onSurfaceVariant,
       ),
       bodySmall: TextStyle(
-                fontSize: 12,
+        fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.4,
         color: onSurfaceVariant,
       ),
       labelLarge: TextStyle(
-                fontSize: 14,
+        fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1,
         color: onSurface,
       ),
       labelMedium: TextStyle(
-                fontSize: 12,
+        fontSize: 12,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.5,
         color: onSurfaceVariant,
       ),
       labelSmall: TextStyle(
-                fontSize: 11,
+        fontSize: 11,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.5,
         color: onSurfaceVariant,

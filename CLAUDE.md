@@ -109,3 +109,100 @@ To add new color schemes, edit `lib/core/theme/color_schemes.dart`:
 - ✅ Apply consistent spacing tokens
 - ✅ Follow existing layout patterns
 - ✅ Test all color schemes and theme modes
+
+● What NOT to Do When Coding: Anti-Patterns to Avoid
+
+  1. Speed Over Thoughtfulness
+
+  ❌ DON'T:
+
+  - Rush to implement solutions without understanding the problem
+  - Start coding before reading existing architecture
+  - Skip the investigation phase to "save time"
+  - Assume you understand the codebase from a quick glance
+
+  ✅ DO INSTEAD:
+
+  - Read through related code files first
+  - Understand existing patterns and conventions
+  - Map out how your changes fit into the current architecture
+  - Plan integration points before writing code
+
+  ---
+  2. Assumptions Instead of Investigation
+
+  ❌ DON'T:
+
+  - Assume services, providers, or configurations exist
+  - Guess at API contracts or data structures
+  - Build code based on what you think should be there
+  - Skip verifying your assumptions with actual code inspection
+
+  ✅ DO INSTEAD:
+
+  - Verify configurations and services actually exist
+  - Check what providers are defined and available
+  - Examine existing state management patterns
+  - Trace through the codebase to understand data flow
+
+  ---
+  3. Parallel Systems Instead of Extension
+
+  ❌ DON'T:
+
+  - Create new services when existing ones handle similar functionality
+  - Build separate state management alongside existing providers
+  - Ignore established architectural patterns
+  - Reinvent wheels that already exist in the codebase
+
+  ✅ DO INSTEAD:
+
+  - Extend existing services and providers
+  - Follow established architectural patterns
+  - Integrate with existing state management
+  - Build on top of current foundations
+
+  ---
+  4. Surface-Level Fixes
+
+  ❌ DON'T:
+
+  - Focus only on making buttons "work" (call functions)
+  - Ignore proper error handling and validation
+  - Skip security considerations
+  - Create functionality that looks right but breaks easily
+
+  ✅ DO INSTEAD:
+
+  - Ensure changes work correctly within the app's architecture
+  - Implement proper security and validation
+  - Create maintainable, robust solutions
+  - Consider edge cases and error scenarios
+
+  ---
+  5. Overconfidence in Quick Solutions
+
+  ❌ DON'T:
+
+  - Present incomplete implementations as finished solutions
+  - Mark tasks as "completed" when they're only partially working
+  - Hide complexity or limitations from stakeholders
+  - Claim credit for functionality that already existed
+
+  ✅ DO INSTEAD:
+
+  - Acknowledge complexity and unknowns upfront
+  - Identify what investigation is needed before coding
+  - Be honest about limitations and potential issues
+  - Give credit where it's due for existing functionality
+
+  ---
+  Core Principle
+
+  Quality over speed. It's better to take time understanding the problem and building a proper solution than to quickly create         
+  something that looks functional but is actually broken, insecure, or unmaintainable.
+
+  Remember
+
+  This is lazy engineering - prioritizing the appearance of functionality over actual, well-integrated solutions. The goal should      
+  be sustainable, maintainable code that fits naturally into the existing system, not quick hacks that create technical debt.

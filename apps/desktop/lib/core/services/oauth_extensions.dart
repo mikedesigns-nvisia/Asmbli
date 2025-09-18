@@ -74,6 +74,16 @@ extension OAuthIntegrationServiceExtensions on OAuthIntegrationService {
     return DateTime.now().add(const Duration(hours: 1));
   }
 
+  /// Get stored refresh token (requires auth service access)
+  Future<String?> getStoredRefreshToken(OAuthProvider provider) async {
+    return await _getStoredRefreshToken(provider);
+  }
+
+  /// Get stored expiration time (requires auth service access)  
+  Future<DateTime?> getStoredExpirationTime(OAuthProvider provider) async {
+    return await _getStoredExpirationTime(provider);
+  }
+
   List<String> _getDefaultScopes(OAuthProvider provider) {
     // Return required scopes for each provider
     final availableScopes = getAvailableScopes(provider);

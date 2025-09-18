@@ -36,7 +36,7 @@ class _IntegrationSearchBarState extends State<IntegrationSearchBar> {
         ),
         boxShadow: [
           BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.05),
+            color: colors.onSurface.withOpacity( 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

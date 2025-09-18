@@ -10,6 +10,8 @@ class EnhancedAgentCard extends StatefulWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onDuplicate;
   final VoidCallback? onChat;
+  final VoidCallback? onActivate;
+  final VoidCallback? onOpenChat;
 
   const EnhancedAgentCard({
     super.key,
@@ -18,6 +20,8 @@ class EnhancedAgentCard extends StatefulWidget {
     this.onDelete,
     this.onDuplicate,
     this.onChat,
+    this.onActivate,
+    this.onOpenChat,
   });
 
   @override
@@ -61,7 +65,7 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
       onEnter: (_) => _handleHover(true),
       onExit: (_) => _handleHover(false),
       child: GestureDetector(
-        onTap: widget.onChat ?? () => context.go('${AppRoutes.chat}?agent=${widget.agent.id}'),
+        onTap: widget.onOpenChat ?? widget.onChat ?? () => context.go('${AppRoutes.chat}?agent=${widget.agent.id}'),
         child: AnimatedBuilder(
           animation: _scaleAnimation,
           builder: (context, child) {
@@ -206,6 +210,26 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
           ),
         ),
         PopupMenuItem(
+          value: 'activate',
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                widget.agent.status == AgentStatus.active 
+                  ? Icons.pause_circle_outline 
+                  : Icons.play_circle_outline,
+                size: 14, 
+                color: colors.onSurface
+              ),
+              SizedBox(width: SpacingTokens.xs),
+              Text(
+                widget.agent.status == AgentStatus.active ? 'Deactivate' : 'Activate',
+                style: TextStyles.bodySmall
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
           value: 'duplicate',
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -304,28 +328,81 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
           child: Row(
             children: [
               Icon(
-                Icons.chat_bubble_outline,
-                size: 14,
-                color: colors.primary,
+                Icons.schedule,
+                size: 12,
+                color: colors.onSurfaceVariant,
               ),
               SizedBox(width: SpacingTokens.xs),
               Text(
-                'Start Chat',
+                _getLastUsedText(),
                 style: TextStyles.caption.copyWith(
-                  color: colors.primary,
-                  fontWeight: FontWeight.w500,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
             ],
           ),
         ),
-        Icon(
-          Icons.arrow_forward_ios,
-          size: 12,
-          color: colors.onSurfaceVariant,
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: SpacingTokens.xs,
+            vertical: SpacingTokens.xxs,
+          ),
+          decoration: BoxDecoration(
+            color: _getStatusColor(colors).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
+            border: Border.all(
+              color: _getStatusColor(colors).withOpacity(0.3),
+            ),
+          ),
+          child: Text(
+            _getStatusText(),
+            style: TextStyles.caption.copyWith(
+              color: _getStatusColor(colors),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
       ],
     );
+  }
+
+  String _getLastUsedText() {
+    final lastUsed = widget.agent.configuration['lastUsed'] as String?;
+    if (lastUsed != null) {
+      try {
+        final lastUsedDate = DateTime.parse(lastUsed);
+        final now = DateTime.now();
+        final diff = now.difference(lastUsedDate);
+        
+        if (diff.inDays > 7) {
+          return '${diff.inDays} days ago';
+        } else if (diff.inDays > 0) {
+          return '${diff.inDays}d ago';
+        } else if (diff.inHours > 0) {
+          return '${diff.inHours}h ago';
+        } else if (diff.inMinutes > 0) {
+          return '${diff.inMinutes}m ago';
+        } else {
+          return 'Just now';
+        }
+      } catch (e) {
+        return 'Never used';
+      }
+    }
+    return 'Never used';
+  }
+
+  String _getStatusText() {
+    switch (widget.agent.status) {
+      case AgentStatus.idle:
+        return 'Ready';
+      case AgentStatus.active:
+        return 'Active';
+      case AgentStatus.error:
+        return 'Error';
+      default:
+        return 'Unknown';
+    }
   }
 
   Widget _buildCategoryBadge(ThemeColors colors, _CardColors cardColors) {
@@ -378,7 +455,9 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
   void _handleMenuAction(String action) {
     switch (action) {
       case 'chat':
-        if (widget.onChat != null) {
+        if (widget.onOpenChat != null) {
+          widget.onOpenChat!();
+        } else if (widget.onChat != null) {
           widget.onChat!();
         } else {
           context.go('${AppRoutes.chat}?agent=${widget.agent.id}');
@@ -389,6 +468,11 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
           widget.onEdit!();
         } else {
           context.go('/agents/configure/${widget.agent.id}');
+        }
+        break;
+      case 'activate':
+        if (widget.onActivate != null) {
+          widget.onActivate!();
         }
         break;
       case 'duplicate':
