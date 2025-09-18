@@ -161,6 +161,23 @@ void main() async {
   }, (error, stackTrace) {
     // Global error handler delegates to AppErrorHandler
     try {
+      // Filter out non-critical errors like Google Fonts loading failures
+      final errorStr = error.toString().toLowerCase();
+      if (errorStr.contains('google_fonts') ||
+          errorStr.contains('fonts.gstatic.com') ||
+          errorStr.contains('failed to load font') ||
+          errorStr.contains('fustat-regular') ||
+          errorStr.contains('fustat-bold') ||
+          errorStr.contains('fustat-medium') ||
+          errorStr.contains('fustat-semibold') ||
+          errorStr.contains('socketexception') ||
+          errorStr.contains('clientexception') ||
+          errorStr.contains('operation not permitted')) {
+        // Google Fonts errors are non-critical - just log them
+        print('⚠️ Font loading failed (non-critical): $error');
+        return;
+      }
+
       AppErrorHandler.handleBusinessError(
         error,
         operation: 'main_zone_error',
@@ -206,7 +223,7 @@ class VectorInitializedApp extends ConsumerWidget {
                       Text(
                         'Setting up your workspace...',
                         style: GoogleFonts.fustat(
-                                                   fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
@@ -214,7 +231,7 @@ class VectorInitializedApp extends ConsumerWidget {
                       Text(
                         'Preparing your knowledge base and context',
                         style: GoogleFonts.fustat(
-                                                   color: Colors.white70,
+                          color: Colors.white70,
                         ),
                       ),
                     ],
@@ -559,7 +576,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  Icon(
  Icons.chat_bubble_outline,
  size: 32,
- color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+ color: colors.onSurfaceVariant.withOpacity( 0.5),
  ),
  const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
@@ -659,8 +676,8 @@ class _ConversationItem extends StatelessWidget {
  child: InkWell(
  onTap: onTap,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- hoverColor: colors.primary.withValues(alpha: 0.04),
- splashColor: colors.primary.withValues(alpha: 0.12),
+ hoverColor: colors.primary.withOpacity( 0.04),
+ splashColor: colors.primary.withOpacity( 0.12),
  child: Container(
  padding: const EdgeInsets.symmetric(
  vertical: SpacingTokens.componentSpacing,
@@ -672,7 +689,7 @@ class _ConversationItem extends StatelessWidget {
  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
  color: isAgentConversation 
- ? colors.primary.withValues(alpha: 0.1)
+ ? colors.primary.withOpacity( 0.1)
  : colors.surfaceVariant,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
@@ -796,7 +813,7 @@ class _QuickActionCard extends StatelessWidget {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
+ color: ThemeColors(context).primary.withOpacity( 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Icon(
@@ -886,10 +903,10 @@ class _StartupScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: colors.surface.withValues(alpha: 0.9),
+                  color: colors.surface.withOpacity( 0.9),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                   border: Border.all(
-                    color: colors.border.withValues(alpha: 0.2),
+                    color: colors.border.withOpacity( 0.2),
                   ),
                 ),
                 child: Column(
@@ -899,7 +916,7 @@ class _StartupScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: colors.primary.withValues(alpha: 0.1),
+                        color: colors.primary.withOpacity( 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                       ),
                       child: Icon(
