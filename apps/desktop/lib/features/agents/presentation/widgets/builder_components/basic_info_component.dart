@@ -85,7 +85,7 @@ class _BasicInfoComponentState extends ConsumerState<BasicInfoComponent> {
         Container(
           padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.primary.withValues(alpha: 0.1),
+            color: colors.primary.withOpacity( 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           ),
           child: Icon(
@@ -234,7 +234,7 @@ class _BasicInfoComponentState extends ConsumerState<BasicInfoComponent> {
             child: Container(
               decoration: BoxDecoration(
                 color: isSelected
-                    ? colors.primary.withValues(alpha: 0.1)
+                    ? colors.primary.withOpacity( 0.1)
                     : colors.surface,
                 border: isSelected
                     ? Border.all(color: colors.primary, width: 2)
@@ -412,9 +412,9 @@ class _BasicInfoComponentState extends ConsumerState<BasicInfoComponent> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.error.withValues(alpha: 0.1),
+        color: colors.error.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: colors.error.withValues(alpha: 0.3)),
+        border: Border.all(color: colors.error.withOpacity( 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

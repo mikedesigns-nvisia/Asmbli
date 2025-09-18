@@ -16,8 +16,8 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             center: Alignment.topCenter,
             radius: 1.5,
             colors: [
-              SemanticColors.primary.withValues(alpha: 0.05),
-              SemanticColors.background.withValues(alpha: 0.8),
+              SemanticColors.primary.withOpacity( 0.05),
+              SemanticColors.background.withOpacity( 0.8),
               SemanticColors.background,
             ],
             stops: const [0.0, 0.6, 1.0],
@@ -81,12 +81,12 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            SemanticColors.primary.withValues(alpha: 0.1),
-            SemanticColors.primary.withValues(alpha: 0.05),
+            SemanticColors.primary.withOpacity( 0.1),
+            SemanticColors.primary.withOpacity( 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
-        border: Border.all(color: SemanticColors.primary.withValues(alpha: 0.2)),
+        border: Border.all(color: SemanticColors.primary.withOpacity( 0.2)),
       ),
       child: Column(
         children: [
@@ -218,7 +218,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: category.color.withValues(alpha: 0.1),
+                color: category.color.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               ),
               child: Icon(
@@ -250,7 +250,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
                 vertical: SpacingTokens.xs,
               ),
               decoration: BoxDecoration(
-                color: SemanticColors.primary.withValues(alpha: 0.1),
+                color: SemanticColors.primary.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Row(

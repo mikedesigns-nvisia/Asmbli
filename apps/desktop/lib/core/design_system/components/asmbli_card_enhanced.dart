@@ -181,23 +181,23 @@ class _AsmblCardEnhancedState extends State<AsmblCardEnhanced>
  Color _getBackgroundColor(ThemeColors colors) {
  switch (widget.variant) {
  case AsmblCardVariant.surface:
- if (_isPressed) return colors.surfaceVariant.withValues(alpha: 0.8);
- if (_isHovered) return colors.surfaceVariant.withValues(alpha: 0.6);
+ if (_isPressed) return colors.surfaceVariant.withOpacity( 0.8);
+ if (_isHovered) return colors.surfaceVariant.withOpacity( 0.6);
  return colors.surface;
  
  case AsmblCardVariant.elevated:
- if (_isPressed) return colors.surface.withValues(alpha: 0.95);
+ if (_isPressed) return colors.surface.withOpacity( 0.95);
  if (_isHovered) return colors.surface;
  return colors.surface;
  
  case AsmblCardVariant.accent:
- if (_isPressed) return colors.accent.withValues(alpha: 0.1);
- if (_isHovered) return colors.accent.withValues(alpha: 0.08);
- return colors.accent.withValues(alpha: 0.05);
+ if (_isPressed) return colors.accent.withOpacity( 0.1);
+ if (_isHovered) return colors.accent.withOpacity( 0.08);
+ return colors.accent.withOpacity( 0.05);
  
  case AsmblCardVariant.outlined:
- if (_isPressed) return colors.surfaceVariant.withValues(alpha: 0.3);
- if (_isHovered) return colors.surfaceVariant.withValues(alpha: 0.2);
+ if (_isPressed) return colors.surfaceVariant.withOpacity( 0.3);
+ if (_isHovered) return colors.surfaceVariant.withOpacity( 0.2);
  return Colors.transparent;
  }
  }
@@ -205,19 +205,19 @@ class _AsmblCardEnhancedState extends State<AsmblCardEnhanced>
  Color _getBorderColor(ThemeColors colors) {
  switch (widget.variant) {
  case AsmblCardVariant.surface:
- if (_isHovered) return colors.border.withValues(alpha: 0.8);
- return colors.border.withValues(alpha: 0.6);
+ if (_isHovered) return colors.border.withOpacity( 0.8);
+ return colors.border.withOpacity( 0.6);
  
  case AsmblCardVariant.accent:
- if (_isHovered) return colors.accent.withValues(alpha: 0.8);
- return colors.accent.withValues(alpha: 0.4);
+ if (_isHovered) return colors.accent.withOpacity( 0.8);
+ return colors.accent.withOpacity( 0.4);
  
  case AsmblCardVariant.outlined:
- if (_isHovered) return colors.accent.withValues(alpha: 0.6);
+ if (_isHovered) return colors.accent.withOpacity( 0.6);
  return colors.border;
  
  case AsmblCardVariant.elevated:
- return colors.border.withValues(alpha: 0.3);
+ return colors.border.withOpacity( 0.3);
  }
  }
 
@@ -237,12 +237,12 @@ class _AsmblCardEnhancedState extends State<AsmblCardEnhanced>
  case AsmblCardVariant.elevated:
  return [
  BoxShadow(
- color: colors.primary.withValues(alpha: 0.08),
+ color: colors.primary.withOpacity( 0.08),
  blurRadius: _isHovered ? 16 : 8,
  offset: Offset(0, _isHovered ? 4 : 2),
  ),
  BoxShadow(
- color: colors.primary.withValues(alpha: 0.04),
+ color: colors.primary.withOpacity( 0.04),
  blurRadius: _isHovered ? 32 : 16,
  offset: Offset(0, _isHovered ? 8 : 4),
  ),
@@ -252,7 +252,7 @@ class _AsmblCardEnhancedState extends State<AsmblCardEnhanced>
  if (_isHovered) {
  return [
  BoxShadow(
- color: colors.accent.withValues(alpha: 0.15),
+ color: colors.accent.withOpacity( 0.15),
  blurRadius: 12,
  offset: const Offset(0, 4),
  ),
@@ -264,7 +264,7 @@ class _AsmblCardEnhancedState extends State<AsmblCardEnhanced>
  if (_isHovered) {
  return [
  BoxShadow(
- color: colors.primary.withValues(alpha: 0.08),
+ color: colors.primary.withOpacity( 0.08),
  blurRadius: 8,
  offset: const Offset(0, 2),
  ),

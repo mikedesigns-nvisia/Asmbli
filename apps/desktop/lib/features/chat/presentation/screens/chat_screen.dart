@@ -116,8 +116,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Container(
  width: 48,
  decoration: BoxDecoration(
- color: theme.colorScheme.surface.withValues(alpha: 0.7),
- border: Border(right: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))),
+ color: theme.colorScheme.surface.withOpacity( 0.7),
+ border: Border(right: BorderSide(color: theme.colorScheme.outline.withOpacity( 0.3))),
  ),
  child: Column(
  children: [
@@ -125,9 +125,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  onPressed: () => setState(() => isSidebarCollapsed = false),
  icon: const Icon(Icons.chevron_right, size: 20),
  style: IconButton.styleFrom(
- backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
+ backgroundColor: theme.colorScheme.surface.withOpacity( 0.8),
  foregroundColor: theme.colorScheme.onSurfaceVariant,
- side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
+ side: BorderSide(color: theme.colorScheme.outline.withOpacity( 0.5)),
  ),
  ),
  ],
@@ -203,7 +203,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Container(
  padding: const EdgeInsets.all(6),
  decoration: BoxDecoration(
- color: _getConversationTypeColor(conversation, theme).withValues(alpha: 0.1),
+ color: _getConversationTypeColor(conversation, theme).withOpacity( 0.1),
  borderRadius: BorderRadius.circular(8),
  ),
  child: Icon(
@@ -263,10 +263,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
- color: _getConversationTypeColor(conversation, theme).withValues(alpha: 0.1),
+ color: _getConversationTypeColor(conversation, theme).withOpacity( 0.1),
  borderRadius: BorderRadius.circular(12),
  border: Border.all(
- color: _getConversationTypeColor(conversation, theme).withValues(alpha: 0.3),
+ color: _getConversationTypeColor(conversation, theme).withOpacity( 0.3),
  ),
  ),
  child: Row(
@@ -295,10 +295,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
  decoration: BoxDecoration(
- color: ThemeColors(context).success.withValues(alpha: 0.1),
+ color: ThemeColors(context).success.withOpacity( 0.1),
  borderRadius: BorderRadius.circular(8),
  border: Border.all(
- color: ThemeColors(context).success.withValues(alpha: 0.3),
+ color: ThemeColors(context).success.withOpacity( 0.3),
  ),
  ),
  child: Row(
@@ -503,7 +503,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        
        // Dropdown
        DropdownButtonFormField<String>(
-         initialValue: selectedModel?.id,
+         value: selectedModel?.id,
          decoration: InputDecoration(
            contentPadding: const EdgeInsets.symmetric(
              horizontal: SpacingTokens.sm,
@@ -598,7 +598,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                            decoration: BoxDecoration(
                              color: isReady 
                                ? ThemeColors(context).success
-                               : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                               : theme.colorScheme.onSurfaceVariant.withOpacity( 0.5),
                              shape: BoxShape.circle,
                            ),
                          );
@@ -609,7 +609,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                        Container(
                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                          decoration: BoxDecoration(
-                           color: ThemeColors(context).accent.withValues(alpha: 0.15),
+                           color: ThemeColors(context).accent.withOpacity( 0.15),
                            borderRadius: BorderRadius.circular(8),
                          ),
                          child: Text(
@@ -626,7 +626,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                        Container(
                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                          decoration: BoxDecoration(
-                           color: ThemeColors(context).primary.withValues(alpha: 0.15),
+                           color: ThemeColors(context).primary.withOpacity( 0.15),
                            borderRadius: BorderRadius.circular(8),
                          ),
                          child: Text(
@@ -679,7 +679,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
      return theme.colorScheme.onSurfaceVariant; // API models
    }
  default:
- return theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7);
+ return theme.colorScheme.onSurfaceVariant.withOpacity( 0.7);
  }
  }
 
@@ -759,8 +759,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  final theme = Theme.of(context);
  return Container(
  decoration: BoxDecoration(
- color: theme.colorScheme.surface.withValues(alpha: 0.7),
- border: Border(right: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))),
+ color: theme.colorScheme.surface.withOpacity( 0.7),
+ border: Border(right: BorderSide(color: theme.colorScheme.outline.withOpacity( 0.3))),
  ),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -875,7 +875,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Expanded(
  child: Container(
  decoration: BoxDecoration(
- color: theme.colorScheme.surface.withValues(alpha: 0.8),
+ color: theme.colorScheme.surface.withOpacity( 0.8),
  borderRadius: BorderRadius.circular(8),
  border: Border.all(color: theme.colorScheme.outline),
  ),
@@ -1109,7 +1109,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  color: isUser ? colorScheme.primary : colorScheme.surface,
  borderRadius: BorderRadius.circular(8),
  border: !isUser ? Border.all(
- color: colorScheme.outline.withValues(alpha: 0.3),
+ color: colorScheme.outline.withOpacity( 0.3),
  ) : null,
  ),
  child: Column(
@@ -1125,7 +1125,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Text(
  _formatTime(message.timestamp),
  style: theme.textTheme.bodySmall?.copyWith(
- color: (isUser ? colorScheme.onPrimary : colorScheme.onSurface).withValues(alpha: 0.7),
+ color: (isUser ? colorScheme.onPrimary : colorScheme.onSurface).withOpacity( 0.7),
   ),
  ),
  ],
@@ -1210,13 +1210,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
          color: agentType == 'agent' 
-           ? theme.colorScheme.primary.withValues(alpha: 0.08)
-           : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
+           ? theme.colorScheme.primary.withOpacity( 0.08)
+           : theme.colorScheme.onSurfaceVariant.withOpacity( 0.05),
          borderRadius: BorderRadius.circular(12),
          border: Border.all(
            color: agentType == 'agent' 
-             ? theme.colorScheme.primary.withValues(alpha: 0.2)
-             : theme.colorScheme.outline.withValues(alpha: 0.2),
+             ? theme.colorScheme.primary.withOpacity( 0.2)
+             : theme.colorScheme.outline.withOpacity( 0.2),
          ),
        ),
        child: Column(
@@ -1229,8 +1229,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                  padding: const EdgeInsets.all(8),
                  decoration: BoxDecoration(
                    color: agentType == 'agent'
-                     ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                     : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
+                     ? theme.colorScheme.primary.withOpacity( 0.1)
+                     : theme.colorScheme.onSurfaceVariant.withOpacity( 0.1),
                    borderRadius: BorderRadius.circular(8),
                  ),
                  child: Icon(
@@ -1371,7 +1371,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
    return Container(
      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
      decoration: BoxDecoration(
-       color: color.withValues(alpha: 0.1),
+       color: color.withOpacity( 0.1),
        borderRadius: BorderRadius.circular(12),
      ),
      child: Row(
@@ -1471,10 +1471,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
      child: Container(
        padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
-         color: theme.colorScheme.surface.withValues(alpha: 0.5),
+         color: theme.colorScheme.surface.withOpacity( 0.5),
          borderRadius: BorderRadius.circular(12),
          border: Border.all(
-           color: theme.colorScheme.outline.withValues(alpha: 0.2),
+           color: theme.colorScheme.outline.withOpacity( 0.2),
          ),
        ),
        child: Column(
@@ -1504,7 +1504,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
      child: Container(
        padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
-         color: theme.colorScheme.surface.withValues(alpha: 0.5),
+         color: theme.colorScheme.surface.withOpacity( 0.5),
          borderRadius: BorderRadius.circular(12),
        ),
        child: Row(
@@ -1533,7 +1533,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
      child: Container(
        padding: const EdgeInsets.all(SpacingTokens.cardPadding),
        decoration: BoxDecoration(
-         color: Colors.red.withValues(alpha: 0.1),
+         color: Colors.red.withOpacity( 0.1),
          borderRadius: BorderRadius.circular(12),
        ),
        child: Text(
@@ -1586,9 +1586,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
          ),
          padding: const EdgeInsets.all(SpacingTokens.cardPadding),
          decoration: BoxDecoration(
-           color: colors.surface.withValues(alpha: 0.8),
+           color: colors.surface.withOpacity( 0.8),
            borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-           border: Border.all(color: colors.border.withValues(alpha: 0.5)),
+           border: Border.all(color: colors.border.withOpacity( 0.5)),
          ),
          child: Column(
            crossAxisAlignment: CrossAxisAlignment.start,
@@ -1660,9 +1660,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
        vertical: SpacingTokens.xs,
      ),
      decoration: BoxDecoration(
-       color: statusColor.withValues(alpha: 0.1),
+       color: statusColor.withOpacity( 0.1),
        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-       border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+       border: Border.all(color: statusColor.withOpacity( 0.3)),
      ),
      child: Row(
        mainAxisSize: MainAxisSize.min,
@@ -2202,10 +2202,10 @@ Widget _buildPrimingStatusIndicator(BuildContext context, core.Conversation conv
  return Container(
    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
    decoration: BoxDecoration(
-     color: indicatorColor.withValues(alpha: 0.1),
+     color: indicatorColor.withOpacity( 0.1),
      borderRadius: BorderRadius.circular(8),
      border: Border.all(
-       color: indicatorColor.withValues(alpha: 0.3),
+       color: indicatorColor.withOpacity( 0.3),
      ),
    ),
    child: Row(

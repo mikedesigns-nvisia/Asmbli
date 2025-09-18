@@ -1093,7 +1093,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  decoration: BoxDecoration(
  color: isSelected 
  ? ThemeColors(context).primary 
- : ThemeColors(context).surfaceVariant.withValues(alpha: 0.7),
+ : ThemeColors(context).surfaceVariant.withOpacity( 0.7),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
  border: Border.all(
  color: isSelected 
@@ -1139,7 +1139,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  Icon(
  Icons.search_off,
  size: 48,
- color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
+ color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.5),
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
@@ -1178,7 +1178,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  Icon(
  Icons.smart_toy_outlined,
  size: 64,
- color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
+ color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.5),
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
@@ -1382,10 +1382,10 @@ This template gives you a starting point - modify it to create your perfect AI a
    
    return Container(
      decoration: BoxDecoration(
-       color: colors.surface.withValues(alpha: 0.1),
+       color: colors.surface.withOpacity( 0.1),
        border: Border(
          bottom: BorderSide(
-           color: colors.border.withValues(alpha: 0.2),
+           color: colors.border.withOpacity( 0.2),
          ),
        ),
      ),
@@ -1402,7 +1402,7 @@ This template gives you a starting point - modify it to create your perfect AI a
                  width: 40,
                  height: 40,
                  decoration: BoxDecoration(
-                   color: colors.primary.withValues(alpha: 0.1),
+                   color: colors.primary.withOpacity( 0.1),
                    borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                  ),
                  child: Icon(
@@ -1714,10 +1714,10 @@ class _AgentCard extends StatelessWidget {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
- color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
+ color: ThemeColors(context).surfaceVariant.withOpacity( 0.3),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  border: Border.all(
- color: ThemeColors(context).border.withValues(alpha: 0.5),
+ color: ThemeColors(context).border.withOpacity( 0.5),
  width: 0.5,
  ),
  ),

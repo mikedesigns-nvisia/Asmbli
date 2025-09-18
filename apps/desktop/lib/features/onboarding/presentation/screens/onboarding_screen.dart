@@ -257,7 +257,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                     vertical: SpacingTokens.xs,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: colors.primary.withValues(alpha: 0.1),
+                                    color: colors.primary.withOpacity( 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -287,10 +287,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             Container(
                               padding: const EdgeInsets.all(SpacingTokens.md),
                               decoration: BoxDecoration(
-                                color: colors.success.withValues(alpha: 0.1),
+                                color: colors.success.withOpacity( 0.1),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: colors.success.withValues(alpha: 0.3),
+                                  color: colors.success.withOpacity( 0.3),
                                 ),
                               ),
                               child: Row(
@@ -346,7 +346,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                         padding: const EdgeInsets.all(SpacingTokens.md),
                                         decoration: BoxDecoration(
                                           color: isSelected 
-                                            ? colors.primary.withValues(alpha: 0.1)
+                                            ? colors.primary.withOpacity( 0.1)
                                             : colors.surface,
                                           borderRadius: BorderRadius.circular(12),
                                           border: Border.all(
@@ -401,7 +401,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                                 style: TextStyles.caption.copyWith(
                                                   color: _ollamaAvailable 
                                                     ? colors.success 
-                                                    : colors.onSurfaceVariant.withValues(alpha: 0.7),
+                                                    : colors.onSurfaceVariant.withOpacity( 0.7),
                                                   fontSize: 10,
                                                 ),
                                                 textAlign: TextAlign.center,
@@ -436,7 +436,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 decoration: InputDecoration(
                                   hintText: 'sk-...',
                                   hintStyle: TextStyles.bodyMedium.copyWith(
-                                    color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+                                    color: colors.onSurfaceVariant.withOpacity( 0.5),
                                   ),
                                   filled: true,
                                   fillColor: colors.surface,
@@ -485,13 +485,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 padding: const EdgeInsets.all(SpacingTokens.md),
                                 decoration: BoxDecoration(
                                   color: _ollamaAvailable 
-                                    ? colors.success.withValues(alpha: 0.1)
-                                    : colors.warning.withValues(alpha: 0.1),
+                                    ? colors.success.withOpacity( 0.1)
+                                    : colors.warning.withOpacity( 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: _ollamaAvailable 
-                                      ? colors.success.withValues(alpha: 0.3)
-                                      : colors.warning.withValues(alpha: 0.3),
+                                      ? colors.success.withOpacity( 0.3)
+                                      : colors.warning.withOpacity( 0.3),
                                   ),
                                 ),
                                 child: Row(

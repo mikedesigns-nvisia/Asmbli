@@ -78,10 +78,10 @@ class _MyAgentsScreenCleanState extends ConsumerState<MyAgentsScreenClean> {
     
     return Container(
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.1),
+        color: colors.surface.withOpacity( 0.1),
         border: Border(
           bottom: BorderSide(
-            color: colors.border.withValues(alpha: 0.2),
+            color: colors.border.withOpacity( 0.2),
           ),
         ),
       ),
@@ -98,7 +98,7 @@ class _MyAgentsScreenCleanState extends ConsumerState<MyAgentsScreenClean> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: colors.primary.withValues(alpha: 0.1),
+                    color: colors.primary.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(

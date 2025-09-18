@@ -52,7 +52,7 @@ class ReviewComponent extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.primary.withValues(alpha: 0.1),
+            color: colors.primary.withOpacity( 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           ),
           child: Icon(
@@ -205,7 +205,7 @@ class ReviewComponent extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: colors.accent.withValues(alpha: 0.1),
+                    color: colors.accent.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Row(
@@ -303,7 +303,7 @@ class ReviewComponent extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: colors.primary.withValues(alpha: 0.1),
+                    color: colors.primary.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Text(
@@ -350,9 +350,9 @@ class ReviewComponent extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.md),
                 decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                  border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+                  border: Border.all(color: colors.primary.withOpacity( 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -383,9 +383,9 @@ class ReviewComponent extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.md),
                 decoration: BoxDecoration(
-                  color: colors.error.withValues(alpha: 0.1),
+                  color: colors.error.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                  border: Border.all(color: colors.error.withValues(alpha: 0.3)),
+                  border: Border.all(color: colors.error.withOpacity( 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

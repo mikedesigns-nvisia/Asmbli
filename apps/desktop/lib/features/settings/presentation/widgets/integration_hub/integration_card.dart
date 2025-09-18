@@ -40,7 +40,7 @@ class IntegrationCard extends StatelessWidget {
             boxShadow: [
               if (_shouldShowElevation())
                 BoxShadow(
-                  color: colors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withOpacity( 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -493,11 +493,11 @@ class IntegrationCard extends StatelessWidget {
   Color _getIconBackgroundColor(ThemeColors colors) {
     switch (_getIntegrationState()) {
       case IntegrationState.active:
-        return (colors.success ?? colors.primary).withValues(alpha: 0.1);
+        return (colors.success ?? colors.primary).withOpacity( 0.1);
       case IntegrationState.configured:
-        return (colors.warning ?? colors.primary).withValues(alpha: 0.1);
+        return (colors.warning ?? colors.primary).withOpacity( 0.1);
       case IntegrationState.suggested:
-        return colors.primary.withValues(alpha: 0.1);
+        return colors.primary.withOpacity( 0.1);
       case IntegrationState.available:
         return colors.surfaceVariant;
     }
@@ -661,7 +661,7 @@ class _InfoChip extends StatelessWidget {
         vertical: SpacingTokens.xs_precise,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Text(

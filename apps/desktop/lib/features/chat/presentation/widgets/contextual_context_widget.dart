@@ -72,9 +72,9 @@ class _ContextualInputAreaState extends ConsumerState<ContextualInputArea> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.md, vertical: SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: ThemeColors(context).primary.withValues(alpha: 0.1),
+        color: ThemeColors(context).primary.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
+        border: Border.all(color: ThemeColors(context).primary.withOpacity( 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +201,7 @@ class _ContextualInputAreaState extends ConsumerState<ContextualInputArea> {
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.1),
+                color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
               child: Icon(
@@ -235,9 +235,9 @@ class _ContextualInputAreaState extends ConsumerState<ContextualInputArea> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.md, vertical: SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+        color: Theme.of(context).colorScheme.surface.withOpacity( 0.8),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity( 0.3)),
       ),
       child: Row(
         children: [
@@ -297,7 +297,7 @@ class _ContextualInputAreaState extends ConsumerState<ContextualInputArea> {
         // Context attachment button
         Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+            color: Theme.of(context).colorScheme.surface.withOpacity( 0.8),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             border: Border.all(color: Theme.of(context).colorScheme.outline),
           ),
@@ -323,7 +323,7 @@ class _ContextualInputAreaState extends ConsumerState<ContextualInputArea> {
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+              color: Theme.of(context).colorScheme.surface.withOpacity( 0.8),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
@@ -481,7 +481,7 @@ class _ContextFlowModalState extends ConsumerState<ContextFlowModal> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.lg),
               decoration: BoxDecoration(
-                color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                color: ThemeColors(context).surface.withOpacity( 0.5),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(BorderRadiusTokens.lg),
                   topRight: Radius.circular(BorderRadiusTokens.lg),
@@ -597,7 +597,7 @@ class _ContextFlowModalState extends ConsumerState<ContextFlowModal> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                color: ThemeColors(context).primary.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Icon(
@@ -740,7 +740,7 @@ class _ContextFlowModalState extends ConsumerState<ContextFlowModal> {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.lg),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                  color: ThemeColors(context).surface.withOpacity( 0.5),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(BorderRadiusTokens.lg),
                     topRight: Radius.circular(BorderRadiusTokens.lg),

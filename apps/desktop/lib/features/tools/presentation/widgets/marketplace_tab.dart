@@ -79,7 +79,7 @@ class MarketplaceTab extends ConsumerWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: colors.success.withValues(alpha: 0.1),
+                color: colors.success.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
               ),
               child: Icon(
@@ -122,7 +122,7 @@ class MarketplaceTab extends ConsumerWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: colors.primary.withValues(alpha: 0.1),
+                    color: colors.primary.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
@@ -139,7 +139,7 @@ class MarketplaceTab extends ConsumerWidget {
                       vertical: SpacingTokens.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: colors.success.withValues(alpha: 0.1),
+                      color: colors.success.withOpacity( 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Text(
@@ -158,7 +158,7 @@ class MarketplaceTab extends ConsumerWidget {
                       vertical: SpacingTokens.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: colors.accent.withValues(alpha: 0.1),
+                      color: colors.accent.withOpacity( 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Text(
@@ -202,10 +202,10 @@ class MarketplaceTab extends ConsumerWidget {
                 vertical: SpacingTokens.xs,
               ),
               decoration: BoxDecoration(
-                color: colors.surface.withValues(alpha: 0.5),
+                color: colors.surface.withOpacity( 0.5),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(
-                  color: colors.border.withValues(alpha: 0.3),
+                  color: colors.border.withOpacity( 0.3),
                 ),
               ),
               child: Text(
@@ -275,10 +275,10 @@ class MarketplaceTab extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: colors.surface.withValues(alpha: 0.5),
+                color: colors.surface.withOpacity( 0.5),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(
-                  color: colors.border.withValues(alpha: 0.3),
+                  color: colors.border.withOpacity( 0.3),
                 ),
               ),
               child: Column(
@@ -350,7 +350,7 @@ class MarketplaceTab extends ConsumerWidget {
                   vertical: SpacingTokens.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.success.withValues(alpha: 0.1),
+                  color: colors.success.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(
@@ -396,10 +396,10 @@ class MarketplaceTab extends ConsumerWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: colors.surface.withValues(alpha: 0.5),
+                  color: colors.surface.withOpacity( 0.5),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   border: Border.all(
-                    color: colors.border.withValues(alpha: 0.3),
+                    color: colors.border.withOpacity( 0.3),
                   ),
                 ),
                 child: Text(

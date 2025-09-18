@@ -79,7 +79,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
           border: Border.all(color: SemanticColors.border),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withOpacity( 0.1),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -138,7 +138,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: SemanticColors.primary.withValues(alpha: 0.1),
+                  color: SemanticColors.primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
@@ -226,9 +226,9 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       decoration: BoxDecoration(
-        color: isActive ? SemanticColors.primary.withValues(alpha: 0.1) : Colors.transparent,
+        color: isActive ? SemanticColors.primary.withOpacity( 0.1) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
-        border: isActive ? Border.all(color: SemanticColors.primary.withValues(alpha: 0.2)) : null,
+        border: isActive ? Border.all(color: SemanticColors.primary.withOpacity( 0.2)) : null,
       ),
       child: ListTile(
         enabled: enabled,
@@ -237,7 +237,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
           size: 20,
           color: enabled
             ? (isActive ? SemanticColors.primary : SemanticColors.onSurfaceVariant)
-            : SemanticColors.onSurfaceVariant.withValues(alpha: 0.3),
+            : SemanticColors.onSurfaceVariant.withOpacity( 0.3),
         ),
         title: Text(
           label,
@@ -246,7 +246,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
             color: enabled
               ? (isActive ? SemanticColors.primary : SemanticColors.onSurface)
-              : SemanticColors.onSurfaceVariant.withValues(alpha: 0.5),
+              : SemanticColors.onSurfaceVariant.withOpacity( 0.5),
           ),
         ),
         onTap: enabled ? onTap : null,
@@ -261,7 +261,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       decoration: BoxDecoration(
-        color: isSelected ? category.color.withValues(alpha: 0.1) : Colors.transparent,
+        color: isSelected ? category.color.withOpacity( 0.1) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
       ),
       child: ListTile(
@@ -297,9 +297,9 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
+                color: Colors.green.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                border: Border.all(color: Colors.green.withOpacity( 0.3)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -327,7 +327,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: SemanticColors.background.withValues(alpha: 0.5),
+        color: SemanticColors.background.withOpacity( 0.5),
         border: const Border(bottom: BorderSide(color: SemanticColors.border)),
       ),
       child: Row(
@@ -394,8 +394,8 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  SemanticColors.primary.withValues(alpha: 0.2),
-                  SemanticColors.primary.withValues(alpha: 0.1),
+                  SemanticColors.primary.withOpacity( 0.2),
+                  SemanticColors.primary.withOpacity( 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(40),
@@ -520,12 +520,12 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: isSelected 
-                        ? category.color.withValues(alpha: 0.1)
+                        ? category.color.withOpacity( 0.1)
                         : SemanticColors.surface,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected 
-                          ? category.color.withValues(alpha: 0.5)
+                          ? category.color.withOpacity( 0.5)
                           : SemanticColors.border,
                         width: isSelected ? 2 : 1,
                       ),
@@ -536,7 +536,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: category.color.withValues(alpha: 0.15),
+                            color: category.color.withOpacity( 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
@@ -655,7 +655,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
         // Summary cards
         Container(
           padding: const EdgeInsets.all(24),
-          color: SemanticColors.background.withValues(alpha: 0.5),
+          color: SemanticColors.background.withOpacity( 0.5),
           child: Row(
             children: [
               Expanded(child: _buildSummaryCard(
@@ -694,12 +694,12 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                 margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
                   color: isFound 
-                    ? Colors.green.withValues(alpha: 0.05)
+                    ? Colors.green.withOpacity( 0.05)
                     : SemanticColors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isFound 
-                      ? Colors.green.withValues(alpha: 0.3)
+                      ? Colors.green.withOpacity( 0.3)
                       : SemanticColors.border,
                     width: 1.5,
                   ),
@@ -711,8 +711,8 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                     height: 48,
                     decoration: BoxDecoration(
                       color: isFound
-                        ? Colors.green.withValues(alpha: 0.15)
-                        : Colors.grey.withValues(alpha: 0.1),
+                        ? Colors.green.withOpacity( 0.15)
+                        : Colors.grey.withOpacity( 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -740,8 +740,8 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     decoration: BoxDecoration(
                       color: isFound 
-                        ? Colors.green.withValues(alpha: 0.15)
-                        : Colors.grey.withValues(alpha: 0.1),
+                        ? Colors.green.withOpacity( 0.15)
+                        : Colors.grey.withOpacity( 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -766,9 +766,9 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity( 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity( 0.3)),
       ),
       child: Row(
         children: [
@@ -805,7 +805,7 @@ class _EnhancedAutoDetectionModalState extends ConsumerState<EnhancedAutoDetecti
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: SemanticColors.background.withValues(alpha: 0.5),
+        color: SemanticColors.background.withOpacity( 0.5),
         border: const Border(top: BorderSide(color: SemanticColors.border)),
       ),
       child: Row(

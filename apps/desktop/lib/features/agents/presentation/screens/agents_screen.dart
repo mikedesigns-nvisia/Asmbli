@@ -92,8 +92,8 @@ class _StatsCard extends StatelessWidget {
  color: Colors.transparent,
  child: InkWell(
  borderRadius: BorderRadius.circular(12),
- hoverColor: theme.colorScheme.primary.withValues(alpha: 0.04),
- splashColor: theme.colorScheme.primary.withValues(alpha: 0.12),
+ hoverColor: theme.colorScheme.primary.withOpacity( 0.04),
+ splashColor: theme.colorScheme.primary.withOpacity( 0.12),
  onTap: () {
  // Add stats card interaction if needed
  },
@@ -148,8 +148,8 @@ class _AgentListItem extends StatelessWidget {
  color: Colors.transparent,
  child: InkWell(
  borderRadius: BorderRadius.circular(12),
- hoverColor: theme.colorScheme.primary.withValues(alpha: 0.04),
- splashColor: theme.colorScheme.primary.withValues(alpha: 0.12),
+ hoverColor: theme.colorScheme.primary.withOpacity( 0.04),
+ splashColor: theme.colorScheme.primary.withOpacity( 0.12),
  onTap: () {
  // Open agent details/chat
  },

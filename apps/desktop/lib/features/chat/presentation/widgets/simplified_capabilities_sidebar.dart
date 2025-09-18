@@ -33,9 +33,9 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
       duration: const Duration(milliseconds: 300),
       width: widget.isCollapsed ? 48 : 320,
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.95),
+        color: colors.surface.withOpacity( 0.95),
         border: Border(
-          right: BorderSide(color: colors.border.withValues(alpha: 0.3)),
+          right: BorderSide(color: colors.border.withOpacity( 0.3)),
         ),
       ),
       child: widget.isCollapsed 
@@ -54,7 +54,7 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: colors.primary.withValues(alpha: 0.1),
+            color: colors.primary.withOpacity( 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -71,7 +71,7 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
           onPressed: widget.onToggleCollapse,
           icon: const Icon(Icons.chevron_right, size: 18),
           style: IconButton.styleFrom(
-            backgroundColor: colors.primary.withValues(alpha: 0.1),
+            backgroundColor: colors.primary.withOpacity( 0.1),
             foregroundColor: colors.primary,
           ),
           tooltip: 'Show AI capabilities',
@@ -118,9 +118,9 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: colors.primary.withValues(alpha: 0.05),
+        color: colors.primary.withOpacity( 0.05),
         border: Border(
-          bottom: BorderSide(color: colors.border.withValues(alpha: 0.2)),
+          bottom: BorderSide(color: colors.border.withOpacity( 0.2)),
         ),
       ),
       child: Row(
@@ -128,7 +128,7 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: colors.primary.withValues(alpha: 0.1),
+              color: colors.primary.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -197,7 +197,7 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -292,9 +292,9 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
         Container(
           padding: const EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
-            color: colors.accent.withValues(alpha: 0.05),
+            color: colors.accent.withOpacity( 0.05),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
+            border: Border.all(color: colors.accent.withOpacity( 0.2)),
           ),
           child: Row(
             children: [
@@ -321,16 +321,16 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.5),
+        color: colors.surface.withOpacity( 0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: capability.color.withValues(alpha: 0.2)),
+        border: Border.all(color: capability.color.withOpacity( 0.2)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: capability.color.withValues(alpha: 0.1),
+              color: capability.color.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
@@ -365,7 +365,7 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
+                color: Colors.green.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -380,7 +380,7 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.1),
+                color: Colors.orange.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -401,9 +401,9 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.primary.withValues(alpha: 0.05),
+        color: colors.primary.withOpacity( 0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
+        border: Border.all(color: colors.primary.withOpacity( 0.2)),
       ),
       child: Row(
         children: [
@@ -439,9 +439,9 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.onSurfaceVariant.withValues(alpha: 0.05),
+        color: colors.onSurfaceVariant.withOpacity( 0.05),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: colors.border.withValues(alpha: 0.3)),
+        border: Border.all(color: colors.border.withOpacity( 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -496,9 +496,9 @@ class _SimplifiedCapabilitiesSidebarState extends ConsumerState<SimplifiedCapabi
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.3),
+        color: colors.surface.withOpacity( 0.3),
         border: Border(
-          top: BorderSide(color: colors.border.withValues(alpha: 0.2)),
+          top: BorderSide(color: colors.border.withOpacity( 0.2)),
         ),
       ),
       child: Row(

@@ -400,7 +400,7 @@ class _AgentPermissionsWidgetState extends ConsumerState<AgentPermissionsWidget>
                   vertical: 2,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -432,7 +432,7 @@ class _AgentPermissionsWidgetState extends ConsumerState<AgentPermissionsWidget>
                         Icon(
                           Icons.api,
                           size: 32,
-                          color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+                          color: colors.onSurfaceVariant.withOpacity( 0.5),
                         ),
                         const SizedBox(height: SpacingTokens.sm),
                         Text(
@@ -466,7 +466,7 @@ class _AgentPermissionsWidgetState extends ConsumerState<AgentPermissionsWidget>
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.surfaceVariant.withValues(alpha: 0.3),
+        color: colors.surfaceVariant.withOpacity( 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(color: colors.border),
       ),
@@ -478,7 +478,7 @@ class _AgentPermissionsWidgetState extends ConsumerState<AgentPermissionsWidget>
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.xs),
                 decoration: BoxDecoration(
-                  color: _getAPITypeColor(api.type, colors).withValues(alpha: 0.1),
+                  color: _getAPITypeColor(api.type, colors).withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
                 ),
                 child: Icon(
@@ -551,7 +551,7 @@ class _AgentPermissionsWidgetState extends ConsumerState<AgentPermissionsWidget>
             Container(
               padding: const EdgeInsets.all(SpacingTokens.xs),
               decoration: BoxDecoration(
-                color: colors.surface.withValues(alpha: 0.5),
+                color: colors.surface.withOpacity( 0.5),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
               ),
               child: Row(
@@ -632,7 +632,7 @@ class _AgentPermissionsWidgetState extends ConsumerState<AgentPermissionsWidget>
                         Icon(
                           Icons.timeline,
                           size: 32,
-                          color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+                          color: colors.onSurfaceVariant.withOpacity( 0.5),
                         ),
                         const SizedBox(height: SpacingTokens.sm),
                         Text(
@@ -687,9 +687,9 @@ class _AgentPermissionsWidgetState extends ConsumerState<AgentPermissionsWidget>
       margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: colors.surfaceVariant.withValues(alpha: 0.3),
+        color: colors.surfaceVariant.withOpacity( 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
-        border: Border.all(color: colors.border.withValues(alpha: 0.5)),
+        border: Border.all(color: colors.border.withOpacity( 0.5)),
       ),
       child: Row(
         children: [
@@ -756,7 +756,7 @@ class _AgentPermissionsWidgetState extends ConsumerState<AgentPermissionsWidget>
           Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: colors.surfaceVariant.withValues(alpha: 0.3),
+              color: colors.surfaceVariant.withOpacity( 0.3),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               border: Border.all(color: colors.border),
             ),
@@ -808,9 +808,9 @@ class _AgentPermissionsWidgetState extends ConsumerState<AgentPermissionsWidget>
           Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: colors.error.withValues(alpha: 0.05),
+              color: colors.error.withOpacity( 0.05),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-              border: Border.all(color: colors.error.withValues(alpha: 0.2)),
+              border: Border.all(color: colors.error.withOpacity( 0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -321,8 +321,8 @@ class _SecurityPolicyWidgetState extends ConsumerState<SecurityPolicyWidget>
                                 padding: const EdgeInsets.all(SpacingTokens.xs),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? colors.primary.withValues(alpha: 0.1)
-                                      : colors.surfaceVariant.withValues(alpha: 0.5),
+                                      ? colors.primary.withOpacity( 0.1)
+                                      : colors.surfaceVariant.withOpacity( 0.5),
                                   borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
                                   border: Border.all(
                                     color: isSelected ? colors.primary : colors.border,
@@ -564,7 +564,7 @@ class _SecurityPolicyWidgetState extends ConsumerState<SecurityPolicyWidget>
                         Icon(
                           Icons.folder_off,
                           size: 32,
-                          color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+                          color: colors.onSurfaceVariant.withOpacity( 0.5),
                         ),
                         const SizedBox(height: SpacingTokens.sm),
                         Text(
@@ -577,7 +577,7 @@ class _SecurityPolicyWidgetState extends ConsumerState<SecurityPolicyWidget>
                         Text(
                           'Add paths to restrict file system access',
                           style: TextStyles.bodySmall.copyWith(
-                            color: colors.onSurfaceVariant.withValues(alpha: 0.7),
+                            color: colors.onSurfaceVariant.withOpacity( 0.7),
                           ),
                         ),
                       ],
@@ -676,7 +676,7 @@ class _SecurityPolicyWidgetState extends ConsumerState<SecurityPolicyWidget>
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: colors.surfaceVariant.withValues(alpha: 0.3),
+                color: colors.surfaceVariant.withOpacity( 0.3),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(color: colors.border),
               ),
@@ -797,7 +797,7 @@ class _SecurityPolicyWidgetState extends ConsumerState<SecurityPolicyWidget>
           Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: colors.surfaceVariant.withValues(alpha: 0.3),
+              color: colors.surfaceVariant.withOpacity( 0.3),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               border: Border.all(color: colors.border),
             ),
@@ -980,7 +980,7 @@ class _SecurityPolicyWidgetState extends ConsumerState<SecurityPolicyWidget>
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: colors.surfaceVariant.withValues(alpha: 0.3),
+        color: colors.surfaceVariant.withOpacity( 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(color: colors.border),
       ),
@@ -1037,7 +1037,7 @@ class _SecurityPolicyWidgetState extends ConsumerState<SecurityPolicyWidget>
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: colors.surfaceVariant.withValues(alpha: 0.3),
+        color: colors.surfaceVariant.withOpacity( 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(color: colors.border),
       ),

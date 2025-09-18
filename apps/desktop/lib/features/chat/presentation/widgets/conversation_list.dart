@@ -90,9 +90,9 @@ class ConversationList extends ConsumerWidget {
  width: 80,
  height: 80,
  decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
+ color: ThemeColors(context).primary.withOpacity( 0.1),
  borderRadius: BorderRadius.circular(40),
- border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.2)),
+ border: Border.all(color: ThemeColors(context).primary.withOpacity( 0.2)),
  ),
  child: Icon(
  Icons.chat_bubble_outline,
@@ -219,8 +219,8 @@ class _ConversationItem extends ConsumerWidget {
  onTap: onTap,
  onLongPress: () => _showContextMenu(context),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- hoverColor: ThemeColors(context).primary.withValues(alpha: 0.04),
- splashColor: ThemeColors(context).primary.withValues(alpha: 0.12),
+ hoverColor: ThemeColors(context).primary.withOpacity( 0.04),
+ splashColor: ThemeColors(context).primary.withOpacity( 0.12),
  child: Container(
  padding: const EdgeInsets.all(SpacingTokens.md),
  decoration: BoxDecoration(
@@ -229,8 +229,8 @@ class _ConversationItem extends ConsumerWidget {
  ? Border.all(color: ThemeColors(context).primary, width: 2)
  : Border.all(color: ThemeColors(context).border),
  color: isSelected 
- ? ThemeColors(context).primary.withValues(alpha: 0.05)
- : ThemeColors(context).surface.withValues(alpha: 0.5),
+ ? ThemeColors(context).primary.withOpacity( 0.05)
+ : ThemeColors(context).surface.withOpacity( 0.5),
  ),
  child: _buildConversationContent(context, ref),
  ),
@@ -276,10 +276,10 @@ class _ConversationItem extends ConsumerWidget {
  width: 32,
  height: 32,
  decoration: BoxDecoration(
- color: _getAgentColor(agent, context).withValues(alpha: 0.1),
+ color: _getAgentColor(agent, context).withOpacity( 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  border: Border.all(
- color: _getAgentColor(agent, context).withValues(alpha: 0.3),
+ color: _getAgentColor(agent, context).withOpacity( 0.3),
  width: 1,
  ),
  ),
@@ -376,7 +376,7 @@ class _ConversationItem extends ConsumerWidget {
  margin: const EdgeInsets.only(right: 4),
  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
  decoration: BoxDecoration(
- color: _getAgentColor(agent, context).withValues(alpha: 0.1),
+ color: _getAgentColor(agent, context).withOpacity( 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Text(
@@ -603,7 +603,7 @@ class _ConversationItem extends ConsumerWidget {
  case 'default_api':
  return ThemeColors(context).onSurfaceVariant;
  default:
- return ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.7);
+ return ThemeColors(context).onSurfaceVariant.withOpacity( 0.7);
  }
  }
 
