@@ -36,19 +36,19 @@ const downloads: DownloadOption[] = [
   },
   {
     platform: 'macOS',
-    version: '1.0.0',
-    size: '~53MB',
+    version: '0.9.0',
+    size: '~24MB',
     format: 'DMG Installer',
-    filename: 'AgentEngine-1.0.0-macOS-Debug.dmg',
+    filename: 'Asmbli-Beta-0.9.0-macOS.dmg',
     available: true,
     recommended: true,
     requirements: [
       'macOS 11.0 (Big Sur) or later',
       'Intel x64 or Apple Silicon (M1/M2/M3)',
-      '4GB RAM (8GB recommended)',
+      '8GB RAM (16GB recommended)',
       '200MB available disk space'
     ],
-    downloadUrl: '/downloads/AgentEngine-1.0.0-macOS-Debug.dmg'
+    downloadUrl: '/downloads/Asmbli-Beta-0.9.0-macOS.dmg'
   }
 ];
 
