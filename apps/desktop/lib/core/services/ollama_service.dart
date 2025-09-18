@@ -306,9 +306,32 @@ class OllamaService {
     String? systemPrompt,
   }) async {
     try {
+      // Build messages array for chat endpoint
+      final chatMessages = <Map<String, String>>[];
+
+      // Add system prompt if provided
+      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
+        chatMessages.add({
+          'role': 'system',
+          'content': systemPrompt,
+        });
+      }
+
+      // Add conversation history if provided
+      if (messages != null && messages.isNotEmpty) {
+        chatMessages.addAll(messages);
+      }
+
+      // Add the current user message
+      chatMessages.add({
+        'role': 'user',
+        'content': prompt,
+      });
+
+      // Use chat endpoint for proper conversation handling
       final requestData = <String, dynamic>{
         'model': model,
-        'prompt': prompt,
+        'messages': chatMessages,
         'stream': false,
         'options': {
           'temperature': 0.7,
@@ -316,14 +339,12 @@ class OllamaService {
         },
       };
 
-      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
-        requestData['system'] = systemPrompt;
-      }
-
-      final response = await _dio.post('/api/generate', data: requestData);
+      final response = await _dio.post('/api/chat', data: requestData);
       final data = response.data as Map<String, dynamic>;
-      
-      return data['response'] as String? ?? '';
+
+      // Chat endpoint returns message object
+      final message = data['message'] as Map<String, dynamic>?;
+      return message?['content'] as String? ?? '';
     } catch (e) {
       debugPrint('Failed to generate response: $e');
       rethrow;
@@ -338,9 +359,32 @@ class OllamaService {
     String? systemPrompt,
   }) async* {
     try {
+      // Build messages array for chat endpoint
+      final chatMessages = <Map<String, String>>[];
+
+      // Add system prompt if provided
+      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
+        chatMessages.add({
+          'role': 'system',
+          'content': systemPrompt,
+        });
+      }
+
+      // Add conversation history if provided
+      if (messages != null && messages.isNotEmpty) {
+        chatMessages.addAll(messages);
+      }
+
+      // Add the current user message
+      chatMessages.add({
+        'role': 'user',
+        'content': prompt,
+      });
+
+      // Use chat endpoint for proper conversation handling
       final requestData = <String, dynamic>{
         'model': model,
-        'prompt': prompt,
+        'messages': chatMessages,
         'stream': true,
         'options': {
           'temperature': 0.7,
@@ -348,12 +392,8 @@ class OllamaService {
         },
       };
 
-      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
-        requestData['system'] = systemPrompt;
-      }
-
       final response = await _dio.post(
-        '/api/generate',
+        '/api/chat',
         data: requestData,
         options: Options(responseType: ResponseType.stream),
       );
@@ -369,10 +409,12 @@ class OllamaService {
             try {
               final data = json.decode(line) as Map<String, dynamic>;
               
-              if (data.containsKey('response')) {
-                final responseText = data['response'] as String?;
-                if (responseText != null && responseText.isNotEmpty) {
-                  yield responseText;
+              // Chat endpoint returns message object when streaming
+              if (data.containsKey('message')) {
+                final message = data['message'] as Map<String, dynamic>?;
+                final content = message?['content'] as String?;
+                if (content != null && content.isNotEmpty) {
+                  yield content;
                 }
               }
               

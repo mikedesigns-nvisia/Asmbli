@@ -29,26 +29,26 @@ const downloads: DownloadOption[] = [
     recommended: true,
     requirements: [
       'Windows 10 64-bit or Windows 11',
-      '4GB RAM (8GB recommended)',
-      '200MB available disk space'
+      '8GB RAM minimum (16GB recommended)',
+      '10GB available disk space (for AI models)'
     ],
     downloadUrl: '/downloads/Asmbli-1.0.0-windows-x64.zip'
   },
   {
     platform: 'macOS',
-    version: '1.0.0',
-    size: '~53MB',
-    format: 'DMG Installer',
-    filename: 'AgentEngine-1.0.0-macOS-Debug.dmg',
+    version: '0.9.0 Beta',
+    size: '~145MB',
+    format: 'ZIP Archive',
+    filename: 'Asmbli-Beta-0.9.0-macOS-unsigned.zip',
     available: true,
     recommended: true,
     requirements: [
-      'macOS 11.0 (Big Sur) or later',
+      'macOS 10.15 (Catalina) or later',
       'Intel x64 or Apple Silicon (M1/M2/M3)',
-      '4GB RAM (8GB recommended)',
-      '200MB available disk space'
+      '8GB RAM minimum (16GB recommended)',
+      '10GB available disk space (for AI models)'
     ],
-    downloadUrl: '/downloads/AgentEngine-1.0.0-macOS-Debug.dmg'
+    downloadUrl: 'https://github.com/WereNext/AgentEngine/releases/download/v0.9.0-beta/Asmbli-Beta-0.9.0-macOS-unsigned.zip'
   }
 ];
 
@@ -258,8 +258,8 @@ export default function DownloadSection() {
                       1
                     </div>
                     <div>
-                      <h4 className="font-semibold">Download & Install</h4>
-                      <p className="text-sm text-neutral-600">Open DMG file and drag AgentEngine.app to Applications folder. ZIP version available on GitHub releases.</p>
+                      <h4 className="font-semibold">Download & Extract</h4>
+                      <p className="text-sm text-neutral-600">Download ZIP file and extract Asmbli.app, then drag to Applications folder.</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
@@ -267,8 +267,8 @@ export default function DownloadSection() {
                       2
                     </div>
                     <div>
-                      <h4 className="font-semibold">First Launch</h4>
-                      <p className="text-sm text-neutral-600">Right-click → Open to bypass Gatekeeper, then grant permissions</p>
+                      <h4 className="font-semibold">First Launch (Important!)</h4>
+                      <p className="text-sm text-neutral-600"><strong>Right-click → Open</strong> to bypass Gatekeeper for unsigned beta build</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
@@ -288,7 +288,8 @@ export default function DownloadSection() {
             <div className="mt-8 p-4 bg-neutral-50 rounded-lg">
               <h4 className="font-semibold mb-2">macOS Troubleshooting</h4>
               <div className="text-sm text-neutral-600 space-y-1">
-                <p><strong>"App is damaged":</strong> Run <code className="bg-white px-1 rounded">sudo xattr -rd com.apple.quarantine /Applications/AgentEngine.app</code></p>
+                <p><strong>Beta Build:</strong> This is an unsigned build - requires right-click → Open on first launch</p>
+                <p><strong>"App is damaged":</strong> Run <code className="bg-white px-1 rounded">sudo xattr -rd com.apple.quarantine /Applications/Asmbli.app</code></p>
                 <p><strong>Permission issues:</strong> Allow app in System Settings → Privacy & Security</p>
               </div>
             </div>

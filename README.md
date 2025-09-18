@@ -27,12 +27,24 @@ Asmbli is a professional-grade AI agent builder that democratizes AI agent creat
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### System Requirements
+
+#### Hardware
+- **RAM**:
+  - Minimum: 8GB
+  - Recommended: 16GB or more (for better performance with local AI models)
+- **Storage**: 10GB free space (additional space needed for AI models)
+- **Processor**: 64-bit processor with 4+ cores recommended
+
+#### Software Prerequisites
 
 - **Flutter**: `>=3.0.0 <4.0.0`
 - **Dart**: `>=3.0.0 <4.0.0`
 - **Node.js**: `>=18.0.0` (for build tools)
 - **Git**: For version control
+- **macOS**: 10.15 (Catalina) or later
+- **Windows**: Windows 10 version 1803 or later
+- **Linux**: Ubuntu 18.04 LTS or equivalent
 
 ### 🖥️ Desktop Application Setup
 

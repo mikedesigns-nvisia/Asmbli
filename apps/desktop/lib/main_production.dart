@@ -465,14 +465,14 @@ class _ProductionHomeScreenState extends ConsumerState<ProductionHomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Welcome to your AI workspace',
+          'Asmbli Beta',
           style: TextStyles.pageTitle.copyWith(
             color: colors.onSurface,
           ),
         ),
         const SizedBox(height: SpacingTokens.iconSpacing),
         Text(
-          'Build, chat, and collaborate with intelligent agents',
+          'Your powerful AI workspace • Min 8GB RAM • Recommended 16GB+',
           style: TextStyles.bodyLarge.copyWith(
             color: colors.onSurfaceVariant,
           ),

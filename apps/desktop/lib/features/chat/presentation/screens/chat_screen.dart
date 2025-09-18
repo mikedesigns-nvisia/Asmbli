@@ -1764,9 +1764,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  conversationId: selectedConversationId,
  content: messageController.text.trim(),
  );
- 
+
  final messageContent = messageController.text.trim();
  messageController.clear();
+
+ // Force refresh of messages to show the user's message immediately
+ ref.invalidate(messagesProvider(selectedConversationId));
  
  // Get conversation details to check if it's an agent conversation
  final conversation = await ref.read(conversationProvider(selectedConversationId).future);

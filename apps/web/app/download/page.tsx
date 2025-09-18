@@ -33,14 +33,16 @@ export default function DownloadPage() {
             Download Asmbli
           </h1>
           <p className="text-xl text-neutral-300 max-w-3xl mx-auto mb-8">
-            Professional AI agent deployment platform. Build, deploy, and manage 
+            Professional AI agent deployment platform. Build, deploy, and manage
             specialized AI agents with enterprise-grade tools and security.
+            <br />
+            <span className="text-amber-400 font-semibold">Now available for macOS Beta!</span>
           </p>
           <div className="flex justify-center gap-6 text-sm text-neutral-400">
             <span>✓ 20+ Agent Templates</span>
             <span>✓ MCP Integration</span>
             <span>✓ Professional Tools</span>
-            <span>✓ Enterprise Security</span>
+            <span>✓ macOS Beta Available</span>
           </div>
         </div>
       </div>
@@ -89,12 +91,12 @@ export default function DownloadPage() {
 
             <div>
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                When will the macOS version be available?
+                What about the macOS Beta version?
               </h3>
               <p className="text-neutral-600">
-                The macOS version requires a macOS development environment for building. 
-                We're working on setting up proper macOS builds and expect to release it soon. 
-                Follow our GitHub for updates.
+                Asmbli Beta v0.9.0 is now available for macOS! This is an unsigned beta build,
+                so you'll need to right-click → Open on first launch to bypass Gatekeeper.
+                Includes all the latest features with improved local AI model support.
               </p>
             </div>
 

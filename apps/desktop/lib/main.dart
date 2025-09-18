@@ -485,14 +485,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
  children: [
  // Welcome Section
  Text(
- 'Welcome back!',
+ 'Asmbli Beta',
  style: TextStyles.pageTitle.copyWith(
  color: colors.onSurface,
  ),
  ),
  const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
- 'Manage your AI agents, conversations, and knowledge base',
+ 'Your powerful AI workspace for agents, conversations, and knowledge',
  style: TextStyles.bodyLarge.copyWith(
  color: colors.onSurfaceVariant,
  ),

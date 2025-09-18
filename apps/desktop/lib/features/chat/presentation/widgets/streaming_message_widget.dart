@@ -486,14 +486,7 @@ class StreamingMessageWidget extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            width: 12,
-            height: 12,
-            child: CircularProgressIndicator(
-              color: ThemeColors(context).primary,
-              strokeWidth: 2,
-            ),
-          ),
+          _PulsingCircle(),
           const SizedBox(width: SpacingTokens.xs),
           Text(
             'Processing with MCP servers...',
@@ -650,6 +643,72 @@ class _AnimatedStreamingCursorState extends State<AnimatedStreamingCursor>
           decoration: BoxDecoration(
             color: ThemeColors(context).primary.withOpacity( _animation.value),
             borderRadius: BorderRadius.circular(1),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Theme-aware pulsing circle indicator
+class _PulsingCircle extends StatefulWidget {
+  const _PulsingCircle();
+
+  @override
+  State<_PulsingCircle> createState() => _PulsingCircleState();
+}
+
+class _PulsingCircleState extends State<_PulsingCircle>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    _animation = Tween<double>(
+      begin: 0.8,
+      end: 1.2,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+    _controller.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _animation.value,
+          child: Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colors.primary.withOpacity(0.8),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.primary.withOpacity(0.3),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
           ),
         );
       },
