@@ -36,19 +36,19 @@ const downloads: DownloadOption[] = [
   },
   {
     platform: 'macOS',
-    version: '0.9.0 Beta',
-    size: '~145MB',
-    format: 'ZIP Archive',
-    filename: 'Asmbli-Beta-0.9.0-macOS-unsigned.zip',
+    version: '0.9.0',
+    size: '~24MB',
+    format: 'DMG Installer',
+    filename: 'Asmbli-Beta-0.9.0-macOS.dmg',
     available: true,
     recommended: true,
     requirements: [
       'macOS 10.15 (Catalina) or later',
       'Intel x64 or Apple Silicon (M1/M2/M3)',
-      '8GB RAM minimum (16GB recommended)',
-      '10GB available disk space (for AI models)'
+      '8GB RAM (16GB recommended)',
+      '200MB available disk space'
     ],
-    downloadUrl: 'https://github.com/WereNext/AgentEngine/releases/download/v0.9.0-beta/Asmbli-Beta-0.9.0-macOS-unsigned.zip'
+    downloadUrl: '/downloads/Asmbli-Beta-0.9.0-macOS.dmg'
   }
 ];
 
