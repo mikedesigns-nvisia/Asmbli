@@ -4,19 +4,19 @@
 <dict>
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
-	<key>com.apple.security.network.client</key>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.asmbli.agentengine</string>
+	</array>
+	<key>com.apple.security.files.downloads.read-write</key>
 	<true/>
 	<key>com.apple.security.files.user-selected.read-write</key>
-	<true/>
-	<key>com.apple.security.files.downloads.read-write</key>
 	<true/>
 	<key>com.apple.security.keychain-access-groups</key>
 	<array>
 		<string>$(AppIdentifierPrefix)com.asmbli.agentengine.desktop</string>
 	</array>
-	<key>com.apple.security.application-groups</key>
-	<array>
-		<string>group.com.asmbli.agentengine</string>
-	</array>
+	<key>com.apple.security.network.client</key>
+	<true/>
 </dict>
 </plist>
