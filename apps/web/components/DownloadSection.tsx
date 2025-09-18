@@ -37,15 +37,18 @@ const downloads: DownloadOption[] = [
   {
     platform: 'macOS',
     version: '1.0.0',
-    size: '~30MB',
+    size: '~46MB',
     format: 'DMG Installer',
-    filename: 'Asmbli-1.0.0-macos-universal.dmg',
-    available: false,
+    filename: 'AgentEngine-1.0.0-macOS-Debug.dmg',
+    available: true,
+    recommended: true,
     requirements: [
       'macOS 10.15 (Catalina) or later',
       'Intel x64 or Apple Silicon (M1/M2/M3)',
-      '4GB RAM (8GB recommended)'
-    ]
+      '4GB RAM (8GB recommended)',
+      '200MB available disk space'
+    ],
+    downloadUrl: '/downloads/AgentEngine-1.0.0-macOS-Debug.dmg'
   }
 ];
 
@@ -76,7 +79,7 @@ export default function DownloadSection() {
   const handleDownload = (download: DownloadOption) => {
     if (!download.available) {
       // Could show coming soon modal or newsletter signup
-      alert('macOS version coming soon! Follow us for updates.');
+      alert('This platform is coming soon! Follow us for updates.');
       return;
     }
     
@@ -190,7 +193,7 @@ export default function DownloadSection() {
 
                 {!download.available && (
                   <p className="text-xs text-neutral-500 text-center">
-                    macOS build requires macOS development environment. Stay tuned!
+                    This platform is coming soon. Stay tuned!
                   </p>
                 )}
               </CardContent>
@@ -217,39 +220,98 @@ export default function DownloadSection() {
         </div>
 
         {/* Installation Instructions */}
-        <Card className="max-w-4xl mx-auto">
+        <Card className="max-w-6xl mx-auto">
           <CardHeader>
-            <CardTitle>Quick Start Guide</CardTitle>
+            <CardTitle>Installation Guide</CardTitle>
             <CardDescription>Get up and running in under 5 minutes</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center mx-auto mb-3 font-bold">
-                  1
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Windows Instructions */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <div className="w-6 h-6 rounded bg-neutral-900 flex items-center justify-center">
+                    <span className="text-white font-bold text-xs">WIN</span>
+                  </div>
+                  Windows Installation
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
+                      1
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Download & Extract</h4>
+                      <p className="text-sm text-neutral-600">Download the ZIP file and extract to your preferred location</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
+                      2
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Launch & Configure</h4>
+                      <p className="text-sm text-neutral-600">Run the executable and follow the setup wizard to add your API keys</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
+                      3
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Deploy Agents</h4>
+                      <p className="text-sm text-neutral-600">Choose from 20+ agent templates and start your first conversation</p>
+                    </div>
+                  </div>
                 </div>
-                <h4 className="font-semibold mb-2">Download & Extract</h4>
-                <p className="text-sm text-neutral-600">
-                  Download the ZIP file and extract to your preferred location
-                </p>
               </div>
-              <div className="text-center">
-                <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center mx-auto mb-3 font-bold">
-                  2
+
+              {/* macOS Instructions */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <div className="w-6 h-6 rounded bg-neutral-900 flex items-center justify-center">
+                    <span className="text-white font-bold text-xs">MAC</span>
+                  </div>
+                  macOS Installation
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
+                      1
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Download & Install</h4>
+                      <p className="text-sm text-neutral-600">Open DMG file and drag AgentEngine.app to Applications folder. ZIP version available on GitHub releases.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
+                      2
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">First Launch</h4>
+                      <p className="text-sm text-neutral-600">Right-click → Open to bypass Gatekeeper, then grant permissions</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
+                      3
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Start Building</h4>
+                      <p className="text-sm text-neutral-600">Configure your API keys and create your first AI agent</p>
+                    </div>
+                  </div>
                 </div>
-                <h4 className="font-semibold mb-2">Launch & Configure</h4>
-                <p className="text-sm text-neutral-600">
-                  Run the executable and follow the setup wizard to add your API keys
-                </p>
               </div>
-              <div className="text-center">
-                <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center mx-auto mb-3 font-bold">
-                  3
-                </div>
-                <h4 className="font-semibold mb-2">Deploy Agents</h4>
-                <p className="text-sm text-neutral-600">
-                  Choose from 20+ agent templates and start your first conversation
-                </p>
+            </div>
+
+            {/* Troubleshooting */}
+            <div className="mt-8 p-4 bg-neutral-50 rounded-lg">
+              <h4 className="font-semibold mb-2">macOS Troubleshooting</h4>
+              <div className="text-sm text-neutral-600 space-y-1">
+                <p><strong>"App is damaged":</strong> Run <code className="bg-white px-1 rounded">sudo xattr -rd com.apple.quarantine /Applications/AgentEngine.app</code></p>
+                <p><strong>Permission issues:</strong> Allow app in System Settings → Privacy & Security</p>
               </div>
             </div>
           </CardContent>
