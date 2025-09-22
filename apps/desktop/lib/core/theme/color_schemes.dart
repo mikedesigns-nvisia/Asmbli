@@ -378,7 +378,7 @@ class AppColorSchemes {
         brightness: brightness,
         primary: primary,
         onPrimary: onPrimary,
-        secondary: isDark ? surface.withValues(alpha: 0.8) : surfaceVariant,
+        secondary: isDark ? surface.withOpacity(0.8) : surfaceVariant,
         onSecondary: onSurface,
         tertiary: accent,
         onTertiary: onAccent,
@@ -407,14 +407,11 @@ class AppColorSchemes {
       ),
 
       // Card Theme
-      cardTheme: CardThemeData(
+      cardTheme: const CardTheme(
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: border.withValues(alpha: 0.5)),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
-        color: surface,
-        surfaceTintColor: Colors.transparent,
         margin: EdgeInsets.zero,
       ),
 

@@ -29,13 +29,13 @@ class ModelWarmupStatusIndicator extends ConsumerWidget {
           ),
           decoration: BoxDecoration(
             color: hasError 
-                ? ThemeColors(context).error.withValues(alpha: 0.1)
-                : ThemeColors(context).primary.withValues(alpha: 0.1),
+                ? ThemeColors(context).error.withOpacity(0.1)
+                : ThemeColors(context).primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             border: Border.all(
               color: hasError 
-                  ? ThemeColors(context).error.withValues(alpha: 0.3)
-                  : ThemeColors(context).primary.withValues(alpha: 0.3),
+                  ? ThemeColors(context).error.withOpacity(0.3)
+                  : ThemeColors(context).primary.withOpacity(0.3),
             ),
           ),
           child: Row(

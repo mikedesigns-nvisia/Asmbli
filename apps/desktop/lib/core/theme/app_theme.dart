@@ -76,7 +76,7 @@ class AppTheme {
  elevation: 0,
  shape: RoundedRectangleBorder(
  borderRadius: BorderRadius.circular(12),
- side: BorderSide(color: lightBorder.withValues(alpha: 0.5)),
+ side: BorderSide(color: lightBorder.withOpacity(0.5)),
  ),
  color: lightCard,
  surfaceTintColor: Colors.transparent,
@@ -280,7 +280,7 @@ class AppTheme {
  elevation: 0,
  shape: RoundedRectangleBorder(
  borderRadius: BorderRadius.circular(12),
- side: BorderSide(color: const Color(0xFF2B3F33).withValues(alpha: 0.5)),
+ side: BorderSide(color: const Color(0xFF2B3F33).withOpacity(0.5)),
  ),
  color: darkCard,
  surfaceTintColor: Colors.transparent,

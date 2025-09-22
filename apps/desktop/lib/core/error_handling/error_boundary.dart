@@ -105,7 +105,7 @@ class _DefaultErrorWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: colors.error.withValues(alpha: 0.1),
+              color: colors.error.withOpacity(0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
             child: Icon(

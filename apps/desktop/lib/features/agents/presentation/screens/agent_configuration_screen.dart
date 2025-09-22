@@ -146,7 +146,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  vertical: SpacingTokens.elementSpacing,
  ),
  decoration: BoxDecoration(
- color: ThemeColors(context).surface.withValues(alpha: 0.95),
+ color: ThemeColors(context).surface.withOpacity(0.95),
  border: Border(
  bottom: BorderSide(
  color: ThemeColors(context).border,
@@ -304,7 +304,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  Container(
  width: 280,
  decoration: BoxDecoration(
- color: ThemeColors(context).surface.withValues(alpha: 0.3),
+ color: ThemeColors(context).surface.withOpacity(0.3),
  border: Border(
  left: BorderSide(color: ThemeColors(context).border, width: 1),
  right: BorderSide(color: ThemeColors(context).border, width: 1),
@@ -375,7 +375,7 @@ class _AgentConfigurationScreenState extends ConsumerState<AgentConfigurationScr
  Container(
  width: 320,
  decoration: BoxDecoration(
- color: ThemeColors(context).surface.withValues(alpha: 0.3),
+ color: ThemeColors(context).surface.withOpacity(0.3),
  ),
  padding: const EdgeInsets.all(SpacingTokens.lg),
  child: const Column(
@@ -829,7 +829,7 @@ class _CompactSectionHeader extends StatelessWidget {
  child: Icon(
  Icons.help_outline,
  size: 16,
- color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.6),
+ color: ThemeColors(context).onSurfaceVariant.withOpacity(0.6),
  ),
  ),
  ],
@@ -933,8 +933,8 @@ class _CapabilityToggle extends StatelessWidget {
  ),
  decoration: BoxDecoration(
  color: value 
- ? ThemeColors(context).primary.withValues(alpha: 0.1) 
- : ThemeColors(context).surfaceVariant.withValues(alpha: 0.5),
+ ? ThemeColors(context).primary.withOpacity(0.1) 
+ : ThemeColors(context).surfaceVariant.withOpacity(0.5),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
  border: Border.all(
  color: value 
@@ -991,13 +991,13 @@ class _CompactMCPServerItem extends StatelessWidget {
  ),
  decoration: BoxDecoration(
  color: isSelected 
- ? ThemeColors(context).primary.withValues(alpha: 0.1) 
- : ThemeColors(context).surface.withValues(alpha: 0.5),
+ ? ThemeColors(context).primary.withOpacity(0.1) 
+ : ThemeColors(context).surface.withOpacity(0.5),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  border: Border.all(
  color: isSelected 
  ? ThemeColors(context).primary 
- : ThemeColors(context).border.withValues(alpha: 0.5),
+ : ThemeColors(context).border.withOpacity(0.5),
  ),
  ),
  child: Column(
@@ -1099,7 +1099,7 @@ class _FormField extends StatelessWidget {
  decoration: InputDecoration(
  hintText: placeholder,
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
+ color: ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
  ),
  filled: true,
  fillColor: ThemeColors(context).surface,
@@ -1295,7 +1295,7 @@ class _SwitchField extends StatelessWidget {
  Switch(
  value: value,
  onChanged: onChanged,
- activeThumbColor: ThemeColors(context).primary,
+ 
  ),
  ],
  ),
@@ -1413,23 +1413,23 @@ class _GuidedPersonalityConfig extends StatelessWidget {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
- color: colors.primary.withValues(alpha: 0.05),
+ color: colors.primary.withOpacity(0.05),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- border: Border.all(color: colors.primary.withValues(alpha: 0.1)),
+ border: Border.all(color: colors.primary.withOpacity(0.1)),
  ),
  child: Row(
  children: [
  Icon(
  Icons.auto_awesome,
  size: 16,
- color: colors.primary.withValues(alpha: 0.7),
+ color: colors.primary.withOpacity(0.7),
  ),
  const SizedBox(width: SpacingTokens.xs),
  Expanded(
  child: Text(
  "We'll create the perfect instructions for your agent based on these choices",
  style: TextStyles.caption.copyWith(
- color: colors.primary.withValues(alpha: 0.8),
+ color: colors.primary.withOpacity(0.8),
  ),
  ),
  ),
@@ -1503,7 +1503,7 @@ class _CreativitySlider extends StatelessWidget {
  vertical: 2,
  ),
  decoration: BoxDecoration(
- color: colors.primary.withValues(alpha: 0.1),
+ color: colors.primary.withOpacity(0.1),
  borderRadius: BorderRadius.circular(4),
  ),
  child: Text(
@@ -1780,7 +1780,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  Container(
  padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
- color: colors.surfaceVariant.withValues(alpha: 0.3),
+ color: colors.surfaceVariant.withOpacity(0.3),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Column(
@@ -1808,7 +1808,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
  color: isSelected 
- ? colors.primary.withValues(alpha: 0.1)
+ ? colors.primary.withOpacity(0.1)
  : colors.surface,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  border: Border.all(
@@ -2012,7 +2012,7 @@ class _MCPSetupDialogState extends State<MCPSetupDialog>
  Container(
  padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
- color: colors.primary.withValues(alpha: 0.1),
+ color: colors.primary.withOpacity(0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Column(
@@ -2177,9 +2177,9 @@ class _MasterPromptPreview extends StatelessWidget {
     return Container(
       height: 300,
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.3),
+        color: colors.surface.withOpacity(0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-        border: Border.all(color: colors.border.withValues(alpha: 0.3)),
+        border: Border.all(color: colors.border.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2187,7 +2187,7 @@ class _MasterPromptPreview extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(SpacingTokens.sm),
             decoration: BoxDecoration(
-              color: colors.primary.withValues(alpha: 0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(BorderRadiusTokens.lg),
                 topRight: Radius.circular(BorderRadiusTokens.lg),

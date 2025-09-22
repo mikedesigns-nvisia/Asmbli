@@ -69,7 +69,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
             ),
             boxShadow: _isFocused ? [
               BoxShadow(
-                color: colors.primary.withValues(alpha: 0.1),
+                color: colors.primary.withOpacity(0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -129,7 +129,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
         border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.1),
+            color: colors.onSurface.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -172,7 +172,7 @@ class _SettingsSearchBarState extends State<SettingsSearchBar> {
         decoration: BoxDecoration(
           color: colors.surfaceVariant,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
-          border: Border.all(color: colors.border.withValues(alpha: 0.5)),
+          border: Border.all(color: colors.border.withOpacity(0.5)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

@@ -44,10 +44,10 @@ class _TrustDialogState extends ConsumerState<TrustDialog> {
             decoration: BoxDecoration(
               color: colors.surface,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
-              border: Border.all(color: colors.border.withValues(alpha: 0.3)),
+              border: Border.all(color: colors.border.withOpacity(0.3)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 20,
                   spreadRadius: 0,
                   offset: const Offset(0, 8),
@@ -62,7 +62,7 @@ class _TrustDialogState extends ConsumerState<TrustDialog> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: colors.warning.withValues(alpha: 0.1),
+                    color: colors.warning.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                   ),
                   child: Icon(
@@ -88,10 +88,10 @@ class _TrustDialogState extends ConsumerState<TrustDialog> {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.lg),
                   decoration: BoxDecoration(
-                    color: colors.warning.withValues(alpha: 0.1),
+                    color: colors.warning.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     border: Border.all(
-                      color: colors.warning.withValues(alpha: 0.3),
+                      color: colors.warning.withOpacity(0.3),
                     ),
                   ),
                   child: Column(

@@ -41,7 +41,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: colors.primary.withValues(alpha: 0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -110,10 +110,10 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.cardPadding),
               decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: 0.05),
+                color: colors.primary.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 border: Border.all(
-                  color: colors.primary.withValues(alpha: 0.2),
+                  color: colors.primary.withOpacity(0.2),
                 ),
               ),
               child: Row(
@@ -220,9 +220,9 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
+                    color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                    border: Border.all(color: Colors.green.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
@@ -244,9 +244,9 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.1),
+                    color: Colors.orange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +270,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                         'Please complete the installation steps above, then check again.',
                         style: GoogleFonts.fustat(
                           fontSize: 12,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withOpacity(0.7),
                         ),
                       ),
                     ],
@@ -331,7 +331,7 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainer,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: colors.border.withValues(alpha: 0.3)),
+                    border: Border.all(color: colors.border.withOpacity(0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -378,14 +378,14 @@ class _OllamaSetupDialogState extends State<OllamaSetupDialog> {
           instructions,
           style: GoogleFonts.fustat(
             fontSize: 12,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.8),
+            color: Colors.black.withOpacity(0.8),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Row(

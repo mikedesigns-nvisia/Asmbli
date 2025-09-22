@@ -245,7 +245,7 @@ class StreamingMessageWidget extends ConsumerWidget {
     return CircleAvatar(
       radius: 16,
       backgroundColor: isUser 
-        ? ThemeColors(context).primary.withValues(alpha: 0.1)
+        ? ThemeColors(context).primary.withOpacity(0.1)
         : ThemeColors(context).primary,
       child: Icon(
         isUser ? Icons.person : Icons.smart_toy,
@@ -265,11 +265,11 @@ class StreamingMessageWidget extends ConsumerWidget {
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: isUser 
-          ? ThemeColors(context).primary.withValues(alpha: 0.1)
+          ? ThemeColors(context).primary.withOpacity(0.1)
           : ThemeColors(context).surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: isUser 
-          ? Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3))
+          ? Border.all(color: ThemeColors(context).primary.withOpacity(0.3))
           : Border.all(color: ThemeColors(context).border),
       ),
       child: Column(
@@ -350,13 +350,13 @@ class StreamingMessageWidget extends ConsumerWidget {
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: result.success 
-          ? ThemeColors(context).success.withValues(alpha: 0.1)
-          : ThemeColors(context).error.withValues(alpha: 0.1),
+          ? ThemeColors(context).success.withOpacity(0.1)
+          : ThemeColors(context).error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
           color: result.success 
-            ? ThemeColors(context).success.withValues(alpha: 0.3)
-            : ThemeColors(context).error.withValues(alpha: 0.3),
+            ? ThemeColors(context).success.withOpacity(0.3)
+            : ThemeColors(context).error.withOpacity(0.3),
         ),
       ),
       child: Column(
@@ -438,7 +438,7 @@ class StreamingMessageWidget extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.5),
+        color: ThemeColors(context).surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(color: ThemeColors(context).border),
       ),
@@ -512,9 +512,9 @@ class StreamingMessageWidget extends ConsumerWidget {
       margin: const EdgeInsets.only(top: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: ThemeColors(context).error.withValues(alpha: 0.1),
+        color: ThemeColors(context).error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: ThemeColors(context).error.withValues(alpha: 0.3)),
+        border: Border.all(color: ThemeColors(context).error.withOpacity(0.3)),
       ),
       child: Row(
         children: [
@@ -542,7 +542,7 @@ class StreamingMessageWidget extends ConsumerWidget {
       margin: const EdgeInsets.only(top: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.xs),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
+        color: ThemeColors(context).surfaceVariant.withOpacity(0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Row(
@@ -648,7 +648,7 @@ class _AnimatedStreamingCursorState extends State<AnimatedStreamingCursor>
           height: 16,
           margin: const EdgeInsets.only(left: 2),
           decoration: BoxDecoration(
-            color: ThemeColors(context).primary.withValues(alpha: _animation.value),
+            color: ThemeColors(context).primary.withOpacity(_animation.value),
             borderRadius: BorderRadius.circular(1),
           ),
         );

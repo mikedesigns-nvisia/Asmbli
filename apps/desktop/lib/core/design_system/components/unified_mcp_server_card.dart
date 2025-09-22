@@ -46,13 +46,13 @@ class UnifiedMCPServerCard extends ConsumerWidget {
         padding: EdgeInsets.all(isCompact ? SpacingTokens.sm : SpacingTokens.md),
         decoration: BoxDecoration(
           color: isSelected 
-            ? ThemeColors(context).primary.withValues(alpha: 0.1) 
-            : ThemeColors(context).surface.withValues(alpha: 0.8),
+            ? ThemeColors(context).primary.withOpacity(0.1) 
+            : ThemeColors(context).surface.withOpacity(0.8),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           border: Border.all(
             color: isSelected 
               ? ThemeColors(context).primary 
-              : ThemeColors(context).border.withValues(alpha: 0.5),
+              : ThemeColors(context).border.withOpacity(0.5),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -83,7 +83,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
           width: 20,
           height: 20,
           decoration: BoxDecoration(
-            color: _getServerColor().withValues(alpha: 0.1),
+            color: _getServerColor().withOpacity(0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
           ),
           child: Icon(
@@ -147,7 +147,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: _getServerColor().withValues(alpha: 0.1),
+                color: _getServerColor().withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               ),
               child: Icon(
@@ -284,14 +284,14 @@ class UnifiedMCPServerCard extends ConsumerWidget {
         child: CircularProgressIndicator(
           strokeWidth: 1,
           valueColor: AlwaysStoppedAnimation<Color>(
-            ThemeColors(context).primary.withValues(alpha: 0.6),
+            ThemeColors(context).primary.withOpacity(0.6),
           ),
         ),
       ),
       error: (_, __) => Icon(
         Icons.help_outline,
         size: 14,
-        color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.6),
+        color: ThemeColors(context).onSurfaceVariant.withOpacity(0.6),
       ),
     );
   }

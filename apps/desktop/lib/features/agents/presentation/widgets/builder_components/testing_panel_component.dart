@@ -70,7 +70,7 @@ class _TestingPanelComponentState extends ConsumerState<TestingPanelComponent> {
         Container(
           padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.primary.withValues(alpha: 0.1),
+            color: colors.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           ),
           child: Icon(
@@ -264,7 +264,7 @@ class _TestingPanelComponentState extends ConsumerState<TestingPanelComponent> {
                   Container(
                     padding: const EdgeInsets.all(SpacingTokens.sm),
                     decoration: BoxDecoration(
-                      color: colors.primary.withValues(alpha: 0.1),
+                      color: colors.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Row(
@@ -368,7 +368,7 @@ class _TestingPanelComponentState extends ConsumerState<TestingPanelComponent> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.xs),
               decoration: BoxDecoration(
-                color: colors.accent.withValues(alpha: 0.1),
+                color: colors.accent.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.smart_toy, size: 16, color: colors.accent),
@@ -402,7 +402,7 @@ class _TestingPanelComponentState extends ConsumerState<TestingPanelComponent> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.xs),
               decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: 0.1),
+                color: colors.primary.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.person, size: 16, color: colors.primary),

@@ -54,7 +54,7 @@ class AgentManagementTab extends StatelessWidget {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            initialValue: selectedAgent,
+                            value: selectedAgent,
                             items: agents.map((a) => DropdownMenuItem(value: a.name.toString(), child: Text(a.name.toString()))).toList(),
                             onChanged: (v) => onSelectAgent(v ?? selectedAgent),
                             decoration: const InputDecoration(labelText: 'Select Agent'),
@@ -63,7 +63,7 @@ class AgentManagementTab extends StatelessWidget {
                         const SizedBox(width: 12),
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            initialValue: selectedTemplate,
+                            value: selectedTemplate,
                             items: (agents.firstWhere((a) => a.name == selectedAgent).templates as List<dynamic>).map((t) => DropdownMenuItem(value: t.toString(), child: Text(t.toString()))).toList(),
                             onChanged: (v) => onSelectTemplate(v ?? selectedTemplate),
                             decoration: const InputDecoration(labelText: 'Template Variation'),

@@ -60,7 +60,7 @@ class _ContextualContextDemoState extends ConsumerState<ContextualContextDemo> {
               margin: const EdgeInsets.all(SpacingTokens.lg),
               padding: const EdgeInsets.all(SpacingTokens.lg),
               decoration: BoxDecoration(
-                color: ThemeColors(context).surface.withValues(alpha: 0.9),
+                color: ThemeColors(context).surface.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                 border: Border.all(color: ThemeColors(context).border),
               ),
@@ -92,7 +92,7 @@ class _ContextualContextDemoState extends ConsumerState<ContextualContextDemo> {
                 margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
                 padding: const EdgeInsets.all(SpacingTokens.lg),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).surface.withValues(alpha: 0.9),
+                  color: ThemeColors(context).surface.withOpacity(0.9),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                   border: Border.all(color: ThemeColors(context).border),
                 ),
@@ -205,11 +205,11 @@ class _ContextualContextDemoState extends ConsumerState<ContextualContextDemo> {
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: isUser 
-                  ? ThemeColors(context).primary.withValues(alpha: 0.1)
+                  ? ThemeColors(context).primary.withOpacity(0.1)
                   : ThemeColors(context).surface,
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 border: isUser 
-                  ? Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3))
+                  ? Border.all(color: ThemeColors(context).primary.withOpacity(0.3))
                   : Border.all(color: ThemeColors(context).border),
               ),
               child: Text(
@@ -227,7 +227,7 @@ class _ContextualContextDemoState extends ConsumerState<ContextualContextDemo> {
             const SizedBox(width: SpacingTokens.sm),
             CircleAvatar(
               radius: 16,
-              backgroundColor: ThemeColors(context).primary.withValues(alpha: 0.1),
+              backgroundColor: ThemeColors(context).primary.withOpacity(0.1),
               child: Icon(
                 Icons.person,
                 size: 20,

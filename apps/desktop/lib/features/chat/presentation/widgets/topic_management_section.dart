@@ -201,9 +201,9 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.componentSpacing),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.5),
+        color: theme.colorScheme.surface.withOpacity(0.5),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -222,9 +222,9 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: topic.color.withValues(alpha: 0.1),
+                      color: topic.color.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: topic.color.withValues(alpha: 0.3)),
+                      border: Border.all(color: topic.color.withOpacity(0.3)),
                     ),
                     child: Icon(
                       topic.icon,
@@ -266,7 +266,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: topic.color.withValues(alpha: 0.1),
+                      color: topic.color.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -298,7 +298,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
             Container(
               decoration: BoxDecoration(
                 border: Border(
-                  top: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                  top: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
                 ),
               ),
               child: conversations.isEmpty
@@ -331,7 +331,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
           Icon(
             Icons.chat_bubble_outline,
             size: 32,
-            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
           ),
           const SizedBox(height: 8),
           Text(
@@ -348,7 +348,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
             icon: const Icon(Icons.add, size: 16),
             label: const Text('Start Conversation'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: topic.color.withValues(alpha: 0.1),
+              backgroundColor: topic.color.withOpacity(0.1),
               foregroundColor: topic.color,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -374,7 +374,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected 
-              ? topic.color.withValues(alpha: 0.1) 
+              ? topic.color.withOpacity(0.1) 
               : Colors.transparent,
           border: isSelected 
               ? Border(left: BorderSide(color: topic.color, width: 3))
@@ -447,7 +447,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
 
   Widget _buildCreateTopicDialog(ThemeData theme) {
     return Container(
-      color: theme.colorScheme.surface.withValues(alpha: 0.9),
+      color: theme.colorScheme.surface.withOpacity(0.9),
       child: Dialog(
         child: Container(
           width: 400,
@@ -655,7 +655,7 @@ class _TopicManagementSectionState extends ConsumerState<TopicManagementSection>
       case 'default_api':
         return theme.colorScheme.onSurfaceVariant;
       default:
-        return theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7);
+        return theme.colorScheme.onSurfaceVariant.withOpacity(0.7);
     }
   }
 

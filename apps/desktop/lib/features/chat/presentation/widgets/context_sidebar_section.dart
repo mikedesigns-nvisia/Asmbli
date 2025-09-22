@@ -119,9 +119,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: ThemeColors(context).primary.withValues(alpha: 0.1),
+              color: ThemeColors(context).primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
+              border: Border.all(color: ThemeColors(context).primary.withOpacity(0.3)),
             ),
             child: Text(
               '${((currentConversation?.metadata?['contextDocuments'] as List?)?.length ?? 0) + _sessionContextIds.length}',
@@ -160,9 +160,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withValues(alpha: 0.8),
+          color: theme.colorScheme.surface.withOpacity(0.8),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+          border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
         ),
         child: Column(
           children: [
@@ -205,9 +205,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.8),
+        color: theme.colorScheme.surface.withOpacity(0.8),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +245,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  color: ThemeColors(context).primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -317,9 +317,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withValues(alpha: 0.8),
+          color: theme.colorScheme.surface.withOpacity(0.8),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+          border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
         ),
         child: Column(
           children: [
@@ -364,9 +364,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.8),
+        color: theme.colorScheme.surface.withOpacity(0.8),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -481,7 +481,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline),
               borderRadius: BorderRadius.circular(6),
-              color: theme.colorScheme.surface.withValues(alpha: 0.8),
+              color: theme.colorScheme.surface.withOpacity(0.8),
             ),
             child: Row(
               children: [
@@ -523,7 +523,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   decoration: BoxDecoration(
                     border: Border.all(color: theme.colorScheme.outline),
                     borderRadius: BorderRadius.circular(6),
-                    color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                    color: theme.colorScheme.surface.withOpacity(0.8),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -555,7 +555,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                   decoration: BoxDecoration(
                     border: Border.all(color: theme.colorScheme.outline),
                     borderRadius: BorderRadius.circular(6),
-                    color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                    color: theme.colorScheme.surface.withOpacity(0.8),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -590,9 +590,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
+                border: Border.all(color: ThemeColors(context).primary.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(6),
-                color: ThemeColors(context).primary.withValues(alpha: 0.05),
+                color: ThemeColors(context).primary.withOpacity(0.05),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -631,16 +631,16 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withValues(alpha: 0.3),
+          color: theme.colorScheme.surface.withOpacity(0.3),
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+          border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
         ),
         child: Row(
           children: [
             Icon(
               Icons.lightbulb_outline,
               size: 12,
-              color: ThemeColors(context).primary.withValues(alpha: 0.7),
+              color: ThemeColors(context).primary.withOpacity(0.7),
             ),
             const SizedBox(width: 6),
             Expanded(
@@ -648,7 +648,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 '💡 Add documents to help your assistant understand your needs',
                 style: GoogleFonts.fustat(
                   fontSize: 10,
-                  color: ThemeColors(context).primary.withValues(alpha: 0.8),
+                  color: ThemeColors(context).primary.withOpacity(0.8),
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -663,9 +663,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: ThemeColors(context).primary.withValues(alpha: 0.1),
+        color: ThemeColors(context).primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.2)),
+        border: Border.all(color: ThemeColors(context).primary.withOpacity(0.2)),
       ),
       child: Row(
         children: [
@@ -698,9 +698,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
       width: double.infinity,
       constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.8),
+        color: theme.colorScheme.surface.withOpacity(0.8),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -710,7 +710,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                bottom: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
               ),
             ),
             child: Column(
@@ -734,7 +734,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                          color: ThemeColors(context).primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Row(
@@ -818,9 +818,9 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surface.withValues(alpha: 0.3),
+              color: theme.colorScheme.surface.withOpacity(0.3),
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -873,7 +873,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                          color: ThemeColors(context).primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
@@ -939,13 +939,13 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: doc.isActive
-                    ? theme.colorScheme.surface.withValues(alpha: 0.3)
-                    : theme.colorScheme.surface.withValues(alpha: 0.1),
+                    ? theme.colorScheme.surface.withOpacity(0.3)
+                    : theme.colorScheme.surface.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
                   color: doc.isActive
-                      ? ThemeColors(context).primary.withValues(alpha: 0.3)
-                      : theme.colorScheme.outline.withValues(alpha: 0.2),
+                      ? ThemeColors(context).primary.withOpacity(0.3)
+                      : theme.colorScheme.outline.withOpacity(0.2),
                 ),
               ),
               child: Row(
@@ -987,7 +987,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                              color: ThemeColors(context).primary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(3),
                             ),
                             child: Text(
@@ -1006,7 +1006,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.red.withValues(alpha: 0.1),
+                              color: Colors.red.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(3),
                             ),
                             child: Text(
@@ -1203,7 +1203,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                color: ThemeColors(context).surface.withOpacity(0.5),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
                   topRight: Radius.circular(12),
@@ -1274,12 +1274,12 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
             width: double.infinity,
             decoration: BoxDecoration(
               border: Border.all(
-                color: ThemeColors(context).primary.withValues(alpha: 0.3),
+                color: ThemeColors(context).primary.withOpacity(0.3),
                 width: 2,
                 style: BorderStyle.solid,
               ),
               borderRadius: BorderRadius.circular(8),
-              color: ThemeColors(context).primary.withValues(alpha: 0.05),
+              color: ThemeColors(context).primary.withOpacity(0.05),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1340,7 +1340,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: ThemeColors(context).primary.withValues(alpha: 0.1),
+            color: ThemeColors(context).primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Row(
@@ -1526,7 +1526,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                  color: ThemeColors(context).surface.withOpacity(0.5),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
@@ -1800,7 +1800,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                    color: ThemeColors(context).surface.withOpacity(0.5),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),
@@ -1982,7 +1982,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                                 margin: const EdgeInsets.only(bottom: 4),
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                                  color: ThemeColors(context).primary.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Row(
@@ -2233,7 +2233,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                    color: ThemeColors(context).surface.withOpacity(0.5),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),
@@ -2300,7 +2300,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                              color: ThemeColors(context).primary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Icon(
@@ -2337,7 +2337,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                                      color: ThemeColors(context).primary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
@@ -2353,7 +2353,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                       decoration: BoxDecoration(
-                                        color: Colors.orange.withValues(alpha: 0.1),
+                                        color: Colors.orange.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
@@ -2422,7 +2422,7 @@ class _ContextSidebarSectionState extends ConsumerState<ContextSidebarSection> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).surface.withValues(alpha: 0.5),
+                  color: ThemeColors(context).surface.withOpacity(0.5),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),

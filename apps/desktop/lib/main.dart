@@ -559,7 +559,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  Icon(
  Icons.chat_bubble_outline,
  size: 32,
- color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+ color: colors.onSurfaceVariant.withOpacity(0.5),
  ),
  const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
@@ -659,8 +659,8 @@ class _ConversationItem extends StatelessWidget {
  child: InkWell(
  onTap: onTap,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- hoverColor: colors.primary.withValues(alpha: 0.04),
- splashColor: colors.primary.withValues(alpha: 0.12),
+ hoverColor: colors.primary.withOpacity(0.04),
+ splashColor: colors.primary.withOpacity(0.12),
  child: Container(
  padding: const EdgeInsets.symmetric(
  vertical: SpacingTokens.componentSpacing,
@@ -672,7 +672,7 @@ class _ConversationItem extends StatelessWidget {
  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
  color: isAgentConversation 
- ? colors.primary.withValues(alpha: 0.1)
+ ? colors.primary.withOpacity(0.1)
  : colors.surfaceVariant,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
@@ -796,7 +796,7 @@ class _QuickActionCard extends StatelessWidget {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
- color: ThemeColors(context).primary.withValues(alpha: 0.1),
+ color: ThemeColors(context).primary.withOpacity(0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Icon(
@@ -886,10 +886,10 @@ class _StartupScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: colors.surface.withValues(alpha: 0.9),
+                  color: colors.surface.withOpacity(0.9),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                   border: Border.all(
-                    color: colors.border.withValues(alpha: 0.2),
+                    color: colors.border.withOpacity(0.2),
                   ),
                 ),
                 child: Column(
@@ -899,7 +899,7 @@ class _StartupScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: colors.primary.withValues(alpha: 0.1),
+                        color: colors.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                       ),
                       child: Icon(
