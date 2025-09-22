@@ -127,9 +127,19 @@ class AgentBusinessService extends BaseBusinessService {
       // Create agent terminal with automatic provisioning (if service available)
       if (_provisioningService != null) {
         try {
-          await _provisioningService!.provisionTerminalForAgent(
-            createdAgent.id,
-            requiredMCPServers: mcpServers,
+          // Add timeout to prevent hanging during terminal provisioning
+          await Future.timeout(
+            _provisioningService!.provisionTerminalForAgent(
+              createdAgent.id,
+              requiredMCPServers: mcpServers,
+            ),
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception(
+                'Terminal provisioning timed out. This may be due to file system '
+                'permission issues or slow disk I/O on macOS.'
+              );
+            },
           );
           
           // Update agent configuration to indicate terminal is ready
