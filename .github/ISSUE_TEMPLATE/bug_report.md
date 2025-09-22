@@ -7,8 +7,10 @@ assignees: ''
 
 ---
 
+**⚠️ Note: This is experimental alpha software. Many features are broken or incomplete.**
+
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear and concise description of what the bug is. (Note: If it's a crash or major functionality not working, this may be expected behavior for alpha software.)
 
 **To Reproduce**
 Steps to reproduce the behavior:

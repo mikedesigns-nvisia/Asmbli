@@ -1,6 +1,6 @@
-# 🤖 Asmbli - AI Chat Desktop Application
+# 🤖 Asmbli - Experimental AI Chat Desktop Application
 
-**Cross-platform desktop chat application for AI models with agent template capabilities**
+**⚠️ Early-stage experimental desktop chat application for AI models with basic agent template capabilities**
 
 [![CI](https://github.com/asmbli/asmbli/workflows/CI/badge.svg)](https://github.com/asmbli/asmbli/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -14,28 +14,36 @@
 
 ## 🌟 Overview
 
-Asmbli is a desktop chat application for AI models with agent template capabilities. Built with Flutter, it provides a clean interface for chatting with various AI models while experimenting with basic agent configurations and document context.
+**⚠️ This is an experimental project in early development. Expect bugs, incomplete features, and breaking changes.**
 
-### ✨ What Asmbli Actually Does
+Asmbli is an experimental desktop chat application for AI models with basic agent template capabilities. Built with Flutter, it provides a simple interface for chatting with AI models while experimenting with very basic agent configurations. This is primarily a learning project and proof-of-concept.
 
-- **🖥️ Cross-Platform Desktop Chat**: Flutter application for Windows, macOS, and Linux
-- **🤖 Multi-Model Support**: Chat with Claude, OpenAI, local models, and other API-based LLMs
-- **📋 Agent Templates**: Create and save basic agent configurations with custom prompts and settings
-- **📄 Document Context**: Upload and reference documents during conversations (basic implementation)
-- **🎨 Professional UI**: Multi-color scheme design system with clean, modern interface
-- **💾 Local Storage**: Save conversations, agent templates, and settings locally
-- **🔐 Secure Credentials**: Safe storage of API keys using OS-native secure storage
+### ✨ What Asmbli Actually Does (Sort Of)
 
-### ⚠️ Current Limitations
+- **🖥️ Basic Desktop Chat**: Flutter application that sometimes works on Windows, macOS, and Linux
+- **🤖 Limited Model Support**: Chat with Claude, OpenAI, and Ollama small models (when API keys/connections work correctly)
+- **📋 Agent Templates**: Very basic agent configurations that may or may not persist properly
+- **📄 Document Context**: Experimental file upload that occasionally works
+- **🎨 Design System**: Has a UI that looks okay but may have visual bugs
+- **💾 Local Storage**: Attempts to save things locally (results may vary)
+- **🔐 Credential Storage**: Tries to store API keys securely (not thoroughly tested)
 
-- **Agent Reliability**: AI agents can hallucinate and provide inconsistent responses
-- **MCP Integration**: MCP server support is experimental and may not work reliably
-- **Context Management**: Document context system is basic and may lose relevance in long conversations
+### ⚠️ Major Limitations & Known Issues
+
+- **This is Alpha Software**: Expect crashes, data loss, and broken functionality
+- **Agent Reliability**: AI agents frequently hallucinate and provide inconsistent responses
+- **MCP Integration**: Experimental at best, probably doesn't work with most servers
+- **Context Management**: Document context system is rudimentary and unreliable
+- **No Production Use**: This is a learning project, not production-ready software
+- **Limited Testing**: Many features are untested and may not work as expected
+- **Bugs Everywhere**: UI glitches, state management issues, and general instability
 - **No Deployment**: Agents exist only within the application - no external deployment capabilities
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (If You're Feeling Brave)
+
+**⚠️ Warning**: This software is experimental and may not work as expected. Use at your own risk.
 
 ### System Requirements
 
@@ -77,13 +85,13 @@ cd apps/desktop
 flutter run
 ```
 
-### 📱 Quick Setup
+### 📱 Quick Setup (Your Mileage May Vary)
 
-1. **Launch the desktop application**
-2. **Add API keys** - Configure Claude, OpenAI, or other AI model APIs in settings
-3. **Start a conversation** - Begin chatting with your chosen AI model
-4. **Try agent templates** - Experiment with different agent configurations
-5. **Upload documents** - Add context files to enhance conversations (optional)
+1. **Launch the desktop application** (if it starts successfully)
+2. **Add API keys** - Try configuring Claude or OpenAI APIs in settings (may or may not save properly)
+3. **Start a conversation** - Attempt to chat with your chosen AI model (expect possible errors)
+4. **Try agent templates** - Experiment with basic agent configurations (results unpredictable)
+5. **Upload documents** - Try adding context files (experimental feature, may not work)
 
 ---
 
@@ -480,24 +488,26 @@ flutter build linux --release
 
 ## 📊 Project Status
 
-### 🎯 Current Version: Beta 0.9.0
+### 🎯 Current Version: Alpha 0.1.0 (Very Early Development)
 
-#### ✅ What Works Well
-- ✅ Cross-platform Flutter desktop application (Windows, macOS, Linux)
-- ✅ Multi-color scheme design system
-- ✅ Real-time chat interface with multiple AI models
-- ✅ Basic agent template creation and management
-- ✅ Secure API key storage
-- ✅ Local conversation history
-- ✅ Document upload and basic context injection
+#### 🤷 What Might Work Sometimes
+- 🤷 Flutter desktop application (compiles and runs, mostly)
+- 🤷 Basic UI components (some visual bugs expected)
+- 🤷 Chat interface (when it doesn't crash)
+- 🤷 Agent templates (very basic, may not persist)
+- 🤷 API key storage (seems to work but not thoroughly tested)
+- 🤷 Local data storage (experimental)
 
-#### ⚠️ Known Issues
-- ⚠️ Agent responses can be inconsistent and may hallucinate
-- ⚠️ MCP server integration is unreliable and experimental
-- ⚠️ Document context may lose relevance in long conversations
-- ⚠️ Vector search functionality is basic and may not scale
-- ⚠️ No authentication or user management system
-- ⚠️ Limited error handling for API failures
+#### 🚨 Major Known Issues
+- 🚨 **Stability**: Frequent crashes and unexpected behavior
+- 🚨 **Data Loss**: May lose conversations, settings, or configurations
+- 🚨 **Agent Reliability**: AI agents frequently provide inconsistent responses
+- 🚨 **MCP Integration**: Mostly non-functional, experimental at best
+- 🚨 **Error Handling**: Poor error handling throughout the application
+- 🚨 **Testing**: Minimal testing coverage, many untested code paths
+- 🚨 **Performance**: May be slow, memory leaks possible
+- 🚨 **UI Bugs**: Visual glitches, layout issues, responsive design problems
+- 🚨 **Cross-Platform**: Different bugs on different operating systems
 
 #### 🚧 In Development
 - 🚧 Improved MCP server compatibility
@@ -513,11 +523,12 @@ flutter build linux --release
 
 ### 📈 Current State
 
-- **Primary Use Case**: Desktop AI chat application with basic agent templates
-- **Stability**: Beta - expect bugs and limitations
-- **Supported Platforms**: Windows, macOS, Linux
-- **AI Models**: Claude, OpenAI, local models (via API)
-- **Best For**: Experimenting with AI conversations and basic agent configurations
+- **Primary Use Case**: Learning project for Flutter and AI integration
+- **Stability**: Alpha - expect crashes, bugs, and broken functionality
+- **Supported Platforms**: Windows, macOS, Linux (with varying degrees of brokenness)
+- **AI Models**: Claude, OpenAI, Ollama small models (when the API integration works)
+- **Best For**: Educational purposes, code examples, and very patient developers who like fixing things
+- **Not Suitable For**: Any production use, serious projects, or users who expect working software
 
 ---
 
@@ -562,7 +573,7 @@ This project uses anonymous analytics to understand usage patterns and improve t
 
 ---
 
-**💬 Ready to try a clean AI chat interface with agent templates? [Get started now!](#-quick-start)**
+**💬 Ready to experiment with an unstable AI chat application that may or may not work? [Proceed at your own risk!](#-quick-start-if-youre-feeling-brave)**
 
 ---
 
