@@ -326,12 +326,12 @@ export default function ContributePage() {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-2">Prerequisites</h4>
-                    <div className="text-sm text-muted-foreground space-y-1">
-                      <p>• Flutter SDK (>=3.0.0)</p>
-                      <p>• Dart SDK (>=3.0.0)</p>
-                      <p>• Git</p>
-                      <p>• Your favorite IDE (VS Code, Android Studio, IntelliJ)</p>
-                    </div>
+                    <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                      <li>Flutter SDK (>=3.0.0)</li>
+                      <li>Dart SDK (>=3.0.0)</li>
+                      <li>Git</li>
+                      <li>Your favorite IDE (VS Code, Kiro, Cursor, JetBrains, Docker Compose)</li>
+                    </ul>
                   </div>
                 </div>
 
