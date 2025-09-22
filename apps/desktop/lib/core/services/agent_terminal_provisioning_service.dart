@@ -197,7 +197,7 @@ class AgentTerminalProvisioningService {
     final userHome = Platform.environment['USERPROFILE'] ?? 
                     Platform.environment['HOME'] ?? 
                     '.';
-    return '$userHome/AgentEngine/agents';
+    return '$userHome/Asmbli/agents';
   }
 
   /// Create security context tailored for agent requirements

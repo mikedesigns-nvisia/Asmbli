@@ -60,7 +60,7 @@ class MacOSStorageService extends DesktopStorageService {
   /// Initialize macOS-specific storage paths
   Future<void> _initializeMacOSPaths() async {
     final appSupportDir = await getApplicationSupportDirectory();
-    final baseDir = path.join(appSupportDir.path, 'AgentEngine');
+    final baseDir = path.join(appSupportDir.path, 'Asmbli');
 
     _coreDataPath = path.join(baseDir, 'CoreData');
     _cloudKitCachePath = path.join(baseDir, 'CloudKit');
@@ -209,9 +209,9 @@ class MacOSStorageService extends DesktopStorageService {
 <plist version="1.0">
 <dict>
     <key>kMDItemKind</key>
-    <string>AgentEngine Data</string>
+    <string>Asmbli Data</string>
     <key>kMDItemDisplayName</key>
-    <string>AgentEngine Search Index</string>
+    <string>Asmbli Search Index</string>
     <key>kMDItemContentType</key>
     <string>com.asmbli.agentengine.data</string>
 </dict>
@@ -652,7 +652,7 @@ class MacOSStorageService extends DesktopStorageService {
       if (_performanceMetrics['is_apple_silicon'] == 1.0) {
         // Enable file system compression on Apple Silicon
         final appSupportDir = await getApplicationSupportDirectory();
-        final agentEngineDir = path.join(appSupportDir.path, 'AgentEngine');
+        final agentEngineDir = path.join(appSupportDir.path, 'Asmbli');
 
         await Process.run('chflags', ['compressed', agentEngineDir]);
         debugPrint('📦 Enabled file system compression');

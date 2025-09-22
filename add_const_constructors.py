@@ -63,7 +63,7 @@ def process_dart_files(directory):
     return fixed_files
 
 if __name__ == '__main__':
-    desktop_app_path = r'C:\AgentEngine\apps\desktop'
+    desktop_app_path = r'C:\Asmbli\apps\desktop'
     
     print('Adding const constructors where appropriate...')
     fixed_files = process_dart_files(desktop_app_path)

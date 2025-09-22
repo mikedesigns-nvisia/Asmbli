@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# AgentEngine macOS Package Script
+# Asmbli macOS Package Script
 # Packages the existing debug build into a distributable format
 
 set -e
 
-echo "🍎 Packaging AgentEngine macOS App..."
+echo "🍎 Packaging Asmbli macOS App..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -15,7 +15,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-APP_NAME="AgentEngine"
+APP_NAME="Asmbli"
 APP_VERSION="1.0.0"
 BUILD_DIR="build/macos/Build/Products/Debug"
 DIST_DIR="dist/macos"
@@ -114,23 +114,23 @@ cd - >/dev/null
 # Create installation README
 echo -e "${BLUE}📝 Creating installation guide...${NC}"
 cat > "$DIST_DIR/README.md" << EOF
-# AgentEngine for macOS
+# Asmbli for macOS
 
 ## Installation Instructions
 
 ### Method 1: DMG Installer (Recommended)
 1. Download and open \`$DMG_NAME.dmg\`
-2. Drag **AgentEngine.app** to the **Applications** folder
+2. Drag **Asmbli.app** to the **Applications** folder
 3. Eject the DMG
 
 ### Method 2: ZIP Archive
 1. Download and extract \`$DMG_NAME.zip\`
-2. Move **AgentEngine.app** to your **Applications** folder
+2. Move **Asmbli.app** to your **Applications** folder
 
 ## First Launch
 
 1. Navigate to **Applications** folder
-2. **Right-click** on **AgentEngine.app** and select **"Open"**
+2. **Right-click** on **Asmbli.app** and select **"Open"**
    - This bypasses macOS Gatekeeper for unsigned apps
 3. Click **"Open"** in the security dialog
 4. Grant necessary permissions when prompted:
@@ -159,7 +159,7 @@ cat > "$DIST_DIR/README.md" << EOF
 ### "App is damaged and can't be opened"
 This happens with unsigned apps. Solution:
 1. Open **Terminal**
-2. Run: \`sudo xattr -rd com.apple.quarantine /Applications/AgentEngine.app\`
+2. Run: \`sudo xattr -rd com.apple.quarantine /Applications/Asmbli.app\`
 3. Try opening the app again
 
 ### Permission Issues
@@ -173,7 +173,7 @@ This happens with unsigned apps. Solution:
 
 ## Support
 
-- GitHub: https://github.com/WereNext/AgentEngine
+- GitHub: https://github.com/WereNext/Asmbli
 - Issues: Report bugs on GitHub Issues
 - Discussions: GitHub Discussions for questions
 
@@ -186,7 +186,7 @@ echo -e "${GREEN}✅ Installation guide created${NC}"
 # Create version info
 echo -e "${BLUE}📄 Creating version info...${NC}"
 cat > "$DIST_DIR/VERSION.txt" << EOF
-AgentEngine for macOS
+Asmbli for macOS
 Version: $APP_VERSION
 Build: Debug
 Date: $(date '+%Y-%m-%d %H:%M:%S')
@@ -230,5 +230,5 @@ echo -e "${BLUE}📋 Distribution Package Contents:${NC}"
 ls -la "$DIST_DIR"
 
 echo ""
-echo -e "${GREEN}✅ AgentEngine macOS package ready for distribution!${NC}"
-echo -e "${BLUE}🚀 Users can now install AgentEngine using the DMG or ZIP file${NC}"
+echo -e "${GREEN}✅ Asmbli macOS package ready for distribution!${NC}"
+echo -e "${BLUE}🚀 Users can now install Asmbli using the DMG or ZIP file${NC}"

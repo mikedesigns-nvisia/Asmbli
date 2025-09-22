@@ -1,4 +1,4 @@
-# OAuth Setup Guide for AgentEngine
+# OAuth Setup Guide for Asmbli
 
 This guide walks you through setting up real OAuth applications with each provider to enable the authentication handshake.
 
@@ -15,7 +15,7 @@ This guide walks you through setting up real OAuth applications with each provid
 
 **Steps**:
 1. Go to **Azure Portal** → **App registrations** → **New registration**
-2. Set **Name**: `AgentEngine Desktop App`
+2. Set **Name**: `Asmbli Desktop App`
 3. Set **Supported account types**: `Accounts in any organizational directory and personal Microsoft accounts`
 4. Set **Redirect URI**: 
    - Type: `Public client/native (mobile & desktop)`
@@ -37,7 +37,7 @@ This guide walks you through setting up real OAuth applications with each provid
 
 **Steps**:
 1. Go to **Settings** → **Developer settings** → **OAuth Apps** → **New OAuth App**
-2. Set **Application name**: `AgentEngine Desktop`
+2. Set **Application name**: `Asmbli Desktop`
 3. Set **Homepage URL**: `https://your-domain.com` (or local development URL)
 4. Set **Authorization callback URL**: `http://localhost:3000/oauth/github/callback`
 5. Click **Register application**
@@ -54,7 +54,7 @@ This guide walks you through setting up real OAuth applications with each provid
 
 **Steps**:
 1. Go to **Your Apps** → **Create New App** → **From scratch**
-2. Set **App Name**: `AgentEngine`
+2. Set **App Name**: `Asmbli`
 3. Choose your **Slack workspace**
 4. Click **Create App**
 5. Go to **OAuth & Permissions**
@@ -74,7 +74,7 @@ This guide walks you through setting up real OAuth applications with each provid
 
 **Steps**:
 1. Go to **Settings** → **API** → **Personal API keys** → **Create key**
-2. Set **Label**: `AgentEngine Integration`
+2. Set **Label**: `Asmbli Integration`
 3. Set **Scopes**: Select appropriate permissions
 4. Click **Create key**
 5. Copy the key → This is your `LINEAR_API_KEY`
@@ -88,7 +88,7 @@ This guide walks you through setting up real OAuth applications with each provid
 
 **Steps**:
 1. Go to **My integrations** → **Create new integration**
-2. Set **Name**: `AgentEngine`
+2. Set **Name**: `Asmbli`
 3. Set **Associated workspace**: Choose your workspace
 4. Set **Type**: `Public integration`
 5. Click **Submit**
@@ -144,7 +144,7 @@ For production, update redirect URLs to your actual domain:
 
 ## 🧪 Testing
 
-1. Start your AgentEngine app
+1. Start your Asmbli app
 2. Go to **Settings** → **OAuth Connections**
 3. Click **Connect** on any provider
 4. You should be redirected to the provider's authorization page

@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AgentEngine Demo',
+      title: 'Asmbli Demo',
       theme: ThemeData(
         primarySwatch: Colors.green,
         fontFamily: 'Fustat',
@@ -78,7 +78,7 @@ class _DemoScreenState extends ConsumerState<DemoScreen>
               child: Row(
                 children: [
                   Text(
-                    'AgentEngine',
+                    'Asmbli',
                     style: TextStyles.brandTitle.copyWith(
                       color: colors.primary,
                     ),

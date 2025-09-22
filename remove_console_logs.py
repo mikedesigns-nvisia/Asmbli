@@ -46,7 +46,7 @@ def process_directory(directory, extensions):
     return fixed_files
 
 if __name__ == '__main__':
-    root_path = r'C:\AgentEngine'
+    root_path = r'C:\Asmbli'
     
     print('Removing console.log statements from production code...')
     

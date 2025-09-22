@@ -66,7 +66,7 @@ class SSEMCPAdapter extends MCPAdapter {
         'Content-Type': 'application/json',
         'Accept': 'text/event-stream',
         'Cache-Control': 'no-cache',
-        'User-Agent': 'AgentEngine-MCP-Client/1.0',
+        'User-Agent': 'Asmbli-MCP-Client/1.0',
         ...config.headers ?? {},
       },
     );
@@ -88,7 +88,7 @@ class SSEMCPAdapter extends MCPAdapter {
           'protocolVersion': '1.0',
           'capabilities': config.capabilities ?? getCapabilities(),
           'clientInfo': {
-            'name': 'AgentEngine',
+            'name': 'Asmbli',
             'version': '1.0.0',
           },
           'transport': 'sse',

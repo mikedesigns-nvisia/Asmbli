@@ -98,7 +98,7 @@ class VectorDatabaseService {
     try {
       // First try: Application documents directory
       final appDocDir = await getApplicationDocumentsDirectory();
-      final primaryPath = path.join(appDocDir.path, 'AgentEngine', 'vector_db');
+      final primaryPath = path.join(appDocDir.path, 'Asmbli', 'vector_db');
       
       // Test if we can create the directory
       final testDir = Directory(primaryPath);
@@ -114,7 +114,7 @@ class VectorDatabaseService {
       try {
         // Second try: Application support directory
         final appSupportDir = await getApplicationSupportDirectory();
-        final secondaryPath = path.join(appSupportDir.path, 'AgentEngine', 'vector_db');
+        final secondaryPath = path.join(appSupportDir.path, 'Asmbli', 'vector_db');
         
         final testDir = Directory(secondaryPath);
         await testDir.create(recursive: true);
@@ -127,7 +127,7 @@ class VectorDatabaseService {
         
         // Third try: Temporary directory (not ideal but works)
         final tempDir = await getTemporaryDirectory();
-        final fallbackPath = path.join(tempDir.path, 'AgentEngine', 'vector_db');
+        final fallbackPath = path.join(tempDir.path, 'Asmbli', 'vector_db');
         
         final testDir = Directory(fallbackPath);
         await testDir.create(recursive: true);

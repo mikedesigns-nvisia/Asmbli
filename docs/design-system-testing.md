@@ -1,10 +1,10 @@
 # Design System Testing Guide
 
-This guide explains how to test new components against the AgentEngine design system to ensure consistency and compliance.
+This guide explains how to test new components against the Asmbli design system to ensure consistency and compliance.
 
 ## Testing Framework Overview
 
-The AgentEngine design system testing includes:
+The Asmbli design system testing includes:
 
 1. **Storybook** - Visual component documentation and testing
 2. **Vitest** - Unit tests for design token compliance

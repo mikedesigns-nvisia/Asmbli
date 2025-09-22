@@ -398,7 +398,7 @@ class MCPServerExecutionService {
             'sampling': {},
           },
           'clientInfo': {
-            'name': 'AgentEngine',
+            'name': 'Asmbli',
             'version': '1.0.0',
           },
         },

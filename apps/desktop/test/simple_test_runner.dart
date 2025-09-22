@@ -16,7 +16,7 @@ import 'widget_test.dart' as widget_tests;
 /// 
 /// Run with: flutter test test/simple_test_runner.dart
 void main() {
-  group('AgentEngine Desktop App - Basic Functionality Tests', () {
+  group('Asmbli Desktop App - Basic Functionality Tests', () {
     
     group('📱 Core App Tests', () {
       widget_tests.main();

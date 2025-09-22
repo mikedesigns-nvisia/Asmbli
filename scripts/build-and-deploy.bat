@@ -4,7 +4,7 @@ echo    Asmbli Distribution Build Script
 echo =============================================
 echo.
 
-cd /d "C:\AgentEngine\apps\desktop"
+cd /d "C:\Asmbli\apps\desktop"
 
 echo [1/5] Cleaning previous builds...
 call flutter clean
@@ -15,8 +15,8 @@ call flutter build windows --release
 
 echo [3/5] Creating distribution package...
 set VERSION=1.0.0
-set DIST_DIR=C:\AgentEngine\dist\windows\Asmbli-%VERSION%-windows
-set RELEASE_DIR=C:\AgentEngine\apps\desktop\build\windows\x64\runner\Release
+set DIST_DIR=C:\Asmbli\dist\windows\Asmbli-%VERSION%-windows
+set RELEASE_DIR=C:\Asmbli\apps\desktop\build\windows\x64\runner\Release
 
 rmdir /s /q "%DIST_DIR%" 2>nul
 mkdir "%DIST_DIR%"
@@ -30,14 +30,14 @@ echo Double-click agentengine_desktop.exe to launch. >> "%DIST_DIR%\README.txt"
 echo Visit https://asmbli.ai for documentation and support. >> "%DIST_DIR%\README.txt"
 
 echo [5/5] Creating distribution archives...
-cd /d "C:\AgentEngine\dist\windows"
+cd /d "C:\Asmbli\dist\windows"
 powershell "Compress-Archive -Path 'Asmbli-%VERSION%-windows' -DestinationPath 'Asmbli-%VERSION%-windows-x64.zip' -Force"
 
 echo.
 echo =============================================
 echo    Build Complete!
 echo =============================================
-echo Distribution created at: C:\AgentEngine\dist\windows\
+echo Distribution created at: C:\Asmbli\dist\windows\
 echo - Asmbli-%VERSION%-windows-x64.zip
 echo.
 echo To update website downloads:

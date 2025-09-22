@@ -1,4 +1,4 @@
-# Consumer Deployment Guide: Running AgentEngine with Your Favorite AI Chat
+# Consumer Deployment Guide: Running Asmbli with Your Favorite AI Chat
 
 *Get your custom AI agents working with LM Studio, Ollama, ChatGPT, and other popular AI tools*
 
@@ -10,13 +10,13 @@ Most people don't want to deploy Kubernetes clusters. They want to:
 3. **Keep it simple** - one-click installs, not terminal commands
 4. **Run locally** for privacy and control
 
-This guide focuses on **practical consumer deployment** - getting AgentEngine's MCP servers working with your current AI workflow.
+This guide focuses on **practical consumer deployment** - getting Asmbli's MCP servers working with your current AI workflow.
 
 ---
 
 ## Quick Start: Choose Your AI Platform
 
-### 🎯 LM Studio + AgentEngine MCP Servers
+### 🎯 LM Studio + Asmbli MCP Servers
 **Best for:** Privacy-focused users who want local AI with enhanced capabilities
 
 ### 🐋 Ollama + Custom Integrations  
@@ -39,19 +39,19 @@ LM Studio is perfect for consumer deployment because it's designed for local AI 
 - Node.js installed (for MCP servers)
 - Basic comfort with downloading and running scripts
 
-### Step 1: Install AgentEngine MCP Server Package
+### Step 1: Install Asmbli MCP Server Package
 
 Create a simple installer script that users can download and run:
 
 ```bash
-# AgentEngine LM Studio Setup Script
+# Asmbli LM Studio Setup Script
 #!/bin/bash
 
-echo "🚀 Setting up AgentEngine MCP servers for LM Studio..."
+echo "🚀 Setting up Asmbli MCP servers for LM Studio..."
 
-# Create AgentEngine directory
-mkdir -p ~/AgentEngine/mcp-servers
-cd ~/AgentEngine/mcp-servers
+# Create Asmbli directory
+mkdir -p ~/Asmbli/mcp-servers
+cd ~/Asmbli/mcp-servers
 
 # Install core MCP servers
 npm init -y
@@ -83,7 +83,7 @@ EOF
 # Create startup script
 cat > start-mcp-servers.sh << 'EOF'
 #!/bin/bash
-echo "Starting AgentEngine MCP servers..."
+echo "Starting Asmbli MCP servers..."
 node ./node_modules/@figma/mcp-server/dist/index.js --port 3001 &
 node ./node_modules/@mcp/filesystem/dist/index.js --port 3002 ~/Documents &
 node ./node_modules/@mcp/git/dist/index.js --port 3003 &
@@ -165,8 +165,8 @@ Ollama is lightweight and perfect for consumer deployment, but needs custom brid
 
 ```bash
 # Create Ollama-MCP Bridge
-mkdir ~/AgentEngine/ollama-bridge
-cd ~/AgentEngine/ollama-bridge
+mkdir ~/Asmbli/ollama-bridge
+cd ~/Asmbli/ollama-bridge
 
 npm init -y
 npm install express cors axios
@@ -259,7 +259,7 @@ echo "Start with: node ollama-mcp-bridge.js"
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ollama + AgentEngine Chat</title>
+    <title>Ollama + Asmbli Chat</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
         .chat-container { border: 1px solid #ddd; height: 400px; overflow-y: auto; padding: 10px; margin-bottom: 10px; }
@@ -272,7 +272,7 @@ echo "Start with: node ollama-mcp-bridge.js"
     </style>
 </head>
 <body>
-    <h1>🦙 Ollama + 🚀 AgentEngine Chat</h1>
+    <h1>🦙 Ollama + 🚀 Asmbli Chat</h1>
     <div class="chat-container" id="chat"></div>
     <div class="input-container">
         <input type="text" id="messageInput" placeholder="Try: 'List my files' or 'Get my Figma designs'" onkeypress="handleKeyPress(event)">
@@ -341,7 +341,7 @@ app.get('/openapi.json', (req, res) => {
   res.json({
     "openapi": "3.0.1",
     "info": {
-      "title": "AgentEngine MCP Gateway",
+      "title": "Asmbli MCP Gateway",
       "description": "Access Figma, filesystem, and git through MCP servers",
       "version": "1.0.0"
     },
@@ -416,7 +416,7 @@ app.listen(3004, () => {
 Create a Custom GPT in ChatGPT with these instructions:
 
 ```markdown
-# AgentEngine Design Assistant
+# Asmbli Design Assistant
 
 You are a design-to-code specialist with access to Figma files and local file system.
 
@@ -445,7 +445,7 @@ Create platform-specific installers that handle everything automatically.
 
 ```powershell
 # install-agentengine.ps1
-Write-Host "🚀 Installing AgentEngine for Consumer Use..." -ForegroundColor Green
+Write-Host "🚀 Installing Asmbli for Consumer Use..." -ForegroundColor Green
 
 # Check if Node.js is installed
 if (!(Get-Command node -ErrorAction SilentlyContinue)) {
@@ -454,8 +454,8 @@ if (!(Get-Command node -ErrorAction SilentlyContinue)) {
     exit
 }
 
-# Create AgentEngine directory
-$agentDir = "$env:USERPROFILE\AgentEngine"
+# Create Asmbli directory
+$agentDir = "$env:USERPROFILE\Asmbli"
 New-Item -ItemType Directory -Force -Path $agentDir
 Set-Location $agentDir
 
@@ -505,7 +505,7 @@ Write-Host "✅ Installation complete!" -ForegroundColor Green
 #!/bin/bash
 # install-agentengine.sh
 
-echo "🚀 Installing AgentEngine for Consumer Use..."
+echo "🚀 Installing Asmbli for Consumer Use..."
 
 # Check dependencies
 if ! command -v node &> /dev/null; then
@@ -514,8 +514,8 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
-# Create AgentEngine directory
-AGENT_DIR="$HOME/AgentEngine"
+# Create Asmbli directory
+AGENT_DIR="$HOME/Asmbli"
 mkdir -p "$AGENT_DIR"
 cd "$AGENT_DIR"
 
@@ -548,7 +548,7 @@ echo "✅ Installation complete!"
 
 ## Consumer UI Integration
 
-Add a consumer-focused deployment section to the AgentEngine UI:
+Add a consumer-focused deployment section to the Asmbli UI:
 
 ### New "Consumer Deploy" Tab
 
@@ -560,7 +560,7 @@ Add a consumer-focused deployment section to the AgentEngine UI:
   <div className="text-center space-y-4 py-8">
     <h2 className="text-3xl font-bold">Deploy to Your AI Setup</h2>
     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-      Connect AgentEngine capabilities to your existing AI tools - no complex deployments needed.
+      Connect Asmbli capabilities to your existing AI tools - no complex deployments needed.
     </p>
   </div>
 
@@ -690,7 +690,7 @@ Add a consumer-focused deployment section to the AgentEngine UI:
 5. **Usage**: "Show me the components in my design system" → AI actually accesses Figma
 6. **Expansion**: Add more MCP servers as needed
 
-This transforms AgentEngine from an enterprise deployment platform into a consumer enhancement tool that makes any AI chat interface more powerful.
+This transforms Asmbli from an enterprise deployment platform into a consumer enhancement tool that makes any AI chat interface more powerful.
 
 <function_calls>
 <invoke name="TodoWrite">

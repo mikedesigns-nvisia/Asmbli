@@ -62,7 +62,7 @@ class HTTPMCPAdapter extends MCPAdapter {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'User-Agent': 'AgentEngine-MCP-Client/1.0',
+        'User-Agent': 'Asmbli-MCP-Client/1.0',
         ...config.headers ?? {},
       },
     );
@@ -90,7 +90,7 @@ class HTTPMCPAdapter extends MCPAdapter {
           'protocolVersion': '1.0',
           'capabilities': config.capabilities ?? getCapabilities(),
           'clientInfo': {
-            'name': 'AgentEngine',
+            'name': 'Asmbli',
             'version': '1.0.0',
           },
         },

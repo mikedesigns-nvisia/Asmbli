@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# AgentEngine macOS Distribution Build Script
+# Asmbli macOS Distribution Build Script
 # Builds a production-ready macOS app bundle for distribution
 
 set -e
 
-echo "🍎 Building AgentEngine macOS Distribution Package..."
+echo "🍎 Building Asmbli macOS Distribution Package..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -15,7 +15,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-APP_NAME="AgentEngine"
+APP_NAME="Asmbli"
 APP_VERSION="1.0.0"
 BUNDLE_ID="com.asmbli.agentengine.desktop"
 BUILD_DIR="build/macos/Build/Products/Release"
@@ -164,4 +164,4 @@ echo ""
 echo -e "${BLUE}🚀 Distribution Package Contents:${NC}"
 ls -la "$DIST_DIR"
 
-echo -e "${GREEN}✅ AgentEngine macOS distribution build complete!${NC}"
+echo -e "${GREEN}✅ Asmbli macOS distribution build complete!${NC}"

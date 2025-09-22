@@ -19,7 +19,7 @@ class MacOSVectorDatabaseService extends VectorDatabaseService {
   final MacOSServiceProvider _macOSService;
 
   // macOS-specific configurations
-  static const String _spotlightIndexPath = '~/Library/Application Support/AgentEngine/spotlight';
+  static const String _spotlightIndexPath = '~/Library/Application Support/Asmbli/spotlight';
   static const int _batchSize = 1000; // Optimized for macOS memory management
 
   // Performance monitoring
@@ -65,7 +65,7 @@ class MacOSVectorDatabaseService extends VectorDatabaseService {
     try {
       // First choice: Application Support with Spotlight indexing
       final appSupportDir = await getApplicationSupportDirectory();
-      final optimizedPath = path.join(appSupportDir.path, 'AgentEngine', 'vector_db_optimized');
+      final optimizedPath = path.join(appSupportDir.path, 'Asmbli', 'vector_db_optimized');
 
       // Test write permissions and speed
       final testDir = Directory(optimizedPath);
@@ -138,7 +138,7 @@ class MacOSVectorDatabaseService extends VectorDatabaseService {
       }
 
       // Create .mdimporter file for custom document types
-      final mdimporterPath = path.join(spotlightDir.path, 'AgentEngine.mdimporter');
+      final mdimporterPath = path.join(spotlightDir.path, 'Asmbli.mdimporter');
       final mdimporterFile = File(mdimporterPath);
 
       if (!await mdimporterFile.exists()) {
@@ -517,7 +517,7 @@ class MacOSVectorDatabaseService extends VectorDatabaseService {
     <array>
         <dict>
             <key>CFBundleTypeName</key>
-            <string>AgentEngine Vector Document</string>
+            <string>Asmbli Vector Document</string>
             <key>CFBundleTypeRole</key>
             <string>MDImporter</string>
             <key>LSItemContentTypes</key>

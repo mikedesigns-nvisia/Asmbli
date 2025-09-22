@@ -1,4 +1,4 @@
-# AgentEngine Deployment Quick Reference
+# Asmbli Deployment Quick Reference
 
 ## 🚀 Deployment Decision Tree
 
@@ -27,7 +27,7 @@ Are you developing locally?
 
 ### Claude Desktop
 ```bash
-# 1. Generate config via AgentEngine UI
+# 1. Generate config via Asmbli UI
 # 2. Install MCP servers
 npm install -g @figma/mcp-server @mcp/filesystem @mcp/git
 
@@ -41,7 +41,7 @@ npm install -g @figma/mcp-server @mcp/filesystem @mcp/git
 
 ### Docker
 ```bash
-# 1. Generate Docker files via AgentEngine UI
+# 1. Generate Docker files via Asmbli UI
 # 2. Build and run
 docker build -t agentengine-app .
 docker run -p 3000:3000 agentengine-app
@@ -52,7 +52,7 @@ docker-compose up -d
 
 ### Kubernetes
 ```bash
-# 1. Generate K8s manifests via AgentEngine UI
+# 1. Generate K8s manifests via Asmbli UI
 # 2. Build and push image
 docker build -t your-registry/agentengine:latest .
 docker push your-registry/agentengine:latest
@@ -197,7 +197,7 @@ kubectl get endpoints service-name
 
 - **Full Deployment Guide**: `/docs/deployment-guide.md`
 - **Podcast Script**: `/docs/deployment-podcast-script.md`
-- **AgentEngine Documentation**: Generated via UI wizard
+- **Asmbli Documentation**: Generated via UI wizard
 - **MCP Protocol Spec**: [Model Context Protocol Documentation]
 - **Security Best Practices**: Enterprise security guidelines
 

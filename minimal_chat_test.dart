@@ -175,10 +175,10 @@ class ClaudeApiException implements Exception {
   String toString() => 'ClaudeApiException: \$message';
 }
 
-/// Demonstration of AgentEngine's AI integration capabilities
+/// Demonstration of Asmbli's AI integration capabilities
 void main(List<String> args) async {
   if (args.isEmpty) {
-    print('🤖 AgentEngine Claude API Integration Test');
+    print('🤖 Asmbli Claude API Integration Test');
     print('==========================================');
     print('');
     print('Usage: dart run minimal_chat_test.dart YOUR_API_KEY');
@@ -191,17 +191,17 @@ void main(List<String> args) async {
   final apiKey = args[0];
   final claudeService = ClaudeApiService();
   
-  print('🚀 AgentEngine - Phase 2: Claude API Integration Test');
+  print('🚀 Asmbli - Phase 2: Claude API Integration Test');
   print('====================================================');
   print('');
-  print('Testing the core AI integration that powers AgentEngine...');
+  print('Testing the core AI integration that powers Asmbli...');
   print('');
 
   // Test 1: Basic API connectivity
   print('📡 Test 1: API Connectivity');
   try {
     final response = await claudeService.sendMessage(
-      message: 'Hello! Please confirm you are working by saying "AgentEngine Claude integration is operational."',
+      message: 'Hello! Please confirm you are working by saying "Asmbli Claude integration is operational."',
       apiKey: apiKey,
       maxTokens: 50,
     );
@@ -226,7 +226,7 @@ void main(List<String> args) async {
       message: 'What can you help me with?',
       apiKey: apiKey,
       maxTokens: 200,
-      systemPrompt: 'You are AgentEngine, a powerful AI assistant that can connect to MCP servers, manage context, and help users with complex tasks. Be helpful and mention your MCP integration capabilities.',
+      systemPrompt: 'You are Asmbli, a powerful AI assistant that can connect to MCP servers, manage context, and help users with complex tasks. Be helpful and mention your MCP integration capabilities.',
     );
     
     print('✅ SUCCESS: \${response.text}');
@@ -260,7 +260,7 @@ void main(List<String> args) async {
     exit(1);
   }
 
-  print('🎉 All tests passed! AgentEngine Claude API integration is fully functional.');
+  print('🎉 All tests passed! Asmbli Claude API integration is fully functional.');
   print('');
   print('✨ What this means:');
   print('   • Users can now have real AI conversations');
@@ -268,6 +268,6 @@ void main(List<String> args) async {
   print('   • Conversation history is properly maintained');
   print('   • Token usage is tracked for billing/optimization');
   print('');
-  print('🚀 AgentEngine is ready for Phase 2 deployment!');
+  print('🚀 Asmbli is ready for Phase 2 deployment!');
   print('   Next steps: Add API key through Settings → API Configuration');
 }

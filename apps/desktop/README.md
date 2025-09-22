@@ -1,4 +1,4 @@
-# AgentEngine Desktop
+# Asmbli Desktop
 
 Professional agent builder for developers with local MCP server integration.
 
@@ -91,7 +91,7 @@ apps/desktop/
 
 ### API Integration
 
-The desktop app connects to the AgentEngine platform API for:
+The desktop app connects to the Asmbli platform API for:
 - Template library access
 - Cloud synchronization
 - Community sharing features

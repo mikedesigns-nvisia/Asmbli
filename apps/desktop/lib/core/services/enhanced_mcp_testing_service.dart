@@ -531,7 +531,7 @@ class EnhancedMCPTestingService {
       final client = HttpClient();
       final request = await client.getUrl(Uri.parse('https://api.github.com/user'));
       request.headers.set('Authorization', 'token $token');
-      request.headers.set('User-Agent', 'AgentEngine-MCP-Test');
+      request.headers.set('User-Agent', 'Asmbli-MCP-Test');
       
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();

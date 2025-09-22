@@ -90,7 +90,7 @@ class DesktopServiceProvider {
 
  if (isDesktop) {
  try {
- final appDir = await fileSystem.getAgentEngineDirectory();
+ final appDir = await fileSystem.getAsmbliDirectory();
  info['paths'] = {
  'appData': appDir.path,
  'agents': (await fileSystem.getAgentsDirectory()).path,

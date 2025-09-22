@@ -16,12 +16,12 @@ class MacOSKeychainService {
       ),
       iOptions: IOSOptions(
         groupId: 'group.com.asmbli.agentengine',
-        accountName: 'AgentEngine',
+        accountName: 'Asmbli',
         accessibility: KeychainAccessibility.first_unlock_this_device,
       ),
       mOptions: MacOsOptions(
         groupId: 'group.com.asmbli.agentengine',
-        accountName: 'AgentEngine',
+        accountName: 'Asmbli',
         accessibility: KeychainAccessibility.first_unlock_this_device,
       ),
     );

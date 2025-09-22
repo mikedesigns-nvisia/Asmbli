@@ -1,8 +1,8 @@
-# AgentEngine Deployment Guide
+# Asmbli Deployment Guide
 
 ## Overview
 
-AgentEngine provides multiple deployment pathways to suit different use cases, from local development to enterprise-scale production deployments. This guide explains each deployment option, when to use them, and step-by-step instructions.
+Asmbli provides multiple deployment pathways to suit different use cases, from local development to enterprise-scale production deployments. This guide explains each deployment option, when to use them, and step-by-step instructions.
 
 ## Deployment Options Summary
 
@@ -52,7 +52,7 @@ AgentEngine provides multiple deployment pathways to suit different use cases, f
 
 ### Claude Desktop Integration
 
-Claude Desktop integration is the fastest way to get started with AgentEngine. This deployment method runs your agent locally and integrates directly with the Claude Desktop application.
+Claude Desktop integration is the fastest way to get started with Asmbli. This deployment method runs your agent locally and integrates directly with the Claude Desktop application.
 
 #### Prerequisites
 - Claude Desktop application installed
@@ -62,7 +62,7 @@ Claude Desktop integration is the fastest way to get started with AgentEngine. T
 #### Setup Process
 
 1. **Generate Configuration**
-   - Use AgentEngine's wizard to configure your agent
+   - Use Asmbli's wizard to configure your agent
    - Select "Claude Desktop" as your deployment target
    - Download the generated `claude_desktop_config.json`
 
@@ -116,7 +116,7 @@ Claude Desktop integration is the fastest way to get started with AgentEngine. T
 
 ### Docker Deployment
 
-Docker deployment provides a consistent, portable environment for your AgentEngine applications.
+Docker deployment provides a consistent, portable environment for your Asmbli applications.
 
 #### Prerequisites
 - Docker installed and running
@@ -126,7 +126,7 @@ Docker deployment provides a consistent, portable environment for your AgentEngi
 #### Single Container Deployment
 
 1. **Generate Docker Configuration**
-   - Configure your agent in AgentEngine
+   - Configure your agent in Asmbli
    - Select "Docker" as deployment target
    - Download the generated `Dockerfile` and `docker-compose.yml`
 
@@ -305,7 +305,7 @@ Railway provides zero-configuration deployments with automatic scaling and monit
 1. **Connect Repository**
    - Create Railway account
    - Connect your GitHub repository
-   - Select the repository containing your AgentEngine project
+   - Select the repository containing your Asmbli project
 
 2. **Configure Environment**
    ```bash
@@ -854,7 +854,7 @@ metadata:
 
 ## Conclusion
 
-AgentEngine's flexible deployment architecture supports everything from local development to enterprise-scale production deployments. Choose the deployment method that best fits your use case:
+Asmbli's flexible deployment architecture supports everything from local development to enterprise-scale production deployments. Choose the deployment method that best fits your use case:
 
 - **Claude Desktop** for local development and personal use
 - **Docker** for team development and simple production deployments
@@ -863,4 +863,4 @@ AgentEngine's flexible deployment architecture supports everything from local de
 
 Each deployment method can be enhanced with proper monitoring, security, and performance optimization to meet your specific requirements.
 
-For additional support and advanced deployment scenarios, consult the AgentEngine documentation or contact the support team.
+For additional support and advanced deployment scenarios, consult the Asmbli documentation or contact the support team.

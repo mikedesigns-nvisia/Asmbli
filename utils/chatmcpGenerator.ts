@@ -263,7 +263,7 @@ function generateMVPChatMCPConfig(mvpData: MVPWizardData): ChatMCPConfig {
       role: role,
       version: '1.0.0',
       createdAt: new Date().toISOString(),
-      generator: 'AgentEngine ChatMCP'
+      generator: 'Asmbli ChatMCP'
     }
   };
 }
@@ -294,7 +294,7 @@ function generateEnterpriseChatMCPConfig(wizardData: WizardData): ChatMCPConfig 
       role: wizardData.primaryPurpose || 'general',
       version: '1.0.0',
       createdAt: new Date().toISOString(),
-      generator: 'AgentEngine ChatMCP Enterprise'
+      generator: 'Asmbli ChatMCP Enterprise'
     }
   };
 }
@@ -361,7 +361,7 @@ See \`environment-setup.md\` for detailed instructions.` : 'No additional enviro
 ## Support
 - ChatMCP Documentation: https://github.com/daodao97/chatmcp
 - MCP Protocol: https://modelcontextprotocol.io/
-- AgentEngine: Your agent configuration system
+- Asmbli: Your agent configuration system
 
 Generated on ${new Date().toLocaleDateString()} by ${config.agentMetadata.generator}
 `;

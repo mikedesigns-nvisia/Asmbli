@@ -4,7 +4,7 @@ import re
 def fix_agent_config_errors():
     """Fix agent configuration screen syntax errors."""
     
-    file_path = r"C:\AgentEngine\apps\desktop\lib\features\agents\presentation\screens\agent_configuration_screen.dart"
+    file_path = r"C:\Asmbli\apps\desktop\lib\features\agents\presentation\screens\agent_configuration_screen.dart"
     
     try:
         with open(file_path, 'r', encoding='utf-8') as f:

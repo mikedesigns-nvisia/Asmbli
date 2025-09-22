@@ -67,7 +67,7 @@ final createConversationProvider = Provider.autoDispose((ref) {
    metadata: {
      'type': 'direct_chat',
      'version': '2.0.0',
-     'generator': 'AgentEngine Business Service',
+     'generator': 'Asmbli Business Service',
      'defaultModelId': defaultModel?.id,
      'defaultModelName': defaultModel?.name,
      'defaultModelProvider': defaultModel?.provider,
@@ -153,7 +153,7 @@ final createAgentConversationProvider = Provider.autoDispose((ref) {
  'globalContextUsed': mcpService.globalContextDocuments.length, // Tracking
  'createdAt': DateTime.now().toIso8601String(),
  'version': '1.0.0',
- 'generator': 'AgentEngine ChatMCP',
+ 'generator': 'Asmbli ChatMCP',
  'settingsVersion': deploymentConfig.timestamp.toIso8601String(),
  };
  

@@ -1,6 +1,6 @@
-# AgentEngine Desktop App - Test Suite
+# Asmbli Desktop App - Test Suite
 
-This directory contains comprehensive integration tests for all major user flows in the AgentEngine desktop application.
+This directory contains comprehensive integration tests for all major user flows in the Asmbli desktop application.
 
 ## Test Structure
 

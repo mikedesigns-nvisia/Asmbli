@@ -432,7 +432,7 @@ class JsonRpcCommunicationService {
           'sampling': {},
         },
         'clientInfo': {
-          'name': 'AgentEngine Desktop',
+          'name': 'Asmbli Desktop',
           'version': '1.0.0',
         },
         // Include credentials if provided

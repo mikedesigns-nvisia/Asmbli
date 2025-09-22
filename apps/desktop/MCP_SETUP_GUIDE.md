@@ -7,7 +7,7 @@ Quick setup guide for real MCP server authentication. Get your agents working wi
 ### GitHub Personal Access Token
 **Get it**: https://github.com/settings/tokens
 1. Click **Generate new token** → **Classic**
-2. Set **Name**: `AgentEngine MCP`
+2. Set **Name**: `Asmbli MCP`
 3. Set **Expiration**: `90 days` (or as needed)
 4. **Scopes**: Select `repo`, `read:org`, `user:email`
 5. Click **Generate token**
@@ -17,7 +17,7 @@ Quick setup guide for real MCP server authentication. Get your agents working wi
 **Get it**: https://linear.app/settings/api
 1. Go to **Settings** → **API**
 2. Click **Create key**
-3. Set **Label**: `AgentEngine`
+3. Set **Label**: `Asmbli`
 4. Copy the key → Add to `.env` as `LINEAR_API_KEY`
 
 ### Brave Search API
@@ -31,7 +31,7 @@ Quick setup guide for real MCP server authentication. Get your agents working wi
 ### Slack Bot Token
 **Setup**: https://api.slack.com/apps
 1. **Create New App** → **From scratch**
-2. Set **App Name**: `AgentEngine Bot`
+2. Set **App Name**: `Asmbli Bot`
 3. Choose your workspace
 4. Go to **OAuth & Permissions**
 5. Add **Bot Token Scopes**: `channels:read`, `chat:write`, `files:read`, `users:read`
@@ -41,7 +41,7 @@ Quick setup guide for real MCP server authentication. Get your agents working wi
 ### Notion Integration Token
 **Setup**: https://www.notion.so/my-integrations
 1. **Create new integration**
-2. Set **Name**: `AgentEngine`
+2. Set **Name**: `Asmbli`
 3. Choose workspace
 4. Set **Type**: `Internal integration`
 5. **Capabilities**: Read, Update, Insert content
@@ -83,7 +83,7 @@ AWS_DEFAULT_REGION=us-east-1
 
 ## ✅ Testing Your Setup
 
-1. Open **AgentEngine** 
+1. Open **Asmbli** 
 2. Go to **Tools** → **Catalog**
 3. Click **Configure** on any MCP server
 4. You should see **Configured** status for services you set up

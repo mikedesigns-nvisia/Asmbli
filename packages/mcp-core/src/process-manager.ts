@@ -386,7 +386,7 @@ export class MCPProcessManager {
             sampling: {}
           },
           clientInfo: {
-            name: 'AgentEngine',
+            name: 'Asmbli',
             version: '1.0.0'
           }
         }

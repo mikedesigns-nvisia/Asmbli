@@ -74,7 +74,7 @@ class DesktopWindowManagementService {
  backgroundColor: options.backgroundColor ?? Colors.transparent,
  skipTaskbar: options.skipTaskbar,
  titleBarStyle: options.titleBarStyle,
- title: options.title ?? 'AgentEngine Desktop',
+ title: options.title ?? 'Asmbli Desktop',
  );
 
  windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -158,7 +158,7 @@ class DesktopWindowManagementService {
  }
 
  Future<String> getTitle() async {
- if (!isDesktop) return 'AgentEngine Desktop';
+ if (!isDesktop) return 'Asmbli Desktop';
  return await windowManager.getTitle();
  }
 

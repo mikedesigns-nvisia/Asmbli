@@ -1,16 +1,16 @@
-# Statement of Work: AgentEngine Deployment Critical Issues Resolution
+# Statement of Work: Asmbli Deployment Critical Issues Resolution
 
 ## Project Overview
 
-**Project**: AgentEngine Critical Deployment Fixes  
-**Client**: AgentEngine Development Team  
+**Project**: Asmbli Critical Deployment Fixes  
+**Client**: Asmbli Development Team  
 **Date**: August 28, 2025  
 **Duration**: 5-7 business days  
 **Priority**: Critical/High Priority  
 
 ## Executive Summary
 
-AgentEngine is a well-architected Flutter desktop application with 95% complete UI/UX and comprehensive MCP (Model Context Protocol) integration architecture. However, critical build errors and missing backend integrations prevent deployment. This SOW addresses the immediate blockers and core missing features required for production deployment.
+Asmbli is a well-architected Flutter desktop application with 95% complete UI/UX and comprehensive MCP (Model Context Protocol) integration architecture. However, critical build errors and missing backend integrations prevent deployment. This SOW addresses the immediate blockers and core missing features required for production deployment.
 
 ## Current State Assessment
 

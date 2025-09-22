@@ -532,7 +532,7 @@ class StreamlinedVectorContextService {
   Future<String> _getDatabasePath() async {
     try {
       final appDocDir = await getApplicationDocumentsDirectory();
-      final primaryPath = path.join(appDocDir.path, 'AgentEngine', 'vector_db');
+      final primaryPath = path.join(appDocDir.path, 'Asmbli', 'vector_db');
       
       final testDir = Directory(primaryPath);
       await testDir.create(recursive: true);
@@ -542,7 +542,7 @@ class StreamlinedVectorContextService {
     } catch (primaryError) {
       try {
         final appSupportDir = await getApplicationSupportDirectory();
-        final secondaryPath = path.join(appSupportDir.path, 'AgentEngine', 'vector_db');
+        final secondaryPath = path.join(appSupportDir.path, 'Asmbli', 'vector_db');
         
         final testDir = Directory(secondaryPath);
         await testDir.create(recursive: true);
@@ -551,7 +551,7 @@ class StreamlinedVectorContextService {
         
       } catch (secondaryError) {
         final tempDir = await getTemporaryDirectory();
-        final fallbackPath = path.join(tempDir.path, 'AgentEngine', 'vector_db');
+        final fallbackPath = path.join(tempDir.path, 'Asmbli', 'vector_db');
         
         final testDir = Directory(fallbackPath);
         await testDir.create(recursive: true);
