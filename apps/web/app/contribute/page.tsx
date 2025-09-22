@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Bot, Code, Zap, Users, Server, FileText, GitBranch, Bug, Lightbulb, Heart, ExternalLink, CheckCircle, AlertTriangle, Github } from 'lucide-react'
+import { ArrowRight, Bot, Code, Zap, Users, Server, FileText, GitBranch, Bug, Lightbulb, Heart, ExternalLink, CheckCircle, AlertTriangle } from 'lucide-react'
 import { Navigation } from '@/components/Navigation'
 import { Footer } from '@/components/Footer'
 
@@ -27,7 +27,7 @@ export default function ContributePage() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Link href="https://github.com/asmbli/asmbli" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white">
-                <Github className="mr-2 h-5 w-5" />
+                <GitBranch className="mr-2 h-5 w-5" />
                 View on GitHub
               </Button>
             </Link>
@@ -400,7 +400,7 @@ export default function ContributePage() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Link href="https://github.com/asmbli/asmbli" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white">
-                <Github className="mr-2 h-5 w-5" />
+                <GitBranch className="mr-2 h-5 w-5" />
                 Start Contributing
               </Button>
             </Link>
