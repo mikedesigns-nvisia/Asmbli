@@ -19,7 +19,7 @@ interface DownloadOption {
 const downloads: DownloadOption[] = [
   {
     platform: 'Windows',
-    version: '1.0.0',
+    version: '1.0.0 Beta',
     size: '~25MB',
     format: 'ZIP Archive',
     filename: 'Asmbli-1.0.0-windows-x64.zip',
@@ -33,7 +33,7 @@ const downloads: DownloadOption[] = [
   },
   {
     platform: 'macOS',
-    version: '0.9.0',
+    version: '0.9.0 Beta',
     size: '~24MB',
     format: 'DMG Installer',
     filename: 'Asmbli-Beta-0.9.0-macOS.dmg',

@@ -5,19 +5,19 @@ import { Footer } from '@/components/Footer';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Download Asmbli - Professional AI Agent Platform',
-  description: 'Download Asmbli for Windows and macOS. Deploy specialized AI agents with MCP integration, professional tools, and enterprise-grade security.',
+  title: 'Download Asmbli Beta - AI Agent Platform',
+  description: 'Download Asmbli Beta for Windows and macOS. Early access to specialized AI agents with MCP integration, professional tools, and local processing.',
   keywords: 'AI agent, download, Windows, macOS, MCP, agent platform, AI tools',
   openGraph: {
-    title: 'Download Asmbli - AI Agents Made Easy',
-    description: 'Professional AI agent deployment platform with 20+ specialized agents and 40+ professional tools.',
+    title: 'Download Asmbli Beta - AI Agents Made Easy',
+    description: 'Beta access to AI agent platform with 20+ specialized agents and MCP integration.',
     type: 'website',
     url: 'https://asmbli.ai/download',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Download Asmbli - AI Agents Made Easy', 
-    description: 'Professional AI agent deployment platform for Windows and macOS.',
+    title: 'Download Asmbli Beta - AI Agents Made Easy',
+    description: 'Beta AI agent platform for Windows and macOS - early access available.',
   }
 };
 
@@ -30,19 +30,19 @@ export default function DownloadPage() {
       <div className="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">
-            Download Asmbli
+            Download Asmbli <span className="text-amber-400">Beta</span>
           </h1>
           <p className="text-xl text-neutral-300 max-w-3xl mx-auto mb-8">
-            Professional AI agent deployment platform. Build, deploy, and manage
-            specialized AI agents with enterprise-grade tools and security.
+            Early access to the AI agent platform. Build, deploy, and manage
+            specialized AI agents with MCP integration and local processing.
             <br />
-            <span className="text-amber-400 font-semibold">Now available for macOS Beta!</span>
+            <span className="text-amber-400 font-semibold">Beta builds available for Windows and macOS!</span>
           </p>
           <div className="flex justify-center gap-6 text-sm text-neutral-400">
+            <span>✓ Beta Access</span>
             <span>✓ 20+ Agent Templates</span>
             <span>✓ MCP Integration</span>
-            <span>✓ Professional Tools</span>
-            <span>✓ macOS Beta Available</span>
+            <span>✓ Local Processing</span>
           </div>
         </div>
       </div>
@@ -54,17 +54,17 @@ export default function DownloadPage() {
       <div className="py-16 bg-neutral-50">
         <div className="container mx-auto px-4 max-w-4xl">
           <h2 className="text-3xl font-bold text-center text-neutral-900 mb-12">
-            Frequently Asked Questions
+            Beta Program FAQ
           </h2>
           
           <div className="space-y-8">
             <div>
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                Is Asmbli free to use?
+                Is Asmbli Beta free to use?
               </h3>
               <p className="text-neutral-600">
-                Asmbli itself is free and open source. You'll need to provide your own AI API keys 
-                (Claude, OpenAI, etc.) which have their own pricing models.
+                Yes! Asmbli Beta is completely free during the beta period. You'll need to provide your own AI API keys
+                (Claude, OpenAI, etc.) which have their own pricing models. The app itself costs nothing.
               </p>
             </div>
 
@@ -91,12 +91,12 @@ export default function DownloadPage() {
 
             <div>
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                When will the macOS version be available?
+                What does "Beta" mean for Asmbli?
               </h3>
               <p className="text-neutral-600">
-                The macOS version requires a macOS development environment for building. 
-                We're working on setting up proper macOS builds and expect to release it soon. 
-                Follow our GitHub for updates.
+                Asmbli is currently in beta, meaning we're actively developing and improving features.
+                You may encounter bugs or rough edges, but you get early access to cutting-edge AI agent technology.
+                Your feedback helps shape the final product!
               </p>
             </div>
 
