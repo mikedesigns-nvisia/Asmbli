@@ -33,9 +33,9 @@ class DesktopFileSystemService {
  return await provider.getTemporaryDirectory();
  }
 
- Future<Directory> getAsmbliDirectory() async {
+ Future<Directory> getAgentEngineDirectory() async {
  final appDir = await getApplicationSupportDirectory();
- final agentEngineDir = Directory(path.join(appDir.path, 'Asmbli'));
+ final agentEngineDir = Directory(path.join(appDir.path, 'AgentEngine'));
  
  if (!await agentEngineDir.exists()) {
  await agentEngineDir.create(recursive: true);
@@ -45,7 +45,7 @@ class DesktopFileSystemService {
  }
 
  Future<Directory> getAgentsDirectory() async {
- final baseDir = await getAsmbliDirectory();
+ final baseDir = await getAgentEngineDirectory();
  final agentsDir = Directory(path.join(baseDir.path, 'agents'));
  
  if (!await agentsDir.exists()) {
@@ -56,7 +56,7 @@ class DesktopFileSystemService {
  }
 
  Future<Directory> getTemplatesDirectory() async {
- final baseDir = await getAsmbliDirectory();
+ final baseDir = await getAgentEngineDirectory();
  final templatesDir = Directory(path.join(baseDir.path, 'templates'));
  
  if (!await templatesDir.exists()) {
@@ -67,7 +67,7 @@ class DesktopFileSystemService {
  }
 
  Future<Directory> getLogsDirectory() async {
- final baseDir = await getAsmbliDirectory();
+ final baseDir = await getAgentEngineDirectory();
  final logsDir = Directory(path.join(baseDir.path, 'logs'));
  
  if (!await logsDir.exists()) {
@@ -78,7 +78,7 @@ class DesktopFileSystemService {
  }
 
  Future<Directory> getMCPServersDirectory() async {
- final baseDir = await getAsmbliDirectory();
+ final baseDir = await getAgentEngineDirectory();
  final mcpDir = Directory(path.join(baseDir.path, 'mcp_servers'));
  
  if (!await mcpDir.exists()) {

@@ -145,7 +145,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected 
-                        ? ThemeColors(context).primary.withOpacity( 0.1)
+                        ? ThemeColors(context).primary.withValues(alpha: 0.1)
                         : ThemeColors(context).surface,
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     border: Border.all(
@@ -225,7 +225,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withOpacity( 0.1),
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -248,7 +248,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                   Icon(
                     Icons.storage,
                     size: 48,
-                    color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.5),
+                    color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: SpacingTokens.sm),
                   Text(
@@ -260,7 +260,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                   Text(
                     'Your agent will work without MCP servers, but won\'t have access to external tools.',
                     style: TextStyles.bodySmall.copyWith(
-                      color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.7),
+                      color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.7),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -402,7 +402,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                   Icon(
                     Icons.check_circle,
                     size: 48,
-                    color: ThemeColors(context).success.withOpacity( 0.5),
+                    color: ThemeColors(context).success.withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: SpacingTokens.sm),
                   Text(
@@ -414,7 +414,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
                   Text(
                     'Configure more servers in Settings or add new ones below.',
                     style: TextStyles.bodySmall.copyWith(
-                      color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.7),
+                      color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.7),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -528,7 +528,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: 4),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surfaceVariant.withOpacity( 0.3),
+        color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: DropdownButtonHideUnderline(

@@ -3,7 +3,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Download, Shield, Zap, Users, Settings } from 'lucide-react';
 
 interface DownloadOption {
@@ -13,7 +12,6 @@ interface DownloadOption {
   format: string;
   filename: string;
   available: boolean;
-  recommended?: boolean;
   requirements: string[];
   downloadUrl?: string;
 }
@@ -26,7 +24,6 @@ const downloads: DownloadOption[] = [
     format: 'ZIP Archive',
     filename: 'Asmbli-1.0.0-windows-x64.zip',
     available: true,
-    recommended: true,
     requirements: [
       'Windows 10 64-bit or Windows 11',
       '8GB RAM minimum (16GB recommended)',
@@ -41,7 +38,6 @@ const downloads: DownloadOption[] = [
     format: 'DMG Installer',
     filename: 'Asmbli-Beta-0.9.0-macOS.dmg',
     available: true,
-    recommended: true,
     requirements: [
       'macOS 10.15 (Catalina) or later',
       'Intel x64 or Apple Silicon (M1/M2/M3)',
@@ -118,14 +114,7 @@ export default function DownloadSection() {
         {/* Download Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-16 max-w-4xl mx-auto">
           {downloads.map((download) => (
-            <Card key={download.platform} className={`relative ${
-              download.recommended ? 'ring-2 ring-amber-400' : ''
-            }`}>
-              {download.recommended && (
-                <Badge className="absolute -top-3 left-6 bg-amber-400 text-amber-900">
-                  Recommended
-                </Badge>
-              )}
+            <Card key={download.platform} className="relative">
               
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
@@ -198,99 +187,39 @@ export default function DownloadSection() {
         </div>
 
         {/* Installation Instructions */}
-        <Card className="max-w-6xl mx-auto">
+        <Card className="max-w-4xl mx-auto">
           <CardHeader>
-            <CardTitle>Installation Guide</CardTitle>
+            <CardTitle>Quick Start Guide</CardTitle>
             <CardDescription>Get up and running in under 5 minutes</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Windows Instructions */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded bg-neutral-900 flex items-center justify-center">
-                    <span className="text-white font-bold text-xs">WIN</span>
-                  </div>
-                  Windows Installation
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
-                      1
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Download & Extract</h4>
-                      <p className="text-sm text-neutral-600">Download the ZIP file and extract to your preferred location</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
-                      2
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Launch & Configure</h4>
-                      <p className="text-sm text-neutral-600">Run the executable and follow the setup wizard to add your API keys</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
-                      3
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Deploy Agents</h4>
-                      <p className="text-sm text-neutral-600">Choose from 20+ agent templates and start your first conversation</p>
-                    </div>
-                  </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center mx-auto mb-3 font-bold">
+                  1
                 </div>
+                <h4 className="font-semibold mb-2">Download & Extract</h4>
+                <p className="text-sm text-neutral-600">
+                  Download the ZIP file and extract to your preferred location
+                </p>
               </div>
-
-              {/* macOS Instructions */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded bg-neutral-900 flex items-center justify-center">
-                    <span className="text-white font-bold text-xs">MAC</span>
-                  </div>
-                  macOS Installation
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
-                      1
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Download & Extract</h4>
-                      <p className="text-sm text-neutral-600">Download ZIP file and extract Asmbli.app, then drag to Applications folder.</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
-                      2
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">First Launch (Important!)</h4>
-                      <p className="text-sm text-neutral-600"><strong>Right-click → Open</strong> to bypass Gatekeeper for unsigned beta build</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm">
-                      3
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Start Building</h4>
-                      <p className="text-sm text-neutral-600">Configure your API keys and create your first AI agent</p>
-                    </div>
-                  </div>
+              <div className="text-center">
+                <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center mx-auto mb-3 font-bold">
+                  2
                 </div>
+                <h4 className="font-semibold mb-2">Launch & Configure</h4>
+                <p className="text-sm text-neutral-600">
+                  Run the executable and follow the setup wizard to add your API keys
+                </p>
               </div>
-            </div>
-
-            {/* Troubleshooting */}
-            <div className="mt-8 p-4 bg-neutral-50 rounded-lg">
-              <h4 className="font-semibold mb-2">macOS Troubleshooting</h4>
-              <div className="text-sm text-neutral-600 space-y-1">
-                <p><strong>Beta Build:</strong> This is an unsigned build - requires right-click → Open on first launch</p>
-                <p><strong>"App is damaged":</strong> Run <code className="bg-white px-1 rounded">sudo xattr -rd com.apple.quarantine /Applications/Asmbli.app</code></p>
-                <p><strong>Permission issues:</strong> Allow app in System Settings → Privacy & Security</p>
+              <div className="text-center">
+                <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center mx-auto mb-3 font-bold">
+                  3
+                </div>
+                <h4 className="font-semibold mb-2">Deploy Agents</h4>
+                <p className="text-sm text-neutral-600">
+                  Choose from 20+ agent templates and start your first conversation
+                </p>
               </div>
             </div>
           </CardContent>

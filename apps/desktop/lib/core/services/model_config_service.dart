@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/model_config.dart';
@@ -14,7 +13,6 @@ class ModelConfigService extends ApiConfigService {
   final Map<String, ModelConfig> _localModels = {};
   final Map<String, ModelConfig> _availableModels = {};
   bool _isInitialized = false;
-  Completer<void>? _initializationCompleter;
 
   ModelConfigService(
     this._storageService, 
@@ -23,47 +21,31 @@ class ModelConfigService extends ApiConfigService {
 
   @override
   Future<void> initialize() async {
-    // Return early if already initialized
     if (_isInitialized) return;
-
-    // If initialization is in progress, wait for it to complete
-    if (_initializationCompleter != null) {
-      return _initializationCompleter!.future;
-    }
-
-    // Start initialization
-    _initializationCompleter = Completer<void>();
+    
     print('DEBUG: ModelConfigService.initialize() called');
-
+    
+    // Initialize base API config service
+    await super.initialize();
+    
+    // Load local models and available models
+    await _loadLocalModels();
+    await _loadAvailableModels();
+    
+    // Initialize Ollama service
     try {
-      // Initialize base API config service
-      await super.initialize();
-
-      // Load local models and available models
-      await _loadLocalModels();
-      await _loadAvailableModels();
-
-      // Initialize Ollama service
-      try {
-        print('DEBUG: Initializing Ollama service...');
-        await _ollamaService.initialize();
-        print('DEBUG: Ollama service initialized, calling sync...');
-        await _syncWithOllama();
-        print('DEBUG: Ollama sync completed');
-      } catch (e) {
-        print('Failed to initialize Ollama service: $e');
-        // Continue without local models
-      }
-
-      _isInitialized = true;
-      print('DEBUG: ModelConfigService initialization complete');
-      _initializationCompleter!.complete();
+      print('DEBUG: Initializing Ollama service...');
+      await _ollamaService.initialize();
+      print('DEBUG: Ollama service initialized, calling sync...');
+      await _syncWithOllama();
+      print('DEBUG: Ollama sync completed');
     } catch (e) {
-      _initializationCompleter!.completeError(e);
-      rethrow;
-    } finally {
-      _initializationCompleter = null;
+      print('Failed to initialize Ollama service: $e');
+      // Continue without local models
     }
+    
+    _isInitialized = true;
+    print('DEBUG: ModelConfigService initialization complete');
   }
 
   /// Migrate existing ApiConfigs to ModelConfigs

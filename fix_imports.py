@@ -4,7 +4,7 @@ import os
 import re
 
 def fix_mcp_imports():
-    lib_dir = r"C:\Asmbli\apps\desktop\lib"
+    lib_dir = r"C:\AgentEngine\apps\desktop\lib"
     
     for root, dirs, files in os.walk(lib_dir):
         for file in files:

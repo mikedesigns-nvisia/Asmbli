@@ -127,7 +127,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
             end: Alignment.bottomRight,
             colors: [
               colors.background,
-              colors.background.withOpacity( 0.8),
+              colors.background.withValues(alpha: 0.8),
             ],
           ),
         ),
@@ -161,9 +161,9 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity( 0.8),
+        color: colors.surface.withValues(alpha: 0.8),
         border: Border(
-          bottom: BorderSide(color: colors.border.withOpacity( 0.5)),
+          bottom: BorderSide(color: colors.border.withValues(alpha: 0.5)),
         ),
       ),
       child: Column(
@@ -293,9 +293,9 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
   //       vertical: SpacingTokens.iconSpacing,
   //     ),
   //     decoration: BoxDecoration(
-  //       color: color.withOpacity( 0.1),
+  //       color: color.withValues(alpha: 0.1),
   //       borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
-  //       border: Border.all(color: color.withOpacity( 0.3)),
+  //       border: Border.all(color: color.withValues(alpha: 0.3)),
   //     ),
   //     child: Row(
   //       mainAxisSize: MainAxisSize.min,
@@ -325,15 +325,15 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
   //           vertical: SpacingTokens.iconSpacing,
   //         ),
   //         decoration: BoxDecoration(
-  //           color: color.withOpacity( 0.1),
+  //           color: color.withValues(alpha: 0.1),
   //           borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
   //           border: Border.all(
-  //             color: color.withOpacity( isLive ? _pulseAnimation.value * 0.5 + 0.3 : 0.3),
+  //             color: color.withValues(alpha: isLive ? _pulseAnimation.value * 0.5 + 0.3 : 0.3),
   //             width: isLive ? 1.5 : 1.0,
   //           ),
   //           boxShadow: isLive ? [
   //             BoxShadow(
-  //               color: color.withOpacity( _pulseAnimation.value * 0.2),
+  //               color: color.withValues(alpha: _pulseAnimation.value * 0.2),
   //               blurRadius: 3,
   //               spreadRadius: 0,
   //             )
@@ -357,7 +357,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
   //                         shape: BoxShape.circle,
   //                         boxShadow: [
   //                           BoxShadow(
-  //                             color: colors.success.withOpacity( _pulseAnimation.value),
+  //                             color: colors.success.withValues(alpha: _pulseAnimation.value),
   //                             blurRadius: 2,
   //                           )
   //                         ],
@@ -447,7 +447,7 @@ class _ModernSettingsScreenState extends ConsumerState<ModernSettingsScreen>
             Icon(
               Icons.search_off,
               size: 64,
-              color: colors.onSurfaceVariant.withOpacity( 0.5),
+              color: colors.onSurfaceVariant.withValues(alpha: 0.5),
             ),
             const SizedBox(height: SpacingTokens.sectionSpacing),
             Text(

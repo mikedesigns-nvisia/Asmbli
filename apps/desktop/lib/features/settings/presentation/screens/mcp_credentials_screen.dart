@@ -131,7 +131,7 @@ class _MCPCredentialsScreenState extends ConsumerState<MCPCredentialsScreen> {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: colors.primary.withOpacity( 0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 ),
                 child: Icon(icon, color: colors.primary, size: 24),
@@ -252,9 +252,9 @@ class _MCPCredentialsScreenState extends ConsumerState<MCPCredentialsScreen> {
           child: Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: colors.surface.withOpacity( 0.3),
+              color: colors.surface.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              border: Border.all(color: colors.border.withOpacity( 0.3)),
+              border: Border.all(color: colors.border.withValues(alpha: 0.3)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,9 +331,9 @@ class _MCPCredentialsScreenState extends ConsumerState<MCPCredentialsScreen> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity( 0.3),
+        color: colors.surface.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: colors.border.withOpacity( 0.3)),
+        border: Border.all(color: colors.border.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,16 +422,16 @@ class _MCPCredentialsScreenState extends ConsumerState<MCPCredentialsScreen> {
       decoration: InputDecoration(
         labelText: label,
         hintText: placeholder,
-        hintStyle: TextStyle(color: colors.onSurfaceVariant.withOpacity( 0.6)),
+        hintStyle: TextStyle(color: colors.onSurfaceVariant.withValues(alpha: 0.6)),
         filled: true,
-        fillColor: colors.surface.withOpacity( 0.5),
+        fillColor: colors.surface.withValues(alpha: 0.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           borderSide: BorderSide(color: colors.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-          borderSide: BorderSide(color: colors.border.withOpacity( 0.5)),
+          borderSide: BorderSide(color: colors.border.withValues(alpha: 0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -464,7 +464,7 @@ class _MCPCredentialsScreenState extends ConsumerState<MCPCredentialsScreen> {
         vertical: SpacingTokens.xs,
       ),
       decoration: BoxDecoration(
-        color: statusData['color'].withOpacity( 0.1),
+        color: statusData['color'].withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Row(

@@ -18,12 +18,12 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.pageHorizontal),
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity( 0.9),
+        color: colors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: colors.onSurface.withOpacity( 0.05),
+            color: colors.onSurface.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -93,7 +93,7 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.xs_precise),
               decoration: BoxDecoration(
-                color: featured.brandColor.withOpacity( 0.1),
+                color: featured.brandColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Icon(
@@ -124,7 +124,7 @@ class CollapsibleFeaturedPanel extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.warning.withOpacity( 0.1),
+                        color: colors.warning.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                       ),
                       child: Text(

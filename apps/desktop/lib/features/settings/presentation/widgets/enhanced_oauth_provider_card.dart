@@ -103,7 +103,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: _getProviderColor(widget.provider).withOpacity( 0.1),
+                      color: _getProviderColor(widget.provider).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     ),
                     child: Icon(
@@ -205,7 +205,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
       padding: const EdgeInsets.only(top: SpacingTokens.md),
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(color: colors.border.withOpacity( 0.3)),
+          top: BorderSide(color: colors.border.withValues(alpha: 0.3)),
         ),
       ),
       child: Column(
@@ -287,9 +287,9 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
           width: double.infinity,
           padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.error.withOpacity( 0.1),
+            color: colors.error.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-            border: Border.all(color: colors.error.withOpacity( 0.3)),
+            border: Border.all(color: colors.error.withValues(alpha: 0.3)),
           ),
           child: Text(
             widget.state.error ?? 'Unknown error occurred',
@@ -332,9 +332,9 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
                 vertical: SpacingTokens.xs,
               ),
               decoration: BoxDecoration(
-                color: colors.primary.withOpacity( 0.1),
+                color: colors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
-                border: Border.all(color: colors.primary.withOpacity( 0.3)),
+                border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
               ),
               child: Text(
                 _formatScopeName(scope),
@@ -395,7 +395,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: colors.primary.withOpacity( 0.1),
+        color: colors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
       ),
       child: Text(
@@ -531,7 +531,7 @@ class _EnhancedOAuthProviderCardState extends State<EnhancedOAuthProviderCard>
       case core.OAuthConnectionStatus.connected:
         return colors.success;
       case core.OAuthConnectionStatus.disconnected:
-        return colors.onSurfaceVariant.withOpacity( 0.5);
+        return colors.onSurfaceVariant.withValues(alpha: 0.5);
       case core.OAuthConnectionStatus.error:
         return colors.error;
       case core.OAuthConnectionStatus.connecting:

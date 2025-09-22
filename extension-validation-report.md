@@ -3,7 +3,7 @@
 
 ## Executive Summary
 
-After comprehensive research and validation of the Asmbli extension library, I've identified key findings about factual accuracy, documentation correctness, and areas requiring updates. The library contains **95+ extensions** across 11 categories with strong overall accuracy but some documentation URLs and feature descriptions need updates.
+After comprehensive research and validation of the AgentEngine extension library, I've identified key findings about factual accuracy, documentation correctness, and areas requiring updates. The library contains **95+ extensions** across 11 categories with strong overall accuracy but some documentation URLs and feature descriptions need updates.
 
 ## Key Findings
 
@@ -240,7 +240,7 @@ Consider adding popular community MCP servers:
 
 ## Conclusion
 
-The Asmbli extension library demonstrates **exceptional quality and accuracy** with 94/100 overall score. The research validates that:
+The AgentEngine extension library demonstrates **exceptional quality and accuracy** with 94/100 overall score. The research validates that:
 
 ✅ **95% of extensions are factually accurate** with correct capabilities
 ✅ **Documentation URLs are 90% correct** with minor updates needed  

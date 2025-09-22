@@ -91,12 +91,12 @@ export default function DownloadPage() {
 
             <div>
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                What about the macOS Beta version?
+                When will the macOS version be available?
               </h3>
               <p className="text-neutral-600">
-                Asmbli Beta v0.9.0 is now available for macOS! This is an unsigned beta build,
-                so you'll need to right-click → Open on first launch to bypass Gatekeeper.
-                Includes all the latest features with improved local AI model support.
+                The macOS version requires a macOS development environment for building. 
+                We're working on setting up proper macOS builds and expect to release it soon. 
+                Follow our GitHub for updates.
               </p>
             </div>
 

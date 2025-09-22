@@ -125,10 +125,10 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
           Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: ThemeColors(context).primary.withOpacity( 0.05),
+              color: ThemeColors(context).primary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               border: Border.all(
-                color: ThemeColors(context).primary.withOpacity( 0.1),
+                color: ThemeColors(context).primary.withValues(alpha: 0.1),
               ),
             ),
             child: Column(
@@ -147,7 +147,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: ThemeColors(context).primary.withOpacity( 0.1),
+                      color: ThemeColors(context).primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Text(
@@ -317,13 +317,13 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: overallValid 
-                    ? ThemeColors(context).success.withOpacity( 0.1)
-                    : ThemeColors(context).warning.withOpacity( 0.1),
+                    ? ThemeColors(context).success.withValues(alpha: 0.1)
+                    : ThemeColors(context).warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 border: Border.all(
                   color: overallValid 
-                      ? ThemeColors(context).success.withOpacity( 0.3)
-                      : ThemeColors(context).warning.withOpacity( 0.3),
+                      ? ThemeColors(context).success.withValues(alpha: 0.3)
+                      : ThemeColors(context).warning.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -521,7 +521,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                   Icon(
                     Icons.chat_bubble_outline,
                     size: 48,
-                    color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.5),
+                    color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: SpacingTokens.sm),
                   Text(
@@ -533,7 +533,7 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
                   Text(
                     'Test your agent before deploying to ensure it works as expected.',
                     style: TextStyles.bodySmall.copyWith(
-                      color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.7),
+                      color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.7),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -551,10 +551,10 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: ThemeColors(context).success.withOpacity( 0.1),
+                color: ThemeColors(context).success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 border: Border.all(
-                  color: ThemeColors(context).success.withOpacity( 0.3),
+                  color: ThemeColors(context).success.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -643,10 +643,10 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: ThemeColors(context).warning.withOpacity( 0.1),
+                color: ThemeColors(context).warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 border: Border.all(
-                  color: ThemeColors(context).warning.withOpacity( 0.3),
+                  color: ThemeColors(context).warning.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -683,10 +683,10 @@ class _DeployTestStepState extends ConsumerState<DeployTestStep> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: ThemeColors(context).success.withOpacity( 0.1),
+                color: ThemeColors(context).success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 border: Border.all(
-                  color: ThemeColors(context).success.withOpacity( 0.3),
+                  color: ThemeColors(context).success.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(

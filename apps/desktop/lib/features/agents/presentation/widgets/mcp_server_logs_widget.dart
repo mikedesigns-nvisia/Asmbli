@@ -396,7 +396,7 @@ class _MCPServerLogsWidgetState extends ConsumerState<MCPServerLogsWidget> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.primary.withOpacity( 0.1),
+                        color: colors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -425,7 +425,7 @@ class _MCPServerLogsWidgetState extends ConsumerState<MCPServerLogsWidget> {
                           Icon(
                             Icons.article_outlined,
                             size: 32,
-                            color: colors.onSurfaceVariant.withOpacity( 0.5),
+                            color: colors.onSurfaceVariant.withValues(alpha: 0.5),
                           ),
                           const SizedBox(height: SpacingTokens.sm),
                           Text(
@@ -442,7 +442,7 @@ class _MCPServerLogsWidgetState extends ConsumerState<MCPServerLogsWidget> {
                                 ? 'Install MCP servers to see logs'
                                 : 'Server logs will appear here when available',
                             style: TextStyles.bodySmall.copyWith(
-                              color: colors.onSurfaceVariant.withOpacity( 0.7),
+                              color: colors.onSurfaceVariant.withValues(alpha: 0.7),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -476,9 +476,9 @@ class _MCPServerLogsWidgetState extends ConsumerState<MCPServerLogsWidget> {
       ),
       decoration: BoxDecoration(
         color: log.level == LogLevel.error
-            ? colors.error.withOpacity( 0.05)
+            ? colors.error.withValues(alpha: 0.05)
             : log.level == LogLevel.warning
-                ? colors.warning.withOpacity( 0.05)
+                ? colors.warning.withValues(alpha: 0.05)
                 : null,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
       ),
@@ -538,7 +538,7 @@ class _MCPServerLogsWidgetState extends ConsumerState<MCPServerLogsWidget> {
       case LogLevel.debug:
         return colors.onSurfaceVariant;
       case LogLevel.trace:
-        return colors.onSurfaceVariant.withOpacity( 0.7);
+        return colors.onSurfaceVariant.withValues(alpha: 0.7);
       default:
         return colors.onSurface;
     }

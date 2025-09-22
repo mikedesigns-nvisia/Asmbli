@@ -278,7 +278,7 @@ class MCPServerLifecycleManager {
           'protocolVersion': '2024-11-05',
           'capabilities': {},
           'clientInfo': {
-            'name': 'Asmbli',
+            'name': 'AgentEngine',
             'version': '1.0.0',
           },
         },

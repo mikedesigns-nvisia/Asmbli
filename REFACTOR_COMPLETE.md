@@ -1,6 +1,6 @@
-# 🎉 Asmbli Refactoring Complete
+# 🎉 AgentEngine Refactoring Complete
 
-The Asmbli codebase has been successfully refactored into a clean two-tier architecture:
+The AgentEngine codebase has been successfully refactored into a clean two-tier architecture:
 
 ## 🏗️ Architecture Overview
 

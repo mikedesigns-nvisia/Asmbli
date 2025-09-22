@@ -41,7 +41,7 @@ def fix_all_dart_files(directory):
     return fixed_files
 
 if __name__ == '__main__':
-    desktop_app_path = r'C:\Asmbli\apps\desktop'
+    desktop_app_path = r'C:\AgentEngine\apps\desktop'
     
     print('Fixing deprecated withOpacity() calls...')
     fixed_files = fix_all_dart_files(desktop_app_path)

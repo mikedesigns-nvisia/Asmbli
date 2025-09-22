@@ -245,7 +245,7 @@ class StreamingMessageWidget extends ConsumerWidget {
     return CircleAvatar(
       radius: 16,
       backgroundColor: isUser 
-        ? ThemeColors(context).primary.withOpacity( 0.1)
+        ? ThemeColors(context).primary.withValues(alpha: 0.1)
         : ThemeColors(context).primary,
       child: Icon(
         isUser ? Icons.person : Icons.smart_toy,
@@ -265,11 +265,11 @@ class StreamingMessageWidget extends ConsumerWidget {
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: isUser 
-          ? ThemeColors(context).primary.withOpacity( 0.1)
+          ? ThemeColors(context).primary.withValues(alpha: 0.1)
           : ThemeColors(context).surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: isUser 
-          ? Border.all(color: ThemeColors(context).primary.withOpacity( 0.3))
+          ? Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3))
           : Border.all(color: ThemeColors(context).border),
       ),
       child: Column(
@@ -350,13 +350,13 @@ class StreamingMessageWidget extends ConsumerWidget {
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
         color: result.success 
-          ? ThemeColors(context).success.withOpacity( 0.1)
-          : ThemeColors(context).error.withOpacity( 0.1),
+          ? ThemeColors(context).success.withValues(alpha: 0.1)
+          : ThemeColors(context).error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
           color: result.success 
-            ? ThemeColors(context).success.withOpacity( 0.3)
-            : ThemeColors(context).error.withOpacity( 0.3),
+            ? ThemeColors(context).success.withValues(alpha: 0.3)
+            : ThemeColors(context).error.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -438,7 +438,7 @@ class StreamingMessageWidget extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surfaceVariant.withOpacity( 0.5),
+        color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(color: ThemeColors(context).border),
       ),
@@ -486,7 +486,14 @@ class StreamingMessageWidget extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _PulsingCircle(),
+          SizedBox(
+            width: 12,
+            height: 12,
+            child: CircularProgressIndicator(
+              color: ThemeColors(context).primary,
+              strokeWidth: 2,
+            ),
+          ),
           const SizedBox(width: SpacingTokens.xs),
           Text(
             'Processing with MCP servers...',
@@ -505,9 +512,9 @@ class StreamingMessageWidget extends ConsumerWidget {
       margin: const EdgeInsets.only(top: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: ThemeColors(context).error.withOpacity( 0.1),
+        color: ThemeColors(context).error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: ThemeColors(context).error.withOpacity( 0.3)),
+        border: Border.all(color: ThemeColors(context).error.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -535,7 +542,7 @@ class StreamingMessageWidget extends ConsumerWidget {
       margin: const EdgeInsets.only(top: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.xs),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surfaceVariant.withOpacity( 0.3),
+        color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Row(
@@ -641,74 +648,8 @@ class _AnimatedStreamingCursorState extends State<AnimatedStreamingCursor>
           height: 16,
           margin: const EdgeInsets.only(left: 2),
           decoration: BoxDecoration(
-            color: ThemeColors(context).primary.withOpacity( _animation.value),
+            color: ThemeColors(context).primary.withValues(alpha: _animation.value),
             borderRadius: BorderRadius.circular(1),
-          ),
-        );
-      },
-    );
-  }
-}
-
-/// Theme-aware pulsing circle indicator
-class _PulsingCircle extends StatefulWidget {
-  const _PulsingCircle();
-
-  @override
-  State<_PulsingCircle> createState() => _PulsingCircleState();
-}
-
-class _PulsingCircleState extends State<_PulsingCircle>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
-    _animation = Tween<double>(
-      begin: 0.8,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-    _controller.repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = ThemeColors(context);
-
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _animation.value,
-          child: Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colors.primary.withOpacity(0.8),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.primary.withOpacity(0.3),
-                  blurRadius: 4,
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
           ),
         );
       },

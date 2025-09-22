@@ -5,7 +5,7 @@ def fix_remaining_syntax_errors():
     """Fix remaining syntax errors from incorrect regex replacements."""
     
     # Directory to scan
-    base_dir = r"C:\Asmbli\apps\desktop\lib"
+    base_dir = r"C:\AgentEngine\apps\desktop\lib"
     
     files_processed = 0
     files_fixed = 0
