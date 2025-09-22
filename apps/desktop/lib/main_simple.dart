@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Asmbli Demo',
+      title: 'AgentEngine Demo',
       theme: ThemeData(
         primarySwatch: Colors.green,
         fontFamily: 'Fustat',
@@ -70,7 +70,7 @@ class _DemoScreenState extends ConsumerState<DemoScreen>
             Container(
               padding: const EdgeInsets.all(SpacingTokens.headerPadding),
               decoration: BoxDecoration(
-                color: colors.surface.withOpacity(0.9),
+                color: colors.surface.withValues(alpha: 0.9),
                 border: Border(
                   bottom: BorderSide(color: colors.border),
                 ),
@@ -78,7 +78,7 @@ class _DemoScreenState extends ConsumerState<DemoScreen>
               child: Row(
                 children: [
                   Text(
-                    'Asmbli',
+                    'AgentEngine',
                     style: TextStyles.brandTitle.copyWith(
                       color: colors.primary,
                     ),
@@ -97,7 +97,7 @@ class _DemoScreenState extends ConsumerState<DemoScreen>
             // Tab bar
             Container(
               decoration: BoxDecoration(
-                color: colors.surface.withOpacity(0.9),
+                color: colors.surface.withValues(alpha: 0.9),
                 border: Border(
                   bottom: BorderSide(color: colors.border),
                 ),

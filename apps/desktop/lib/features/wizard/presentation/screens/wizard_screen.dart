@@ -302,7 +302,7 @@ class _WizardScreenState extends State<WizardScreen> {
  const SizedBox(height: SpacingTokens.sm),
  
  DropdownButtonFormField<String>(
- value: _authenticationLevel,
+ initialValue: _authenticationLevel,
  decoration: const InputDecoration(
  labelText: 'Authentication Level',
  ),
@@ -358,7 +358,7 @@ class _WizardScreenState extends State<WizardScreen> {
  const SizedBox(height: SpacingTokens.sm),
  
  DropdownButtonFormField<String>(
- value: _privacyLevel,
+ initialValue: _privacyLevel,
  decoration: const InputDecoration(
  labelText: 'Privacy Level',
  ),
@@ -424,7 +424,7 @@ class _WizardScreenState extends State<WizardScreen> {
  const SizedBox(height: SpacingTokens.sm),
  
  DropdownButtonFormField<String>(
- value: _personality,
+ initialValue: _personality,
  decoration: const InputDecoration(
  labelText: 'Agent Personality',
  ),
@@ -453,7 +453,7 @@ class _WizardScreenState extends State<WizardScreen> {
  const SizedBox(height: SpacingTokens.sm),
  
  DropdownButtonFormField<String>(
- value: _responseStyle,
+ initialValue: _responseStyle,
  decoration: const InputDecoration(
  labelText: 'Response Length',
  ),

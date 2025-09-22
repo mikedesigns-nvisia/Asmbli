@@ -123,7 +123,7 @@ export function ShareExportSystem({ wizardData, className = '' }: ShareExportPro
         metadata: {
           createdAt: new Date().toISOString(),
           exportedAt: new Date().toISOString(),
-          generator: 'Asmbli ChatMCP',
+          generator: 'AgentEngine ChatMCP',
           targetPlatform: 'ChatMCP'
         }
       };

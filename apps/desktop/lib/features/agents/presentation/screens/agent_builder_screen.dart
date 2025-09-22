@@ -142,7 +142,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.headerPadding),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity( 0.8),
+        color: colors.surface.withValues(alpha: 0.8),
         border: Border(bottom: BorderSide(color: colors.border)),
       ),
       child: Row(
@@ -224,7 +224,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
                 vertical: SpacingTokens.sm,
               ),
               decoration: BoxDecoration(
-                color: isSelected ? colors.primary.withOpacity( 0.1) : null,
+                color: isSelected ? colors.primary.withValues(alpha: 0.1) : null,
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
               ),
               child: Row(
@@ -373,10 +373,10 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
                 ),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? colors.primary.withOpacity( 0.1)
+                      ? colors.primary.withValues(alpha: 0.1)
                       : isCompleted
-                          ? colors.accent.withOpacity( 0.1)
-                          : colors.surface.withOpacity( 0.5),
+                          ? colors.accent.withValues(alpha: 0.1)
+                          : colors.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   border: Border.all(
                     color: isActive
@@ -435,7 +435,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity( 0.8),
+        color: colors.surface.withValues(alpha: 0.8),
         border: Border(top: BorderSide(color: colors.border)),
       ),
       child: Row(

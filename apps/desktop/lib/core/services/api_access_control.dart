@@ -432,7 +432,7 @@ class APIAccessControl {
     headers.addAll(additionalHeaders);
 
     // Add security headers
-    headers['User-Agent'] = 'Asmbli/1.0';
+    headers['User-Agent'] = 'AgentEngine/1.0';
     headers['Content-Type'] = 'application/json';
 
     return SecureAPIRequest(

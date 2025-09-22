@@ -27,7 +27,7 @@ class IntegrationBackupService {
       totalIntegrations: configurations.length,
       configurations: configurations,
       metadata: BackupMetadata(
-        exportedBy: 'Asmbli Desktop',
+        exportedBy: 'AgentEngine Desktop',
         platform: Platform.operatingSystem,
         agentEngineVersion: '1.0.0',
       ),
@@ -49,7 +49,7 @@ class IntegrationBackupService {
       totalIntegrations: selectedConfigurations.length,
       configurations: selectedConfigurations,
       metadata: BackupMetadata(
-        exportedBy: 'Asmbli Desktop',
+        exportedBy: 'AgentEngine Desktop',
         platform: Platform.operatingSystem,
         agentEngineVersion: '1.0.0',
         isPartialExport: true,
@@ -65,7 +65,7 @@ class IntegrationBackupService {
     try {
       // Get user's documents directory (in a real app, would use path_provider)
       final documentsPath = Platform.environment['USERPROFILE'] ?? Platform.environment['HOME'] ?? '/tmp';
-      final backupDir = Directory(path.join(documentsPath, 'Asmbli', 'Backups'));
+      final backupDir = Directory(path.join(documentsPath, 'AgentEngine', 'Backups'));
       
       if (!await backupDir.exists()) {
         await backupDir.create(recursive: true);
@@ -209,7 +209,7 @@ class IntegrationBackupService {
   Future<List<BackupInfo>> getBackupHistory() async {
     try {
       final documentsPath = Platform.environment['USERPROFILE'] ?? Platform.environment['HOME'] ?? '/tmp';
-      final backupDir = Directory(path.join(documentsPath, 'Asmbli', 'Backups'));
+      final backupDir = Directory(path.join(documentsPath, 'AgentEngine', 'Backups'));
       
       if (!await backupDir.exists()) {
         return [];
@@ -354,7 +354,7 @@ class IntegrationBackupService {
       totalIntegrations: configurations.length,
       configurations: configurations,
       metadata: BackupMetadata(
-        exportedBy: 'Asmbli Template Generator',
+        exportedBy: 'AgentEngine Template Generator',
         platform: Platform.operatingSystem,
         agentEngineVersion: '1.0.0',
         isTemplate: true,

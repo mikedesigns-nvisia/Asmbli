@@ -28,7 +28,7 @@ Future<void> testFilesystemServer() async {
     print('🔧 Launching MCP filesystem server...');
     final process = await Process.start(
       'npx',
-      ['@modelcontextprotocol/server-filesystem', 'C:\\Asmbli'],
+      ['@modelcontextprotocol/server-filesystem', 'C:\\AgentEngine'],
       runInShell: true,
     );
     

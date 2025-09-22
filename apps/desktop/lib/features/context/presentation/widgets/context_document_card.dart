@@ -262,7 +262,7 @@ class _ContextDocumentCardState extends State<ContextDocumentCard>
       case ContextType.examples:
         return colors.success;
       case ContextType.knowledge:
-        return colors.primary.withOpacity( 0.8);
+        return colors.primary.withValues(alpha: 0.8);
       case ContextType.custom:
         return colors.onSurfaceVariant;
     }

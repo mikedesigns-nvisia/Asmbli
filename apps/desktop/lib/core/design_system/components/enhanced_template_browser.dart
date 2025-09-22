@@ -172,7 +172,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
             ],
           ),
           onSelected: (selected) => setState(() => _showRecommendedOnly = selected),
-          selectedColor: SemanticColors.primary.withOpacity( 0.2),
+          selectedColor: SemanticColors.primary.withValues(alpha: 0.2),
           checkmarkColor: SemanticColors.primary,
         ),
       ],
@@ -190,7 +190,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity( 0.3),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
         ),
         borderRadius: BorderRadius.circular(6),
       ),
@@ -287,10 +287,10 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface.withOpacity( 0.8),
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity( 0.3),
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -303,7 +303,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: (template.brandColor ?? SemanticColors.primary).withOpacity( 0.1),
+                      color: (template.brandColor ?? SemanticColors.primary).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -381,7 +381,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity( 0.5),
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -412,13 +412,13 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isRecommended 
-              ? SemanticColors.primary.withOpacity( 0.1)
-              : Theme.of(context).colorScheme.surface.withOpacity( 0.8),
+              ? SemanticColors.primary.withValues(alpha: 0.1)
+              : Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: isRecommended
-                ? SemanticColors.primary.withOpacity( 0.3)
-                : Theme.of(context).colorScheme.outline.withOpacity( 0.3),
+                ? SemanticColors.primary.withValues(alpha: 0.3)
+                : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -427,7 +427,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: (template.brandColor ?? SemanticColors.primary).withOpacity( 0.1),
+                  color: (template.brandColor ?? SemanticColors.primary).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(
@@ -521,7 +521,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity( 0.1),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: const Row(
@@ -549,7 +549,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        color: SemanticColors.success.withOpacity( 0.1),
+        color: SemanticColors.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -581,7 +581,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       decoration: BoxDecoration(
-        color: badgeColor.withOpacity( 0.1),
+        color: badgeColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(3),
       ),
       child: Text(

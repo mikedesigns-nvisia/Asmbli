@@ -2,13 +2,9 @@
 
 **⚠️ Early-stage experimental desktop chat application for AI models with basic agent template capabilities**
 
-[![CI](https://github.com/asmbli/asmbli/workflows/CI/badge.svg)](https://github.com/asmbli/asmbli/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-blue)](https://modelcontextprotocol.io)
-[![GitHub Stars](https://img.shields.io/github/stars/asmbli/asmbli?style=social)](https://github.com/asmbli/asmbli/stargazers)
-[![Discord](https://img.shields.io/discord/YOUR_DISCORD_ID?logo=discord&logoColor=white&label=Discord)](https://discord.gg/asmbli)
-[![Contributors](https://img.shields.io/github/contributors/asmbli/asmbli)](https://github.com/asmbli/asmbli/graphs/contributors)
 
 ---
 
@@ -45,31 +41,19 @@ Asmbli is an experimental desktop chat application for AI models with basic agen
 
 **⚠️ Warning**: This software is experimental and may not work as expected. Use at your own risk.
 
-### System Requirements
-
-#### Hardware
-- **RAM**:
-  - Minimum: 8GB
-  - Recommended: 16GB or more (for better performance with local AI models)
-- **Storage**: 10GB free space (additional space needed for AI models)
-- **Processor**: 64-bit processor with 4+ cores recommended
-
-#### Software Prerequisites
+### Prerequisites
 
 - **Flutter**: `>=3.0.0 <4.0.0`
 - **Dart**: `>=3.0.0 <4.0.0`
 - **Node.js**: `>=18.0.0` (for build tools)
 - **Git**: For version control
-- **macOS**: 10.15 (Catalina) or later
-- **Windows**: Windows 10 version 1803 or later
-- **Linux**: Ubuntu 18.04 LTS or equivalent
 
 ### 🖥️ Desktop Application Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/asmbli/asmbli.git
-cd Asmbli
+git clone https://github.com/your-org/AgentEngine.git
+cd AgentEngine
 
 # Install Flutter dependencies
 cd apps/desktop
@@ -100,7 +84,7 @@ flutter run
 ### Project Structure
 
 ```
-Asmbli/
+AgentEngine/
 ├── apps/
 │   └── desktop/                    # Flutter desktop application
 │       ├── lib/
@@ -274,7 +258,7 @@ We welcome contributions from the community! Here's how to get started:
 
 1. **Fork the repository**
    ```bash
-   git fork https://github.com/asmbli/asmbli.git
+   git fork https://github.com/your-org/AgentEngine.git
    ```
 
 2. **Create a feature branch**
@@ -560,12 +544,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **📖 Documentation**: [Full documentation site](https://docs.asmbli.dev)
 - **💬 Discord**: [Join our community](https://discord.gg/asmbli)
-- **🐛 Issues**: [GitHub Issues](https://github.com/asmbli/asmbli/issues)
+- **🐛 Issues**: [GitHub Issues](https://github.com/your-org/AgentEngine/issues)
 - **📧 Email**: support@asmbli.dev
 
 ### 🗺️ Roadmap
 
-See our [public roadmap](https://github.com/asmbli/asmbli/projects) for upcoming features and releases.
+See our [public roadmap](https://github.com/your-org/AgentEngine/projects) for upcoming features and releases.
 
 ### 📊 Analytics
 

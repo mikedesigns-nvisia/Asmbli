@@ -201,7 +201,7 @@ class _ContextScreenState extends ConsumerState<ContextScreen> {
  Icon(
  Icons.library_books_outlined,
  size: 64,
- color: colors.onSurfaceVariant.withOpacity( 0.5),
+ color: colors.onSurfaceVariant.withValues(alpha: 0.5),
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
  Text(

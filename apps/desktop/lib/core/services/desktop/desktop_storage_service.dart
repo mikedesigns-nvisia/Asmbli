@@ -56,7 +56,7 @@ class DesktopStorageService {
 
  Future<void> _initializeHive() async {
  try {
-   final appDir = await DesktopFileSystemService.instance.getAsmbliDirectory();
+   final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
    final hiveDir = Directory(path.join(appDir.path, 'storage'));
    
    if (!await hiveDir.exists()) {
@@ -318,7 +318,7 @@ class DesktopStorageService {
  }
 
  Future<void> saveToFile(String fileName, Map<String, dynamic> data) async {
- final appDir = await DesktopFileSystemService.instance.getAsmbliDirectory();
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
  final filePath = path.join(appDir.path, fileName);
  
  final jsonString = const JsonEncoder.withIndent(' ').convert(data);
@@ -327,7 +327,7 @@ class DesktopStorageService {
 
  Future<Map<String, dynamic>?> loadFromFile(String fileName) async {
  try {
- final appDir = await DesktopFileSystemService.instance.getAsmbliDirectory();
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
  final filePath = path.join(appDir.path, fileName);
  
  if (!await DesktopFileSystemService.instance.fileExists(filePath)) {
@@ -343,7 +343,7 @@ class DesktopStorageService {
  }
 
  Future<void> deleteFile(String fileName) async {
- final appDir = await DesktopFileSystemService.instance.getAsmbliDirectory();
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
  final filePath = path.join(appDir.path, fileName);
  await DesktopFileSystemService.instance.deleteFile(filePath);
  }
@@ -392,7 +392,7 @@ class DesktopStorageService {
  final timestamp = DateTime.now().millisecondsSinceEpoch;
  final defaultBackupPath = backupPath ?? path.join(
  (await getApplicationDocumentsDirectory()).path,
- 'Asmbli',
+ 'AgentEngine',
  'backups',
  'backup_$timestamp.json',
  );
@@ -407,7 +407,7 @@ class DesktopStorageService {
  Future<List<String>> getBackupFiles() async {
  final backupsDir = path.join(
  (await getApplicationDocumentsDirectory()).path,
- 'Asmbli',
+ 'AgentEngine',
  'backups',
  );
  
@@ -441,7 +441,7 @@ class DesktopStorageService {
  Future<int> getStorageSize() async {
  int totalSize = 0;
  
- final appDir = await DesktopFileSystemService.instance.getAsmbliDirectory();
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
  final entities = await DesktopFileSystemService.instance.listDirectory(
  appDir.path,
  recursive: true,
@@ -463,7 +463,7 @@ class DesktopStorageService {
  Future<Map<String, int>> getStorageBreakdown() async {
  final breakdown = <String, int>{};
  
- final appDir = await DesktopFileSystemService.instance.getAsmbliDirectory();
+ final appDir = await DesktopFileSystemService.instance.getAgentEngineDirectory();
  final directories = ['storage', 'agents', 'templates', 'logs', 'mcp_servers'];
  
  for (final dirName in directories) {
@@ -506,7 +506,7 @@ class DesktopStorageService {
  
  final backupsDir = path.join(
  (await getApplicationDocumentsDirectory()).path,
- 'Asmbli',
+ 'AgentEngine',
  'backups',
  );
  

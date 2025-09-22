@@ -281,7 +281,7 @@ class AgentMCPIntegrationService {
   String _getDefaultWorkingDirectory() {
     // Create agent-specific directory
     final userHome = Platform.environment['USERPROFILE'] ?? Platform.environment['HOME'] ?? '.';
-    return '$userHome/Asmbli/agents';
+    return '$userHome/AgentEngine/agents';
   }
 
   /// Get server credentials from catalog entry

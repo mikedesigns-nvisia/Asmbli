@@ -696,22 +696,83 @@ class AgentTerminalImpl implements AgentTerminal {
 
   Future<void> initialize() async {
     try {
-      // Create working directory if it doesn't exist
-      final workingDir = Directory(workingDirectory);
-      if (!await workingDir.exists()) {
-        await workingDir.create(recursive: true);
-      }
-
-      // Set up secure environment variables
-      environment.addAll(config.securityContext.terminalPermissions.secureEnvironmentVars);
+      // Add timeout to prevent hanging on macOS directory operations
+      await _initializeWithDirectoryCreation().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TerminalException(
+            'Terminal initialization timed out for agent $agentId. '
+            'This may be due to file system permission issues or slow disk I/O.'
+          );
+        },
+      );
 
       status = TerminalStatus.ready;
-      
       _addOutput('Terminal initialized for agent $agentId', TerminalOutputType.system);
     } catch (e) {
       status = TerminalStatus.error;
       _addOutput('Failed to initialize terminal: $e', TerminalOutputType.error);
       rethrow;
+    }
+  }
+
+  /// Initialize directory creation with proper error handling and permission checks
+  Future<void> _initializeWithDirectoryCreation() async {
+    final workingDir = Directory(workingDirectory);
+
+    // Check if directory already exists
+    if (await workingDir.exists()) {
+      // Verify we have write permissions
+      await _verifyDirectoryPermissions(workingDir);
+    } else {
+      // Create directory with proper error handling
+      await _createWorkingDirectorySafely(workingDir);
+    }
+
+    // Set up secure environment variables
+    environment.addAll(config.securityContext.terminalPermissions.secureEnvironmentVars);
+  }
+
+  /// Verify that we have proper permissions for the working directory
+  Future<void> _verifyDirectoryPermissions(Directory directory) async {
+    try {
+      // Try to create a temporary file to verify write permissions
+      final testFile = File('${directory.path}/.asmbli_permission_test');
+      await testFile.writeAsString('test');
+      await testFile.delete();
+    } catch (e) {
+      throw TerminalException(
+        'Insufficient permissions for working directory ${directory.path}: $e'
+      );
+    }
+  }
+
+  /// Create working directory with proper parent directory handling
+  Future<void> _createWorkingDirectorySafely(Directory workingDir) async {
+    try {
+      // Check parent directory permissions first
+      final parentDir = workingDir.parent;
+      if (!await parentDir.exists()) {
+        // Create parent directories if they don't exist
+        await parentDir.create(recursive: true);
+      }
+
+      // Verify parent directory is writable
+      await _verifyDirectoryPermissions(parentDir);
+
+      // Create the working directory
+      await workingDir.create(recursive: true);
+
+      ProductionLogger.instance.info(
+        'Created agent working directory',
+        data: {'agent_id': agentId, 'directory': workingDir.path},
+        category: 'agent_terminal',
+      );
+    } catch (e) {
+      throw TerminalException(
+        'Failed to create working directory ${workingDir.path}: $e. '
+        'Check file system permissions and available disk space.'
+      );
     }
   }
 
@@ -730,12 +791,21 @@ class AgentTerminalImpl implements AgentTerminal {
     Process? process;
     
     try {
+      // Add timeout to process start to prevent hanging
       process = await Process.start(
         Platform.isWindows ? 'cmd' : 'bash',
         Platform.isWindows ? ['/c', command] : ['-c', command],
         workingDirectory: workingDirectory,
         environment: environment,
         runInShell: true,
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw TerminalException(
+            'Command execution timed out: $command. '
+            'Process failed to start within 30 seconds.'
+          );
+        },
       );
 
       // Track the process for cleanup

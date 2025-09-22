@@ -182,7 +182,7 @@ case 'Microsoft': return Layers;
 - **Enterprise-grade** visual consistency
 - **Scalable architecture** for future icon additions
 
-**The Asmbli extension library now features a comprehensive, professional branded icon system that enhances user experience and maintains perfect visual consistency across the entire platform!** ✨
+**The AgentEngine extension library now features a comprehensive, professional branded icon system that enhances user experience and maintains perfect visual consistency across the entire platform!** ✨
 
 ---
 

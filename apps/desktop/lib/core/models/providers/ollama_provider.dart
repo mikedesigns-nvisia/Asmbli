@@ -154,8 +154,8 @@ class OllamaProvider extends ModelProvider {
     try {
       print('🤖 Ollama completion request for model: ${request.model ?? ModelConstants.defaultOllamaModel}');
       
-      final requestData = _buildChatRequest(request);
-      final response = await _client.post('/api/chat', data: requestData);
+      final requestData = _buildCompletionRequest(request);
+      final response = await _client.post('/api/generate', data: requestData);
       
       if (response.statusCode != 200) {
         throw ModelCompletionException(
@@ -190,10 +190,10 @@ class OllamaProvider extends ModelProvider {
     try {
       print('🌊 Ollama streaming request for model: ${request.model ?? ModelConstants.defaultOllamaModel}');
       
-      final requestData = _buildChatRequest(request, stream: true);
-
+      final requestData = _buildCompletionRequest(request, stream: true);
+      
       final response = await _client.post(
-        '/api/chat',
+        '/api/generate',
         data: requestData,
         options: Options(
           responseType: ResponseType.stream,
@@ -382,44 +382,10 @@ class OllamaProvider extends ModelProvider {
   }
 
   /// Build completion request payload
-  Map<String, dynamic> _buildChatRequest(ModelRequest request, {bool stream = false}) {
-    // Build messages array for chat endpoint
-    final messages = <Map<String, String>>[];
-
-    // Add system prompt if provided
-    if (request.systemPrompt != null && request.systemPrompt!.isNotEmpty) {
-      messages.add({
-        'role': 'system',
-        'content': request.systemPrompt!,
-      });
-    }
-
-    // Add conversation messages
-    for (final message in request.messages) {
-      messages.add({
-        'role': message.role,
-        'content': message.content,
-      });
-    }
-
-    return {
-      'model': request.model ?? ModelConstants.defaultOllamaModel,
-      'messages': messages,
-      'stream': stream,
-      'options': {
-        'temperature': request.temperature,
-        'top_p': request.topP,
-        'num_predict': request.maxTokens,
-        if (request.stop != null) 'stop': request.stop,
-      },
-    };
-  }
-
-  /// Legacy prompt-based request builder (kept for compatibility)
   Map<String, dynamic> _buildCompletionRequest(ModelRequest request, {bool stream = false}) {
     // Convert messages to Ollama prompt format
     final prompt = _buildPromptFromMessages(request.messages, request.systemPrompt);
-
+    
     return {
       'model': request.model ?? ModelConstants.defaultOllamaModel,
       'prompt': prompt,

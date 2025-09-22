@@ -322,7 +322,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  color: ThemeColors(context).surfaceVariant,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
  border: Border.all(
- color: ThemeColors(context).border.withOpacity( 0.5),
+ color: ThemeColors(context).border.withValues(alpha: 0.5),
  ),
  ),
  child: Column(
@@ -445,7 +445,7 @@ class _AddContextModalState extends ConsumerState<AddContextModal> {
  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
  decoration: BoxDecoration(
  color: isSelected 
- ? ThemeColors(context).primary.withOpacity( 0.1)
+ ? ThemeColors(context).primary.withValues(alpha: 0.1)
  : ThemeColors(context).surface,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
  border: Border.all(

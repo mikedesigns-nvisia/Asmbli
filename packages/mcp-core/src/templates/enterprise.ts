@@ -199,7 +199,7 @@ export const ENTERPRISE_TEMPLATES: MCPServerTemplate[] = [
         type: 'text',
         required: false,
         description: 'Default folder name for operations',
-        placeholder: 'Asmbli Files'
+        placeholder: 'AgentEngine Files'
       }
     ],
     setupInstructions: [

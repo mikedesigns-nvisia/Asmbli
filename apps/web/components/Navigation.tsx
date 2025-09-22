@@ -35,29 +35,35 @@ export function Navigation({ showBackButton = false, backHref = '/', backLabel =
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex gap-6 items-center">
-            <Link
-              href="/templates"
+            <Link 
+              href="/templates" 
               className={`hover:underline text-sm ${isActive('/templates') ? 'font-semibold text-foreground' : ''}`}
             >
               Templates
             </Link>
-            <Link
-              href="/mcp-servers"
+            <Link 
+              href="/mcp-servers" 
               className={`hover:underline text-sm ${isActive('/mcp-servers') ? 'font-semibold text-foreground' : ''}`}
             >
               Library
             </Link>
-            <Link
-              href="/contribute"
-              className={`hover:underline text-sm ${isActive('/contribute') ? 'font-semibold text-foreground' : ''}`}
+            <Link 
+              href="/dashboard" 
+              className={`hover:underline text-sm ${isActive('/dashboard') ? 'font-semibold text-foreground' : ''}`}
             >
-              Contribute
+              Dashboard
             </Link>
             <Link
               href="/download"
               className={`hover:underline text-sm ${isActive('/download') ? 'font-semibold text-foreground' : ''}`}
             >
               Download
+            </Link>
+            <Link
+              href="/contribute"
+              className={`hover:underline text-sm ${isActive('/contribute') ? 'font-semibold text-foreground' : ''}`}
+            >
+              Contribute
             </Link>
             <Link href="/chat">
               <Button>View Demo</Button>
@@ -79,26 +85,26 @@ export function Navigation({ showBackButton = false, backHref = '/', backLabel =
         {isMobileMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 border-t pt-4">
             <div className="flex flex-col space-y-4">
-              <Link
-                href="/templates"
+              <Link 
+                href="/templates" 
                 className={`hover:text-primary transition-colors ${isActive('/templates') ? 'font-semibold text-foreground' : ''}`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Templates
               </Link>
-              <Link
-                href="/mcp-servers"
+              <Link 
+                href="/mcp-servers" 
                 className={`hover:text-primary transition-colors ${isActive('/mcp-servers') ? 'font-semibold text-foreground' : ''}`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Library
               </Link>
-              <Link
-                href="/contribute"
-                className={`hover:text-primary transition-colors ${isActive('/contribute') ? 'font-semibold text-foreground' : ''}`}
+              <Link 
+                href="/dashboard" 
+                className={`hover:text-primary transition-colors ${isActive('/dashboard') ? 'font-semibold text-foreground' : ''}`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Contribute
+                Dashboard
               </Link>
               <Link
                 href="/download"
@@ -106,6 +112,13 @@ export function Navigation({ showBackButton = false, backHref = '/', backLabel =
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Download
+              </Link>
+              <Link
+                href="/contribute"
+                className={`hover:text-primary transition-colors ${isActive('/contribute') ? 'font-semibold text-foreground' : ''}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contribute
               </Link>
               <Link href="/chat" onClick={() => setIsMobileMenuOpen(false)}>
                 <Button className="w-full">View Demo</Button>

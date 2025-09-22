@@ -38,7 +38,7 @@ class _AsmblCardState extends State<AsmblCard> {
  : colors.surface,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
  border: Border.all(
- color: colors.border.withOpacity( 0.5),
+ color: colors.border.withValues(alpha: 0.5),
  ),
  ),
  child: Material(
@@ -48,7 +48,7 @@ class _AsmblCardState extends State<AsmblCard> {
  onTap: widget.onTap,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
  hoverColor: Colors.transparent,
- splashColor: colors.primary.withOpacity( 0.1),
+ splashColor: colors.primary.withValues(alpha: 0.1),
  child: Padding(
  padding: effectivePadding,
  child: widget.child,

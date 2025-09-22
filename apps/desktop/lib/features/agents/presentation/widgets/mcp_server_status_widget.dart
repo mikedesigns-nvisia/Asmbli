@@ -226,7 +226,7 @@ class _MCPServerStatusWidgetState extends ConsumerState<MCPServerStatusWidget> {
           Icon(
             Icons.extension_off,
             size: 32,
-            color: colors.onSurfaceVariant.withOpacity( 0.5),
+            color: colors.onSurfaceVariant.withValues(alpha: 0.5),
           ),
           const SizedBox(height: SpacingTokens.sm),
           Text(
@@ -239,7 +239,7 @@ class _MCPServerStatusWidgetState extends ConsumerState<MCPServerStatusWidget> {
           Text(
             'Install MCP servers to give your agent access to tools',
             style: TextStyles.bodySmall.copyWith(
-              color: colors.onSurfaceVariant.withOpacity( 0.7),
+              color: colors.onSurfaceVariant.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -253,10 +253,10 @@ class _MCPServerStatusWidgetState extends ConsumerState<MCPServerStatusWidget> {
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: colors.surfaceVariant.withOpacity( 0.3),
+        color: colors.surfaceVariant.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: _getStatusColor(server.status, colors).withOpacity( 0.3),
+          color: _getStatusColor(server.status, colors).withValues(alpha: 0.3),
         ),
       ),
       child: Row(
