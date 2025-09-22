@@ -219,9 +219,9 @@ export default function HomePage() {
                 Download Open Source
               </Button>
             </Link>
-            <Link href="https://github.com/asmbli/asmbli#-quick-start" target="_blank" rel="noopener noreferrer">
+            <Link href="/contribute">
               <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                Get Started
+                Become a Contributor
               </Button>
             </Link>
           </div>
