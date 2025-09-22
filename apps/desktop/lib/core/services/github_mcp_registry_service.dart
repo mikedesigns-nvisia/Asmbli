@@ -715,7 +715,7 @@ class GitHubMCPRegistryService {
         options: Options(
           headers: {
             'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Asmbli-MCP-Registry',
+            'User-Agent': 'AgentEngine-MCP-Registry',
           },
         ),
       );
@@ -734,7 +734,7 @@ class GitHubMCPRegistryService {
         options: Options(
           headers: {
             'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Asmbli-MCP-Registry',
+            'User-Agent': 'AgentEngine-MCP-Registry',
           },
         ),
       );
@@ -753,7 +753,7 @@ class GitHubMCPRegistryService {
         options: Options(
           headers: {
             'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Asmbli-MCP-Registry',
+            'User-Agent': 'AgentEngine-MCP-Registry',
           },
         ),
       );
@@ -773,7 +773,7 @@ class GitHubMCPRegistryService {
         options: Options(
           headers: {
             'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Asmbli-MCP-Registry',
+            'User-Agent': 'AgentEngine-MCP-Registry',
           },
         ),
       );

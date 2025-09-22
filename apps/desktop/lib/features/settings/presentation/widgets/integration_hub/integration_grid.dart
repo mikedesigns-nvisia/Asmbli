@@ -210,13 +210,13 @@ class _IntegrationGridState extends ConsumerState<IntegrationGrid> {
           Container(
             padding: const EdgeInsets.all(SpacingTokens.xxl),
             decoration: BoxDecoration(
-              color: colors.surfaceVariant.withOpacity( 0.5),
+              color: colors.surfaceVariant.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
             ),
             child: Icon(
               icon,
               size: 64,
-              color: colors.onSurfaceVariant.withOpacity( 0.5),
+              color: colors.onSurfaceVariant.withValues(alpha: 0.5),
             ),
           ),
           

@@ -304,7 +304,7 @@ class _AsmblButtonState extends State<AsmblButton>
     final isEnabled = widget.onPressed != null && !widget.isLoading;
     
     if (!isEnabled) {
-      return colors.onSurfaceVariant.withOpacity( 0.6);
+      return colors.onSurfaceVariant.withValues(alpha: 0.6);
     }
 
     switch (widget.variant) {
@@ -324,33 +324,33 @@ class _AsmblButtonState extends State<AsmblButton>
     final isEnabled = widget.onPressed != null && !widget.isLoading;
     
     if (!isEnabled) {
-      return colors.surfaceVariant.withOpacity( 0.5);
+      return colors.surfaceVariant.withValues(alpha: 0.5);
     }
 
     switch (widget.variant) {
       case AsmblButtonVariant.primary:
-        if (_isPressed) return colors.primary.withOpacity( 0.9);
-        if (_isHovered) return colors.primary.withOpacity( 0.95);
+        if (_isPressed) return colors.primary.withValues(alpha: 0.9);
+        if (_isHovered) return colors.primary.withValues(alpha: 0.95);
         return colors.primary;
       
       case AsmblButtonVariant.accent:
-        if (_isPressed) return colors.accent.withOpacity( 0.9);
-        if (_isHovered) return colors.accent.withOpacity( 0.95);
+        if (_isPressed) return colors.accent.withValues(alpha: 0.9);
+        if (_isHovered) return colors.accent.withValues(alpha: 0.95);
         return colors.accent;
       
       case AsmblButtonVariant.secondary:
-        if (_isPressed) return colors.surfaceVariant.withOpacity( 0.8);
-        if (_isHovered) return colors.surfaceVariant.withOpacity( 0.6);
-        return colors.surfaceVariant.withOpacity( 0.4);
+        if (_isPressed) return colors.surfaceVariant.withValues(alpha: 0.8);
+        if (_isHovered) return colors.surfaceVariant.withValues(alpha: 0.6);
+        return colors.surfaceVariant.withValues(alpha: 0.4);
       
       case AsmblButtonVariant.outline:
-        if (_isPressed) return colors.accent.withOpacity( 0.1);
-        if (_isHovered) return colors.accent.withOpacity( 0.05);
+        if (_isPressed) return colors.accent.withValues(alpha: 0.1);
+        if (_isHovered) return colors.accent.withValues(alpha: 0.05);
         return Colors.transparent;
       
       case AsmblButtonVariant.destructive:
-        if (_isPressed) return Colors.red.withOpacity( 0.9);
-        if (_isHovered) return Colors.red.withOpacity( 0.95);
+        if (_isPressed) return Colors.red.withValues(alpha: 0.9);
+        if (_isHovered) return Colors.red.withValues(alpha: 0.95);
         return Colors.red;
     }
   }
@@ -359,7 +359,7 @@ class _AsmblButtonState extends State<AsmblButton>
     final isEnabled = widget.onPressed != null && !widget.isLoading;
     
     if (!isEnabled) {
-      return colors.border.withOpacity( 0.5);
+      return colors.border.withValues(alpha: 0.5);
     }
 
     switch (widget.variant) {
@@ -368,7 +368,7 @@ class _AsmblButtonState extends State<AsmblButton>
         return colors.border;
       
       case AsmblButtonVariant.secondary:
-        if (_isHovered) return colors.accent.withOpacity( 0.6);
+        if (_isHovered) return colors.accent.withValues(alpha: 0.6);
         return colors.border;
       
       default:
@@ -383,7 +383,7 @@ class _AsmblButtonState extends State<AsmblButton>
 
     return [
       BoxShadow(
-        color: colors.primary.withOpacity( 0.15),
+        color: colors.primary.withValues(alpha: 0.15),
         blurRadius: 8,
         offset: const Offset(0, 2),
       ),

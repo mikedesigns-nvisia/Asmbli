@@ -2,7 +2,7 @@
 
 ## ✅ Complete Implementation Success!
 
-The Asmbli design system testing framework is fully operational and ready to validate new components.
+The AgentEngine design system testing framework is fully operational and ready to validate new components.
 
 ### 📊 Test Results Summary
 

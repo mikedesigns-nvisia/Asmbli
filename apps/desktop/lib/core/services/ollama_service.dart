@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:convert';
-import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +22,6 @@ class OllamaService {
   final Dio _dio;
   bool _isInitialized = false;
   String? _ollamaBinaryPath;
-  Completer<void>? _initializationCompleter;
 
   OllamaService(this._desktopService) : _dio = Dio() {
     _dio.options.baseUrl = 'http://127.0.0.1:11434';
@@ -44,24 +42,13 @@ class OllamaService {
 
   /// Initialize the embedded Ollama service
   Future<void> initialize() async {
-    // Return early if already initialized
     if (_isInitialized) return;
-
-    // If initialization is in progress, wait for it to complete
-    if (_initializationCompleter != null) {
-      return _initializationCompleter!.future;
-    }
-
-    // Start initialization
-    _initializationCompleter = Completer<void>();
-    debugPrint('DEBUG: OllamaService.initialize() called');
-
+    
     try {
       // First check if Ollama is already running externally
       if (await isAvailable) {
         debugPrint('Found existing Ollama instance');
         _isInitialized = true;
-        _initializationCompleter!.complete();
         return;
       }
 
@@ -72,27 +59,22 @@ class OllamaService {
         await _waitForStartup();
       } catch (e) {
         debugPrint('Failed to start embedded Ollama, trying system installation: $e');
-
+        
         // Try to use system-installed Ollama as fallback
         if (await _trySystemOllama()) {
           debugPrint('Using system-installed Ollama');
         } else {
           debugPrint('No Ollama installation found. Local models will not be available.');
           // Don't throw - just mark as not initialized so local models aren't available
-          _initializationCompleter!.complete();
           return;
         }
       }
-
+      
       _isInitialized = true;
-      debugPrint('DEBUG: Ollama service initialization complete');
-      _initializationCompleter!.complete();
+      debugPrint('Ollama service initialized successfully');
     } catch (e) {
       debugPrint('Failed to initialize Ollama service: $e');
-      _initializationCompleter!.completeError(e);
-      // Don't rethrow - gracefully handle missing Ollama
-    } finally {
-      _initializationCompleter = null;
+      // Don't throw - gracefully handle missing Ollama
     }
   }
 
@@ -306,32 +288,9 @@ class OllamaService {
     String? systemPrompt,
   }) async {
     try {
-      // Build messages array for chat endpoint
-      final chatMessages = <Map<String, String>>[];
-
-      // Add system prompt if provided
-      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
-        chatMessages.add({
-          'role': 'system',
-          'content': systemPrompt,
-        });
-      }
-
-      // Add conversation history if provided
-      if (messages != null && messages.isNotEmpty) {
-        chatMessages.addAll(messages);
-      }
-
-      // Add the current user message
-      chatMessages.add({
-        'role': 'user',
-        'content': prompt,
-      });
-
-      // Use chat endpoint for proper conversation handling
       final requestData = <String, dynamic>{
         'model': model,
-        'messages': chatMessages,
+        'prompt': prompt,
         'stream': false,
         'options': {
           'temperature': 0.7,
@@ -339,12 +298,14 @@ class OllamaService {
         },
       };
 
-      final response = await _dio.post('/api/chat', data: requestData);
-      final data = response.data as Map<String, dynamic>;
+      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
+        requestData['system'] = systemPrompt;
+      }
 
-      // Chat endpoint returns message object
-      final message = data['message'] as Map<String, dynamic>?;
-      return message?['content'] as String? ?? '';
+      final response = await _dio.post('/api/generate', data: requestData);
+      final data = response.data as Map<String, dynamic>;
+      
+      return data['response'] as String? ?? '';
     } catch (e) {
       debugPrint('Failed to generate response: $e');
       rethrow;
@@ -359,32 +320,9 @@ class OllamaService {
     String? systemPrompt,
   }) async* {
     try {
-      // Build messages array for chat endpoint
-      final chatMessages = <Map<String, String>>[];
-
-      // Add system prompt if provided
-      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
-        chatMessages.add({
-          'role': 'system',
-          'content': systemPrompt,
-        });
-      }
-
-      // Add conversation history if provided
-      if (messages != null && messages.isNotEmpty) {
-        chatMessages.addAll(messages);
-      }
-
-      // Add the current user message
-      chatMessages.add({
-        'role': 'user',
-        'content': prompt,
-      });
-
-      // Use chat endpoint for proper conversation handling
       final requestData = <String, dynamic>{
         'model': model,
-        'messages': chatMessages,
+        'prompt': prompt,
         'stream': true,
         'options': {
           'temperature': 0.7,
@@ -392,8 +330,12 @@ class OllamaService {
         },
       };
 
+      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
+        requestData['system'] = systemPrompt;
+      }
+
       final response = await _dio.post(
-        '/api/chat',
+        '/api/generate',
         data: requestData,
         options: Options(responseType: ResponseType.stream),
       );
@@ -409,12 +351,10 @@ class OllamaService {
             try {
               final data = json.decode(line) as Map<String, dynamic>;
               
-              // Chat endpoint returns message object when streaming
-              if (data.containsKey('message')) {
-                final message = data['message'] as Map<String, dynamic>?;
-                final content = message?['content'] as String?;
-                if (content != null && content.isNotEmpty) {
-                  yield content;
+              if (data.containsKey('response')) {
+                final responseText = data['response'] as String?;
+                if (responseText != null && responseText.isNotEmpty) {
+                  yield responseText;
                 }
               }
               

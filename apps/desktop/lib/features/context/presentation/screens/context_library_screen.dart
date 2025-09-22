@@ -113,7 +113,7 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
                             borderSide: BorderSide(color: colors.border),
                           ),
                           filled: true,
-                          fillColor: colors.surface.withOpacity( 0.7),
+                          fillColor: colors.surface.withValues(alpha: 0.7),
                         ),
                       ),
                     ),

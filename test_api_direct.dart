@@ -18,7 +18,7 @@ Future<void> main() async {
     );
 
     request.headers.set('Accept', 'application/json');
-    request.headers.set('User-Agent', 'Asmbli/1.0.0');
+    request.headers.set('User-Agent', 'AgentEngine/1.0.0');
 
     final response = await request.close();
 

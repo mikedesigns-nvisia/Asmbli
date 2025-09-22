@@ -38,7 +38,7 @@ export const handler: Handler = async (event, context) => {
           error: 'Database not configured',
           message: 'DATABASE_URL or NETLIFY_DATABASE_URL environment variable is missing',
           setup: 'Configure database connection in Netlify environment variables',
-          docs: 'https://github.com/asmbli/asmbli/blob/main/DEPLOYMENT_GUIDE.md'
+          docs: 'https://github.com/WereNext/AgentEngine/blob/main/DEPLOYMENT_GUIDE.md'
         }),
       };
     }

@@ -164,7 +164,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                 hint: Text(
                   'Select AI Model',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.6),
+                    color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.6),
                   ),
                 ),
                 isExpanded: true,
@@ -229,9 +229,9 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: chipColor.withOpacity( 0.1),
+        color: chipColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: chipColor.withOpacity( 0.3)),
+        border: Border.all(color: chipColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -300,7 +300,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                         _loadTemplatePrompt();
                       }
                     },
-                    thumbColor: MaterialStateProperty.all(ThemeColors(context).primary),
+                    activeThumbColor: ThemeColors(context).primary,
                   ),
                 ],
               ),
@@ -337,7 +337,7 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
                   ? 'Define your agent\'s role, expertise, and how it should behave...'
                   : 'System prompt will be loaded from template',
               hintStyle: TextStyles.bodyMedium.copyWith(
-                color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.6),
+                color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.6),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
@@ -439,9 +439,9 @@ class _IntelligenceConfigStepState extends ConsumerState<IntelligenceConfigStep>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: ThemeColors(context).info.withOpacity( 0.1),
+        color: ThemeColors(context).info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: ThemeColors(context).info.withOpacity( 0.3)),
+        border: Border.all(color: ThemeColors(context).info.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

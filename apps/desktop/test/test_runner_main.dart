@@ -9,7 +9,7 @@ import 'integration/navigation_routing_flow_test.dart' as navigation_tests;
 
 /// Comprehensive test runner for all user flow tests
 /// 
-/// This file runs all major user flow tests for the Asmbli desktop app:
+/// This file runs all major user flow tests for the AgentEngine desktop app:
 /// - Onboarding flow
 /// - Chat conversation flows
 /// - Agent creation flows  
@@ -18,7 +18,7 @@ import 'integration/navigation_routing_flow_test.dart' as navigation_tests;
 /// 
 /// Run with: flutter test test/test_runner_main.dart
 void main() {
-  group('Asmbli Desktop App - Complete User Flow Tests', () {
+  group('AgentEngine Desktop App - Complete User Flow Tests', () {
     
     // Run all test suites
     group('🎯 Onboarding Flow Tests', () {

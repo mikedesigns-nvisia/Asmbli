@@ -100,9 +100,9 @@ class WorkingAgentConnectionsTab extends ConsumerWidget {
         vertical: SpacingTokens.sm,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity( 0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: color.withOpacity( 0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -168,8 +168,8 @@ class WorkingAgentConnectionsTab extends ConsumerWidget {
                     height: 48,
                     decoration: BoxDecoration(
                       color: agentConnection.hasActiveServers 
-                          ? colors.success.withOpacity( 0.2)
-                          : colors.primary.withOpacity( 0.1),
+                          ? colors.success.withValues(alpha: 0.2)
+                          : colors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     ),
                     child: Stack(
@@ -258,9 +258,9 @@ class WorkingAgentConnectionsTab extends ConsumerWidget {
                         vertical: SpacingTokens.xs,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.success.withOpacity( 0.1),
+                        color: colors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                        border: Border.all(color: colors.success.withOpacity( 0.3)),
+                        border: Border.all(color: colors.success.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -298,9 +298,9 @@ class WorkingAgentConnectionsTab extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.md),
                   decoration: BoxDecoration(
-                    color: colors.onSurfaceVariant.withOpacity( 0.1),
+                    color: colors.onSurfaceVariant.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                    border: Border.all(color: colors.onSurfaceVariant.withOpacity( 0.2)),
+                    border: Border.all(color: colors.onSurfaceVariant.withValues(alpha: 0.2)),
                   ),
                   child: Row(
                     children: [
@@ -317,9 +317,9 @@ class WorkingAgentConnectionsTab extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.md),
                   decoration: BoxDecoration(
-                    color: colors.onSurfaceVariant.withOpacity( 0.1),
+                    color: colors.onSurfaceVariant.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                    border: Border.all(color: colors.onSurfaceVariant.withOpacity( 0.2)),
+                    border: Border.all(color: colors.onSurfaceVariant.withValues(alpha: 0.2)),
                   ),
                   child: Row(
                     children: [
@@ -400,7 +400,7 @@ class WorkingAgentConnectionsTab extends ConsumerWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: colors.accent.withOpacity( 0.1),
+              color: colors.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
             child: Icon(

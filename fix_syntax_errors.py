@@ -5,7 +5,7 @@ def fix_syntax_errors():
     """Fix syntax errors from incorrect regex replacements."""
     
     # Directory to scan
-    base_dir = r"C:\Asmbli\apps\desktop\lib"
+    base_dir = r"C:\AgentEngine\apps\desktop\lib"
     
     # Patterns to fix
     patterns = [

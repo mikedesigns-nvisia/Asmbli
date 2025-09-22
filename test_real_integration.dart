@@ -16,7 +16,7 @@ void main() async {
     name: 'Filesystem Server Test',
     url: 'stdio://filesystem',
     command: 'npx',
-    args: ['@modelcontextprotocol/server-filesystem', 'C:\\Asmbli'],
+    args: ['@modelcontextprotocol/server-filesystem', 'C:\\AgentEngine'],
     transport: 'stdio',
     autoReconnect: true,
     maxRetries: 3,

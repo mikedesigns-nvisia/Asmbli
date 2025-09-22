@@ -30,7 +30,7 @@ export const handler: Handler = async (event, context) => {
         body: JSON.stringify({
           error: 'Database not configured',
           message: 'DATABASE_URL or NETLIFY_DATABASE_URL environment variable is not set. Please configure database connection.',
-          docs: 'https://github.com/asmbli/asmbli/blob/main/DEPLOYMENT_GUIDE.md'
+          docs: 'https://github.com/WereNext/AgentEngine/blob/main/DEPLOYMENT_GUIDE.md'
         }),
       };
     }

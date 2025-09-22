@@ -28,58 +28,19 @@
       ]
     },
     "macos": {
-      "status": "beta-available",
-      "version": "0.9.0 Beta",
+      "status": "coming-soon",
       "architecture": "universal",
-      "format": "zip",
-      "filename": "Asmbli-Beta-0.9.0-macOS-unsigned.zip",
-      "size": "~145MB",
+      "format": "dmg",
       "requirements": {
         "os": "macOS 10.15 (Catalina) or later",
         "architecture": "Intel x64 or Apple Silicon (M1/M2/M3)",
-        "ram": "8GB minimum (16GB recommended)",
-        "disk": "10GB available space (for AI models)"
+        "ram": "4GB (8GB recommended)",
+        "disk": "200MB available space"
       },
-      "features": [
-        "🚀 ASMBLI BETA - Updated welcome experience with 'Asmbli Beta' branding",
-        "🔧 FIXED LOCAL LLM CHAT - Improved Ollama integration for macOS with proper /api/chat endpoints",
-        "🎨 THEME-AWARE UI - Beautiful pulsing indicators that adapt to your chosen color scheme",
-        "💬 BETTER MESSAGE HANDLING - User messages now stay visible during AI responses",
-        "📋 ENHANCED SYSTEM REQUIREMENTS - Clear RAM requirements for optimal performance",
-        "Professional AI agent deployment",
-        "20+ specialized agent templates",
-        "MCP tool integration (60+ tools)",
-        "Multi-color scheme support (Mint Green, Cool Blue, Forest Green, Sunset Orange)",
-        "Real-time chat interface with streaming",
-        "Local AI model support via Ollama",
-        "Enterprise security and OAuth 2.0"
-      ],
-      "installation": {
-        "important": "This is an unsigned beta build",
-        "steps": [
-          "Extract ZIP file",
-          "Drag Asmbli.app to Applications folder",
-          "Right-click → Open to bypass Gatekeeper",
-          "Click 'Open' in security dialog"
-        ]
-      }
+      "note": "macOS build requires macOS development environment. Coming in next release."
     }
   },
   "changelog": {
-    "0.9.0-beta": {
-      "type": "beta",
-      "platform": "macOS",
-      "highlights": [
-        "🚀 ASMBLI BETA - Updated welcome experience with 'Asmbli Beta' branding",
-        "🔧 FIXED LOCAL LLM CHAT - Proper Ollama integration using /api/chat endpoints instead of /api/generate",
-        "🎨 THEME-AWARE PULSING INDICATORS - Beautiful animations that adapt to selected color scheme",
-        "💬 IMPROVED MESSAGE VISIBILITY - User messages stay visible during AI response generation",
-        "📋 UPDATED SYSTEM REQUIREMENTS - Clear 8GB minimum / 16GB recommended RAM requirements",
-        "🔄 BETTER PROVIDER INVALIDATION - Fixed UI refresh after sending messages",
-        "🎨 MULTI-COLOR SCHEME SUPPORT - Mint Green, Cool Blue, Forest Green, Sunset Orange themes",
-        "🦙 ENHANCED OLLAMA SUPPORT - Improved macOS-specific Ollama service with better path detection"
-      ]
-    },
     "1.1.0": {
       "type": "major",
       "highlights": [

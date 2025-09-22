@@ -257,7 +257,7 @@ class ContextRepository {
      final missingDocument = ContextDocument(
        id: 'f8948349-cfc4-4518-a46f-89a2d64a5861',
        title: 'README.md',
-       content: '''# Asmbli Desktop
+       content: '''# AgentEngine Desktop
 
 Professional agent builder for developers with local MCP server integration.
 
@@ -350,7 +350,7 @@ apps/desktop/
 
 ### API Integration
 
-The desktop app connects to the Asmbli platform API for:
+The desktop app connects to the AgentEngine platform API for:
 - Template library access
 - Cloud synchronization
 - Community sharing features

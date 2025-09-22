@@ -61,7 +61,7 @@ class WebSocketMCPAdapter extends MCPAdapter {
     
     // Build headers
     final headers = <String, dynamic>{
-      'User-Agent': 'Asmbli-MCP-Client/1.0',
+      'User-Agent': 'AgentEngine-MCP-Client/1.0',
       ...config.headers ?? {},
     };
     
@@ -112,7 +112,7 @@ class WebSocketMCPAdapter extends MCPAdapter {
         'protocolVersion': '1.0',
         'capabilities': config.capabilities ?? getCapabilities(),
         'clientInfo': {
-          'name': 'Asmbli',
+          'name': 'AgentEngine',
           'version': '1.0.0',
         },
       });

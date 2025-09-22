@@ -33,7 +33,7 @@ class AsmblDropdown<T> extends StatelessWidget {
  decoration: BoxDecoration(
  border: Border.all(color: colors.border),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
- color: colors.surface.withOpacity( 0.8),
+ color: colors.surface.withValues(alpha: 0.8),
  ),
  child: DropdownButtonHideUnderline(
  child: DropdownButton<T>(
@@ -173,7 +173,7 @@ class _AsmblSearchableDropdownState<T> extends State<AsmblSearchableDropdown<T>>
  decoration: BoxDecoration(
  border: Border.all(color: colors.border),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
- color: colors.surface.withOpacity( 0.8),
+ color: colors.surface.withValues(alpha: 0.8),
  ),
  child: Row(
  children: [
@@ -208,7 +208,7 @@ class _AsmblSearchableDropdownState<T> extends State<AsmblSearchableDropdown<T>>
  border: Border.all(color: colors.border),
  boxShadow: [
  BoxShadow(
- color: colors.onSurface.withOpacity( 0.1),
+ color: colors.onSurface.withValues(alpha: 0.1),
  blurRadius: 8,
  offset: const Offset(0, 4),
  ),
@@ -274,7 +274,7 @@ class _AsmblSearchableDropdownState<T> extends State<AsmblSearchableDropdown<T>>
  ),
  decoration: BoxDecoration(
  color: isSelected
- ? colors.primary.withOpacity( 0.1)
+ ? colors.primary.withValues(alpha: 0.1)
  : Colors.transparent,
  ),
  child: Row(

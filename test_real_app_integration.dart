@@ -27,7 +27,7 @@ Future<void> testMCPServerProcess() async {
       name: 'Test Filesystem Server',
       url: 'stdio://test',
       command: 'npx',
-      args: ['@modelcontextprotocol/server-filesystem', 'C:\\Asmbli'],
+      args: ['@modelcontextprotocol/server-filesystem', 'C:\\AgentEngine'],
       transport: 'stdio',
       autoReconnect: false,
       maxRetries: 1,

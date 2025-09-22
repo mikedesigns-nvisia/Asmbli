@@ -69,9 +69,9 @@ class _RichTextMessageWidgetState extends State<RichTextMessageWidget> {
             // Code block config
             PreConfig(
               decoration: BoxDecoration(
-                color: colors.surfaceVariant.withOpacity( 0.3),
+                color: colors.surfaceVariant.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                border: Border.all(color: colors.border.withOpacity( 0.5)),
+                border: Border.all(color: colors.border.withValues(alpha: 0.5)),
               ),
               padding: const EdgeInsets.all(SpacingTokens.md),
               wrapper: (child, code, language) => _buildCodeBlock(child, code, language),
@@ -83,7 +83,7 @@ class _RichTextMessageWidgetState extends State<RichTextMessageWidget> {
                 fontFamily: 'Courier New',
                 fontSize: 13,
                 color: colors.primary,
-                backgroundColor: colors.surfaceVariant.withOpacity( 0.2),
+                backgroundColor: colors.surfaceVariant.withValues(alpha: 0.2),
               ),
             ),
           ],
@@ -117,7 +117,7 @@ class _RichTextMessageWidgetState extends State<RichTextMessageWidget> {
                   vertical: SpacingTokens.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.surfaceVariant.withOpacity( 0.5),
+                  color: colors.surfaceVariant.withValues(alpha: 0.5),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(BorderRadiusTokens.md),
                     topRight: Radius.circular(BorderRadiusTokens.md),
@@ -144,7 +144,7 @@ class _RichTextMessageWidgetState extends State<RichTextMessageWidget> {
               width: double.infinity,
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: colors.surfaceVariant.withOpacity( 0.3),
+                color: colors.surfaceVariant.withValues(alpha: 0.3),
                 borderRadius: language != null
                     ? const BorderRadius.only(
                         bottomLeft: Radius.circular(BorderRadiusTokens.md),
@@ -212,9 +212,9 @@ class _RichTextMessageWidgetState extends State<RichTextMessageWidget> {
       child: Container(
         margin: const EdgeInsets.all(SpacingTokens.xs),
         decoration: BoxDecoration(
-          color: colors.surface.withOpacity( 0.9),
+          color: colors.surface.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-          border: Border.all(color: colors.border.withOpacity( 0.5)),
+          border: Border.all(color: colors.border.withValues(alpha: 0.5)),
         ),
         child: InkWell(
           onTap: () => _copyToClipboard(widget.content),
@@ -269,7 +269,7 @@ class _RichTextMessageWidgetState extends State<RichTextMessageWidget> {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: ThemeColors(context).surfaceVariant.withOpacity( 0.3),
+                color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: SelectableText(

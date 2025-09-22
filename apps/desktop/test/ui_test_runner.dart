@@ -17,7 +17,7 @@ import 'integration/ui_structure_test.dart' as ui_tests;
 /// 
 /// Run with: flutter test test/ui_test_runner.dart
 void main() {
-  group('Asmbli Desktop App - UI Component Tests', () {
+  group('AgentEngine Desktop App - UI Component Tests', () {
     
     group('🎨 Design System Tests', () {
       ui_tests.main();

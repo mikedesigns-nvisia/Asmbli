@@ -1,5 +1,5 @@
 #!/bin/bash
-# Asmbli MCP Servers for LM Studio - Consumer Installer
+# AgentEngine MCP Servers for LM Studio - Consumer Installer
 # Version 1.0.0
 
 set -e
@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 # Pretty output functions
 print_header() {
     echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${BLUE}🚀 Asmbli MCP Servers for LM Studio${NC}"
+    echo -e "${BLUE}🚀 AgentEngine MCP Servers for LM Studio${NC}"
     echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 }
 
@@ -75,11 +75,11 @@ check_prerequisites() {
     fi
 }
 
-# Setup Asmbli directory
+# Setup AgentEngine directory
 setup_directory() {
-    print_info "Setting up Asmbli directory..."
+    print_info "Setting up AgentEngine directory..."
     
-    AGENT_DIR="$HOME/Asmbli"
+    AGENT_DIR="$HOME/AgentEngine"
     mkdir -p "$AGENT_DIR/mcp-servers"
     cd "$AGENT_DIR/mcp-servers"
     
@@ -116,7 +116,7 @@ create_configurations() {
     
     # Create .env file for API keys
     cat > .env << 'EOF'
-# Asmbli MCP Server Configuration
+# AgentEngine MCP Server Configuration
 # Add your API keys here
 
 # Figma Integration (get from https://www.figma.com/developers/api)
@@ -138,14 +138,14 @@ EOF
     # Create LM Studio integration script
     cat > start-mcp-servers.sh << 'EOF'
 #!/bin/bash
-# Start Asmbli MCP Servers for LM Studio
+# Start AgentEngine MCP Servers for LM Studio
 
 # Load environment variables
 set -a
 source .env
 set +a
 
-echo "🚀 Starting Asmbli MCP servers..."
+echo "🚀 Starting AgentEngine MCP servers..."
 
 # Start Figma MCP server
 if [ ! -z "$FIGMA_ACCESS_TOKEN" ] && [ "$FIGMA_ACCESS_TOKEN" != "your_figma_token_here" ]; then
@@ -260,12 +260,12 @@ create_shortcuts() {
     # Create start script for easy access
     DESKTOP_DIR="$HOME/Desktop"
     if [ -d "$DESKTOP_DIR" ]; then
-        cat > "$DESKTOP_DIR/Start Asmbli MCP.command" << EOF
+        cat > "$DESKTOP_DIR/Start AgentEngine MCP.command" << EOF
 #!/bin/bash
-cd "$HOME/Asmbli/mcp-servers"
+cd "$HOME/AgentEngine/mcp-servers"
 ./start-mcp-servers.sh
 EOF
-        chmod +x "$DESKTOP_DIR/Start Asmbli MCP.command"
+        chmod +x "$DESKTOP_DIR/Start AgentEngine MCP.command"
         print_success "Desktop shortcut created"
     fi
 }
@@ -279,17 +279,17 @@ show_instructions() {
     echo -e "${YELLOW}📋 Next Steps:${NC}"
     echo ""
     echo -e "${BLUE}1. Configure API Keys:${NC}"
-    echo "   Edit: $HOME/Asmbli/mcp-servers/.env"
+    echo "   Edit: $HOME/AgentEngine/mcp-servers/.env"
     echo "   Add your Figma, GitHub, and other API tokens"
     echo ""
     echo -e "${BLUE}2. Start MCP Servers:${NC}"
-    echo "   Run: $HOME/Asmbli/mcp-servers/start-mcp-servers.sh"
+    echo "   Run: $HOME/AgentEngine/mcp-servers/start-mcp-servers.sh"
     echo "   Or double-click the desktop shortcut"
     echo ""
     echo -e "${BLUE}3. Configure LM Studio:${NC}"
     echo "   • Open LM Studio settings"
     echo "   • Enable external tools/plugins"
-    echo "   • Import configuration from: $HOME/Asmbli/mcp-servers/lm-studio-config.json"
+    echo "   • Import configuration from: $HOME/AgentEngine/mcp-servers/lm-studio-config.json"
     echo "   • Or manually add the endpoints shown when servers start"
     echo ""
     echo -e "${BLUE}4. Test Integration:${NC}"
@@ -305,9 +305,9 @@ show_instructions() {
     echo "   • Each API integration is optional - configure only what you need"
     echo ""
     echo -e "${GREEN}🆘 Need Help?${NC}"
-    echo "   • Documentation: $HOME/Asmbli/mcp-servers/README.md"
+    echo "   • Documentation: $HOME/AgentEngine/mcp-servers/README.md"
     echo "   • Troubleshooting: Check server logs in terminal"
-    echo "   • Community: https://github.com/Asmbli/discussions"
+    echo "   • Community: https://github.com/AgentEngine/discussions"
     echo ""
 }
 

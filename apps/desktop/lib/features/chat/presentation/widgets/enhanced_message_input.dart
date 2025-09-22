@@ -75,11 +75,11 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: ThemeColors(context).surface.withOpacity( 0.8),
+                    color: ThemeColors(context).surface.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     border: Border.all(
                       color: _isComposing 
-                        ? ThemeColors(context).primary.withOpacity( 0.5)
+                        ? ThemeColors(context).primary.withValues(alpha: 0.5)
                         : ThemeColors(context).border,
                       width: _isComposing ? 2 : 1,
                     ),
@@ -146,7 +146,7 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
                     ? LinearGradient(
                         colors: [
                           ThemeColors(context).primary,
-                          ThemeColors(context).primary.withOpacity( 0.8),
+                          ThemeColors(context).primary.withValues(alpha: 0.8),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -159,7 +159,7 @@ class _EnhancedMessageInputState extends ConsumerState<EnhancedMessageInput> {
                   boxShadow: _canSend
                     ? [
                         BoxShadow(
-                          color: ThemeColors(context).primary.withOpacity( 0.3),
+                          color: ThemeColors(context).primary.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),

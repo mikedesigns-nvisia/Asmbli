@@ -14,7 +14,7 @@ INSTALLATION INSTRUCTIONS:
 2. Run agentengine_desktop.exe to start the application
 
 3. The application will create data folders in:
-   %APPDATA%\Asmbli Inc\Asmbli Desktop\
+   %APPDATA%\AgentEngine Inc\AgentEngine Desktop\
 
 SYSTEM REQUIREMENTS:
 ===================
@@ -48,7 +48,7 @@ SUPPORT:
 ========
 
 - Documentation: https://docs.asmbli.dev
-- Issues: https://github.com/your-org/Asmbli/issues
+- Issues: https://github.com/your-org/AgentEngine/issues
 - Email: support@asmbli.dev
 
 LICENSE:

@@ -79,10 +79,10 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
   Widget _buildHeaderWithTabs(ThemeColors colors, ToolsState state) {
     return Container(
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity( 0.1),
+        color: colors.surface.withValues(alpha: 0.1),
         border: Border(
           bottom: BorderSide(
-            color: colors.border.withOpacity( 0.2),
+            color: colors.border.withValues(alpha: 0.2),
           ),
         ),
       ),
@@ -99,7 +99,7 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity( 0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
@@ -251,10 +251,10 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen>
         vertical: SpacingTokens.xs,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity( 0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: color.withOpacity( 0.2),
+          color: color.withValues(alpha: 0.2),
         ),
       ),
       child: Row(

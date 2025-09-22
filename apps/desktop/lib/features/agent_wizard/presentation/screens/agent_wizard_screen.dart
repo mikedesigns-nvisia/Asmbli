@@ -188,7 +188,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
               color: ThemeColors(context).onSurface,
             ),
             style: IconButton.styleFrom(
-              backgroundColor: ThemeColors(context).surface.withOpacity( 0.8),
+              backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.8),
               padding: const EdgeInsets.all(SpacingTokens.md),
             ),
           ),
@@ -221,7 +221,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.xl),
                   decoration: BoxDecoration(
-                    color: ThemeColors(context).primary.withOpacity( 0.1),
+                    color: ThemeColors(context).primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                   ),
                   child: Icon(
@@ -301,7 +301,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
               color: ThemeColors(context).onSurface,
             ),
             style: IconButton.styleFrom(
-              backgroundColor: ThemeColors(context).surface.withOpacity( 0.8),
+              backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.8),
               padding: const EdgeInsets.all(SpacingTokens.md),
             ),
           ),
@@ -365,7 +365,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                   color: theme.colorScheme.onSurface,
                 ),
                 style: IconButton.styleFrom(
-                  backgroundColor: theme.colorScheme.surface.withOpacity( 0.8),
+                  backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
                 ),
               ),
               
@@ -505,7 +505,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         color: ThemeColors(context).surface,
         border: Border(
           top: BorderSide(
-            color: ThemeColors(context).border.withOpacity( 0.3),
+            color: ThemeColors(context).border.withValues(alpha: 0.3),
           ),
         ),
       ),
@@ -709,10 +709,10 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         Container(
           padding: const EdgeInsets.all(SpacingTokens.lg),
           decoration: BoxDecoration(
-            color: ThemeColors(context).primary.withOpacity( 0.1),
+            color: ThemeColors(context).primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             border: Border.all(
-              color: ThemeColors(context).primary.withOpacity( 0.2),
+              color: ThemeColors(context).primary.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
@@ -795,7 +795,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                   Container(
                     padding: const EdgeInsets.all(SpacingTokens.md),
                     decoration: BoxDecoration(
-                      color: ThemeColors(context).primary.withOpacity( 0.1),
+                      color: ThemeColors(context).primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     ),
                     child: Icon(
@@ -1222,10 +1222,10 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withOpacity( 0.9),
+        color: theme.colorScheme.surface.withValues(alpha: 0.9),
         border: Border(
           top: BorderSide(
-            color: theme.colorScheme.outline.withOpacity( 0.3),
+            color: theme.colorScheme.outline.withValues(alpha: 0.3),
           ),
         ),
       ),
@@ -1546,7 +1546,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyles.bodyLarge.copyWith(
-              color: ThemeColors(context).onSurfaceVariant.withOpacity( 0.7),
+              color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.7),
               fontSize: 16,
             ),
             border: OutlineInputBorder(
@@ -1589,7 +1589,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         padding: const EdgeInsets.all(SpacingTokens.lg),
         decoration: BoxDecoration(
           color: isSelected 
-              ? ThemeColors(context).primary.withOpacity( 0.1)
+              ? ThemeColors(context).primary.withValues(alpha: 0.1)
               : ThemeColors(context).surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           border: Border.all(
@@ -1667,7 +1667,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
         padding: const EdgeInsets.all(SpacingTokens.lg),
         decoration: BoxDecoration(
           color: isEnabled 
-              ? ThemeColors(context).primary.withOpacity( 0.1)
+              ? ThemeColors(context).primary.withValues(alpha: 0.1)
               : ThemeColors(context).surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           border: Border.all(
@@ -1728,7 +1728,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 }
                 setState(() {});
               },
-              thumbColor: MaterialStateProperty.all(ThemeColors(context).primary),
+              activeThumbColor: ThemeColors(context).primary,
             ),
           ],
         ),
