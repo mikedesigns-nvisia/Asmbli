@@ -327,8 +327,8 @@ export default function ContributePage() {
                   <div>
                     <h4 className="font-semibold mb-2">Prerequisites</h4>
                     <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                      <li>Flutter SDK (>=3.0.0)</li>
-                      <li>Dart SDK (>=3.0.0)</li>
+                      <li>Flutter SDK (&gt;=3.0.0)</li>
+                      <li>Dart SDK (&gt;=3.0.0)</li>
                       <li>Git</li>
                       <li>Your favorite IDE (VS Code, Kiro, Cursor, JetBrains, Docker Compose)</li>
                     </ul>
