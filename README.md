@@ -2,9 +2,13 @@
 
 **Build, deploy, and manage AI agents with ease using the Model Context Protocol (MCP)**
 
+[![CI](https://github.com/asmbli/asmbli/workflows/CI/badge.svg)](https://github.com/asmbli/asmbli/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-blue)](https://modelcontextprotocol.io)
+[![GitHub Stars](https://img.shields.io/github/stars/asmbli/asmbli?style=social)](https://github.com/asmbli/asmbli/stargazers)
+[![Discord](https://img.shields.io/discord/YOUR_DISCORD_ID?logo=discord&logoColor=white&label=Discord)](https://discord.gg/asmbli)
+[![Contributors](https://img.shields.io/github/contributors/asmbli/asmbli)](https://github.com/asmbli/asmbli/graphs/contributors)
 
 ---
 
@@ -50,8 +54,8 @@ Asmbli is a professional-grade AI agent builder that democratizes AI agent creat
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/AgentEngine.git
-cd AgentEngine
+git clone https://github.com/asmbli/asmbli.git
+cd Asmbli
 
 # Install Flutter dependencies
 cd apps/desktop
@@ -82,7 +86,7 @@ flutter run
 ### Project Structure
 
 ```
-AgentEngine/
+Asmbli/
 ├── apps/
 │   └── desktop/                    # Flutter desktop application
 │       ├── lib/
@@ -256,7 +260,7 @@ We welcome contributions from the community! Here's how to get started:
 
 1. **Fork the repository**
    ```bash
-   git fork https://github.com/your-org/AgentEngine.git
+   git fork https://github.com/asmbli/asmbli.git
    ```
 
 2. **Create a feature branch**
@@ -532,12 +536,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **📖 Documentation**: [Full documentation site](https://docs.asmbli.dev)
 - **💬 Discord**: [Join our community](https://discord.gg/asmbli)
-- **🐛 Issues**: [GitHub Issues](https://github.com/your-org/AgentEngine/issues)
+- **🐛 Issues**: [GitHub Issues](https://github.com/asmbli/asmbli/issues)
 - **📧 Email**: support@asmbli.dev
 
 ### 🗺️ Roadmap
 
-See our [public roadmap](https://github.com/your-org/AgentEngine/projects) for upcoming features and releases.
+See our [public roadmap](https://github.com/asmbli/asmbli/projects) for upcoming features and releases.
 
 ### 📊 Analytics
 

@@ -45,3 +45,20 @@ coverage/
 
 # Misc
 .cache/
+# IDE and Build Artifacts
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Flutter/Dart build artifacts
+**/build/
+**/.dart_tool/
+**/coverage/
+
+# Environment files
+.env
+.env.local
+.env.*.local

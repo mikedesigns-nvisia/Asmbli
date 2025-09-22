@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        flutter-version: ['3.19.0']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ matrix.flutter-version }}
+        channel: 'stable'
+
+    - name: Get dependencies
+      run: |
+        cd apps/desktop
+        flutter pub get
+        cd ../../packages/agent_engine_core
+        flutter pub get
+
+    - name: Analyze code
+      run: |
+        cd apps/desktop
+        flutter analyze
+        cd ../../packages/agent_engine_core
+        flutter analyze
+
+    - name: Run tests
+      run: |
+        cd apps/desktop
+        flutter test
+        cd ../../packages/agent_engine_core
+        flutter test
+
+    - name: Check formatting
+      run: |
+        cd apps/desktop
+        dart format --set-exit-if-changed .
+        cd ../../packages/agent_engine_core
+        dart format --set-exit-if-changed .
+
+  build:
+    needs: test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            build-cmd: flutter build linux
+            artifact-name: linux-build
+          - os: macos-latest
+            build-cmd: flutter build macos
+            artifact-name: macos-build
+          - os: windows-latest
+            build-cmd: flutter build windows
+            artifact-name: windows-build
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: |
+        cd apps/desktop
+        flutter pub get
+
+    - name: Build application
+      run: |
+        cd apps/desktop
+        ${{ matrix.build-cmd }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact-name }}
+        path: apps/desktop/build/
+        retention-days: 7

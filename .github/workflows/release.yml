@@ -1,0 +1,103 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Asmbli ${{ github.ref }}
+          draft: true
+          prerelease: false
+
+  build-and-upload:
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            artifact-name: asmbli-linux-x64
+            build-cmd: flutter build linux --release
+            asset-path: build/linux/x64/release/bundle
+          - os: macos-latest
+            platform: macos
+            artifact-name: asmbli-macos
+            build-cmd: flutter build macos --release
+            asset-path: build/macos/Build/Products/Release
+          - os: windows-latest
+            platform: windows
+            artifact-name: asmbli-windows-x64
+            build-cmd: flutter build windows --release
+            asset-path: build/windows/x64/runner/Release
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: |
+        cd apps/desktop
+        flutter pub get
+
+    - name: Build application
+      run: |
+        cd apps/desktop
+        ${{ matrix.build-cmd }}
+
+    - name: Package release
+      run: |
+        cd apps/desktop/${{ matrix.asset-path }}
+        if [ "${{ matrix.platform }}" = "macos" ]; then
+          zip -r ../../../../../${{ matrix.artifact-name }}.zip .
+        elif [ "${{ matrix.platform }}" = "windows" ]; then
+          7z a ../../../../../${{ matrix.artifact-name }}.zip .
+        else
+          tar czf ../../../../../${{ matrix.artifact-name }}.tar.gz .
+        fi
+      shell: bash
+
+    - name: Upload Release Asset (Linux)
+      if: matrix.platform == 'linux'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: ./${{ matrix.artifact-name }}.tar.gz
+        asset_name: ${{ matrix.artifact-name }}.tar.gz
+        asset_content_type: application/gzip
+
+    - name: Upload Release Asset (macOS/Windows)
+      if: matrix.platform != 'linux'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: ./${{ matrix.artifact-name }}.zip
+        asset_name: ${{ matrix.artifact-name }}.zip
+        asset_content_type: application/zip
