@@ -214,7 +214,7 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-            <Link href="https://github.com/asmbli/asmbli" target="_blank" rel="noopener noreferrer">
+            <Link href="https://github.com/WereNext/Asmbli" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-amber-950">
                 Download Open Source
               </Button>
@@ -341,7 +341,7 @@ export default function HomePage() {
           </div>
 
           <div className="mt-8 sm:mt-12 px-4">
-            <Link href="https://github.com/asmbli/asmbli" target="_blank" rel="noopener noreferrer">
+            <Link href="https://github.com/WereNext/Asmbli" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-amber-950">
                 Get Started on GitHub
               </Button>
@@ -732,12 +732,12 @@ export default function HomePage() {
                 realistic expectations and transparent limitations.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link href="https://github.com/asmbli/asmbli" target="_blank" rel="noopener noreferrer">
+                <Link href="https://github.com/WereNext/Asmbli" target="_blank" rel="noopener noreferrer">
                   <Button className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-amber-950">
                     View on GitHub
                   </Button>
                 </Link>
-                <Link href="https://github.com/asmbli/asmbli#-quick-start" target="_blank" rel="noopener noreferrer">
+                <Link href="https://github.com/WereNext/Asmbli#-quick-start" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" className="w-full sm:w-auto">
                     Quick Start Guide
                   </Button>

@@ -53,11 +53,17 @@ export function Navigation({ showBackButton = false, backHref = '/', backLabel =
             >
               Dashboard
             </Link>
-            <Link 
-              href="/download" 
+            <Link
+              href="/download"
               className={`hover:underline text-sm ${isActive('/download') ? 'font-semibold text-foreground' : ''}`}
             >
               Download
+            </Link>
+            <Link
+              href="/contribute"
+              className={`hover:underline text-sm ${isActive('/contribute') ? 'font-semibold text-foreground' : ''}`}
+            >
+              Contribute
             </Link>
             <Link href="/chat">
               <Button>View Demo</Button>
@@ -100,12 +106,19 @@ export function Navigation({ showBackButton = false, backHref = '/', backLabel =
               >
                 Dashboard
               </Link>
-              <Link 
-                href="/download" 
+              <Link
+                href="/download"
                 className={`hover:text-primary transition-colors ${isActive('/download') ? 'font-semibold text-foreground' : ''}`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Download
+              </Link>
+              <Link
+                href="/contribute"
+                className={`hover:text-primary transition-colors ${isActive('/contribute') ? 'font-semibold text-foreground' : ''}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contribute
               </Link>
               <Link href="/chat" onClick={() => setIsMobileMenuOpen(false)}>
                 <Button className="w-full">View Demo</Button>
