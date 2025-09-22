@@ -1,6 +1,6 @@
-# 🤖 Asmbli - Professional AI Agent Builder
+# 🤖 Asmbli - AI Chat Desktop Application
 
-**Build, deploy, and manage AI agents with ease using the Model Context Protocol (MCP)**
+**Cross-platform desktop chat application for AI models with agent template capabilities**
 
 [![CI](https://github.com/asmbli/asmbli/workflows/CI/badge.svg)](https://github.com/asmbli/asmbli/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -14,18 +14,24 @@
 
 ## 🌟 Overview
 
-Asmbli is a professional-grade AI agent builder that democratizes AI agent creation for both developers and non-technical users. Built with Flutter and leveraging the Model Context Protocol (MCP), it provides a seamless cross-platform desktop experience.
+Asmbli is a desktop chat application for AI models with agent template capabilities. Built with Flutter, it provides a clean interface for chatting with various AI models while experimenting with basic agent configurations and document context.
 
-### ✨ Key Features
+### ✨ What Asmbli Actually Does
 
-- **🖥️ Professional Desktop Application**: Cross-platform Flutter application for Windows, macOS, and Linux
-- **🔧 60+ MCP Server Integrations**: GitHub, Microsoft 365, AWS, Google Cloud, Slack, and more
-- **🎨 Advanced Design System**: Multi-color scheme support with professional UI components
-- **💬 Real-time Chat Interface**: Streaming conversations with context-aware responses
-- **🔐 Enterprise Security**: OAuth 2.0, API key management, and secure credential storage
-- **📱 Cross-Platform**: Native desktop application (Windows, macOS, Linux)
-- **🎯 Agent Templates**: Pre-configured templates for common use cases
-- **📊 Vector Knowledge Base**: Advanced context management and retrieval
+- **🖥️ Cross-Platform Desktop Chat**: Flutter application for Windows, macOS, and Linux
+- **🤖 Multi-Model Support**: Chat with Claude, OpenAI, local models, and other API-based LLMs
+- **📋 Agent Templates**: Create and save basic agent configurations with custom prompts and settings
+- **📄 Document Context**: Upload and reference documents during conversations (basic implementation)
+- **🎨 Professional UI**: Multi-color scheme design system with clean, modern interface
+- **💾 Local Storage**: Save conversations, agent templates, and settings locally
+- **🔐 Secure Credentials**: Safe storage of API keys using OS-native secure storage
+
+### ⚠️ Current Limitations
+
+- **Agent Reliability**: AI agents can hallucinate and provide inconsistent responses
+- **MCP Integration**: MCP server support is experimental and may not work reliably
+- **Context Management**: Document context system is basic and may lose relevance in long conversations
+- **No Deployment**: Agents exist only within the application - no external deployment capabilities
 
 ---
 
@@ -74,10 +80,10 @@ flutter run
 ### 📱 Quick Setup
 
 1. **Launch the desktop application**
-2. **Complete onboarding** - Configure your first AI model
-3. **Add integrations** - Connect to your favorite services
-4. **Create your first agent** - Use templates or build from scratch
-5. **Start chatting** - Test your agent in real-time
+2. **Add API keys** - Configure Claude, OpenAI, or other AI model APIs in settings
+3. **Start a conversation** - Begin chatting with your chosen AI model
+4. **Try agent templates** - Experiment with different agent configurations
+5. **Upload documents** - Add context files to enhance conversations (optional)
 
 ---
 
@@ -146,32 +152,32 @@ AsmblCard(
 )
 ```
 
-### 🔧 MCP Integration Architecture
+### 🔧 Core Features
 
-Asmbli integrates with 60+ MCP servers across multiple categories:
+#### Chat Interface
+- **Real-time conversations** with AI models
+- **Message history** and conversation management
+- **Streaming responses** for better user experience
+- **Multi-model switching** within conversations
 
-#### Core MCP Servers (11)
-- **filesystem-mcp** - Local file operations
-- **git-mcp** - Version control
-- **github** - GitHub API integration
-- **postgres-mcp** - Database operations
-- **memory-mcp** - AI memory management
+#### Agent Templates
+- **Custom prompts** and system messages
+- **Model configuration** (temperature, max tokens, etc.)
+- **Template library** for common use cases
+- **Save and reuse** agent configurations
 
-#### Enterprise Integrations (49+)
-- **Microsoft 365 Suite** (Teams, Outlook, SharePoint, OneDrive)
-- **Cloud Platforms** (AWS, Google Cloud, Azure)
-- **Communication** (Slack, Discord, Telegram)
-- **Productivity** (Notion, Linear, Google Analytics)
-- **Design Tools** (Figma, Sketch, Storybook)
+#### Document Context (Beta)
+- **File upload** for context (PDF, text, markdown)
+- **Basic document parsing** and chunking
+- **Context injection** into conversations
+- **Local vector storage** (experimental)
 
-#### Platform Filtering
+#### MCP Integration (Experimental)
+⚠️ **Note**: MCP server integration is in early development and may not work reliably.
 
-```typescript
-// Automatic platform-based server filtering
-const mcpManager = new MCPManager(isDesktop: boolean)
-const availableServers = mcpManager.getAvailableServers()
-// Returns only compatible servers for current platform
-```
+- **Local MCP servers** - Basic filesystem operations
+- **Configuration management** for MCP connections
+- **Limited server compatibility** - most servers are untested
 
 ---
 
@@ -474,37 +480,44 @@ flutter build linux --release
 
 ## 📊 Project Status
 
-### 🎯 Current Version: 1.0.0
+### 🎯 Current Version: Beta 0.9.0
 
-#### ✅ Completed Features
-- ✅ Flutter desktop application with full feature set
+#### ✅ What Works Well
+- ✅ Cross-platform Flutter desktop application (Windows, macOS, Linux)
 - ✅ Multi-color scheme design system
-- ✅ 60+ MCP server integrations
-- ✅ Real-time chat interface with streaming
-- ✅ Agent creation and management
-- ✅ OAuth 2.0 authentication flows
-- ✅ Vector knowledge base integration
-- ✅ Cross-platform deployment pipeline
+- ✅ Real-time chat interface with multiple AI models
+- ✅ Basic agent template creation and management
+- ✅ Secure API key storage
+- ✅ Local conversation history
+- ✅ Document upload and basic context injection
 
-#### 🚧 In Progress
-- 🚧 Mobile application (iOS/Android)
-- 🚧 Advanced analytics dashboard
-- 🚧 Multi-user collaboration features
-- 🚧 Plugin marketplace
+#### ⚠️ Known Issues
+- ⚠️ Agent responses can be inconsistent and may hallucinate
+- ⚠️ MCP server integration is unreliable and experimental
+- ⚠️ Document context may lose relevance in long conversations
+- ⚠️ Vector search functionality is basic and may not scale
+- ⚠️ No authentication or user management system
+- ⚠️ Limited error handling for API failures
 
-#### 🔮 Planned Features
-- 🔮 Voice interface integration
-- 🔮 Advanced workflow automation
-- 🔮 Enterprise SSO integration
-- 🔮 Custom model training interface
+#### 🚧 In Development
+- 🚧 Improved MCP server compatibility
+- 🚧 Better document context management
+- 🚧 Enhanced agent reliability
+- 🚧 More robust error handling
 
-### 📈 Metrics
+#### 🔮 Future Goals
+- 🔮 Agent deployment capabilities
+- 🔮 Multi-user support
+- 🔮 Plugin marketplace
+- 🔮 Mobile applications
 
-- **Lines of Code**: ~50,000 (Dart) + ~25,000 (TypeScript)
-- **Test Coverage**: 85%+ target
+### 📈 Current State
+
+- **Primary Use Case**: Desktop AI chat application with basic agent templates
+- **Stability**: Beta - expect bugs and limitations
 - **Supported Platforms**: Windows, macOS, Linux
-- **MCP Integrations**: 60+ services
-- **UI Components**: 50+ design system components
+- **AI Models**: Claude, OpenAI, local models (via API)
+- **Best For**: Experimenting with AI conversations and basic agent configurations
 
 ---
 
@@ -549,7 +562,7 @@ This project uses anonymous analytics to understand usage patterns and improve t
 
 ---
 
-**🚀 Ready to build the future of AI agents? [Get started now!](#-quick-start)**
+**💬 Ready to try a clean AI chat interface with agent templates? [Get started now!](#-quick-start)**
 
 ---
 
