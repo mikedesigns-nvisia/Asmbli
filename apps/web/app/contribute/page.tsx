@@ -25,13 +25,13 @@ export default function ContributePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-            <Link href="https://github.com/asmbli/asmbli" target="_blank" rel="noopener noreferrer">
+            <Link href="https://github.com/WereNext/Asmbli" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white">
                 <GitBranch className="mr-2 h-5 w-5" />
                 View on GitHub
               </Button>
             </Link>
-            <Link href="https://github.com/asmbli/asmbli/issues/new" target="_blank" rel="noopener noreferrer">
+            <Link href="https://github.com/WereNext/Asmbli/issues/new" target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="outline" className="w-full sm:w-auto">
                 Report an Issue
               </Button>
@@ -64,7 +64,7 @@ export default function ContributePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="https://github.com/asmbli/asmbli/issues/new?template=bug_report.md" target="_blank" rel="noopener noreferrer">
+                <Link href="https://github.com/WereNext/Asmbli/issues/new?template=bug_report.md" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" size="sm" className="w-full">
                     Report Bug
                     <ExternalLink className="ml-2 h-3 w-3" />
@@ -84,7 +84,7 @@ export default function ContributePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="https://github.com/asmbli/asmbli/issues/new?template=feature_request.md" target="_blank" rel="noopener noreferrer">
+                <Link href="https://github.com/WereNext/Asmbli/issues/new?template=feature_request.md" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" size="sm" className="w-full">
                     Suggest Feature
                     <ExternalLink className="ml-2 h-3 w-3" />
@@ -104,7 +104,7 @@ export default function ContributePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="https://github.com/asmbli/asmbli/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22" target="_blank" rel="noopener noreferrer">
+                <Link href="https://github.com/WereNext/Asmbli/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" size="sm" className="w-full">
                     Good First Issues
                     <ExternalLink className="ml-2 h-3 w-3" />
@@ -124,7 +124,7 @@ export default function ContributePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="https://github.com/asmbli/asmbli/tree/main/docs" target="_blank" rel="noopener noreferrer">
+                <Link href="https://github.com/WereNext/Asmbli/tree/main/docs" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" size="sm" className="w-full">
                     View Docs
                     <ExternalLink className="ml-2 h-3 w-3" />
@@ -144,7 +144,7 @@ export default function ContributePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="https://github.com/asmbli/asmbli/issues?q=is%3Aissue+is%3Aopen+label%3Amcp" target="_blank" rel="noopener noreferrer">
+                <Link href="https://github.com/WereNext/Asmbli/issues?q=is%3Aissue+is%3Aopen+label%3Amcp" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" size="sm" className="w-full">
                     MCP Issues
                     <ExternalLink className="ml-2 h-3 w-3" />
@@ -164,7 +164,7 @@ export default function ContributePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="https://github.com/asmbli/asmbli/discussions" target="_blank" rel="noopener noreferrer">
+                <Link href="https://github.com/WereNext/Asmbli/discussions" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" size="sm" className="w-full">
                     Join Discussions
                     <ExternalLink className="ml-2 h-3 w-3" />
@@ -330,7 +330,7 @@ export default function ContributePage() {
                       <li>Flutter SDK (&gt;=3.0.0)</li>
                       <li>Dart SDK (&gt;=3.0.0)</li>
                       <li>Git</li>
-                      <li>Your favorite IDE (VS Code, Kiro, Cursor, JetBrains, Docker Compose)</li>
+                      <li>Your favorite IDE (VS Code, Kiro, Cursor)</li>
                     </ul>
                   </div>
                 </div>
@@ -342,7 +342,7 @@ export default function ContributePage() {
                   <div>
                     <h4 className="font-semibold mb-2">Clone and Setup</h4>
                     <div className="bg-gray-100 rounded-lg p-3 text-sm font-mono">
-                      <p>git clone https://github.com/asmbli/asmbli.git</p>
+                      <p>git clone https://github.com/WereNext/Asmbli.git</p>
                       <p>cd asmbli</p>
                       <p>cd apps/desktop && flutter pub get</p>
                       <p>cd ../../packages/agent_engine_core && flutter pub get</p>
@@ -372,7 +372,7 @@ export default function ContributePage() {
                     <p className="text-sm text-muted-foreground mb-2">
                       Check out our contribution guidelines and development setup
                     </p>
-                    <Link href="https://github.com/asmbli/asmbli/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">
+                    <Link href="https://github.com/WereNext/Asmbli/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">
                       <Button variant="outline" size="sm">
                         Read CONTRIBUTING.md
                         <ExternalLink className="ml-2 h-3 w-3" />
@@ -398,13 +398,13 @@ export default function ContributePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <Link href="https://github.com/asmbli/asmbli" target="_blank" rel="noopener noreferrer">
+            <Link href="https://github.com/WereNext/Asmbli" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white">
                 <GitBranch className="mr-2 h-5 w-5" />
                 Start Contributing
               </Button>
             </Link>
-            <Link href="https://github.com/asmbli/asmbli/discussions" target="_blank" rel="noopener noreferrer">
+            <Link href="https://github.com/WereNext/Asmbli/discussions" target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="outline" className="w-full sm:w-auto">
                 Join Discussions
               </Button>
