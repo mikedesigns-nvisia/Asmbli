@@ -697,8 +697,7 @@ class AgentTerminalImpl implements AgentTerminal {
   Future<void> initialize() async {
     try {
       // Add timeout to prevent hanging on macOS directory operations
-      await Future.timeout(
-        _initializeWithDirectoryCreation(),
+      await _initializeWithDirectoryCreation().timeout(
         const Duration(seconds: 10),
         onTimeout: () {
           throw TerminalException(
@@ -793,14 +792,13 @@ class AgentTerminalImpl implements AgentTerminal {
     
     try {
       // Add timeout to process start to prevent hanging
-      process = await Future.timeout(
-        Process.start(
-          Platform.isWindows ? 'cmd' : 'bash',
-          Platform.isWindows ? ['/c', command] : ['-c', command],
-          workingDirectory: workingDirectory,
-          environment: environment,
-          runInShell: true,
-        ),
+      process = await Process.start(
+        Platform.isWindows ? 'cmd' : 'bash',
+        Platform.isWindows ? ['/c', command] : ['-c', command],
+        workingDirectory: workingDirectory,
+        environment: environment,
+        runInShell: true,
+      ).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           throw TerminalException(

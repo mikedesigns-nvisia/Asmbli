@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:agent_engine_core/models/agent.dart';
 import 'package:agent_engine_core/services/agent_service.dart';
 import 'package:uuid/uuid.dart';
@@ -128,11 +129,10 @@ class AgentBusinessService extends BaseBusinessService {
       if (_provisioningService != null) {
         try {
           // Add timeout to prevent hanging during terminal provisioning
-          await Future.timeout(
-            _provisioningService!.provisionTerminalForAgent(
-              createdAgent.id,
-              requiredMCPServers: mcpServers,
-            ),
+          await _provisioningService!.provisionTerminalForAgent(
+            createdAgent.id,
+            requiredMCPServers: mcpServers,
+          ).timeout(
             const Duration(seconds: 30),
             onTimeout: () {
               throw Exception(
