@@ -98,10 +98,10 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  decoration: InputDecoration(
  hintText: 'Enter document title...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+ color: colors.onSurfaceVariant.withOpacity(0.6),
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
+ fillColor: colors.surfaceVariant.withOpacity(0.3),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  borderSide: BorderSide(color: colors.border),
@@ -141,10 +141,10 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  ),
  const SizedBox(height: SpacingTokens.sm),
  DropdownButtonFormField<ContextType>(
- initialValue: _selectedType,
+ value: _selectedType,
  decoration: InputDecoration(
  filled: true,
- fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
+ fillColor: colors.surfaceVariant.withOpacity(0.3),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  borderSide: BorderSide(color: colors.border),
@@ -207,10 +207,10 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  decoration: InputDecoration(
  hintText: 'api, documentation, reference...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+ color: colors.onSurfaceVariant.withOpacity(0.6),
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
+ fillColor: colors.surfaceVariant.withOpacity(0.3),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  borderSide: BorderSide(color: colors.border),
@@ -256,10 +256,10 @@ class _ContextDocumentFormState extends State<ContextDocumentForm> {
  decoration: InputDecoration(
  hintText: 'Enter the context content that will be provided to agents...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+ color: colors.onSurfaceVariant.withOpacity(0.6),
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
+ fillColor: colors.surfaceVariant.withOpacity(0.3),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  borderSide: BorderSide(color: colors.border),

@@ -61,7 +61,7 @@ class _ContextLibraryComponentState extends ConsumerState<ContextLibraryComponen
         Container(
           padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.primary.withValues(alpha: 0.1),
+            color: colors.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           ),
           child: Icon(
@@ -117,7 +117,7 @@ class _ContextLibraryComponentState extends ConsumerState<ContextLibraryComponen
                   style: BorderStyle.solid,
                 ),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-                color: colors.surface.withValues(alpha: 0.5),
+                color: colors.surface.withOpacity(0.5),
               ),
               child: InkWell(
                 onTap: _isUploading ? null : _pickFiles,
@@ -182,9 +182,9 @@ class _ContextLibraryComponentState extends ConsumerState<ContextLibraryComponen
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: colors.accent.withValues(alpha: 0.1),
+                color: colors.accent.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+                border: Border.all(color: colors.accent.withOpacity(0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,7 +251,7 @@ class _ContextLibraryComponentState extends ConsumerState<ContextLibraryComponen
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: colors.primary.withValues(alpha: 0.1),
+                    color: colors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Row(

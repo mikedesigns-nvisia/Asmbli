@@ -174,7 +174,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
      decoration: BoxDecoration(
        border: Border.all(color: theme.colorScheme.outline),
        borderRadius: BorderRadius.circular(6),
-       color: theme.colorScheme.surface.withValues(alpha: 0.8),
+       color: theme.colorScheme.surface.withOpacity(0.8),
      ),
      child: DropdownButtonHideUnderline(
        child: DropdownButton<String>(
@@ -257,9 +257,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
      width: double.infinity,
      padding: const EdgeInsets.all(10),
      decoration: BoxDecoration(
-       color: ThemeColors(context).primary.withValues(alpha: 0.1),
+       color: ThemeColors(context).primary.withOpacity(0.1),
        borderRadius: BorderRadius.circular(6),
-       border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
+       border: Border.all(color: ThemeColors(context).primary.withOpacity(0.3)),
      ),
      child: Row(
        children: [
@@ -296,9 +296,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
          width: double.infinity,
          padding: const EdgeInsets.all(12),
          decoration: BoxDecoration(
-           color: theme.colorScheme.surface.withValues(alpha: 0.8),
+           color: theme.colorScheme.surface.withOpacity(0.8),
            borderRadius: BorderRadius.circular(6),
-           border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+           border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
          ),
          child: Column(
            crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,9 +349,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
        width: double.infinity,
        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
        decoration: BoxDecoration(
-         color: ThemeColors(context).success.withValues(alpha: 0.1),
+         color: ThemeColors(context).success.withOpacity(0.1),
          borderRadius: BorderRadius.circular(8),
-         border: Border.all(color: ThemeColors(context).success.withValues(alpha: 0.3)),
+         border: Border.all(color: ThemeColors(context).success.withOpacity(0.3)),
        ),
        child: Row(
          mainAxisAlignment: MainAxisAlignment.center,
@@ -376,9 +376,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
        width: double.infinity,
        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
        decoration: BoxDecoration(
-         color: ThemeColors(context).primary.withValues(alpha: 0.1),
+         color: ThemeColors(context).primary.withOpacity(0.1),
          borderRadius: BorderRadius.circular(8),
-         border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
+         border: Border.all(color: ThemeColors(context).primary.withOpacity(0.3)),
        ),
        child: Row(
          mainAxisAlignment: MainAxisAlignment.center,
@@ -417,9 +417,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
      width: double.infinity,
      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
      decoration: BoxDecoration(
-       color: ThemeColors(context).primary.withValues(alpha: 0.1),
+       color: ThemeColors(context).primary.withOpacity(0.1),
        borderRadius: BorderRadius.circular(8),
-       border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
+       border: Border.all(color: ThemeColors(context).primary.withOpacity(0.3)),
      ),
      child: Row(
        mainAxisAlignment: MainAxisAlignment.center,
@@ -443,7 +443,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
    return Container(
      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
      decoration: BoxDecoration(
-       color: color.withValues(alpha: 0.1),
+       color: color.withOpacity(0.1),
        borderRadius: BorderRadius.circular(12),
      ),
      child: Row(
@@ -479,7 +479,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                decoration: BoxDecoration(
                  border: Border.all(color: ThemeColors(context).primary),
                  borderRadius: BorderRadius.circular(6),
-                 color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                 color: ThemeColors(context).primary.withOpacity(0.1),
                ),
                child: Center(
                  child: Text(
@@ -503,7 +503,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                decoration: BoxDecoration(
                  border: Border.all(color: theme.colorScheme.outline),
                  borderRadius: BorderRadius.circular(6),
-                 color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                 color: theme.colorScheme.surface.withOpacity(0.8),
                ),
                child: Center(
                  child: Text(
@@ -530,7 +530,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                decoration: BoxDecoration(
                  border: Border.all(color: theme.colorScheme.outline),
                  borderRadius: BorderRadius.circular(6),
-                 color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                 color: theme.colorScheme.surface.withOpacity(0.8),
                ),
                child: Center(
                  child: Text(
@@ -553,7 +553,7 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
                decoration: BoxDecoration(
                  border: Border.all(color: theme.colorScheme.outline),
                  borderRadius: BorderRadius.circular(6),
-                 color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                 color: theme.colorScheme.surface.withOpacity(0.8),
                ),
                child: Center(
                  child: Text(
@@ -577,9 +577,9 @@ class _AgentLoaderSectionState extends ConsumerState<AgentLoaderSection> {
      width: double.infinity,
      padding: const EdgeInsets.all(16),
      decoration: BoxDecoration(
-       color: theme.colorScheme.surface.withValues(alpha: 0.5),
+       color: theme.colorScheme.surface.withOpacity(0.5),
        borderRadius: BorderRadius.circular(8),
-       border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+       border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
      ),
      child: Column(
        children: [

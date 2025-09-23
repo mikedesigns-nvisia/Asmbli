@@ -99,7 +99,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
           Container(
             padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
             decoration: BoxDecoration(
-              color: colors.primary.withValues(alpha: 0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Icon(
@@ -142,7 +142,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: colors.border.withValues(alpha: 0.5), width: 1),
+          bottom: BorderSide(color: colors.border.withOpacity(0.5), width: 1),
         ),
       ),
       child: TabBar(
@@ -262,7 +262,7 @@ class _AdvancedManagementPanelState extends ConsumerState<AdvancedManagementPane
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: colors.surfaceVariant.withValues(alpha: 0.5),
+        color: colors.surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
       ),
       child: Column(
@@ -490,7 +490,7 @@ class _ControlButton extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(
               color: isDestructive 
-                ? colors.error.withValues(alpha: 0.3)
+                ? colors.error.withOpacity(0.3)
                 : colors.border,
             ),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -500,7 +500,7 @@ class _ControlButton extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                 decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
+                  color: iconColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Icon(icon, size: 16, color: iconColor),

@@ -150,7 +150,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
         Container(
           padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
           decoration: BoxDecoration(
-            color: colors.primary.withValues(alpha: 0.1),
+            color: colors.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
           ),
           child: Icon(
@@ -280,9 +280,9 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
           Container(
             padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
             decoration: BoxDecoration(
-              color: colors.error.withValues(alpha: 0.1),
+              color: colors.error.withOpacity(0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              border: Border.all(color: colors.error.withValues(alpha: 0.3)),
+              border: Border.all(color: colors.error.withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -818,7 +818,7 @@ class _CustomMCPServerModalState extends State<CustomMCPServerModal> {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                 decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Icon(
@@ -1038,7 +1038,7 @@ class _MethodTab extends StatelessWidget {
           vertical: SpacingTokens.componentSpacing,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? colors.primary.withValues(alpha: 0.1) : colors.surfaceVariant,
+          color: isSelected ? colors.primary.withOpacity(0.1) : colors.surfaceVariant,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           border: Border.all(
             color: isSelected ? colors.primary : colors.border,

@@ -60,10 +60,10 @@ class _ThinkingAnimationWidgetState extends State<ThinkingAnimationWidget>
         margin: const EdgeInsets.only(left: 0, right: 48, top: 8, bottom: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withValues(alpha: 0.7),
+          color: theme.colorScheme.surface.withOpacity(0.7),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: theme.colorScheme.outline.withValues(alpha: 0.1),
+            color: theme.colorScheme.outline.withOpacity(0.1),
             width: 1,
           ),
         ),
@@ -75,7 +75,7 @@ class _ThinkingAnimationWidgetState extends State<ThinkingAnimationWidget>
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                color: ThemeColors(context).primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Icon(
@@ -95,7 +95,7 @@ class _ThinkingAnimationWidgetState extends State<ThinkingAnimationWidget>
                   style: TextStyle(
                     
                     fontSize: 14,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                    color: theme.colorScheme.onSurface.withOpacity(0.8),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -125,7 +125,7 @@ class _ThinkingAnimationWidgetState extends State<ThinkingAnimationWidget>
                             style: TextStyle(
                               
                               fontSize: 14,
-                              color: ThemeColors(context).primary.withValues(alpha: opacity),
+                              color: ThemeColors(context).primary.withOpacity(opacity),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -220,18 +220,18 @@ class _ThinkingBubbleWidgetState extends State<ThinkingBubbleWidget>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    ThemeColors(context).surface.withValues(alpha: 0.9),
-                    ThemeColors(context).surface.withValues(alpha: 0.7),
+                    ThemeColors(context).surface.withOpacity(0.9),
+                    ThemeColors(context).surface.withOpacity(0.7),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                  color: ThemeColors(context).primary.withOpacity(0.1),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: ThemeColors(context).primary.withValues(alpha: 0.05),
+                    color: ThemeColors(context).primary.withOpacity(0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -256,13 +256,13 @@ class _ThinkingBubbleWidgetState extends State<ThinkingBubbleWidget>
                               end: Alignment.bottomRight,
                               colors: [
                                 ThemeColors(context).primary,
-                                ThemeColors(context).primary.withValues(alpha: 0.8),
+                                ThemeColors(context).primary.withOpacity(0.8),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(8),
                             boxShadow: [
                               BoxShadow(
-                                color: ThemeColors(context).primary.withValues(alpha: 0.2),
+                                color: ThemeColors(context).primary.withOpacity(0.2),
                                 blurRadius: 4,
                                 offset: const Offset(0, 1),
                               ),
@@ -326,7 +326,7 @@ class _ThinkingBubbleWidgetState extends State<ThinkingBubbleWidget>
                                         style: TextStyle(
                                           
                                           fontSize: 16,
-                                          color: ThemeColors(context).primary.withValues(alpha: opacity),
+                                          color: ThemeColors(context).primary.withOpacity(opacity),
                                           fontWeight: FontWeight.w900,
                                         ),
                                       ),
@@ -344,7 +344,7 @@ class _ThinkingBubbleWidgetState extends State<ThinkingBubbleWidget>
                         style: TextStyle(
                           
                           fontSize: 12,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
                           fontWeight: FontWeight.w400,
                           letterSpacing: -0.1,
                         ),

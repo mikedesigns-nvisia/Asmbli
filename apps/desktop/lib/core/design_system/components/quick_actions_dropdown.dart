@@ -70,14 +70,14 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  child: Material(
  elevation: 8,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
- shadowColor: colors.onSurface.withValues(alpha: 0.15),
+ shadowColor: colors.onSurface.withOpacity(0.15),
  color: colors.surface,
  child: Container(
  decoration: BoxDecoration(
  color: colors.surface,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
  border: Border.all(
- color: colors.border.withValues(alpha: 0.8),
+ color: colors.border.withOpacity(0.8),
  width: 1,
  ),
  ),
@@ -94,7 +94,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  decoration: BoxDecoration(
  border: Border(
  bottom: BorderSide(
- color: colors.border.withValues(alpha: 0.3),
+ color: colors.border.withOpacity(0.3),
  width: 1,
  ),
  ),
@@ -104,7 +104,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
- color: colors.primary.withValues(alpha: 0.1),
+ color: colors.primary.withOpacity(0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Icon(
@@ -189,7 +189,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  vertical: SpacingTokens.componentSpacing,
  ),
  decoration: BoxDecoration(
- color: colors.border.withValues(alpha: 0.3),
+ color: colors.border.withOpacity(0.3),
  ),
  ),
  
@@ -232,8 +232,8 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  child: InkWell(
  onTap: onTap,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
- hoverColor: color.withValues(alpha: 0.05),
- splashColor: color.withValues(alpha: 0.15),
+ hoverColor: color.withOpacity(0.05),
+ splashColor: color.withOpacity(0.15),
  child: Container(
  padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  decoration: BoxDecoration(
@@ -248,7 +248,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
- color: color.withValues(alpha: 0.12),
+ color: color.withOpacity(0.12),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Icon(
@@ -284,7 +284,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  child: Icon(
  Icons.arrow_forward_ios,
  size: 12,
- color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+ color: colors.onSurfaceVariant.withOpacity(0.6),
  ),
  ),
  ],
@@ -313,8 +313,8 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  child: InkWell(
  onTap: _toggleDropdown,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
- hoverColor: colors.primary.withValues(alpha: 0.04),
- splashColor: colors.primary.withValues(alpha: 0.12),
+ hoverColor: colors.primary.withOpacity(0.04),
+ splashColor: colors.primary.withOpacity(0.12),
  child: AnimatedContainer(
  duration: const Duration(milliseconds: 200),
  curve: Curves.easeInOut,
@@ -331,12 +331,12 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  ),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
  color: _isOpen 
- ? colors.primary.withValues(alpha: 0.05)
- : colors.surface.withValues(alpha: 0.8),
+ ? colors.primary.withOpacity(0.05)
+ : colors.surface.withOpacity(0.8),
  boxShadow: _isOpen 
  ? [
  BoxShadow(
- color: colors.primary.withValues(alpha: 0.1),
+ color: colors.primary.withOpacity(0.1),
  blurRadius: 4,
  offset: const Offset(0, 2),
  ),
@@ -351,7 +351,7 @@ class _QuickActionsDropdownState extends ConsumerState<QuickActionsDropdown> {
  curve: Curves.easeInOut,
  padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
- color: (_isOpen ? colors.primary : colors.onSurfaceVariant).withValues(alpha: 0.1),
+ color: (_isOpen ? colors.primary : colors.onSurfaceVariant).withOpacity(0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Icon(

@@ -93,7 +93,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             end: Alignment.bottomRight,
             colors: [
               SemanticColors.background,
-              SemanticColors.background.withValues(alpha: 0.95),
+              SemanticColors.background.withOpacity(0.95),
             ],
           ),
         ),
@@ -131,10 +131,10 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withValues(alpha: 0.9),
+        color: ThemeColors(context).surface.withOpacity(0.9),
         border: Border(
           bottom: BorderSide(
-            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
           ),
         ),
       ),
@@ -214,7 +214,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                       ? SemanticColors.success
                       : isActive 
                         ? SemanticColors.primary 
-                        : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                        : Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
@@ -267,8 +267,8 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                   child: Container(
                     height: 2,
                     color: isCompleted 
-                      ? SemanticColors.success.withValues(alpha: 0.5)
-                      : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                      ? SemanticColors.success.withOpacity(0.5)
+                      : Theme.of(context).colorScheme.outline.withOpacity(0.3),
                   ),
                 ),
               ],
@@ -291,13 +291,13 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  SemanticColors.primary.withValues(alpha: 0.1),
-                  SemanticColors.primary.withValues(alpha: 0.05),
+                  SemanticColors.primary.withOpacity(0.1),
+                  SemanticColors.primary.withOpacity(0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: SemanticColors.primary.withValues(alpha: 0.2),
+                color: SemanticColors.primary.withOpacity(0.2),
               ),
             ),
             child: Row(
@@ -446,10 +446,10 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
                 ),
               ),
               child: Column(
@@ -473,7 +473,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: (_selectedTemplate!.brandColor ?? SemanticColors.primary).withValues(alpha: 0.1),
+                          color: (_selectedTemplate!.brandColor ?? SemanticColors.primary).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
@@ -554,10 +554,10 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withValues(alpha: 0.9),
+        color: ThemeColors(context).surface.withOpacity(0.9),
         border: Border(
           top: BorderSide(
-            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
           ),
         ),
       ),

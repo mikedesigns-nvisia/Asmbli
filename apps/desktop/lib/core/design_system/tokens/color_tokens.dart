@@ -77,8 +77,8 @@ class SemanticColors {
  static const Color borderSubtle = ColorTokens.border;
  
  // Header Colors
- static const Color headerBackground = Color(0x80FFFFFF); // white.withValues(alpha: 0.5)
- static const Color headerBorder = Color(0x4DD3E8DC); // border.withValues(alpha: 0.3)
+ static const Color headerBackground = Color(0x80FFFFFF); // white.withOpacity(0.5)
+ static const Color headerBorder = Color(0x4DD3E8DC); // border.withOpacity(0.3)
  
  // State Colors
  static const Color success = ColorTokens.success;

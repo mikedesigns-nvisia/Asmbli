@@ -59,10 +59,10 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
             Container(
               padding: const EdgeInsets.all(SpacingTokens.headerPadding),
               decoration: BoxDecoration(
-                color: colors.surface.withValues(alpha: 0.1),
+                color: colors.surface.withOpacity(0.1),
                 border: Border(
                   bottom: BorderSide(
-                    color: colors.border.withValues(alpha: 0.2),
+                    color: colors.border.withOpacity(0.2),
                   ),
                 ),
               ),
@@ -146,7 +146,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                 decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
@@ -222,10 +222,10 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? colors.primary : colors.surface.withValues(alpha: 0.3),
+          color: isSelected ? colors.primary : colors.surface.withOpacity(0.3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? colors.primary : colors.border.withValues(alpha: 0.3),
+            color: isSelected ? colors.primary : colors.border.withOpacity(0.3),
           ),
         ),
         child: Text(
@@ -278,7 +278,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: 0.1),
+                color: colors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(Icons.add, color: colors.primary),
@@ -334,7 +334,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
                 decoration: BoxDecoration(
-                  color: colors.onSurfaceVariant.withValues(alpha: 0.1),
+                  color: colors.onSurfaceVariant.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
@@ -431,8 +431,8 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: model.isApi 
-                      ? colors.primary.withValues(alpha: 0.1)
-                      : colors.accent.withValues(alpha: 0.1),
+                      ? colors.primary.withOpacity(0.1)
+                      : colors.accent.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -539,7 +539,7 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: colors.surface.withValues(alpha: 0.3),
+                      color: colors.surface.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Icon(
@@ -574,14 +574,14 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
           children: [
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: colors.border.withValues(alpha: 0.3)),
+                border: Border.all(color: colors.border.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
+                    color: Colors.blue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.cloud, color: Colors.blue),
@@ -603,14 +603,14 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: colors.border.withValues(alpha: 0.3)),
+                border: Border.all(color: colors.border.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.1),
+                    color: Colors.orange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.download, color: Colors.orange),
@@ -632,14 +632,14 @@ class _LLMConfigurationScreenState extends ConsumerState<LLMConfigurationScreen>
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: colors.border.withValues(alpha: 0.3)),
+                border: Border.all(color: colors.border.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
+                    color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.computer, color: Colors.green),

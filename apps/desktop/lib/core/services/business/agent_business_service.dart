@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:agent_engine_core/models/agent.dart';
 import 'package:agent_engine_core/services/agent_service.dart';
 import 'package:uuid/uuid.dart';
@@ -127,9 +128,18 @@ class AgentBusinessService extends BaseBusinessService {
       // Create agent terminal with automatic provisioning (if service available)
       if (_provisioningService != null) {
         try {
+          // Add timeout to prevent hanging during terminal provisioning
           await _provisioningService!.provisionTerminalForAgent(
             createdAgent.id,
             requiredMCPServers: mcpServers,
+          ).timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception(
+                'Terminal provisioning timed out. This may be due to file system '
+                'permission issues or slow disk I/O on macOS.'
+              );
+            },
           );
           
           // Update agent configuration to indicate terminal is ready

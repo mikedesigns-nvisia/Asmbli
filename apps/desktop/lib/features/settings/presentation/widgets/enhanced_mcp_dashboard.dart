@@ -109,13 +109,13 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            SemanticColors.primary.withValues(alpha: 0.1),
-            SemanticColors.primary.withValues(alpha: 0.05),
+            SemanticColors.primary.withOpacity(0.1),
+            SemanticColors.primary.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: SemanticColors.primary.withValues(alpha: 0.2),
+          color: SemanticColors.primary.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -210,10 +210,10 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -249,7 +249,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
   Widget _buildTabBar(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+        color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: TabBar(
@@ -391,10 +391,10 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+        color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
         ),
       ),
       child: Material(
@@ -414,7 +414,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: (template?.brandColor ?? SemanticColors.primary).withValues(alpha: 0.1),
+                        color: (template?.brandColor ?? SemanticColors.primary).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
@@ -447,7 +447,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                                    color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -490,7 +490,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                         Switch(
                           value: config.enabled,
                           onChanged: (value) => _toggleServer(serverId, value),
-                          activeThumbColor: SemanticColors.success,
+                          
                         ),
                       ],
                     ),
@@ -536,10 +536,10 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: recommendation.category.color.withValues(alpha: 0.05),
+        color: recommendation.category.color.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: recommendation.category.color.withValues(alpha: 0.2),
+          color: recommendation.category.color.withOpacity(0.2),
         ),
       ),
       child: Material(
@@ -556,7 +556,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: (recommendation.template.brandColor ?? SemanticColors.primary).withValues(alpha: 0.1),
+                    color: (recommendation.template.brandColor ?? SemanticColors.primary).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -588,7 +588,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: recommendation.category.color.withValues(alpha: 0.1),
+                              color: recommendation.category.color.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(

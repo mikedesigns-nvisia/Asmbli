@@ -158,7 +158,7 @@ class _OAuthScopeManagementDialogState extends ConsumerState<OAuthScopeManagemen
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: _getProviderColor().withValues(alpha: 0.1),
+              color: _getProviderColor().withOpacity(0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Icon(
@@ -242,7 +242,7 @@ class _OAuthScopeManagementDialogState extends ConsumerState<OAuthScopeManagemen
                             setState(() => _currentFilter = filter);
                           },
                           backgroundColor: colors.surface,
-                          selectedColor: colors.primary.withValues(alpha: 0.2),
+                          selectedColor: colors.primary.withOpacity(0.2),
                           labelStyle: TextStyles.caption.copyWith(
                             color: isSelected ? colors.primary : colors.onSurfaceVariant,
                           ),
@@ -260,7 +260,7 @@ class _OAuthScopeManagementDialogState extends ConsumerState<OAuthScopeManagemen
                   vertical: SpacingTokens.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                 ),
                 child: Text(
@@ -284,7 +284,7 @@ class _OAuthScopeManagementDialogState extends ConsumerState<OAuthScopeManagemen
             Icon(
               Icons.search_off,
               size: 48,
-              color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+              color: colors.onSurfaceVariant.withOpacity(0.5),
             ),
             const SizedBox(height: SpacingTokens.md),
             Text(
@@ -328,7 +328,7 @@ class _OAuthScopeManagementDialogState extends ConsumerState<OAuthScopeManagemen
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: colors.onSurfaceVariant.withValues(alpha: 0.1),
+                  color: colors.onSurfaceVariant.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                 ),
                 child: Text(
@@ -357,12 +357,12 @@ class _OAuthScopeManagementDialogState extends ConsumerState<OAuthScopeManagemen
       decoration: BoxDecoration(
         border: Border.all(
           color: isSelected 
-              ? colors.primary.withValues(alpha: 0.3)
-              : colors.border.withValues(alpha: 0.3),
+              ? colors.primary.withOpacity(0.3)
+              : colors.border.withOpacity(0.3),
         ),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         color: isSelected 
-            ? colors.primary.withValues(alpha: 0.05)
+            ? colors.primary.withOpacity(0.05)
             : colors.surface,
       ),
       child: CheckboxListTile(
@@ -397,7 +397,7 @@ class _OAuthScopeManagementDialogState extends ConsumerState<OAuthScopeManagemen
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: colors.warning.withValues(alpha: 0.2),
+                  color: colors.warning.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                 ),
                 child: Text(
@@ -463,7 +463,7 @@ class _OAuthScopeManagementDialogState extends ConsumerState<OAuthScopeManagemen
           Icon(
             Icons.error_outline,
             size: 64,
-            color: colors.error.withValues(alpha: 0.5),
+            color: colors.error.withOpacity(0.5),
           ),
           const SizedBox(height: SpacingTokens.lg),
           Text(

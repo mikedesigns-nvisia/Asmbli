@@ -114,10 +114,10 @@ class ModelDownloadManager extends ConsumerWidget {
       ),
       padding: const EdgeInsets.all(SpacingTokens.cardPadding),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.7),
+        color: theme.colorScheme.surface.withOpacity(0.7),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.3),
+          color: theme.colorScheme.outline.withOpacity(0.3),
         ),
       ),
       child: Column(
@@ -129,7 +129,7 @@ class ModelDownloadManager extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -198,7 +198,7 @@ class ModelDownloadManager extends ConsumerWidget {
                 const SizedBox(height: 4),
                 LinearProgressIndicator(
                   value: downloadProgress,
-                  backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.2),
+                  backgroundColor: theme.colorScheme.outline.withOpacity(0.2),
                   valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
                 ),
               ],
@@ -235,13 +235,13 @@ class ModelDownloadManager extends ConsumerWidget {
       padding: const EdgeInsets.all(SpacingTokens.cardPadding),
       decoration: BoxDecoration(
         color: isReady 
-          ? colors.success.withValues(alpha: 0.05)
-          : theme.colorScheme.surface.withValues(alpha: 0.7),
+          ? colors.success.withOpacity(0.05)
+          : theme.colorScheme.surface.withOpacity(0.7),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         border: Border.all(
           color: isReady 
-            ? colors.success.withValues(alpha: 0.3)
-            : theme.colorScheme.outline.withValues(alpha: 0.3),
+            ? colors.success.withOpacity(0.3)
+            : theme.colorScheme.outline.withOpacity(0.3),
         ),
       ),
       child: Column(
@@ -254,7 +254,7 @@ class ModelDownloadManager extends ConsumerWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isReady 
-                    ? colors.success.withValues(alpha: 0.1)
+                    ? colors.success.withOpacity(0.1)
                     : theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -356,7 +356,7 @@ class ModelDownloadManager extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -387,7 +387,7 @@ class ModelDownloadManager extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(

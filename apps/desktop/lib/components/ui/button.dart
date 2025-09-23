@@ -122,7 +122,7 @@ class AsmblButton extends StatelessWidget {
  height: height,
  width: width,
  decoration: BoxDecoration(
- color: onPressed == null ? backgroundColor.withValues(alpha: 0.5) : backgroundColor,
+ color: onPressed == null ? backgroundColor.withOpacity(0.5) : backgroundColor,
  border: borderColor != Colors.transparent 
  ? Border.all(color: borderColor) 
  : null,
@@ -130,7 +130,7 @@ class AsmblButton extends StatelessWidget {
  boxShadow: variant == AsmblButtonVariant.primary && onPressed != null
  ? [
  BoxShadow(
- color: backgroundColor.withValues(alpha: 0.3),
+ color: backgroundColor.withOpacity(0.3),
  blurRadius: 4,
  offset: const Offset(0, 2),
  ),
@@ -142,8 +142,8 @@ class AsmblButton extends StatelessWidget {
  child: InkWell(
  onTap: onPressed,
  borderRadius: BorderRadius.circular(8),
- hoverColor: foregroundColor.withValues(alpha: 0.08),
- splashColor: foregroundColor.withValues(alpha: 0.16),
+ hoverColor: foregroundColor.withOpacity(0.08),
+ splashColor: foregroundColor.withOpacity(0.16),
  child: Container(
  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
  child: Center(child: buttonChild),

@@ -48,7 +48,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           border: Border.all(color: SemanticColors.border),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -88,7 +88,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: SemanticColors.primary.withValues(alpha: 0.1),
+                    color: SemanticColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -166,9 +166,9 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
               margin: const EdgeInsets.all(24),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
+                color: Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
+                border: Border.all(color: Colors.green.withOpacity(0.2)),
               ),
               child: Column(
                 children: [
@@ -282,7 +282,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withValues(alpha: 0.1),
+              color: SemanticColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
@@ -690,7 +690,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
             color: isSelected 
-              ? SemanticColors.primary.withValues(alpha: 0.1)
+              ? SemanticColors.primary.withOpacity(0.1)
               : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
@@ -775,7 +775,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected 
-            ? SemanticColors.primary.withValues(alpha: 0.1)
+            ? SemanticColors.primary.withOpacity(0.1)
             : SemanticColors.background,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
@@ -822,7 +822,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
             decoration: BoxDecoration(
               color: isComplete 
                 ? Colors.green
-                : SemanticColors.primary.withValues(alpha: 0.3),
+                : SemanticColors.primary.withOpacity(0.3),
               borderRadius: BorderRadius.circular(8),
             ),
             child: isComplete 
@@ -858,12 +858,12 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isFound 
-          ? Colors.green.withValues(alpha: 0.05)
+          ? Colors.green.withOpacity(0.05)
           : SemanticColors.background,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isFound 
-            ? Colors.green.withValues(alpha: 0.3)
+            ? Colors.green.withOpacity(0.3)
             : SemanticColors.border,
         ),
       ),
@@ -874,8 +874,8 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
             height: 24,
             decoration: BoxDecoration(
               color: isFound
-                ? Colors.green.withValues(alpha: 0.15)
-                : Colors.grey.withValues(alpha: 0.1),
+                ? Colors.green.withOpacity(0.15)
+                : Colors.grey.withOpacity(0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(

@@ -198,7 +198,7 @@ class IntegrationDependencyDialog extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: const Color(0xFF736B5F).withValues(alpha: 0.1),
+              color: const Color(0xFF736B5F).withOpacity(0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(

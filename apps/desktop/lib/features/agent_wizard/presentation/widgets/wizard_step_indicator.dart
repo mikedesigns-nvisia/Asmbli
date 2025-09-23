@@ -135,9 +135,9 @@ class WizardStepIndicator extends StatelessWidget {
 
   Color _getStepBackgroundColor(BuildContext context, bool isActive, bool isCompleted) {
     if (isCompleted) {
-      return ThemeColors(context).success.withValues(alpha: 0.1);
+      return ThemeColors(context).success.withOpacity(0.1);
     } else if (isActive) {
-      return ThemeColors(context).primary.withValues(alpha: 0.1);
+      return ThemeColors(context).primary.withOpacity(0.1);
     } else {
       return ThemeColors(context).surface;
     }
@@ -169,7 +169,7 @@ class WizardStepIndicator extends StatelessWidget {
     } else if (isAccessible) {
       return ThemeColors(context).onSurfaceVariant;
     } else {
-      return ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5);
+      return ThemeColors(context).onSurfaceVariant.withOpacity(0.5);
     }
   }
 }

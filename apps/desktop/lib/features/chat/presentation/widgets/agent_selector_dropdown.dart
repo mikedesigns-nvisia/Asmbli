@@ -31,7 +31,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
       height: 40,
       margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
       decoration: BoxDecoration(
-        color: SemanticColors.surfaceVariant.withValues(alpha: 0.5),
+        color: SemanticColors.surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Center(
@@ -41,7 +41,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
           child: CircularProgressIndicator(
             strokeWidth: 2,
             valueColor: AlwaysStoppedAnimation<Color>(
-              SemanticColors.primary.withValues(alpha: 0.6),
+              SemanticColors.primary.withOpacity(0.6),
             ),
           ),
         ),
@@ -54,9 +54,9 @@ class AgentSelectorDropdown extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.error.withValues(alpha: 0.1),
+        color: SemanticColors.error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: SemanticColors.error.withValues(alpha: 0.3)),
+        border: Border.all(color: SemanticColors.error.withOpacity(0.3)),
       ),
       child: Row(
         children: [
@@ -84,7 +84,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.surfaceVariant.withValues(alpha: 0.3),
+        color: SemanticColors.surfaceVariant.withOpacity(0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(color: SemanticColors.border),
       ),
@@ -191,7 +191,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: _getAgentColor(context, agent).withValues(alpha: 0.1),
+              color: _getAgentColor(context, agent).withOpacity(0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Icon(
@@ -262,7 +262,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: _getAgentColor(context, agent).withValues(alpha: 0.1),
+                color: _getAgentColor(context, agent).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Icon(
@@ -317,7 +317,7 @@ class AgentSelectorDropdown extends ConsumerWidget {
                         margin: const EdgeInsets.only(right: 4),
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: ThemeColors(context).primary.withValues(alpha: 0.1),
+                          color: ThemeColors(context).primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                         ),
                         child: Text(

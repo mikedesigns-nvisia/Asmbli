@@ -1,6 +1,8 @@
 # Contributing to Asmbli
 
-First off, thank you for considering contributing to Asmbli! It's people like you that make Asmbli such a great tool.
+**⚠️ Warning: This is experimental alpha software. Contributions are welcome, but expect bugs, broken features, and frequent changes.**
+
+First off, thank you for considering contributing to this experimental project! Please understand that this is early-stage software with many rough edges.
 
 ## Code of Conduct
 

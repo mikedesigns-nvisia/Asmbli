@@ -16,8 +16,8 @@ class MarketplaceScreen extends ConsumerWidget {
             center: Alignment.topCenter,
             radius: 1.5,
             colors: [
-              SemanticColors.primary.withValues(alpha: 0.05),
-              SemanticColors.background.withValues(alpha: 0.8),
+              SemanticColors.primary.withOpacity(0.05),
+              SemanticColors.background.withOpacity(0.8),
               SemanticColors.background,
             ],
             stops: const [0.0, 0.6, 1.0],

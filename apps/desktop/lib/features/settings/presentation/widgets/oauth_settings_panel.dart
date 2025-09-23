@@ -268,7 +268,7 @@ class _OAuthSettingsPanelState extends ConsumerState<OAuthSettingsPanel> {
               SizedBox(
                 width: 80,
                 child: TextFormField(
-                  initialValue: ((settings['refresh_threshold'] ?? 300) ~/ 60).toString(),
+                  value: ((settings['refresh_threshold'] ?? 300) ~/ 60).toString(),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     isDense: true,
@@ -294,7 +294,7 @@ class _OAuthSettingsPanelState extends ConsumerState<OAuthSettingsPanel> {
               SizedBox(
                 width: 80,
                 child: TextFormField(
-                  initialValue: (settings['timeout_seconds'] ?? 30).toString(),
+                  value: (settings['timeout_seconds'] ?? 30).toString(),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     isDense: true,
@@ -320,7 +320,7 @@ class _OAuthSettingsPanelState extends ConsumerState<OAuthSettingsPanel> {
               SizedBox(
                 width: 80,
                 child: TextFormField(
-                  initialValue: (settings['max_retry_attempts'] ?? 3).toString(),
+                  value: (settings['max_retry_attempts'] ?? 3).toString(),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     isDense: true,

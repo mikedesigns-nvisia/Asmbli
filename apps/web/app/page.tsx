@@ -175,11 +175,11 @@ export default function HomePage() {
 
           {/* Hero Text */}
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold italic mb-4 sm:mb-6 font-display leading-tight">
-            Open source AI chat application with agent templates
+            Experimental AI chat application with basic agent templates
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
-            Cross-platform desktop chat interface for AI models. Create basic agent templates,
-            upload documents for context, and experiment with AI conversations. Now open source!
+            ⚠️ <strong>Alpha Software:</strong> Cross-platform desktop chat interface for AI models.
+            Experimental agent templates, basic document context. Expect bugs, incomplete features, and breaking changes.
           </p>
 
           {/* Key Capabilities */}
@@ -233,8 +233,8 @@ export default function HomePage() {
               <span className="whitespace-nowrap">Open Source</span>
             </span>
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
-              <span className="whitespace-nowrap">Beta v0.9.0</span>
+              <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+              <span className="whitespace-nowrap">Alpha v0.1.0</span>
             </span>
             <span className="flex items-center gap-1">
               <Shield className="w-3 h-3" />
@@ -763,6 +763,45 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Coded with Claude Section */}
+      <section className="py-12 sm:py-16 lg:py-20 px-4 bg-blue-50/10">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 font-display">
+            🤖 Coded with Claude
+          </h2>
+          <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 border">
+            <div className="flex items-start space-x-4 mb-6">
+              <Code className="w-8 h-8 text-blue-600 flex-shrink-0 mt-1" />
+              <div className="text-left">
+                <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+                  This entire project is being built using Claude Code - an AI coding assistant that writes, debugs,
+                  and iterates on code in real-time. It's a practical example of human-AI collaboration in software development.
+                </p>
+                <p className="text-xl font-semibold text-blue-600 font-display">
+                  Meta-experiment: AI building tools for AI.
+                </p>
+              </div>
+            </div>
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                Every component, every feature, and even this website was developed through conversations with Claude.
+                The code is transparent, the process is documented, and the results speak for themselves -
+                both the successes and the inevitable AI-generated bugs.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Special thanks to GitHub Copilot for code completion and suggestions, and Kiro for additional development assistance.
+                This project showcases collaboration between multiple AI coding tools working together.
+              </p>
+              <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
+                <p className="text-green-700 text-sm font-medium">
+                  💡 Living proof that AI can be a powerful coding partner, not just a code generator.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Privacy Section */}
       <section className="py-12 sm:py-16 lg:py-20 px-4 bg-yellow-50/10">
         <div className="container mx-auto max-w-3xl text-center">
@@ -773,7 +812,7 @@ export default function HomePage() {
             </h2>
           </div>
           <p className="text-base sm:text-lg text-muted-foreground mb-6 px-4">
-            We don't store your chats or user data. Your conversations with AI agents remain entirely on your device. 
+            We don't store your chats or user data. Your conversations with AI agents remain entirely on your device.
             We only collect basic profile registration information needed to provide you access to the platform.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center text-xs sm:text-sm text-muted-foreground">
