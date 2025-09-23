@@ -1,12 +1,12 @@
 {
-  "version": "1.1.0",
-  "releaseDate": "2025-08-25",
+  "version": "1.0.0",
+  "releaseDate": "2025-09-22",
   "platforms": {
     "windows": {
       "architecture": "x64",
       "format": "zip",
-      "filename": "Asmbli-1.1.0-windows-x64-auto-detection.zip",
-      "size": "~26MB",
+      "filename": "Asmbli-1.0.0-windows-x64.zip",
+      "size": "~14MB",
       "requirements": {
         "os": "Windows 10 64-bit or Windows 11",
         "ram": "4GB (8GB recommended)",
