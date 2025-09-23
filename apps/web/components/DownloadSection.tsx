@@ -20,16 +20,16 @@ const downloads: DownloadOption[] = [
   {
     platform: 'Windows',
     version: '1.0.0 Beta',
-    size: '~25MB',
+    size: '~15MB',
     format: 'ZIP Archive',
-    filename: 'Asmbli-1.0.0-windows-x64.zip',
+    filename: 'Asmbli-1.0.0-windows-x64-release.zip',
     available: true,
     requirements: [
       'Windows 10 64-bit or Windows 11',
       '8GB RAM minimum (16GB recommended)',
       '10GB available disk space (for AI models)'
     ],
-    downloadUrl: '/downloads/Asmbli-1.0.0-windows-x64.zip'
+    downloadUrl: '/downloads/Asmbli-1.0.0-windows-x64-release.zip'
   },
   {
     platform: 'macOS',
