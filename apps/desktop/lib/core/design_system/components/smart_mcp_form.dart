@@ -49,6 +49,8 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Form(
       key: _formKey,
       child: Column(
@@ -85,13 +87,15 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
   }
 
   Widget _buildTemplateHeader(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: (widget.template.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+        color: (widget.template.brandColor ?? colors.primary).withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: (widget.template.brandColor ?? SemanticColors.primary).withOpacity(0.3),
+          color: (widget.template.brandColor ?? colors.primary).withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -100,12 +104,12 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: (widget.template.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+              color: (widget.template.brandColor ?? colors.primary).withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               widget.template.icon,
-              color: widget.template.brandColor ?? SemanticColors.primary,
+              color: widget.template.brandColor ?? colors.primary,
               size: 24,
             ),
           ),
@@ -119,7 +123,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                     Text(
                       widget.template.name,
                       style: TextStyle(
-                        color: widget.template.brandColor ?? SemanticColors.primary,
+                        color: widget.template.brandColor ?? colors.primary,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -168,16 +172,18 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
   }
 
   Widget _buildDifficultyBadge(BuildContext context) {
+    final colors = ThemeColors(context);
+
     Color badgeColor;
     switch (widget.template.difficulty.toLowerCase()) {
       case 'easy':
-        badgeColor = SemanticColors.success;
+        badgeColor = colors.success;
         break;
       case 'medium':
         badgeColor = Colors.orange;
         break;
       case 'hard':
-        badgeColor = SemanticColors.error;
+        badgeColor = colors.error;
         break;
       default:
         badgeColor = Theme.of(context).colorScheme.onSurfaceVariant;
@@ -200,25 +206,27 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
   }
 
   Widget _buildPopularBadge(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: SemanticColors.primary.withOpacity(0.1),
+        color: colors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.star,
             size: 8,
-            color: SemanticColors.primary,
+            color: colors.primary,
           ),
-          SizedBox(width: 2),
+          const SizedBox(width: 2),
           Text(
             'Popular',
             style: TextStyle(
-              color: SemanticColors.primary,
+              color: colors.primary,
               fontWeight: FontWeight.w600,
               fontSize: 12,
             ),
@@ -534,31 +542,33 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
   }
 
   Widget _buildSetupInstructions(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: SemanticColors.primary.withOpacity(0.05),
+        color: colors.primary.withOpacity(0.05),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: SemanticColors.primary.withOpacity(0.2),
+          color: colors.primary.withOpacity(0.2),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               Icon(
                 Icons.help_outline,
                 size: 16,
-                color: SemanticColors.primary,
+                color: colors.primary,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 'Setup Instructions',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  color: SemanticColors.primary,
+                  color: colors.primary,
                 ),
               ),
             ],
@@ -574,13 +584,13 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                     width: 20,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: SemanticColors.primary,
+                      color: colors.primary,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
                       child: Text(
                         instruction.step.toString(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),

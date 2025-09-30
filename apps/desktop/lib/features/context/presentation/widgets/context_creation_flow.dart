@@ -189,7 +189,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  decoration: BoxDecoration(
  shape: BoxShape.circle,
  color: isCompleted 
- ? SemanticColors.success
+ ? colors.success
  : isCurrent 
  ? colors.primary 
  : colors.surfaceVariant,
@@ -217,7 +217,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  height: 2,
  margin: const EdgeInsets.symmetric(horizontal: 8),
  color: isCompleted 
- ? SemanticColors.success 
+ ? colors.success
  : colors.border,
  ),
  ),
@@ -1320,8 +1320,8 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  backgroundColor = colors.error.withOpacity(0.1);
  icon = Icons.error_outline;
  } else if (isWarning) {
- messageColor = SemanticColors.warning;
- backgroundColor = SemanticColors.warning.withOpacity(0.1);
+ messageColor = colors.warning;
+ backgroundColor = colors.warning.withOpacity(0.1);
  icon = Icons.warning_amber;
  } else {
  // Success message with warnings

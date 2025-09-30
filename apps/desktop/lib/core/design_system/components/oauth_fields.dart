@@ -114,7 +114,7 @@ class OAuthField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: SemanticColors.error,
+              color: ThemeColors(context).error,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -217,7 +217,7 @@ class OAuthField extends MCPField {
               child: Text(
                 'Disconnect',
                 style: TextStyle(
-                  color: SemanticColors.error,
+                  color: ThemeColors(context).error,
                 ),
               ),
             ),
@@ -265,11 +265,11 @@ class OAuthField extends MCPField {
       case OAuthStatus.notAuthenticated:
         return Theme.of(context).colorScheme.onSurfaceVariant;
       case OAuthStatus.authenticating:
-        return SemanticColors.primary;
+        return ThemeColors(context).primary;
       case OAuthStatus.authenticated:
-        return SemanticColors.success;
+        return ThemeColors(context).success;
       case OAuthStatus.error:
-        return SemanticColors.error;
+        return ThemeColors(context).error;
     }
   }
 
@@ -421,13 +421,13 @@ class _PermissionScopeFieldState extends State<PermissionScopeField> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: SemanticColors.primary.withOpacity(0.1),
+                                color: ThemeColors(context).primary.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 'Required',
                                 style: TextStyle(
-                                  color: SemanticColors.primary,
+                                  color: ThemeColors(context).primary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

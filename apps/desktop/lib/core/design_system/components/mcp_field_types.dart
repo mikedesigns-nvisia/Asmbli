@@ -69,7 +69,7 @@ class PathPickerField extends MCPField {
                   ),
                   suffixIcon: Icon(
                     isDirectory ? Icons.folder_open : Icons.file_open,
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                   ),
                 ),
                 readOnly: true,
@@ -115,7 +115,7 @@ class PathPickerField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: SemanticColors.error,
+              color: colors.error,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -139,7 +139,7 @@ class PathPickerField extends MCPField {
           Icon(
             isDirectory ? Icons.folder : Icons.file_present,
             size: 16,
-            color: SemanticColors.primary,
+            color: colors.primary,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -182,12 +182,14 @@ class PathPickerField extends MCPField {
         onChanged!(selectedPath);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to select path: $e'),
-          backgroundColor: SemanticColors.error,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to select path: $e'),
+            backgroundColor: ThemeColors(context).error,
+          ),
+        );
+      }
     }
   }
 
@@ -198,12 +200,14 @@ class PathPickerField extends MCPField {
       final fileSystemService = DesktopFileSystemService.instance;
       await fileSystemService.openDirectoryInExplorer(value!);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to open in explorer: $e'),
-          backgroundColor: SemanticColors.error,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open in explorer: $e'),
+            backgroundColor: ThemeColors(context).error,
+          ),
+        );
+      }
     }
   }
 
@@ -240,6 +244,8 @@ class ApiTokenField extends MCPField {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -255,9 +261,9 @@ class ApiTokenField extends MCPField {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.key,
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                   ),
                   suffixIcon: showValidationStatus ? _buildValidationIcon() : null,
                 ),
@@ -315,7 +321,7 @@ class ApiTokenField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: SemanticColors.error,
+              color: colors.error,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -333,10 +339,11 @@ class ApiTokenField extends MCPField {
   }
 
   Widget? _buildValidationIcon() {
+    final colors = ThemeColors(super.context);
     // This would be connected to actual validation state
-    return const Icon(
+    return Icon(
       Icons.check_circle,
-      color: SemanticColors.success,
+      color: colors.success,
       size: 20,
     );
   }
@@ -415,6 +422,8 @@ class SelectField extends MCPField {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -427,9 +436,9 @@ class SelectField extends MCPField {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            prefixIcon: const Icon(
+            prefixIcon: Icon(
               Icons.arrow_drop_down,
-              color: SemanticColors.primary,
+              color: colors.primary,
             ),
           ),
           items: [
@@ -447,13 +456,13 @@ class SelectField extends MCPField {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: option.badgeColor ?? SemanticColors.primary.withOpacity(0.1),
+                        color: option.badgeColor ?? colors.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         option.badge!,
                         style: TextStyle(
-                          color: option.badgeColor ?? SemanticColors.primary,
+                          color: option.badgeColor ?? colors.primary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -510,7 +519,7 @@ class SelectField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: SemanticColors.error,
+              color: colors.error,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -584,6 +593,8 @@ class DatabaseConnectionField extends MCPField {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -604,7 +615,7 @@ class DatabaseConnectionField extends MCPField {
                 children: [
                   Icon(
                     _getDbIcon(),
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
@@ -654,7 +665,7 @@ class DatabaseConnectionField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: SemanticColors.error,
+              color: colors.error,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -775,11 +786,12 @@ class DatabaseConnectionField extends MCPField {
   }
 
   void _testConnection(BuildContext context) {
+    final colors = ThemeColors(context);
     // This would implement actual connection testing
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Testing connection to $dbType database...'),
-        backgroundColor: SemanticColors.primary,
+        backgroundColor: colors.primary,
       ),
     );
   }

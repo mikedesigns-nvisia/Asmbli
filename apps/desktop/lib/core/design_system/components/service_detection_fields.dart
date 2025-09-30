@@ -51,7 +51,7 @@ class ServiceDetectionField extends MCPField {
                 children: [
                   Icon(
                     _getServiceIcon(),
-                    color: SemanticColors.primary,
+                    color: ThemeColors(context).primary,
                     size: 20,
                   ),
                   const SizedBox(width: 12),
@@ -67,7 +67,7 @@ class ServiceDetectionField extends MCPField {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation(SemanticColors.primary),
+                        valueColor: AlwaysStoppedAnimation(ThemeColors(context).primary),
                       ),
                     ),
                   ] else ...[
@@ -111,7 +111,7 @@ class ServiceDetectionField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: SemanticColors.error,
+              color: ThemeColors(context).error,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -187,12 +187,12 @@ class ServiceDetectionField extends MCPField {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isSelected 
-                    ? SemanticColors.primary.withOpacity(0.1)
+                    ? ThemeColors(context).primary.withOpacity(0.1)
                     : Theme.of(context).colorScheme.surface.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: isSelected 
-                      ? SemanticColors.primary.withOpacity(0.5)
+                      ? ThemeColors(context).primary.withOpacity(0.5)
                       : Theme.of(context).colorScheme.outline.withOpacity(0.3),
                   ),
                 ),
@@ -223,7 +223,7 @@ class ServiceDetectionField extends MCPField {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: isSelected 
-                                    ? SemanticColors.primary 
+                                    ? ThemeColors(context).primary
                                     : Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
@@ -264,7 +264,7 @@ class ServiceDetectionField extends MCPField {
                     if (isSelected) ...[
                       const Icon(
                         Icons.check_circle,
-                        color: SemanticColors.primary,
+                        color: ThemeColors(context).primary,
                         size: 20,
                       ),
                     ] else ...[
@@ -317,9 +317,9 @@ class ServiceDetectionField extends MCPField {
   Color _getStatusColor(ServiceStatus status) {
     switch (status) {
       case ServiceStatus.running:
-        return SemanticColors.success;
+        return ThemeColors(context).success;
       case ServiceStatus.stopped:
-        return SemanticColors.error;
+        return ThemeColors(context).error;
       case ServiceStatus.unknown:
         return Colors.orange;
     }
@@ -348,7 +348,7 @@ class ServiceDetectionField extends MCPField {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Testing connection to ${service.name}...'),
-        backgroundColor: SemanticColors.primary,
+        backgroundColor: ThemeColors(context).primary,
       ),
     );
     
@@ -358,7 +358,7 @@ class ServiceDetectionField extends MCPField {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Connection to ${service.name} successful!'),
-            backgroundColor: SemanticColors.success,
+            backgroundColor: ThemeColors(context).success,
           ),
         );
       }
@@ -462,7 +462,7 @@ class _PortScannerFieldState extends State<PortScannerField> {
           Icon(
             Icons.circle,
             size: 8,
-            color: port.isOpen ? SemanticColors.success : SemanticColors.error,
+            color: port.isOpen ? ThemeColors(context).success : ThemeColors(context).error,
           ),
           const SizedBox(width: 8),
           Text(
@@ -483,7 +483,7 @@ class _PortScannerFieldState extends State<PortScannerField> {
           Text(
             port.isOpen ? 'Open' : 'Closed',
             style: TextStyle(
-              color: port.isOpen ? SemanticColors.success : SemanticColors.error,
+              color: port.isOpen ? ThemeColors(context).success : ThemeColors(context).error,
               fontWeight: FontWeight.w500,
             ),
           ),

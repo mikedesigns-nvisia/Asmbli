@@ -98,7 +98,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  const Icon(
  Icons.check_circle,
  size: 16,
- color: SemanticColors.success,
+ color: ThemeColors(context).success,
  ),
  const SizedBox(width: SpacingTokens.sm),
  Expanded(
@@ -210,7 +210,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  child: Text(
  'Error loading documents: $error',
  style: TextStyles.bodyMedium.copyWith(
- color: SemanticColors.error,
+ color: ThemeColors(context).error,
  ),
  ),
  ),
@@ -263,7 +263,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  content: Text(
  'Successfully assigned ${selectedDocuments.length} context document(s) to ${widget.agentName}',
  ),
- backgroundColor: SemanticColors.success,
+ backgroundColor: ThemeColors(context).success,
  ),
  );
  }
@@ -272,7 +272,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  ScaffoldMessenger.of(context).showSnackBar(
  SnackBar(
  content: Text('Failed to assign context: $e'),
- backgroundColor: SemanticColors.error,
+ backgroundColor: ThemeColors(context).error,
  ),
  );
  }

@@ -987,7 +987,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                 height: 12,
                 decoration: BoxDecoration(
                   color: isCompleted 
-                      ? SemanticColors.success
+                      ? colors.success
                       : isCurrent
                           ? ThemeColors(context).primary
                           : ThemeColors(context).surfaceVariant,
@@ -1105,7 +1105,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
                     height: 20,
                     decoration: BoxDecoration(
                       color: isCompleted 
-                          ? SemanticColors.success
+                          ? colors.success
                           : isCurrent
                               ? ThemeColors(context).primary
                               : ThemeColors(context).surfaceVariant,

@@ -123,12 +123,12 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: SemanticColors.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
                       Icons.api,
-                      color: SemanticColors.primary,
+                      color: theme.colorScheme.primary,
                       size: 24,
                     ),
                   ),
@@ -283,7 +283,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              borderSide: const BorderSide(color: SemanticColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
             filled: true,
             fillColor: theme.colorScheme.surface,
@@ -334,7 +334,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              borderSide: const BorderSide(color: SemanticColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
             filled: true,
             fillColor: theme.colorScheme.surface,
@@ -392,9 +392,9 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: _isTestSuccessful 
-            ? SemanticColors.success.withOpacity(0.5)
+            ? ThemeColors(context).success.withOpacity(0.5)
             : _testError != null 
-              ? SemanticColors.error.withOpacity(0.5)
+              ? ThemeColors(context).error.withOpacity(0.5)
               : theme.colorScheme.outline,
         ),
       ),
@@ -413,9 +413,9 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                   ),
                 )
               else if (_isTestSuccessful)
-                const Icon(Icons.check_circle, color: SemanticColors.success, size: 16)
+                Icon(Icons.check_circle, color: ThemeColors(context).success, size: 16)
               else if (_testError != null)
-                const Icon(Icons.error, color: SemanticColors.error, size: 16)
+                Icon(Icons.error, color: ThemeColors(context).error, size: 16)
               else
                 Icon(Icons.info_outline, color: theme.colorScheme.onSurfaceVariant, size: 16),
               
@@ -431,9 +431,9 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                       : 'Test your API key',
                 style: TextStyles.labelMedium.copyWith(
                   color: _isTestSuccessful 
-                    ? SemanticColors.success
+                    ? ThemeColors(context).success
                     : _testError != null 
-                      ? SemanticColors.error
+                      ? ThemeColors(context).error
                       : theme.colorScheme.onSurface,
                 ),
               ),
@@ -453,7 +453,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
             Text(
               _testError!,
               style: TextStyles.bodySmall.copyWith(
-                color: SemanticColors.error,
+                color: ThemeColors(context).error,
               ),
             ),
           ],
@@ -564,7 +564,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                 ? 'AI model updated successfully!'
                 : 'AI model added successfully!',
             ),
-            backgroundColor: SemanticColors.success,
+            backgroundColor: ThemeColors(context).success,
           ),
         );
       }
@@ -573,7 +573,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to save AI model: $e'),
-            backgroundColor: SemanticColors.error,
+            backgroundColor: ThemeColors(context).error,
           ),
         );
       }

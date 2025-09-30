@@ -236,13 +236,13 @@ class UnifiedMCPServerCard extends ConsumerWidget {
               const Icon(
                 Icons.check_circle_outline,
                 size: 14,
-                color: SemanticColors.success,
+                color: ThemeColors(context).success,
               ),
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 serverConfig.enabled ? 'Configured and enabled' : 'Configured but disabled',
                 style: TextStyle(
-                  color: serverConfig.enabled ? SemanticColors.success : ThemeColors(context).warning,
+                  color: serverConfig.enabled ? ThemeColors(context).success : ThemeColors(context).warning,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -324,7 +324,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
       case 'scheduler':
         return const Color(0xFF2196F3);
       default:
-        return SemanticColors.primary;
+        return ThemeColors(context).primary;
     }
   }
 
