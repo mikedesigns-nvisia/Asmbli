@@ -7,15 +7,23 @@ abstract class MCPAdapter {
   final StreamController<MCPEvent> _eventController = StreamController<MCPEvent>.broadcast();
   bool _isConnected = false;
   String? _connectionId;
-  
+
   /// Protocol identifier (e.g., 'stdio', 'websocket', 'http', 'sse', 'grpc')
   String get protocol;
-  
+
   /// Whether the adapter is currently connected
   bool get isConnected => _isConnected;
-  
+
   /// Unique connection identifier
   String? get connectionId => _connectionId;
+
+  /// Protected setter for connection state (for subclasses)
+  @protected
+  set isConnected(bool value) => _isConnected = value;
+
+  /// Protected setter for connection ID (for subclasses)
+  @protected
+  set connectionId(String? value) => _connectionId = value;
   
   /// Stream of events from the MCP server
   Stream<MCPEvent> get eventStream => _eventController.stream;

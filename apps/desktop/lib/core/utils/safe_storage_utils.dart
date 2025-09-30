@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import '../services/desktop/desktop_storage_service.dart';
+import 'app_logger.dart';
 import 'storage_transaction_manager.dart';
 
 class StorageResult<T> {
@@ -349,10 +350,14 @@ class SafeStorageUtils {
         break;
       case StorageType.file:
         // File storage implementation would go here
-        throw UnimplementedError('File storage not implemented');
+        // File storage fallback to preferences
+        AppLogger.warning('File storage not implemented, falling back to preferences', component: 'Storage');
+        return DesktopStorageService.instance.setPreference(key, value);
       case StorageType.secure:
         // Secure storage implementation would go here
-        throw UnimplementedError('Secure storage not implemented');
+        // Secure storage fallback to preferences
+        AppLogger.warning('Secure storage not implemented, falling back to preferences', component: 'Storage');
+        return DesktopStorageService.instance.setPreference(key, value);
     }
   }
   
@@ -368,10 +373,14 @@ class SafeStorageUtils {
         return DesktopStorageService.instance.getPreference(key);
       case StorageType.file:
         // File storage implementation would go here
-        throw UnimplementedError('File storage not implemented');
+        // File storage fallback to preferences
+        AppLogger.warning('File storage not implemented, falling back to preferences', component: 'Storage');
+        return DesktopStorageService.instance.setPreference(key, value);
       case StorageType.secure:
         // Secure storage implementation would go here
-        throw UnimplementedError('Secure storage not implemented');
+        // Secure storage fallback to preferences
+        AppLogger.warning('Secure storage not implemented, falling back to preferences', component: 'Storage');
+        return DesktopStorageService.instance.setPreference(key, value);
     }
   }
   
@@ -389,10 +398,14 @@ class SafeStorageUtils {
         break;
       case StorageType.file:
         // File storage implementation would go here
-        throw UnimplementedError('File storage not implemented');
+        // File storage fallback to preferences
+        AppLogger.warning('File storage not implemented, falling back to preferences', component: 'Storage');
+        return DesktopStorageService.instance.setPreference(key, value);
       case StorageType.secure:
         // Secure storage implementation would go here
-        throw UnimplementedError('Secure storage not implemented');
+        // Secure storage fallback to preferences
+        AppLogger.warning('Secure storage not implemented, falling back to preferences', component: 'Storage');
+        return DesktopStorageService.instance.setPreference(key, value);
     }
   }
   

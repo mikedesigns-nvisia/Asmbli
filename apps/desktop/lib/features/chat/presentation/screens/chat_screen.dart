@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:agent_engine_core/models/conversation.dart' as core;
 import 'dart:async';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
 import '../../../../core/services/mcp_bridge_service.dart';
@@ -56,19 +57,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  // Start model warm-up process in background (non-blocking)
  _startModelWarmUpInBackground();
  } catch (e) {
- print('Service initialization failed: $e');
+ AppLogger.error('Service initialization failed', component: 'Chat', error: e);
  }
  }
 
  Future<void> _startModelWarmUpInBackground() async {
  try {
-   print('🔥 Starting model warm-up for chat screen...');
+   AppLogger.info('Starting model warm-up for chat screen', component: 'Chat');
    final warmUpService = ref.read(modelWarmUpServiceProvider);
    // Run warmup in background without blocking UI
    unawaited(warmUpService.warmUpAllModels());
-   print('✅ Model warm-up started in background');
+   AppLogger.info('Model warm-up started in background', component: 'Chat');
  } catch (e) {
-   print('❌ Model warm-up failed: $e');
+   AppLogger.error('Model warm-up failed', component: 'Chat', error: e);
  }
  }
 
@@ -1834,8 +1835,7 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  );
 
  // Update message with final content and MCP interaction data
- print('DEBUG: MCP response content: "${response.response}"');
- print('DEBUG: MCP response length: ${response.response.length}');
+ AppLogger.debug('MCP response received: length=${response.response.length}', component: 'Chat.MCP');
  
  final finalMessage = core.Message(
  id: streamingMessage.id,
@@ -1870,7 +1870,10 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
      ?? ref.read(selectedModelProvider);
 
  // Check if model is configured - different logic for local vs API models
- print('DEBUG: Selected model: ${selectedModel?.name}, isLocal: ${selectedModel?.isLocal}, isConfigured: ${selectedModel?.isConfigured}, status: ${selectedModel?.status}');
+ AppLogger.debug(
+   'Model validation: name=${selectedModel?.name}, isLocal=${selectedModel?.isLocal}, isConfigured=${selectedModel?.isConfigured}, status=${selectedModel?.status}',
+   component: 'Chat.Model'
+ );
  
  if (selectedModel == null) {
    if (mounted) {
@@ -1963,7 +1966,7 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
 
  // For non-agent conversations with global MCP servers, try to use MCP bridge
  if (globalMcpServers.isNotEmpty) {
-   print('🔗 Standard conversation using global MCP servers: $globalMcpServers');
+   AppLogger.info('Standard conversation using global MCP servers: $globalMcpServers', component: 'Chat.MCP');
    try {
      final mcpBridge = MCPBridgeService(mcpService);
      final mcpResponse = await mcpBridge.processMessage(
@@ -2004,7 +2007,7 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
      return;
      
    } catch (mcpError) {
-     print('⚠️ MCP processing failed for standard conversation, falling back to direct LLM: $mcpError');
+     AppLogger.warning('MCP processing failed for standard conversation, falling back to direct LLM', component: 'Chat.MCP', error: mcpError);
      // Fall through to direct LLM call
    }
  }
@@ -2260,7 +2263,7 @@ Future<void> _updateConversationPrimingAfterSuccess(String conversationId, Model
    ref.invalidate(conversationProvider(conversationId));
    
  } catch (e) {
-   print('Failed to update priming status after success: $e');
+   AppLogger.error('Failed to update priming status after success', component: 'Chat.Priming', error: e);
  }
 }
 

@@ -9,6 +9,8 @@ import 'core/design_system/design_system.dart';
 import 'core/design_system/components/asmbli_card_enhanced.dart';
 import 'core/constants/routes.dart';
 import 'core/di/service_locator.dart';
+import 'core/error/global_error_handler.dart';
+import 'core/utils/app_logger.dart';
 import 'features/chat/presentation/screens/chat_screen.dart';
 import 'features/chat/presentation/screens/chat_screen_with_contextual.dart';
 // import 'features/chat/presentation/screens/modern_chat_screen_v2.dart'; // Temporarily disabled
@@ -50,16 +52,17 @@ void main() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     // Initialize production error handling first
-    print('🛡️ Initializing error handling...');
+    AppLogger.info('Initializing global error handling', component: 'Main');
     try {
+      GlobalErrorHandler.initialize();
       await AppErrorHandler.instance.initialize();
-      print('✅ Error handling initialized');
+      AppLogger.info('Error handling initialized successfully', component: 'Main');
     } catch (e) {
-      print('❌ Error handling initialization failed: $e');
+      AppLogger.critical('Error handling initialization failed', component: 'Main', error: e);
     }
 
     // Initialize Service Locator first (contains all business logic)
-    print('🚀 Initializing Service Locator...');
+    AppLogger.info('Initializing Service Locator', component: 'Main');
     try {
       final startTime = DateTime.now();
       await ServiceLocator.instance.initialize();
