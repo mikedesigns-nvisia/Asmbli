@@ -69,25 +69,27 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Column(
       children: [
         // Header with stats and actions
-        _buildHeader(context),
+        _buildHeader(colors),
         
         const SizedBox(height: SpacingTokens.sectionSpacing),
         
         // Tab navigation
-        _buildTabBar(context),
-        
+        _buildTabBar(colors),
+
         const SizedBox(height: SpacingTokens.sectionSpacing),
-        
+
         // Tab content
         Expanded(
           child: TabBarView(
             controller: _tabController,
             children: [
-              _buildActiveIntegrationsTab(context),
-              _buildRecommendationsTab(context),
+              _buildActiveIntegrationsTab(colors),
+              _buildRecommendationsTab(colors),
               _buildBrowseIntegrationsTab(context),
             ],
           ),
@@ -96,7 +98,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(ThemeColors colors) {
     final mcpService = ref.watch(mcpSettingsServiceProvider);
     final servers = mcpService.getAllMCPServers();
     final activeServers = servers.values.where((s) => s.enabled).length;
@@ -109,13 +111,13 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            SemanticColors.primary.withOpacity(0.1),
-            SemanticColors.primary.withOpacity(0.05),
+            colors.primary.withOpacity(0.1),
+            colors.primary.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: SemanticColors.primary.withOpacity(0.2),
+          color: colors.primary.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -123,30 +125,30 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.hub,
                 size: 24,
-                color: SemanticColors.primary,
+                color: colors.primary,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Integration Hub',
                       style: TextStyle(
-                        
+
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: SemanticColors.primary,
+                        color: colors.primary,
                       ),
                     ),
                     Text(
                       'Manage your agent\'s external service connections',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -166,23 +168,23 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
           Row(
             children: [
               _buildStatCard(
-                context,
+                colors,
                 icon: Icons.link,
                 label: 'Active',
                 value: activeServers.toString(),
-                color: SemanticColors.success,
+                color: colors.success,
               ),
               const SizedBox(width: 16),
               _buildStatCard(
-                context,
+                colors,
                 icon: Icons.storage,
                 label: 'Total',
                 value: totalServers.toString(),
-                color: SemanticColors.primary,
+                color: colors.primary,
               ),
               const SizedBox(width: 16),
               _buildStatCard(
-                context,
+                colors,
                 icon: Icons.auto_awesome,
                 label: 'Suggested',
                 value: _recommendations.length.toString(),
@@ -201,7 +203,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
   }
 
   Widget _buildStatCard(
-    BuildContext context, {
+    ThemeColors colors, {
     required IconData icon,
     required String label,
     required String value,
@@ -236,7 +238,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                 label,
                 style: TextStyle(
                   fontSize: 10,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -246,10 +248,10 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
     );
   }
 
-  Widget _buildTabBar(BuildContext context) {
+  Widget _buildTabBar(ThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+        color: colors.surface.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: TabBar(
@@ -268,15 +270,15 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
             text: 'Browse All',
           ),
         ],
-        labelColor: SemanticColors.primary,
-        unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
-        indicatorColor: SemanticColors.primary,
+        labelColor: colors.primary,
+        unselectedLabelColor: colors.onSurfaceVariant,
+        indicatorColor: colors.primary,
         dividerColor: Colors.transparent,
       ),
     );
   }
 
-  Widget _buildActiveIntegrationsTab(BuildContext context) {
+  Widget _buildActiveIntegrationsTab(ThemeColors colors) {
     final mcpService = ref.watch(mcpSettingsServiceProvider);
     final servers = mcpService.getAllMCPServers();
     final filteredServers = servers.entries.where((entry) {
@@ -290,7 +292,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
 
     if (filteredServers.isEmpty) {
       return _buildEmptyState(
-        context,
+        colors,
         icon: Icons.hub_outlined,
         title: 'No integrations configured',
         message: 'Add your first integration to get started',
@@ -303,16 +305,16 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
       children: [
         // Search and filter
         _buildSearchAndFilter(context),
-        
+
         const SizedBox(height: 16),
-        
+
         // Server list
         Expanded(
           child: ListView.builder(
             itemCount: filteredServers.length,
             itemBuilder: (context, index) {
               final entry = filteredServers[index];
-              return _buildServerCard(context, entry.key, entry.value);
+              return _buildServerCard(colors, entry.key, entry.value);
             },
           ),
         ),
@@ -320,10 +322,10 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
     );
   }
 
-  Widget _buildRecommendationsTab(BuildContext context) {
+  Widget _buildRecommendationsTab(ThemeColors colors) {
     if (_recommendations.isEmpty) {
       return _buildEmptyState(
-        context,
+        colors,
         icon: Icons.auto_awesome,
         title: 'No recommendations available',
         message: 'Complete your agent profile to get personalized recommendations',
@@ -337,7 +339,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
       itemCount: _recommendations.length,
       itemBuilder: (context, index) {
         final recommendation = _recommendations[index];
-        return _buildRecommendationCard(context, recommendation);
+        return _buildRecommendationCard(colors, recommendation);
       },
     );
   }
@@ -385,16 +387,16 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
     );
   }
 
-  Widget _buildServerCard(BuildContext context, String serverId, MCPServerConfig config) {
+  Widget _buildServerCard(ThemeColors colors, String serverId, MCPServerConfig config) {
     final template = _findTemplateForServer(config);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+        color: colors.surface.withOpacity(0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: colors.border.withOpacity(0.3),
         ),
       ),
       child: Material(
@@ -414,12 +416,12 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: (template?.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+                        color: (template?.brandColor ?? colors.primary).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
                         template?.icon ?? Icons.storage,
-                        color: template?.brandColor ?? SemanticColors.primary,
+                        color: template?.brandColor ?? colors.primary,
                         size: 20,
                       ),
                     ),
@@ -436,10 +438,10 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                               Text(
                                 config.name,
                                 style: TextStyle(
-                                  
+
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: colors.onSurface,
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -447,14 +449,14 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                                    color: colors.surface.withOpacity(0.5),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     template.category,
                                     style: TextStyle(
                                       fontSize: 9,
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      color: colors.onSurfaceVariant,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -465,7 +467,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                             config.description,
                             style: TextStyle(
                               fontSize: 12,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: colors.onSurfaceVariant,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -519,8 +521,8 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                     const Spacer(),
                     TextButton.icon(
                       onPressed: () => _deleteServer(serverId, config),
-                      icon: const Icon(Icons.delete, size: 14, color: SemanticColors.error),
-                      label: const Text('Delete', style: TextStyle(fontSize: 11, color: SemanticColors.error)),
+                      icon: Icon(Icons.delete, size: 14, color: colors.error),
+                      label: Text('Delete', style: TextStyle(fontSize: 11, color: colors.error)),
                     ),
                   ],
                 ),
@@ -532,7 +534,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
     );
   }
 
-  Widget _buildRecommendationCard(BuildContext context, MCPRecommendation recommendation) {
+  Widget _buildRecommendationCard(ThemeColors colors, MCPRecommendation recommendation) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -556,12 +558,12 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: (recommendation.template.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+                    color: (recommendation.template.brandColor ?? colors.primary).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     recommendation.template.icon,
-                    color: recommendation.template.brandColor ?? SemanticColors.primary,
+                    color: recommendation.template.brandColor ?? colors.primary,
                     size: 24,
                   ),
                 ),
@@ -578,10 +580,10 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                           Text(
                             recommendation.template.name,
                             style: TextStyle(
-                              
+
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: colors.onSurface,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -607,7 +609,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
                         recommendation.reason,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: colors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -629,7 +631,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
   }
 
   Widget _buildEmptyState(
-    BuildContext context, {
+    ThemeColors colors, {
     required IconData icon,
     required String title,
     required String message,
@@ -643,7 +645,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
           Icon(
             icon,
             size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
           const SizedBox(height: 16),
           Text(
@@ -651,7 +653,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
@@ -659,7 +661,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
             message,
             style: TextStyle(
               fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -776,6 +778,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
   }
 
   void _deleteServer(String serverId, MCPServerConfig config) {
+    final colors = ThemeColors(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -793,7 +796,7 @@ class _EnhancedMCPDashboardState extends ConsumerState<EnhancedMCPDashboard>
               Navigator.of(context).pop();
               setState(() {});
             },
-            style: ElevatedButton.styleFrom(backgroundColor: SemanticColors.error),
+            style: ElevatedButton.styleFrom(backgroundColor: colors.error),
             child: const Text('Delete'),
           ),
         ],

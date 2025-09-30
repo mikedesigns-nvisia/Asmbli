@@ -71,6 +71,8 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -86,7 +88,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
           // Header
           Row(
             children: [
-              _buildStatusIcon(),
+              _buildStatusIcon(colors),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -117,17 +119,17 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
               ],
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Test content
-          _buildTestContent(context),
+          _buildTestContent(context, colors),
         ],
       ),
     );
   }
 
-  Widget _buildStatusIcon() {
+  Widget _buildStatusIcon(ThemeColors colors) {
     if (_isTesting) {
       return AnimatedBuilder(
         animation: _pulseController,
@@ -136,16 +138,16 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1 + (_pulseController.value * 0.1)),
+              color: colors.primary.withOpacity(0.1 + (_pulseController.value * 0.1)),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Center(
+            child: Center(
               child: SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation(SemanticColors.primary),
+                  valueColor: AlwaysStoppedAnimation(colors.primary),
                 ),
               ),
             ),
@@ -155,9 +157,9 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     }
 
     if (_currentResult != null) {
-      final color = _getStatusColor(_currentResult!.status);
+      final color = _getStatusColor(_currentResult!.status, colors);
       final icon = _getStatusIcon(_currentResult!.status);
-      
+
       return Container(
         width: 40,
         height: 40,
@@ -188,19 +190,19 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     );
   }
 
-  Widget _buildTestContent(BuildContext context) {
+  Widget _buildTestContent(BuildContext context, ThemeColors colors) {
     if (_isTesting && _currentResult != null) {
-      return _buildLoadingContent(context);
+      return _buildLoadingContent(context, colors);
     }
 
     if (_currentResult != null) {
-      return _buildResultContent(context);
+      return _buildResultContent(context, colors);
     }
 
-    return _buildInitialContent(context);
+    return _buildInitialContent(context, colors);
   }
 
-  Widget _buildInitialContent(BuildContext context) {
+  Widget _buildInitialContent(BuildContext context, ThemeColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -218,12 +220,12 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
           ),
         ),
         const SizedBox(height: 16),
-        _buildTestChecklist(context),
+        _buildTestChecklist(context, colors),
       ],
     );
   }
 
-  Widget _buildLoadingContent(BuildContext context) {
+  Widget _buildLoadingContent(BuildContext context, ThemeColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -231,13 +233,13 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
           _currentResult!.message,
           style: TextStyle(
             fontWeight: FontWeight.w500,
-            color: SemanticColors.primary,
+            color: colors.primary,
           ),
         ),
         const SizedBox(height: 12),
         LinearProgressIndicator(
-          valueColor: const AlwaysStoppedAnimation(SemanticColors.primary),
-          backgroundColor: SemanticColors.primary.withOpacity(0.1),
+          valueColor: AlwaysStoppedAnimation(colors.primary),
+          backgroundColor: colors.primary.withOpacity(0.1),
         ),
         const SizedBox(height: 8),
         Text(
@@ -250,9 +252,9 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     );
   }
 
-  Widget _buildResultContent(BuildContext context) {
+  Widget _buildResultContent(BuildContext context, ThemeColors colors) {
     final result = _currentResult!;
-    final statusColor = _getStatusColor(result.status);
+    final statusColor = _getStatusColor(result.status, colors);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,13 +305,13 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
         // Metadata (for successful connections)
         if (result.isSuccess && result.metadata.isNotEmpty) ...[
           const SizedBox(height: 12),
-          _buildMetadataDisplay(context, result.metadata),
+          _buildMetadataDisplay(context, result.metadata, colors),
         ],
 
         // Suggestions for errors/warnings
         if (result.suggestions.isNotEmpty) ...[
           const SizedBox(height: 12),
-          _buildSuggestions(context, result.suggestions, result.status),
+          _buildSuggestions(context, result.suggestions, result.status, colors),
         ],
 
         // Error details
@@ -343,9 +345,9 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     );
   }
 
-  Widget _buildTestChecklist(BuildContext context) {
+  Widget _buildTestChecklist(BuildContext context, ThemeColors colors) {
     final requiredFields = widget.template.fields.where((f) => f.required).toList();
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -358,7 +360,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
         ),
         const SizedBox(height: 8),
         ...requiredFields.map((field) {
-          final hasValue = widget.config[field.id] != null && 
+          final hasValue = widget.config[field.id] != null &&
                           widget.config[field.id].toString().isNotEmpty;
           return Padding(
             padding: const EdgeInsets.only(bottom: 4),
@@ -367,7 +369,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                 Icon(
                   hasValue ? Icons.check_circle : Icons.radio_button_unchecked,
                   size: 14,
-                  color: hasValue ? SemanticColors.success : Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: hasValue ? colors.success : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -401,14 +403,14 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     );
   }
 
-  Widget _buildMetadataDisplay(BuildContext context, Map<String, dynamic> metadata) {
+  Widget _buildMetadataDisplay(BuildContext context, Map<String, dynamic> metadata, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: SemanticColors.success.withOpacity(0.05),
+        color: colors.success.withOpacity(0.05),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: SemanticColors.success.withOpacity(0.2),
+          color: colors.success.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -418,7 +420,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
             'Connection Details:',
             style: TextStyle(
               fontWeight: FontWeight.w500,
-              color: SemanticColors.success,
+              color: colors.success,
             ),
           ),
           const SizedBox(height: 6),
@@ -439,9 +441,9 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     );
   }
 
-  Widget _buildSuggestions(BuildContext context, List<String> suggestions, TestStatus status) {
-    final color = _getStatusColor(status);
-    
+  Widget _buildSuggestions(BuildContext context, List<String> suggestions, TestStatus status, ThemeColors colors) {
+    final color = _getStatusColor(status, colors);
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -502,16 +504,16 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     );
   }
 
-  Color _getStatusColor(TestStatus status) {
+  Color _getStatusColor(TestStatus status, ThemeColors colors) {
     switch (status) {
       case TestStatus.loading:
-        return SemanticColors.primary;
+        return colors.primary;
       case TestStatus.success:
-        return SemanticColors.success;
+        return colors.success;
       case TestStatus.warning:
         return Colors.orange;
       case TestStatus.error:
-        return SemanticColors.error;
+        return colors.error;
     }
   }
 
@@ -573,11 +575,13 @@ class MCPConnectionStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     if (testResult == null) {
       return _buildUntestedStatus(context);
     }
 
-    final color = _getStatusColor(testResult!.status);
+    final color = _getStatusColor(testResult!.status, colors);
     final icon = _getStatusIcon(testResult!.status);
 
     return Material(
@@ -641,16 +645,16 @@ class MCPConnectionStatus extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(TestStatus status) {
+  Color _getStatusColor(TestStatus status, ThemeColors colors) {
     switch (status) {
       case TestStatus.loading:
         return Colors.blue;
       case TestStatus.success:
-        return SemanticColors.success;
+        return colors.success;
       case TestStatus.warning:
         return Colors.orange;
       case TestStatus.error:
-        return SemanticColors.error;
+        return colors.error;
     }
   }
 
@@ -714,6 +718,7 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     final totalServers = widget.serverIds.length;
     final connectedServers = _healthResults.values
         .where((result) => result?.isSuccess ?? false)
@@ -733,10 +738,10 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.health_and_safety,
                 size: 20,
-                color: SemanticColors.primary,
+                color: colors.primary,
               ),
               const SizedBox(width: 8),
               Text(
@@ -752,7 +757,7 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: connectedServers == totalServers
-                      ? SemanticColors.success
+                      ? colors.success
                       : Colors.orange,
                 ),
               ),
@@ -763,7 +768,7 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
             value: totalServers > 0 ? connectedServers / totalServers : 0,
             valueColor: AlwaysStoppedAnimation(
               connectedServers == totalServers
-                  ? SemanticColors.success
+                  ? colors.success
                   : Colors.orange,
             ),
             backgroundColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),

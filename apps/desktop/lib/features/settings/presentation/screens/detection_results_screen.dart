@@ -104,36 +104,38 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Scaffold(
-      backgroundColor: SemanticColors.background,
+      backgroundColor: colors.background,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              SemanticColors.primary.withOpacity(0.02),
-              SemanticColors.background,
+              colors.primary.withOpacity(0.02),
+              colors.background,
             ],
           ),
         ),
         child: Column(
           children: [
-            _buildHeader(),
-            Expanded(child: _buildContent()),
+            _buildHeader(colors),
+            Expanded(child: _buildContent(colors)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.headerPadding),
       decoration: BoxDecoration(
-        color: SemanticColors.surface.withOpacity(0.8),
-        border: const Border(
-          bottom: BorderSide(color: SemanticColors.border),
+        color: colors.surface.withOpacity(0.8),
+        border: Border(
+          bottom: BorderSide(color: colors.border),
         ),
       ),
       child: Row(
@@ -141,12 +143,12 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.auto_fix_high,
-              color: SemanticColors.primary,
+              color: colors.primary,
               size: 24,
             ),
           ),
@@ -161,13 +163,13 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _isDetecting 
+                  _isDetecting
                     ? 'Scanning your system for tools...'
-                    : _detectionResult != null 
+                    : _detectionResult != null
                       ? 'Found ${_detectionResult!.totalFound} tools ready to integrate'
                       : 'Ready to scan your system',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -189,37 +191,37 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(ThemeColors colors) {
     if (_isDetecting) {
-      return _buildDetectingState();
+      return _buildDetectingState(colors);
     }
-    
+
     if (_detectionResult == null) {
-      return _buildEmptyState();
+      return _buildEmptyState(colors);
     }
 
     return Column(
       children: [
-        _buildSummaryCards(),
+        _buildSummaryCards(colors),
         const SizedBox(height: 24),
-        _buildCategoryFilter(),
+        _buildCategoryFilter(colors),
         const SizedBox(height: 16),
-        Expanded(child: _buildResultsList()),
+        Expanded(child: _buildResultsList(colors)),
       ],
     );
   }
 
-  Widget _buildDetectingState() {
+  Widget _buildDetectingState(ThemeColors colors) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
+          SizedBox(
             width: 80,
             height: 80,
             child: CircularProgressIndicator(
               strokeWidth: 6,
-              valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
             ),
           ),
           const SizedBox(height: 24),
@@ -231,7 +233,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
           Text(
             'Looking for installed development tools, browsers, and applications...',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -240,7 +242,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(ThemeColors colors) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -248,13 +250,13 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.search,
               size: 48,
-              color: SemanticColors.primary,
+              color: colors.primary,
             ),
           ),
           const SizedBox(height: 24),
@@ -266,7 +268,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
           Text(
             'Click "Start Detection" to scan your system for installed tools and applications.',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -280,13 +282,14 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
     );
   }
 
-  Widget _buildSummaryCards() {
+  Widget _buildSummaryCards(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
         children: [
           Expanded(
             child: _buildSummaryCard(
+              colors,
               'Tools Found',
               _detectionResult!.totalFound.toString(),
               Icons.check_circle,
@@ -296,15 +299,17 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
           const SizedBox(width: 16),
           Expanded(
             child: _buildSummaryCard(
+              colors,
               'Ready to Configure',
               _detectionResult!.totalFound.toString(),
               Icons.settings,
-              SemanticColors.primary,
+              colors.primary,
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: _buildSummaryCard(
+              colors,
               'Already Configured',
               _configurationResult?.totalConfigured.toString() ?? '0',
               Icons.done_all,
@@ -316,7 +321,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
     );
   }
 
-  Widget _buildSummaryCard(String label, String value, IconData icon, Color color) {
+  Widget _buildSummaryCard(ThemeColors colors, String label, String value, IconData icon, Color color) {
     return AsmblCard(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -345,7 +350,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
                   Text(
                     label,
                     style: TextStyles.bodySmall.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -357,7 +362,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
     );
   }
 
-  Widget _buildCategoryFilter() {
+  Widget _buildCategoryFilter(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
@@ -366,7 +371,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
             'Filter:',
             style: TextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(width: 16),
@@ -389,9 +394,9 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
     );
   }
 
-  Widget _buildResultsList() {
+  Widget _buildResultsList(ThemeColors colors) {
     final filteredResults = _getFilteredResults();
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: GridView.builder(
@@ -404,15 +409,15 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
         itemCount: filteredResults.length,
         itemBuilder: (context, index) {
           final entry = filteredResults[index];
-          return _buildToolCard(entry.key, entry.value);
+          return _buildToolCard(colors, entry.key, entry.value);
         },
       ),
     );
   }
 
-  Widget _buildToolCard(String toolName, bool isDetected) {
+  Widget _buildToolCard(ThemeColors colors, String toolName, bool isDetected) {
     final isConfigured = _configurationResult?.successfulConfigurations.contains(toolName) ?? false;
-    
+
     return AsmblCard(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -431,19 +436,19 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
               child: Icon(
                 isConfigured
                   ? Icons.done_all
-                  : isDetected 
+                  : isDetected
                     ? Icons.check_circle
                     : Icons.cancel,
                 color: isConfigured
                   ? Colors.blue
-                  : isDetected 
+                  : isDetected
                     ? Colors.green
                     : Colors.grey,
                 size: 20,
               ),
             ),
             const SizedBox(width: 12),
-            
+
             // Tool info
             Expanded(
               child: Column(
@@ -454,28 +459,28 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
                     toolName,
                     style: TextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: SemanticColors.onSurface,
+                      color: colors.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     isConfigured
                       ? '✓ Configured and ready'
-                      : isDetected 
+                      : isDetected
                         ? 'Detected - ready to configure'
                         : 'Not found on this system',
                     style: TextStyles.bodySmall.copyWith(
                       color: isConfigured
                         ? Colors.blue
-                        : isDetected 
+                        : isDetected
                           ? Colors.green
-                          : SemanticColors.onSurfaceVariant,
+                          : colors.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
             ),
-            
+
             // Action button
             if (isDetected && !isConfigured && !_isConfiguring)
               AsmblButton.secondary(

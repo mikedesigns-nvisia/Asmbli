@@ -9,6 +9,8 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ThemeColors(context);
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -16,9 +18,9 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             center: Alignment.topCenter,
             radius: 1.5,
             colors: [
-              SemanticColors.primary.withOpacity(0.05),
-              SemanticColors.background.withOpacity(0.8),
-              SemanticColors.background,
+              colors.primary.withOpacity(0.05),
+              colors.background.withOpacity(0.8),
+              colors.background,
             ],
             stops: const [0.0, 0.6, 1.0],
           ),
@@ -28,7 +30,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             children: [
               // App Navigation Bar
               const AppNavigationBar(currentRoute: AppRoutes.settings),
-              
+
               // Main content
               Expanded(
                 child: Padding(
@@ -45,24 +47,24 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
                       Text(
                         'Connect your tools and services automatically',
                         style: TextStyles.bodyMedium.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
+                          color: colors.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: SpacingTokens.xxl),
-                      
+
                       // Auto-detect everything button
-                      _buildAutoDetectCard(context),
+                      _buildAutoDetectCard(context, colors),
                       const SizedBox(height: SpacingTokens.xxl),
-                      
+
                       // Integration categories
                       Text(
                         'Or choose a specific category:',
                         style: TextStyles.titleMedium,
                       ),
                       const SizedBox(height: SpacingTokens.lg),
-                      
+
                       Expanded(
-                        child: _buildCategoryGrid(context),
+                        child: _buildCategoryGrid(context, colors),
                       ),
                     ],
                   ),
@@ -75,30 +77,30 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAutoDetectCard(BuildContext context) {
+  Widget _buildAutoDetectCard(BuildContext context, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.xxl),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            SemanticColors.primary.withOpacity(0.1),
-            SemanticColors.primary.withOpacity(0.05),
+            colors.primary.withOpacity(0.1),
+            colors.primary.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
-        border: Border.all(color: SemanticColors.primary.withOpacity(0.2)),
+        border: Border.all(color: colors.primary.withOpacity(0.2)),
       ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(SpacingTokens.lg),
             decoration: BoxDecoration(
-              color: SemanticColors.primary,
+              color: colors.primary,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.auto_fix_high,
-              color: SemanticColors.surface,
+              color: colors.surface,
               size: 32,
             ),
           ),
@@ -106,7 +108,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
           Text(
             'Detect Everything Automatically',
             style: TextStyles.headlineMedium.copyWith(
-              color: SemanticColors.primary,
+              color: colors.primary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -114,7 +116,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
           Text(
             'Scan your system for all installed tools and services. We\'ll automatically configure the ones we find.',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -128,7 +130,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoryGrid(BuildContext context) {
+  Widget _buildCategoryGrid(BuildContext context, ThemeColors colors) {
     final categories = [
       const CategoryItem(
         name: 'Development Tools',
@@ -196,21 +198,21 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final category = categories[index];
-        return _buildCategoryCard(context, category);
+        return _buildCategoryCard(context, colors, category);
       },
     );
   }
 
-  Widget _buildCategoryCard(BuildContext context, CategoryItem category) {
+  Widget _buildCategoryCard(BuildContext context, ThemeColors colors, CategoryItem category) {
     return InkWell(
       onTap: () => _showCategoryDetection(context, category.name),
       borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
       child: Container(
         padding: const EdgeInsets.all(SpacingTokens.lg),
         decoration: BoxDecoration(
-          color: SemanticColors.surface,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-          border: Border.all(color: SemanticColors.border),
+          border: Border.all(color: colors.border),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -237,7 +239,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             Text(
               category.description,
               style: TextStyles.bodySmall.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -250,22 +252,22 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
                 vertical: SpacingTokens.xs,
               ),
               decoration: BoxDecoration(
-                color: SemanticColors.primary.withOpacity(0.1),
+                color: colors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.auto_fix_high,
                     size: 14,
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     'Auto-Detect',
                     style: TextStyles.labelMedium.copyWith(
-                      color: SemanticColors.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ],
