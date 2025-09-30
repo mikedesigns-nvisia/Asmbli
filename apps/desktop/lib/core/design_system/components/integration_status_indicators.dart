@@ -5,10 +5,11 @@ import '../../services/integration_service.dart';
 
 /// Visual indicators for integration status and availability
 class IntegrationStatusIndicators {
-  
+
   /// Main status badge showing configuration and availability state
-  static Widget statusBadge(IntegrationStatus status, {bool compact = false}) {
-    final colors = _getStatusColors(status);
+  static Widget statusBadge(BuildContext context, IntegrationStatus status, {bool compact = false}) {
+    final themeColors = ThemeColors(context);
+    final colors = _getStatusColors(themeColors, status);
     final text = _getStatusText(status);
     final icon = _getStatusIcon(status);
 
@@ -61,21 +62,22 @@ class IntegrationStatusIndicators {
   }
 
   /// Availability indicator for integrations not yet implemented
-  static Widget availabilityIndicator(IntegrationDefinition definition) {
+  static Widget availabilityIndicator(BuildContext context, IntegrationDefinition definition) {
+    final colors = ThemeColors(context);
     if (definition.isAvailable) {
-      return const Row(
+      return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.check_circle,
             size: 12,
-            color: SemanticColors.success,
+            color: colors.success,
           ),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
             'Available',
             style: TextStyle(
-              color: SemanticColors.success,
+              color: colors.success,
               fontWeight: FontWeight.w500,
               fontSize: 12,
             ),
@@ -84,19 +86,19 @@ class IntegrationStatusIndicators {
       );
     }
 
-    return const Row(
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           Icons.schedule,
           size: 12,
-          color: SemanticColors.warning,
+          color: colors.warning,
         ),
-        SizedBox(width: 4),
+        const SizedBox(width: 4),
         Text(
           'Coming Soon',
           style: TextStyle(
-            color: SemanticColors.warning,
+            color: colors.warning,
             fontWeight: FontWeight.w500,
             fontSize: 12,
           ),
@@ -106,8 +108,9 @@ class IntegrationStatusIndicators {
   }
 
   /// Difficulty badge showing integration complexity
-  static Widget difficultyBadge(String difficulty, {bool showIcon = true}) {
-    final colors = _getDifficultyColors(difficulty);
+  static Widget difficultyBadge(BuildContext context, String difficulty, {bool showIcon = true}) {
+    final themeColors = ThemeColors(context);
+    final colors = _getDifficultyColors(themeColors, difficulty);
     final icon = _getDifficultyIcon(difficulty);
 
     return Container(
@@ -136,35 +139,36 @@ class IntegrationStatusIndicators {
   }
 
   /// Prerequisites indicator showing setup requirements
-  static Widget prerequisitesIndicator(List<String> prerequisites) {
+  static Widget prerequisitesIndicator(BuildContext context, List<String> prerequisites) {
     if (prerequisites.isEmpty) return const SizedBox.shrink();
 
+    final colors = ThemeColors(context);
     return Tooltip(
       message: 'Prerequisites:\n${prerequisites.map((p) => '• $p').join('\n')}',
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: SemanticColors.warning.withOpacity(0.1),
+          color: colors.warning.withOpacity(0.1),
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: SemanticColors.warning.withOpacity(0.3),
+            color: colors.warning.withOpacity(0.3),
             width: 1,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.info_outline,
               size: 10,
-              color: SemanticColors.warning,
+              color: colors.warning,
             ),
             const SizedBox(width: 2),
             Text(
               '${prerequisites.length} req',
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                color: SemanticColors.warning,
+                color: colors.warning,
               ),
             ),
           ],
@@ -174,9 +178,10 @@ class IntegrationStatusIndicators {
   }
 
   /// Capabilities tags showing what the integration can do
-  static Widget capabilitiesPreview(List<String> capabilities, {int maxShow = 3}) {
+  static Widget capabilitiesPreview(BuildContext context, List<String> capabilities, {int maxShow = 3}) {
     if (capabilities.isEmpty) return const SizedBox.shrink();
 
+    final colors = ThemeColors(context);
     final displayCapabilities = capabilities.take(maxShow).toList();
     final hasMore = capabilities.length > maxShow;
 
@@ -184,17 +189,17 @@ class IntegrationStatusIndicators {
       spacing: 4,
       runSpacing: 2,
       children: [
-        ...displayCapabilities.map((capability) => 
+        ...displayCapabilities.map((capability) =>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(3),
             ),
             child: Text(
               capability,
               style: TextStyle(
-                color: SemanticColors.primary,
+                color: colors.primary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -204,13 +209,13 @@ class IntegrationStatusIndicators {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             decoration: BoxDecoration(
-              color: SemanticColors.onSurfaceVariant.withOpacity(0.1),
+              color: colors.onSurfaceVariant.withOpacity(0.1),
               borderRadius: BorderRadius.circular(3),
             ),
             child: Text(
               '+${capabilities.length - maxShow}',
               style: TextStyle(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -220,8 +225,9 @@ class IntegrationStatusIndicators {
   }
 
   /// Health status indicator for configured integrations
-  static Widget healthIndicator(IntegrationHealth health) {
-    final colors = _getHealthColors(health.status);
+  static Widget healthIndicator(BuildContext context, IntegrationHealth health) {
+    final themeColors = ThemeColors(context);
+    final colors = _getHealthColors(themeColors, health.status);
     
     return Tooltip(
       message: health.message ?? _getHealthStatusText(health.status),
@@ -244,19 +250,19 @@ class IntegrationStatusIndicators {
   }
 
   /// Combined status row with all relevant indicators
-  static Widget statusRow(IntegrationStatus status) {
+  static Widget statusRow(BuildContext context, IntegrationStatus status) {
     return Row(
       children: [
-        statusBadge(status, compact: true),
+        statusBadge(context, status, compact: true),
         const SizedBox(width: SpacingTokens.xs),
-        availabilityIndicator(status.definition),
+        availabilityIndicator(context, status.definition),
         const SizedBox(width: SpacingTokens.xs),
-        difficultyBadge(status.definition.difficulty, showIcon: false),
+        difficultyBadge(context, status.definition.difficulty, showIcon: false),
         const SizedBox(width: SpacingTokens.xs),
-        prerequisitesIndicator(status.definition.prerequisites),
+        prerequisitesIndicator(context, status.definition.prerequisites),
         const Spacer(),
         if (status.isConfigured && status.mcpConfig != null)
-          healthIndicator(IntegrationHealth(
+          healthIndicator(context, IntegrationHealth(
             status: IntegrationHealthStatus.healthy,
             lastChecked: DateTime.now(),
           )),
@@ -302,35 +308,35 @@ class IntegrationHealth {
 }
 
 // Private helper methods
-StatusColors _getStatusColors(IntegrationStatus status) {
+StatusColors _getStatusColors(ThemeColors colors, IntegrationStatus status) {
   if (!status.definition.isAvailable) {
     return StatusColors(
-      background: SemanticColors.onSurfaceVariant.withOpacity(0.1),
-      foreground: SemanticColors.onSurfaceVariant,
-      border: SemanticColors.onSurfaceVariant.withOpacity(0.2),
+      background: colors.onSurfaceVariant.withOpacity(0.1),
+      foreground: colors.onSurfaceVariant,
+      border: colors.onSurfaceVariant.withOpacity(0.2),
     );
   }
 
   if (!status.isConfigured) {
     return StatusColors(
-      background: SemanticColors.primary.withOpacity(0.1),
-      foreground: SemanticColors.primary,
-      border: SemanticColors.primary.withOpacity(0.3),
+      background: colors.primary.withOpacity(0.1),
+      foreground: colors.primary,
+      border: colors.primary.withOpacity(0.3),
     );
   }
 
   if (!status.isEnabled) {
     return StatusColors(
-      background: SemanticColors.warning.withOpacity(0.1),
-      foreground: SemanticColors.warning,
-      border: SemanticColors.warning.withOpacity(0.3),
+      background: colors.warning.withOpacity(0.1),
+      foreground: colors.warning,
+      border: colors.warning.withOpacity(0.3),
     );
   }
 
   return StatusColors(
-    background: SemanticColors.success.withOpacity(0.1),
-    foreground: SemanticColors.success,
-    border: SemanticColors.success.withOpacity(0.3),
+    background: colors.success.withOpacity(0.1),
+    foreground: colors.success,
+    border: colors.success.withOpacity(0.3),
   );
 }
 
@@ -348,31 +354,31 @@ IconData _getStatusIcon(IntegrationStatus status) {
   return Icons.check_circle;
 }
 
-StatusColors _getDifficultyColors(String difficulty) {
+StatusColors _getDifficultyColors(ThemeColors colors, String difficulty) {
   switch (difficulty.toLowerCase()) {
     case 'easy':
       return StatusColors(
-        background: SemanticColors.success.withOpacity(0.1),
-        foreground: SemanticColors.success,
-        border: SemanticColors.success.withOpacity(0.3),
+        background: colors.success.withOpacity(0.1),
+        foreground: colors.success,
+        border: colors.success.withOpacity(0.3),
       );
     case 'medium':
       return StatusColors(
-        background: SemanticColors.warning.withOpacity(0.1),
-        foreground: SemanticColors.warning,
-        border: SemanticColors.warning.withOpacity(0.3),
+        background: colors.warning.withOpacity(0.1),
+        foreground: colors.warning,
+        border: colors.warning.withOpacity(0.3),
       );
     case 'hard':
       return StatusColors(
-        background: SemanticColors.error.withOpacity(0.1),
-        foreground: SemanticColors.error,
-        border: SemanticColors.error.withOpacity(0.3),
+        background: colors.error.withOpacity(0.1),
+        foreground: colors.error,
+        border: colors.error.withOpacity(0.3),
       );
     default:
       return StatusColors(
-        background: SemanticColors.onSurfaceVariant.withOpacity(0.1),
-        foreground: SemanticColors.onSurfaceVariant,
-        border: SemanticColors.onSurfaceVariant.withOpacity(0.2),
+        background: colors.onSurfaceVariant.withOpacity(0.1),
+        foreground: colors.onSurfaceVariant,
+        border: colors.onSurfaceVariant.withOpacity(0.2),
       );
   }
 }
@@ -386,31 +392,31 @@ IconData _getDifficultyIcon(String difficulty) {
   }
 }
 
-StatusColors _getHealthColors(IntegrationHealthStatus status) {
+StatusColors _getHealthColors(ThemeColors colors, IntegrationHealthStatus status) {
   switch (status) {
     case IntegrationHealthStatus.healthy:
       return StatusColors(
-        background: SemanticColors.success.withOpacity(0.1),
-        foreground: SemanticColors.success,
-        border: SemanticColors.success.withOpacity(0.3),
+        background: colors.success.withOpacity(0.1),
+        foreground: colors.success,
+        border: colors.success.withOpacity(0.3),
       );
     case IntegrationHealthStatus.warning:
       return StatusColors(
-        background: SemanticColors.warning.withOpacity(0.1),
-        foreground: SemanticColors.warning,
-        border: SemanticColors.warning.withOpacity(0.3),
+        background: colors.warning.withOpacity(0.1),
+        foreground: colors.warning,
+        border: colors.warning.withOpacity(0.3),
       );
     case IntegrationHealthStatus.error:
       return StatusColors(
-        background: SemanticColors.error.withOpacity(0.1),
-        foreground: SemanticColors.error,
-        border: SemanticColors.error.withOpacity(0.3),
+        background: colors.error.withOpacity(0.1),
+        foreground: colors.error,
+        border: colors.error.withOpacity(0.3),
       );
     case IntegrationHealthStatus.unknown:
       return StatusColors(
-        background: SemanticColors.onSurfaceVariant.withOpacity(0.1),
-        foreground: SemanticColors.onSurfaceVariant,
-        border: SemanticColors.onSurfaceVariant.withOpacity(0.2),
+        background: colors.onSurfaceVariant.withOpacity(0.1),
+        foreground: colors.onSurfaceVariant,
+        border: colors.onSurfaceVariant.withOpacity(0.2),
       );
   }
 }

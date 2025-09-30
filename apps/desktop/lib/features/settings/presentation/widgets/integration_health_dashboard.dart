@@ -42,20 +42,21 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
   
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     // Using monitoring service instead of removed healthService
     final healthMonitoringService = ref.watch(monitoring.integrationHealthMonitoringServiceProvider);
     final statistics = healthMonitoringService.getHealthStatistics();
     final currentHealth = healthMonitoringService.currentHealth;
     final integrationsNeedingAttention = healthMonitoringService.getIntegrationsNeedingAttention();
-    
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            SemanticColors.background,
-            SemanticColors.background.withOpacity(0.95),
+            colors.background,
+            colors.background.withOpacity(0.95),
           ],
         ),
       ),
@@ -63,33 +64,33 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          _buildHeader(context, statistics),
-          
+          _buildHeader(context, statistics, colors),
+
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Health Overview Cards
-          _buildHealthOverview(context, statistics),
-          
+          _buildHealthOverview(context, statistics, colors),
+
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Integrations Needing Attention
           if (integrationsNeedingAttention.isNotEmpty)
-            _buildAttentionSection(context, integrationsNeedingAttention),
-          
+            _buildAttentionSection(context, integrationsNeedingAttention, colors),
+
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Integration Health Grid
-          _buildHealthGrid(context, currentHealth),
+          _buildHealthGrid(context, currentHealth, colors),
         ],
       ),
     );
   }
   
-  Widget _buildHeader(BuildContext context, monitoring.HealthStatistics stats) {
+  Widget _buildHeader(BuildContext context, monitoring.HealthStatistics stats, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: SemanticColors.surface.withOpacity(0.9),
+        color: colors.surface.withOpacity(0.9),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         boxShadow: [
           BoxShadow(
@@ -111,21 +112,21 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: _getOverallHealthColor(stats).withOpacity(0.2),
+                    color: _getOverallHealthColor(stats, colors).withOpacity(0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     _getOverallHealthIcon(stats),
-                    color: _getOverallHealthColor(stats),
+                    color: _getOverallHealthColor(stats, colors),
                     size: 24,
                   ),
                 ),
               );
             },
           ),
-          
+
           const SizedBox(width: SpacingTokens.lg),
-          
+
           // Title and summary
           Expanded(
             child: Column(
@@ -139,13 +140,13 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                 Text(
                   stats.overallStatus,
                   style: TextStyles.bodyMedium.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
           ),
-          
+
           // Health percentage
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -155,13 +156,13 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: _getOverallHealthColor(stats),
+                  color: _getOverallHealthColor(stats, colors),
                 ),
               ),
               Text(
                 'Healthy',
                 style: TextStyles.caption.copyWith(
-                  color: SemanticColors.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -171,7 +172,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     );
   }
   
-  Widget _buildHealthOverview(BuildContext context, monitoring.HealthStatistics stats) {
+  Widget _buildHealthOverview(BuildContext context, monitoring.HealthStatistics stats, ThemeColors colors) {
     return Row(
       children: [
         Expanded(
@@ -179,8 +180,9 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             'Healthy',
             stats.healthy,
             Icons.check_circle,
-            SemanticColors.success,
+            colors.success,
             stats.total,
+            colors,
           ),
         ),
         const SizedBox(width: SpacingTokens.md),
@@ -189,8 +191,9 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             'Unhealthy',
             stats.unhealthy,
             Icons.warning,
-            SemanticColors.warning,
+            colors.warning,
             stats.total,
+            colors,
           ),
         ),
         const SizedBox(width: SpacingTokens.md),
@@ -199,8 +202,9 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             'Error',
             stats.error,
             Icons.error,
-            SemanticColors.error,
+            colors.error,
             stats.total,
+            colors,
           ),
         ),
         const SizedBox(width: SpacingTokens.md),
@@ -209,8 +213,9 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             'Disabled',
             stats.disabled,
             Icons.power_settings_new,
-            SemanticColors.onSurfaceVariant,
+            colors.onSurfaceVariant,
             stats.total,
+            colors,
           ),
         ),
       ],
@@ -223,13 +228,14 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     IconData icon,
     Color color,
     int total,
+    ThemeColors colors,
   ) {
     final percentage = total > 0 ? (count / total) * 100 : 0.0;
-    
+
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: SemanticColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: color.withOpacity(0.3),
@@ -246,7 +252,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
               Text(
                 label,
                 style: TextStyles.bodySmall.copyWith(
-                  color: SemanticColors.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -271,7 +277,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
           Text(
             '${percentage.toStringAsFixed(0)}% of total',
             style: TextStyles.caption.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
         ],
@@ -279,14 +285,14 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     );
   }
   
-  Widget _buildAttentionSection(BuildContext context, List<monitoring.IntegrationHealth> integrationsNeedingAttention) {
+  Widget _buildAttentionSection(BuildContext context, List<monitoring.IntegrationHealth> integrationsNeedingAttention, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: SemanticColors.warning.withOpacity(0.1),
+        color: colors.warning.withOpacity(0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: SemanticColors.warning.withOpacity(0.3),
+          color: colors.warning.withOpacity(0.3),
         ),
       ),
       child: Column(
@@ -294,9 +300,9 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.warning,
-                color: SemanticColors.warning,
+                color: colors.warning,
                 size: 20,
               ),
               const SizedBox(width: SpacingTokens.sm),
@@ -304,7 +310,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                 'Integrations Needing Attention (${integrationsNeedingAttention.length})',
                 style: TextStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: SemanticColors.warning,
+                  color: colors.warning,
                 ),
               ),
             ],
@@ -318,7 +324,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                   Icon(
                     _getStatusIconFromHealthStatus(health.status),
                     size: 16,
-                    color: _getStatusColorFromHealthStatus(health.status),
+                    color: _getStatusColorFromHealthStatus(health.status, colors),
                   ),
                   const SizedBox(width: SpacingTokens.sm),
                   Expanded(
@@ -332,7 +338,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                   Text(
                     _getTimeDifference(health.lastChecked),
                     style: TextStyles.caption.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -344,7 +350,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     );
   }
   
-  Widget _buildHealthGrid(BuildContext context, Map<String, monitoring.IntegrationHealth> allHealth) {    
+  Widget _buildHealthGrid(BuildContext context, Map<String, monitoring.IntegrationHealth> allHealth, ThemeColors colors) {
     if (allHealth.isEmpty) {
       return Center(
         child: Column(
@@ -353,27 +359,27 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             Icon(
               Icons.monitor_heart,
               size: 64,
-              color: SemanticColors.onSurfaceVariant.withOpacity(0.5),
+              color: colors.onSurfaceVariant.withOpacity(0.5),
             ),
             const SizedBox(height: SpacingTokens.lg),
             Text(
               'No integrations being monitored',
               style: TextStyles.bodyLarge.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: SpacingTokens.sm),
             Text(
               'Configure integrations to start monitoring their health',
               style: TextStyles.bodyMedium.copyWith(
-                color: SemanticColors.onSurfaceVariant.withOpacity(0.7),
+                color: colors.onSurfaceVariant.withOpacity(0.7),
               ),
             ),
           ],
         ),
       );
     }
-    
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -390,10 +396,10 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
         final integrationId = entry.key;
         final health = entry.value;
         final integration = IntegrationRegistry.getById(integrationId);
-        
+
         if (integration == null) return const SizedBox.shrink();
-        
-        return _buildHealthMonitorCard(integration, health);
+
+        return _buildHealthMonitorCard(integration, health, colors);
       },
     );
   }
@@ -401,6 +407,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
   Widget _buildHealthMonitorCard(
     IntegrationDefinition integration,
     monitoring.IntegrationHealth health,
+    ThemeColors colors,
   ) {
     return AsmblCard(
       child: InkWell(
@@ -418,13 +425,13 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: (integration.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+                      color: (integration.brandColor ?? colors.primary).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Icon(
                       integration.icon,
                       size: 16,
-                      color: integration.brandColor ?? SemanticColors.primary,
+                      color: integration.brandColor ?? colors.primary,
                     ),
                   ),
                   const SizedBox(width: SpacingTokens.sm),
@@ -442,27 +449,27 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                     width: 12,
                     height: 12,
                     decoration: BoxDecoration(
-                      color: _getStatusColorFromHealthStatus(health.status),
+                      color: _getStatusColorFromHealthStatus(health.status, colors),
                       shape: BoxShape.circle,
                     ),
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: SpacingTokens.sm),
-              
+
               // Status message
               Text(
                 health.message ?? 'Status unknown',
                 style: TextStyles.caption.copyWith(
-                  color: SemanticColors.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const Spacer(),
-              
+
               // Details row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -470,17 +477,17 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                   if (health.latencyMs != null)
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.speed,
                           size: 12,
-                          color: SemanticColors.onSurfaceVariant,
+                          color: colors.onSurfaceVariant,
                         ),
                         const SizedBox(width: 2),
                         Text(
                           '${health.latencyMs}ms',
                           style: TextStyles.caption.copyWith(
                             fontSize: 10,
-                            color: SemanticColors.onSurfaceVariant,
+                            color: colors.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -489,7 +496,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                     'Last: ${_getTimeDifference(health.lastChecked)}',
                     style: TextStyles.caption.copyWith(
                       fontSize: 10,
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -514,15 +521,15 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     );
   }
   
-  Color _getOverallHealthColor(monitoring.HealthStatistics stats) {
-    if (stats.error > 0) return SemanticColors.error;
-    if (stats.unhealthy > 0) return SemanticColors.warning;
+  Color _getOverallHealthColor(monitoring.HealthStatistics stats, ThemeColors colors) {
+    if (stats.error > 0) return colors.error;
+    if (stats.unhealthy > 0) return colors.warning;
     if (stats.healthy == stats.total && stats.total > 0) {
-      return SemanticColors.success;
+      return colors.success;
     }
-    return SemanticColors.onSurfaceVariant;
+    return colors.onSurfaceVariant;
   }
-  
+
   IconData _getOverallHealthIcon(monitoring.HealthStatistics stats) {
     if (stats.error > 0) return Icons.error;
     if (stats.unhealthy > 0) return Icons.warning;
@@ -531,19 +538,19 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     }
     return Icons.help_outline;
   }
-  
-  Color _getStatusColor(monitoring.IntegrationHealthStatus status) {
+
+  Color _getStatusColor(monitoring.IntegrationHealthStatus status, ThemeColors colors) {
     switch (status) {
       case monitoring.IntegrationHealthStatus.healthy:
-        return SemanticColors.success;
+        return colors.success;
       case monitoring.IntegrationHealthStatus.unhealthy:
-        return SemanticColors.warning;
+        return colors.warning;
       case monitoring.IntegrationHealthStatus.error:
-        return SemanticColors.error;
+        return colors.error;
       case monitoring.IntegrationHealthStatus.disabled:
-        return SemanticColors.onSurfaceVariant;
+        return colors.onSurfaceVariant;
       case monitoring.IntegrationHealthStatus.notFound:
-        return SemanticColors.onSurfaceVariant;
+        return colors.onSurfaceVariant;
     }
   }
   
@@ -586,18 +593,18 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     return '${diff.inDays}d ago';
   }
 
-  Color _getStatusColorFromHealthStatus(monitoring.IntegrationHealthStatus status) {
+  Color _getStatusColorFromHealthStatus(monitoring.IntegrationHealthStatus status, ThemeColors colors) {
     switch (status) {
       case monitoring.IntegrationHealthStatus.healthy:
-        return SemanticColors.success;
+        return colors.success;
       case monitoring.IntegrationHealthStatus.unhealthy:
-        return SemanticColors.warning;
+        return colors.warning;
       case monitoring.IntegrationHealthStatus.error:
-        return SemanticColors.error;
+        return colors.error;
       case monitoring.IntegrationHealthStatus.disabled:
-        return SemanticColors.onSurfaceVariant;
+        return colors.onSurfaceVariant;
       case monitoring.IntegrationHealthStatus.notFound:
-        return SemanticColors.onSurfaceVariant;
+        return colors.onSurfaceVariant;
     }
   }
 
@@ -629,7 +636,8 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
   });
   
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     return Dialog(
       child: Container(
         width: 600,
@@ -645,12 +653,12 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: (integration.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+                    color: (integration.brandColor ?? colors.primary).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(
                     integration.icon,
-                    color: integration.brandColor ?? SemanticColors.primary,
+                    color: integration.brandColor ?? colors.primary,
                   ),
                 ),
                 const SizedBox(width: SpacingTokens.md),
@@ -665,7 +673,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                       Text(
                         'Health Details',
                         style: TextStyles.bodyMedium.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
+                          color: colors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -677,24 +685,24 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: SpacingTokens.lg),
-            
+
             // Current Status
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: _getStatusColor(health.status).withOpacity(0.1),
+                color: _getStatusColor(health.status, colors).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 border: Border.all(
-                  color: _getStatusColor(health.status).withOpacity(0.3),
+                  color: _getStatusColor(health.status, colors).withOpacity(0.3),
                 ),
               ),
               child: Row(
                 children: [
                   Icon(
                     _getStatusIcon(health.status),
-                    color: _getStatusColor(health.status),
+                    color: _getStatusColor(health.status, colors),
                   ),
                   const SizedBox(width: SpacingTokens.sm),
                   Expanded(
@@ -705,13 +713,13 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                           _getStatusText(health.status),
                           style: TextStyles.bodyLarge.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: _getStatusColor(health.status),
+                            color: _getStatusColor(health.status, colors),
                           ),
                         ),
                         Text(
                           health.message,
                           style: TextStyles.bodyMedium.copyWith(
-                            color: SemanticColors.onSurfaceVariant,
+                            color: colors.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -720,9 +728,9 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: SpacingTokens.lg),
-            
+
             // Details
             if (health.details != null) ...[
               Text(
@@ -739,7 +747,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                     Text(
                       '${entry.key}:',
                       style: TextStyles.bodyMedium.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(width: SpacingTokens.sm),
@@ -752,10 +760,10 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                   ],
                 ),
               )),
-              
+
               const SizedBox(height: SpacingTokens.lg),
             ],
-            
+
             // Actions
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -772,21 +780,21 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
     );
   }
   
-  Color _getStatusColor(monitoring.IntegrationHealthStatus status) {
+  Color _getStatusColor(monitoring.IntegrationHealthStatus status, ThemeColors colors) {
     switch (status) {
       case monitoring.IntegrationHealthStatus.healthy:
-        return SemanticColors.success;
+        return colors.success;
       case monitoring.IntegrationHealthStatus.unhealthy:
-        return SemanticColors.warning;
+        return colors.warning;
       case monitoring.IntegrationHealthStatus.error:
-        return SemanticColors.error;
+        return colors.error;
       case monitoring.IntegrationHealthStatus.disabled:
-        return SemanticColors.onSurfaceVariant;
+        return colors.onSurfaceVariant;
       case monitoring.IntegrationHealthStatus.notFound:
-        return SemanticColors.onSurfaceVariant;
+        return colors.onSurfaceVariant;
     }
   }
-  
+
   IconData _getStatusIcon(monitoring.IntegrationHealthStatus status) {
     switch (status) {
       case monitoring.IntegrationHealthStatus.healthy:
@@ -801,7 +809,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
         return Icons.help_outline;
     }
   }
-  
+
   String _getStatusText(monitoring.IntegrationHealthStatus status) {
     switch (status) {
       case monitoring.IntegrationHealthStatus.healthy:

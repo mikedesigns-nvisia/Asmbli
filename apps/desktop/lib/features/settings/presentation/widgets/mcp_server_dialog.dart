@@ -203,10 +203,11 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       }
     } catch (e) {
       if (mounted) {
+        final colors = ThemeColors(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to save server: $e'),
-            backgroundColor: SemanticColors.error,
+            backgroundColor: colors.error,
           ),
         );
       }
@@ -247,19 +248,21 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
       await mcpService.saveSettings();
       
       if (mounted) {
+        final colors = ThemeColors(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('MCP server "$serverId" added successfully!'),
-            backgroundColor: SemanticColors.success,
+            backgroundColor: colors.success,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
+        final colors = ThemeColors(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to add MCP server: $e'),
-            backgroundColor: SemanticColors.error,
+            backgroundColor: colors.error,
           ),
         );
       }
@@ -268,14 +271,15 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     final theme = Theme.of(context);
     final isEdit = widget.existingConfig != null;
 
     // Show choice between wizard and quick form
-    return _buildDialogChoice(context, isEdit);
+    return _buildDialogChoice(context, isEdit, colors);
   }
 
-  Widget _buildDialogChoice(BuildContext context, bool isEdit) {
+  Widget _buildDialogChoice(BuildContext context, bool isEdit, ThemeColors colors) {
     if (isEdit) {
       // For editing, go straight to the enhanced wizard
       return EnhancedMCPServerWizard(
@@ -294,7 +298,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
         ),
         padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
         decoration: BoxDecoration(
-          color: ThemeColors(context).surface.withOpacity(0.95),
+          color: colors.surface.withOpacity(0.95),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
@@ -306,10 +310,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             // Header
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.integration_instructions,
                   size: 28,
-                  color: SemanticColors.primary,
+                  color: colors.primary,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -323,7 +327,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       Text(
                         'Choose how you want to set up your integration',
                         style: TextStyles.bodyMedium.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
+                          color: colors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -347,13 +351,13 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    SemanticColors.primary.withOpacity(0.1),
-                    SemanticColors.primary.withOpacity(0.05),
+                    colors.primary.withOpacity(0.1),
+                    colors.primary.withOpacity(0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: SemanticColors.primary.withOpacity(0.2),
+                  color: colors.primary.withOpacity(0.2),
                 ),
               ),
               child: Column(
@@ -363,12 +367,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: SemanticColors.primary,
+                          color: colors.primary,
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.auto_fix_high,
-                          color: SemanticColors.surface,
+                          color: colors.surface,
                           size: 20,
                         ),
                       ),
@@ -380,13 +384,13 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                             Text(
                               'Auto-Detect Configuration',
                               style: TextStyles.titleMedium.copyWith(
-                                color: SemanticColors.primary,
+                                color: colors.primary,
                               ),
                             ),
                             Text(
                               'Automatically find and configure installed tools',
                               style: TextStyles.bodyMedium.copyWith(
-                                color: SemanticColors.onSurfaceVariant,
+                                color: colors.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -416,17 +420,17 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             // Divider with "OR" text
             Row(
               children: [
-                const Expanded(child: Divider(color: SemanticColors.border)),
+                Expanded(child: Divider(color: colors.border)),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     'OR',
                     style: TextStyles.labelMedium.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ),
-                const Expanded(child: Divider(color: SemanticColors.border)),
+                Expanded(child: Divider(color: colors.border)),
               ],
             ),
             
@@ -442,11 +446,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     Expanded(
                       child: _buildSetupOption(
                         context,
+                        colors: colors,
                         title: 'Server Library',
                         description: 'Select from curated MCP servers',
                         icon: Icons.library_books,
                         badge: 'Popular',
-                        badgeColor: SemanticColors.primary,
+                        badgeColor: colors.primary,
                         onTap: () {
                           Navigator.of(context).pop();
                           showDialog(
@@ -465,11 +470,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     Expanded(
                       child: _buildSetupOption(
                         context,
+                        colors: colors,
                         title: 'Custom Config',
                         description: 'Add any MCP server with JSON',
                         icon: Icons.code,
                         badge: 'JSON',
-                        badgeColor: SemanticColors.warning,
+                        badgeColor: colors.warning,
                         onTap: () {
                           Navigator.of(context).pop();
                           showDialog(
@@ -493,11 +499,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     Expanded(
                       child: _buildSetupOption(
                         context,
+                        colors: colors,
                         title: 'Guided Setup',
                         description: 'Step-by-step wizard with recommendations',
                         icon: Icons.auto_awesome,
                         badge: 'Recommended',
-                        badgeColor: SemanticColors.success,
+                        badgeColor: colors.success,
                         onTap: () {
                           Navigator.of(context).pop();
                           showDialog(
@@ -507,23 +514,24 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                         },
                       ),
                     ),
-                    
+
                     const SizedBox(width: 16),
-                    
+
                     // Quick Setup Option
                     Expanded(
                       child: _buildSetupOption(
                         context,
+                        colors: colors,
                         title: 'Manual Setup',
                         description: 'Traditional form for advanced users',
                         icon: Icons.settings,
                         badge: 'Advanced',
-                        badgeColor: SemanticColors.warning,
+                        badgeColor: colors.warning,
                         onTap: () {
                           Navigator.of(context).pop();
                           showDialog(
                             context: context,
-                            builder: (context) => _buildTraditionalDialog(context, isEdit),
+                            builder: (context) => _buildTraditionalDialog(context, isEdit, colors),
                           );
                         },
                       ),
@@ -540,6 +548,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
 
   Widget _buildSetupOption(
     BuildContext context, {
+    required ThemeColors colors,
     required String title,
     required String description,
     required IconData icon,
@@ -567,12 +576,12 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: SemanticColors.primary.withOpacity(0.1),
+                  color: colors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Icon(
                   icon,
-                  color: SemanticColors.primary,
+                  color: colors.primary,
                   size: 24,
                 ),
               ),
@@ -590,24 +599,24 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               Text(
                 description,
                 style: TextStyles.caption.copyWith(
-                  color: SemanticColors.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                   height: 1.3,
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               if (badge != null) ...[
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: (badgeColor ?? SemanticColors.primary).withOpacity(0.1),
+                    color: (badgeColor ?? colors.primary).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     badge,
                     style: TextStyles.labelMedium.copyWith(
-                      color: badgeColor ?? SemanticColors.primary,
+                      color: badgeColor ?? colors.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -620,7 +629,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     );
   }
 
-  Widget _buildTraditionalDialog(BuildContext context, bool isEdit) {
+  Widget _buildTraditionalDialog(BuildContext context, bool isEdit, ThemeColors colors) {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -630,7 +639,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           minWidth: 600,
         ),
         decoration: BoxDecoration(
-          color: ThemeColors(context).surface.withOpacity(0.95),
+          color: colors.surface.withOpacity(0.95),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
@@ -651,10 +660,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.storage,
                     size: 24,
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                   ),
                   const SizedBox(width: SpacingTokens.componentSpacing),
                   Expanded(
@@ -685,7 +694,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     children: [
                       // Template Selection (only for new servers)
                       if (!isEdit) ...[
-                        _buildTemplateSelection(),
+                        _buildTemplateSelection(colors),
                         const SizedBox(height: SpacingTokens.sectionSpacing),
                       ],
 
@@ -695,17 +704,17 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       const SizedBox(height: SpacingTokens.sectionSpacing),
 
                       // Command Configuration
-                      _buildCommandConfiguration(),
+                      _buildCommandConfiguration(colors),
 
                       const SizedBox(height: SpacingTokens.sectionSpacing),
 
                       // Environment Variables
-                      _buildEnvironmentVariables(),
+                      _buildEnvironmentVariables(colors),
 
                       const SizedBox(height: SpacingTokens.sectionSpacing),
 
                       // Advanced Options
-                      _buildAdvancedOptions(),
+                      _buildAdvancedOptions(colors),
                     ],
                   ),
                 ),
@@ -748,7 +757,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     );
   }
 
-  Widget _buildTemplateSelection() {
+  Widget _buildTemplateSelection(ThemeColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -757,7 +766,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           style: TextStyles.cardTitle,
         ),
         const SizedBox(height: SpacingTokens.componentSpacing),
-        
+
         // Template grid
         Wrap(
           spacing: 12,
@@ -776,13 +785,13 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 ),
                 padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
                 decoration: BoxDecoration(
-                  color: isSelected 
-                    ? SemanticColors.primary.withOpacity(0.1)
+                  color: isSelected
+                    ? colors.primary.withOpacity(0.1)
                     : Theme.of(context).colorScheme.surface.withOpacity(0.8),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: isSelected 
-                      ? SemanticColors.primary
+                    color: isSelected
+                      ? colors.primary
                       : Theme.of(context).colorScheme.outline.withOpacity(0.3),
                   ),
                 ),
@@ -791,17 +800,17 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     Icon(
                       template.icon,
                       size: 32,
-                      color: isSelected 
-                        ? SemanticColors.primary
+                      color: isSelected
+                        ? colors.primary
                         : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       template.name,
                       style: TextStyles.labelMedium.copyWith(
-                        color: isSelected 
-                          ? SemanticColors.primary
-                          : SemanticColors.onSurface,
+                        color: isSelected
+                          ? colors.primary
+                          : colors.onSurface,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -809,7 +818,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     Text(
                       template.category,
                       style: TextStyles.labelMedium.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -874,7 +883,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     );
   }
 
-  Widget _buildCommandConfiguration() {
+  Widget _buildCommandConfiguration(ThemeColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -959,7 +968,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       },
                       icon: const Icon(Icons.remove_circle, size: 20),
                       style: IconButton.styleFrom(
-                        foregroundColor: SemanticColors.error,
+                        foregroundColor: colors.error,
                       ),
                     ),
                   ],
@@ -972,7 +981,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     );
   }
 
-  Widget _buildEnvironmentVariables() {
+  Widget _buildEnvironmentVariables(ThemeColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1017,7 +1026,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 Text(
                   'No environment variables configured',
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -1083,7 +1092,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                     },
                     icon: const Icon(Icons.delete, size: 16),
                     style: IconButton.styleFrom(
-                      foregroundColor: SemanticColors.error,
+                      foregroundColor: colors.error,
                       minimumSize: const Size(32, 32),
                     ),
                   ),
@@ -1095,7 +1104,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
     );
   }
 
-  Widget _buildAdvancedOptions() {
+  Widget _buildAdvancedOptions(ThemeColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1125,7 +1134,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                   Text(
                     'Server will be available for agent deployment when enabled',
                     style: TextStyles.caption.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -1140,6 +1149,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
   void _showAddEnvVarDialog() {
     final keyController = TextEditingController();
     final valueController = TextEditingController();
+    final colors = ThemeColors(context);
 
     showDialog(
       context: context,
@@ -1152,10 +1162,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             minWidth: 400,
           ),
           decoration: BoxDecoration(
-            color: ThemeColors(context).surface.withOpacity(0.95),
+            color: colors.surface.withOpacity(0.95),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: SemanticColors.border.withOpacity(0.5),
+              color: colors.border.withOpacity(0.5),
             ),
           ),
           child: Column(
@@ -1167,7 +1177,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: SemanticColors.border.withOpacity(0.3),
+                      color: colors.border.withOpacity(0.3),
                     ),
                   ),
                 ),
@@ -1183,7 +1193,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close),
                       style: IconButton.styleFrom(
-                        foregroundColor: SemanticColors.onSurfaceVariant,
+                        foregroundColor: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -1228,7 +1238,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
-                      color: SemanticColors.border.withOpacity(0.3),
+                      color: colors.border.withOpacity(0.3),
                     ),
                   ),
                 ),
@@ -1264,6 +1274,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
 
   void _editEnvVar(String key, String currentValue) {
     final valueController = TextEditingController(text: currentValue);
+    final colors = ThemeColors(context);
 
     showDialog(
       context: context,
@@ -1276,10 +1287,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             minWidth: 400,
           ),
           decoration: BoxDecoration(
-            color: ThemeColors(context).surface.withOpacity(0.95),
+            color: colors.surface.withOpacity(0.95),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: SemanticColors.border.withOpacity(0.5),
+              color: colors.border.withOpacity(0.5),
             ),
           ),
           child: Column(
@@ -1291,7 +1302,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: SemanticColors.border.withOpacity(0.3),
+                      color: colors.border.withOpacity(0.3),
                     ),
                   ),
                 ),
@@ -1307,7 +1318,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close),
                       style: IconButton.styleFrom(
-                        foregroundColor: SemanticColors.onSurfaceVariant,
+                        foregroundColor: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -1337,7 +1348,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
-                      color: SemanticColors.border.withOpacity(0.3),
+                      color: colors.border.withOpacity(0.3),
                     ),
                   ),
                 ),

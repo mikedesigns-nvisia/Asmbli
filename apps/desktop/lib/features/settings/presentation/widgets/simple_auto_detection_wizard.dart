@@ -37,15 +37,16 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 900,
         height: 600,
         decoration: BoxDecoration(
-          color: SemanticColors.surface,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: SemanticColors.border),
+          border: Border.all(color: colors.border),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -56,25 +57,25 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
         ),
         child: Row(
           children: [
-            _buildSidebar(),
-            Expanded(child: _buildMainContent()),
+            _buildSidebar(colors),
+            Expanded(child: _buildMainContent(colors)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSidebar() {
+  Widget _buildSidebar(ThemeColors colors) {
     return Container(
       width: 280,
-      decoration: const BoxDecoration(
-        color: SemanticColors.background,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: colors.background,
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(16),
           bottomLeft: Radius.circular(16),
         ),
         border: Border(
-          right: BorderSide(color: SemanticColors.border),
+          right: BorderSide(color: colors.border),
         ),
       ),
       child: Column(
@@ -88,12 +89,12 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: SemanticColors.primary.withOpacity(0.1),
+                    color: colors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.auto_fix_high,
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                     size: 20,
                   ),
                 ),
@@ -120,15 +121,15 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
                 Text(
                   'Progress',
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildProgressStep('Overview', 'overview', Icons.info_outline),
-                _buildProgressStep('Categories', 'categories', Icons.category_outlined),
-                _buildProgressStep('Detection', 'detecting', Icons.search),
-                _buildProgressStep('Results', 'results', Icons.check_circle_outline),
+                _buildProgressStep(colors, 'Overview', 'overview', Icons.info_outline),
+                _buildProgressStep(colors, 'Categories', 'categories', Icons.category_outlined),
+                _buildProgressStep(colors, 'Detection', 'detecting', Icons.search),
+                _buildProgressStep(colors, 'Results', 'results', Icons.check_circle_outline),
               ],
             ),
           ),
@@ -145,13 +146,13 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
                   Text(
                     'Categories',
                     style: TextStyles.bodySmall.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ..._categories.entries.map((entry) => 
-                    _buildCategoryFilter(entry.key, entry.value)
+                  ..._categories.entries.map((entry) =>
+                    _buildCategoryFilter(colors, entry.key, entry.value)
                   ),
                 ],
               ),
@@ -210,21 +211,21 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     );
   }
 
-  Widget _buildMainContent() {
+  Widget _buildMainContent(ThemeColors colors) {
     return Column(
       children: [
-        _buildMainHeader(),
-        Expanded(child: _buildStepContent()),
-        _buildMainFooter(),
+        _buildMainHeader(colors),
+        Expanded(child: _buildStepContent(colors)),
+        _buildMainFooter(colors),
       ],
     );
   }
   
-  Widget _buildMainHeader() {
+  Widget _buildMainHeader(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: SemanticColors.border)),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: colors.border)),
       ),
       child: Row(
         children: [
@@ -240,7 +241,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
                 Text(
                   _getStepDescription(),
                   style: TextStyles.bodyMedium.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -248,9 +249,9 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           ),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(
+            icon: Icon(
               Icons.close,
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
         ],
@@ -258,22 +259,22 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     );
   }
   
-  Widget _buildStepContent() {
+  Widget _buildStepContent(ThemeColors colors) {
     switch (_currentStep) {
       case 'overview':
-        return _buildOverviewStep();
+        return _buildOverviewStep(colors);
       case 'categories':
-        return _buildCategoriesStep();
+        return _buildCategoriesStep(colors);
       case 'detecting':
-        return _buildDetectingStep();
+        return _buildDetectingStep(colors);
       case 'results':
         return _buildResultsStep();
       default:
-        return _buildOverviewStep();
+        return _buildOverviewStep(colors);
     }
   }
 
-  Widget _buildOverviewStep() {
+  Widget _buildOverviewStep(ThemeColors colors) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -282,13 +283,13 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.auto_fix_high,
               size: 48,
-              color: SemanticColors.primary,
+              color: colors.primary,
             ),
           ),
           const SizedBox(height: 32),
@@ -301,7 +302,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           Text(
             'We\'ll scan your system for installed development tools, browsers, and productivity apps, then automatically configure the ones we find. No manual setup required.',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -313,6 +314,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
             children: [
               Expanded(
                 child: _buildFeatureCard(
+                  colors,
                   Icons.speed,
                   'Fast Detection',
                   'Scans your entire system in seconds',
@@ -321,6 +323,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
               const SizedBox(width: 16),
               Expanded(
                 child: _buildFeatureCard(
+                  colors,
                   Icons.shield_outlined,
                   'Safe & Secure',
                   'Only reads installation paths, no private data',
@@ -329,6 +332,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
               const SizedBox(width: 16),
               Expanded(
                 child: _buildFeatureCard(
+                  colors,
                   Icons.widgets_outlined,
                   'Smart Config',
                   'Automatically configures found tools',
@@ -341,7 +345,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     );
   }
   
-  Widget _buildCategoriesStep() {
+  Widget _buildCategoriesStep(ThemeColors colors) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -358,7 +362,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           Text(
             'Choose the categories you want us to scan for, or select all to detect everything.',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -373,7 +377,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
             crossAxisSpacing: 16,
             childAspectRatio: 1.5,
             children: _categories.entries.map((entry) {
-              return _buildCategoryCard(entry.key, entry.value);
+              return _buildCategoryCard(colors, entry.key, entry.value);
             }).toList(),
           ),
         ],
@@ -381,18 +385,18 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     );
   }
 
-  Widget _buildDetectingStep() {
+  Widget _buildDetectingStep(ThemeColors colors) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
+          SizedBox(
             width: 80,
             height: 80,
             child: CircularProgressIndicator(
               strokeWidth: 6,
-              valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
             ),
           ),
           const SizedBox(height: 32),
@@ -404,7 +408,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           Text(
             'Detecting installed tools and applications...',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 24),
@@ -413,15 +417,15 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: SemanticColors.background,
+              color: colors.background,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: SemanticColors.border),
+              border: Border.all(color: colors.border),
             ),
             child: Column(
               children: [
-                _buildDetectionProgress('Development Tools', true),
-                _buildDetectionProgress('Web Browsers', true),
-                _buildDetectionProgress('Productivity Apps', false),
+                _buildDetectionProgress(colors, 'Development Tools', true),
+                _buildDetectionProgress(colors, 'Web Browsers', true),
+                _buildDetectionProgress(colors, 'Productivity Apps', false),
               ],
             ),
           ),
@@ -484,9 +488,10 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
               ),
               itemCount: sortedDetections.length,
               itemBuilder: (context, index) {
+                final colors = ThemeColors(context);
                 final entry = sortedDetections[index];
                 final isFound = entry.value;
-                return _buildResultCard(entry.key, isFound);
+                return _buildResultCard(colors, entry.key, isFound);
               },
             ),
           ),
@@ -495,11 +500,11 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     );
   }
 
-  Widget _buildMainFooter() {
+  Widget _buildMainFooter(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: SemanticColors.border)),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: colors.border)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -627,10 +632,10 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     return filtered;
   }
   
-  Widget _buildProgressStep(String title, String step, IconData icon) {
+  Widget _buildProgressStep(ThemeColors colors, String title, String step, IconData icon) {
     final isActive = _currentStep == step;
     final isCompleted = _getStepIndex(_currentStep) > _getStepIndex(step);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -639,28 +644,28 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: isCompleted 
+              color: isCompleted
                 ? Colors.green
-                : isActive 
-                  ? SemanticColors.primary
-                  : SemanticColors.border,
+                : isActive
+                  ? colors.primary
+                  : colors.border,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               isCompleted ? Icons.check : icon,
               size: 12,
-              color: isCompleted || isActive 
-                ? Colors.white 
-                : SemanticColors.onSurfaceVariant,
+              color: isCompleted || isActive
+                ? Colors.white
+                : colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(width: 12),
           Text(
             title,
             style: TextStyles.bodySmall.copyWith(
-              color: isActive 
-                ? SemanticColors.onSurface
-                : SemanticColors.onSurfaceVariant,
+              color: isActive
+                ? colors.onSurface
+                : colors.onSurfaceVariant,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
@@ -679,7 +684,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     }
   }
   
-  Widget _buildCategoryFilter(String key, String label) {
+  Widget _buildCategoryFilter(ThemeColors colors, String key, String label) {
     final isSelected = _selectedCategory == key;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -689,8 +694,8 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
-            color: isSelected 
-              ? SemanticColors.primary.withOpacity(0.1)
+            color: isSelected
+              ? colors.primary.withOpacity(0.1)
               : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
@@ -699,17 +704,17 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
               Icon(
                 _getCategoryIcon(key),
                 size: 16,
-                color: isSelected 
-                  ? SemanticColors.primary
-                  : SemanticColors.onSurfaceVariant,
+                color: isSelected
+                  ? colors.primary
+                  : colors.onSurfaceVariant,
               ),
               const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyles.bodySmall.copyWith(
-                  color: isSelected 
-                    ? SemanticColors.primary
-                    : SemanticColors.onSurfaceVariant,
+                  color: isSelected
+                    ? colors.primary
+                    : colors.onSurfaceVariant,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
@@ -730,19 +735,19 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     }
   }
   
-  Widget _buildFeatureCard(IconData icon, String title, String description) {
+  Widget _buildFeatureCard(ThemeColors colors, IconData icon, String title, String description) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         children: [
           Icon(
             icon,
-            color: SemanticColors.primary,
+            color: colors.primary,
             size: 24,
           ),
           const SizedBox(height: 8),
@@ -757,7 +762,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           Text(
             description,
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -766,7 +771,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     );
   }
   
-  Widget _buildCategoryCard(String key, String label) {
+  Widget _buildCategoryCard(ThemeColors colors, String key, String label) {
     final isSelected = _selectedCategory == key;
     return InkWell(
       onTap: () => setState(() => _selectedCategory = key),
@@ -774,14 +779,14 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected 
-            ? SemanticColors.primary.withOpacity(0.1)
-            : SemanticColors.background,
+          color: isSelected
+            ? colors.primary.withOpacity(0.1)
+            : colors.background,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected 
-              ? SemanticColors.primary
-              : SemanticColors.border,
+            color: isSelected
+              ? colors.primary
+              : colors.border,
           ),
         ),
         child: Column(
@@ -789,18 +794,18 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           children: [
             Icon(
               _getCategoryIcon(key),
-              color: isSelected 
-                ? SemanticColors.primary
-                : SemanticColors.onSurfaceVariant,
+              color: isSelected
+                ? colors.primary
+                : colors.onSurfaceVariant,
               size: 32,
             ),
             const SizedBox(height: 8),
             Text(
               label,
               style: TextStyles.bodyMedium.copyWith(
-                color: isSelected 
-                  ? SemanticColors.primary
-                  : SemanticColors.onSurface,
+                color: isSelected
+                  ? colors.primary
+                  : colors.onSurface,
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
@@ -811,7 +816,7 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     );
   }
   
-  Widget _buildDetectionProgress(String label, bool isComplete) {
+  Widget _buildDetectionProgress(ThemeColors colors, String label, bool isComplete) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -820,12 +825,12 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
             width: 16,
             height: 16,
             decoration: BoxDecoration(
-              color: isComplete 
+              color: isComplete
                 ? Colors.green
-                : SemanticColors.primary.withOpacity(0.3),
+                : colors.primary.withOpacity(0.3),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: isComplete 
+            child: isComplete
               ? const Icon(Icons.check, size: 10, color: Colors.white)
               : const SizedBox(),
           ),
@@ -833,19 +838,19 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
           Text(
             label,
             style: TextStyles.bodySmall.copyWith(
-              color: isComplete 
+              color: isComplete
                 ? Colors.green.shade700
-                : SemanticColors.onSurfaceVariant,
+                : colors.onSurfaceVariant,
             ),
           ),
           const Spacer(),
           if (!isComplete)
-            const SizedBox(
+            SizedBox(
               width: 12,
               height: 12,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
+                valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
               ),
             ),
         ],
@@ -853,18 +858,18 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
     );
   }
   
-  Widget _buildResultCard(String name, bool isFound) {
+  Widget _buildResultCard(ThemeColors colors, String name, bool isFound) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isFound 
+        color: isFound
           ? Colors.green.withOpacity(0.05)
-          : SemanticColors.background,
+          : colors.background,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isFound 
+          color: isFound
             ? Colors.green.withOpacity(0.3)
-            : SemanticColors.border,
+            : colors.border,
         ),
       ),
       child: Row(
@@ -889,9 +894,9 @@ class _SimpleAutoDetectionWizardState extends ConsumerState<SimpleAutoDetectionW
             child: Text(
               name,
               style: TextStyles.bodySmall.copyWith(
-                color: isFound 
-                  ? SemanticColors.onSurface
-                  : SemanticColors.onSurfaceVariant,
+                color: isFound
+                  ? colors.onSurface
+                  : colors.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),
