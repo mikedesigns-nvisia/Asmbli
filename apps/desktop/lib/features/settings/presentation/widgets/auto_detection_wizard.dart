@@ -27,37 +27,39 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Dialog(
       child: Container(
         width: 600,
         height: 500,
         decoration: BoxDecoration(
-          color: SemanticColors.surface,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
-          border: Border.all(color: SemanticColors.border),
+          border: Border.all(color: colors.border),
         ),
         child: Column(
           children: [
-            _buildHeader(),
-            Expanded(child: _buildContent()),
-            _buildFooter(),
+            _buildHeader(colors),
+            Expanded(child: _buildContent(colors)),
+            _buildFooter(colors),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.headerPadding),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: SemanticColors.border)),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: colors.border)),
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.auto_fix_high,
-            color: SemanticColors.primary,
+            color: colors.primary,
             size: 24,
           ),
           const SizedBox(width: SpacingTokens.md),
@@ -70,24 +72,24 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
           const Spacer(),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.close, color: SemanticColors.onSurfaceVariant),
+            icon: Icon(Icons.close, color: colors.onSurfaceVariant),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(ThemeColors colors) {
     if (_currentStep == 'ready') {
-      return _buildReadyStep();
+      return _buildReadyStep(colors);
     } else if (_currentStep == 'detecting') {
-      return _buildDetectingStep();
+      return _buildDetectingStep(colors);
     } else {
-      return _buildResultsStep();
+      return _buildResultsStep(colors);
     }
   }
 
-  Widget _buildReadyStep() {
+  Widget _buildReadyStep(ThemeColors colors) {
     return Padding(
       padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
@@ -96,13 +98,13 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
           Container(
             padding: const EdgeInsets.all(SpacingTokens.xxl),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.search,
               size: 64,
-              color: SemanticColors.primary,
+              color: colors.primary,
             ),
           ),
           const SizedBox(height: SpacingTokens.xxl),
@@ -117,18 +119,18 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
                 ? 'We\'ll automatically detect and configure ${widget.specificIntegration} on your system.'
                 : 'We\'ll scan your system for installed tools and services, then automatically configure the ones we find.',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: SpacingTokens.xxl),
-          _buildDetectionPreview(),
+          _buildDetectionPreview(colors),
         ],
       ),
     );
   }
 
-  Widget _buildDetectionPreview() {
+  Widget _buildDetectionPreview(ThemeColors colors) {
     final categories = widget.specificIntegration != null
         ? [widget.specificIntegration!]
         : [
@@ -146,9 +148,9 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,13 +169,13 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
                 vertical: SpacingTokens.xs,
               ),
               decoration: BoxDecoration(
-                color: SemanticColors.primary.withOpacity(0.1),
+                color: colors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Text(
                 category,
                 style: TextStyles.labelMedium.copyWith(
-                  color: SemanticColors.primary,
+                  color: colors.primary,
                 ),
               ),
             )).toList(),
@@ -183,18 +185,18 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
     );
   }
 
-  Widget _buildDetectingStep() {
+  Widget _buildDetectingStep(ThemeColors colors) {
     return Padding(
       padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
+          SizedBox(
             width: 80,
             height: 80,
             child: CircularProgressIndicator(
               strokeWidth: 6,
-              valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
             ),
           ),
           const SizedBox(height: SpacingTokens.xxl),
@@ -206,20 +208,20 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
           Text(
             'Detecting installed tools and services',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: SpacingTokens.xxl),
-          const LinearProgressIndicator(
-            backgroundColor: SemanticColors.border,
-            valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
+          LinearProgressIndicator(
+            backgroundColor: colors.border,
+            valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildResultsStep() {
+  Widget _buildResultsStep(ThemeColors colors) {
     if (_detectionResult == null) return const SizedBox();
 
     // Simplified for demo - extract from detection result
@@ -254,30 +256,30 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
             margin: const EdgeInsets.only(bottom: SpacingTokens.lg),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatCard('Ready to Use', foundIntegrations.length, Icons.check_circle),
-                _buildStatCard('Needs Setup', needsSetupIntegrations.length, Icons.settings),
-                _buildStatCard('Confidence', '85%', Icons.psychology),
+                _buildStatCard(colors, 'Ready to Use', foundIntegrations.length, Icons.check_circle),
+                _buildStatCard(colors, 'Needs Setup', needsSetupIntegrations.length, Icons.settings),
+                _buildStatCard(colors, 'Confidence', '85%', Icons.psychology),
               ],
             ),
           ),
-          
+
           // Results list
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   if (foundIntegrations.isNotEmpty) ...[
-                    _buildResultSection('Ready to Use', foundIntegrations, Icons.check_circle, Colors.green),
+                    _buildResultSection(colors, 'Ready to Use', foundIntegrations, Icons.check_circle, Colors.green),
                     const SizedBox(height: SpacingTokens.lg),
                   ],
                   if (needsSetupIntegrations.isNotEmpty) ...[
-                    _buildResultSection('Needs Configuration', needsSetupIntegrations, Icons.settings, Colors.orange),
+                    _buildResultSection(colors, 'Needs Configuration', needsSetupIntegrations, Icons.settings, Colors.orange),
                   ],
                 ],
               ),
@@ -288,28 +290,28 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
     );
   }
 
-  Widget _buildStatCard(String label, dynamic value, IconData icon) {
+  Widget _buildStatCard(ThemeColors colors, String label, dynamic value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: SemanticColors.primary, size: 28),
+        Icon(icon, color: colors.primary, size: 28),
         const SizedBox(height: SpacingTokens.xs),
         Text(
           value.toString(),
           style: TextStyles.headlineSmall.copyWith(
-            color: SemanticColors.primary,
+            color: colors.primary,
           ),
         ),
         Text(
           label,
           style: TextStyles.labelMedium.copyWith(
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildResultSection(String title, List<IntegrationDetection> integrations, IconData icon, Color color) {
+  Widget _buildResultSection(ThemeColors colors, String title, List<IntegrationDetection> integrations, IconData icon, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -321,19 +323,19 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
           ],
         ),
         const SizedBox(height: SpacingTokens.md),
-        ...integrations.map((integration) => _buildIntegrationCard(integration)),
+        ...integrations.map((integration) => _buildIntegrationCard(colors, integration)),
       ],
     );
   }
 
-  Widget _buildIntegrationCard(IntegrationDetection integration) {
+  Widget _buildIntegrationCard(ThemeColors colors, IntegrationDetection integration) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: SemanticColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
@@ -355,7 +357,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
                   Text(
                     integration.path!,
                     style: TextStyles.bodySmall.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
               ],
@@ -390,11 +392,11 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
     }
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: SemanticColors.border)),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: colors.border)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,

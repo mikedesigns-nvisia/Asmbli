@@ -10,32 +10,33 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ThemeColors(context);
     final dependencyService = ref.watch(integrationDependencyServiceProvider);
     final recommendations = dependencyService.getRecommendations();
-    
+
     if (recommendations.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(colors);
     }
-    
+
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(),
+          _buildHeader(colors),
           const SizedBox(height: SpacingTokens.lg),
-          ...recommendations.take(5).map((rec) => _buildRecommendationItem(context, ref, rec)),
+          ...recommendations.take(5).map((rec) => _buildRecommendationItem(context, ref, rec, colors)),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(ThemeColors colors) {
     return Row(
       children: [
-        const Icon(
+        Icon(
           Icons.lightbulb_outline,
-          color: SemanticColors.primary,
+          color: colors.primary,
           size: 18,
         ),
         const SizedBox(width: SpacingTokens.xs),
@@ -49,15 +50,15 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: SemanticColors.primary.withOpacity(0.1),
+            color: colors.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(4),
           ),
-          child: const Text(
+          child: Text(
             'SUGGESTIONS',
             style: TextStyle(
               fontSize: 8,
               fontWeight: FontWeight.w600,
-              color: SemanticColors.primary,
+              color: colors.primary,
             ),
           ),
         ),
@@ -66,21 +67,22 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
   }
 
   Widget _buildRecommendationItem(
-    BuildContext context, 
-    WidgetRef ref, 
+    BuildContext context,
+    WidgetRef ref,
     IntegrationRecommendation recommendation,
+    ThemeColors colors,
   ) {
     final integration = IntegrationRegistry.getById(recommendation.integrationId);
     if (integration == null) return const SizedBox.shrink();
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: SemanticColors.border,
+          color: colors.border,
           width: 1,
         ),
       ),
@@ -89,7 +91,7 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
         children: [
           Row(
             children: [
-              _buildIntegrationIcon(integration),
+              _buildIntegrationIcon(integration, colors),
               const SizedBox(width: SpacingTokens.sm),
               Expanded(
                 child: Column(
@@ -104,14 +106,14 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(width: SpacingTokens.xs),
-                        _buildPriorityBadge(recommendation.priority),
+                        _buildPriorityBadge(recommendation.priority, colors),
                       ],
                     ),
                     const SizedBox(height: SpacingTokens.xs),
                     Text(
                       recommendation.reason,
                       style: TextStyles.bodySmall.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -122,36 +124,36 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
           ),
           if (recommendation.requiredFirst.isNotEmpty) ...[
             const SizedBox(height: SpacingTokens.sm),
-            _buildRequirementsBanner(recommendation.requiredFirst),
+            _buildRequirementsBanner(recommendation.requiredFirst, colors),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildIntegrationIcon(IntegrationDefinition integration) {
+  Widget _buildIntegrationIcon(IntegrationDefinition integration, ThemeColors colors) {
     return Container(
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        color: SemanticColors.primary.withOpacity(0.1),
+        color: colors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Icon(
         _getIntegrationIcon(integration),
-        color: SemanticColors.primary,
+        color: colors.primary,
         size: 16,
       ),
     );
   }
 
-  Widget _buildPriorityBadge(int priority) {
-    final color = priority >= 3 
-      ? SemanticColors.success 
-      : priority >= 2 
-        ? SemanticColors.primary 
-        : SemanticColors.onSurfaceVariant;
-        
+  Widget _buildPriorityBadge(int priority, ThemeColors colors) {
+    final color = priority >= 3
+      ? colors.success
+      : priority >= 2
+        ? colors.primary
+        : colors.onSurfaceVariant;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       decoration: BoxDecoration(
@@ -180,31 +182,31 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildRequirementsBanner(List<String> requiredFirst) {
+  Widget _buildRequirementsBanner(List<String> requiredFirst, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.xs),
       decoration: BoxDecoration(
-        color: SemanticColors.warning.withOpacity(0.1),
+        color: colors.warning.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: SemanticColors.warning.withOpacity(0.3),
+          color: colors.warning.withOpacity(0.3),
           width: 1,
         ),
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.info_outline,
-            color: SemanticColors.warning,
+            color: colors.warning,
             size: 12,
           ),
           const SizedBox(width: SpacingTokens.xs),
           Expanded(
             child: Text(
               'Requires: ${requiredFirst.map((id) => IntegrationRegistry.getById(id)?.name ?? id).join(', ')}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 10,
-                color: SemanticColors.warning,
+                color: colors.warning,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -214,14 +216,14 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(ThemeColors colors) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         children: [
-          const Icon(
+          Icon(
             Icons.done_all,
-            color: SemanticColors.success,
+            color: colors.success,
             size: 32,
           ),
           const SizedBox(height: SpacingTokens.sm),
@@ -229,14 +231,14 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
             'No Recommendations',
             style: TextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w600,
-              color: SemanticColors.success,
+              color: colors.success,
             ),
           ),
           const SizedBox(height: SpacingTokens.xs),
           Text(
             'Your integration setup is optimized!',
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -267,10 +269,11 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
     }
     
     // TODO: Implement actual installation logic
+    final colors = ThemeColors(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Installing ${recommendation.integrationId}...'),
-        backgroundColor: SemanticColors.primary,
+        backgroundColor: colors.primary,
       ),
     );
   }

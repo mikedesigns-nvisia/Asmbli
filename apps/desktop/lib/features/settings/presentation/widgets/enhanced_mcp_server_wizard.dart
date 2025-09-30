@@ -81,6 +81,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     final theme = Theme.of(context);
     final isEdit = widget.existingConfig != null;
 
@@ -92,8 +93,8 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              SemanticColors.background,
-              SemanticColors.background.withOpacity(0.95),
+              colors.background,
+              colors.background.withOpacity(0.95),
             ],
           ),
         ),
@@ -102,8 +103,8 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
           body: Column(
             children: [
               // Header with progress
-              _buildHeader(context, isEdit),
-              
+              _buildHeader(context, isEdit, colors),
+
               // Content
               Expanded(
                 child: PageView(
@@ -111,15 +112,15 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                   physics: const NeverScrollableScrollPhysics(),
                   onPageChanged: (index) => setState(() => _currentStep = index),
                   children: [
-                    _buildTemplateBrowserStep(context),
+                    _buildTemplateBrowserStep(context, colors),
                     _buildConfigurationStep(context),
-                    _buildTestingStep(context),
+                    _buildTestingStep(context, colors),
                   ],
                 ),
               ),
-              
+
               // Navigation
-              _buildNavigation(context, isEdit),
+              _buildNavigation(context, isEdit, colors),
             ],
           ),
         ),
@@ -127,11 +128,11 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     );
   }
 
-  Widget _buildHeader(BuildContext context, bool isEdit) {
+  Widget _buildHeader(BuildContext context, bool isEdit, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.9),
+        color: colors.surface.withOpacity(0.9),
         border: Border(
           bottom: BorderSide(
             color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
@@ -143,10 +144,10 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.integration_instructions,
                 size: 28,
-                color: SemanticColors.primary,
+                color: colors.primary,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -156,7 +157,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                     Text(
                       isEdit ? 'Edit Integration' : 'Add Integration',
                       style: TextStyle(
-                        
+
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -181,17 +182,17 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Progress indicator
-          _buildProgressIndicator(context),
+          _buildProgressIndicator(context, colors),
         ],
       ),
     );
   }
 
-  Widget _buildProgressIndicator(BuildContext context) {
+  Widget _buildProgressIndicator(BuildContext context, ThemeColors colors) {
     return Row(
       children: _steps.asMap().entries.map((entry) {
         final index = entry.key;
@@ -199,7 +200,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
         final isActive = index == _currentStep;
         final isCompleted = index < _currentStep;
         final isAccessible = index <= _currentStep || (_selectedTemplate != null && index == 1);
-        
+
         return Expanded(
           child: Row(
             children: [
@@ -210,27 +211,27 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: isCompleted 
-                      ? SemanticColors.success
-                      : isActive 
-                        ? SemanticColors.primary 
+                    color: isCompleted
+                      ? colors.success
+                      : isActive
+                        ? colors.primary
                         : Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
-                    isCompleted 
+                    isCompleted
                       ? Icons.check
                       : step.icon,
-                    color: isCompleted || isActive 
-                      ? Colors.white 
+                    color: isCompleted || isActive
+                      ? Colors.white
                       : Theme.of(context).colorScheme.onSurfaceVariant,
                     size: 16,
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: 8),
-              
+
               // Step info
               Expanded(
                 child: Column(
@@ -239,11 +240,11 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                     Text(
                       step.title,
                       style: TextStyle(
-                        
+
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: isActive 
-                          ? SemanticColors.primary
+                        color: isActive
+                          ? colors.primary
                           : Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
@@ -259,15 +260,15 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                   ],
                 ),
               ),
-              
+
               // Connector line
               if (index < _steps.length - 1) ...[
                 const SizedBox(width: 8),
                 Expanded(
                   child: Container(
                     height: 2,
-                    color: isCompleted 
-                      ? SemanticColors.success.withOpacity(0.5)
+                    color: isCompleted
+                      ? colors.success.withOpacity(0.5)
                       : Theme.of(context).colorScheme.outline.withOpacity(0.3),
                   ),
                 ),
@@ -279,7 +280,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     );
   }
 
-  Widget _buildTemplateBrowserStep(BuildContext context) {
+  Widget _buildTemplateBrowserStep(BuildContext context, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -291,26 +292,26 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  SemanticColors.primary.withOpacity(0.1),
-                  SemanticColors.primary.withOpacity(0.05),
+                  colors.primary.withOpacity(0.1),
+                  colors.primary.withOpacity(0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: SemanticColors.primary.withOpacity(0.2),
+                color: colors.primary.withOpacity(0.2),
               ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.auto_fix_high, color: SemanticColors.primary),
+                Icon(Icons.auto_fix_high, color: colors.primary),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Auto-Detect All Integrations',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: SemanticColors.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -327,28 +328,28 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Divider with "OR CHOOSE MANUALLY" text
           Row(
             children: [
-              const Expanded(child: Divider(color: SemanticColors.border)),
+              Expanded(child: Divider(color: colors.border)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'OR CHOOSE MANUALLY',
                   style: TextStyles.labelMedium.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                 ),
               ),
-              const Expanded(child: Divider(color: SemanticColors.border)),
+              Expanded(child: Divider(color: colors.border)),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Template browser
           Expanded(
             child: EnhancedTemplateBrowser(
@@ -416,7 +417,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     );
   }
 
-  Widget _buildTestingStep(BuildContext context) {
+  Widget _buildTestingStep(BuildContext context, ThemeColors colors) {
     if (_selectedTemplate == null) {
       return const Center(
         child: Text('No template selected'),
@@ -438,9 +439,9 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
               setState(() => _isLoading = false);
             },
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Summary card
           if (!_isLoading && _selectedTemplate != null) ...[
             Container(
@@ -458,14 +459,14 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                   Text(
                     'Configuration Summary',
                     style: TextStyle(
-                      
+
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   // Template info
                   Row(
                     children: [
@@ -473,12 +474,12 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: (_selectedTemplate!.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+                          color: (_selectedTemplate!.brandColor ?? colors.primary).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
                           _selectedTemplate!.icon,
-                          color: _selectedTemplate!.brandColor ?? SemanticColors.primary,
+                          color: _selectedTemplate!.brandColor ?? colors.primary,
                           size: 20,
                         ),
                       ),
@@ -506,9 +507,9 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Configured fields summary
                   Text(
                     'Configured Settings:',
@@ -524,10 +525,10 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.check_circle_outline,
                             size: 14,
-                            color: SemanticColors.success,
+                            color: colors.success,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -550,11 +551,11 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
     );
   }
 
-  Widget _buildNavigation(BuildContext context, bool isEdit) {
+  Widget _buildNavigation(BuildContext context, bool isEdit, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.9),
+        color: colors.surface.withOpacity(0.9),
         border: Border(
           top: BorderSide(
             color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
@@ -573,7 +574,7 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
             )
           else
             const SizedBox.shrink(),
-          
+
           // Next/Complete button
           AsmblButton.primary(
             text: _getNextButtonText(isEdit),
@@ -760,10 +761,11 @@ class _EnhancedMCPServerWizardState extends ConsumerState<EnhancedMCPServerWizar
       }
     } catch (e) {
       if (mounted) {
+        final colors = ThemeColors(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to save configuration: $e'),
-            backgroundColor: SemanticColors.error,
+            backgroundColor: colors.error,
           ),
         );
       }

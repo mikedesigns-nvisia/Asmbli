@@ -49,6 +49,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -56,30 +57,30 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              SemanticColors.background,
-              SemanticColors.background.withOpacity(0.95),
+              colors.background,
+              colors.background.withOpacity(0.95),
             ],
           ),
         ),
         child: Column(
           children: [
             // Hero Header
-            _buildHeroHeader(context),
-            
+            _buildHeroHeader(context, colors),
+
             // Demo Tabs
-            _buildDemoTabs(context),
-            
+            _buildDemoTabs(context, colors),
+
             // Tab Content
             Expanded(
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildBeforeAfterComparison(context),
-                  _buildLiveWizardDemo(context),
-                  _buildTemplateBrowserDemo(context),
-                  _buildSmartRecommendationsDemo(context),
-                  _buildTestingDemo(context),
-                  _buildDashboardDemo(context),
+                  _buildBeforeAfterComparison(context, colors),
+                  _buildLiveWizardDemo(context, colors),
+                  _buildTemplateBrowserDemo(context, colors),
+                  _buildSmartRecommendationsDemo(context, colors),
+                  _buildTestingDemo(context, colors),
+                  _buildDashboardDemo(context, colors),
                 ],
               ),
             ),
@@ -89,7 +90,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     );
   }
 
-  Widget _buildHeroHeader(BuildContext context) {
+  Widget _buildHeroHeader(BuildContext context, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
@@ -97,34 +98,33 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            SemanticColors.primary.withOpacity(0.15),
-            SemanticColors.primary.withOpacity(0.05),
+            colors.primary.withOpacity(0.15),
+            colors.primary.withOpacity(0.05),
           ],
         ),
         border: Border(
           bottom: BorderSide(
-            color: SemanticColors.primary.withOpacity(0.2),
+            color: colors.primary.withOpacity(0.2),
           ),
         ),
       ),
       child: Column(
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.auto_awesome,
                 size: 32,
-                color: SemanticColors.primary,
+                color: colors.primary,
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Text(
                 'MCP UI Transformation Showcase',
                 style: TextStyle(
-                  
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
-                  color: SemanticColors.primary,
+                  color: colors.primary,
                 ),
               ),
             ],
@@ -143,22 +143,25 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             children: [
               _buildMetricCard(
                 context,
+                colors,
                 icon: Icons.speed,
                 label: 'Setup Time',
                 value: '80% Faster',
-                color: SemanticColors.success,
+                color: colors.success,
               ),
               const SizedBox(width: 24),
               _buildMetricCard(
                 context,
+                colors,
                 icon: Icons.check_circle,
                 label: 'Success Rate',
                 value: '95%',
-                color: SemanticColors.primary,
+                color: colors.primary,
               ),
               const SizedBox(width: 24),
               _buildMetricCard(
                 context,
+                colors,
                 icon: Icons.integration_instructions,
                 label: 'Integrations',
                 value: '42+',
@@ -167,6 +170,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
               const SizedBox(width: 24),
               _buildMetricCard(
                 context,
+                colors,
                 icon: Icons.sentiment_very_satisfied,
                 label: 'User-Friendly',
                 value: '100%',
@@ -180,7 +184,8 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
   }
 
   Widget _buildMetricCard(
-    BuildContext context, {
+    BuildContext context,
+    ThemeColors colors, {
     required IconData icon,
     required String label,
     required String value,
@@ -219,7 +224,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     );
   }
 
-  Widget _buildDemoTabs(BuildContext context) {
+  Widget _buildDemoTabs(BuildContext context, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       child: Container(
@@ -237,9 +242,9 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             Tab(icon: Icon(Icons.play_circle), text: 'Testing & Validation'),
             Tab(icon: Icon(Icons.dashboard), text: 'Management Dashboard'),
           ],
-          labelColor: SemanticColors.primary,
+          labelColor: colors.primary,
           unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
-          indicatorColor: SemanticColors.primary,
+          indicatorColor: colors.primary,
           indicatorSize: TabBarIndicatorSize.tab,
           isScrollable: true,
         ),
@@ -247,7 +252,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     );
   }
 
-  Widget _buildBeforeAfterComparison(BuildContext context) {
+  Widget _buildBeforeAfterComparison(BuildContext context, ThemeColors colors) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -261,10 +266,11 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             ),
           ),
           const SizedBox(height: 32),
-          
+
           // PostgreSQL Example
           _buildComparisonCard(
             context,
+            colors,
             title: 'PostgreSQL Database Setup',
             before: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,10 +302,11 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
           ),
           
           const SizedBox(height: 24),
-          
+
           // GitHub Example
           _buildComparisonCard(
             context,
+            colors,
             title: 'GitHub Integration',
             before: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,10 +334,11 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
           ),
           
           const SizedBox(height: 24),
-          
+
           // Filesystem Example
           _buildComparisonCard(
             context,
+            colors,
             title: 'Filesystem Access',
             before: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,7 +368,8 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
   }
 
   Widget _buildComparisonCard(
-    BuildContext context, {
+    BuildContext context,
+    ThemeColors colors, {
     required String title,
     required Widget before,
     required Widget after,
@@ -379,15 +388,15 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: SemanticColors.primary,
+                color: colors.primary,
               ),
             ),
           ),
@@ -403,15 +412,15 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: SemanticColors.error.withOpacity(0.1),
+                          color: colors.error.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
+                        child: Text(
                           'BEFORE (Manual)',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: SemanticColors.error,
+                            color: colors.error,
                           ),
                         ),
                       ),
@@ -440,15 +449,15 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: SemanticColors.success.withOpacity(0.1),
+                          color: colors.success.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
+                        child: Text(
                           'AFTER (User-Friendly)',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: SemanticColors.success,
+                            color: colors.success,
                           ),
                         ),
                       ),
@@ -491,7 +500,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     );
   }
 
-  Widget _buildLiveWizardDemo(BuildContext context) {
+  Widget _buildLiveWizardDemo(BuildContext context, ThemeColors colors) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -544,7 +553,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                 onSelected: (selected) {
                   setState(() => _selectedRole = role);
                 },
-                selectedColor: SemanticColors.primary.withOpacity(0.2),
+                selectedColor: colors.primary.withOpacity(0.2),
               );
             }).toList(),
           ),
@@ -553,7 +562,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     );
   }
 
-  Widget _buildTemplateBrowserDemo(BuildContext context) {
+  Widget _buildTemplateBrowserDemo(BuildContext context, ThemeColors colors) {
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -583,7 +592,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Selected: ${template.name}'),
-                    backgroundColor: SemanticColors.primary,
+                    backgroundColor: colors.primary,
                   ),
                 );
               },
@@ -594,7 +603,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     );
   }
 
-  Widget _buildSmartRecommendationsDemo(BuildContext context) {
+  Widget _buildSmartRecommendationsDemo(BuildContext context, ThemeColors colors) {
     final recommendationService = IntelligentMCPRecommendations();
     final recommendations = recommendationService.getRecommendationsForAgent(
       agentRole: _selectedRole,
@@ -625,35 +634,35 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: SemanticColors.primary.withOpacity(0.3),
+                color: colors.primary.withOpacity(0.3),
               ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.person, color: SemanticColors.primary),
+                Icon(Icons.person, color: colors.primary),
                 const SizedBox(width: 12),
                 Text(
                   'Current Role: $_selectedRole',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 24),
-          ...recommendations.map((rec) => _buildRecommendationCard(context, rec)),
+          ...recommendations.map((rec) => _buildRecommendationCard(context, colors, rec)),
         ],
       ),
     );
   }
 
-  Widget _buildRecommendationCard(BuildContext context, MCPRecommendation recommendation) {
+  Widget _buildRecommendationCard(BuildContext context, ThemeColors colors, MCPRecommendation recommendation) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -670,12 +679,12 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: (recommendation.template.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+              color: (recommendation.template.brandColor ?? colors.primary).withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               recommendation.template.icon,
-              color: recommendation.template.brandColor ?? SemanticColors.primary,
+              color: recommendation.template.brandColor ?? colors.primary,
               size: 24,
             ),
           ),
@@ -742,7 +751,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     );
   }
 
-  Widget _buildTestingDemo(BuildContext context) {
+  Widget _buildTestingDemo(BuildContext context, ThemeColors colors) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -764,7 +773,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             ),
           ),
           const SizedBox(height: 32),
-          
+
           // Demo test for filesystem
           const MCPConnectionTester(
             serverId: 'demo-filesystem',
@@ -775,9 +784,9 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
             },
             autoStart: false,
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Demo test for GitHub
           const MCPConnectionTester(
             serverId: 'demo-github',
@@ -792,7 +801,7 @@ class _MCPShowcaseScreenState extends ConsumerState<MCPShowcaseScreen>
     );
   }
 
-  Widget _buildDashboardDemo(BuildContext context) {
+  Widget _buildDashboardDemo(BuildContext context, ThemeColors colors) {
     return Padding(
       padding: const EdgeInsets.all(32),
       child: EnhancedMCPDashboard(
