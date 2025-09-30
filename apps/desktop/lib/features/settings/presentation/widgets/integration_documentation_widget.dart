@@ -42,34 +42,35 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     final docService = ref.watch(integrationDocumentationServiceProvider);
-    
+
     return SizedBox(
       height: MediaQuery.of(context).size.height - 200,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(),
+          _buildHeader(colors),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Search Bar
-          _buildSearchBar(),
+          _buildSearchBar(colors),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Tab Navigation
-          _buildTabNavigation(),
+          _buildTabNavigation(colors),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Tab Content
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildOverviewTab(docService),
-                _buildQuickStartTab(docService),
-                _buildDocumentationTab(docService),
-                _buildTroubleshootingTab(docService),
-                _buildSearchTab(docService),
+                _buildOverviewTab(colors, docService),
+                _buildQuickStartTab(colors, docService),
+                _buildDocumentationTab(colors, docService),
+                _buildTroubleshootingTab(colors, docService),
+                _buildSearchTab(colors, docService),
               ],
             ),
           ),
@@ -78,12 +79,12 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(ThemeColors colors) {
     return Row(
       children: [
-        const Icon(
+        Icon(
           Icons.help_outline,
-          color: SemanticColors.primary,
+          color: colors.primary,
           size: 24,
         ),
         const SizedBox(width: SpacingTokens.sm),
@@ -96,25 +97,25 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Container(
             padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
             decoration: BoxDecoration(
-              color: SemanticColors.primary.withOpacity(0.1),
+              color: colors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.integration_instructions, size: 14, color: SemanticColors.primary),
+                Icon(Icons.integration_instructions, size: 14, color: colors.primary),
                 const SizedBox(width: SpacingTokens.xs),
                 Text(
                   IntegrationRegistry.getById(_selectedIntegrationId!)?.name ?? _selectedIntegrationId!,
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(width: SpacingTokens.xs),
                 GestureDetector(
                   onTap: () => setState(() => _selectedIntegrationId = null),
-                  child: const Icon(Icons.close, size: 14, color: SemanticColors.primary),
+                  child: Icon(Icons.close, size: 14, color: colors.primary),
                 ),
               ],
             ),
@@ -124,7 +125,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(ThemeColors colors) {
     return Row(
       children: [
         Expanded(
@@ -142,14 +143,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                borderSide: const BorderSide(color: SemanticColors.border),
+                borderSide: BorderSide(color: colors.border),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: SpacingTokens.lg, vertical: SpacingTokens.sm),
             ),
           ),
         ),
         const SizedBox(width: SpacingTokens.sm),
-        
+
         Expanded(
           child: AsmblStringDropdown(
             value: _selectedCategory,
@@ -161,12 +162,12 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildTabNavigation() {
+  Widget _buildTabNavigation(ThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: SemanticColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: TabBar(
         controller: _tabController,
@@ -177,89 +178,89 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Tab(text: 'Troubleshooting'),
           Tab(text: 'Search Results'),
         ],
-        labelColor: SemanticColors.primary,
-        unselectedLabelColor: SemanticColors.onSurfaceVariant,
+        labelColor: colors.primary,
+        unselectedLabelColor: colors.onSurfaceVariant,
         indicator: BoxDecoration(
-          color: SemanticColors.primary.withOpacity(0.1),
+          color: colors.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         ),
       ),
     );
   }
 
-  Widget _buildOverviewTab(IntegrationDocumentationService docService) {
+  Widget _buildOverviewTab(ThemeColors colors, IntegrationDocumentationService docService) {
     final categories = docService.getDocumentationCategories();
     final popularTopics = docService.getPopularTopics();
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Categories Overview
-          _buildCategoriesSection(categories),
+          _buildCategoriesSection(colors, categories),
           const SizedBox(height: SpacingTokens.xxl),
-          
+
           // Popular Topics
-          _buildPopularTopicsSection(popularTopics),
+          _buildPopularTopicsSection(colors, popularTopics),
           const SizedBox(height: SpacingTokens.xxl),
-          
+
           // Getting Started
-          _buildGettingStartedSection(),
+          _buildGettingStartedSection(colors),
         ],
       ),
     );
   }
 
-  Widget _buildQuickStartTab(IntegrationDocumentationService docService) {
+  Widget _buildQuickStartTab(ThemeColors colors, IntegrationDocumentationService docService) {
     if (_selectedIntegrationId == null) {
-      return _buildIntegrationSelector();
+      return _buildIntegrationSelector(colors);
     }
 
     final quickStart = docService.getQuickStartGuide(_selectedIntegrationId!);
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildQuickStartHeader(quickStart),
+          _buildQuickStartHeader(colors, quickStart),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Prerequisites
           if (quickStart.prerequisites.isNotEmpty) ...[
-            _buildPrerequisitesSection(quickStart.prerequisites),
+            _buildPrerequisitesSection(colors, quickStart.prerequisites),
             const SizedBox(height: SpacingTokens.xl),
           ],
-          
+
           // Setup Steps
-          _buildSetupStepsSection(quickStart.steps),
+          _buildSetupStepsSection(colors, quickStart.steps),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Common Issues
           if (quickStart.commonIssues.isNotEmpty) ...[
-            _buildCommonIssuesSection(quickStart.commonIssues),
+            _buildCommonIssuesSection(colors, quickStart.commonIssues),
             const SizedBox(height: SpacingTokens.xl),
           ],
-          
+
           // Next Steps
-          _buildNextStepsSection(quickStart.nextSteps),
+          _buildNextStepsSection(colors, quickStart.nextSteps),
         ],
       ),
     );
   }
 
-  Widget _buildDocumentationTab(IntegrationDocumentationService docService) {
+  Widget _buildDocumentationTab(ThemeColors colors, IntegrationDocumentationService docService) {
     if (_selectedIntegrationId == null) {
-      return _buildIntegrationSelector();
+      return _buildIntegrationSelector(colors);
     }
 
     final documentation = docService.getDocumentation(_selectedIntegrationId!);
     final configExamples = docService.getConfigurationExamples(_selectedIntegrationId!);
     final apiReference = docService.getAPIReference(_selectedIntegrationId!);
-    
+
     if (documentation == null) {
-      return _buildEmptyState('Documentation not available');
+      return _buildEmptyState(colors, 'Documentation not available');
     }
 
     return SingleChildScrollView(
@@ -267,93 +268,93 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDocumentationHeader(documentation),
+          _buildDocumentationHeader(colors, documentation),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Overview
           _buildOverviewSection(documentation),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Features
-          _buildFeaturesSection(documentation),
+          _buildFeaturesSection(colors, documentation),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Configuration Examples
           if (configExamples.isNotEmpty) ...[
-            _buildConfigurationExamplesSection(configExamples),
+            _buildConfigurationExamplesSection(colors, configExamples),
             const SizedBox(height: SpacingTokens.xl),
           ],
-          
+
           // API Reference
           if (apiReference != null) ...[
-            _buildAPIReferenceSection(apiReference),
+            _buildAPIReferenceSection(colors, apiReference),
             const SizedBox(height: SpacingTokens.xl),
           ],
-          
+
           // Use Cases
-          _buildUseCasesSection(documentation),
+          _buildUseCasesSection(colors, documentation),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Requirements & Limitations
-          _buildRequirementsSection(documentation),
+          _buildRequirementsSection(colors, documentation),
         ],
       ),
     );
   }
 
-  Widget _buildTroubleshootingTab(IntegrationDocumentationService docService) {
+  Widget _buildTroubleshootingTab(ThemeColors colors, IntegrationDocumentationService docService) {
     if (_selectedIntegrationId == null) {
-      return _buildIntegrationSelector();
+      return _buildIntegrationSelector(colors);
     }
 
     final troubleshooting = docService.getTroubleshootingGuide(_selectedIntegrationId!);
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTroubleshootingHeader(troubleshooting),
+          _buildTroubleshootingHeader(colors, troubleshooting),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Common Issues
-          _buildTroubleshootingIssuesSection(troubleshooting.commonIssues),
+          _buildTroubleshootingIssuesSection(colors, troubleshooting.commonIssues),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Diagnostic Steps
-          _buildDiagnosticStepsSection(troubleshooting.diagnosticSteps),
+          _buildDiagnosticStepsSection(colors, troubleshooting.diagnosticSteps),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Support Resources
-          _buildSupportResourcesSection(troubleshooting.supportResources),
+          _buildSupportResourcesSection(colors, troubleshooting.supportResources),
         ],
       ),
     );
   }
 
-  Widget _buildSearchTab(IntegrationDocumentationService docService) {
+  Widget _buildSearchTab(ThemeColors colors, IntegrationDocumentationService docService) {
     if (_searchQuery.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.search,
               size: 64,
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             const SizedBox(height: SpacingTokens.lg),
             Text(
               'Enter a search query',
               style: TextStyles.bodyLarge.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: SpacingTokens.xs),
             Text(
               'Search through documentation, guides, and help articles',
               style: TextStyles.bodyMedium.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -362,29 +363,29 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     }
 
     final searchResults = docService.searchDocumentation(_searchQuery);
-    
+
     if (searchResults.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.search_off,
               size: 64,
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             const SizedBox(height: SpacingTokens.lg),
             Text(
               'No results found',
               style: TextStyles.bodyLarge.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: SpacingTokens.xs),
             Text(
               'Try different search terms or browse categories',
               style: TextStyles.bodyMedium.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -402,15 +403,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
-          ...searchResults.map((result) => _buildSearchResultItem(result)),
+
+          ...searchResults.map((result) => _buildSearchResultItem(colors, result)),
         ],
       ),
     );
   }
 
   // Section builders
-  Widget _buildCategoriesSection(List<DocumentationCategory> categories) {
+  Widget _buildCategoriesSection(ThemeColors colors, List<DocumentationCategory> categories) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -419,7 +420,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: SpacingTokens.lg),
-        
+
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -430,13 +431,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             mainAxisSpacing: SpacingTokens.lg,
           ),
           itemCount: categories.length,
-          itemBuilder: (context, index) => _buildCategoryCard(categories[index]),
+          itemBuilder: (context, index) => _buildCategoryCard(colors, categories[index]),
         ),
       ],
     );
   }
 
-  Widget _buildCategoryCard(DocumentationCategory category) {
+  Widget _buildCategoryCard(ThemeColors colors, DocumentationCategory category) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -446,7 +447,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             children: [
               Icon(
                 _getCategoryIcon(category.icon),
-                color: SemanticColors.primary,
+                color: colors.primary,
                 size: 20,
               ),
               const SizedBox(width: SpacingTokens.xs),
@@ -459,18 +460,18 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             ],
           ),
           const SizedBox(height: SpacingTokens.sm),
-          
+
           Text(
             category.description,
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          
+
           const Spacer(),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -493,13 +494,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildPopularTopicsSection(List<PopularTopic> topics) {
+  Widget _buildPopularTopicsSection(ThemeColors colors, List<PopularTopic> topics) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(Icons.trending_up, color: SemanticColors.success, size: 16),
+            Icon(Icons.trending_up, color: colors.success, size: 16),
             const SizedBox(width: SpacingTokens.xs),
             Text(
               'Popular Help Topics',
@@ -508,13 +509,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           ],
         ),
         const SizedBox(height: SpacingTokens.lg),
-        
-        ...topics.map((topic) => _buildPopularTopicItem(topic)),
+
+        ...topics.map((topic) => _buildPopularTopicItem(colors, topic)),
       ],
     );
   }
 
-  Widget _buildPopularTopicItem(PopularTopic topic) {
+  Widget _buildPopularTopicItem(ThemeColors colors, PopularTopic topic) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       child: AsmblCard(
@@ -535,15 +536,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
-                          color: SemanticColors.primary.withOpacity(0.1),
+                          color: colors.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
                           topic.category,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.w600,
-                            color: SemanticColors.primary,
+                            color: colors.primary,
                           ),
                         ),
                       ),
@@ -553,23 +554,23 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   Text(
                     topic.description,
                     style: TextStyles.bodySmall.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
             ),
-            
+
             Column(
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.visibility, size: 12, color: SemanticColors.onSurfaceVariant),
+                    Icon(Icons.visibility, size: 12, color: colors.onSurfaceVariant),
                     const SizedBox(width: 2),
                     Text(
                       '${topic.viewCount}',
                       style: TextStyles.bodySmall.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -577,12 +578,12 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    const Icon(Icons.thumb_up, size: 12, color: SemanticColors.success),
+                    Icon(Icons.thumb_up, size: 12, color: colors.success),
                     const SizedBox(width: 2),
                     Text(
                       '${topic.helpfulVotes}',
                       style: TextStyles.bodySmall.copyWith(
-                        color: SemanticColors.success,
+                        color: colors.success,
                       ),
                     ),
                   ],
@@ -595,7 +596,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildGettingStartedSection() {
+  Widget _buildGettingStartedSection(ThemeColors colors) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -603,7 +604,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         children: [
           Row(
             children: [
-              const Icon(Icons.play_circle, color: SemanticColors.primary, size: 20),
+              Icon(Icons.play_circle, color: colors.primary, size: 20),
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Getting Started',
@@ -612,18 +613,18 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           Text(
             'New to integrations? Follow these steps to get started:',
             style: TextStyles.bodyMedium,
           ),
           const SizedBox(height: SpacingTokens.sm),
-          
-          _buildStepItem('1', 'Choose an integration from the Marketplace'),
-          _buildStepItem('2', 'Follow the Quick Start guide for setup'),
-          _buildStepItem('3', 'Test your integration to ensure it works'),
-          _buildStepItem('4', 'Monitor health and performance'),
-          
+
+          _buildStepItem(colors, '1', 'Choose an integration from the Marketplace'),
+          _buildStepItem(colors, '2', 'Follow the Quick Start guide for setup'),
+          _buildStepItem(colors, '3', 'Test your integration to ensure it works'),
+          _buildStepItem(colors, '4', 'Monitor health and performance'),
+
           const SizedBox(height: SpacingTokens.lg),
           Row(
             children: [
@@ -643,7 +644,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildStepItem(String number, String text) {
+  Widget _buildStepItem(ThemeColors colors, String number, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: SpacingTokens.xs),
       child: Row(
@@ -651,17 +652,17 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Container(
             width: 20,
             height: 20,
-            decoration: const BoxDecoration(
-              color: SemanticColors.primary,
+            decoration: BoxDecoration(
+              color: colors.primary,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 number,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: SemanticColors.surface,
+                  color: colors.surface,
                 ),
               ),
             ),
@@ -679,7 +680,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
   }
 
   // Quick Start sections
-  Widget _buildQuickStartHeader(QuickStartGuide guide) {
+  Widget _buildQuickStartHeader(ThemeColors colors, QuickStartGuide guide) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Row(
@@ -696,24 +697,24 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Text(
                   'Get ${IntegrationRegistry.getById(guide.integrationId)?.name} up and running quickly',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
           ),
-          
+
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.schedule, size: 14, color: SemanticColors.primary),
+                  Icon(Icons.schedule, size: 14, color: colors.primary),
                   const SizedBox(width: SpacingTokens.xs),
                   Text(
                     '~${guide.estimatedTime.inMinutes} min',
                     style: TextStyles.bodySmall.copyWith(
-                      color: SemanticColors.primary,
+                      color: colors.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -723,7 +724,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getDifficultyColor(guide.difficulty).withOpacity(0.1),
+                  color: _getDifficultyColor(colors, guide.difficulty).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -731,7 +732,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: _getDifficultyColor(guide.difficulty),
+                    color: _getDifficultyColor(colors, guide.difficulty),
                   ),
                 ),
               ),
@@ -742,7 +743,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildPrerequisitesSection(List<PrerequisiteStep> prerequisites) {
+  Widget _buildPrerequisitesSection(ThemeColors colors, List<PrerequisiteStep> prerequisites) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -750,7 +751,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         children: [
           Row(
             children: [
-              const Icon(Icons.checklist, color: SemanticColors.warning, size: 16),
+              Icon(Icons.checklist, color: colors.warning, size: 16),
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Prerequisites',
@@ -759,33 +760,33 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
-          ...prerequisites.map((prereq) => _buildPrerequisiteItem(prereq)),
+
+          ...prerequisites.map((prereq) => _buildPrerequisiteItem(colors, prereq)),
         ],
       ),
     );
   }
 
-  Widget _buildPrerequisiteItem(PrerequisiteStep prereq) {
+  Widget _buildPrerequisiteItem(ThemeColors colors, PrerequisiteStep prereq) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: prereq.isRequired ? SemanticColors.warning.withOpacity(0.3) : SemanticColors.border,
+          color: prereq.isRequired ? colors.warning.withOpacity(0.3) : colors.border,
         ),
       ),
       child: Row(
         children: [
           Icon(
             prereq.isRequired ? Icons.warning : Icons.info,
-            color: prereq.isRequired ? SemanticColors.warning : SemanticColors.primary,
+            color: prereq.isRequired ? colors.warning : colors.primary,
             size: 16,
           ),
           const SizedBox(width: SpacingTokens.sm),
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -801,15 +802,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
-                          color: SemanticColors.error.withOpacity(0.1),
+                          color: colors.error.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
-                        child: const Text(
+                        child: Text(
                           'REQUIRED',
                           style: TextStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.w600,
-                            color: SemanticColors.error,
+                            color: colors.error,
                           ),
                         ),
                       ),
@@ -819,17 +820,17 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Text(
                   prereq.description,
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
           ),
-          
+
           Text(
             '~${prereq.estimatedTime.inMinutes}m',
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
         ],
@@ -837,7 +838,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildSetupStepsSection(List<SetupStep> steps) {
+  Widget _buildSetupStepsSection(ThemeColors colors, List<SetupStep> steps) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -845,7 +846,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         children: [
           Row(
             children: [
-              const Icon(Icons.list_alt, color: SemanticColors.primary, size: 16),
+              Icon(Icons.list_alt, color: colors.primary, size: 16),
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Setup Steps',
@@ -854,14 +855,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
-          ...steps.map((step) => _buildSetupStepItem(step)),
+
+          ...steps.map((step) => _buildSetupStepItem(colors, step)),
         ],
       ),
     );
   }
 
-  Widget _buildSetupStepItem(SetupStep step) {
+  Widget _buildSetupStepItem(ThemeColors colors, SetupStep step) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.lg),
       child: Row(
@@ -871,23 +872,23 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Container(
             width: 32,
             height: 32,
-            decoration: const BoxDecoration(
-              color: SemanticColors.primary,
+            decoration: BoxDecoration(
+              color: colors.primary,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 '${step.stepNumber}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: SemanticColors.surface,
+                  color: colors.surface,
                 ),
               ),
             ),
           ),
           const SizedBox(width: SpacingTokens.sm),
-          
+
           // Step content
           Expanded(
             child: Column(
@@ -903,14 +904,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   style: TextStyles.bodyMedium,
                 ),
                 const SizedBox(height: SpacingTokens.sm),
-                
+
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: SemanticColors.primary.withOpacity(0.05),
+                    color: colors.primary.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     border: Border.all(
-                      color: SemanticColors.primary.withOpacity(0.2),
+                      color: colors.primary.withOpacity(0.2),
                     ),
                   ),
                   child: Column(
@@ -920,7 +921,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                         'Action:',
                         style: TextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: SemanticColors.primary,
+                          color: colors.primary,
                         ),
                       ),
                       Text(
@@ -930,18 +931,18 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: SpacingTokens.sm),
-                
+
                 Row(
                   children: [
-                    const Icon(Icons.check_circle, size: 14, color: SemanticColors.success),
+                    Icon(Icons.check_circle, size: 14, color: colors.success),
                     const SizedBox(width: SpacingTokens.xs),
                     Expanded(
                       child: Text(
                         'Expected: ${step.expectedResult}',
                         style: TextStyles.bodySmall.copyWith(
-                          color: SemanticColors.success,
+                          color: colors.success,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -956,7 +957,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildCommonIssuesSection(List<CommonIssue> issues) {
+  Widget _buildCommonIssuesSection(ThemeColors colors, List<CommonIssue> issues) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -964,7 +965,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         children: [
           Row(
             children: [
-              const Icon(Icons.help_outline, color: SemanticColors.warning, size: 16),
+              Icon(Icons.help_outline, color: colors.warning, size: 16),
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Common Issues',
@@ -973,14 +974,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
-          ...issues.map((issue) => _buildCommonIssueItem(issue)),
+
+          ...issues.map((issue) => _buildCommonIssueItem(colors, issue)),
         ],
       ),
     );
   }
 
-  Widget _buildCommonIssueItem(CommonIssue issue) {
+  Widget _buildCommonIssueItem(ThemeColors colors, CommonIssue issue) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       child: ExpansionTile(
@@ -991,7 +992,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         subtitle: Text(
           issue.description,
           style: TextStyles.bodySmall.copyWith(
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
         ),
         children: [
@@ -1001,10 +1002,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               width: double.infinity,
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: SemanticColors.success.withOpacity(0.05),
+                color: colors.success.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(
-                  color: SemanticColors.success.withOpacity(0.2),
+                  color: colors.success.withOpacity(0.2),
                 ),
               ),
               child: Column(
@@ -1014,7 +1015,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                     'Solution:',
                     style: TextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: SemanticColors.success,
+                      color: colors.success,
                     ),
                   ),
                   const SizedBox(height: SpacingTokens.xs),
@@ -1031,7 +1032,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildNextStepsSection(List<String> nextSteps) {
+  Widget _buildNextStepsSection(ThemeColors colors, List<String> nextSteps) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -1039,7 +1040,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         children: [
           Row(
             children: [
-              const Icon(Icons.arrow_forward, color: SemanticColors.primary, size: 16),
+              Icon(Icons.arrow_forward, color: colors.primary, size: 16),
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 'What\'s Next?',
@@ -1048,7 +1049,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           ...nextSteps.map((step) => Padding(
             padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
             child: Row(
@@ -1058,8 +1059,8 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   width: 6,
                   height: 6,
                   margin: const EdgeInsets.only(top: 6, right: SpacingTokens.sm),
-                  decoration: const BoxDecoration(
-                    color: SemanticColors.primary,
+                  decoration: BoxDecoration(
+                    color: colors.primary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -1078,7 +1079,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
   }
 
   // Additional sections for Documentation tab...
-  Widget _buildDocumentationHeader(IntegrationDocumentation doc) {
+  Widget _buildDocumentationHeader(ThemeColors colors, IntegrationDocumentation doc) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -1094,14 +1095,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               Text(
                 'Version ${doc.version}',
                 style: TextStyles.bodySmall.copyWith(
-                  color: SemanticColors.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(width: SpacingTokens.sm),
               Text(
                 'Updated ${_formatDate(doc.lastUpdated)}',
                 style: TextStyles.bodySmall.copyWith(
-                  color: SemanticColors.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -1131,7 +1132,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildFeaturesSection(IntegrationDocumentation doc) {
+  Widget _buildFeaturesSection(ThemeColors colors, IntegrationDocumentation doc) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -1142,13 +1143,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: SpacingTokens.sm),
-          
+
           ...doc.features.map((feature) => Padding(
             padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.check, color: SemanticColors.success, size: 16),
+                Icon(Icons.check, color: colors.success, size: 16),
                 const SizedBox(width: SpacingTokens.xs),
                 Expanded(
                   child: Text(
@@ -1164,7 +1165,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildConfigurationExamplesSection(List<ConfigurationExample> examples) {
+  Widget _buildConfigurationExamplesSection(ThemeColors colors, List<ConfigurationExample> examples) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1173,13 +1174,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: SpacingTokens.sm),
-        
-        ...examples.map((example) => _buildConfigurationExampleItem(example)),
+
+        ...examples.map((example) => _buildConfigurationExampleItem(colors, example)),
       ],
     );
   }
 
-  Widget _buildConfigurationExampleItem(ConfigurationExample example) {
+  Widget _buildConfigurationExampleItem(ThemeColors colors, ConfigurationExample example) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.lg),
       child: AsmblCard(
@@ -1197,7 +1198,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(
-                    color: _getDifficultyColor(example.difficulty).withOpacity(0.1),
+                    color: _getDifficultyColor(colors, example.difficulty).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
@@ -1205,7 +1206,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                     style: TextStyle(
                       fontSize: 8,
                       fontWeight: FontWeight.w600,
-                      color: _getDifficultyColor(example.difficulty),
+                      color: _getDifficultyColor(colors, example.difficulty),
                     ),
                   ),
                 ),
@@ -1215,18 +1216,18 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             Text(
               example.description,
               style: TextStyles.bodyMedium.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: SpacingTokens.sm),
-            
+
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: SemanticColors.onSurface.withOpacity(0.05),
+                color: colors.onSurface.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                border: Border.all(color: SemanticColors.border),
+                border: Border.all(color: colors.border),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1242,7 +1243,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       ),
                       IconButton(
                         icon: const Icon(Icons.copy, size: 16),
-                        onPressed: () => _copyToClipboard(example.config.toString()),
+                        onPressed: () => _copyToClipboard(colors, example.config.toString()),
                         tooltip: 'Copy configuration',
                       ),
                     ],
@@ -1250,21 +1251,21 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   const SizedBox(height: SpacingTokens.xs),
                   Text(
                     JsonEncoder.withIndent('  ').convert(example.config),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 12,
-                      color: SemanticColors.onSurface,
+                      color: colors.onSurface,
                     ),
                   ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: SpacingTokens.sm),
             Text(
               example.explanation,
               style: TextStyles.bodySmall.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -1275,9 +1276,9 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
   }
 
   // More section builders...
-  Widget _buildIntegrationSelector() {
+  Widget _buildIntegrationSelector(ThemeColors colors) {
     final allIntegrations = IntegrationRegistry.allIntegrations
-        .where((integration) => 
+        .where((integration) =>
             _selectedCategory == 'All' || integration.category.displayName == _selectedCategory)
         .toList();
 
@@ -1291,7 +1292,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -1315,7 +1316,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                         children: [
                           Icon(
                             _getCategoryIcon(integration.category.name),
-                            color: SemanticColors.primary,
+                            color: colors.primary,
                             size: 16,
                           ),
                           const Spacer(),
@@ -1323,13 +1324,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                             Container(
                               padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
-                                color: SemanticColors.warning.withOpacity(0.1),
+                                color: colors.warning.withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.schedule,
                                 size: 10,
-                                color: SemanticColors.warning,
+                                color: colors.warning,
                               ),
                             ),
                         ],
@@ -1345,7 +1346,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       Text(
                         integration.difficulty,
                         style: TextStyles.bodySmall.copyWith(
-                          color: _getDifficultyColor(integration.difficulty),
+                          color: _getDifficultyColor(colors, integration.difficulty),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -1360,7 +1361,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildSearchResultItem(SearchResult result) {
+  Widget _buildSearchResultItem(ThemeColors colors, SearchResult result) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       child: AsmblCard(
@@ -1373,7 +1374,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Icon(
                   _getSearchResultIcon(result.type),
                   size: 16,
-                  color: SemanticColors.primary,
+                  color: colors.primary,
                 ),
                 const SizedBox(width: SpacingTokens.xs),
                 Expanded(
@@ -1385,15 +1386,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(
-                    color: SemanticColors.primary.withOpacity(0.1),
+                    color: colors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
                     result.type.name.toUpperCase(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 8,
                       fontWeight: FontWeight.w600,
-                      color: SemanticColors.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -1403,7 +1404,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             Text(
               result.excerpt,
               style: TextStyles.bodySmall.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -1414,21 +1415,21 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildEmptyState(String message) {
+  Widget _buildEmptyState(ThemeColors colors, String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.description,
             size: 64,
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
           const SizedBox(height: SpacingTokens.lg),
           Text(
             message,
             style: TextStyles.bodyLarge.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
         ],
@@ -1453,12 +1454,12 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     }
   }
 
-  Color _getDifficultyColor(String difficulty) {
+  Color _getDifficultyColor(ThemeColors colors, String difficulty) {
     switch (difficulty.toLowerCase()) {
-      case 'easy': return SemanticColors.success;
-      case 'medium': return SemanticColors.warning;
-      case 'hard': return SemanticColors.error;
-      default: return SemanticColors.onSurfaceVariant;
+      case 'easy': return colors.success;
+      case 'medium': return colors.warning;
+      case 'hard': return colors.error;
+      default: return colors.onSurfaceVariant;
     }
   }
 
@@ -1480,18 +1481,18 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     return '${(difference.inDays / 30).floor()} months ago';
   }
 
-  void _copyToClipboard(String text) {
+  void _copyToClipboard(ThemeColors colors, String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Text('Copied to clipboard'),
-        backgroundColor: SemanticColors.success,
+        backgroundColor: colors.success,
       ),
     );
   }
 
   // Additional helper methods for troubleshooting, API reference, etc.
-  Widget _buildTroubleshootingHeader(TroubleshootingGuide guide) {
+  Widget _buildTroubleshootingHeader(ThemeColors colors, TroubleshootingGuide guide) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -1505,7 +1506,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Text(
             'Common issues and solutions for this integration',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
         ],
@@ -1513,7 +1514,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildTroubleshootingIssuesSection(List<CommonIssue> issues) {
+  Widget _buildTroubleshootingIssuesSection(ThemeColors colors, List<CommonIssue> issues) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1522,13 +1523,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: SpacingTokens.sm),
-        
-        ...issues.map((issue) => _buildCommonIssueItem(issue)),
+
+        ...issues.map((issue) => _buildCommonIssueItem(colors, issue)),
       ],
     );
   }
 
-  Widget _buildDiagnosticStepsSection(List<DiagnosticStep> steps) {
+  Widget _buildDiagnosticStepsSection(ThemeColors colors, List<DiagnosticStep> steps) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -1542,25 +1543,25 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Text(
             'Follow these steps to diagnose issues:',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
-          ...steps.map((step) => _buildDiagnosticStepItem(step)),
+
+          ...steps.map((step) => _buildDiagnosticStepItem(colors, step)),
         ],
       ),
     );
   }
 
-  Widget _buildDiagnosticStepItem(DiagnosticStep step) {
+  Widget _buildDiagnosticStepItem(ThemeColors colors, DiagnosticStep step) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1568,23 +1569,23 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Container(
             width: 24,
             height: 24,
-            decoration: const BoxDecoration(
-              color: SemanticColors.primary,
+            decoration: BoxDecoration(
+              color: colors.primary,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 '${step.step}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: SemanticColors.surface,
+                  color: colors.surface,
                 ),
               ),
             ),
           ),
           const SizedBox(width: SpacingTokens.sm),
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1602,15 +1603,15 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.xs),
                   decoration: BoxDecoration(
-                    color: SemanticColors.onSurface.withOpacity(0.05),
+                    color: colors.onSurface.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     step.command,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 11,
-                      color: SemanticColors.onSurface,
+                      color: colors.onSurface,
                     ),
                   ),
                 ),
@@ -1622,7 +1623,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildSupportResourcesSection(List<SupportResource> resources) {
+  Widget _buildSupportResourcesSection(ThemeColors colors, List<SupportResource> resources) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -1633,14 +1634,14 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
-          ...resources.map((resource) => _buildSupportResourceItem(resource)),
+
+          ...resources.map((resource) => _buildSupportResourceItem(colors, resource)),
         ],
       ),
     );
   }
 
-  Widget _buildSupportResourceItem(SupportResource resource) {
+  Widget _buildSupportResourceItem(ThemeColors colors, SupportResource resource) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       child: AsmblCard(
@@ -1649,11 +1650,11 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           children: [
             Icon(
               _getSupportResourceIcon(resource.type),
-              color: SemanticColors.primary,
+              color: colors.primary,
               size: 20,
             ),
             const SizedBox(width: SpacingTokens.sm),
-            
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1665,21 +1666,21 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   Text(
                     resource.description,
                     style: TextStyles.bodySmall.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
             ),
-            
-            const Icon(Icons.open_in_new, size: 16, color: SemanticColors.onSurfaceVariant),
+
+            Icon(Icons.open_in_new, size: 16, color: colors.onSurfaceVariant),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAPIReferenceSection(APIReference apiRef) {
+  Widget _buildAPIReferenceSection(ThemeColors colors, APIReference apiRef) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -1692,35 +1693,35 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           const SizedBox(height: SpacingTokens.sm),
           Text(
             'Base URL: ${apiRef.baseUrl}',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'monospace',
               fontSize: 12,
-              color: SemanticColors.onSurface,
+              color: colors.onSurface,
             ),
           ),
           Text(
             'Authentication: ${apiRef.authentication}',
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Endpoints
-          ...apiRef.endpoints.map((endpoint) => _buildAPIEndpointItem(endpoint)),
+          ...apiRef.endpoints.map((endpoint) => _buildAPIEndpointItem(colors, endpoint)),
         ],
       ),
     );
   }
 
-  Widget _buildAPIEndpointItem(APIEndpoint endpoint) {
+  Widget _buildAPIEndpointItem(ThemeColors colors, APIEndpoint endpoint) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1730,7 +1731,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getMethodColor(endpoint.method).withOpacity(0.1),
+                  color: _getMethodColor(colors, endpoint.method).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -1738,7 +1739,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: _getMethodColor(endpoint.method),
+                    color: _getMethodColor(colors, endpoint.method),
                   ),
                 ),
               ),
@@ -1763,7 +1764,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             Text(
               'Parameters: ${endpoint.parameters.join(', ')}',
               style: TextStyles.bodySmall.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -1772,7 +1773,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildUseCasesSection(IntegrationDocumentation doc) {
+  Widget _buildUseCasesSection(ThemeColors colors, IntegrationDocumentation doc) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -1783,13 +1784,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: SpacingTokens.sm),
-          
+
           ...doc.useCases.map((useCase) => Padding(
             padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.play_arrow, color: SemanticColors.primary, size: 16),
+                Icon(Icons.play_arrow, color: colors.primary, size: 16),
                 const SizedBox(width: SpacingTokens.xs),
                 Expanded(
                   child: Text(
@@ -1805,7 +1806,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     );
   }
 
-  Widget _buildRequirementsSection(IntegrationDocumentation doc) {
+  Widget _buildRequirementsSection(ThemeColors colors, IntegrationDocumentation doc) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1820,13 +1821,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: SpacingTokens.sm),
-                
+
                 ...doc.requirements.map((req) => Padding(
                   padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.check_box, color: SemanticColors.success, size: 16),
+                      Icon(Icons.check_box, color: colors.success, size: 16),
                       const SizedBox(width: SpacingTokens.xs),
                       Expanded(
                         child: Text(
@@ -1853,13 +1854,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                   style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: SpacingTokens.sm),
-                
+
                 ...doc.limitations.map((limitation) => Padding(
                   padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.warning, color: SemanticColors.warning, size: 16),
+                      Icon(Icons.warning, color: colors.warning, size: 16),
                       const SizedBox(width: SpacingTokens.xs),
                       Expanded(
                         child: Text(
@@ -1887,13 +1888,13 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
     }
   }
 
-  Color _getMethodColor(String method) {
+  Color _getMethodColor(ThemeColors colors, String method) {
     switch (method.toUpperCase()) {
-      case 'GET': return SemanticColors.success;
-      case 'POST': return SemanticColors.primary;
-      case 'PUT': return SemanticColors.warning;
-      case 'DELETE': return SemanticColors.error;
-      default: return SemanticColors.onSurfaceVariant;
+      case 'GET': return colors.success;
+      case 'POST': return colors.primary;
+      case 'PUT': return colors.warning;
+      case 'DELETE': return colors.error;
+      default: return colors.onSurfaceVariant;
     }
   }
 }

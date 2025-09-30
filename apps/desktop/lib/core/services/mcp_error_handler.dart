@@ -16,6 +16,7 @@ import 'oauth_integration_service.dart';
 
 /// Production-grade error handling and recovery system for MCP operations
 /// Implements comprehensive error classification, recovery strategies, and telemetry
+@Deprecated('Will be consolidated into MCPMonitoringService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPErrorHandler {
   final DesktopStorageService _storageService;
   MCPProcessManager? _processManager;

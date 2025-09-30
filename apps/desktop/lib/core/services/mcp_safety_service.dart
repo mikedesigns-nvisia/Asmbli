@@ -4,12 +4,13 @@ import '../models/mcp_capability.dart';
 import '../data/mcp_server_configs.dart';
 
 /// Anthropic PM-style Trust & Safety Service
-/// 
+///
 /// This service implements safety-first principles:
 /// - Constitutional AI approach to command evaluation
 /// - Progressive trust model
 /// - Clear explanation of risks and benefits
 /// - User empowerment through informed consent
+@Deprecated('Will be consolidated into MCPSecurityService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPSafetyService {
   final Map<String, int> _userTrustScore = {};
   final Set<String> _approvedCapabilities = {};

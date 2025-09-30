@@ -5,6 +5,7 @@ import 'context_resource_server.dart';
 
 /// Service for exposing context documents as MCP resources
 /// Following MCP specification for resources: read-only data sources
+@Deprecated('Will be consolidated into MCPContextService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class ContextMCPResourceService {
 
   /// Convert context documents to MCP resources for an agent

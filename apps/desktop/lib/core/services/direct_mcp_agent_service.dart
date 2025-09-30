@@ -5,6 +5,7 @@ import '../utils/app_logger.dart';
 
 /// Direct MCP service for agents - bypasses complex terminal manager dependencies
 /// This provides a simple interface for agents to execute MCP tools
+@Deprecated('Will be consolidated into AgentMCPService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class DirectMCPAgentService {
   final new_mcp.MCPProcessManager _mcpManager;
   final Map<String, new_mcp.MCPServerSession> _agentSessions = {};

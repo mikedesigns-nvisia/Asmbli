@@ -4,6 +4,7 @@ import 'github_mcp_registry_service.dart';
 
 /// Service for managing featured and official MCP servers
 /// Provides curated list of high-quality servers from official sources
+@Deprecated('Will be consolidated into MCPCatalogService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class FeaturedMCPServersService {
   static const List<Map<String, dynamic>> _featuredServers = [
     // Official Microsoft Servers

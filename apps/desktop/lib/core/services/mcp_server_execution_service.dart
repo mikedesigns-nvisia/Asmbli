@@ -13,6 +13,7 @@ import '../di/service_locator.dart';
 
 /// Service for executing and managing MCP server processes
 /// Implements JSON-RPC 2.0 communication as per MCP specification
+@Deprecated('Will be consolidated into MCPServerService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPServerExecutionService {
   final DesktopStorageService _storage = DesktopStorageService.instance;
   final MCPCatalogService _catalogService;

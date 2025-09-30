@@ -34,40 +34,41 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     final testingService = ref.watch(integrationTestingServiceProvider);
     final integrationService = ref.watch(integrationServiceProvider);
     final configuredIntegrations = integrationService.getConfiguredIntegrations();
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(),
+          _buildHeader(colors),
           const SizedBox(height: SpacingTokens.xxl),
-          
+
           // Quick Actions
-          _buildQuickActions(configuredIntegrations),
+          _buildQuickActions(colors, configuredIntegrations),
           const SizedBox(height: SpacingTokens.xxl),
-          
+
           // Integration Selector
-          _buildIntegrationSelector(configuredIntegrations),
+          _buildIntegrationSelector(colors, configuredIntegrations),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Tab Navigation
-          _buildTabNavigation(),
+          _buildTabNavigation(colors),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Tab Content
           SizedBox(
             height: 600,
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildTestRunnerTab(testingService),
-                _buildValidationTab(testingService),
-                _buildBenchmarkTab(testingService),
-                _buildReportsTab(testingService),
+                _buildTestRunnerTab(colors, testingService),
+                _buildValidationTab(colors, testingService),
+                _buildBenchmarkTab(colors, testingService),
+                _buildReportsTab(colors, testingService),
               ],
             ),
           ),
@@ -76,15 +77,15 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(ThemeColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(
+            Icon(
               Icons.bug_report,
-              color: SemanticColors.primary,
+              color: colors.primary,
               size: 28,
             ),
             const SizedBox(width: SpacingTokens.sm),
@@ -98,60 +99,64 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
         Text(
           'Test integration functionality, validate configurations, and benchmark performance',
           style: TextStyles.bodyMedium.copyWith(
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildQuickActions(List<IntegrationStatus> integrations) {
+  Widget _buildQuickActions(ThemeColors colors, List<IntegrationStatus> integrations) {
     return Row(
       children: [
         Expanded(
           child: _buildQuickActionCard(
+            colors,
             'Run All Tests',
             'Test all configured integrations',
             Icons.play_arrow,
-            SemanticColors.primary,
-            integrations.isNotEmpty && !_isRunningTests 
-              ? () => _runAllTests(integrations) 
+            colors.primary,
+            integrations.isNotEmpty && !_isRunningTests
+              ? () => _runAllTests(colors, integrations)
               : null,
           ),
         ),
         const SizedBox(width: SpacingTokens.lg),
         Expanded(
           child: _buildQuickActionCard(
+            colors,
             'Validate Configs',
             'Quick validation check',
             Icons.verified,
-            SemanticColors.success,
-            integrations.isNotEmpty && !_isRunningTests 
-              ? () => _validateAllConfigs(integrations) 
+            colors.success,
+            integrations.isNotEmpty && !_isRunningTests
+              ? () => _validateAllConfigs(colors, integrations)
               : null,
           ),
         ),
         const SizedBox(width: SpacingTokens.lg),
         Expanded(
           child: _buildQuickActionCard(
+            colors,
             'Performance Test',
             'Benchmark all integrations',
             Icons.speed,
-            SemanticColors.warning,
-            integrations.isNotEmpty && !_isRunningTests 
-              ? () => _runBenchmarkSuite(integrations) 
+            colors.warning,
+            integrations.isNotEmpty && !_isRunningTests
+              ? () => _runBenchmarkSuite(colors, integrations)
               : null,
           ),
         ),
         const SizedBox(width: SpacingTokens.lg),
         Expanded(
           child: _buildQuickActionCard(
+            colors,
             'Generate Report',
             'Create test report',
             Icons.assessment,
-            SemanticColors.onSurface,
-            _lastTestResult != null 
-              ? () => _generateReport() 
+            colors.onSurface,
+            _lastTestResult != null
+              ? () => _generateReport(colors)
               : null,
           ),
         ),
@@ -160,6 +165,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
   }
 
   Widget _buildQuickActionCard(
+    ThemeColors colors,
     String title,
     String subtitle,
     IconData icon,
@@ -192,7 +198,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
           Text(
             subtitle,
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: SpacingTokens.sm),
@@ -201,24 +207,24 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
             child: AsmblButton.primary(
               text: 'Run',
               onPressed: onPressed,
-                          ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildIntegrationSelector(List<IntegrationStatus> integrations) {
+  Widget _buildIntegrationSelector(ThemeColors colors, List<IntegrationStatus> integrations) {
     if (integrations.isEmpty) {
       return AsmblCard(
         padding: const EdgeInsets.all(SpacingTokens.lg),
         child: Center(
           child: Column(
             children: [
-              const Icon(
+              Icon(
                 Icons.info_outline,
                 size: 48,
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
               const SizedBox(height: SpacingTokens.sm),
               Text(
@@ -229,7 +235,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
               Text(
                 'Configure some integrations to start testing',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: SemanticColors.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -248,13 +254,13 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           Wrap(
             spacing: SpacingTokens.sm,
             runSpacing: SpacingTokens.sm,
             children: integrations.map((integration) {
               final isSelected = _selectedIntegrationId == integration.definition.id;
-              
+
               return GestureDetector(
                 onTap: () => setState(() => _selectedIntegrationId = integration.definition.id),
                 child: Container(
@@ -263,35 +269,35 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
                     vertical: SpacingTokens.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected 
-                        ? SemanticColors.primary.withOpacity(0.1)
-                        : SemanticColors.background,
+                    color: isSelected
+                        ? colors.primary.withOpacity(0.1)
+                        : colors.background,
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     border: Border.all(
-                      color: isSelected 
-                          ? SemanticColors.primary
-                          : SemanticColors.border,
+                      color: isSelected
+                          ? colors.primary
+                          : colors.border,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildIntegrationIcon(integration.definition),
+                      _buildIntegrationIcon(colors, integration.definition),
                       const SizedBox(width: SpacingTokens.xs),
                       Text(
                         integration.definition.name,
                         style: TextStyles.bodyMedium.copyWith(
-                          color: isSelected ? SemanticColors.primary : SemanticColors.onSurface,
+                          color: isSelected ? colors.primary : colors.onSurface,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                         ),
                       ),
                       if (integration.isEnabled) ...[
                         const SizedBox(width: SpacingTokens.xs),
-                        const Icon(
+                        Icon(
                           Icons.check_circle,
                           size: 14,
-                          color: SemanticColors.success,
+                          color: colors.success,
                         ),
                       ],
                     ],
@@ -305,12 +311,12 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     );
   }
 
-  Widget _buildTabNavigation() {
+  Widget _buildTabNavigation(ThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: SemanticColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: TabBar(
         controller: _tabController,
@@ -320,45 +326,46 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
           Tab(text: 'Benchmarks'),
           Tab(text: 'Reports'),
         ],
-        labelColor: SemanticColors.primary,
-        unselectedLabelColor: SemanticColors.onSurfaceVariant,
+        labelColor: colors.primary,
+        unselectedLabelColor: colors.onSurfaceVariant,
         indicator: BoxDecoration(
-          color: SemanticColors.primary.withOpacity(0.1),
+          color: colors.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         ),
       ),
     );
   }
 
-  Widget _buildTestRunnerTab(IntegrationTestingService testingService) {
+  Widget _buildTestRunnerTab(ThemeColors colors, IntegrationTestingService testingService) {
     if (_selectedIntegrationId == null) {
-      return _buildEmptyState('Select an integration to run tests');
+      return _buildEmptyState(colors, 'Select an integration to run tests');
     }
 
     final recommendations = testingService.getTestRecommendations(_selectedIntegrationId!);
-    
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Test Recommendations
-          _buildTestRecommendations(recommendations, testingService),
+          _buildTestRecommendations(colors, recommendations, testingService),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Last Test Results
           if (_lastTestResult != null) ...[
-            _buildLastTestResults(_lastTestResult!),
+            _buildLastTestResults(colors, _lastTestResult!),
             const SizedBox(height: SpacingTokens.xl),
           ],
-          
+
           // Active Test Sessions
-          _buildActiveTestSessions(testingService),
+          _buildActiveTestSessions(colors, testingService),
         ],
       ),
     );
   }
 
   Widget _buildTestRecommendations(
+    ThemeColors colors,
     List<TestRecommendation> recommendations,
     IntegrationTestingService testingService,
   ) {
@@ -369,7 +376,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
         children: [
           Row(
             children: [
-              const Icon(Icons.recommend, color: SemanticColors.primary, size: 16),
+              Icon(Icons.recommend, color: colors.primary, size: 16),
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Recommended Tests',
@@ -378,19 +385,20 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
               const Spacer(),
               AsmblButton.primary(
                 text: 'Run All Recommended',
-                onPressed: _isRunningTests ? null : () => _runRecommendedTests(recommendations, testingService),
-                              ),
+                onPressed: _isRunningTests ? null : () => _runRecommendedTests(colors, recommendations, testingService),
+              ),
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
-          ...recommendations.map((rec) => _buildTestRecommendationItem(rec, testingService)),
+
+          ...recommendations.map((rec) => _buildTestRecommendationItem(colors, rec, testingService)),
         ],
       ),
     );
   }
 
   Widget _buildTestRecommendationItem(
+    ThemeColors colors,
     TestRecommendation recommendation,
     IntegrationTestingService testingService,
   ) {
@@ -398,19 +406,19 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
           Icon(
             _getTestTypeIcon(recommendation.testType),
-            color: _getPriorityColor(recommendation.priority),
+            color: _getPriorityColor(colors, recommendation.priority),
             size: 16,
           ),
           const SizedBox(width: SpacingTokens.sm),
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,12 +430,12 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
                       style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(width: SpacingTokens.xs),
-                    _buildPriorityBadge(recommendation.priority),
+                    _buildPriorityBadge(colors, recommendation.priority),
                     const Spacer(),
                     Text(
                       '~${recommendation.estimatedDuration.inSeconds}s',
                       style: TextStyles.bodySmall.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -436,26 +444,26 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
                 Text(
                   recommendation.reason,
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(width: SpacingTokens.sm),
           AsmblButton.secondary(
             text: 'Run',
-            onPressed: _isRunningTests 
-                ? null 
-                : () => _runSingleTest(recommendation.testType, testingService),
-                      ),
+            onPressed: _isRunningTests
+                ? null
+                : () => _runSingleTest(colors, recommendation.testType, testingService),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildLastTestResults(TestSuite testResult) {
+  Widget _buildLastTestResults(ThemeColors colors, TestSuite testResult) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -468,8 +476,8 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
                     ? Icons.check_circle
                     : Icons.error,
                 color: testResult.overallStatus == TestStatus.passed
-                    ? SemanticColors.success
-                    : SemanticColors.error,
+                    ? colors.success
+                    : colors.error,
                 size: 16,
               ),
               const SizedBox(width: SpacingTokens.xs),
@@ -481,47 +489,49 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
               Text(
                 'Duration: ${testResult.duration.inSeconds}s',
                 style: TextStyles.bodySmall.copyWith(
-                  color: SemanticColors.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Test Results Summary
           Row(
             children: [
-              _buildResultStat('Total', '${testResult.tests.length}', SemanticColors.onSurface),
+              _buildResultStat(colors, 'Total', '${testResult.tests.length}', colors.onSurface),
               const SizedBox(width: SpacingTokens.lg),
               _buildResultStat(
-                'Passed', 
+                colors,
+                'Passed',
                 '${testResult.tests.where((t) => t.status == TestStatus.passed).length}',
-                SemanticColors.success,
+                colors.success,
               ),
               const SizedBox(width: SpacingTokens.lg),
               _buildResultStat(
+                colors,
                 'Failed',
                 '${testResult.tests.where((t) => t.status == TestStatus.failed).length}',
-                SemanticColors.error,
+                colors.error,
               ),
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Individual Test Results
-          ...testResult.tests.map((test) => _buildTestResultItem(test)),
+          ...testResult.tests.map((test) => _buildTestResultItem(colors, test)),
         ],
       ),
     );
   }
 
-  Widget _buildActiveTestSessions(IntegrationTestingService testingService) {
+  Widget _buildActiveTestSessions(ThemeColors colors, IntegrationTestingService testingService) {
     final activeSessions = testingService.getActiveTestSessions();
-    
+
     if (activeSessions.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -532,16 +542,16 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
             style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
-          ...activeSessions.map((session) => _buildTestSessionItem(session, testingService)),
+
+          ...activeSessions.map((session) => _buildTestSessionItem(colors, session, testingService)),
         ],
       ),
     );
   }
 
-  Widget _buildValidationTab(IntegrationTestingService testingService) {
+  Widget _buildValidationTab(ThemeColors colors, IntegrationTestingService testingService) {
     if (_selectedIntegrationId == null) {
-      return _buildEmptyState('Select an integration to validate');
+      return _buildEmptyState(colors, 'Select an integration to validate');
     }
 
     return SingleChildScrollView(
@@ -549,20 +559,20 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
         children: [
           AsmblButton.primary(
             text: 'Run Validation',
-            onPressed: _isRunningTests ? null : () => _runValidation(testingService),
+            onPressed: _isRunningTests ? null : () => _runValidation(colors, testingService),
           ),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           // Validation results would go here
-          _buildEmptyState('Run validation to see results'),
+          _buildEmptyState(colors, 'Run validation to see results'),
         ],
       ),
     );
   }
 
-  Widget _buildBenchmarkTab(IntegrationTestingService testingService) {
+  Widget _buildBenchmarkTab(ThemeColors colors, IntegrationTestingService testingService) {
     if (_selectedIntegrationId == null) {
-      return _buildEmptyState('Select an integration to benchmark');
+      return _buildEmptyState(colors, 'Select an integration to benchmark');
     }
 
     return SingleChildScrollView(
@@ -573,64 +583,64 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
               Expanded(
                 child: AsmblButton.primary(
                   text: 'Run Benchmark',
-                  onPressed: _isRunningTests ? null : () => _runBenchmark(testingService),
+                  onPressed: _isRunningTests ? null : () => _runBenchmark(colors, testingService),
                 ),
               ),
               const SizedBox(width: SpacingTokens.sm),
               AsmblButton.secondary(
                 text: 'Quick Test',
-                onPressed: _isRunningTests ? null : () => _runQuickBenchmark(testingService),
+                onPressed: _isRunningTests ? null : () => _runQuickBenchmark(colors, testingService),
               ),
             ],
           ),
           const SizedBox(height: SpacingTokens.xl),
-          
+
           if (_lastBenchmarkResult != null)
-            _buildBenchmarkResults(_lastBenchmarkResult!)
+            _buildBenchmarkResults(colors, _lastBenchmarkResult!)
           else
-            _buildEmptyState('Run benchmark to see performance metrics'),
+            _buildEmptyState(colors, 'Run benchmark to see performance metrics'),
         ],
       ),
     );
   }
 
-  Widget _buildReportsTab(IntegrationTestingService testingService) {
+  Widget _buildReportsTab(ThemeColors colors, IntegrationTestingService testingService) {
     return SingleChildScrollView(
       child: Column(
         children: [
           AsmblButton.primary(
             text: 'Generate Comprehensive Report',
-            onPressed: () => _generateComprehensiveReport(testingService),
+            onPressed: () => _generateComprehensiveReport(colors, testingService),
           ),
           const SizedBox(height: SpacingTokens.xl),
-          
-          _buildEmptyState('Generate a report to see detailed analytics'),
+
+          _buildEmptyState(colors, 'Generate a report to see detailed analytics'),
         ],
       ),
     );
   }
 
   // Helper widgets
-  Widget _buildIntegrationIcon(IntegrationDefinition integration) {
+  Widget _buildIntegrationIcon(ThemeColors colors, IntegrationDefinition integration) {
     return Container(
       width: 20,
       height: 20,
       decoration: BoxDecoration(
-        color: SemanticColors.primary.withOpacity(0.1),
+        color: colors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Icon(
         _getCategoryIcon(integration.category),
-        color: SemanticColors.primary,
+        color: colors.primary,
         size: 12,
       ),
     );
   }
 
-  Widget _buildPriorityBadge(RecommendationPriority priority) {
-    final color = _getPriorityColor(priority);
+  Widget _buildPriorityBadge(ThemeColors colors, RecommendationPriority priority) {
+    final color = _getPriorityColor(colors, priority);
     final text = priority.name.toUpperCase();
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       decoration: BoxDecoration(
@@ -648,7 +658,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     );
   }
 
-  Widget _buildResultStat(String label, String value, Color color) {
+  Widget _buildResultStat(ThemeColors colors, String label, String value, Color color) {
     return Column(
       children: [
         Text(
@@ -658,33 +668,33 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
         Text(
           label,
           style: TextStyles.bodySmall.copyWith(
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildTestResultItem(TestResult test) {
+  Widget _buildTestResultItem(ThemeColors colors, TestResult test) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: test.status == TestStatus.passed 
-              ? SemanticColors.success.withOpacity(0.3)
-              : SemanticColors.error.withOpacity(0.3),
+          color: test.status == TestStatus.passed
+              ? colors.success.withOpacity(0.3)
+              : colors.error.withOpacity(0.3),
         ),
       ),
       child: Row(
         children: [
           Icon(
             test.status == TestStatus.passed ? Icons.check : Icons.close,
-            color: test.status == TestStatus.passed 
-                ? SemanticColors.success 
-                : SemanticColors.error,
+            color: test.status == TestStatus.passed
+                ? colors.success
+                : colors.error,
             size: 16,
           ),
           const SizedBox(width: SpacingTokens.sm),
@@ -699,7 +709,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
                 Text(
                   test.message,
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -708,7 +718,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
           Text(
             '${test.duration.inMilliseconds}ms',
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
         ],
@@ -716,14 +726,14 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     );
   }
 
-  Widget _buildTestSessionItem(TestSession session, IntegrationTestingService testingService) {
+  Widget _buildTestSessionItem(ThemeColors colors, TestSession session, IntegrationTestingService testingService) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
@@ -744,7 +754,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
                 Text(
                   'Started ${DateTime.now().difference(session.startTime).inSeconds}s ago',
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -753,13 +763,13 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
           AsmblButton.secondary(
             text: 'Cancel',
             onPressed: () => testingService.cancelTestSession(session.sessionId),
-                      ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildBenchmarkResults(BenchmarkResult result) {
+  Widget _buildBenchmarkResults(ThemeColors colors, BenchmarkResult result) {
     return AsmblCard(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       child: Column(
@@ -767,7 +777,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
         children: [
           Row(
             children: [
-              const Icon(Icons.speed, color: SemanticColors.warning, size: 16),
+              Icon(Icons.speed, color: colors.warning, size: 16),
               const SizedBox(width: SpacingTokens.xs),
               Text(
                 'Benchmark Results',
@@ -777,13 +787,13 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
                 decoration: BoxDecoration(
-                  color: _getScoreColor(result.overallScore).withOpacity(0.1),
+                  color: _getScoreColor(colors, result.overallScore).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(
                   'Score: ${result.overallScore.toInt()}/100',
                   style: TextStyles.bodySmall.copyWith(
-                    color: _getScoreColor(result.overallScore),
+                    color: _getScoreColor(colors, result.overallScore),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -791,21 +801,21 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
             ],
           ),
           const SizedBox(height: SpacingTokens.lg),
-          
-          ...result.tests.map((test) => _buildBenchmarkTestItem(test)),
+
+          ...result.tests.map((test) => _buildBenchmarkTestItem(colors, test)),
         ],
       ),
     );
   }
 
-  Widget _buildBenchmarkTestItem(BenchmarkTest test) {
+  Widget _buildBenchmarkTestItem(ThemeColors colors, BenchmarkTest test) {
     return Container(
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: SemanticColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: SemanticColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -838,21 +848,21 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     );
   }
 
-  Widget _buildEmptyState(String message) {
+  Widget _buildEmptyState(ThemeColors colors, String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.science,
             size: 64,
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
           const SizedBox(height: SpacingTokens.lg),
           Text(
             message,
             style: TextStyles.bodyLarge.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -862,33 +872,33 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
   }
 
   // Action methods
-  void _runAllTests(List<IntegrationStatus> integrations) async {
+  void _runAllTests(ThemeColors colors, List<IntegrationStatus> integrations) async {
     setState(() => _isRunningTests = true);
-    
+
     try {
       // Run tests for all integrations sequentially
       for (final integration in integrations) {
         if (integration.isEnabled) {
           final testingService = ref.read(integrationTestingServiceProvider);
           final result = await testingService.runIntegrationTests(integration.definition.id);
-          
+
           if (integration == integrations.last) {
             setState(() => _lastTestResult = result);
           }
         }
       }
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('All tests completed successfully'),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: colors.success,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Test execution failed: $e'),
-          backgroundColor: SemanticColors.error,
+          backgroundColor: colors.error,
         ),
       );
     } finally {
@@ -896,29 +906,29 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     }
   }
 
-  void _validateAllConfigs(List<IntegrationStatus> integrations) async {
+  void _validateAllConfigs(ThemeColors colors, List<IntegrationStatus> integrations) async {
     setState(() => _isRunningTests = true);
-    
+
     try {
       final testingService = ref.read(integrationTestingServiceProvider);
-      
+
       for (final integration in integrations) {
         if (integration.isEnabled) {
           await testingService.validateConfiguration(integration.definition.id);
         }
       }
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('All configurations validated'),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: colors.success,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Validation failed: $e'),
-          backgroundColor: SemanticColors.error,
+          backgroundColor: colors.error,
         ),
       );
     } finally {
@@ -926,33 +936,33 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     }
   }
 
-  void _runBenchmarkSuite(List<IntegrationStatus> integrations) async {
+  void _runBenchmarkSuite(ThemeColors colors, List<IntegrationStatus> integrations) async {
     setState(() => _isRunningTests = true);
-    
+
     try {
       final testingService = ref.read(integrationTestingServiceProvider);
-      
+
       for (final integration in integrations) {
         if (integration.isEnabled) {
           final result = await testingService.runBenchmarks(integration.definition.id);
-          
+
           if (integration == integrations.last) {
             setState(() => _lastBenchmarkResult = result);
           }
         }
       }
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Benchmark suite completed'),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: colors.success,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Benchmark failed: $e'),
-          backgroundColor: SemanticColors.error,
+          backgroundColor: colors.error,
         ),
       );
     } finally {
@@ -960,45 +970,46 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     }
   }
 
-  void _generateReport() {
+  void _generateReport(ThemeColors colors) {
     if (_lastTestResult != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Test report generated successfully'),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: colors.success,
         ),
       );
     }
   }
 
   void _runRecommendedTests(
+    ThemeColors colors,
     List<TestRecommendation> recommendations,
     IntegrationTestingService testingService,
   ) async {
     if (_selectedIntegrationId == null) return;
-    
+
     setState(() => _isRunningTests = true);
-    
+
     try {
       final testTypes = recommendations.map((r) => r.testType).toList();
       final result = await testingService.runIntegrationTests(
         _selectedIntegrationId!,
         testTypes: testTypes,
       );
-      
+
       setState(() => _lastTestResult = result);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Recommended tests completed'),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: colors.success,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Test execution failed: $e'),
-          backgroundColor: SemanticColors.error,
+          backgroundColor: colors.error,
         ),
       );
     } finally {
@@ -1006,30 +1017,30 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     }
   }
 
-  void _runSingleTest(TestType testType, IntegrationTestingService testingService) async {
+  void _runSingleTest(ThemeColors colors, TestType testType, IntegrationTestingService testingService) async {
     if (_selectedIntegrationId == null) return;
-    
+
     setState(() => _isRunningTests = true);
-    
+
     try {
       final result = await testingService.runIntegrationTests(
         _selectedIntegrationId!,
         testTypes: [testType],
       );
-      
+
       setState(() => _lastTestResult = result);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${_getTestTypeName(testType)} test completed'),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: colors.success,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Test execution failed: $e'),
-          backgroundColor: SemanticColors.error,
+          backgroundColor: colors.error,
         ),
       );
     } finally {
@@ -1037,25 +1048,25 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     }
   }
 
-  void _runValidation(IntegrationTestingService testingService) async {
+  void _runValidation(ThemeColors colors, IntegrationTestingService testingService) async {
     if (_selectedIntegrationId == null) return;
-    
+
     setState(() => _isRunningTests = true);
-    
+
     try {
       await testingService.validateConfiguration(_selectedIntegrationId!);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Validation completed'),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: colors.success,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Validation failed: $e'),
-          backgroundColor: SemanticColors.error,
+          backgroundColor: colors.error,
         ),
       );
     } finally {
@@ -1063,26 +1074,26 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     }
   }
 
-  void _runBenchmark(IntegrationTestingService testingService) async {
+  void _runBenchmark(ThemeColors colors, IntegrationTestingService testingService) async {
     if (_selectedIntegrationId == null) return;
-    
+
     setState(() => _isRunningTests = true);
-    
+
     try {
       final result = await testingService.runBenchmarks(_selectedIntegrationId!);
       setState(() => _lastBenchmarkResult = result);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Benchmark completed'),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: colors.success,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Benchmark failed: $e'),
-          backgroundColor: SemanticColors.error,
+          backgroundColor: colors.error,
         ),
       );
     } finally {
@@ -1090,26 +1101,26 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     }
   }
 
-  void _runQuickBenchmark(IntegrationTestingService testingService) async {
+  void _runQuickBenchmark(ThemeColors colors, IntegrationTestingService testingService) async {
     if (_selectedIntegrationId == null) return;
-    
+
     setState(() => _isRunningTests = true);
-    
+
     try {
       final result = await testingService.runBenchmarks(_selectedIntegrationId!, iterations: 3);
       setState(() => _lastBenchmarkResult = result);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Quick benchmark completed'),
-          backgroundColor: SemanticColors.success,
+          backgroundColor: colors.success,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Benchmark failed: $e'),
-          backgroundColor: SemanticColors.error,
+          backgroundColor: colors.error,
         ),
       );
     } finally {
@@ -1117,11 +1128,11 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     }
   }
 
-  void _generateComprehensiveReport(IntegrationTestingService testingService) {
+  void _generateComprehensiveReport(ThemeColors colors, IntegrationTestingService testingService) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Text('Comprehensive report generated'),
-        backgroundColor: SemanticColors.success,
+        backgroundColor: colors.success,
       ),
     );
   }
@@ -1155,19 +1166,19 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     }
   }
 
-  Color _getPriorityColor(RecommendationPriority priority) {
+  Color _getPriorityColor(ThemeColors colors, RecommendationPriority priority) {
     switch (priority) {
-      case RecommendationPriority.low: return SemanticColors.onSurfaceVariant;
-      case RecommendationPriority.medium: return SemanticColors.warning;
-      case RecommendationPriority.high: return SemanticColors.error;
-      case RecommendationPriority.critical: return SemanticColors.error;
+      case RecommendationPriority.low: return colors.onSurfaceVariant;
+      case RecommendationPriority.medium: return colors.warning;
+      case RecommendationPriority.high: return colors.error;
+      case RecommendationPriority.critical: return colors.error;
     }
   }
 
-  Color _getScoreColor(double score) {
-    if (score >= 80) return SemanticColors.success;
-    if (score >= 60) return SemanticColors.warning;
-    return SemanticColors.error;
+  Color _getScoreColor(ThemeColors colors, double score) {
+    if (score >= 80) return colors.success;
+    if (score >= 60) return colors.warning;
+    return colors.error;
   }
 
   IconData _getCategoryIcon(IntegrationCategory category) {

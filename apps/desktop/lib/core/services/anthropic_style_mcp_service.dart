@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/mcp_catalog_entry.dart';
 
 /// Anthropic-style MCP service focused on safety, simplicity, and user value
 class AnthropicStyleMCPService {

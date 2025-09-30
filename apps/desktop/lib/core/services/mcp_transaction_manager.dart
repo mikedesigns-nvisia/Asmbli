@@ -12,6 +12,7 @@ import 'mcp_process_manager.dart';
 
 /// Production-grade transactional state manager for MCP operations
 /// Ensures atomic operations, rollback capability, and data consistency
+@Deprecated('Will be consolidated into MCPSettingsService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPTransactionManager {
   final DesktopStorageService _storageService;
   final MCPCatalogService _catalogService;

@@ -10,6 +10,7 @@ import 'mcp_catalog_service.dart';
 import 'mcp_protocol_handler.dart';
 import '../../features/agents/presentation/widgets/mcp_server_logs_widget.dart';
 
+@Deprecated('Will be consolidated into MCPProcessService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 /// Installation progress tracking
 class InstallationProgress {
   final String serverId;

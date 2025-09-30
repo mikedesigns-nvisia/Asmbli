@@ -7,6 +7,7 @@ import 'integration_health_monitoring_service.dart';
 
 /// Bridge service that connects Flutter to the TypeScript MCP core
 /// Handles message processing with MCP server integration
+@Deprecated('Will be consolidated into MCPServerService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPBridgeService {
   static const MethodChannel _methodChannel = MethodChannel('agentengine.mcp');
   static const EventChannel _eventChannel = EventChannel('agentengine.mcp.events');

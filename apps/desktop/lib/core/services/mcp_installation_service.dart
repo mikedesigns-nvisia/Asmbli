@@ -9,6 +9,7 @@ import 'production_logger.dart';
 import 'mcp_catalog_service.dart';
 
 /// Service for installing MCP servers using uvx/npx in agent terminals
+@Deprecated('Will be consolidated into MCPRegistryService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPInstallationService {
   static const Duration _installTimeout = Duration(minutes: 5);
   static const Duration _checkTimeout = Duration(seconds: 30);

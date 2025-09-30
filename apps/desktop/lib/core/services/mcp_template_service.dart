@@ -263,6 +263,7 @@ class TemplateValidationError {
 }
 
 /// Service for managing MCP server templates
+@Deprecated('Will be consolidated into MCPSettingsService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPTemplateService {
   // Hard-coded templates (in production, these would come from the TypeScript layer)
   static final List<MCPServerTemplate> _coreTemplates = [

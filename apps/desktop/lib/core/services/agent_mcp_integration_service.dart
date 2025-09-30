@@ -11,6 +11,7 @@ import 'mcp_catalog_service.dart';
 import 'production_logger.dart';
 
 /// Service that integrates agents with MCP servers through terminals
+@Deprecated('Will be consolidated into AgentMCPService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class AgentMCPIntegrationService {
   final AgentTerminalManager _terminalManager;
   final MCPInstallationService _installationService;

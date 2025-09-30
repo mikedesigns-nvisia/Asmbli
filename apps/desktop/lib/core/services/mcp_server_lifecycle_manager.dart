@@ -8,6 +8,7 @@ import 'production_logger.dart';
 
 /// Enhanced MCP server lifecycle manager with comprehensive health monitoring,
 /// automatic restart capabilities, and clean shutdown procedures
+@Deprecated('Will be consolidated into MCPServerService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPServerLifecycleManager {
   final MCPProcessManager _processManager;
   final ProductionLogger _logger;

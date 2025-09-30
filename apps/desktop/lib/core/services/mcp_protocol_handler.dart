@@ -9,6 +9,7 @@ import 'json_rpc_communication_service.dart';
 
 /// Handles MCP protocol communication and connection management
 /// Enhanced with JSON-RPC communication service for secure, logged, and concurrent operations
+@Deprecated('Use MCPProtocolService instead. Will be consolidated in v2.0. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPProtocolHandler {
   final MCPErrorHandler _errorHandler;
   final JsonRpcCommunicationService _jsonRpcService;

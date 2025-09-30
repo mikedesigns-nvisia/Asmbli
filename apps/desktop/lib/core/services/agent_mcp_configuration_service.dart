@@ -10,6 +10,7 @@ import '../di/service_locator.dart';
 
 /// Service for managing MCP server configurations for specific agents
 /// Links agents to GitHub MCP registry tools and manages their configurations
+@Deprecated('Will be consolidated into AgentMCPService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class AgentMCPConfigurationService {
   final MCPCatalogService _catalogService;
   final DesktopStorageService _storage;

@@ -73,34 +73,35 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Header and search
-        _buildHeader(context),
+        _buildHeader(context, colors),
         
         const SizedBox(height: SpacingTokens.sectionSpacing),
         
         // Filters
-        _buildFilters(context),
-        
+        _buildFilters(context, colors),
+
         const SizedBox(height: SpacingTokens.sectionSpacing),
-        
+
         // Quick recommendations
         if (widget.recommendedTags != null || widget.userRole != null) ...[
-          _buildRecommendations(context),
+          _buildRecommendations(context, colors),
           const SizedBox(height: SpacingTokens.sectionSpacing),
         ],
-        
+
         // Template grid
         Expanded(
-          child: _buildTemplateGrid(context),
+          child: _buildTemplateGrid(context, colors),
         ),
       ],
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, ThemeColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -137,7 +138,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     );
   }
 
-  Widget _buildFilters(BuildContext context) {
+  Widget _buildFilters(BuildContext context, ThemeColors colors) {
     return Wrap(
       spacing: 12,
       runSpacing: 8,
@@ -145,21 +146,23 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         // Category filter
         _buildFilterDropdown(
           context,
+          colors,
           label: 'Category',
           value: _selectedCategory,
           items: ['All', ...TemplateCategories.all],
           onChanged: (value) => setState(() => _selectedCategory = value!),
         ),
-        
+
         // Difficulty filter
         _buildFilterDropdown(
           context,
+          colors,
           label: 'Difficulty',
           value: _selectedDifficulty,
           items: ['All', 'Easy', 'Medium', 'Hard'],
           onChanged: (value) => setState(() => _selectedDifficulty = value!),
         ),
-        
+
         // Recommended toggle
         FilterChip(
           selected: _showRecommendedOnly,
@@ -172,15 +175,16 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
             ],
           ),
           onSelected: (selected) => setState(() => _showRecommendedOnly = selected),
-          selectedColor: SemanticColors.primary.withOpacity(0.2),
-          checkmarkColor: SemanticColors.primary,
+          selectedColor: colors.primary.withOpacity(0.2),
+          checkmarkColor: colors.primary,
         ),
       ],
     );
   }
 
   Widget _buildFilterDropdown(
-    BuildContext context, {
+    BuildContext context,
+    ThemeColors colors, {
     required String label,
     required String value,
     required List<String> items,
@@ -213,26 +217,26 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     );
   }
 
-  Widget _buildRecommendations(BuildContext context) {
+  Widget _buildRecommendations(BuildContext context, ThemeColors colors) {
     final recommendations = _getRecommendationsForUser();
     if (recommendations.isEmpty) return const SizedBox.shrink();
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
             Icon(
               Icons.auto_awesome,
               size: 16,
-              color: SemanticColors.primary,
+              color: colors.primary,
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
               'Recommended for you',
               style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                color: SemanticColors.primary,
+                fontWeight: FontWeight.w500,
+                color: colors.primary,
               ),
             ),
           ],
@@ -248,7 +252,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
               return Container(
                 width: 200,
                 margin: const EdgeInsets.only(right: 12),
-                child: _buildCompactTemplateCard(context, template, isRecommended: true),
+                child: _buildCompactTemplateCard(context, colors, template, isRecommended: true),
               );
             },
           ),
@@ -257,11 +261,11 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     );
   }
 
-  Widget _buildTemplateGrid(BuildContext context) {
+  Widget _buildTemplateGrid(BuildContext context, ThemeColors colors) {
     final templates = _filteredTemplates;
-    
+
     if (templates.isEmpty) {
-      return _buildEmptyState(context);
+      return _buildEmptyState(context, colors);
     }
     
     return GridView.builder(
@@ -273,12 +277,12 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
       ),
       itemCount: templates.length,
       itemBuilder: (context, index) {
-        return _buildTemplateCard(context, templates[index]);
+        return _buildTemplateCard(context, colors, templates[index]);
       },
     );
   }
 
-  Widget _buildTemplateCard(BuildContext context, EnhancedMCPTemplate template) {
+  Widget _buildTemplateCard(BuildContext context, ThemeColors colors, EnhancedMCPTemplate template) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -303,12 +307,12 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: (template.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+                      color: (template.brandColor ?? colors.primary).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       template.icon,
-                      color: template.brandColor ?? SemanticColors.primary,
+                      color: template.brandColor ?? colors.primary,
                       size: 20,
                     ),
                   ),
@@ -316,42 +320,42 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      if (template.isPopular) _buildPopularBadge(),
+                      if (template.isPopular) _buildPopularBadge(colors),
                       if (template.isRecommended) ...[
                         if (template.isPopular) const SizedBox(height: 2),
-                        _buildRecommendedBadge(),
+                        _buildRecommendedBadge(colors),
                       ],
                     ],
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               // Title and category
               Text(
                 template.name,
                 style: TextStyle(
-                      fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const SizedBox(height: 4),
-              
+
               Row(
                 children: [
                   Text(
                     template.category,
                     style: TextStyle(
-                      color: template.brandColor ?? SemanticColors.primary,
+                      color: template.brandColor ?? colors.primary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  _buildDifficultyBadge(template.difficulty),
+                  _buildDifficultyBadge(colors, template.difficulty),
                 ],
               ),
               
@@ -402,7 +406,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     );
   }
 
-  Widget _buildCompactTemplateCard(BuildContext context, EnhancedMCPTemplate template, {bool isRecommended = false}) {
+  Widget _buildCompactTemplateCard(BuildContext context, ThemeColors colors, EnhancedMCPTemplate template, {bool isRecommended = false}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -411,13 +415,13 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isRecommended 
-              ? SemanticColors.primary.withOpacity(0.1)
+            color: isRecommended
+              ? colors.primary.withOpacity(0.1)
               : Theme.of(context).colorScheme.surface.withOpacity(0.8),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: isRecommended
-                ? SemanticColors.primary.withOpacity(0.3)
+                ? colors.primary.withOpacity(0.3)
                 : Theme.of(context).colorScheme.outline.withOpacity(0.3),
             ),
           ),
@@ -427,12 +431,12 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: (template.brandColor ?? SemanticColors.primary).withOpacity(0.1),
+                  color: (template.brandColor ?? colors.primary).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(
                   template.icon,
-                  color: template.brandColor ?? SemanticColors.primary,
+                  color: template.brandColor ?? colors.primary,
                   size: 16,
                 ),
               ),
@@ -446,8 +450,8 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
                       template.name,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: isRecommended 
-                          ? SemanticColors.primary 
+                        color: isRecommended
+                          ? colors.primary
                           : Theme.of(context).colorScheme.onSurface,
                       ),
                       maxLines: 1,
@@ -474,7 +478,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, ThemeColors colors) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -517,7 +521,7 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     );
   }
 
-  Widget _buildPopularBadge() {
+  Widget _buildPopularBadge(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
@@ -545,34 +549,34 @@ class _EnhancedTemplateBrowserState extends State<EnhancedTemplateBrowser> {
     );
   }
 
-  Widget _buildRecommendedBadge() {
+  Widget _buildRecommendedBadge(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        color: SemanticColors.success.withOpacity(0.1),
+        color: colors.success.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         'Recommended',
         style: TextStyle(
-          color: SemanticColors.success,
+          color: colors.success,
           fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  Widget _buildDifficultyBadge(String difficulty) {
+  Widget _buildDifficultyBadge(ThemeColors colors, String difficulty) {
     Color badgeColor;
     switch (difficulty.toLowerCase()) {
       case 'easy':
-        badgeColor = SemanticColors.success;
+        badgeColor = colors.success;
         break;
       case 'medium':
         badgeColor = Colors.orange;
         break;
       case 'hard':
-        badgeColor = SemanticColors.error;
+        badgeColor = colors.error;
         break;
       default:
         badgeColor = Theme.of(context).colorScheme.onSurfaceVariant;

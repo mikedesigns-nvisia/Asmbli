@@ -17,20 +17,21 @@ class AutoDetectButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ThemeColors(context);
     if (compact) {
-      return _buildCompactButton(context);
+      return _buildCompactButton(context, colors);
     } else {
-      return _buildFullButton(context);
+      return _buildFullButton(context, colors);
     }
   }
 
-  Widget _buildCompactButton(BuildContext context) {
+  Widget _buildCompactButton(BuildContext context, ThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: SemanticColors.primary.withOpacity(0.1),
+        color: colors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: SemanticColors.primary.withOpacity(0.3),
+          color: colors.primary.withOpacity(0.3),
         ),
       ),
       child: Material(
@@ -43,16 +44,16 @@ class AutoDetectButton extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.auto_fix_high,
                   size: 18,
-                  color: SemanticColors.primary,
+                  color: colors.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Auto-Detect',
                   style: TextStyle(
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                   ),
                 ),
               ],
@@ -63,19 +64,19 @@ class AutoDetectButton extends ConsumerWidget {
     );
   }
 
-  Widget _buildFullButton(BuildContext context) {
+  Widget _buildFullButton(BuildContext context, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            SemanticColors.primary.withOpacity(0.1),
-            SemanticColors.primary.withOpacity(0.05),
+            colors.primary.withOpacity(0.1),
+            colors.primary.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: SemanticColors.primary.withOpacity(0.2),
+          color: colors.primary.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -86,12 +87,12 @@ class AutoDetectButton extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: SemanticColors.primary,
+                  color: colors.primary,
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.auto_fix_high,
-                  color: SemanticColors.surface,
+                  color: colors.surface,
                   size: 20,
                 ),
               ),
@@ -105,14 +106,14 @@ class AutoDetectButton extends ConsumerWidget {
                           ? 'Auto-Detect $specificIntegration'
                           : 'Auto-Detect Configuration',
                       style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                        color: SemanticColors.primary,
-                      ).copyWith(color: SemanticColors.primary),
+                        fontWeight: FontWeight.w500,
+                        color: colors.primary,
+                      ),
                     ),
                     Text(
                       'Automatically find and configure installed tools',
                       style: TextStyle(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -165,6 +166,7 @@ class AutoDetectFormField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ThemeColors(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -190,18 +192,18 @@ class AutoDetectFormField extends ConsumerWidget {
           decoration: InputDecoration(
             hintText: 'Path will be auto-detected',
             filled: true,
-            fillColor: SemanticColors.surface,
+            fillColor: colors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: SemanticColors.border),
+              borderSide: BorderSide(color: colors.border),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: SemanticColors.border),
+              borderSide: BorderSide(color: colors.border),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: SemanticColors.primary),
+              borderSide: BorderSide(color: colors.primary),
             ),
           ),
         ),

@@ -1,208 +1,527 @@
-# Asmbli Development Guidelines
+# CLAUDE.md
 
-## Design System Rules
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-### ALWAYS Use Existing Design System
-- **Location**: `lib/core/design_system/`
-- **Import**: `import 'core/design_system/design_system.dart';`
-- **Use the Multi-Color Scheme System** - supports multiple color palettes
+---
 
-### Color Scheme System
-The app now supports multiple color schemes that users can select in Settings > Appearance:
+## Project Overview
 
-#### Available Color Schemes:
-1. **Mint Green** (default) - Mint/forest green palette
-2. **Cool Blue** - Professional blue tones
-3. **Forest Green** - Rich forest greens
-4. **Sunset Orange** - Warm orange/red tones
+**Asmbli** is a Flutter desktop application for building and managing AI agents with MCP (Model Context Protocol) integration. This is an **experimental alpha project** with a comprehensive design system but significant architectural complexity.
 
-#### Theme Colors Usage:
+**Tech Stack**: Flutter 3.0+, Dart 3.0+, Riverpod (state management), MCP integration, local storage (Hive + SQLite)
+
+**Platforms**: Windows, macOS, Linux
+
+---
+
+## Development Commands
+
+### Setup
+```bash
+# Install Flutter dependencies for desktop app
+cd apps/desktop
+flutter pub get
+
+# Install core package dependencies
+cd ../../packages/agent_engine_core
+flutter pub get
+```
+
+### Running the App
+```bash
+cd apps/desktop
+
+# Run on desktop (auto-detects platform)
+flutter run
+
+# Run on specific platform
+flutter run -d windows
+flutter run -d macos
+flutter run -d linux
+```
+
+### Testing
+```bash
+cd apps/desktop
+
+# Run all tests
+flutter test
+
+# Run specific test file
+flutter test test/unit/services/agent_service_test.dart
+
+# Run tests with coverage
+flutter test --coverage
+
+# Generate coverage report (requires lcov)
+genhtml coverage/lcov.info -o coverage/html
+```
+
+### Code Quality
+```bash
+# Run static analysis
+flutter analyze
+
+# Format code
+dart format .
+
+# Run build_runner for code generation (if models changed)
+flutter packages pub run build_runner build --delete-conflicting-outputs
+```
+
+### Building
+```bash
+# Build release version for current platform
+flutter build windows --release
+flutter build macos --release
+flutter build linux --release
+```
+
+---
+
+## Architecture
+
+### High-Level Structure
+
+```
+apps/desktop/lib/
+├── core/                      # Core infrastructure
+│   ├── design_system/        # UI components, tokens, themes
+│   ├── di/                   # ServiceLocator (dependency injection)
+│   ├── services/             # 136+ business logic services
+│   │   ├── desktop/          # Platform-specific services
+│   │   ├── llm/              # LLM provider abstractions
+│   │   ├── business/         # Business service layer
+│   │   └── (46 MCP services) # MCP integration (see below)
+│   ├── models/               # Data models
+│   └── utils/                # Utilities
+├── features/                 # Feature modules (178 files)
+│   ├── chat/                 # Chat interface
+│   ├── agents/               # Agent management
+│   ├── settings/             # Settings & configuration
+│   ├── context/              # Document context
+│   └── tools/                # MCP tools/integrations
+└── providers/                # Riverpod providers
+
+packages/agent_engine_core/   # Shared models & interfaces
+```
+
+### Key Architectural Patterns
+
+**1. Service Locator Pattern** (`lib/core/di/service_locator.dart`)
+- Central dependency injection container
+- Services registered at startup in `main.dart`
+- Access via `ServiceLocator.instance.get<ServiceType>()`
+- **110+ services** (consolidation plan in progress - see `docs/SERVICE_CONSOLIDATION_PLAN.md`)
+
+**2. Riverpod State Management**
+- 1,096+ providers across codebase
+- Use `ref.watch()` to listen to state changes
+- Use `ref.read()` for one-time reads
+- Provider pattern: `final myProvider = StateNotifierProvider<MyNotifier, MyState>(...)`
+
+**3. Feature-Based Organization**
+- Each feature has `presentation/`, `data/`, `models/` subdirectories
+- Business logic in services, UI in features
+- Cross-feature communication via services or shared providers
+
+**4. MCP Integration Architecture** (⚠️ Complex - 46 services)
+MCP services are organized in layers (see `docs/SERVICE_CONSOLIDATION_PLAN.md` for consolidation roadmap):
+- **Protocol Layer**: `MCPProtocolHandler`, `MCPProcessManager`, transport adapters
+- **Server Management**: `MCPServerExecutionService`, `MCPBridgeService`, lifecycle managers
+- **Agent Integration**: `AgentMCPIntegrationService`, `AgentTerminalManager`
+- **Context**: `ContextMCPResourceService`, `MCPCatalogService`
+- **Support**: `MCPErrorHandler`, `MCPHealthMonitor`, settings services
+
+**⚠️ Current State**: Over-engineered with significant overlap. When working with MCP:
+1. Start with `MCPBridgeService` for basic MCP operations
+2. Use `MCPCatalogService` for server discovery
+3. Use `AgentMCPIntegrationService` for agent-specific MCP features
+4. Avoid creating new MCP services - extend existing ones
+
+---
+
+## Design System (CRITICAL)
+
+### ⚠️ Mandatory Patterns
+
+**ALWAYS use `ThemeColors(context)` - NEVER hardcode colors**
+
 ```dart
-// ALWAYS use ThemeColors for dynamic color scheme support
+import 'core/design_system/design_system.dart';
+
+// ✅ CORRECT
+final colors = ThemeColors(context);
+Container(color: colors.primary)
+
+// ❌ WRONG - Will break color scheme switching
+Container(color: Color(0xFF4ECDC4))
+Container(color: SemanticColors.primary)  // Deprecated
+```
+
+### Multi-Color Scheme System
+The app supports 5 user-selectable color schemes (Warm Neutral, Cool Blue, Forest Green, Sunset Orange, Silver Onyx). All UI must adapt dynamically.
+
+**Available Colors**:
+```dart
 final colors = ThemeColors(context);
 
-// Core colors that adapt to selected scheme
-colors.background              // Main background
-colors.surface                // Card/surface backgrounds
-colors.primary                // Primary brand color
-colors.onSurface              // Main text color
-colors.onSurfaceVariant       // Secondary text color
-colors.border                 // Border color
-colors.accent                 // Accent/tertiary color
-
-// Special gradient colors (adapt to color scheme)
-colors.backgroundGradientStart
-colors.backgroundGradientMiddle  
-colors.backgroundGradientEnd
+colors.background, colors.surface, colors.primary, colors.accent
+colors.onSurface, colors.onSurfaceVariant, colors.border
+colors.success, colors.warning, colors.error
+colors.backgroundGradientStart/Middle/End
 ```
 
-### Component Usage
+### Design System Components
+**ALWAYS use these instead of Flutter widgets**:
+
 ```dart
-// ALWAYS use design system components
-AsmblCard(child: ...)              // Instead of Card()
-AsmblButton.primary(text: "...")   // Instead of ElevatedButton()
-HeaderButton(text: "...", icon: ...)  // For navigation
-TextStyles.pageTitle               // Instead of TextStyle()
-SpacingTokens.xxl                  // Instead of EdgeInsets.all(24)
+// Cards
+AsmblCard(child: ...)
+AsmblCardEnhanced.outlined(child: ...)
+
+// Buttons
+AsmblButton.primary(text: "Save", onPressed: () {})
+AsmblButton.accent(text: "Create", onPressed: () {})
+AsmblButton.secondary(text: "Cancel", onPressed: () {})
+AsmblButton.outline(text: "Learn More", onPressed: () {})
+AsmblButton.destructive(text: "Delete", onPressed: () {})
+
+// Typography
+TextStyles.pageTitle, TextStyles.sectionTitle
+TextStyles.cardTitle, TextStyles.bodyMedium
+
+// Spacing (Golden Ratio System)
+SpacingTokens.xs (4px), SpacingTokens.sm (8px), SpacingTokens.md (13px)
+SpacingTokens.lg (16px), SpacingTokens.xl (21px), SpacingTokens.xxl (24px)
+
+// Border Radius
+BorderRadiusTokens.sm (2px), BorderRadiusTokens.md (6px)
+BorderRadiusTokens.lg (8px), BorderRadiusTokens.xl (12px)
 ```
 
-### Layout Patterns
-- **Page Structure**: Gradient background + semi-transparent header + content
-- **Header Padding**: `SpacingTokens.headerPadding` (24px)
-- **Page Padding**: `SpacingTokens.xxl` (24px)
-- **Element Spacing**: `SpacingTokens.lg` (16px)
-- **Border Radius**: `BorderRadiusTokens.xl` (12px for cards)
-
-### Typography
-- **Font**: Fustat (Google Fonts) throughout
-- **Brand Title**: `TextStyles.brandTitle` (bold italic)
-- **Page Titles**: `TextStyles.pageTitle`
-- **Body Text**: `TextStyles.bodyMedium`
-
-### Interactive States
-- All components have built-in hover/pressed states
-- Use theme-appropriate overlays that match selected color scheme
-- Consistent 150ms transitions
-
-## Development Rules
-
-### When Adding New Features
-1. **ALWAYS** use `ThemeColors(context)` for colors
-2. **ALWAYS** use existing components first
-3. **EXTEND** existing components if needed
-4. **MAINTAIN** color scheme compatibility
-5. **TEST** all color schemes work consistently
-
-### Color Scheme Management
+### Standard Page Layout Pattern
 ```dart
-// Access current theme state
-final themeState = ref.watch(themeServiceProvider);
-final themeService = ref.read(themeServiceProvider.notifier);
+return Scaffold(
+  body: Container(
+    decoration: BoxDecoration(
+      gradient: RadialGradient(
+        center: Alignment.topCenter,
+        radius: 1.5,
+        colors: [
+          colors.backgroundGradientStart,
+          colors.backgroundGradientMiddle,
+          colors.backgroundGradientEnd,
+        ],
+        stops: const [0.0, 0.6, 1.0],
+      ),
+    ),
+    child: SafeArea(
+      child: Column(
+        children: [
+          // Header with AppNavigationBar
+          const AppNavigationBar(currentRoute: AppRoutes.myRoute),
 
-// Change color scheme
-themeService.setColorScheme(AppColorSchemes.coolBlue);
-
-// Change theme mode (light/dark)
-themeService.setTheme(ThemeMode.dark);
-
-// Get theme-aware colors with specific scheme
-final colors = ThemeColors(context, colorScheme: themeState.colorScheme);
+          // Content with standard padding
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(SpacingTokens.xxl),
+              child: // Your content
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+);
 ```
 
-### Adding New Color Schemes
-To add new color schemes, edit `lib/core/theme/color_schemes.dart`:
-1. Add scheme ID constant to `AppColorSchemes`
-2. Add entry to `AppColorSchemes.all` list
-3. Add case to `getTheme()` method
-4. Implement light and dark theme variants
+**Full design system reference**: `apps/desktop/lib/core/design_system/USAGE.md`
 
-### Forbidden Practices
-- ❌ Using `Color(0xFF...)` directly
-- ❌ Hardcoding colors instead of using ThemeColors
-- ❌ Using `Container()` without design system
-- ❌ Hardcoding spacing values
-- ❌ Creating color schemes outside the system
+---
 
-### Required Practices  
-- ✅ Import design system in every new file
-- ✅ Use `ThemeColors(context)` for all colors
-- ✅ Apply consistent spacing tokens
-- ✅ Follow existing layout patterns
-- ✅ Test all color schemes and theme modes
+## Critical Anti-Patterns to AVOID
 
-● What NOT to Do When Coding: Anti-Patterns to Avoid
+### 1. Service Proliferation
+❌ **DON'T** create new services without checking if existing ones can be extended
+- Currently 110+ services (target: 50)
+- 46 MCP services with significant overlap
+- ✅ **DO** extend existing services or merge functionality
 
-  1. Speed Over Thoughtfulness
+### 2. Hardcoded Values
+❌ **DON'T** use:
+- `Color(0xFF...)` - Use `ThemeColors(context)`
+- `EdgeInsets.all(24)` - Use `SpacingTokens.xxl`
+- `TextStyle(fontSize: 16)` - Use `TextStyles.bodyMedium`
+- `SemanticColors.*` - Deprecated, use `ThemeColors(context)`
 
-  ❌ DON'T:
+### 3. Assumptions Without Investigation
+❌ **DON'T**:
+- Assume services exist - verify with ServiceLocator
+- Guess at data flow - trace through providers
+- Create parallel systems - integrate with existing architecture
 
-  - Rush to implement solutions without understanding the problem
-  - Start coding before reading existing architecture
-  - Skip the investigation phase to "save time"
-  - Assume you understand the codebase from a quick glance
+✅ **DO**:
+- Read related code first
+- Use ServiceLocator.instance.get<T>() for services
+- Check providers directory for state management
+- Follow established patterns
 
-  ✅ DO INSTEAD:
+### 4. Large Files
+⚠️ Several files exceed 2,000 lines (settings_screen.dart: 3,290 lines)
+- Split large files into smaller, focused components
+- Extract reusable widgets
+- Use composition over monolithic widgets
 
-  - Read through related code files first
-  - Understand existing patterns and conventions
-  - Map out how your changes fit into the current architecture
-  - Plan integration points before writing code
+### 5. Missing Tests
+Current coverage: ~9% (target: 40%)
+- ✅ **DO** write tests for new services and business logic
+- Test helpers available in `apps/desktop/test/helpers/`
+- See `docs/TESTING_BOOTSTRAP.md` for testing patterns
 
-  ---
-  2. Assumptions Instead of Investigation
+---
 
-  ❌ DON'T:
+## Working with MCP Servers
 
-  - Assume services, providers, or configurations exist
-  - Guess at API contracts or data structures
-  - Build code based on what you think should be there
-  - Skip verifying your assumptions with actual code inspection
+MCP (Model Context Protocol) integration is complex. Follow this guidance:
 
-  ✅ DO INSTEAD:
+### Basic MCP Operations
+```dart
+// Get MCP catalog service
+final mcpCatalog = ServiceLocator.instance.get<MCPCatalogService>();
 
-  - Verify configurations and services actually exist
-  - Check what providers are defined and available
-  - Examine existing state management patterns
-  - Trace through the codebase to understand data flow
+// Get available servers
+final servers = await mcpCatalog.getAvailableServers();
 
-  ---
-  3. Parallel Systems Instead of Extension
+// Configure MCP for an agent
+final agentMCPService = ServiceLocator.instance.get<AgentMCPIntegrationService>();
+await agentMCPService.enableGitHubMCPTool(
+  agentId: agentId,
+  catalogEntryId: serverId,
+);
+```
 
-  ❌ DON'T:
+### MCP Service Hierarchy
+1. **MCPCatalogService** - Server discovery and registry
+2. **MCPBridgeService** - Core MCP communication
+3. **AgentMCPIntegrationService** - Agent-specific integration
+4. **MCPServerExecutionService** - Server lifecycle management
 
-  - Create new services when existing ones handle similar functionality
-  - Build separate state management alongside existing providers
-  - Ignore established architectural patterns
-  - Reinvent wheels that already exist in the codebase
+⚠️ **Do not create new MCP services** - consolidation is in progress. Extend existing services instead.
 
-  ✅ DO INSTEAD:
+---
 
-  - Extend existing services and providers
-  - Follow established architectural patterns
-  - Integrate with existing state management
-  - Build on top of current foundations
+## State Management with Riverpod
 
-  ---
-  4. Surface-Level Fixes
+### Provider Patterns
+```dart
+// State Notifier Provider (mutable state)
+final myProvider = StateNotifierProvider<MyNotifier, MyState>((ref) {
+  return MyNotifier();
+});
 
-  ❌ DON'T:
+// Future Provider (async data)
+final dataProvider = FutureProvider<Data>((ref) async {
+  final service = ref.read(serviceProvider);
+  return service.fetchData();
+});
 
-  - Focus only on making buttons "work" (call functions)
-  - Ignore proper error handling and validation
-  - Skip security considerations
-  - Create functionality that looks right but breaks easily
+// Stream Provider (real-time data)
+final streamProvider = StreamProvider<Event>((ref) {
+  return someEventStream;
+});
+```
 
-  ✅ DO INSTEAD:
+### Using Providers
+```dart
+// In widgets (ConsumerWidget or ConsumerStatefulWidget)
+class MyWidget extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch for changes
+    final state = ref.watch(myProvider);
 
-  - Ensure changes work correctly within the app's architecture
-  - Implement proper security and validation
-  - Create maintainable, robust solutions
-  - Consider edge cases and error scenarios
+    // Read once (no rebuild)
+    final service = ref.read(serviceProvider);
 
-  ---
-  5. Overconfidence in Quick Solutions
+    // Read notifier (to call methods)
+    ref.read(myProvider.notifier).updateSomething();
 
-  ❌ DON'T:
+    return Container();
+  }
+}
+```
 
-  - Present incomplete implementations as finished solutions
-  - Mark tasks as "completed" when they're only partially working
-  - Hide complexity or limitations from stakeholders
-  - Claim credit for functionality that already existed
+---
 
-  ✅ DO INSTEAD:
+## Data Persistence
 
-  - Acknowledge complexity and unknowns upfront
-  - Identify what investigation is needed before coding
-  - Be honest about limitations and potential issues
-  - Give credit where it's due for existing functionality
+### Local Storage Options
+1. **Hive** - Key-value storage (preferences, settings)
+   - Access via `DesktopStorageService.instance`
+   - Initialized in `main.dart`
 
-  ---
-  Core Principle
+2. **SQLite** - Relational data (conversations, agents)
+   - Used by `DesktopAgentService`, `DesktopConversationService`
 
-  Quality over speed. It's better to take time understanding the problem and building a proper solution than to quickly create         
-  something that looks functional but is actually broken, insecure, or unmaintainable.
+3. **Secure Storage** - Credentials, API keys
+   - `SecureAuthService` for OAuth tokens
+   - `MacOSKeychainService` on macOS
 
-  Remember
+### Storage Patterns
+```dart
+// Get storage service
+final storage = ServiceLocator.instance.get<DesktopStorageService>();
 
-  This is lazy engineering - prioritizing the appearance of functionality over actual, well-integrated solutions. The goal should      
-  be sustainable, maintainable code that fits naturally into the existing system, not quick hacks that create technical debt.
+// Save preference
+await storage.setPreference('key', value);
+
+// Read preference
+final value = storage.getPreference<String>('key');
+
+// Agent persistence (via service)
+final agentService = ServiceLocator.instance.get<AgentService>();
+await agentService.createAgent(agent);
+final agents = await agentService.getAgents();
+```
+
+---
+
+## Common Development Tasks
+
+### Adding a New Feature
+1. Create feature directory in `lib/features/my_feature/`
+2. Add `presentation/`, `data/`, `models/` subdirectories
+3. Use design system components (`import 'core/design_system/design_system.dart'`)
+4. Create Riverpod providers for state management
+5. Register any new services in ServiceLocator (avoid if possible)
+6. Write tests in `test/unit/features/my_feature/`
+
+### Adding a New Service
+⚠️ **Think twice** - we have 110+ services already
+1. Check if existing service can be extended first
+2. If truly needed, add to `lib/core/services/`
+3. Register in ServiceLocator (`lib/core/di/service_locator.dart`)
+4. Document in service consolidation plan if MCP-related
+5. Write unit tests
+
+### Adding a New UI Component
+1. Check if design system component exists first
+2. If custom needed, extend design system component
+3. Use `ThemeColors(context)` and spacing tokens
+4. Add to `lib/core/design_system/components/`
+5. Export from `design_system.dart`
+6. Test with all 5 color schemes
+
+### Debugging MCP Issues
+1. Check MCP logs: `MCPErrorHandler` outputs debug info
+2. Verify server configuration in `MCPSettingsService`
+3. Test server execution with `MCPServerExecutionService`
+4. Check agent MCP bindings in `AgentMCPConfigurationService`
+
+---
+
+## Testing
+
+### Test Structure
+```
+apps/desktop/test/
+├── unit/           # Service and model tests
+├── widget/         # Widget tests
+├── integration/    # Integration tests
+└── helpers/        # Test utilities and mocks
+```
+
+### Writing Tests
+```dart
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  group('MyService', () {
+    late MyService service;
+
+    setUp(() {
+      service = MyService();
+    });
+
+    test('does expected operation', () {
+      final result = service.doSomething();
+      expect(result, expectedValue);
+    });
+  });
+}
+```
+
+**Testing guide**: `docs/TESTING_BOOTSTRAP.md`
+
+---
+
+## Important Files & References
+
+### Core Architecture
+- `apps/desktop/lib/main.dart` - App entry point, service initialization
+- `apps/desktop/lib/core/di/service_locator.dart` - Dependency injection
+- `apps/desktop/lib/core/design_system/design_system.dart` - Design system exports
+- `packages/agent_engine_core/` - Shared models and interfaces
+
+### Documentation
+- `apps/desktop/lib/core/design_system/USAGE.md` - Design system guide
+- `docs/SERVICE_CONSOLIDATION_PLAN.md` - Service reduction roadmap
+- `docs/TESTING_BOOTSTRAP.md` - Testing guide
+- `docs/TECHNICAL_DEBT_ROADMAP.md` - Technical debt plan
+- `README.md` - Project overview and setup
+
+### Configuration
+- `apps/desktop/pubspec.yaml` - Dependencies
+- `analysis_options.yaml` - Linter rules (if exists)
+
+---
+
+## Known Issues & Technical Debt
+
+### Current Challenges
+1. **Service Proliferation**: 110 services (target: 50), 46 MCP services (target: 12)
+2. **Low Test Coverage**: ~9% (target: 40%)
+3. **Large Files**: Several files >2,000 lines need splitting
+4. **Deprecated Patterns**: 38 files still use old `SemanticColors` (should use `ThemeColors`)
+5. **Legacy Code**: Unused React/TypeScript files in `/components` and `/src`
+
+### Active Improvements
+- Service consolidation plan underway (see `docs/SERVICE_CONSOLIDATION_PLAN.md`)
+- Testing bootstrap initiative (see `docs/TESTING_BOOTSTRAP.md`)
+- Design system cleanup (see `docs/TECHNICAL_DEBT_ROADMAP.md`)
+
+### Before Making Changes
+1. Check consolidation plans - services may be deprecated soon
+2. Write tests for new functionality
+3. Use design system components
+4. Verify with `flutter analyze` before committing
+
+---
+
+## Quality Standards
+
+### Required Before Committing
+- [ ] Code passes `flutter analyze` with no warnings
+- [ ] All tests pass (`flutter test`)
+- [ ] Uses `ThemeColors(context)` for colors (no hardcoded colors)
+- [ ] Uses spacing tokens (no magic numbers)
+- [ ] Uses design system components
+- [ ] Tested with all 5 color schemes (if UI changes)
+- [ ] Tests written for new services/business logic
+
+### Code Review Checklist
+- [ ] No new services created without justification
+- [ ] No hardcoded colors or spacing
+- [ ] Follows existing architectural patterns
+- [ ] Integrates with ServiceLocator properly
+- [ ] Uses Riverpod correctly for state management
+- [ ] Documentation updated if needed
+
+---
+
+## Philosophy
+
+**Quality over speed**: Understand the architecture before coding. This codebase has comprehensive foundations but significant complexity. Take time to investigate existing patterns, avoid creating parallel systems, and build maintainable solutions that integrate naturally.
+
+**When in doubt**: Check if a service/component/pattern already exists. With 110+ services and 50+ design system components, the functionality you need likely exists. Extension is almost always better than creation.

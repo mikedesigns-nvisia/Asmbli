@@ -5,6 +5,7 @@ import 'mcp_catalog_service.dart';
 import 'secure_credentials_service.dart';
 
 /// Service for validating MCP server configurations and dependencies
+@Deprecated('Will be consolidated into MCPSecurityService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPValidationService {
   final MCPCatalogService _catalogService;
   final SecureCredentialsService _credentialsService;

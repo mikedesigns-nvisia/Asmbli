@@ -9,6 +9,7 @@ import 'mcp_server_execution_service.dart';
 
 /// Manages dynamic installation and execution of MCP servers from GitHub registry
 /// Handles runtime installation using uvx, npx, docker, etc.
+@Deprecated('Will be consolidated into MCPServerService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class DynamicMCPServerManager {
   final AgentMCPConfigurationService _configService;
   final MCPServerExecutionService _executionService;

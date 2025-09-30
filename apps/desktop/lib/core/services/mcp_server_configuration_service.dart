@@ -4,6 +4,7 @@ import 'context_mcp_resource_service.dart';
 
 /// Service for managing MCP server configurations and integration
 /// This bridges the gap between detected integrations and MCP server configs
+@Deprecated('Will be consolidated into MCPServerService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPServerLibraryConfigurationService {
   
   /// Map detected integration to available MCP servers

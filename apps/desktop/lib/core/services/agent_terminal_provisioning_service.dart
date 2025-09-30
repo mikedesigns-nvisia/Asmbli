@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/agent_terminal.dart';
-import '../models/mcp_server_process.dart';
 import 'agent_terminal_manager.dart';
 import 'context_aware_tool_discovery_service.dart';
 import 'production_logger.dart';
