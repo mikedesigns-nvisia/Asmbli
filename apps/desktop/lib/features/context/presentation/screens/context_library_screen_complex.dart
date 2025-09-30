@@ -1518,8 +1518,10 @@ module.exports = {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return Scaffold(
-      backgroundColor: SemanticColors.background,
+      backgroundColor: colors.background,
       body: Column(
         children: [
           // Header
@@ -1530,8 +1532,8 @@ module.exports = {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  SemanticColors.background,
-                  SemanticColors.background.withOpacity(0.95),
+                  colors.background,
+                  colors.background.withOpacity(0.95),
                 ],
               ),
             ),
@@ -1553,7 +1555,7 @@ module.exports = {
                     Text(
                       'Context Library',
                       style: TextStyles.pageTitle.copyWith(
-                        color: SemanticColors.onSurface,
+                        color: colors.onSurface,
                       ),
                     ),
                     const Spacer(),
@@ -1564,9 +1566,9 @@ module.exports = {
                 // Tab selector
                 Container(
                   decoration: BoxDecoration(
-                    color: SemanticColors.surface.withOpacity(0.7),
+                    color: colors.surface.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-                    border: Border.all(color: SemanticColors.border),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Row(
                     children: [
@@ -1576,14 +1578,14 @@ module.exports = {
                           child: Container(
                             padding: const EdgeInsets.all(SpacingTokens.md),
                             decoration: BoxDecoration(
-                              color: selectedTab == 0 ? SemanticColors.primary.withOpacity(0.1) : null,
+                              color: selectedTab == 0 ? colors.primary.withOpacity(0.1) : null,
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                             ),
                             child: Text(
                               'My Context',
                               textAlign: TextAlign.center,
                               style: TextStyles.bodyMedium.copyWith(
-                                color: selectedTab == 0 ? SemanticColors.primary : SemanticColors.onSurfaceVariant,
+                                color: selectedTab == 0 ? colors.primary : colors.onSurfaceVariant,
                                 fontWeight: selectedTab == 0 ? FontWeight.w600 : FontWeight.normal,
                               ),
                             ),
@@ -1596,14 +1598,14 @@ module.exports = {
                           child: Container(
                             padding: const EdgeInsets.all(SpacingTokens.md),
                             decoration: BoxDecoration(
-                              color: selectedTab == 1 ? SemanticColors.primary.withOpacity(0.1) : null,
+                              color: selectedTab == 1 ? colors.primary.withOpacity(0.1) : null,
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                             ),
                             child: Text(
                               'Template Library',
                               textAlign: TextAlign.center,
                               style: TextStyles.bodyMedium.copyWith(
-                                color: selectedTab == 1 ? SemanticColors.primary : SemanticColors.onSurfaceVariant,
+                                color: selectedTab == 1 ? colors.primary : colors.onSurfaceVariant,
                                 fontWeight: selectedTab == 1 ? FontWeight.w600 : FontWeight.normal,
                               ),
                             ),
@@ -1627,14 +1629,15 @@ module.exports = {
   }
 
   Widget _buildMyContextTab() {
+    final colors = ThemeColors(context);
     final contextAsync = ref.watch(contextDocumentsWithVectorProvider);
-    
+
     return contextAsync.when(
       data: (documents) {
         if (documents.isEmpty) {
-          return _buildEmptyMyContext();
+          return _buildEmptyMyContext(colors);
         }
-        
+
         return Padding(
           padding: const EdgeInsets.all(SpacingTokens.xxl),
           child: Column(
@@ -1651,10 +1654,10 @@ module.exports = {
                         prefixIcon: const Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                          borderSide: const BorderSide(color: SemanticColors.border),
+                          borderSide: BorderSide(color: colors.border),
                         ),
                         filled: true,
-                        fillColor: SemanticColors.surface,
+                        fillColor: colors.surface,
                       ),
                     ),
                   ),
@@ -1689,10 +1692,10 @@ module.exports = {
                           children: [
                             Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.description,
                                   size: 20,
-                                  color: SemanticColors.primary,
+                                  color: colors.primary,
                                 ),
                                 const SizedBox(width: SpacingTokens.sm),
                                 Expanded(
@@ -1700,7 +1703,7 @@ module.exports = {
                                     doc.title,
                                     style: TextStyles.bodyMedium.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: SemanticColors.onSurface,
+                                      color: colors.onSurface,
                                     ),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
@@ -1712,7 +1715,7 @@ module.exports = {
                             Text(
                               doc.type.displayName,
                               style: TextStyles.caption.copyWith(
-                                color: SemanticColors.onSurfaceVariant,
+                                color: colors.onSurfaceVariant,
                               ),
                             ),
                             const SizedBox(height: SpacingTokens.sm),
@@ -1720,7 +1723,7 @@ module.exports = {
                               child: Text(
                                 doc.content,
                                 style: TextStyles.bodySmall.copyWith(
-                                  color: SemanticColors.onSurfaceVariant,
+                                  color: colors.onSurfaceVariant,
                                 ),
                                 maxLines: 4,
                                 overflow: TextOverflow.ellipsis,
@@ -1735,13 +1738,13 @@ module.exports = {
                                   return Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: SemanticColors.surfaceVariant.withOpacity(0.5),
+                                      color: colors.surfaceVariant.withOpacity(0.5),
                                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                                     ),
                                     child: Text(
                                       tag,
                                       style: TextStyles.caption.copyWith(
-                                        color: SemanticColors.onSurfaceVariant,
+                                        color: colors.onSurfaceVariant,
                                         fontSize: 10,
                                       ),
                                     ),
@@ -1761,37 +1764,40 @@ module.exports = {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 48,
-              color: SemanticColors.error,
-            ),
-            const SizedBox(height: SpacingTokens.componentSpacing),
-            Text(
-              'Error loading context documents',
-              style: TextStyles.pageTitle.copyWith(
-                color: SemanticColors.onSurface,
+      error: (error, stack) {
+        final colors = ThemeColors(context);
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: colors.error,
               ),
-            ),
-            const SizedBox(height: SpacingTokens.componentSpacing),
-            Text(
-              error.toString(),
-              style: TextStyles.bodyMedium.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+              const SizedBox(height: SpacingTokens.componentSpacing),
+              Text(
+                'Error loading context documents',
+                style: TextStyles.pageTitle.copyWith(
+                  color: colors.onSurface,
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+              const SizedBox(height: SpacingTokens.componentSpacing),
+              Text(
+                error.toString(),
+                style: TextStyles.bodyMedium.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildEmptyMyContext() {
+  Widget _buildEmptyMyContext(ThemeColors colors) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(SpacingTokens.xxl),
@@ -1801,20 +1807,20 @@ module.exports = {
             Icon(
               Icons.library_books_outlined,
               size: 64,
-              color: SemanticColors.onSurfaceVariant.withOpacity(0.6),
+              color: colors.onSurfaceVariant.withOpacity(0.6),
             ),
             const SizedBox(height: SpacingTokens.xl),
             Text(
               'Your Context Library is Empty',
               style: TextStyles.pageTitle.copyWith(
-                color: SemanticColors.onSurface,
+                color: colors.onSurface,
               ),
             ),
             const SizedBox(height: SpacingTokens.md),
             Text(
               'Add context documents to help your agents understand your codebase, requirements, and preferences.',
               style: TextStyles.bodyMedium.copyWith(
-                color: SemanticColors.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1831,6 +1837,8 @@ module.exports = {
   }
 
   Widget _buildTemplateLibraryTab() {
+    final colors = ThemeColors(context);
+
     return Padding(
       padding: const EdgeInsets.all(SpacingTokens.xxl),
       child: Column(
@@ -1847,10 +1855,10 @@ module.exports = {
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                      borderSide: const BorderSide(color: SemanticColors.border),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     filled: true,
-                    fillColor: SemanticColors.surface,
+                    fillColor: colors.surface,
                   ),
                 ),
               ),
@@ -1913,6 +1921,8 @@ class _TemplateCardState extends State<TemplateCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -1930,13 +1940,13 @@ class _TemplateCardState extends State<TemplateCard> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: SemanticColors.primary.withOpacity(0.1),
+                  color: colors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(
                   widget.template.category,
                   style: TextStyles.caption.copyWith(
-                    color: SemanticColors.primary,
+                    color: colors.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1949,20 +1959,20 @@ class _TemplateCardState extends State<TemplateCard> {
                 widget.template.name,
                 style: TextStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: SemanticColors.onSurface,
+                  color: colors.onSurface,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const SizedBox(height: SpacingTokens.sm),
-              
+
               // Description
               Expanded(
                 child: Text(
                   widget.template.description,
                   style: TextStyles.bodySmall.copyWith(
-                    color: SemanticColors.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -1980,13 +1990,13 @@ class _TemplateCardState extends State<TemplateCard> {
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: SemanticColors.surfaceVariant.withOpacity(0.5),
+                        color: colors.surfaceVariant.withOpacity(0.5),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                       ),
                       child: Text(
                         tag,
                         style: TextStyles.caption.copyWith(
-                          color: SemanticColors.onSurfaceVariant,
+                          color: colors.onSurfaceVariant,
                           fontSize: 10,
                         ),
                       ),
@@ -2022,10 +2032,12 @@ class _TemplateCardState extends State<TemplateCard> {
   }
 
   void _showPreview(BuildContext context) {
+    final colors = ThemeColors(context);
+
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: SemanticColors.surface,
+      builder: (dialogContext) => Dialog(
+        backgroundColor: colors.surface,
         child: Container(
           width: 800,
           height: 600,
@@ -2039,7 +2051,7 @@ class _TemplateCardState extends State<TemplateCard> {
                     child: Text(
                       widget.template.name,
                       style: TextStyles.pageTitle.copyWith(
-                        color: SemanticColors.onSurface,
+                        color: colors.onSurface,
                       ),
                     ),
                   ),
@@ -2051,30 +2063,30 @@ class _TemplateCardState extends State<TemplateCard> {
               ),
               
               const SizedBox(height: SpacingTokens.md),
-              
+
               Text(
                 widget.template.description,
                 style: TextStyles.bodyMedium.copyWith(
-                  color: SemanticColors.onSurfaceVariant,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
-              
+
               const SizedBox(height: SpacingTokens.lg),
-              
+
               Expanded(
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(SpacingTokens.lg),
                   decoration: BoxDecoration(
-                    color: SemanticColors.surfaceVariant.withOpacity(0.3),
+                    color: colors.surfaceVariant.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                    border: Border.all(color: SemanticColors.border),
+                    border: Border.all(color: colors.border),
                   ),
                   child: SingleChildScrollView(
                     child: Text(
                       widget.template.contentPreview,
                       style: TextStyles.bodySmall.copyWith(
-                        color: SemanticColors.onSurface,
+                        color: colors.onSurface,
                         fontFamily: 'monospace',
                       ),
                     ),

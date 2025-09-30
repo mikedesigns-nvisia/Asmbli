@@ -30,6 +30,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
   
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     final integrationService = ref.watch(integrationServiceProvider);
     final marketplaceService = ref.watch(integrationMarketplaceServiceProvider);
     final healthService = ref.watch(integrationHealthMonitoringServiceProvider);
@@ -44,28 +45,28 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.detectedTools != null && widget.detectedTools!.isNotEmpty) ...[
-            _buildDetectedToolsBanner(widget.detectedTools!),
+            _buildDetectedToolsBanner(colors, widget.detectedTools!),
             const SizedBox(height: SpacingTokens.lg),
           ],
-          _buildHeader(),
+          _buildHeader(colors),
           const SizedBox(height: SpacingTokens.lg),
-          
+
           // Marketplace Stats Overview
-          _buildMarketplaceStats(marketplaceStats, healthStats),
+          _buildMarketplaceStats(colors, marketplaceStats, healthStats),
           const SizedBox(height: SpacingTokens.xxl),
-          
+
           // Main content with sidebar
           Expanded(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Sidebar
-                _buildSidebar(allIntegrationsWithStatus),
+                _buildSidebar(colors, allIntegrationsWithStatus),
                 const SizedBox(width: SpacingTokens.xxl),
-                
+
                 // Main content
                 Expanded(
-                  child: _buildMainContent(filteredIntegrations),
+                  child: _buildMainContent(colors, filteredIntegrations),
                 ),
               ],
             ),
@@ -75,15 +76,15 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     );
   }
   
-  Widget _buildHeader() {
+  Widget _buildHeader(ThemeColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(
+            Icon(
               Icons.store,
-              color: SemanticColors.primary,
+              color: colors.primary,
               size: 28,
             ),
             const SizedBox(width: SpacingTokens.sm),
@@ -97,14 +98,14 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         Text(
           'Discover and install powerful integrations to enhance your agents',
           style: TextStyles.bodyMedium.copyWith(
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildDetectedToolsBanner(Map<String, bool> detected) {
+  Widget _buildDetectedToolsBanner(ThemeColors colors, Map<String, bool> detected) {
     final found = detected.entries.where((e) => e.value).map((e) => e.key).toList();
     if (found.isEmpty) return const SizedBox();
 
@@ -123,7 +124,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                 const SizedBox(height: SpacingTokens.xs),
                 Text(
                   'Quick actions: configure detected tools or browse other integrations',
-                  style: TextStyles.bodyMedium.copyWith(color: SemanticColors.onSurfaceVariant),
+                  style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
                 ),
               ],
             ),
@@ -161,6 +162,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     showDialog(
       context: context,
       builder: (context) {
+        final colors = ThemeColors(context);
         final selections = <String, bool>{for (var k in found) k: true};
         return StatefulBuilder(
           builder: (context, setState) {
@@ -185,7 +187,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                     const SizedBox(height: SpacingTokens.sm),
                     Text(
                       'Selected items will be auto-configured where we have an integration match.',
-                      style: TextStyles.bodySmall.copyWith(color: SemanticColors.onSurfaceVariant),
+                      style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -219,12 +221,15 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                     }
 
                     final successCount = results.values.where((v) => v).length;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Installed $successCount of ${results.length} selected integrations'),
-                        backgroundColor: successCount > 0 ? SemanticColors.success : SemanticColors.error,
-                      ),
-                    );
+                    if (context.mounted) {
+                      final colors = ThemeColors(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Installed $successCount of ${results.length} selected integrations'),
+                          backgroundColor: successCount > 0 ? colors.success : colors.error,
+                        ),
+                      );
+                    }
                     setState(() {});
                   },
                 ),
@@ -236,9 +241,9 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     );
   }
 
-  Widget _buildSidebar(List<IntegrationStatus> allIntegrations) {
+  Widget _buildSidebar(ThemeColors colors, List<IntegrationStatus> allIntegrations) {
     final categoryStats = <IntegrationCategory, Map<String, int>>{};
-    
+
     for (final category in IntegrationCategory.values) {
       final categoryIntegrations = allIntegrations.where((status) => status.definition.category == category);
       categoryStats[category] = {
@@ -247,7 +252,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         'available': categoryIntegrations.where((status) => status.definition.isAvailable).length,
       };
     }
-    
+
     return SizedBox(
       width: 280,
       child: AsmblCard(
@@ -260,9 +265,10 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: SpacingTokens.lg),
-            
+
             // All category
             _buildSidebarCategoryItem(
+              colors,
               'All',
               Icons.apps,
               allIntegrations.length,
@@ -271,15 +277,16 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               () => setState(() => _selectedCategory = 'All'),
             ),
             const SizedBox(height: SpacingTokens.sm),
-            
+
             // Individual categories
             ...IntegrationCategory.values.map((category) {
               final stats = categoryStats[category]!;
               final isSelected = _selectedCategory == category.displayName;
-              
+
               return Padding(
                 padding: const EdgeInsets.only(bottom: SpacingTokens.sm),
                 child: _buildSidebarCategoryItem(
+                  colors,
                   category.displayName,
                   _getCategoryIcon(category),
                   stats['total']!,
@@ -296,6 +303,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
   }
   
   Widget _buildSidebarCategoryItem(
+    ThemeColors colors,
     String name,
     IconData icon,
     int total,
@@ -308,19 +316,19 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
       child: Container(
         padding: const EdgeInsets.all(SpacingTokens.sm),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? SemanticColors.primary.withOpacity(0.1)
+          color: isSelected
+              ? colors.primary.withOpacity(0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-          border: isSelected 
-              ? Border.all(color: SemanticColors.primary.withOpacity(0.3))
+          border: isSelected
+              ? Border.all(color: colors.primary.withOpacity(0.3))
               : null,
         ),
         child: Row(
           children: [
             Icon(
               icon,
-              color: isSelected ? SemanticColors.primary : SemanticColors.onSurface,
+              color: isSelected ? colors.primary : colors.onSurface,
               size: 18,
             ),
             const SizedBox(width: SpacingTokens.sm),
@@ -332,13 +340,13 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
                     name,
                     style: TextStyles.bodyMedium.copyWith(
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected ? SemanticColors.primary : SemanticColors.onSurface,
+                      color: isSelected ? colors.primary : colors.onSurface,
                     ),
                   ),
                   Text(
                     '$configured/$total configured',
                     style: TextStyles.bodySmall.copyWith(
-                      color: SemanticColors.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -350,62 +358,66 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     );
   }
   
-  Widget _buildMainContent(List<IntegrationStatus> filteredIntegrations) {
+  Widget _buildMainContent(ThemeColors colors, List<IntegrationStatus> filteredIntegrations) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildIntegrationsGrid(filteredIntegrations),
+          _buildIntegrationsGrid(colors, filteredIntegrations),
         ],
       ),
     );
   }
 
-  Widget _buildMarketplaceStats(MarketplaceStatistics marketplaceStats, HealthStatistics healthStats) {
+  Widget _buildMarketplaceStats(ThemeColors colors, MarketplaceStatistics marketplaceStats, HealthStatistics healthStats) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: SemanticColors.surface.withOpacity(0.8),
+        color: colors.surface.withOpacity(0.8),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         border: Border.all(
-          color: SemanticColors.border.withOpacity(0.2),
+          color: colors.border.withOpacity(0.2),
         ),
       ),
       child: Row(
         children: [
           _buildStatCard(
+            colors,
             'Available',
             '${marketplaceStats.available}',
             Icons.apps,
-            SemanticColors.primary,
+            colors.primary,
           ),
           const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
+            colors,
             'Installed',
             '${marketplaceStats.installed}',
             Icons.check_circle,
-            SemanticColors.success,
+            colors.success,
           ),
           const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
+            colors,
             'Popular',
             '${marketplaceStats.popular}',
             Icons.star,
-            SemanticColors.warning,
+            colors.warning,
           ),
           const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
+            colors,
             'Recommended',
             '${marketplaceStats.recommended}',
             Icons.thumb_up,
-            SemanticColors.primary,
+            colors.primary,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(ThemeColors colors, String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
@@ -428,7 +440,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           Text(
             label,
             style: TextStyles.caption.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
         ],
@@ -436,11 +448,11 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     );
   }
   
-  Widget _buildIntegrationsGrid(List<IntegrationStatus> integrations) {
+  Widget _buildIntegrationsGrid(ThemeColors colors, List<IntegrationStatus> integrations) {
     if (integrations.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(colors);
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -451,17 +463,17 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               'Available Integrations (${integrations.length})',
               style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
             ),
-            const Row(
+            Row(
               children: [
-                Icon(Icons.grid_view, size: 16),
-                SizedBox(width: SpacingTokens.xs),
-                Icon(Icons.list, size: 16, color: SemanticColors.onSurfaceVariant),
+                const Icon(Icons.grid_view, size: 16),
+                const SizedBox(width: SpacingTokens.xs),
+                Icon(Icons.list, size: 16, color: colors.onSurfaceVariant),
               ],
             ),
           ],
         ),
         const SizedBox(height: SpacingTokens.lg),
-        
+
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -472,13 +484,13 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
             mainAxisSpacing: SpacingTokens.lg,
           ),
           itemCount: integrations.length,
-          itemBuilder: (context, index) => _buildIntegrationCard(integrations[index]),
+          itemBuilder: (context, index) => _buildIntegrationCard(colors, integrations[index]),
         ),
       ],
     );
   }
   
-  Widget _buildIntegrationCard(IntegrationStatus status) {
+  Widget _buildIntegrationCard(ThemeColors colors, IntegrationStatus status) {
     // Determine if this integration matches any detected tool
     bool matchedByDetection = false;
     String? matchedToolName;
@@ -501,14 +513,14 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           // Header with icon and status
           Row(
             children: [
-              _buildIntegrationIcon(status.definition),
+              _buildIntegrationIcon(colors, status.definition),
               const Spacer(),
               if (status.isConfigured)
-                const Icon(Icons.check_circle, color: SemanticColors.success, size: 16),
+                Icon(Icons.check_circle, color: colors.success, size: 16),
             ],
           ),
           const SizedBox(height: SpacingTokens.sm),
-          
+
           // Name and category
           Text(
             status.definition.name,
@@ -519,11 +531,11 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           Text(
             status.definition.category.displayName,
             style: TextStyles.bodySmall.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: SpacingTokens.sm),
-          
+
           // Description
           Expanded(
             child: Text(
@@ -534,7 +546,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
             ),
           ),
           const SizedBox(height: SpacingTokens.sm),
-          
+
           // Badges
           Wrap(
             spacing: 4,
@@ -544,7 +556,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               if (matchedByDetection)
                 Chip(
                   label: Text('Detected: ${matchedToolName ?? ''}'),
-                  backgroundColor: SemanticColors.primary.withOpacity(0.12),
+                  backgroundColor: colors.primary.withOpacity(0.12),
                 ),
               if (!status.definition.isAvailable)
                 IntegrationStatusIndicators.availabilityIndicator(status.definition),
@@ -579,14 +591,14 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     );
   }
   
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(ThemeColors colors) {
     return Center(
       child: Column(
         children: [
-          const Icon(
+          Icon(
             Icons.apps,
             size: 64,
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
           const SizedBox(height: SpacingTokens.lg),
           Text(
@@ -597,7 +609,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
           Text(
             'Try selecting a different category',
             style: TextStyles.bodyMedium.copyWith(
-              color: SemanticColors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: SpacingTokens.lg),
@@ -614,17 +626,17 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     );
   }
   
-  Widget _buildIntegrationIcon(IntegrationDefinition integration, {double size = 24}) {
+  Widget _buildIntegrationIcon(ThemeColors colors, IntegrationDefinition integration, {double size = 24}) {
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: SemanticColors.primary.withOpacity(0.1),
+        color: colors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Icon(
         _getCategoryIcon(integration.category),
-        color: SemanticColors.primary,
+        color: colors.primary,
         size: size * 0.6,
       ),
     );
@@ -697,45 +709,54 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
       
       // If there are missing required dependencies, don't proceed
       if (depCheck.missingRequired.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Please install required dependencies first: ${depCheck.missingRequired.join(', ')}'),
-            backgroundColor: SemanticColors.error,
-          ),
-        );
+        if (context.mounted) {
+          final colors = ThemeColors(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please install required dependencies first: ${depCheck.missingRequired.join(', ')}'),
+              backgroundColor: colors.error,
+            ),
+          );
+        }
         return;
       }
     }
-    
+
     try {
       // Use the new installation service for enhanced workflow
       final result = await marketplaceService.installIntegration(
         status.definition.id,
         autoDetect: true,
       );
-      
-      if (result.success) {
+
+      if (context.mounted) {
+        final colors = ThemeColors(context);
+        if (result.success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${status.definition.name} installed successfully!'),
+              backgroundColor: colors.success,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Installation failed: ${result.error ?? 'Unknown error'}'),
+              backgroundColor: colors.error,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        final colors = ThemeColors(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${status.definition.name} installed successfully!'),
-            backgroundColor: SemanticColors.success,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Installation failed: ${result.error ?? 'Unknown error'}'),
-            backgroundColor: SemanticColors.error,
+            content: Text('Installation error: $e'),
+            backgroundColor: colors.error,
           ),
         );
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Installation error: $e'),
-          backgroundColor: SemanticColors.error,
-        ),
-      );
     }
   }
   
@@ -747,11 +768,12 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         serverId: status.definition.id,
       ),
     ).then((result) {
-      if (result == true) {
+      if (result == true && context.mounted) {
+        final colors = ThemeColors(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${status.definition.name} updated successfully!'),
-            backgroundColor: SemanticColors.success,
+            backgroundColor: colors.success,
           ),
         );
       }

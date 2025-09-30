@@ -234,9 +234,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
 
  @override
  Widget build(BuildContext context) {
+ final colors = ThemeColors(context);
  final themeMode = ref.watch(themeServiceProvider);
  final themeService = ref.read(themeServiceProvider.notifier);
- 
+
  return Scaffold(
  body: Container(
  decoration: BoxDecoration(
@@ -1185,10 +1186,11 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
  );
  }
   Widget _buildMCPServersTab() {
+    final colors = ThemeColors(context);
     return Consumer(
       builder: (context, ref, child) {
         final mcpService = ref.watch(mcpSettingsServiceProvider);
-        
+
         return SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Center(
@@ -1246,7 +1248,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                               children: servers.entries.map((entry) {
                                 return Container(
                                   margin: const EdgeInsets.only(bottom: 12),
-                                  child: _buildMCPServerCard(entry.key, entry.value, mcpService),
+                                  child: _buildMCPServerCard(entry.key, entry.value, mcpService, colors),
                                 );
                               }).toList(),
                             );
@@ -1725,7 +1727,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
     _showMessage('Add Context Document - Coming soon!');
   }
 
-  Widget _buildMCPServerCard(String serverId, MCPServerConfig config, MCPSettingsService mcpService) {
+  Widget _buildMCPServerCard(String serverId, MCPServerConfig config, MCPSettingsService mcpService, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1748,19 +1750,19 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: config.enabled 
-                    ? SemanticColors.success.withOpacity(0.1)
+                  color: config.enabled
+                    ? Colors.green.withOpacity(0.1)
                     : Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: config.enabled 
-                      ? SemanticColors.success.withOpacity(0.3)
+                    color: config.enabled
+                      ? Colors.green.withOpacity(0.3)
                       : Theme.of(context).colorScheme.outline.withOpacity(0.3),
                   ),
                 ),
                 child: Icon(
                   Icons.storage,
-                  color: config.enabled ? SemanticColors.success : Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: config.enabled ? Colors.green : Theme.of(context).colorScheme.onSurfaceVariant,
                   size: 20,
                 ),
               ),
@@ -1820,8 +1822,8 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                     onPressed: () => _testMCPServerConnection(serverId, mcpService),
                     icon: const Icon(Icons.play_circle, size: 20),
                     style: IconButton.styleFrom(
-                      foregroundColor: SemanticColors.primary,
-                      overlayColor: SemanticColors.primary.withOpacity(0.1),
+                      foregroundColor: colors.primary,
+                      overlayColor: colors.primary.withOpacity(0.1),
                     ),
                   ),
                   IconButton(
@@ -1829,15 +1831,15 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                     icon: const Icon(Icons.edit, size: 18),
                     style: IconButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                      overlayColor: ThemeColors(context).primary.withOpacity(0.1),
+                      overlayColor: colors.primary.withOpacity(0.1),
                     ),
                   ),
                   IconButton(
                     onPressed: () => _deleteMCPServer(serverId, mcpService),
                     icon: const Icon(Icons.delete, size: 18),
                     style: IconButton.styleFrom(
-                      foregroundColor: SemanticColors.error,
-                      overlayColor: SemanticColors.error.withOpacity(0.1),
+                      foregroundColor: Colors.red,
+                      overlayColor: Colors.red.withOpacity(0.1),
                     ),
                   ),
                 ],
@@ -1918,11 +1920,11 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
       text = 'Testing...';
       icon = Icons.hourglass_empty;
     } else if (hasError || status?.status == ConnectionStatus.error) {
-      color = SemanticColors.error;
+      color = Colors.red;
       text = 'Error';
       icon = Icons.error;
     } else if (status?.isConnected == true) {
-      color = SemanticColors.success;
+      color = Colors.green;
       text = 'Connected';
       icon = Icons.check_circle;
     } else {
@@ -1989,10 +1991,11 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
   }
 
   void _deleteMCPServer(String serverId, MCPSettingsService mcpService) async {
+    final colors = ThemeColors(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ThemeColors(context).surface.withOpacity(0.95),
+        backgroundColor: colors.surface.withOpacity(0.95),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(
@@ -2002,7 +2005,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
         title: const Text(
           'Delete MCP Server',
           style: TextStyle(
-            
+
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -2014,14 +2017,14 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             style: TextButton.styleFrom(
-              overlayColor: ThemeColors(context).primary.withOpacity(0.1),
+              overlayColor: colors.primary.withOpacity(0.1),
             ),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: SemanticColors.error,
+              backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
             child: const Text('Delete'),
@@ -2246,15 +2249,16 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     final integrationService = ref.watch(integrationServiceProvider);
     final healthService = ref.watch(health_monitoring.integrationHealthMonitoringServiceProvider);
     final allIntegrationsWithStatus = integrationService.getAllIntegrationsWithStatus();
     final stats = integrationService.getStats();
     final healthStats = healthService.getHealthStatistics();
-    
+
     // Filter integrations directly as IntegrationStatus objects
     final filteredItems = _filterIntegrationStatus(allIntegrationsWithStatus);
-    
+
     return Container(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -2282,7 +2286,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
           const SizedBox(height: 24),
           
           // Enhanced Stats Overview with Marketplace and Health
-          _buildEnhancedStatsOverview(stats, healthStats),
+          _buildEnhancedStatsOverview(stats, healthStats, colors),
           const SizedBox(height: 24),
           
           // Search, Filter and Add Row
@@ -2595,6 +2599,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   }
 
   void _showMarketplaceDialog(BuildContext context) {
+    final colors = ThemeColors(context);
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -2610,10 +2615,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             minHeight: 600,
           ),
           decoration: BoxDecoration(
-            color: SemanticColors.surface,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
             border: Border.all(
-              color: SemanticColors.border,
+              color: colors.border,
               width: 1,
             ),
           ),
@@ -2622,16 +2627,16 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               // Header
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.lg),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: SemanticColors.border,
+                      color: colors.border,
                     ),
                   ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.store, size: 24, color: SemanticColors.primary),
+                    Icon(Icons.store, size: 24, color: colors.primary),
                     const SizedBox(width: SpacingTokens.sm),
                     Text(
                       'Integration Marketplace',
@@ -2661,22 +2666,23 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   }
 
   Widget _buildTestWorkflowButton(BuildContext context) {
+    final colors = ThemeColors(context);
     return Consumer(
       builder: (context, ref, child) {
         return Container(
           padding: const EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
-            color: SemanticColors.primary.withOpacity(0.1),
+            color: colors.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             border: Border.all(
-              color: SemanticColors.primary.withOpacity(0.3),
+              color: colors.primary.withOpacity(0.3),
             ),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.science,
-                color: SemanticColors.primary,
+                color: colors.primary,
                 size: 20,
               ),
               const SizedBox(width: SpacingTokens.sm),
@@ -2688,13 +2694,13 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                       'Test Integration Workflow',
                       style: TextStyles.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: SemanticColors.primary,
+                        color: colors.primary,
                       ),
                     ),
                     Text(
                       'Verify end-to-end integration from discovery to agent chat',
                       style: TextStyles.bodySmall.copyWith(
-                        color: SemanticColors.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -2713,22 +2719,23 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   }
 
   void _runIntegrationTest(BuildContext context, WidgetRef ref) async {
+    final colors = ThemeColors(context);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: SemanticColors.surface,
+        backgroundColor: colors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         ),
         title: Row(
           children: [
-            const SizedBox(
+            SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(SemanticColors.primary),
+                valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
               ),
             ),
             const SizedBox(width: SpacingTokens.sm),
@@ -2741,7 +2748,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         content: Text(
           'Testing complete workflow from marketplace to chat...',
           style: TextStyles.bodyMedium.copyWith(
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
           ),
         ),
       ),
@@ -2775,7 +2782,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
     }).toList();
   }
 
-  Widget _buildEnhancedStatsOverview(IntegrationStats stats, health_monitoring.HealthStatistics healthStats) {
+  Widget _buildEnhancedStatsOverview(IntegrationStats stats, health_monitoring.HealthStatistics healthStats, ThemeColors colors) {
     return Column(
       children: [
         // Main Stats Row
@@ -2794,14 +2801,14 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                 'Total Available',
                 '${stats.available}',
                 Icons.apps,
-                SemanticColors.primary,
+                colors.primary,
               ),
               const SizedBox(width: SpacingTokens.lg),
               _buildStatCard(
                 'Installed',
                 '${stats.configured}',
                 Icons.check_circle,
-                SemanticColors.success,
+                Colors.green,
               ),
               const SizedBox(width: SpacingTokens.lg),
               _buildStatCard(
@@ -2866,7 +2873,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
     );
   }
 
-  Widget _buildStatsOverview(IntegrationStats stats) {
+  Widget _buildStatsOverview(IntegrationStats stats, ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
@@ -2882,28 +2889,28 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
             'Total',
             '${stats.total}',
             Icons.apps,
-            SemanticColors.primary,
+            colors.primary,
           ),
           const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
             'Configured',
             '${stats.configured}',
             Icons.check_circle,
-            SemanticColors.success,
+            Colors.green,
           ),
           const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
             'Active',
             '${stats.enabled}',
             Icons.play_circle,
-            ThemeColors(context).primary,
+            colors.primary,
           ),
           const SizedBox(width: SpacingTokens.lg),
           _buildStatCard(
             'Available',
             '${stats.available}',
             Icons.download,
-            SemanticColors.warning,
+            Colors.orange,
           ),
           const Spacer(),
           // Quick category indicators
@@ -2953,6 +2960,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   }
 
   Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    final colors = ThemeColors(context);
     return Column(
       children: [
         Row(
@@ -2973,9 +2981,9 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 11,
-            color: SemanticColors.onSurfaceVariant,
+            color: colors.onSurfaceVariant,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -2984,6 +2992,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
   }
 
   Widget _buildIntegrationStatusCard(IntegrationStatus status) {
+    final colors = ThemeColors(context);
     final integration = status.definition;
     final color = integration.brandColor ?? _getCategoryColor(integration.category);
 
@@ -3027,20 +3036,20 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                     integration.name,
                     style: TextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: ThemeColors(context).onSurface,
+                      color: colors.onSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 2),
-                  
+
                   // Description
                   Expanded(
                     child: Text(
                       integration.description,
                       style: TextStyles.caption.copyWith(
-                        color: ThemeColors(context).onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
