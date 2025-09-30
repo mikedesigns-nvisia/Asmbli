@@ -36,6 +36,8 @@ import '../services/agent_mcp_integration_service.dart';
 import '../services/agent_mcp_configuration_service.dart';
 import '../services/agent_aware_mcp_installer.dart';
 import '../services/agent_mcp_session_service.dart';
+import '../services/agent_mcp_communication_bridge.dart';
+import '../services/direct_mcp_agent_service.dart';
 
 // Business services
 import '../services/business/base_business_service.dart';
@@ -243,6 +245,10 @@ class ServiceLocator {
       mcpProtocolHandler,
     );
     registerSingleton<AgentMCPSessionService>(agentMCPSessionService);
+
+    // Register Direct MCP Agent Service (simplified integration)
+    final directMcpService = DirectMCPAgentService.instance;
+    registerSingleton<DirectMCPAgentService>(directMcpService);
   }
 
   /// Register all business services
@@ -256,6 +262,8 @@ class ServiceLocator {
       promptService: get<AgentContextPromptService>(),
       eventBus: get<BusinessEventBus>(),
       integrationService: null, // Temporarily disabled until dependencies are fixed
+      communicationBridge: null, // Temporarily disabled due to complex dependencies
+      directMcpService: get<DirectMCPAgentService>(), // Use our simplified MCP service
     ));
 
     // Conversation business service

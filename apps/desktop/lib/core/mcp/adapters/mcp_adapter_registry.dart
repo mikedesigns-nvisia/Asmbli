@@ -7,6 +7,8 @@ import 'http_adapter.dart';
 import 'sse_adapter.dart';
 import '../../models/mcp_server_config.dart';
 import '../../utils/app_logger.dart';
+import '../../utils/circuit_breaker.dart';
+import '../communication/stdio_mcp_communicator.dart';
 
 /// Registry for managing and auto-detecting MCP protocol adapters
 class MCPAdapterRegistry {
@@ -382,25 +384,42 @@ class _AdapterCandidate {
   String toString() => '$protocol (priority: $priority, reason: $reason)';
 }
 
-/// Safe fallback implementation for STDIO adapter
+/// Production STDIO MCP adapter with real process communication
 class StdioMCPAdapter extends MCPAdapter {
-  bool _hasLogged = false;
+  StdioMCPCommunicator? _communicator;
+  CircuitBreaker? _circuitBreaker;
 
   @override
   String get protocol => 'stdio';
 
   @override
   Future<void> connect(MCPServerConfig config) async {
-    if (!_hasLogged) {
-      AppLogger.warning(
-        'STDIO adapter not yet implemented - using fallback mode for ${config.name}',
-        component: 'MCP.STDIO',
-      );
-      _hasLogged = true;
+    if (isConnected && _communicator?.isConnected == true) {
+      AppLogger.debug('STDIO adapter already connected to ${config.name}', component: 'MCP.STDIO');
+      return;
     }
-    // Set the base class connection state
-    isConnected = true;
-    connectionId = 'stdio-fallback-${config.id}';
+
+    // Create circuit breaker for this connection
+    _circuitBreaker = CircuitBreaker(
+      name: 'mcp-stdio-${config.id}',
+      failureThreshold: 3,
+      timeout: const Duration(seconds: 30),
+      resetTimeout: const Duration(minutes: 2),
+    );
+
+    // Create communicator
+    _communicator = StdioMCPCommunicator(circuitBreaker: _circuitBreaker!);
+
+    // Attempt connection
+    final success = await _communicator!.connect(config);
+
+    if (success) {
+      isConnected = true;
+      connectionId = _communicator!.connectionId;
+      AppLogger.info('STDIO adapter connected to ${config.name}', component: 'MCP.STDIO');
+    } else {
+      throw Exception('Failed to connect to MCP server: ${config.name}');
+    }
   }
 
   @override
@@ -408,49 +427,81 @@ class StdioMCPAdapter extends MCPAdapter {
     String method,
     Map<String, dynamic> params,
   ) async {
-    if (!isConnected) {
+    if (!isConnected || _communicator == null) {
       throw Exception('STDIO adapter not connected');
     }
 
-    AppLogger.debug(
-      'STDIO adapter fallback: method=$method, params=${params.keys.join(', ')}',
-      component: 'MCP.STDIO',
-    );
-
-    // Return safe fallback response based on method
-    switch (method) {
-      case 'initialize':
-        return {
-          'protocolVersion': '2024-11-05',
-          'capabilities': {
-            'logging': {},
-            'prompts': {'listChanged': false},
-            'resources': {'subscribe': false, 'listChanged': false},
-            'tools': {'listChanged': false},
-          },
-          'serverInfo': {
-            'name': 'fallback-stdio-server',
-            'version': '1.0.0',
-          },
-        };
-      case 'tools/list':
-        return {
-          'tools': [],
-        };
-      case 'resources/list':
-        return {
-          'resources': [],
-        };
-      case 'prompts/list':
-        return {
-          'prompts': [],
-        };
-      default:
-        return {
-          'result': null,
-          'error': 'STDIO adapter not implemented - method $method not available',
-        };
+    if (_circuitBreaker == null) {
+      throw Exception('Circuit breaker not initialized');
     }
+
+    return await _circuitBreaker!.execute(
+      () async {
+        final request = {
+          'jsonrpc': '2.0',
+          'id': DateTime.now().millisecondsSinceEpoch,
+          'method': method,
+          'params': params,
+        };
+
+        final response = await _communicator!.sendRequest(request);
+
+        // Return the result part of the JSON-RPC response
+        if (response['error'] != null) {
+          throw Exception('MCP error: ${response['error']}');
+        }
+
+        return response['result'] as Map<String, dynamic>? ?? {};
+      },
+      <String, dynamic>{}, // Empty fallback
+      operationName: 'mcp-$method',
+    );
+  }
+
+  @override
+  Future<void> disconnect() async {
+    if (_communicator != null) {
+      await _communicator!.disconnect();
+      _communicator = null;
+    }
+    _circuitBreaker?.dispose();
+    _circuitBreaker = null;
+
+    await super.disconnect();
+  }
+
+  /// Get available tools from the connected MCP server
+  Future<List<Map<String, dynamic>>> getTools() async {
+    if (_communicator == null) {
+      throw Exception('Not connected to MCP server');
+    }
+
+    if (_circuitBreaker == null) {
+      throw Exception('Circuit breaker not initialized');
+    }
+
+    return await _circuitBreaker!.execute(
+      () async => await _communicator!.getTools(),
+      <Map<String, dynamic>>[], // Empty list fallback
+      operationName: 'mcp-tools-list',
+    );
+  }
+
+  /// Call a tool on the connected MCP server
+  Future<Map<String, dynamic>> callTool(String toolName, Map<String, dynamic> arguments) async {
+    if (_communicator == null) {
+      throw Exception('Not connected to MCP server');
+    }
+
+    if (_circuitBreaker == null) {
+      throw Exception('Circuit breaker not initialized');
+    }
+
+    return await _circuitBreaker!.execute(
+      () async => await _communicator!.callTool(toolName, arguments),
+      <String, dynamic>{}, // Empty result fallback
+      operationName: 'mcp-tool-call-$toolName',
+    );
   }
 }
 

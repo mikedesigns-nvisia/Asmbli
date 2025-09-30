@@ -11,6 +11,7 @@ import '../agent_context_prompt_service.dart';
 import '../agent_mcp_integration_service.dart';
 import '../agent_terminal_provisioning_service.dart';
 import '../agent_mcp_communication_bridge.dart';
+import '../direct_mcp_agent_service.dart';
 import '../production_logger.dart';
 
 /// Business service for agent management
@@ -25,6 +26,7 @@ class AgentBusinessService extends BaseBusinessService {
   final AgentMCPIntegrationService? _integrationService;
   final AgentTerminalProvisioningService? _provisioningService;
   final AgentMCPCommunicationBridge? _communicationBridge;
+  final DirectMCPAgentService? _directMcpService;
 
   AgentBusinessService({
     required AgentService agentRepository,
@@ -36,6 +38,7 @@ class AgentBusinessService extends BaseBusinessService {
     AgentMCPIntegrationService? integrationService,
     AgentTerminalProvisioningService? provisioningService,
     AgentMCPCommunicationBridge? communicationBridge,
+    DirectMCPAgentService? directMcpService,
   })  : _agentRepository = agentRepository,
         _mcpService = mcpService,
         _modelService = modelService,
@@ -44,7 +47,8 @@ class AgentBusinessService extends BaseBusinessService {
         _eventBus = eventBus ?? BusinessEventBus(),
         _integrationService = integrationService,
         _provisioningService = provisioningService,
-        _communicationBridge = communicationBridge;
+        _communicationBridge = communicationBridge,
+        _directMcpService = directMcpService;
 
   /// Log error (compatibility method)
   void logError(String message, dynamic error) {
@@ -517,39 +521,74 @@ class AgentBusinessService extends BaseBusinessService {
         'parameters': parameters,
       });
 
-      if (_communicationBridge == null) {
-        return BusinessResult.failure('MCP communication bridge not available');
-      }
-
       // Validate agent exists and is active
       final agent = await _agentRepository.getAgent(agentId);
       if (agent.status != AgentStatus.active) {
         return BusinessResult.failure('Agent must be active to execute tools');
       }
 
-      // Execute the tool
-      final result = await _communicationBridge!.executeMCPTool(
-        agentId,
-        serverId,
-        toolName,
-        parameters,
-        timeout: timeout,
-      );
+      // Try communication bridge first, fallback to direct MCP service
+      if (_communicationBridge != null) {
+        // Execute the tool via communication bridge
+        final result = await _communicationBridge!.executeMCPTool(
+          agentId,
+          serverId,
+          toolName,
+          parameters,
+          timeout: timeout,
+        );
 
-      // Log the execution
-      ProductionLogger.instance.info(
-        'Agent tool execution completed',
-        data: {
-          'agent_id': agentId,
-          'server_id': serverId,
-          'tool_name': toolName,
-          'success': result.success,
-          'execution_time_ms': result.executionTime.inMilliseconds,
-        },
-        category: 'agent_business',
-      );
+        // Log the execution
+        ProductionLogger.instance.info(
+          'Agent tool execution completed via bridge',
+          data: {
+            'agent_id': agentId,
+            'server_id': serverId,
+            'tool_name': toolName,
+            'success': result.success,
+            'execution_time_ms': result.executionTime.inMilliseconds,
+          },
+          category: 'agent_business',
+        );
 
-      return BusinessResult.success(result);
+        return BusinessResult.success(result);
+      } else if (_directMcpService != null) {
+        // Execute the tool via direct MCP service
+        final mcpResult = await _directMcpService!.executeTool(
+          agentId: agentId,
+          toolName: toolName,
+          arguments: parameters,
+          timeout: timeout,
+        );
+
+        // Convert to MCPToolResult format expected by business layer
+        final result = MCPToolResult(
+          agentId: agentId,
+          serverId: serverId.isNotEmpty ? serverId : 'direct-mcp',
+          toolName: toolName,
+          success: mcpResult.success,
+          result: mcpResult.result,
+          error: mcpResult.error,
+          executionTime: mcpResult.executionTime,
+          timestamp: mcpResult.timestamp,
+        );
+
+        // Log the execution
+        ProductionLogger.instance.info(
+          'Agent tool execution completed via direct MCP',
+          data: {
+            'agent_id': agentId,
+            'tool_name': toolName,
+            'success': result.success,
+            'execution_time_ms': result.executionTime.inMilliseconds,
+          },
+          category: 'agent_business',
+        );
+
+        return BusinessResult.success(result);
+      } else {
+        return BusinessResult.failure('No MCP service available for tool execution');
+      }
     });
   }
 
@@ -558,13 +597,25 @@ class AgentBusinessService extends BaseBusinessService {
     return handleBusinessOperation('getAgentTools', () async {
       validateRequired({'agentId': agentId});
 
-      if (_communicationBridge == null) {
-        return BusinessResult.failure('MCP communication bridge not available');
+      // Try communication bridge first, fallback to direct MCP service
+      if (_communicationBridge != null) {
+        final tools = await _communicationBridge!.getAvailableToolsForAgent(agentId);
+        return BusinessResult.success(tools);
+      } else if (_directMcpService != null) {
+        final mcpTools = await _directMcpService!.getAvailableTools(agentId: agentId);
+
+        // Convert MCPToolDefinition to MCPToolInfo format
+        final tools = mcpTools.map((tool) => MCPToolInfo(
+          serverId: 'direct-mcp-${tool.name}',
+          name: tool.name,
+          description: tool.description,
+          parameters: tool.parameters,
+        )).toList();
+
+        return BusinessResult.success(tools);
+      } else {
+        return BusinessResult.failure('No MCP service available for tool discovery');
       }
-
-      final tools = await _communicationBridge!.getAvailableToolsForAgent(agentId);
-
-      return BusinessResult.success(tools);
     });
   }
 
@@ -718,7 +769,7 @@ class AgentBusinessService extends BaseBusinessService {
 
     // Cleanup communication bridge resources
     if (_communicationBridge != null) {
-      await _communicationBridge!.cleanupAgent(agent.id);
+      await _communicationBridge!.shutdownMCPServersForAgent(agent.id);
     }
 
     // Cleanup provisioning service resources
