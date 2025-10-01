@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'lib/core/services/github_mcp_registry_service.dart';
 import 'lib/core/services/mcp_catalog_service.dart';
 import 'lib/core/services/mcp_catalog_adapter.dart';
+import 'lib/core/services/featured_mcp_servers_service.dart';
 
 /// Simple test to verify GitHub MCP Registry integration
 Future<void> main() async {
@@ -37,7 +38,8 @@ Future<void> main() async {
 
     // Test 2: Service integration
     final githubService = GitHubMCPRegistryService(api);
-    final catalogService = MCPCatalogService(githubService);
+    final featuredService = FeaturedMCPServersService();
+    final catalogService = MCPCatalogService(githubService, featuredService);
 
     try {
       final entries = await catalogService.getAllEntries();

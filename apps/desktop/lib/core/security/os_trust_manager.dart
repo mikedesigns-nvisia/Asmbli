@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'dart:ffi';
 import 'package:ffi/ffi.dart';
-import 'package:win32/win32.dart';
 import 'package:flutter/foundation.dart';
 
 /// Manages OS-native trust mechanisms for the application

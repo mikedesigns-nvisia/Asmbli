@@ -1,7 +1,5 @@
 import 'mcp_settings_service.dart';
 
-import '../models/mcp_server_config.dart';
-
 /// Default MCP server setup (removed fake defaults)
 class DefaultMCPSetup {
   static Future<void> setupDefaultServers(MCPSettingsService settingsService) async {

@@ -8,7 +8,7 @@ import '../utils/app_logger.dart';
 /// Global error boundary for production-ready error handling
 class GlobalErrorHandler {
   static bool _isInitialized = false;
-  static StreamSubscription<IsolateError>? _isolateErrorSubscription;
+  static StreamSubscription<dynamic>? _isolateErrorSubscription;
 
   /// Initialize global error handling
   static void initialize() {
@@ -59,14 +59,19 @@ class GlobalErrorHandler {
   }
 
   /// Handle isolate errors
-  static void _handleIsolateError(IsolateError error) {
+  static void _handleIsolateError(dynamic errorData) {
+    final errorAndStackTrace = errorData is List ? errorData : [errorData];
+    final error = errorAndStackTrace.first;
+    final stackTrace = errorAndStackTrace.length > 1 ? errorAndStackTrace[1] as StackTrace? : null;
+
     AppLogger.critical(
-      'Isolate error: ${error.message}',
+      'Isolate error: $error',
       component: 'ErrorHandler',
       error: error,
+      stackTrace: stackTrace,
     );
 
-    _logProductionError('Isolate Error', error, null);
+    _logProductionError('Isolate Error', error, stackTrace);
   }
 
   /// Log errors for production monitoring

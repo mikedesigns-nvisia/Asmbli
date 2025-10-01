@@ -9,13 +9,14 @@ import 'mcp_safety_service.dart';
 import 'mcp_user_interface_service.dart';
 
 /// Production-Ready MCP Orchestrator (Simplified)
-/// 
+///
 /// This version focuses on the MAGIC user experience while being production-ready:
 /// - One-click capability enablement ✨
-/// - Beautiful progress updates 
+/// - Beautiful progress updates
 /// - Smart error recovery with friendly messages
 /// - Reliable state management
 /// - Actually compiles and works!
+@Deprecated('Will be consolidated into MCPServerService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class ProductionMCPOrchestrator {
   final MCPSafetyService _safetyService;
   final MCPUserInterfaceService _uiService;

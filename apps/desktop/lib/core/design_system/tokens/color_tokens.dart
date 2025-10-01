@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Design tokens for Mint (Light) and Forest (Dark) themes
+@Deprecated('Use ThemeColors(context) instead for multi-color scheme support. See USAGE.md')
 class ColorTokens {
  // Base Colors
  static const Color white = Color(0xFFFFFFFF);

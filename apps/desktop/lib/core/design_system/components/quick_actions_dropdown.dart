@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../tokens/spacing_tokens.dart';
-import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
 import '../../../features/chat/presentation/widgets/add_context_modal.dart';
 import '../../constants/routes.dart';

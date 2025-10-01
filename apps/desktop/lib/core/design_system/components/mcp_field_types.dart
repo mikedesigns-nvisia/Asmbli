@@ -52,6 +52,7 @@ class PathPickerField extends MCPField {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -115,7 +116,7 @@ class PathPickerField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: colors.error,
+              color: ThemeColors(context).error,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -125,6 +126,7 @@ class PathPickerField extends MCPField {
   }
 
   Widget _buildPathPreview(BuildContext context) {
+    final colors = ThemeColors(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -265,7 +267,7 @@ class ApiTokenField extends MCPField {
                     Icons.key,
                     color: colors.primary,
                   ),
-                  suffixIcon: showValidationStatus ? _buildValidationIcon() : null,
+                  suffixIcon: showValidationStatus ? _buildValidationIcon(context) : null,
                 ),
                 obscureText: isSecret,
                 onChanged: onChanged,
@@ -321,7 +323,7 @@ class ApiTokenField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: colors.error,
+              color: ThemeColors(context).error,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -338,8 +340,8 @@ class ApiTokenField extends MCPField {
     );
   }
 
-  Widget? _buildValidationIcon() {
-    final colors = ThemeColors(super.context);
+  Widget? _buildValidationIcon(BuildContext context) {
+    final colors = ThemeColors(context);
     // This would be connected to actual validation state
     return Icon(
       Icons.check_circle,
@@ -519,7 +521,7 @@ class SelectField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: colors.error,
+              color: ThemeColors(context).error,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -665,7 +667,7 @@ class DatabaseConnectionField extends MCPField {
           Text(
             '*',
             style: TextStyle(
-              color: colors.error,
+              color: ThemeColors(context).error,
               fontWeight: FontWeight.bold,
             ),
           ),

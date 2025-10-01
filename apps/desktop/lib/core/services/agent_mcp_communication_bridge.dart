@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/agent_terminal.dart';
 import '../models/mcp_server_process.dart';
-import '../models/mcp_connection.dart';
 import '../models/mcp_server_config.dart';
 import 'agent_terminal_manager.dart';
 import '../mcp/process/mcp_process_manager.dart' as new_mcp;

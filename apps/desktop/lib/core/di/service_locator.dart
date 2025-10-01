@@ -27,16 +27,12 @@ import '../services/mcp_protocol_handler.dart';
 import '../services/mcp_process_manager.dart';
 import '../services/production_logger.dart';
 import 'package:dio/dio.dart';
-import '../services/secure_auth_service.dart';
 
 // New agent-terminal architecture services
 import '../services/mcp_installation_service.dart';
-import '../services/agent_terminal_manager.dart';
-import '../services/agent_mcp_integration_service.dart';
 import '../services/agent_mcp_configuration_service.dart';
 import '../services/agent_aware_mcp_installer.dart';
 import '../services/agent_mcp_session_service.dart';
-import '../services/agent_mcp_communication_bridge.dart';
 import '../services/direct_mcp_agent_service.dart';
 
 // Business services

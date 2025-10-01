@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../design_system.dart';
-import '../../models/mcp_capability.dart';
 import '../../services/mcp_user_interface_service.dart';
 
 /// ✨ Magical Progress Widget - Makes Installation Feel Like Magic

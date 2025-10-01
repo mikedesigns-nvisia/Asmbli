@@ -126,7 +126,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
                       color: theme.colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.api,
                       color: theme.colorScheme.primary,
                       size: 24,

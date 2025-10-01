@@ -1,10 +1,8 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'desktop_service_provider.dart';
 import 'macos_keychain_service.dart';
-import 'file_system_service.dart';
 import 'window_management_service.dart';
 import 'desktop_storage_service.dart';
 

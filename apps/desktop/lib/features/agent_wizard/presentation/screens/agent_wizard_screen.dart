@@ -922,6 +922,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   }
   
   Widget _buildCompactProgress(BuildContext context) {
+    final colors = ThemeColors(context);
     final stepTitles = [
       'Basics',
       'Intelligence',
@@ -929,7 +930,7 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
       'Advanced',
       'Deploy',
     ];
-    
+
     return AsmblCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1072,14 +1073,15 @@ class _AgentWizardScreenState extends ConsumerState<AgentWizardScreen> {
   }
 
   Widget _buildStepOverview(BuildContext context) {
+    final colors = ThemeColors(context);
     final stepTitles = [
       'Agent Basics',
       'Intelligence',
-      'MCP Servers', 
+      'MCP Servers',
       'Advanced',
       'Deploy & Test',
     ];
-    
+
     return AsmblCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

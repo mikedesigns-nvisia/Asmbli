@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../tokens/spacing_tokens.dart';
-import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
 
 // Header button component matching your existing _HeaderButton pattern

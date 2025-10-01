@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import 'package:agent_engine_core/services/agent_service.dart';
 import '../models/mcp_catalog_entry.dart';
-import '../models/agent_mcp_server_config.dart';
 import 'mcp_installation_service.dart';
 import 'agent_mcp_configuration_service.dart';
 import 'desktop/desktop_agent_service.dart';

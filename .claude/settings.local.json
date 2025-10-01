@@ -54,7 +54,9 @@
       "Read(/C:\\AgentEngine\\apps\\desktop\\lib\\core\\services/**)",
       "WebFetch(domain:github.blog)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(flutter run:*)"
+      "Bash(flutter run:*)",
+      "Bash(where uvx)",
+      "Bash(dart analyze:*)"
     ],
     "deny": [],
     "ask": [],

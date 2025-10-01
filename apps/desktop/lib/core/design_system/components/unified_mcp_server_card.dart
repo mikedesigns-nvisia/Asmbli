@@ -83,13 +83,13 @@ class UnifiedMCPServerCard extends ConsumerWidget {
           width: 20,
           height: 20,
           decoration: BoxDecoration(
-            color: _getServerColor().withOpacity(0.1),
+            color: _getServerColor(context).withOpacity(0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
           ),
           child: Icon(
             _getServerIcon(),
             size: 12,
-            color: _getServerColor(),
+            color: _getServerColor(context),
           ),
         ),
         
@@ -147,13 +147,13 @@ class UnifiedMCPServerCard extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: _getServerColor().withOpacity(0.1),
+                color: _getServerColor(context).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               ),
               child: Icon(
                 _getServerIcon(),
                 size: 20,
-                color: _getServerColor(),
+                color: _getServerColor(context),
               ),
             ),
             
@@ -233,7 +233,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
           const SizedBox(height: SpacingTokens.sm),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.check_circle_outline,
                 size: 14,
                 color: ThemeColors(context).success,
@@ -296,7 +296,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
     );
   }
 
-  Color _getServerColor() {
+  Color _getServerColor(BuildContext context) {
     switch (serverId.toLowerCase()) {
       case 'github':
       case 'git':

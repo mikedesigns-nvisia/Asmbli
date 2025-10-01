@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'environment_config.dart';
 
 /// OAuth 2.0 client configurations for production use

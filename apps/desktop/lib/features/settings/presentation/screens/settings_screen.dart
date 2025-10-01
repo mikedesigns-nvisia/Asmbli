@@ -3008,9 +3008,9 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                   // Status row at top
                   Row(
                     children: [
-                      IntegrationStatusIndicators.statusBadge(status, compact: true),
+                      IntegrationStatusIndicators.statusBadge(context, status, compact: true),
                       const Spacer(),
-                      IntegrationStatusIndicators.difficultyBadge(integration.difficulty, showIcon: false),
+                      IntegrationStatusIndicators.difficultyBadge(context, integration.difficulty, showIcon: false),
                     ],
                   ),
                   const SizedBox(height: SpacingTokens.xs),
@@ -3060,12 +3060,12 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                   const SizedBox(height: SpacingTokens.xs),
                   
                   // Capabilities preview
-                  IntegrationStatusIndicators.capabilitiesPreview(integration.capabilities),
-                  
+                  IntegrationStatusIndicators.capabilitiesPreview(context, integration.capabilities),
+
                   const SizedBox(height: SpacingTokens.xs),
-                  
+
                   // Prerequisites indicator
-                  IntegrationStatusIndicators.prerequisitesIndicator(integration.prerequisites),
+                  IntegrationStatusIndicators.prerequisitesIndicator(context, integration.prerequisites),
                 ],
               ),
             ),

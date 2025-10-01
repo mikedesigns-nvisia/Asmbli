@@ -2139,11 +2139,11 @@ Future<void> _updateConversationPrimingAfterSuccess(String conversationId, Model
      context: context,
      barrierDismissible: false, // Force user to configure or cancel
      builder: (context) => AlertDialog(
-       title: const Row(
+       title: Row(
          children: [
-           Icon(Icons.key, color: SemanticColors.primary),
-           SizedBox(width: 8),
-           Text('API Key Required'),
+           Icon(Icons.key, color: ThemeColors(context).primary),
+           const SizedBox(width: 8),
+           const Text('API Key Required'),
          ],
        ),
        content: const Column(
@@ -2168,8 +2168,8 @@ Future<void> _updateConversationPrimingAfterSuccess(String conversationId, Model
            icon: const Icon(Icons.settings),
            label: const Text('Configure API Key'),
            style: ElevatedButton.styleFrom(
-             backgroundColor: SemanticColors.primary,
-             foregroundColor: SemanticColors.onPrimary,
+             backgroundColor: ThemeColors(context).primary,
+             foregroundColor: ThemeColors(context).onPrimary,
            ),
          ),
        ],

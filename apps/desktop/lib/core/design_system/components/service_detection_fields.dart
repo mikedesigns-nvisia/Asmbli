@@ -62,7 +62,7 @@ class ServiceDetectionField extends MCPField {
                     ),
                   ),
                   if (isScanning) ...[
-                    const SizedBox(
+                    SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
@@ -202,13 +202,13 @@ class ServiceDetectionField extends MCPField {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: _getStatusColor(service.status).withOpacity(0.1),
+                        color: _getStatusColor(service.status, context).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Icon(
                         _getStatusIcon(service.status),
                         size: 16,
-                        color: _getStatusColor(service.status),
+                        color: _getStatusColor(service.status, context),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -231,13 +231,13 @@ class ServiceDetectionField extends MCPField {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: _getStatusColor(service.status).withOpacity(0.1),
+                                  color: _getStatusColor(service.status, context).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
                                   service.status.displayName,
                                   style: TextStyle(
-                                    color: _getStatusColor(service.status),
+                                    color: _getStatusColor(service.status, context),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -262,7 +262,7 @@ class ServiceDetectionField extends MCPField {
                       ),
                     ),
                     if (isSelected) ...[
-                      const Icon(
+                      Icon(
                         Icons.check_circle,
                         color: ThemeColors(context).primary,
                         size: 20,
@@ -314,7 +314,7 @@ class ServiceDetectionField extends MCPField {
     }
   }
 
-  Color _getStatusColor(ServiceStatus status) {
+  Color _getStatusColor(ServiceStatus status, BuildContext context) {
     switch (status) {
       case ServiceStatus.running:
         return ThemeColors(context).success;

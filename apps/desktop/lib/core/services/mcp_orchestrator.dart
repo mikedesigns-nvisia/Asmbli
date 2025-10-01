@@ -9,12 +9,13 @@ import 'mcp_user_interface_service.dart';
 import '../di/service_locator.dart';
 
 /// Anthropic PM-style MCP Orchestrator
-/// 
+///
 /// This service provides "magic mode" MCP server management:
 /// - One-click capability enablement
 /// - Hides technical complexity from users
 /// - Provides friendly progress updates
 /// - Handles errors gracefully with recovery suggestions
+@Deprecated('Will be consolidated into MCPServerService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class MCPOrchestrator {
   final MCPSafetyService _safetyService;
   final MCPUserInterfaceService _uiService;

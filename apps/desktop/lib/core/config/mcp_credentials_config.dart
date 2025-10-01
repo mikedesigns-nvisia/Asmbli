@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'environment_config.dart';
-import '../models/mcp_catalog_entry.dart';
 
 /// Practical MCP credentials configuration for real usage
 /// Handles the 4 auth types that MCP servers actually use

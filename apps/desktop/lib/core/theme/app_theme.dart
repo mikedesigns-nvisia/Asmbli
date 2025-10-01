@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+@Deprecated('Use AppColorSchemes from color_schemes.dart instead. This duplicates theme functionality.')
 class AppTheme {
  // Mint (Light) and Forest (Dark) Theme Colors with Enhanced Gradients
  // Light Mode Theme - Mint

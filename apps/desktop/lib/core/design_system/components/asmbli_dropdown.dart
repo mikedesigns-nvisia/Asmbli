@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../tokens/spacing_tokens.dart';
-import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
 
 // Theme-aware dropdown component

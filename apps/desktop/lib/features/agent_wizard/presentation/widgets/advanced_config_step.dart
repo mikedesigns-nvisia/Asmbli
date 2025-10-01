@@ -765,7 +765,8 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
     String statusText;
     
     if (isConfigured && isEnabled) {
-      statusColor = SemanticColors.success;
+      final colors = ThemeColors(context);
+      statusColor = colors.success;
       statusIcon = Icons.check_circle;
       statusText = 'Ready';
     } else if (isConfigured && !isEnabled) {
@@ -1241,6 +1242,7 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
   }
   
   void _addCommonVariable(String name, String example) {
+    final colors = ThemeColors(context);
     setState(() {
       if (!widget.wizardState.environmentVariables.containsKey(name)) {
         _envControllers[name] = TextEditingController();
@@ -1248,12 +1250,12 @@ class _AdvancedConfigStepState extends ConsumerState<AdvancedConfigStep> {
         widget.onChanged();
       }
     });
-    
+
     // Show a helpful message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Added $name - don\'t forget to enter your actual API key!'),
-        backgroundColor: SemanticColors.success,
+        backgroundColor: colors.success,
         action: SnackBarAction(
           label: 'OK',
           textColor: Colors.white,
