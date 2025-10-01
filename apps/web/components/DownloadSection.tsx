@@ -19,6 +19,20 @@ interface DownloadOption {
 const downloads: DownloadOption[] = [
   {
     platform: 'Windows',
+    version: '1.0.1',
+    size: '58KB',
+    format: 'Standalone Executable',
+    filename: 'AgentEngine-Windows-v1.0.1.exe',
+    available: true,
+    requirements: [
+      'Windows 10 64-bit or Windows 11',
+      '8GB RAM minimum (16GB recommended)',
+      '10GB available disk space (for AI models)'
+    ],
+    downloadUrl: 'https://github.com/WereNext/Asmbli/raw/main/downloads/windows/v1.0.1/AgentEngine-Windows-v1.0.1.exe'
+  },
+  {
+    platform: 'Windows',
     version: '1.0.0 Beta',
     size: '~15MB',
     format: 'ZIP Archive',
