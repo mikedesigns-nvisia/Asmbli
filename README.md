@@ -114,8 +114,8 @@ lib/
 ## Technical Patterns Explored
 
 ### Successful Patterns
-- Feature-based module organization
-- Reactive state with Riverpod
+- Ollama & API LLM model wrapper
+- Agent template UI and deployment in chat
 - Design system abstraction
 - Protocol-based tool integration
 
@@ -127,22 +127,16 @@ lib/
 ## Insights for Future Projects
 
 ### Product Design
-1. **Progressive disclosure** essential for complex tools
-2. **Visual configuration** > text-based for non-developers
+1. **Progressive disclosure** essential for complex tools like AI
+2. **Visual configuration** > text-based for non-developers, most users
 3. **Personality matters** in AI interactions
-4. **Context visibility** builds trust
+4. **Context visibility** builds trust & repeatability 
 
-### Technical Architecture
-1. **Start simple** - can always add abstraction
-2. **Service boundaries** should match mental models
-3. **Test early** - retroactive testing is painful
-4. **Documentation** as you experiment saves time
-
-### Agentic AI Patterns
-1. **Templates accelerate** user onboarding
-2. **Tool integration** needs dead-simple UX
-3. **Conversation memory** creates relationship
-4. **Model transparency** reduces confusion
+### Agentic UX Patterns
+1. **Templates accelerate** user onboarding & reduces clicks to action
+2. **Tool integration** needs simple UX
+3. **Conversation memory** creates relationship & reliability
+4. **Model transparency** reduces confusion & promotes privacy
 
 ## Future Exploration Areas
 
@@ -160,24 +154,6 @@ lib/
 - Cross-application agent workflows
 
 See [FUTURE_VISION.md](FUTURE_VISION.md) for detailed exploration of these concepts.
-
-## Contributing to the Experiment
-
-This is an open experiment! Feel free to:
-- Try new UX patterns
-- Experiment with agent behaviors
-- Explore different architectures
-- Share your learnings
-
-## Not Production Ready
-
-This is an experimental project for learning and exploration. It's not intended for production use but rather as:
-- A testbed for AI UX patterns
-- A reference for design decisions
-- A playground for agentic behaviors
-- A learning experience in Flutter desktop
-
-## License
 
 MIT - Use these experiments and learnings freely!
 
