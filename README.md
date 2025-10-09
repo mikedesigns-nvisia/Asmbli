@@ -26,8 +26,8 @@ This is not a production application, but rather a playground for experimenting 
 
 - **Agent templates**: Pre-configured personalities and capabilities
 - **Tool integration**: MCP protocol for extending agent abilities
-- **Context awareness**: Document integration and memory patterns
-- **Multi-model switching**: How users think about different AI models
+- **Context awareness**: Document integration and session doc lookup
+- **Multi-model switching**: Using different models for different types of tasks
 
 ### 🛠️ Technical Experiments
 
@@ -41,7 +41,7 @@ This is not a production application, but rather a playground for experimenting 
 ### What Worked Well
 
 1. **Visual Design System**
-   - Dynamic theming creates personalization
+   - Dynamic theming creates easy personalization
    - Component-based design scales well
    - Golden ratio spacing feels natural
 
@@ -57,10 +57,10 @@ This is not a production application, but rather a playground for experimenting 
 
 ### Areas for Improvement
 
-1. **Over-Architecture**
-   - 110 services is too granular
+1. **Over-Architecture Happens with Agentic Coding**
+   - 110 services is too much
    - Simpler patterns would suffice
-   - Abstraction can hinder understanding
+   - Complex services can hinder codebase understanding
 
 2. **Information Architecture**
    - Settings screen too dense (3000+ lines)
@@ -71,8 +71,10 @@ This is not a production application, but rather a playground for experimenting 
    - Agents still feel like tools, not partners
    - Need more personality/memory
    - Tool use could be more intuitive
+   - Agents hallucinate easily, making this hard to test
+   - Different LLM's will create different agent experiences no matter what because of pre-training
 
-## Running the Experiment
+## Running the Experiment - this may not work*
 
 ```bash
 # Prerequisites: Flutter 3.0+
@@ -120,8 +122,8 @@ lib/
 - Protocol-based tool integration
 
 ### Failed Experiments
-- 110-service architecture (too complex)
-- Some MCP integration attempts
+- Code base is a mess
+- MCP doesn't seem to work
 - Over-abstraction in places
 
 ## Insights for Future Projects
