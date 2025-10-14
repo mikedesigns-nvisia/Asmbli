@@ -4,13 +4,63 @@ import 'package:uuid/uuid.dart';
 import '../models/logic_block.dart';
 import '../models/canvas_state.dart';
 import '../models/reasoning_workflow.dart';
+import '../models/reasoning_capabilities.dart';
 import '../presentation/widgets/block_palette.dart';
+import '../services/reasoning_llm_service.dart';
+import '../services/workflow_execution_engine.dart';
+import '../../../core/services/llm/unified_llm_service.dart';
+import '../../../core/di/service_locator.dart';
 
 /// State notifier for canvas interactions and workflow management
 class CanvasNotifier extends StateNotifier<CanvasState> {
-  CanvasNotifier() : super(CanvasState.empty());
+  late final ReasoningLLMService _reasoningService;
+  late final WorkflowExecutionEngine _executionEngine;
+  WorkflowExecutionResult? _lastExecutionResult;
+  bool _isExecuting = false;
+  String? _currentExecutingBlockId;
+
+  CanvasNotifier() : super(CanvasState.empty()) {
+    _initializeServices();
+  }
 
   static const _uuid = Uuid();
+
+  void _initializeServices() {
+    try {
+      final unifiedLLMService = ServiceLocator.instance.get<UnifiedLLMService>();
+      _reasoningService = ReasoningLLMService(unifiedLLMService);
+      _executionEngine = WorkflowExecutionEngine(_reasoningService);
+      
+      // Listen to execution events
+      _executionEngine.executionEvents.listen((event) {
+        _handleExecutionEvent(event);
+      });
+    } catch (e) {
+      print('Warning: Could not initialize reasoning services: $e');
+      // Continue without reasoning capabilities for now
+    }
+  }
+
+  void _handleExecutionEvent(ExecutionEvent event) {
+    if (event is _BlockStarted) {
+      _currentExecutingBlockId = event.blockId;
+    } else if (event is _BlockCompleted) {
+      _currentExecutingBlockId = null;
+    } else if (event is _ExecutionCompleted || event is _ExecutionFailed) {
+      _isExecuting = false;
+      _currentExecutingBlockId = null;
+    }
+    
+    // Update state to trigger UI refresh
+    state = state.copyWith(
+      uiState: {
+        ...state.uiState,
+        'is_executing': _isExecuting,
+        'current_executing_block': _currentExecutingBlockId,
+        'last_execution_result': _lastExecutionResult,
+      },
+    );
+  }
 
   // Workflow management
   void createNewWorkflow({String? name}) {
@@ -381,6 +431,56 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
     state = state.copyWith(
       isMinimapVisible: !state.isMinimapVisible,
     );
+  }
+
+  // Workflow execution methods
+  Future<void> executeWorkflow({
+    required String modelId,
+    Map<String, dynamic>? initialContext,
+  }) async {
+    if (_isExecuting) {
+      throw Exception('Workflow is already executing');
+    }
+
+    final validation = state.workflow.validate();
+    if (!validation.isValid) {
+      throw Exception('Workflow validation failed: ${validation.errors.join(', ')}');
+    }
+
+    _isExecuting = true;
+    _currentExecutingBlockId = null;
+    _lastExecutionResult = null;
+
+    try {
+      final result = await _executionEngine.executeWorkflow(
+        state.workflow,
+        modelId,
+        initialContext: initialContext ?? {
+          'context_data': 'Test context for reasoning workflow',
+        },
+      );
+
+      _lastExecutionResult = result;
+    } catch (e) {
+      _isExecuting = false;
+      rethrow;
+    }
+  }
+
+  Future<ReasoningCapabilities> getModelCapabilities(String modelId) async {
+    return await _reasoningService.getModelCapabilities(modelId);
+  }
+
+  Stream<ExecutionEvent> get executionEvents => _executionEngine.executionEvents;
+
+  WorkflowExecutionResult? get lastExecutionResult => _lastExecutionResult;
+  bool get isExecuting => _isExecuting;
+  String? get currentExecutingBlockId => _currentExecutingBlockId;
+
+  @override
+  void dispose() {
+    _executionEngine.dispose();
+    super.dispose();
   }
 
   // Utility methods

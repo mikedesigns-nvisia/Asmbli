@@ -5,6 +5,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../widgets/reasoning_canvas.dart';
 import '../widgets/properties_panel.dart';
+import '../widgets/execution_overlay.dart';
 import '../../providers/canvas_provider.dart';
 
 /// Main orchestration screen for visual reasoning workflows
@@ -17,6 +18,7 @@ class OrchestrationScreen extends ConsumerStatefulWidget {
 }
 
 class _OrchestrationScreenState extends ConsumerState<OrchestrationScreen> {
+  String _selectedModelId = 'claude-3-sonnet'; // Default model
   @override
   Widget build(BuildContext context) {
     final colors = ThemeColors(context);
@@ -78,10 +80,24 @@ class _OrchestrationScreenState extends ConsumerState<OrchestrationScreen> {
                       
                       const SizedBox(width: SpacingTokens.lg),
                       
-                      // Properties panel
-                      const SizedBox(
+                      // Properties panel with execution trace
+                      SizedBox(
                         width: 320,
-                        child: PropertiesPanel(),
+                        child: Column(
+                          children: [
+                            const Expanded(
+                              flex: 2,
+                              child: PropertiesPanel(),
+                            ),
+                            const SizedBox(height: SpacingTokens.md),
+                            Expanded(
+                              flex: 1,
+                              child: ExecutionTraceViewer(
+                                executionEvents: ref.watch(canvasProvider.notifier).executionEvents,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -143,6 +159,53 @@ class _OrchestrationScreenState extends ConsumerState<OrchestrationScreen> {
                   onPressed: _exportWorkflow,
                   icon: Icons.download,
                 ),
+                const SizedBox(width: SpacingTokens.md),
+                
+                // Model selector
+                Container(
+                  width: 150,
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedModelId,
+                    decoration: InputDecoration(
+                      labelText: 'Model',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: SpacingTokens.sm,
+                        vertical: SpacingTokens.xs,
+                      ),
+                      isDense: true,
+                    ),
+                    items: [
+                      DropdownMenuItem(value: 'claude-3-sonnet', child: Text('Claude 3 Sonnet')),
+                      DropdownMenuItem(value: 'gpt-4', child: Text('GPT-4')),
+                      DropdownMenuItem(value: 'llama3.1:8b', child: Text('Llama 3.1 8B')),
+                      DropdownMenuItem(value: 'qwen2.5:7b', child: Text('Qwen 2.5 7B')),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _selectedModelId = value);
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: SpacingTokens.sm),
+                
+                // Execution controls
+                if (canvasState.workflow.isValid) ...[
+                  AsmblButton.primary(
+                    text: ref.watch(canvasProvider.notifier).isExecuting ? 'Executing...' : 'Execute',
+                    onPressed: ref.watch(canvasProvider.notifier).isExecuting ? null : _executeWorkflow,
+                    icon: ref.watch(canvasProvider.notifier).isExecuting ? Icons.hourglass_empty : Icons.play_arrow,
+                  ),
+                ] else ...[
+                  AsmblButton.secondary(
+                    text: 'Invalid Workflow',
+                    onPressed: null,
+                    icon: Icons.error_outline,
+                  ),
+                ],
               ],
             ),
           ],
@@ -268,6 +331,42 @@ class _OrchestrationScreenState extends ConsumerState<OrchestrationScreen> {
     final workflow = ref.read(canvasProvider).workflow;
     final markdown = _generateMarkdownDocumentation(workflow);
     _showExportResult('Markdown Export', markdown);
+  }
+
+  Future<void> _executeWorkflow() async {
+    try {
+      await ref.read(canvasProvider.notifier).executeWorkflow(
+        modelId: _selectedModelId,
+        initialContext: {
+          'context_data': 'Example context for testing the reasoning workflow',
+          'user_input': 'This is a test execution of the visual reasoning flow',
+        },
+      );
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Workflow execution completed',
+              style: TextStyles.bodyMedium.copyWith(color: Colors.white),
+            ),
+            backgroundColor: ThemeColors(context).success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Execution failed: $e',
+              style: TextStyles.bodyMedium.copyWith(color: Colors.white),
+            ),
+            backgroundColor: ThemeColors(context).error,
+          ),
+        );
+      }
+    }
   }
 
   String _generateMarkdownDocumentation(workflow) {
