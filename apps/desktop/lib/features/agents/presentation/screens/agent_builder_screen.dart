@@ -256,8 +256,6 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
     switch (builderState.mode) {
       case AgentBuilderMode.wizard:
         return _buildWizardMode(builderState, colors);
-      case AgentBuilderMode.dashboard:
-        return _buildDashboardMode(builderState, colors);
       case AgentBuilderMode.template:
         return _buildTemplateMode(builderState, colors);
     }
@@ -475,7 +473,6 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
   IconData _getModeIcon(AgentBuilderMode mode) {
     switch (mode) {
       case AgentBuilderMode.wizard: return Icons.assistant;
-      case AgentBuilderMode.dashboard: return Icons.dashboard;
       case AgentBuilderMode.template: return Icons.library_books;
     }
   }
@@ -483,7 +480,6 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
   String _getModeLabel(AgentBuilderMode mode) {
     switch (mode) {
       case AgentBuilderMode.wizard: return 'Wizard';
-      case AgentBuilderMode.dashboard: return 'Dashboard';
       case AgentBuilderMode.template: return 'Template';
     }
   }

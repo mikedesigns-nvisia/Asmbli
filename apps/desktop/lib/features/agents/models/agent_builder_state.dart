@@ -5,7 +5,6 @@ import '../../../core/models/mcp_catalog_entry.dart';
 /// Enumeration for different builder modes
 enum AgentBuilderMode {
   wizard,     // Step-by-step guided flow
-  dashboard,  // All-in-one view
   template,   // Starting from a template
 }
 
