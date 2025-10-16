@@ -317,11 +317,11 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
         padding: const EdgeInsets.all(SpacingTokens.sm),
         decoration: BoxDecoration(
           color: isSelected
-              ? colors.primary.withOpacity(0.1)
+              ? colors.primary.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
           border: isSelected
-              ? Border.all(color: colors.primary.withOpacity(0.3))
+              ? Border.all(color: colors.primary.withValues(alpha: 0.3))
               : null,
         ),
         child: Row(
@@ -373,10 +373,10 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.8),
+        color: colors.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         border: Border.all(
-          color: colors.border.withOpacity(0.2),
+          color: colors.border.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -421,7 +421,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Column(
@@ -556,7 +556,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
               if (matchedByDetection)
                 Chip(
                   label: Text('Detected: ${matchedToolName ?? ''}'),
-                  backgroundColor: colors.primary.withOpacity(0.12),
+                  backgroundColor: colors.primary.withValues(alpha: 0.12),
                 ),
               if (!status.definition.isAvailable)
                 IntegrationStatusIndicators.availabilityIndicator(status.definition),
@@ -631,7 +631,7 @@ class _IntegrationMarketplaceState extends ConsumerState<IntegrationMarketplace>
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: colors.primary.withOpacity(0.1),
+        color: colors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Icon(

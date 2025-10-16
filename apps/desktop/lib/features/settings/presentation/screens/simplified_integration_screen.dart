@@ -18,8 +18,8 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             center: Alignment.topCenter,
             radius: 1.5,
             colors: [
-              colors.primary.withOpacity(0.05),
-              colors.background.withOpacity(0.8),
+              colors.primary.withValues(alpha: 0.05),
+              colors.background.withValues(alpha: 0.8),
               colors.background,
             ],
             stops: const [0.0, 0.6, 1.0],
@@ -83,12 +83,12 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            colors.primary.withOpacity(0.1),
-            colors.primary.withOpacity(0.05),
+            colors.primary.withValues(alpha: 0.1),
+            colors.primary.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
-        border: Border.all(color: colors.primary.withOpacity(0.2)),
+        border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
@@ -220,7 +220,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: category.color.withOpacity(0.1),
+                color: category.color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               ),
               child: Icon(
@@ -252,7 +252,7 @@ class SimplifiedIntegrationScreen extends ConsumerWidget {
                 vertical: SpacingTokens.xs,
               ),
               decoration: BoxDecoration(
-                color: colors.primary.withOpacity(0.1),
+                color: colors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Row(

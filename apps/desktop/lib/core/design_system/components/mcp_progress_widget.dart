@@ -54,7 +54,7 @@ class MCPProgressWidget extends ConsumerWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: _getStatusColor(colors).withOpacity(0.1),
+            color: _getStatusColor(colors).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           ),
           child: Center(
@@ -145,7 +145,7 @@ class MCPProgressWidget extends ConsumerWidget {
     return Column(
       children: [
         LinearProgressIndicator(
-          backgroundColor: colors.border.withOpacity(0.3),
+          backgroundColor: colors.border.withValues(alpha: 0.3),
           valueColor: AlwaysStoppedAnimation(colors.primary),
         ),
         SizedBox(height: SpacingTokens.sm),
@@ -174,10 +174,10 @@ class MCPProgressWidget extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.05),
+        color: Colors.orange.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: Colors.orange.withOpacity(0.2),
+          color: Colors.orange.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -428,10 +428,10 @@ class CapabilityPermissionDialog extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
         ),
       ),
       child: Column(

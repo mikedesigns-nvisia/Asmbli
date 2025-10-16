@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/constants/routes.dart';
 
 class AgentsScreen extends StatelessWidget {
  const AgentsScreen({super.key});
@@ -12,7 +14,7 @@ class AgentsScreen extends StatelessWidget {
  IconButton(
  icon: const Icon(Icons.add),
  onPressed: () {
- // Create new agent
+ context.push(AppRoutes.agentBuilder);
  },
  ),
  ],
@@ -92,8 +94,8 @@ class _StatsCard extends StatelessWidget {
  color: Colors.transparent,
  child: InkWell(
  borderRadius: BorderRadius.circular(12),
- hoverColor: theme.colorScheme.primary.withOpacity(0.04),
- splashColor: theme.colorScheme.primary.withOpacity(0.12),
+ hoverColor: theme.colorScheme.primary.withValues(alpha: 0.04),
+ splashColor: theme.colorScheme.primary.withValues(alpha: 0.12),
  onTap: () {
  // Add stats card interaction if needed
  },
@@ -148,8 +150,8 @@ class _AgentListItem extends StatelessWidget {
  color: Colors.transparent,
  child: InkWell(
  borderRadius: BorderRadius.circular(12),
- hoverColor: theme.colorScheme.primary.withOpacity(0.04),
- splashColor: theme.colorScheme.primary.withOpacity(0.12),
+ hoverColor: theme.colorScheme.primary.withValues(alpha: 0.04),
+ splashColor: theme.colorScheme.primary.withValues(alpha: 0.12),
  onTap: () {
  // Open agent details/chat
  },
@@ -218,7 +220,7 @@ class _AgentListItem extends StatelessWidget {
  ),
  ],
  onSelected: (value) {
- // Handle menu actions
+ _handleMenuAction(context, value, 'agent_${index + 1}');
  },
  ),
  ),
@@ -235,5 +237,57 @@ class _AgentListItem extends StatelessWidget {
  if (difference == 1) return 'Yesterday';
  if (difference < 7) return '$difference days ago';
  return '${date.day}/${date.month}/${date.year}';
+ }
+
+ void _handleMenuAction(BuildContext context, String action, String agentId) {
+   switch (action) {
+     case 'edit':
+       context.push('${AppRoutes.agentBuilder}?id=$agentId');
+       break;
+     case 'duplicate':
+       // TODO: Implement agent duplication
+       ScaffoldMessenger.of(context).showSnackBar(
+         const SnackBar(content: Text('Duplicate feature coming soon')),
+       );
+       break;
+     case 'export':
+       // TODO: Implement agent export
+       ScaffoldMessenger.of(context).showSnackBar(
+         const SnackBar(content: Text('Export feature coming soon')),
+       );
+       break;
+     case 'delete':
+       _showDeleteConfirmation(context, agentId);
+       break;
+   }
+ }
+
+ void _showDeleteConfirmation(BuildContext context, String agentId) {
+   showDialog(
+     context: context,
+     builder: (BuildContext context) {
+       return AlertDialog(
+         title: const Text('Delete Agent'),
+         content: const Text('Are you sure you want to delete this agent? This action cannot be undone.'),
+         actions: [
+           TextButton(
+             onPressed: () => Navigator.of(context).pop(),
+             child: const Text('Cancel'),
+           ),
+           TextButton(
+             onPressed: () {
+               Navigator.of(context).pop();
+               // TODO: Implement agent deletion
+               ScaffoldMessenger.of(context).showSnackBar(
+                 const SnackBar(content: Text('Agent deleted')),
+               );
+             },
+             style: TextButton.styleFrom(foregroundColor: Colors.red),
+             child: const Text('Delete'),
+           ),
+         ],
+       );
+     },
+   );
  }
 }

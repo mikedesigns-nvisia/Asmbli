@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:agent_engine_core/services/agent_service.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/di/service_locator.dart';
+import '../../../../../core/constants/routes.dart';
 import '../../../models/agent_builder_state.dart';
 import '../../screens/agent_builder_screen.dart';
 
@@ -52,7 +55,7 @@ class ReviewComponent extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           ),
           child: Icon(
@@ -180,24 +183,32 @@ class ReviewComponent extends ConsumerWidget {
                 ),
                 const SizedBox(height: SpacingTokens.md),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: AsmblButton.primary(
-                    text: 'Create & Deploy',
-                    onPressed: builderState.isValid ? () => _createAgent(builderState, deploy: true) : null,
-                    icon: Icons.cloud_upload,
-                  ),
-                ),
+                Consumer(
+                  builder: (context, ref, child) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: AsmblButton.primary(
+                            text: 'Create & Deploy',
+                            onPressed: builderState.isValid ? () => _createAgent(context, ref, builderState, deploy: true) : null,
+                            icon: Icons.cloud_upload,
+                          ),
+                        ),
 
-                const SizedBox(height: SpacingTokens.sm),
+                        const SizedBox(height: SpacingTokens.sm),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: AsmblButton.secondary(
-                    text: 'Save as Draft',
-                    onPressed: () => _createAgent(builderState, deploy: false),
-                    icon: Icons.save,
-                  ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: AsmblButton.secondary(
+                            text: 'Save as Draft',
+                            onPressed: () => _createAgent(context, ref, builderState, deploy: false),
+                            icon: Icons.save,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
 
                 const SizedBox(height: SpacingTokens.md),
@@ -205,7 +216,7 @@ class ReviewComponent extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: colors.accent.withOpacity(0.1),
+                    color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Row(
@@ -303,7 +314,7 @@ class ReviewComponent extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Text(
@@ -350,9 +361,9 @@ class ReviewComponent extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.md),
                 decoration: BoxDecoration(
-                  color: colors.primary.withOpacity(0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                  border: Border.all(color: colors.primary.withOpacity(0.3)),
+                  border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -383,9 +394,9 @@ class ReviewComponent extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.md),
                 decoration: BoxDecoration(
-                  color: colors.error.withOpacity(0.1),
+                  color: colors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                  border: Border.all(color: colors.error.withOpacity(0.3)),
+                  border: Border.all(color: colors.error.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -496,11 +507,94 @@ class ReviewComponent extends ConsumerWidget {
     );
   }
 
-  void _createAgent(AgentBuilderState builderState, {required bool deploy}) {
-    // TODO: Implement actual agent creation logic
-    print('Creating agent: ${builderState.name}');
-    print('Deploy: $deploy');
-    print('Configuration: ${builderState.toJson()}');
+  Future<void> _createAgent(BuildContext context, WidgetRef ref, AgentBuilderState builderState, {required bool deploy}) async {
+    final colors = ThemeColors(context);
+    
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          backgroundColor: colors.surface,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(color: colors.primary),
+              const SizedBox(height: SpacingTokens.lg),
+              Text(
+                'Creating agent...',
+                style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // Convert builder state to agent
+      final agent = builderState.toAgent();
+      
+      // Get agent service and create agent
+      final agentService = ServiceLocator.instance.get<AgentService>();
+      final createdAgent = await agentService.createAgent(agent);
+      
+      print('✅ Agent created successfully: ${createdAgent.name} (ID: ${createdAgent.id})');
+      
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Agent "${createdAgent.name}" created successfully!',
+              style: TextStyles.bodyMedium.copyWith(color: Colors.white),
+            ),
+            backgroundColor: colors.success,
+            action: SnackBarAction(
+              label: 'View Agents',
+              textColor: Colors.white,
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  AppRoutes.agents,
+                  (route) => route.isFirst,
+                );
+              },
+            ),
+          ),
+        );
+        
+        // Navigate to agents screen after a short delay
+        Future.delayed(const Duration(seconds: 2), () {
+          if (context.mounted) {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              AppRoutes.agents,
+              (route) => route.isFirst,
+            );
+          }
+        });
+      }
+      
+    } catch (e) {
+      print('❌ Failed to create agent: $e');
+      
+      // Close loading dialog if open
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to create agent: $e',
+              style: TextStyles.bodyMedium.copyWith(color: Colors.white),
+            ),
+            backgroundColor: colors.error,
+          ),
+        );
+      }
+    }
   }
 
   void _exportConfiguration(AgentBuilderState builderState, String format) {

@@ -28,10 +28,10 @@ class AutoDetectButton extends ConsumerWidget {
   Widget _buildCompactButton(BuildContext context, ThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: colors.primary.withOpacity(0.1),
+        color: colors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: colors.primary.withOpacity(0.3),
+          color: colors.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Material(
@@ -70,13 +70,13 @@ class AutoDetectButton extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            colors.primary.withOpacity(0.1),
-            colors.primary.withOpacity(0.05),
+            colors.primary.withValues(alpha: 0.1),
+            colors.primary.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: colors.primary.withOpacity(0.2),
+          color: colors.primary.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -187,7 +187,7 @@ class AutoDetectFormField extends ConsumerWidget {
         ),
         const SizedBox(height: SpacingTokens.sm),
         TextFormField(
-          value: value,
+          initialValue: value,
           onChanged: onChanged,
           decoration: InputDecoration(
             hintText: 'Path will be auto-detected',

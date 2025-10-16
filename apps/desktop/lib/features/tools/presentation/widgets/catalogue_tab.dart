@@ -162,7 +162,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   hintStyle: TextStyle(color: colors.onSurfaceVariant),
                   prefixIcon: Icon(Icons.search, color: colors.onSurfaceVariant),
                   filled: true,
-                  fillColor: colors.surface.withOpacity(0.5),
+                  fillColor: colors.surface.withValues(alpha: 0.5),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     borderSide: BorderSide.none,
@@ -308,7 +308,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
     final dropdown = Container(
       padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.5),
+        color: colors.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
       ),
       child: DropdownButton<T?>(
@@ -357,7 +357,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
               vertical: SpacingTokens.xs,
             ),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Text(
@@ -404,7 +404,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: colors.primary.withOpacity(0.1),
+                color: colors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
               ),
               child: Icon(
@@ -469,7 +469,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: colors.onSurface.withOpacity(0.1),
+                    color: colors.onSurface.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                 ),
@@ -483,7 +483,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                         height: 16,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: colors.onSurface.withOpacity(0.1),
+                          color: colors.onSurface.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
                         ),
                       ),
@@ -493,7 +493,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                         height: 14,
                         width: 200,
                         decoration: BoxDecoration(
-                          color: colors.onSurface.withOpacity(0.08),
+                          color: colors.onSurface.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
                         ),
                       ),
@@ -505,7 +505,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   width: 80,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                 ),
@@ -517,7 +517,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
               height: 12,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: colors.onSurface.withOpacity(0.08),
+                color: colors.onSurface.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
               ),
             ),
@@ -526,7 +526,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
               height: 12,
               width: 250,
               decoration: BoxDecoration(
-                color: colors.onSurface.withOpacity(0.08),
+                color: colors.onSurface.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
               ),
             ),
@@ -538,7 +538,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   width: 60,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                   ),
                 ),
@@ -547,7 +547,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   width: 50,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: colors.accent.withOpacity(0.1),
+                    color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                   ),
                 ),
@@ -556,7 +556,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   width: 40,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: colors.success.withOpacity(0.1),
+                    color: colors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                   ),
                 ),
@@ -583,7 +583,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: colors.error.withOpacity(0.1),
+                    color: colors.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                   ),
                   child: Icon(
@@ -622,7 +622,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                 Text(
                   'Error: $error',
                   style: TextStyles.caption.copyWith(
-                    color: colors.onSurfaceVariant.withOpacity(0.7),
+                    color: colors.onSurfaceVariant.withValues(alpha: 0.7),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -993,7 +993,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: server.isOfficial ? colors.primary.withOpacity(0.1) : colors.accent.withOpacity(0.1),
+                    color: server.isOfficial ? colors.primary.withValues(alpha: 0.1) : colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
@@ -1053,9 +1053,9 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                       vertical: SpacingTokens.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: colors.surface.withOpacity(0.5),
+                      color: colors.surface.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                      border: Border.all(color: colors.border.withOpacity(0.5)),
+                      border: Border.all(color: colors.border.withValues(alpha: 0.5)),
                     ),
                     child: Text(
                       capability,
@@ -1192,10 +1192,10 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
       width: double.infinity,
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(0.05),
+        color: iconColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: iconColor.withOpacity(0.2),
+          color: iconColor.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -1276,10 +1276,10 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
       width: double.infinity,
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(0.05),
+        color: iconColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: iconColor.withOpacity(0.2),
+          color: iconColor.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -1327,10 +1327,10 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: iconColor.withOpacity(0.1),
+                              color: iconColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
-                                color: iconColor.withOpacity(0.3),
+                                color: iconColor.withValues(alpha: 0.3),
                                 width: 0.5,
                               ),
                             ),
@@ -1430,10 +1430,10 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
       width: double.infinity,
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(0.05),
+        color: iconColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: iconColor.withOpacity(0.2),
+          color: iconColor.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -1481,10 +1481,10 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: colors.primary.withOpacity(0.1),
+                              color: colors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
-                                color: colors.primary.withOpacity(0.3),
+                                color: colors.primary.withValues(alpha: 0.3),
                                 width: 0.5,
                               ),
                             ),
@@ -1609,8 +1609,8 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
       label: Text(label),
       selected: selected,
       onSelected: (_) => onTap(),
-      backgroundColor: colors.surface.withOpacity(0.3),
-      selectedColor: colors.primary.withOpacity(0.2),
+      backgroundColor: colors.surface.withValues(alpha: 0.3),
+      selectedColor: colors.primary.withValues(alpha: 0.2),
       checkmarkColor: colors.primary,
       labelStyle: TextStyle(
         color: selected ? colors.primary : colors.onSurfaceVariant,
@@ -1647,8 +1647,8 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
               _selectedDifficulty = selected ? difficulty : null;
             });
           },
-          backgroundColor: colors.surface.withOpacity(0.3),
-          selectedColor: colors.primary.withOpacity(0.2),
+          backgroundColor: colors.surface.withValues(alpha: 0.3),
+          selectedColor: colors.primary.withValues(alpha: 0.2),
           checkmarkColor: colors.primary,
           labelStyle: TextStyle(
             color: isSelected ? colors.primary : colors.onSurfaceVariant,
@@ -1676,8 +1676,8 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
               _selectedCategory = selected ? category : null;
             });
           },
-          backgroundColor: colors.surface.withOpacity(0.3),
-          selectedColor: colors.accent.withOpacity(0.2),
+          backgroundColor: colors.surface.withValues(alpha: 0.3),
+          selectedColor: colors.accent.withValues(alpha: 0.2),
           checkmarkColor: colors.accent,
           labelStyle: TextStyle(
             color: isSelected ? colors.accent : colors.onSurfaceVariant,
@@ -1774,20 +1774,20 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                 padding: EdgeInsets.all(SpacingTokens.lg),
                 decoration: BoxDecoration(
                   color: isHovered || isFocused
-                      ? colors.surface.withOpacity(0.8)
+                      ? colors.surface.withValues(alpha: 0.8)
                       : colors.surface,
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   border: Border.all(
                     color: isFocused
-                        ? colors.primary.withOpacity(0.6)
+                        ? colors.primary.withValues(alpha: 0.6)
                         : isHovered
-                            ? colors.border.withOpacity(0.5)
-                            : colors.border.withOpacity(0.3),
+                            ? colors.border.withValues(alpha: 0.5)
+                            : colors.border.withValues(alpha: 0.3),
                     width: isFocused ? 2 : 1,
                   ),
                   boxShadow: isHovered || isFocused ? [
                     BoxShadow(
-                      color: colors.primary.withOpacity(0.1),
+                      color: colors.primary.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -1822,7 +1822,7 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
           width: 20,
           height: 20,
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -1857,9 +1857,9 @@ class _CatalogueTabState extends ConsumerState<CatalogueTab> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.primary.withOpacity(0.1),
+                        color: colors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
-                        border: Border.all(color: colors.primary.withOpacity(0.3)),
+                        border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         'Official',
@@ -2139,7 +2139,7 @@ class _InstallServerDialogState extends ConsumerState<_InstallServerDialog> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: colors.background.withOpacity(0.5),
+                  color: colors.background.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   border: Border.all(color: colors.border),
                 ),
@@ -2173,9 +2173,9 @@ class _InstallServerDialogState extends ConsumerState<_InstallServerDialog> {
               Container(
                 padding: EdgeInsets.all(SpacingTokens.md),
                 decoration: BoxDecoration(
-                  color: colors.success.withOpacity(0.1),
+                  color: colors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                  border: Border.all(color: colors.success.withOpacity(0.3)),
+                  border: Border.all(color: colors.success.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   children: [
@@ -2210,9 +2210,9 @@ class _InstallServerDialogState extends ConsumerState<_InstallServerDialog> {
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: colors.error.withOpacity(0.1),
+                  color: colors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                  border: Border.all(color: colors.error.withOpacity(0.3)),
+                  border: Border.all(color: colors.error.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

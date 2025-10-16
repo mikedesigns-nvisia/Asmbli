@@ -114,7 +114,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              colors.primary.withOpacity(0.02),
+              colors.primary.withValues(alpha: 0.02),
               colors.background,
             ],
           ),
@@ -133,7 +133,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.headerPadding),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.8),
+        color: colors.surface.withValues(alpha: 0.8),
         border: Border(
           bottom: BorderSide(color: colors.border),
         ),
@@ -143,7 +143,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -250,7 +250,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
@@ -330,7 +330,7 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 20),
@@ -429,8 +429,8 @@ class _DetectionResultsScreenState extends ConsumerState<DetectionResultsScreen>
               height: 40,
               decoration: BoxDecoration(
                 color: isDetected
-                  ? (isConfigured ? Colors.blue.withOpacity(0.15) : Colors.green.withOpacity(0.15))
-                  : Colors.grey.withOpacity(0.1),
+                  ? (isConfigured ? Colors.blue.withValues(alpha: 0.15) : Colors.green.withValues(alpha: 0.15))
+                  : Colors.grey.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(

@@ -91,6 +91,14 @@ class AppNavigationBar extends ConsumerWidget {
  const SizedBox(width: SpacingTokens.lg),
  
  HeaderButton(
+ text: 'Reasoning Flows',
+ icon: Icons.account_tree,
+ onPressed: () => context.go(AppRoutes.orchestration),
+ isActive: currentRoute == AppRoutes.orchestration,
+ ),
+ const SizedBox(width: SpacingTokens.lg),
+ 
+ HeaderButton(
  text: 'Settings',
  icon: Icons.settings,
  onPressed: () => context.go(AppRoutes.settings),

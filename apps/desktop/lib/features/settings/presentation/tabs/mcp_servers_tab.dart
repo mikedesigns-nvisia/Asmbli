@@ -19,7 +19,7 @@ class MCPServersTab extends ConsumerWidget {
 
     return Card(
       elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.6),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -282,7 +282,7 @@ class _ServerCardState extends State<_ServerCard> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface.withOpacity(0.03),
+                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.03),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: SelectableText(cfgPreview, style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: Theme.of(context).colorScheme.onSurface)),

@@ -73,8 +73,8 @@ class _EnhancedMCPServerCardState extends ConsumerState<EnhancedMCPServerCard>
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                   border: Border.all(
                     color: _isHovered 
-                      ? colors.primary.withOpacity(0.6) 
-                      : colors.border.withOpacity(0.3),
+                      ? colors.primary.withValues(alpha: 0.6) 
+                      : colors.border.withValues(alpha: 0.3),
                     width: _isHovered ? 2 : 1,
                   ),
                 ),
@@ -104,7 +104,7 @@ class _EnhancedMCPServerCardState extends ConsumerState<EnhancedMCPServerCard>
         Container(
           padding: EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
           ),
           child: Icon(
@@ -128,10 +128,10 @@ class _EnhancedMCPServerCardState extends ConsumerState<EnhancedMCPServerCard>
         vertical: SpacingTokens.xs,
       ),
       decoration: BoxDecoration(
-        color: trustData.color.withOpacity(0.1),
+        color: trustData.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: trustData.color.withOpacity(0.3),
+          color: trustData.color.withValues(alpha: 0.3),
         ),
       ),
       child: Row(

@@ -129,7 +129,7 @@ class _OAuthConnectionsScreenState extends ConsumerState<OAuthConnectionsScreen>
                 Container(
                   padding: EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
@@ -163,7 +163,7 @@ class _OAuthConnectionsScreenState extends ConsumerState<OAuthConnectionsScreen>
             Container(
               padding: EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: colors.surface.withOpacity(0.3),
+                color: colors.surface.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 border: Border.all(color: colors.border),
               ),
@@ -445,9 +445,9 @@ class _OAuthConnectionsScreenState extends ConsumerState<OAuthConnectionsScreen>
       margin: EdgeInsets.only(left: SpacingTokens.xl),
       padding: EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.3),
+        color: colors.surface.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: colors.border.withOpacity(0.3)),
+        border: Border.all(color: colors.border.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,7 +479,7 @@ class _OAuthConnectionsScreenState extends ConsumerState<OAuthConnectionsScreen>
                 vertical: 2,
               ),
               decoration: BoxDecoration(
-                color: colors.accent.withOpacity(0.1),
+                color: colors.accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
               ),
               child: Text(

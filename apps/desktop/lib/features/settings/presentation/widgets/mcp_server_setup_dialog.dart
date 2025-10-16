@@ -104,7 +104,7 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
         Container(
           padding: EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           ),
           child: Icon(
@@ -156,9 +156,9 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
                   vertical: SpacingTokens.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.primary.withOpacity(0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                  border: Border.all(color: colors.primary.withOpacity(0.3)),
+                  border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -203,9 +203,9 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
                   vertical: SpacingTokens.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.accent.withOpacity(0.1),
+                  color: colors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                  border: Border.all(color: colors.accent.withOpacity(0.3)),
+                  border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   capability.replaceAll('-', ' '),
@@ -263,7 +263,7 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
                     hintText: authReq['placeholder'] as String? ?? 'Enter ${(authReq['displayName'] as String? ?? 'auth field').toLowerCase()}',
                     hintStyle: TextStyle(color: colors.onSurfaceVariant),
                     filled: true,
-                    fillColor: colors.surface.withOpacity(0.3),
+                    fillColor: colors.surface.withValues(alpha: 0.3),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                       borderSide: BorderSide(color: colors.border),
@@ -309,9 +309,9 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.accent.withOpacity(0.05),
+        color: colors.accent.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: colors.accent.withOpacity(0.2)),
+        border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,9 +356,9 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.05),
+        color: Colors.red.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: Colors.red.withOpacity(0.2)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -422,9 +422,9 @@ class _MCPServerSetupDialogState extends ConsumerState<MCPServerSetupDialog> {
         vertical: SpacingTokens.xs,
       ),
       decoration: BoxDecoration(
-        color: badgeColor.withOpacity(0.1),
+        color: badgeColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: badgeColor.withOpacity(0.3)),
+        border: Border.all(color: badgeColor.withValues(alpha: 0.3)),
       ),
       child: Text(
         badgeText,

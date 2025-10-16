@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:agent_engine_core/services/agent_service.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../providers/agent_provider.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import '../widgets/enhanced_agent_card.dart';
@@ -683,33 +685,108 @@ _buildCompactHeaderWithTabs(),
  }
 
  void _useTemplate(AgentTemplate template) async {
- // Create a new agent from template using agent provider
- final agentNotifier = ref.read(agentNotifierProvider.notifier);
- 
- try {
-   final newAgent = Agent(
-     id: 'agent_${DateTime.now().millisecondsSinceEpoch}',
-     name: template.name.replaceAll(' (Template)', ''),
-     description: template.description.split(' - ').first,
-     capabilities: _getCapabilitiesFromTemplate(template),
-     configuration: {
-       'systemPrompt': _generateSystemPromptFromTemplate(template),
-       'temperature': 0.7,
-       'maxTokens': 2048,
-       'source_template': template.name,
-       'category': template.category,
-       'mcpServers': template.mcpServers,
-     },
-   );
+   final colors = ThemeColors(context);
    
-   await agentNotifier.createAgent(newAgent);
-   
-   // Navigate to agent configuration screen to edit the new agent
-   context.go('/agents/configure/${newAgent.id}');
- } catch (e) {
-   // If agent creation fails, just navigate to new agent screen
-   context.go(AppRoutes.agentBuilder);
- }
+   try {
+     // Show loading dialog
+     showDialog(
+       context: context,
+       barrierDismissible: false,
+       builder: (context) => AlertDialog(
+         backgroundColor: colors.surface,
+         content: Column(
+           mainAxisSize: MainAxisSize.min,
+           children: [
+             CircularProgressIndicator(color: colors.primary),
+             const SizedBox(height: SpacingTokens.lg),
+             Text(
+               'Creating agent from template...',
+               style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
+             ),
+           ],
+         ),
+       ),
+     );
+
+     // Create agent from template using basic agent service
+     final agentService = ServiceLocator.instance.get<AgentService>();
+     final capabilities = _getCapabilitiesFromTemplate(template);
+     
+     print('🔧 Creating agent with capabilities: $capabilities');
+     
+     final newAgent = Agent(
+       id: 'agent_${DateTime.now().millisecondsSinceEpoch}',
+       name: template.name.replaceAll(' Template', '').replaceAll(' (Template)', ''),
+       description: template.description,
+       capabilities: capabilities,
+       configuration: {
+         'systemPrompt': _generateSystemPromptFromTemplate(template),
+         'temperature': 0.7,
+         'maxTokens': 2048,
+         'source_template': template.name,
+         'category': template.category,
+         'mcpServers': template.mcpServers,
+         'createdAt': DateTime.now().toIso8601String(),
+         'fromTemplate': true,
+       },
+     );
+     
+     final createdAgent = await agentService.createAgent(newAgent);
+     
+     print('✅ Agent created from template: ${createdAgent.name} (ID: ${createdAgent.id})');
+     
+     // Close loading dialog
+     if (context.mounted) {
+       Navigator.of(context).pop();
+       
+       // Show success message
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(
+           content: Text(
+             'Agent "${createdAgent.name}" created from template!',
+             style: TextStyles.bodyMedium.copyWith(color: Colors.white),
+           ),
+           backgroundColor: colors.success,
+           action: SnackBarAction(
+             label: 'Edit Agent',
+             textColor: Colors.white,
+             onPressed: () {
+               context.go('/agents/configure/${createdAgent.id}');
+             },
+           ),
+         ),
+       );
+       
+       // Refresh the agents list
+       ref.invalidate(agentsProvider);
+     }
+     
+   } catch (e) {
+     print('❌ Failed to create agent from template: $e');
+     
+     // Close loading dialog if open
+     if (context.mounted) {
+       Navigator.of(context).pop();
+       
+       // Show error message
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(
+           content: Text(
+             'Failed to create agent: $e',
+             style: TextStyles.bodyMedium.copyWith(color: Colors.white),
+           ),
+           backgroundColor: colors.error,
+           action: SnackBarAction(
+             label: 'Try Builder',
+             textColor: Colors.white,
+             onPressed: () {
+               context.go(AppRoutes.agentBuilder);
+             },
+           ),
+         ),
+       );
+     }
+   }
  }
  
  void _editAgent(Agent agent) {
@@ -810,7 +887,7 @@ _buildCompactHeaderWithTabs(),
                  Container(
                    padding: const EdgeInsets.all(SpacingTokens.sm),
                    decoration: BoxDecoration(
-                     color: ThemeColors(context).primary.withOpacity(0.1),
+                     color: ThemeColors(context).primary.withValues(alpha: 0.1),
                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                    ),
                    child: Icon(
@@ -880,9 +957,9 @@ _buildCompactHeaderWithTabs(),
                width: double.infinity,
                padding: EdgeInsets.all(SpacingTokens.sm),
                decoration: BoxDecoration(
-                 color: ThemeColors(context).primary.withOpacity(0.1),
+                 color: ThemeColors(context).primary.withValues(alpha: 0.1),
                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                 border: Border.all(color: ThemeColors(context).primary.withOpacity(0.2)),
+                 border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.2)),
                ),
                child: Text(
                  template.exampleUse,
@@ -915,7 +992,7 @@ _buildCompactHeaderWithTabs(),
                      decoration: BoxDecoration(
                        color: ThemeColors(context).surfaceVariant,
                        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                       border: Border.all(color: ThemeColors(context).primary.withOpacity(0.3)),
+                       border: Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3)),
                      ),
                      child: Row(
                        mainAxisSize: MainAxisSize.min,
@@ -968,22 +1045,31 @@ _buildCompactHeaderWithTabs(),
  }
  
  List<String> _getCapabilitiesFromTemplate(AgentTemplate template) {
-   switch (template.category) {
-     case 'Research':
-       return ['research', 'analysis', 'citation', 'fact-checking'];
-     case 'Development':
-       return ['coding', 'debugging', 'code-review', 'testing'];
-     case 'Writing':
-       return ['content-creation', 'editing', 'seo', 'copywriting'];
-     case 'Data Analysis':
-       return ['data-analysis', 'visualization', 'statistics', 'reporting'];
-     case 'Customer Support':
-       return ['customer-service', 'troubleshooting', 'communication', 'ticket-management'];
-     case 'Marketing':
-       return ['marketing', 'campaigns', 'analytics', 'strategy'];
-     default:
-       return ['general-assistance', 'problem-solving', 'communication'];
-   }
+   print('🔍 Getting capabilities for template: ${template.name}, category: ${template.category}');
+   
+   final capabilities = switch (template.category) {
+     'Research' => ['research', 'analysis', 'citation', 'fact-checking'],
+     'Development' => ['coding', 'debugging', 'code-review', 'testing'],
+     'Writing' => ['content-creation', 'editing', 'seo', 'copywriting'],
+     'Data Analysis' => ['data-analysis', 'visualization', 'statistics', 'reporting'],
+     'Customer Support' => ['customer-service', 'troubleshooting', 'communication', 'ticket-management'],
+     'Marketing' => ['marketing', 'campaigns', 'analytics', 'strategy'],
+     'Design' => ['design', 'ui-ux', 'prototyping', 'figma'],
+     'DevOps' => ['devops', 'deployment', 'automation', 'infrastructure'],
+     'Database' => ['database', 'sql', 'optimization', 'administration'],
+     'Security' => ['security', 'penetration-testing', 'vulnerability-assessment', 'auditing'],
+     'Product' => ['product-management', 'strategy', 'roadmap', 'analytics'],
+     'API' => ['api-design', 'rest', 'graphql', 'documentation'],
+     'QA' => ['testing', 'automation', 'quality-assurance', 'validation'],
+     'Blockchain' => ['blockchain', 'smart-contracts', 'web3', 'defi'],
+     'AI/ML' => ['machine-learning', 'ai', 'model-training', 'data-science'],
+     'Content Creation' => ['content-creation', 'video-editing', 'multimedia', 'production'],
+     'IoT' => ['iot', 'embedded-systems', 'sensors', 'edge-computing'],
+     String() => ['general-assistance', 'problem-solving', 'communication'],
+   };
+   
+   print('✅ Generated capabilities: $capabilities');
+   return capabilities;
  }
  
  String _generateSystemPromptFromTemplate(AgentTemplate template) {
@@ -1093,7 +1179,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  decoration: BoxDecoration(
  color: isSelected 
  ? ThemeColors(context).primary 
- : ThemeColors(context).surfaceVariant.withOpacity(0.7),
+ : ThemeColors(context).surfaceVariant.withValues(alpha: 0.7),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
  border: Border.all(
  color: isSelected 
@@ -1139,7 +1225,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  Icon(
  Icons.search_off,
  size: 48,
- color: ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
+ color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
@@ -1178,7 +1264,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  Icon(
  Icons.smart_toy_outlined,
  size: 64,
- color: ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
+ color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
@@ -1355,7 +1441,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  decoration: BoxDecoration(
  color: isSelected 
  ? ThemeColors(context).primary 
- : ThemeColors(context).surfaceVariant.withOpacity(0.7),
+ : ThemeColors(context).surfaceVariant.withValues(alpha: 0.7),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
  border: Border.all(
  color: isSelected 
@@ -1382,10 +1468,10 @@ This template gives you a starting point - modify it to create your perfect AI a
    
    return Container(
      decoration: BoxDecoration(
-       color: colors.surface.withOpacity(0.1),
+       color: colors.surface.withValues(alpha: 0.1),
        border: Border(
          bottom: BorderSide(
-           color: colors.border.withOpacity(0.2),
+           color: colors.border.withValues(alpha: 0.2),
          ),
        ),
      ),
@@ -1402,7 +1488,7 @@ This template gives you a starting point - modify it to create your perfect AI a
                  width: 40,
                  height: 40,
                  decoration: BoxDecoration(
-                   color: colors.primary.withOpacity(0.1),
+                   color: colors.primary.withValues(alpha: 0.1),
                    borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                  ),
                  child: Icon(
@@ -1470,7 +1556,7 @@ This template gives you a starting point - modify it to create your perfect AI a
  Icon(
  Icons.search_off,
  size: 48,
- color: ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
+ color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
  ),
  const SizedBox(height: SpacingTokens.componentSpacing),
  Text(
@@ -1714,10 +1800,10 @@ class _AgentCard extends StatelessWidget {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.xs),
  decoration: BoxDecoration(
- color: ThemeColors(context).surfaceVariant.withOpacity(0.3),
+ color: ThemeColors(context).surfaceVariant.withValues(alpha: 0.3),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  border: Border.all(
- color: ThemeColors(context).border.withOpacity(0.5),
+ color: ThemeColors(context).border.withValues(alpha: 0.5),
  width: 0.5,
  ),
  ),

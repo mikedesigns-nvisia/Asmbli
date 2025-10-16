@@ -20,12 +20,12 @@ class ContextStatusIndicator extends ConsumerWidget {
       ),
       decoration: BoxDecoration(
         color: contextDocs.isNotEmpty 
-            ? ThemeColors(context).accent.withOpacity(0.1)
+            ? ThemeColors(context).accent.withValues(alpha: 0.1)
             : ThemeColors(context).surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: contextDocs.isNotEmpty 
-              ? ThemeColors(context).accent.withOpacity(0.3)
+              ? ThemeColors(context).accent.withValues(alpha: 0.3)
               : ThemeColors(context).border,
         ),
       ),

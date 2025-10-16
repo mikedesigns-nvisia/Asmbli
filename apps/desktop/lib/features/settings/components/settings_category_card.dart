@@ -88,7 +88,7 @@ class _SettingsCategoryCardState extends ConsumerState<SettingsCategoryCard>
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: (widget.color ?? colors.primary).withOpacity(0.1),
+                            color: (widget.color ?? colors.primary).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                           ),
                           child: Icon(
@@ -123,7 +123,7 @@ class _SettingsCategoryCardState extends ConsumerState<SettingsCategoryCard>
                         Icon(
                           Icons.chevron_right,
                           size: 20,
-                          color: colors.onSurfaceVariant.withOpacity(
+                          color: colors.onSurfaceVariant.withValues(alpha: 
                             _isHovered ? 1.0 : 0.6,
                           ),
                         ),

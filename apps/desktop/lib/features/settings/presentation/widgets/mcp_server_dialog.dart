@@ -298,10 +298,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
         ),
         padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
         decoration: BoxDecoration(
-          color: colors.surface.withOpacity(0.95),
+          color: colors.surface.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
           ),
         ),
         child: Column(
@@ -351,13 +351,13 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    colors.primary.withOpacity(0.1),
-                    colors.primary.withOpacity(0.05),
+                    colors.primary.withValues(alpha: 0.1),
+                    colors.primary.withValues(alpha: 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: colors.primary.withOpacity(0.2),
+                  color: colors.primary.withValues(alpha: 0.2),
                 ),
               ),
               child: Column(
@@ -564,10 +564,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -576,7 +576,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: colors.primary.withOpacity(0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Icon(
@@ -610,7 +610,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: (badgeColor ?? colors.primary).withOpacity(0.1),
+                    color: (badgeColor ?? colors.primary).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -639,10 +639,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           minWidth: 600,
         ),
         decoration: BoxDecoration(
-          color: colors.surface.withOpacity(0.95),
+          color: colors.surface.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
           ),
         ),
         child: Column(
@@ -654,7 +654,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -727,7 +727,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -786,13 +786,13 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
                 decoration: BoxDecoration(
                   color: isSelected
-                    ? colors.primary.withOpacity(0.1)
-                    : Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                    ? colors.primary.withValues(alpha: 0.1)
+                    : Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: isSelected
                       ? colors.primary
-                      : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -1007,10 +1007,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                 style: BorderStyle.solid,
                 width: 2,
               ),
@@ -1042,10 +1042,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -1162,10 +1162,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             minWidth: 400,
           ),
           decoration: BoxDecoration(
-            color: colors.surface.withOpacity(0.95),
+            color: colors.surface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: colors.border.withOpacity(0.5),
+              color: colors.border.withValues(alpha: 0.5),
             ),
           ),
           child: Column(
@@ -1177,7 +1177,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: colors.border.withOpacity(0.3),
+                      color: colors.border.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
@@ -1238,7 +1238,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
-                      color: colors.border.withOpacity(0.3),
+                      color: colors.border.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
@@ -1287,10 +1287,10 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
             minWidth: 400,
           ),
           decoration: BoxDecoration(
-            color: colors.surface.withOpacity(0.95),
+            color: colors.surface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: colors.border.withOpacity(0.5),
+              color: colors.border.withValues(alpha: 0.5),
             ),
           ),
           child: Column(
@@ -1302,7 +1302,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: colors.border.withOpacity(0.3),
+                      color: colors.border.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
@@ -1348,7 +1348,7 @@ class _MCPServerDialogState extends ConsumerState<MCPServerDialog> {
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
-                      color: colors.border.withOpacity(0.3),
+                      color: colors.border.withValues(alpha: 0.3),
                     ),
                   ),
                 ),

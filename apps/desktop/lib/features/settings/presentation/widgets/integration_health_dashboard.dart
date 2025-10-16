@@ -56,7 +56,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
           end: Alignment.bottomRight,
           colors: [
             colors.background,
-            colors.background.withOpacity(0.95),
+            colors.background.withValues(alpha: 0.95),
           ],
         ),
       ),
@@ -90,11 +90,11 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.9),
+        color: colors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -112,7 +112,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: _getOverallHealthColor(stats, colors).withOpacity(0.2),
+                    color: _getOverallHealthColor(stats, colors).withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -238,7 +238,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
         color: colors.surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -269,7 +269,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
           const SizedBox(height: SpacingTokens.xs),
           LinearProgressIndicator(
             value: percentage / 100,
-            backgroundColor: color.withOpacity(0.1),
+            backgroundColor: color.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 4,
           ),
@@ -289,10 +289,10 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.warning.withOpacity(0.1),
+        color: colors.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: colors.warning.withOpacity(0.3),
+          color: colors.warning.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -359,7 +359,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             Icon(
               Icons.monitor_heart,
               size: 64,
-              color: colors.onSurfaceVariant.withOpacity(0.5),
+              color: colors.onSurfaceVariant.withValues(alpha: 0.5),
             ),
             const SizedBox(height: SpacingTokens.lg),
             Text(
@@ -372,7 +372,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
             Text(
               'Configure integrations to start monitoring their health',
               style: TextStyles.bodyMedium.copyWith(
-                color: colors.onSurfaceVariant.withOpacity(0.7),
+                color: colors.onSurfaceVariant.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -425,7 +425,7 @@ class _IntegrationHealthDashboardState extends ConsumerState<IntegrationHealthDa
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: (integration.brandColor ?? colors.primary).withOpacity(0.1),
+                      color: (integration.brandColor ?? colors.primary).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Icon(
@@ -653,7 +653,7 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: (integration.brandColor ?? colors.primary).withOpacity(0.1),
+                    color: (integration.brandColor ?? colors.primary).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(
@@ -692,10 +692,10 @@ class IntegrationHealthDetailsDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: _getStatusColor(health.status, colors).withOpacity(0.1),
+                color: _getStatusColor(health.status, colors).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                 border: Border.all(
-                  color: _getStatusColor(health.status, colors).withOpacity(0.3),
+                  color: _getStatusColor(health.status, colors).withValues(alpha: 0.3),
                 ),
               ),
               child: Row(

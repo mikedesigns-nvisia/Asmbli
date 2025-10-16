@@ -52,7 +52,7 @@ class OAuthProviderCard extends StatelessWidget {
           height: 48,
           padding: EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.surface.withOpacity(0.3),
+            color: colors.surface.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             border: Border.all(color: colors.border),
           ),
@@ -153,9 +153,9 @@ class OAuthProviderCard extends StatelessWidget {
         vertical: SpacingTokens.xs,
       ),
       decoration: BoxDecoration(
-        color: statusColor.withOpacity(0.1),
+        color: statusColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        border: Border.all(color: statusColor.withOpacity(0.3)),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -218,9 +218,9 @@ class OAuthProviderCard extends StatelessWidget {
                 vertical: SpacingTokens.xs,
               ),
               decoration: BoxDecoration(
-                color: colors.accent.withOpacity(0.1),
+                color: colors.accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                border: Border.all(color: colors.accent.withOpacity(0.3)),
+                border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
               ),
               child: Text(
                 capability,
@@ -319,7 +319,7 @@ class OAuthProviderCard extends StatelessWidget {
         indicatorColor = Colors.red;
         break;
       case OAuthConnectionStatus.disconnected:
-        indicatorColor = colors.onSurfaceVariant.withOpacity(0.3);
+        indicatorColor = colors.onSurfaceVariant.withValues(alpha: 0.3);
         break;
     }
 
@@ -340,9 +340,9 @@ class OAuthProviderCard extends StatelessWidget {
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: colors.accent.withOpacity(0.1),
+        color: colors.accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
-        border: Border.all(color: colors.accent.withOpacity(0.3)),
+        border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
       ),
       child: Text(
         'Approval Required',

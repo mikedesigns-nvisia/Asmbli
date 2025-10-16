@@ -21,7 +21,7 @@ class JsonSyntaxHighlighter extends StatelessWidget {
       if (jsonText.trim().isEmpty) {
         return Text(
           jsonText,
-          style: style.copyWith(color: colors.onSurfaceVariant.withOpacity(0.6)),
+          style: style.copyWith(color: colors.onSurfaceVariant.withValues(alpha: 0.6)),
         );
       }
 
@@ -39,7 +39,7 @@ class JsonSyntaxHighlighter extends StatelessWidget {
       // If it's not valid JSON, just show plain text with error color
       return Text(
         jsonText,
-        style: style.copyWith(color: colors.error.withOpacity(0.8)),
+        style: style.copyWith(color: colors.error.withValues(alpha: 0.8)),
       );
     }
   }

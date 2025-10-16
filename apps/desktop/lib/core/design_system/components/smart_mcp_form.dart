@@ -92,10 +92,10 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: (widget.template.brandColor ?? colors.primary).withOpacity(0.1),
+        color: (widget.template.brandColor ?? colors.primary).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: (widget.template.brandColor ?? colors.primary).withOpacity(0.3),
+          color: (widget.template.brandColor ?? colors.primary).withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -104,7 +104,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: (widget.template.brandColor ?? colors.primary).withOpacity(0.1),
+              color: (widget.template.brandColor ?? colors.primary).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -149,7 +149,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -192,7 +192,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: badgeColor.withOpacity(0.1),
+        color: badgeColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -211,7 +211,7 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: colors.primary.withOpacity(0.1),
+        color: colors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -240,10 +240,10 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Colors.orange.withOpacity(0.3),
+          color: Colors.orange.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -547,10 +547,10 @@ class _SmartMCPFormState extends State<SmartMCPForm> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors.primary.withOpacity(0.05),
+        color: colors.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: colors.primary.withOpacity(0.2),
+          color: colors.primary.withValues(alpha: 0.2),
         ),
       ),
       child: Column(

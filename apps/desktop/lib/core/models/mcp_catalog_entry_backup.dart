@@ -40,7 +40,8 @@ class MCPCatalogEntry extends Equatable {
   final String? author;
   final String? homepage;
   final String? repository;
-  final String? documentationUrl;\n  final DateTime? lastUpdated;
+  final String? documentationUrl;
+  final DateTime? lastUpdated;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -67,7 +68,8 @@ class MCPCatalogEntry extends Equatable {
     this.author,
     this.homepage,
     this.repository,
-    this.documentationUrl,\n    this.lastUpdated,
+    this.documentationUrl,
+    this.lastUpdated,
     this.createdAt,
     this.updatedAt,
   });

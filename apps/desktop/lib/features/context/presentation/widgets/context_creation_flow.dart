@@ -113,7 +113,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  vertical: SpacingTokens.componentSpacing,
  ),
  decoration: BoxDecoration(
- color: colors.surface.withOpacity(0.95),
+ color: colors.surface.withValues(alpha: 0.95),
  borderRadius: const BorderRadius.only(
  topLeft: Radius.circular(BorderRadiusTokens.xl),
  topRight: Radius.circular(BorderRadiusTokens.xl),
@@ -602,10 +602,10 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  decoration: InputDecoration(
  hintText: 'Enter a descriptive title...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withOpacity(0.6),
+ color: colors.onSurfaceVariant.withValues(alpha: 0.6),
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withOpacity(0.3),
+ fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
  contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.iconSpacing,
@@ -652,10 +652,10 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  decoration: InputDecoration(
  hintText: 'Enter your ${_selectedType.displayName.toLowerCase()} content here...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withOpacity(0.6),
+ color: colors.onSurfaceVariant.withValues(alpha: 0.6),
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withOpacity(0.3),
+ fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
  contentPadding: const EdgeInsets.all(SpacingTokens.componentSpacing),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -763,7 +763,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  color: colors.primary,
  ),
  ),
- backgroundColor: colors.primary.withOpacity(0.1),
+ backgroundColor: colors.primary.withValues(alpha: 0.1),
  side: BorderSide(color: colors.primary),
  ),
  ],
@@ -825,10 +825,10 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  decoration: InputDecoration(
  hintText: 'api, documentation, reference...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withOpacity(0.6),
+ color: colors.onSurfaceVariant.withValues(alpha: 0.6),
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withOpacity(0.3),
+ fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
  contentPadding: const EdgeInsets.symmetric(
  horizontal: SpacingTokens.componentSpacing,
  vertical: SpacingTokens.iconSpacing,
@@ -937,7 +937,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  vertical: SpacingTokens.componentSpacing,
  ),
  decoration: BoxDecoration(
- color: colors.surface.withOpacity(0.95),
+ color: colors.surface.withValues(alpha: 0.95),
  borderRadius: const BorderRadius.only(
  bottomLeft: Radius.circular(BorderRadiusTokens.xl),
  bottomRight: Radius.circular(BorderRadiusTokens.xl),
@@ -1317,16 +1317,16 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  
  if (isError) {
  messageColor = colors.error;
- backgroundColor = colors.error.withOpacity(0.1);
+ backgroundColor = colors.error.withValues(alpha: 0.1);
  icon = Icons.error_outline;
  } else if (isWarning) {
  messageColor = colors.warning;
- backgroundColor = colors.warning.withOpacity(0.1);
+ backgroundColor = colors.warning.withValues(alpha: 0.1);
  icon = Icons.warning_amber;
  } else {
  // Success message with warnings
  messageColor = colors.primary;
- backgroundColor = colors.primary.withOpacity(0.1);
+ backgroundColor = colors.primary.withValues(alpha: 0.1);
  icon = Icons.info_outline;
  }
  
@@ -1335,7 +1335,7 @@ class _ContextCreationFlowState extends State<ContextCreationFlow> {
  decoration: BoxDecoration(
  color: backgroundColor,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- border: Border.all(color: messageColor.withOpacity(0.5)),
+ border: Border.all(color: messageColor.withValues(alpha: 0.5)),
  ),
  child: Row(
  crossAxisAlignment: CrossAxisAlignment.start,

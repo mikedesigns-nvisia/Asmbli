@@ -808,7 +808,7 @@ class _WizardScreenState extends State<WizardScreen> {
  return Container(
  padding: const EdgeInsets.all(SpacingTokens.md),
  decoration: BoxDecoration(
- color: colors.surface.withOpacity(0.5),
+ color: colors.surface.withValues(alpha: 0.5),
  borderRadius: BorderRadius.circular(8),
  border: Border.all(color: colors.border),
  ),

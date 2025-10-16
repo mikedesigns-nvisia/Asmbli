@@ -32,7 +32,7 @@ class QuickActionsBar extends ConsumerWidget {
         border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -201,7 +201,7 @@ class _QuickActionButton extends StatelessWidget {
           padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           decoration: BoxDecoration(
             color: isPrimary 
-              ? colors.primary.withOpacity(0.1)
+              ? colors.primary.withValues(alpha: 0.1)
               : colors.surfaceVariant,
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             border: Border.all(
@@ -218,7 +218,7 @@ class _QuickActionButton extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isPrimary 
                     ? colors.primary
-                    : colors.primary.withOpacity(0.1),
+                    : colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Icon(
@@ -333,7 +333,7 @@ class _StatChip extends StatelessWidget {
         vertical: SpacingTokens.xs_precise,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
       ),
       child: Row(

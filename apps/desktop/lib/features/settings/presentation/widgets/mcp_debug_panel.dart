@@ -118,13 +118,13 @@ class _MCPDebugPanelState extends ConsumerState<MCPDebugPanel> {
       padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
         color: result.success 
-            ? colors.primary.withOpacity(0.05) 
-            : Colors.red.withOpacity(0.05),
+            ? colors.primary.withValues(alpha: 0.05) 
+            : Colors.red.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: result.success 
-              ? colors.primary.withOpacity(0.2) 
-              : Colors.red.withOpacity(0.2),
+              ? colors.primary.withValues(alpha: 0.2) 
+              : Colors.red.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -217,7 +217,7 @@ class _MCPDebugPanelState extends ConsumerState<MCPDebugPanel> {
       width: double.infinity,
       padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.3),
+        color: colors.surface.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(color: colors.border),
       ),
@@ -256,9 +256,9 @@ class _MCPDebugPanelState extends ConsumerState<MCPDebugPanel> {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.accent.withOpacity(0.05),
+        color: colors.accent.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: colors.accent.withOpacity(0.2)),
+        border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

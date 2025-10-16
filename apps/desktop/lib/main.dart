@@ -23,6 +23,9 @@ import 'features/context/presentation/screens/context_library_screen.dart';
 import 'features/agent_wizard/presentation/screens/agent_wizard_screen.dart';
 import 'features/agents/presentation/screens/agent_builder_screen.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'features/orchestration/presentation/screens/orchestration_screen.dart';
+import 'features/orchestration/presentation/screens/workflow_browser_screen.dart';
+import 'features/orchestration/presentation/screens/workflow_marketplace_screen.dart';
 import 'providers/conversation_provider.dart';
 import 'package:agent_engine_core/models/conversation.dart';
 import 'core/services/storage_service.dart';
@@ -373,6 +376,13 @@ final _router = GoRouter(
  builder: (context, state) => const MyAgentsScreen(),
  ),
  GoRoute(
+ path: AppRoutes.agentBuilder,
+ builder: (context, state) {
+   final agentId = state.uri.queryParameters['id'];
+   return AgentBuilderScreen(agentId: agentId);
+ },
+ ),
+ GoRoute(
  path: '/agents/configure/:agentId',
  builder: (context, state) {
  final agentId = state.pathParameters['agentId'];
@@ -395,8 +405,16 @@ final _router = GoRouter(
   },
  ),
  GoRoute(
-  path: AppRoutes.agentBuilder,
-  builder: (context, state) => const AgentBuilderScreen(),
+  path: AppRoutes.orchestration,
+  builder: (context, state) => const OrchestrationScreen(),
+ ),
+ GoRoute(
+  path: AppRoutes.workflowBrowser,
+  builder: (context, state) => const WorkflowBrowserScreen(),
+ ),
+ GoRoute(
+  path: AppRoutes.workflowMarketplace,
+  builder: (context, state) => const WorkflowMarketplaceScreen(),
  ),
  ],
 );
@@ -562,7 +580,7 @@ class _RecentConversationsSection extends ConsumerWidget {
  Icon(
  Icons.chat_bubble_outline,
  size: 32,
- color: colors.onSurfaceVariant.withOpacity(0.5),
+ color: colors.onSurfaceVariant.withValues(alpha: 0.5),
  ),
  const SizedBox(height: SpacingTokens.iconSpacing),
  Text(
@@ -662,8 +680,8 @@ class _ConversationItem extends StatelessWidget {
  child: InkWell(
  onTap: onTap,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
- hoverColor: colors.primary.withOpacity(0.04),
- splashColor: colors.primary.withOpacity(0.12),
+ hoverColor: colors.primary.withValues(alpha: 0.04),
+ splashColor: colors.primary.withValues(alpha: 0.12),
  child: Container(
  padding: const EdgeInsets.symmetric(
  vertical: SpacingTokens.componentSpacing,
@@ -675,7 +693,7 @@ class _ConversationItem extends StatelessWidget {
  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
  color: isAgentConversation 
- ? colors.primary.withOpacity(0.1)
+ ? colors.primary.withValues(alpha: 0.1)
  : colors.surfaceVariant,
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
@@ -799,7 +817,7 @@ class _QuickActionCard extends StatelessWidget {
  Container(
  padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
  decoration: BoxDecoration(
- color: ThemeColors(context).primary.withOpacity(0.1),
+ color: ThemeColors(context).primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  ),
  child: Icon(
@@ -889,10 +907,10 @@ class _StartupScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: colors.surface.withOpacity(0.9),
+                  color: colors.surface.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                   border: Border.all(
-                    color: colors.border.withOpacity(0.2),
+                    color: colors.border.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Column(
@@ -902,7 +920,7 @@ class _StartupScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: colors.primary.withOpacity(0.1),
+                        color: colors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                       ),
                       child: Icon(

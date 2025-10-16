@@ -21,7 +21,7 @@ class LoadingOverlay extends StatelessWidget {
         child,
         if (isLoading)
           Container(
-            color: ThemeColors(context).surface.withOpacity(0.95),
+            color: ThemeColors(context).surface.withValues(alpha: 0.95),
             child: const Center(
               child: ThinkingBubbleWidget(),
             ),

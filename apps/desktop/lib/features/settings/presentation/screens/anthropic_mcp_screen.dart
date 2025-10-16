@@ -128,7 +128,7 @@ class _AnthropicMCPScreenState extends ConsumerState<AnthropicMCPScreen> {
                 Container(
                   padding: EdgeInsets.all(SpacingTokens.md),
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
@@ -163,10 +163,10 @@ class _AnthropicMCPScreenState extends ConsumerState<AnthropicMCPScreen> {
             Container(
               padding: EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: colors.accent.withOpacity(0.1),
+                color: colors.accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(
-                  color: colors.accent.withOpacity(0.2),
+                  color: colors.accent.withValues(alpha: 0.2),
                 ),
               ),
               child: Row(
@@ -320,10 +320,10 @@ class _AnthropicMCPScreenState extends ConsumerState<AnthropicMCPScreen> {
         vertical: SpacingTokens.sm,
       ),
       decoration: BoxDecoration(
-        color: trustData.color.withOpacity(0.1),
+        color: trustData.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: trustData.color.withOpacity(0.3),
+          color: trustData.color.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -359,7 +359,7 @@ class _AnthropicMCPScreenState extends ConsumerState<AnthropicMCPScreen> {
                 Container(
                   padding: EdgeInsets.all(SpacingTokens.md),
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(

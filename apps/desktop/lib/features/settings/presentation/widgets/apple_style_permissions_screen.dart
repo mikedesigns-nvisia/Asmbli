@@ -101,7 +101,7 @@ class _AppleStylePermissionsScreenState extends ConsumerState<AppleStylePermissi
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: colors.surface.withOpacity(0.1),
+                color: colors.surface.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
@@ -202,10 +202,10 @@ class _AppleStylePermissionsScreenState extends ConsumerState<AppleStylePermissi
     return Container(
       padding: EdgeInsets.all(SpacingTokens.xl),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.6),
+        color: colors.surface.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
         border: Border.all(
-          color: colors.border.withOpacity(0.3),
+          color: colors.border.withValues(alpha: 0.3),
           width: 0.5,
         ),
       ),
@@ -217,7 +217,7 @@ class _AppleStylePermissionsScreenState extends ConsumerState<AppleStylePermissi
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: colors.primary.withOpacity(0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Icon(
@@ -258,7 +258,7 @@ class _AppleStylePermissionsScreenState extends ConsumerState<AppleStylePermissi
                 child: CircularProgressIndicator(
                   value: percentage,
                   strokeWidth: 3,
-                  backgroundColor: colors.border.withOpacity(0.3),
+                  backgroundColor: colors.border.withValues(alpha: 0.3),
                   valueColor: AlwaysStoppedAnimation(colors.primary),
                 ),
               ),
@@ -277,10 +277,10 @@ class _AppleStylePermissionsScreenState extends ConsumerState<AppleStylePermissi
       padding: EdgeInsets.only(bottom: SpacingTokens.lg),
       child: Container(
         decoration: BoxDecoration(
-          color: colors.surface.withOpacity(0.4),
+          color: colors.surface.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           border: Border.all(
-            color: colors.border.withOpacity(0.2),
+            color: colors.border.withValues(alpha: 0.2),
             width: 0.5,
           ),
         ),
@@ -305,7 +305,7 @@ class _AppleStylePermissionsScreenState extends ConsumerState<AppleStylePermissi
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: _getCategoryColor(category).withOpacity(0.1),
+                          color: _getCategoryColor(category).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(18),
                         ),
                         child: Icon(
@@ -361,7 +361,7 @@ class _AppleStylePermissionsScreenState extends ConsumerState<AppleStylePermissi
               child: isExpanded ? Column(
                 children: [
                   Divider(
-                    color: colors.border.withOpacity(0.3),
+                    color: colors.border.withValues(alpha: 0.3),
                     height: 1,
                     indent: SpacingTokens.lg,
                     endIndent: SpacingTokens.lg,
@@ -429,7 +429,7 @@ class _AppleStylePermissionsScreenState extends ConsumerState<AppleStylePermissi
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: colors.primary.withOpacity(0.1),
+                          color: colors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(

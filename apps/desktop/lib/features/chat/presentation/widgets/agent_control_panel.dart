@@ -33,9 +33,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           Container(
             width: 48,
             decoration: BoxDecoration(
-              color: ThemeColors(context).surface.withOpacity(0.9),
+              color: ThemeColors(context).surface.withValues(alpha: 0.9),
               border: Border(
-                right: BorderSide(color: ThemeColors(context).border.withOpacity(0.3)),
+                right: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
               ),
             ),
             child: Column(
@@ -53,7 +53,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                   onPressed: widget.onToggleCollapse,
                   icon: const Icon(Icons.chevron_right, size: 18),
                   style: IconButton.styleFrom(
-                    backgroundColor: ThemeColors(context).primary.withOpacity(0.1),
+                    backgroundColor: ThemeColors(context).primary.withValues(alpha: 0.1),
                     foregroundColor: ThemeColors(context).primary,
                   ),
                   tooltip: 'Show Agent Control Panel',
@@ -79,11 +79,11 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       height: 32,
       decoration: BoxDecoration(
         color: _selectedSection == section 
-          ? ThemeColors(context).primary.withOpacity(0.2)
+          ? ThemeColors(context).primary.withValues(alpha: 0.2)
           : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: _selectedSection == section
-          ? Border.all(color: ThemeColors(context).primary.withOpacity(0.3))
+          ? Border.all(color: ThemeColors(context).primary.withValues(alpha: 0.3))
           : null,
       ),
       child: Icon(
@@ -99,9 +99,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
   Widget _buildControlPanelContent() {
     return Container(
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.95),
+        color: ThemeColors(context).surface.withValues(alpha: 0.95),
         border: Border(
-          right: BorderSide(color: ThemeColors(context).border.withOpacity(0.3)),
+          right: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
         ),
       ),
       child: Column(
@@ -129,9 +129,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: ThemeColors(context).primary.withOpacity(0.05),
+        color: ThemeColors(context).primary.withValues(alpha: 0.05),
         border: Border(
-          bottom: BorderSide(color: ThemeColors(context).border.withOpacity(0.2)),
+          bottom: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.2)),
         ),
       ),
       child: Column(
@@ -142,7 +142,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withOpacity(0.1),
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -205,12 +205,12 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
         return Container(
           padding: const EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
-            color: ThemeColors(context).surface.withOpacity(0.7),
+            color: ThemeColors(context).surface.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: agentType == 'agent' 
-                ? ThemeColors(context).primary.withOpacity(0.3)
-                : ThemeColors(context).border.withOpacity(0.2),
+                ? ThemeColors(context).primary.withValues(alpha: 0.3)
+                : ThemeColors(context).border.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
@@ -220,8 +220,8 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                 height: 32,
                 decoration: BoxDecoration(
                   color: agentType == 'agent'
-                    ? ThemeColors(context).primary.withOpacity(0.2)
-                    : ThemeColors(context).onSurfaceVariant.withOpacity(0.1),
+                    ? ThemeColors(context).primary.withValues(alpha: 0.2)
+                    : ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
@@ -258,8 +258,8 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: agentType == 'agent'
-                    ? Colors.green.withOpacity(0.1)
-                    : Colors.orange.withOpacity(0.1),
+                    ? Colors.green.withValues(alpha: 0.1)
+                    : Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -292,7 +292,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.md, vertical: SpacingTokens.sm),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: ThemeColors(context).border.withOpacity(0.2)),
+          bottom: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.2)),
         ),
       ),
       child: Row(
@@ -308,7 +308,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                 padding: const EdgeInsets.symmetric(vertical: SpacingTokens.sm),
                 decoration: BoxDecoration(
                   color: isSelected 
-                    ? ThemeColors(context).primary.withOpacity(0.1)
+                    ? ThemeColors(context).primary.withValues(alpha: 0.1)
                     : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -331,7 +331,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
                             decoration: BoxDecoration(
                               color: isSelected
                                 ? ThemeColors(context).primary
-                                : ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
+                                : ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -565,7 +565,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: ThemeColors(context).primary.withOpacity(0.1),
+              color: ThemeColors(context).primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -587,9 +587,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.5),
+        color: ThemeColors(context).surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: ThemeColors(context).border.withOpacity(0.3)),
+        border: Border.all(color: ThemeColors(context).border.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -607,7 +607,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
+              color: Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -636,9 +636,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       margin: const EdgeInsets.only(bottom: SpacingTokens.md),
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.5),
+        color: ThemeColors(context).surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: statusColor.withOpacity(0.3)),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -648,7 +648,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
+                  color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Icon(Icons.extension, size: 14, color: statusColor),
@@ -678,7 +678,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
+                  color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -701,7 +701,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
               children: capabilities.map((capability) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withOpacity(0.1),
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -724,9 +724,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       margin: const EdgeInsets.only(bottom: SpacingTokens.md),
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -757,7 +757,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -778,9 +778,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.5),
+        color: ThemeColors(context).surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: ThemeColors(context).border.withOpacity(0.3)),
+        border: Border.all(color: ThemeColors(context).border.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -819,7 +819,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             width: double.infinity,
             padding: const EdgeInsets.all(SpacingTokens.sm),
             decoration: BoxDecoration(
-              color: ThemeColors(context).onSurface.withOpacity(0.05),
+              color: ThemeColors(context).onSurface.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -849,9 +849,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
       margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.5),
+        color: ThemeColors(context).surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: ThemeColors(context).border.withOpacity(0.3)),
+        border: Border.all(color: ThemeColors(context).border.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -886,7 +886,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             decoration: BoxDecoration(
-              color: (isSecret ? Colors.orange : Colors.blue).withOpacity(0.1),
+              color: (isSecret ? Colors.orange : Colors.blue).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -907,9 +907,9 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: ThemeColors(context).primary.withOpacity(0.05),
+        color: ThemeColors(context).primary.withValues(alpha: 0.05),
         border: Border(
-          top: BorderSide(color: ThemeColors(context).border.withOpacity(0.2)),
+          top: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.2)),
         ),
       ),
       child: Row(
@@ -949,7 +949,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.7),
+        color: ThemeColors(context).surface.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -970,7 +970,7 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text('Error loading agent', style: TextStyles.bodySmall),
@@ -1015,8 +1015,8 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  ThemeColors(context).primary.withOpacity(0.1),
-                  ThemeColors(context).accent.withOpacity(0.05),
+                  ThemeColors(context).primary.withValues(alpha: 0.1),
+                  ThemeColors(context).accent.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -1071,10 +1071,10 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: ThemeColors(context).primary.withOpacity(0.05),
+        color: ThemeColors(context).primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: ThemeColors(context).primary.withOpacity(0.1),
+          color: ThemeColors(context).primary.withValues(alpha: 0.1),
         ),
       ),
       child: Column(
@@ -1114,10 +1114,10 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.8),
+        color: ThemeColors(context).surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: ThemeColors(context).border.withOpacity(0.3),
+          color: ThemeColors(context).border.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -1159,10 +1159,10 @@ class _AgentControlPanelState extends ConsumerState<AgentControlPanel> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: ThemeColors(context).accent.withOpacity(0.05),
+        color: ThemeColors(context).accent.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: ThemeColors(context).accent.withOpacity(0.1),
+          color: ThemeColors(context).accent.withValues(alpha: 0.1),
         ),
       ),
       child: Column(

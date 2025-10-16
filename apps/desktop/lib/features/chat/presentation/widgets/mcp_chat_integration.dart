@@ -114,9 +114,9 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
           margin: EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
           padding: EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
-            color: colors.surface.withOpacity(0.3),
+            color: colors.surface.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-            border: Border.all(color: colors.border.withOpacity(0.5)),
+            border: Border.all(color: colors.border.withValues(alpha: 0.5)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,9 +158,9 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
           vertical: SpacingTokens.xs,
         ),
         decoration: BoxDecoration(
-          color: colors.primary.withOpacity(0.1),
+          color: colors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-          border: Border.all(color: colors.primary.withOpacity(0.3)),
+          border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -266,10 +266,10 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: colors.primary.withOpacity(0.1),
+          color: colors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           border: Border.all(
-            color: colors.primary.withOpacity(0.3),
+            color: colors.primary.withValues(alpha: 0.3),
           ),
         ),
         child: Row(

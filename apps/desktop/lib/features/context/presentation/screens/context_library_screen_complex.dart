@@ -1533,7 +1533,7 @@ module.exports = {
                 end: Alignment.bottomCenter,
                 colors: [
                   colors.background,
-                  colors.background.withOpacity(0.95),
+                  colors.background.withValues(alpha: 0.95),
                 ],
               ),
             ),
@@ -1566,7 +1566,7 @@ module.exports = {
                 // Tab selector
                 Container(
                   decoration: BoxDecoration(
-                    color: colors.surface.withOpacity(0.7),
+                    color: colors.surface.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                     border: Border.all(color: colors.border),
                   ),
@@ -1578,7 +1578,7 @@ module.exports = {
                           child: Container(
                             padding: const EdgeInsets.all(SpacingTokens.md),
                             decoration: BoxDecoration(
-                              color: selectedTab == 0 ? colors.primary.withOpacity(0.1) : null,
+                              color: selectedTab == 0 ? colors.primary.withValues(alpha: 0.1) : null,
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                             ),
                             child: Text(
@@ -1598,7 +1598,7 @@ module.exports = {
                           child: Container(
                             padding: const EdgeInsets.all(SpacingTokens.md),
                             decoration: BoxDecoration(
-                              color: selectedTab == 1 ? colors.primary.withOpacity(0.1) : null,
+                              color: selectedTab == 1 ? colors.primary.withValues(alpha: 0.1) : null,
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                             ),
                             child: Text(
@@ -1738,7 +1738,7 @@ module.exports = {
                                   return Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: colors.surfaceVariant.withOpacity(0.5),
+                                      color: colors.surfaceVariant.withValues(alpha: 0.5),
                                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                                     ),
                                     child: Text(
@@ -1807,7 +1807,7 @@ module.exports = {
             Icon(
               Icons.library_books_outlined,
               size: 64,
-              color: colors.onSurfaceVariant.withOpacity(0.6),
+              color: colors.onSurfaceVariant.withValues(alpha: 0.6),
             ),
             const SizedBox(height: SpacingTokens.xl),
             Text(
@@ -1940,7 +1940,7 @@ class _TemplateCardState extends State<TemplateCard> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.primary.withOpacity(0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(
@@ -1990,7 +1990,7 @@ class _TemplateCardState extends State<TemplateCard> {
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: colors.surfaceVariant.withOpacity(0.5),
+                        color: colors.surfaceVariant.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                       ),
                       child: Text(
@@ -2078,7 +2078,7 @@ class _TemplateCardState extends State<TemplateCard> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(SpacingTokens.lg),
                   decoration: BoxDecoration(
-                    color: colors.surfaceVariant.withOpacity(0.3),
+                    color: colors.surfaceVariant.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                     border: Border.all(color: colors.border),
                   ),

@@ -177,7 +177,7 @@ class ThemeColors {
  
  // Border colors
  Color get border => theme.colorScheme.outline;
- Color get borderSubtle => theme.colorScheme.outline.withOpacity(0.5);
+ Color get borderSubtle => theme.colorScheme.outline.withValues(alpha: 0.5);
  
  // Semantic colors - Enhanced contrast for better accessibility
  Color get success => isDark ? const Color(0xFF22C55E) : const Color(0xFF15803D);
@@ -186,9 +186,9 @@ class ThemeColors {
  Color get info => isDark ? const Color(0xFF3B82F6) : const Color(0xFF1D4ED8);
  
  // Interactive states - Enhanced for better visibility
- Color get hover => primary.withOpacity(isDark ? 0.08 : 0.06);
- Color get pressed => primary.withOpacity(isDark ? 0.12 : 0.10);
- Color get focus => primary.withOpacity(isDark ? 0.16 : 0.14);
+ Color get hover => primary.withValues(alpha: isDark ? 0.08 : 0.06);
+ Color get pressed => primary.withValues(alpha: isDark ? 0.12 : 0.10);
+ Color get focus => primary.withValues(alpha: isDark ? 0.16 : 0.14);
  
  // Special colors
  Color get headerBackground {
@@ -197,25 +197,25 @@ class ThemeColors {
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
- return const Color(0xFF1E293B).withOpacity(0.90); // Blue navigation background
+ return const Color(0xFF1E293B).withValues(alpha: 0.90); // Blue navigation background
  case 'forest-green':
- return const Color(0xFF1F3325).withOpacity(0.90); // Forest navigation background 
+ return const Color(0xFF1F3325).withValues(alpha: 0.90); // Forest navigation background 
  case 'sunset-orange':
- return const Color(0xFF664029).withOpacity(0.90); // Warm orange navigation background
+ return const Color(0xFF664029).withValues(alpha: 0.90); // Warm orange navigation background
  case 'silver-onyx':
- return const Color(0xFF2D2D2D).withOpacity(0.90); // Charcoal navigation background
+ return const Color(0xFF2D2D2D).withValues(alpha: 0.90); // Charcoal navigation background
  default: // warm-neutral
- return const Color(0xFF423126).withOpacity(0.90); // Warm brown navigation background
+ return const Color(0xFF423126).withValues(alpha: 0.90); // Warm brown navigation background
  }
  } else {
  return const Color(0x80FFFFFF); // Semi-transparent white
  }
  }
  
- Color get headerBorder => border.withOpacity(0.3);
+ Color get headerBorder => border.withValues(alpha: 0.3);
  
  Color get cardBackground => surface;
- Color get cardBorder => border.withOpacity(0.5);
+ Color get cardBorder => border.withValues(alpha: 0.5);
  
  Color get inputBackground => isDark
  ? backgroundGradientStart

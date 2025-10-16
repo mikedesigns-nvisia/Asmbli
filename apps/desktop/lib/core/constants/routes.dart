@@ -13,6 +13,9 @@ class AppRoutes {
  static const String wizard = '/wizard';
  static const String agentWizard = '/agent-wizard';
  static const String agentBuilder = '/agent-builder';
+ static const String orchestration = '/orchestration';
+ static const String workflowBrowser = '/workflow-browser';
+ static const String workflowMarketplace = '/workflow-marketplace';
  static const String integrations = '/integrations';
  static const String integrationHub = '/integration-hub';
  static const String marketplace = '/marketplace';
@@ -31,6 +34,9 @@ class AppRoutes {
  wizard: 'Wizard',
  agentWizard: 'Create Agent',
  agentBuilder: 'Build Agent',
+ orchestration: 'Reasoning Flows',
+ workflowBrowser: 'Workflow Library',
+ workflowMarketplace: 'Workflow Marketplace',
  integrations: 'Add Integrations',
  integrationHub: 'Integration Hub',
  marketplace: 'Marketplace',
@@ -53,6 +59,9 @@ class AppRoutes {
  wizard,
  agentWizard,
  agentBuilder,
+ orchestration,
+ workflowBrowser,
+ workflowMarketplace,
  integrations,
  integrationHub,
  marketplace,

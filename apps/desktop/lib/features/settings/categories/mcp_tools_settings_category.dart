@@ -213,7 +213,7 @@ class _McpToolsSettingsCategoryState extends ConsumerState<McpToolsSettingsCateg
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: _getServerStatusColor(status, colors).withOpacity(0.1),
+                    color: _getServerStatusColor(status, colors).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
@@ -243,8 +243,8 @@ class _McpToolsSettingsCategoryState extends ConsumerState<McpToolsSettingsCateg
                             ),
                             decoration: BoxDecoration(
                               color: server.enabled 
-                                  ? colors.accent.withOpacity(0.1)
-                                  : colors.onSurfaceVariant.withOpacity(0.1),
+                                  ? colors.accent.withValues(alpha: 0.1)
+                                  : colors.onSurfaceVariant.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                             ),
                             child: Text(
@@ -293,10 +293,10 @@ class _McpToolsSettingsCategoryState extends ConsumerState<McpToolsSettingsCateg
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: _getServerStatusColor(status, colors).withOpacity(0.1),
+                  color: _getServerStatusColor(status, colors).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   border: Border.all(
-                    color: _getServerStatusColor(status, colors).withOpacity(0.2),
+                    color: _getServerStatusColor(status, colors).withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
@@ -402,7 +402,7 @@ class _McpToolsSettingsCategoryState extends ConsumerState<McpToolsSettingsCateg
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: colors.error.withOpacity(0.1),
+                  color: colors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   border: Border.all(color: colors.error),
                 ),

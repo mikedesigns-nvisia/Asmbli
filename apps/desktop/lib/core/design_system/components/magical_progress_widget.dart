@@ -133,14 +133,14 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
           borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
           gradient: LinearGradient(
             colors: [
-              Colors.green.withOpacity(0.1),
-              colors.primary.withOpacity(0.1),
+              Colors.green.withValues(alpha: 0.1),
+              colors.primary.withValues(alpha: 0.1),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           border: Border.all(
-            color: Colors.green.withOpacity(0.3),
+            color: Colors.green.withValues(alpha: 0.3),
             width: 2,
           ),
         );
@@ -148,7 +148,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
         return BoxDecoration(
           borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
           border: Border.all(
-            color: Colors.red.withOpacity(0.3),
+            color: Colors.red.withValues(alpha: 0.3),
             width: 1,
           ),
         );
@@ -157,8 +157,8 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
           borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
           gradient: LinearGradient(
             colors: [
-              colors.primary.withOpacity(0.05),
-              colors.accent.withOpacity(0.05),
+              colors.primary.withValues(alpha: 0.05),
+              colors.accent.withValues(alpha: 0.05),
             ],
           ),
         );
@@ -275,7 +275,7 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
                     gradient: LinearGradient(
                       colors: [
-                        colors.primary.withOpacity(0.3),
+                        colors.primary.withValues(alpha: 0.3),
                         Colors.transparent,
                       ],
                       stops: [_progressAnimation.value, _progressAnimation.value + 0.1],
@@ -314,10 +314,10 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
         Container(
           padding: const EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
-            color: Colors.green.withOpacity(0.1),
+            color: Colors.green.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             border: Border.all(
-              color: Colors.green.withOpacity(0.2),
+              color: Colors.green.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
@@ -358,10 +358,10 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
         Container(
           padding: const EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
-            color: Colors.red.withOpacity(0.1),
+            color: Colors.red.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             border: Border.all(
-              color: Colors.red.withOpacity(0.2),
+              color: Colors.red.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
@@ -403,10 +403,10 @@ class _MagicalProgressWidgetState extends ConsumerState<MagicalProgressWidget>
         Container(
           padding: const EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
-            color: Colors.orange.withOpacity(0.1),
+            color: Colors.orange.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             border: Border.all(
-              color: Colors.orange.withOpacity(0.2),
+              color: Colors.orange.withValues(alpha: 0.2),
             ),
           ),
           child: Row(

@@ -97,7 +97,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
           Container(
             padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Row(
@@ -181,7 +181,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         labelColor: colors.primary,
         unselectedLabelColor: colors.onSurfaceVariant,
         indicator: BoxDecoration(
-          color: colors.primary.withOpacity(0.1),
+          color: colors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         ),
       ),
@@ -536,7 +536,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
-                          color: colors.primary.withOpacity(0.1),
+                          color: colors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
@@ -724,7 +724,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getDifficultyColor(colors, guide.difficulty).withOpacity(0.1),
+                  color: _getDifficultyColor(colors, guide.difficulty).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -775,7 +775,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
         color: colors.background,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: prereq.isRequired ? colors.warning.withOpacity(0.3) : colors.border,
+          color: prereq.isRequired ? colors.warning.withValues(alpha: 0.3) : colors.border,
         ),
       ),
       child: Row(
@@ -802,7 +802,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
-                          color: colors.error.withOpacity(0.1),
+                          color: colors.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
@@ -908,10 +908,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.05),
+                    color: colors.primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     border: Border.all(
-                      color: colors.primary.withOpacity(0.2),
+                      color: colors.primary.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Column(
@@ -1002,10 +1002,10 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               width: double.infinity,
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: colors.success.withOpacity(0.05),
+                color: colors.success.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(
-                  color: colors.success.withOpacity(0.2),
+                  color: colors.success.withValues(alpha: 0.2),
                 ),
               ),
               child: Column(
@@ -1198,7 +1198,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(
-                    color: _getDifficultyColor(colors, example.difficulty).withOpacity(0.1),
+                    color: _getDifficultyColor(colors, example.difficulty).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
@@ -1225,7 +1225,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               width: double.infinity,
               padding: const EdgeInsets.all(SpacingTokens.sm),
               decoration: BoxDecoration(
-                color: colors.onSurface.withOpacity(0.05),
+                color: colors.onSurface.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 border: Border.all(color: colors.border),
               ),
@@ -1324,7 +1324,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                             Container(
                               padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
-                                color: colors.warning.withOpacity(0.1),
+                                color: colors.warning.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -1386,7 +1386,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
@@ -1603,7 +1603,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.xs),
                   decoration: BoxDecoration(
-                    color: colors.onSurface.withOpacity(0.05),
+                    color: colors.onSurface.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
@@ -1731,7 +1731,7 @@ class _IntegrationDocumentationWidgetState extends ConsumerState<IntegrationDocu
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getMethodColor(colors, endpoint.method).withOpacity(0.1),
+                  color: _getMethodColor(colors, endpoint.method).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(

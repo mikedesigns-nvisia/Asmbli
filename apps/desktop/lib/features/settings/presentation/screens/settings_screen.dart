@@ -308,9 +308,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Expanded(
  child: Container(
  decoration: BoxDecoration(
- color: ThemeColors(context).surface.withOpacity(0.8),
+ color: ThemeColors(context).surface.withValues(alpha: 0.8),
  borderRadius: BorderRadius.circular(12),
- border: Border.all(color: ThemeColors(context).border.withOpacity(0.5)),
+ border: Border.all(color: ThemeColors(context).border.withValues(alpha: 0.5)),
  ),
  child: TabBar(
  controller: _tabController,
@@ -333,7 +333,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  fontWeight: FontWeight.w500,
  ),
  indicator: BoxDecoration(
- color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+ color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(8),
  ),
  indicatorPadding: const EdgeInsets.all(4),
@@ -498,9 +498,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Container(
  padding: const EdgeInsets.all(16),
  decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+ color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
  borderRadius: BorderRadius.circular(8),
- border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
+ border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
  ),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -535,9 +535,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Container(
  padding: const EdgeInsets.all(12),
  decoration: BoxDecoration(
- color: ThemeColors(context).surface.withOpacity(0.8),
+ color: ThemeColors(context).surface.withValues(alpha: 0.8),
  borderRadius: BorderRadius.circular(6),
- border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
+ border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
  ),
  child: Row(
  children: [
@@ -566,9 +566,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+ color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(4),
- border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
+ border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
  ),
  child: Text(
  'Change',
@@ -595,10 +595,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  return Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+ color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(4),
  border: Border.all(
- color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+ color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
  width: 1,
  ),
  ),
@@ -643,7 +643,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  decoration: BoxDecoration(
  border: Border.all(color: Theme.of(context).colorScheme.outline),
  borderRadius: BorderRadius.circular(8),
- color: ThemeColors(context).surface.withOpacity(0.8),
+ color: ThemeColors(context).surface.withValues(alpha: 0.8),
  ),
  child: TextField(
  controller: systemPromptController,
@@ -678,7 +678,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  style: TextButton.styleFrom(
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
  foregroundColor: Theme.of(context).colorScheme.onSurface,
- overlayColor: ThemeColors(context).primary.withOpacity(0.1),
+ overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
  ),
  child: const Text(
  'Reset to Default',
@@ -700,7 +700,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  style: TextButton.styleFrom(
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
  foregroundColor: Theme.of(context).colorScheme.onPrimary,
- overlayColor: Colors.white.withOpacity(0.1),
+ overlayColor: Colors.white.withValues(alpha: 0.1),
  ),
  child: const Text(
  'Save Prompt',
@@ -845,9 +845,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  child: Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
- color: Colors.orange.withOpacity(0.1),
+ color: Colors.orange.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(4),
- border: Border.all(color: Colors.orange.withOpacity(0.3)),
+ border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
  ),
  child: const Row(
  mainAxisSize: MainAxisSize.min,
@@ -878,13 +878,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
  color: apiConfig.isConfigured 
- ? ThemeColors(context).success.withOpacity(0.1) 
- : ThemeColors(context).error.withOpacity(0.1),
+ ? ThemeColors(context).success.withValues(alpha: 0.1) 
+ : ThemeColors(context).error.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(4),
  border: Border.all(
  color: apiConfig.isConfigured 
- ? ThemeColors(context).success.withOpacity(0.3) 
- : ThemeColors(context).error.withOpacity(0.3),
+ ? ThemeColors(context).success.withValues(alpha: 0.3) 
+ : ThemeColors(context).error.withValues(alpha: 0.3),
  ),
  ),
  child: Row(
@@ -917,10 +917,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  showDialog(
  context: context,
  builder: (context) => AlertDialog(
- backgroundColor: ThemeColors(context).surface.withOpacity(0.95),
+ backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.95),
  shape: RoundedRectangleBorder(
  borderRadius: BorderRadius.circular(12),
- side: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
+ side: BorderSide(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
  ),
  title: Text(
  'Select API for $selectedAgent',
@@ -943,13 +943,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  margin: const EdgeInsets.only(bottom: 8),
  decoration: BoxDecoration(
  color: isSelected 
- ? Theme.of(context).colorScheme.primary.withOpacity(0.05)
- : ThemeColors(context).surface.withOpacity(0.8),
+ ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.05)
+ : ThemeColors(context).surface.withValues(alpha: 0.8),
  borderRadius: BorderRadius.circular(8),
  border: Border.all(
  color: isSelected 
- ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
- : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+ ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+ : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
  ),
  ),
  child: ListTile(
@@ -958,13 +958,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  height: 32,
  decoration: BoxDecoration(
  color: apiConfig.isConfigured 
- ? ThemeColors(context).success.withOpacity(0.1)
- : ThemeColors(context).error.withOpacity(0.1),
+ ? ThemeColors(context).success.withValues(alpha: 0.1)
+ : ThemeColors(context).error.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(6),
  border: Border.all(
  color: apiConfig.isConfigured 
- ? ThemeColors(context).success.withOpacity(0.3)
- : ThemeColors(context).error.withOpacity(0.3),
+ ? ThemeColors(context).success.withValues(alpha: 0.3)
+ : ThemeColors(context).error.withValues(alpha: 0.3),
  ),
  ),
  child: Icon(
@@ -988,9 +988,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
  decoration: BoxDecoration(
- color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+ color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(4),
- border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
+ border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
  ),
  child: Text(
  'DEFAULT',
@@ -1061,7 +1061,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  ),
  style: TextButton.styleFrom(
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
- overlayColor: ThemeColors(context).primary.withOpacity(0.1),
+ overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
  ),
  ),
  ),
@@ -1079,7 +1079,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
  style: TextButton.styleFrom(
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
  foregroundColor: Theme.of(context).colorScheme.onSurface,
- overlayColor: ThemeColors(context).primary.withOpacity(0.1),
+ overlayColor: ThemeColors(context).primary.withValues(alpha: 0.1),
  ),
  child: const Text(
  'Cancel',
@@ -1312,10 +1312,10 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                               style: BorderStyle.solid,
                               width: 2,
                             ),
@@ -1356,10 +1356,10 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           style: BorderStyle.solid,
           width: 2,
         ),
@@ -1441,7 +1441,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                   Container(
                     padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                     decoration: BoxDecoration(
-                      color: ThemeColors(context).primary.withOpacity(0.1),
+                      color: ThemeColors(context).primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Icon(
@@ -1556,7 +1556,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               ),
               child: Icon(icon, size: 32, color: color),
@@ -1579,7 +1579,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                           vertical: SpacingTokens.xs_precise,
                         ),
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.2),
+                          color: color.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                         ),
                         child: Text(
@@ -1731,12 +1731,12 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
+        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: config.enabled 
-            ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
-            : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+            : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -1751,13 +1751,13 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                 height: 40,
                 decoration: BoxDecoration(
                   color: config.enabled
-                    ? Colors.green.withOpacity(0.1)
-                    : Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                    ? Colors.green.withValues(alpha: 0.1)
+                    : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: config.enabled
-                      ? Colors.green.withOpacity(0.3)
-                      : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      ? Colors.green.withValues(alpha: 0.3)
+                      : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Icon(
@@ -1823,7 +1823,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                     icon: const Icon(Icons.play_circle, size: 20),
                     style: IconButton.styleFrom(
                       foregroundColor: colors.primary,
-                      overlayColor: colors.primary.withOpacity(0.1),
+                      overlayColor: colors.primary.withValues(alpha: 0.1),
                     ),
                   ),
                   IconButton(
@@ -1831,7 +1831,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                     icon: const Icon(Icons.edit, size: 18),
                     style: IconButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                      overlayColor: colors.primary.withOpacity(0.1),
+                      overlayColor: colors.primary.withValues(alpha: 0.1),
                     ),
                   ),
                   IconButton(
@@ -1839,7 +1839,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
                     icon: const Icon(Icons.delete, size: 18),
                     style: IconButton.styleFrom(
                       foregroundColor: Colors.red,
-                      overlayColor: Colors.red.withOpacity(0.1),
+                      overlayColor: Colors.red.withValues(alpha: 0.1),
                     ),
                   ),
                 ],
@@ -1853,7 +1853,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Column(
@@ -1936,9 +1936,9 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1995,11 +1995,11 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: colors.surface.withOpacity(0.95),
+        backgroundColor: colors.surface.withValues(alpha: 0.95),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
           ),
         ),
         title: const Text(
@@ -2017,7 +2017,7 @@ void _editApiKeyFromMap(Map<String, dynamic> cfg) {
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             style: TextButton.styleFrom(
-              overlayColor: colors.primary.withOpacity(0.1),
+              overlayColor: colors.primary.withValues(alpha: 0.1),
             ),
             child: const Text('Cancel'),
           ),
@@ -2063,9 +2063,9 @@ class _SettingsSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.8),
+        color: ThemeColors(context).surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
+        border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2431,7 +2431,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               trailing: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withOpacity(0.1),
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(
@@ -2470,7 +2470,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: integration.color.withOpacity(0.1),
+                      color: integration.color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Icon(
@@ -2521,7 +2521,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                       color: ThemeColors(context).surface,
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                       border: Border.all(
-                        color: ThemeColors(context).border.withOpacity(0.3),
+                        color: ThemeColors(context).border.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Text(
@@ -2672,10 +2672,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         return Container(
           padding: const EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             border: Border.all(
-              color: colors.primary.withOpacity(0.3),
+              color: colors.primary.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -2789,10 +2789,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
         Container(
           padding: const EdgeInsets.all(SpacingTokens.lg),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
@@ -2829,10 +2829,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: healthStats.isHealthy ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                  color: healthStats.isHealthy ? Colors.green.withValues(alpha: 0.1) : Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   border: Border.all(
-                    color: healthStats.isHealthy ? Colors.green.withOpacity(0.3) : Colors.orange.withOpacity(0.3),
+                    color: healthStats.isHealthy ? Colors.green.withValues(alpha: 0.3) : Colors.orange.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -2877,10 +2877,10 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -2925,7 +2925,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getCategoryColor(category).withOpacity(0.1),
+                    color: _getCategoryColor(category).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Row(
@@ -3020,7 +3020,7 @@ class _IntegrationsTabContentState extends ConsumerState<IntegrationsTabContent>
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Icon(

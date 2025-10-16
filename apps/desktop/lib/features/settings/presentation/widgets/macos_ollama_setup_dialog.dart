@@ -55,7 +55,7 @@ class _MacOSOllamaSetupDialogState extends ConsumerState<MacOSOllamaSetupDialog>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -128,13 +128,13 @@ class _MacOSOllamaSetupDialogState extends ConsumerState<MacOSOllamaSetupDialog>
       padding: const EdgeInsets.all(SpacingTokens.cardPadding),
       decoration: BoxDecoration(
         color: isInstalled
-          ? Colors.green.withOpacity(0.1)
-          : Colors.orange.withOpacity(0.1),
+          ? Colors.green.withValues(alpha: 0.1)
+          : Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: isInstalled
-            ? Colors.green.withOpacity(0.3)
-            : Colors.orange.withOpacity(0.3),
+            ? Colors.green.withValues(alpha: 0.3)
+            : Colors.orange.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -306,13 +306,13 @@ class _MacOSOllamaSetupDialogState extends ConsumerState<MacOSOllamaSetupDialog>
         padding: const EdgeInsets.all(SpacingTokens.cardPadding),
         decoration: BoxDecoration(
           color: isSelected
-            ? colors.primary.withOpacity(0.1)
+            ? colors.primary.withValues(alpha: 0.1)
             : theme.colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           border: Border.all(
             color: isSelected
-              ? colors.primary.withOpacity(0.5)
-              : colors.border.withOpacity(0.3),
+              ? colors.primary.withValues(alpha: 0.5)
+              : colors.border.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -322,8 +322,8 @@ class _MacOSOllamaSetupDialogState extends ConsumerState<MacOSOllamaSetupDialog>
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isRecommended
-                  ? Colors.green.withOpacity(0.2)
-                  : colors.primary.withOpacity(0.1),
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : colors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -354,7 +354,7 @@ class _MacOSOllamaSetupDialogState extends ConsumerState<MacOSOllamaSetupDialog>
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.2),
+                            color: Colors.green.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -411,10 +411,10 @@ class _MacOSOllamaSetupDialogState extends ConsumerState<MacOSOllamaSetupDialog>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.cardPadding),
       decoration: BoxDecoration(
-        color: colors.primary.withOpacity(0.05),
+        color: colors.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: colors.primary.withOpacity(0.2),
+          color: colors.primary.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -462,7 +462,7 @@ class _MacOSOllamaSetupDialogState extends ConsumerState<MacOSOllamaSetupDialog>
         color: theme.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: colors.border.withOpacity(0.3),
+          color: colors.border.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -554,7 +554,7 @@ class _MacOSOllamaSetupDialogState extends ConsumerState<MacOSOllamaSetupDialog>
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.8),
+          color: Colors.black.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
@@ -593,7 +593,7 @@ class _MacOSOllamaSetupDialogState extends ConsumerState<MacOSOllamaSetupDialog>
               color: theme.colorScheme.surfaceContainer,
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               border: Border.all(
-                color: colors.border.withOpacity(0.3),
+                color: colors.border.withValues(alpha: 0.3),
               ),
             ),
             child: Column(

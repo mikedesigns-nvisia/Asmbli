@@ -49,7 +49,7 @@ class CategoryFilterBar extends StatelessWidget {
               selected: isSelected,
               onSelected: (selected) => onCategoryChanged(category.id),
               backgroundColor: colors.surface,
-              selectedColor: colors.primary.withOpacity(0.1),
+              selectedColor: colors.primary.withValues(alpha: 0.1),
               checkmarkColor: colors.primary,
               labelStyle: TextStyles.caption.copyWith(
                 color: isSelected ? colors.primary : colors.onSurfaceVariant,

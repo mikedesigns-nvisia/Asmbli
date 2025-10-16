@@ -55,7 +55,7 @@ class ToolSelectorComponent extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           ),
           child: Icon(
@@ -154,9 +154,9 @@ class ToolSelectorComponent extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(SpacingTokens.md),
                     decoration: BoxDecoration(
-                      color: colors.accent.withOpacity(0.1),
+                      color: colors.accent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                      border: Border.all(color: colors.accent.withOpacity(0.3)),
+                      border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
                     ),
                     child: Column(
                       children: [
@@ -201,9 +201,9 @@ class ToolSelectorComponent extends ConsumerWidget {
                               child: Container(
                                 padding: const EdgeInsets.all(SpacingTokens.sm),
                                 decoration: BoxDecoration(
-                                  color: colors.primary.withOpacity(0.1),
+                                  color: colors.primary.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                                  border: Border.all(color: colors.primary.withOpacity(0.3)),
+                                  border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
                                 ),
                                 child: Row(
                                   children: [

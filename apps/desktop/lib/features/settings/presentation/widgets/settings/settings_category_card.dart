@@ -71,19 +71,19 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
           color: colors.surface,
           borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
           border: Border.all(
-            color: _isHovered ? colors.primary.withOpacity(0.3) : colors.border,
+            color: _isHovered ? colors.primary.withValues(alpha: 0.3) : colors.border,
             width: _isHovered ? 2 : 1,
           ),
           boxShadow: [
             if (_isHovered)
               BoxShadow(
-                color: colors.primary.withOpacity(0.1),
+                color: colors.primary.withValues(alpha: 0.1),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               )
             else
               BoxShadow(
-                color: colors.onSurface.withOpacity(0.05),
+                color: colors.onSurface.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -123,7 +123,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
           decoration: BoxDecoration(
-            color: widget.category.color.withOpacity(_isHovered ? 0.15 : 0.1),
+            color: widget.category.color.withValues(alpha: _isHovered ? 0.15 : 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           ),
           child: Icon(
@@ -187,10 +187,10 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: widget.category.color.withOpacity(0.1),
+        color: widget.category.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
         border: Border.all(
-          color: widget.category.color.withOpacity(0.3),
+          color: widget.category.color.withValues(alpha: 0.3),
         ),
       ),
       child: Text(
@@ -211,10 +211,10 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: colors.warning.withOpacity(0.1),
+        color: colors.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
         border: Border.all(
-          color: colors.warning.withOpacity(0.3),
+          color: colors.warning.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -373,7 +373,7 @@ class _SettingsCategoryCardState extends State<SettingsCategoryCard>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
       decoration: BoxDecoration(
-        color: colors.surfaceVariant.withOpacity(0.5),
+        color: colors.surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
       ),
       child: Row(

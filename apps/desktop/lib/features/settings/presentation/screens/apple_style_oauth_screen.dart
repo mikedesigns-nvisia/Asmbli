@@ -110,7 +110,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: colors.surface.withOpacity(0.1),
+                color: colors.surface.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
@@ -235,7 +235,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
             vertical: 2,
           ),
           decoration: BoxDecoration(
-            color: colors.onSurfaceVariant.withOpacity(0.1),
+            color: colors.onSurfaceVariant.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
@@ -260,10 +260,10 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
       padding: EdgeInsets.only(bottom: SpacingTokens.md),
       child: Container(
         decoration: BoxDecoration(
-          color: colors.surface.withOpacity(0.6),
+          color: colors.surface.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           border: Border.all(
-            color: colors.border.withOpacity(0.3),
+            color: colors.border.withValues(alpha: 0.3),
             width: 0.5,
           ),
         ),
@@ -283,7 +283,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: colors.primary.withOpacity(0.1),
+                          color: colors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(22),
                         ),
                         child: Icon(
@@ -345,7 +345,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
                   // Subtle arrow
                   Icon(
                     Icons.arrow_forward_ios,
-                    color: colors.onSurfaceVariant.withOpacity(0.3),
+                    color: colors.onSurfaceVariant.withValues(alpha: 0.3),
                     size: 16,
                   ),
                 ],
@@ -366,10 +366,10 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
       padding: EdgeInsets.only(bottom: SpacingTokens.md),
       child: Container(
         decoration: BoxDecoration(
-          color: colors.surface.withOpacity(0.3),
+          color: colors.surface.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           border: Border.all(
-            color: colors.border.withOpacity(0.2),
+            color: colors.border.withValues(alpha: 0.2),
             width: 0.5,
           ),
         ),
@@ -387,7 +387,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: colors.onSurfaceVariant.withOpacity(0.1),
+                      color: colors.onSurfaceVariant.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(22),
                     ),
                     child: Icon(
@@ -559,7 +559,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
           width: 36,
           height: 4,
           decoration: BoxDecoration(
-            color: colors.onSurfaceVariant.withOpacity(0.3),
+            color: colors.onSurfaceVariant.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -573,7 +573,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: colors.primary.withOpacity(0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Icon(
@@ -608,7 +608,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
           ),
         ),
         
-        Divider(color: colors.border.withOpacity(0.3), height: 1),
+        Divider(color: colors.border.withValues(alpha: 0.3), height: 1),
         
         // Options
         Expanded(
@@ -643,7 +643,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
                 () => _viewActivity(provider),
                 colors,
               ),
-              Divider(color: colors.border.withOpacity(0.3), height: 1),
+              Divider(color: colors.border.withValues(alpha: 0.3), height: 1),
               _buildSheetOption(
                 'Disconnect Account',
                 'Remove this connection',
@@ -689,7 +689,7 @@ class _AppleStyleOAuthScreenState extends ConsumerState<AppleStyleOAuthScreen>
       trailing: Icon(
         Icons.arrow_forward_ios,
         size: 16,
-        color: colors.onSurfaceVariant.withOpacity(0.3),
+        color: colors.onSurfaceVariant.withValues(alpha: 0.3),
       ),
     );
   }

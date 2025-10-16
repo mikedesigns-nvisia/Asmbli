@@ -438,7 +438,12 @@ class IntegratedSecurityService {
     
     for (final part in parts) {
       if (_looksLikeFilePath(part)) {
-        filePaths.add(part.replaceAll(RegExp(r'^["\'"'"']|["\'"'"']$'), '')); // Remove quotes
+        String cleanPart = part;
+        if ((cleanPart.startsWith('"') && cleanPart.endsWith('"')) ||
+            (cleanPart.startsWith("'") && cleanPart.endsWith("'"))) {
+          cleanPart = cleanPart.substring(1, cleanPart.length - 1);
+        }
+        filePaths.add(cleanPart);
       }
     }
     

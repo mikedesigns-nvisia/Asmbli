@@ -159,8 +159,8 @@ class AppearanceSettingsCategory extends ConsumerWidget {
         padding: const EdgeInsets.all(SpacingTokens.md),
         decoration: BoxDecoration(
           color: isSelected 
-              ? colors.primary.withOpacity(0.1)
-              : colors.surface.withOpacity(0.5),
+              ? colors.primary.withValues(alpha: 0.1)
+              : colors.surface.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           border: Border.all(
             color: isSelected ? colors.primary : colors.border,
@@ -247,8 +247,8 @@ class AppearanceSettingsCategory extends ConsumerWidget {
         padding: const EdgeInsets.all(SpacingTokens.sm),
         decoration: BoxDecoration(
           color: isSelected 
-              ? colors.primary.withOpacity(0.1)
-              : colors.surface.withOpacity(0.5),
+              ? colors.primary.withValues(alpha: 0.1)
+              : colors.surface.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           border: Border.all(
             color: isSelected ? colors.primary : colors.border,

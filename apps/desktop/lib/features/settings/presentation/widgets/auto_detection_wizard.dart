@@ -98,7 +98,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
           Container(
             padding: const EdgeInsets.all(SpacingTokens.xxl),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
             child: Icon(
@@ -169,7 +169,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
                 vertical: SpacingTokens.xs,
               ),
               decoration: BoxDecoration(
-                color: colors.primary.withOpacity(0.1),
+                color: colors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Text(
@@ -256,7 +256,7 @@ class _AutoDetectionWizardState extends ConsumerState<AutoDetectionWizard> {
             margin: const EdgeInsets.only(bottom: SpacingTokens.lg),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             ),
             child: Row(

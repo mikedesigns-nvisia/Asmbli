@@ -548,7 +548,7 @@ class _ProductionRecentConversationsSection extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -723,8 +723,8 @@ class _ConversationItem extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-        hoverColor: colors.primary.withOpacity(0.04),
-        splashColor: colors.primary.withOpacity(0.12),
+        hoverColor: colors.primary.withValues(alpha: 0.04),
+        splashColor: colors.primary.withValues(alpha: 0.12),
         child: Container(
           padding: const EdgeInsets.symmetric(
             vertical: SpacingTokens.componentSpacing,
@@ -736,7 +736,7 @@ class _ConversationItem extends StatelessWidget {
                 padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                 decoration: BoxDecoration(
                   color: isAgentConversation 
-                      ? colors.primary.withOpacity(0.1)
+                      ? colors.primary.withValues(alpha: 0.1)
                       : colors.surfaceVariant,
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),

@@ -27,6 +27,10 @@ import '../services/mcp_protocol_handler.dart';
 import '../services/mcp_process_manager.dart';
 import '../services/production_logger.dart';
 import 'package:dio/dio.dart';
+import '../../features/orchestration/services/workflow_persistence_service.dart';
+import '../../features/orchestration/services/workflow_marketplace_service.dart';
+import '../../features/orchestration/services/workflow_execution_service.dart';
+import '../../features/orchestration/services/agent_workflow_integration_service.dart';
 
 // New agent-terminal architecture services
 import '../services/mcp_installation_service.dart';
@@ -160,6 +164,20 @@ class ServiceLocator {
     // Register data layer services
     registerSingleton<AgentService>(DesktopAgentService());
     registerSingleton<ConversationService>(DesktopConversationService());
+    
+    // Register orchestration services
+    final workflowPersistence = WorkflowPersistenceService.instance;
+    await workflowPersistence.initialize();
+    registerSingleton<WorkflowPersistenceService>(workflowPersistence);
+    
+    final workflowMarketplace = WorkflowMarketplaceService.instance;
+    registerSingleton<WorkflowMarketplaceService>(workflowMarketplace);
+    
+    final workflowExecution = WorkflowExecutionService.instance;
+    registerSingleton<WorkflowExecutionService>(workflowExecution);
+    
+    final agentWorkflowIntegration = AgentWorkflowIntegrationService.instance;
+    registerSingleton<AgentWorkflowIntegrationService>(agentWorkflowIntegration);
 
     // Register GitHub MCP registry service first
     final githubApi = GitHubMCPRegistryApi(Dio());
@@ -187,6 +205,7 @@ class ServiceLocator {
     registerSingleton<ClaudeApiService>(claudeApiService);
     
     final modelConfigService = ModelConfigService(storageService, ollamaService);
+    await modelConfigService.initialize();
     registerSingleton<ModelConfigService>(modelConfigService);
     
     final unifiedLlmService = UnifiedLLMService(modelConfigService, claudeApiService, ollamaService);

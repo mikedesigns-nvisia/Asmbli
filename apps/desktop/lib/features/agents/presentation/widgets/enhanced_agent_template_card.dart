@@ -71,16 +71,16 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                     border: Border.all(
                       color: _isHovered 
-                        ? cardColors.borderColor.withOpacity(0.8) 
-                        : cardColors.borderColor.withOpacity(0.3),
+                        ? cardColors.borderColor.withValues(alpha: 0.8) 
+                        : cardColors.borderColor.withValues(alpha: 0.3),
                       width: _isHovered ? 2 : 1,
                     ),
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        cardColors.backgroundColor.withOpacity(0.05),
-                        cardColors.backgroundColor.withOpacity(0.02),
+                        cardColors.backgroundColor.withValues(alpha: 0.05),
+                        cardColors.backgroundColor.withValues(alpha: 0.02),
                       ],
                     ),
                   ),
@@ -115,7 +115,7 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
         Container(
           padding: EdgeInsets.all(SpacingTokens.xs),
           decoration: BoxDecoration(
-            color: cardColors.backgroundColor.withOpacity(0.15),
+            color: cardColors.backgroundColor.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
           ),
           child: Icon(
@@ -149,7 +149,7 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
                         vertical: SpacingTokens.xxs,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.warning.withOpacity(0.1),
+                        color: colors.warning.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
                       ),
                       child: Text(
@@ -216,10 +216,10 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
                 vertical: SpacingTokens.xxs,
               ),
               decoration: BoxDecoration(
-                color: colors.surface.withOpacity(0.5),
+                color: colors.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
                 border: Border.all(
-                  color: colors.border.withOpacity(0.5),
+                  color: colors.border.withValues(alpha: 0.5),
                 ),
               ),
               child: Text(
@@ -260,7 +260,7 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
             vertical: SpacingTokens.xxs,
           ),
           decoration: BoxDecoration(
-            color: cardColors.accentColor.withOpacity(0.1),
+            color: cardColors.accentColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
           ),
           child: Text(
@@ -332,9 +332,9 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
           vertical: SpacingTokens.xs,
         ),
         decoration: BoxDecoration(
-          color: cardColors.accentColor.withOpacity(0.1),
+          color: cardColors.accentColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-          border: Border.all(color: cardColors.accentColor.withOpacity(0.3)),
+          border: Border.all(color: cardColors.accentColor.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -365,10 +365,10 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
         vertical: SpacingTokens.xxs,
       ),
       decoration: BoxDecoration(
-        color: cardColors.accentColor.withOpacity(0.1),
+        color: cardColors.accentColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
         border: Border.all(
-          color: cardColors.accentColor.withOpacity(0.3),
+          color: cardColors.accentColor.withValues(alpha: 0.3),
         ),
       ),
       child: Text(

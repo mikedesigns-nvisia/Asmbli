@@ -50,7 +50,7 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
@@ -136,7 +136,7 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        color: colors.primary.withOpacity(0.1),
+        color: colors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Icon(
@@ -157,7 +157,7 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(3),
       ),
       child: Text(
@@ -186,10 +186,10 @@ class IntegrationRecommendationsWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.xs),
       decoration: BoxDecoration(
-        color: colors.warning.withOpacity(0.1),
+        color: colors.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: colors.warning.withOpacity(0.3),
+          color: colors.warning.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

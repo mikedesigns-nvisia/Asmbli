@@ -238,8 +238,8 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     return Container(
       width: 280,
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.7),
-        border: Border(right: BorderSide(color: colors.border.withOpacity(0.3))),
+        color: colors.surface.withValues(alpha: 0.7),
+        border: Border(right: BorderSide(color: colors.border.withValues(alpha: 0.3))),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +275,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: colors.primary.withOpacity(0.1),
+                          color: colors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(Icons.psychology, size: 16, color: colors.primary),
@@ -398,7 +398,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(Icons.psychology, size: 18, color: colors.primary),
@@ -429,9 +429,9 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colors.primary.withOpacity(0.3)),
+              border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -446,9 +446,9 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
-              color: colors.success.withOpacity(0.1),
+              color: colors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: colors.success.withOpacity(0.3)),
+              border: Border.all(color: colors.success.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -490,7 +490,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                   decoration: BoxDecoration(
                     color: isUser ? colors.primary : colors.surface,
                     borderRadius: BorderRadius.circular(8),
-                    border: !isUser ? Border.all(color: colors.border.withOpacity(0.3)) : null,
+                    border: !isUser ? Border.all(color: colors.border.withValues(alpha: 0.3)) : null,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -509,7 +509,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                       Text(
                         _formatTime(message.timestamp),
                         style: TextStyles.caption.copyWith(
-                          color: (isUser ? Colors.white : colors.onSurface).withOpacity(0.7),
+                          color: (isUser ? Colors.white : colors.onSurface).withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -547,9 +547,9 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.5),
+        color: colors.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colors.border.withOpacity(0.3)),
+        border: Border.all(color: colors.border.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -623,7 +623,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
         decoration: BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: colors.border.withOpacity(0.3)),
+          border: Border.all(color: colors.border.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
@@ -648,7 +648,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
               onPressed: () {},
               icon: const Icon(Icons.download, size: 16),
               style: IconButton.styleFrom(
-                backgroundColor: colors.primary.withOpacity(0.1),
+                backgroundColor: colors.primary.withValues(alpha: 0.1),
                 foregroundColor: colors.primary,
               ),
             ),
@@ -705,7 +705,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: colors.surface.withOpacity(0.8),
+                color: colors.surface.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: colors.border),
               ),
@@ -723,7 +723,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
           const SizedBox(width: SpacingTokens.lg),
           Container(
             decoration: BoxDecoration(
-              color: colors.onSurfaceVariant.withOpacity(0.3),
+              color: colors.onSurfaceVariant.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
             ),
             child: IconButton(
@@ -750,8 +750,8 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     return Container(
       width: 280,
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.7),
-        border: Border(left: BorderSide(color: colors.border.withOpacity(0.3))),
+        color: colors.surface.withValues(alpha: 0.7),
+        border: Border(left: BorderSide(color: colors.border.withValues(alpha: 0.3))),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -782,9 +782,9 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
       margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: isActive ? colors.primary.withOpacity(0.1) : Colors.transparent,
+        color: isActive ? colors.primary.withValues(alpha: 0.1) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
-        border: isActive ? Border.all(color: colors.primary.withOpacity(0.3)) : null,
+        border: isActive ? Border.all(color: colors.primary.withValues(alpha: 0.3)) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -809,7 +809,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -861,11 +861,11 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                 width: 320,
                 padding: const EdgeInsets.all(SpacingTokens.lg),
                 decoration: BoxDecoration(
-                  color: colors.success.withOpacity(0.95),
+                  color: colors.success.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -891,7 +891,7 @@ class _DemoChatScreenState extends ConsumerState<DemoChatScreen>
                     const SizedBox(height: SpacingTokens.sm),
                     Text(
                       '✓ Meeting scheduled with sales team\n✓ Report sent to stakeholders\n✓ Calendar invites dispatched',
-                      style: TextStyles.bodySmall.copyWith(color: Colors.white.withOpacity(0.9)),
+                      style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.9)),
                     ),
                   ],
                 ),
