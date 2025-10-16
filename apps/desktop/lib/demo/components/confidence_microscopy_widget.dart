@@ -86,11 +86,19 @@ class _ConfidenceMicroscopyWidgetState extends State<ConfidenceMicroscopyWidget>
           children: [
             _buildHeader(colors),
             const SizedBox(height: SpacingTokens.lg),
-            _buildConfidenceTree(colors),
-            if (_showDetails) ...[
-              const SizedBox(height: SpacingTokens.lg),
-              _buildDetailPanel(colors),
-            ],
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildConfidenceTree(colors),
+                    if (_showDetails) ...[
+                      const SizedBox(height: SpacingTokens.lg),
+                      _buildDetailPanel(colors),
+                    ],
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -334,7 +342,7 @@ class _ConfidenceMicroscopyWidgetState extends State<ConfidenceMicroscopyWidget>
       case 'goal': return Icons.flag;
       case 'context': return Icons.info;
       case 'reasoning': return Icons.psychology;
-      case 'gateway': return Icons.decision_tree;
+      case 'gateway': return Icons.account_tree;
       case 'fallback': return Icons.alt_route;
       case 'trace': return Icons.timeline;
       case 'exit': return Icons.check_circle;

@@ -38,6 +38,7 @@ import 'core/services/feature_flag_service.dart';
 import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
 import 'features/tools/presentation/screens/tools_screen.dart';
 import 'features/chat/presentation/demo/contextual_context_demo.dart';
+import 'demo/scenarios/complete_vc_demo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/services/desktop/hive_cleanup_service.dart';
 import 'core/error/app_error_handler.dart';
@@ -357,6 +358,11 @@ final _router = GoRouter(
  GoRoute(
  path: '/contextual-context-demo',
  builder: (context, state) => const ContextualContextDemo(),
+ ),
+ // Reasoning Demo
+ GoRoute(
+ path: AppRoutes.reasoningDemo,
+ builder: (context, state) => const CompleteVCDemo(),
  ),
  GoRoute(
  path: AppRoutes.settings,

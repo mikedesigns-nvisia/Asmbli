@@ -18,7 +18,7 @@ Licensee may process personal data of EU residents using the Software.
 
 3. LIABILITY LIMITATIONS  
 IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, OR 
-CONSEQUENTIAL DAMAGES. Maximum liability shall not exceed $50,000.
+CONSEQUENTIAL DAMAGES. Maximum liability shall not exceed \$50,000.
 [UNCERTAINTY TRIGGER: Conflicts with UK consumer protection laws]
 
 4. TERMINATION
@@ -44,24 +44,24 @@ TECHNOVATE AI - SERIES A PITCH DECK
 
 SLIDE 1: PROBLEM
 Enterprise customers struggle with AI implementation complexity.
-Current solutions require 6+ months and $500K+ investments.
+Current solutions require 6+ months and \$500K+ investments.
 
 SLIDE 2: SOLUTION  
 TechnoVate AI provides no-code AI automation platform.
 Customers can deploy AI workflows in under 2 weeks.
 
 SLIDE 3: MARKET SIZE
-Total Addressable Market: $47 billion (Source: Gartner 2024)
-[UNCERTAINTY TRIGGER: But McKinsey report says $28 billion - which is correct?]
+Total Addressable Market: \$47 billion (Source: Gartner 2024)
+[UNCERTAINTY TRIGGER: But McKinsey report says \$28 billion - which is correct?]
 
-Serviceable Addressable Market: $12 billion
+Serviceable Addressable Market: \$12 billion
 [UNCERTAINTY TRIGGER: Based on 2022 data, may be outdated]
 
 Current market growth: 23% CAGR
 [UNCERTAINTY TRIGGER: Pre-AI winter projections, current reality unclear]
 
 SLIDE 4: TRACTION
-- 15 enterprise customers (ARR: $300K)
+- 15 enterprise customers (ARR: \$300K)
 - Customer interviews show 89% satisfaction
 [UNCERTAINTY TRIGGER: Sample size only 9 customers responded]
 
@@ -69,8 +69,8 @@ SLIDE 4: TRACTION
 [UNCERTAINTY TRIGGER: Pilot was only 3 weeks, limited data]
 
 SLIDE 5: BUSINESS MODEL
-SaaS pricing: $50-500 per user per month
-Average customer: 200 users = $120K ARR
+SaaS pricing: \$50-500 per user per month
+Average customer: 200 users = \$120K ARR
 [UNCERTAINTY TRIGGER: Only 2 customers at this scale, others much smaller]
 
 SLIDE 6: COMPETITION
@@ -86,7 +86,7 @@ CTO: Jane Doe (Ex-Tesla, 8 years automation)
 [UNCERTAINTY TRIGGER: Recent departures from previous companies under unclear circumstances]
 
 SLIDE 8: FUNDING
-Seeking: $5M Series A
+Seeking: \$5M Series A
 Use of funds: 60% engineering, 30% sales, 10% marketing
 [UNCERTAINTY TRIGGER: Burn rate suggests 12-month runway, aggressive hiring plan]
 ''';
@@ -98,7 +98,7 @@ Project: E-commerce Platform Redesign
 
 OVERVIEW
 Migrate monolithic e-commerce platform to microservices architecture.
-Current system: 500K daily active users, 2M products, $50M GMV.
+Current system: 500K daily active users, 2M products, \$50M GMV.
 
 PROPOSED ARCHITECTURE
 
@@ -169,49 +169,49 @@ QUARTERLY FINANCIAL ANALYSIS - Q3 2024
 TechCorp Industries
 
 REVENUE SUMMARY
-Q3 2024 Revenue: $12.4M (reported)
+Q3 2024 Revenue: \$12.4M (reported)
 [UNCERTAINTY TRIGGER: Preliminary figure, pending final reconciliation]
 
-Q3 2023 Revenue: $8.7M
+Q3 2023 Revenue: \$8.7M
 Year-over-Year Growth: 42.5%
 [UNCERTAINTY TRIGGER: Different accounting method used in Q3 2023]
 
 REVENUE BREAKDOWN
-Software Licenses: $8.1M (65%)
-Professional Services: $3.2M (26%)  
-Support & Maintenance: $1.1M (9%)
+Software Licenses: \$8.1M (65%)
+Professional Services: \$3.2M (26%)  
+Support & Maintenance: \$1.1M (9%)
 [UNCERTAINTY TRIGGER: Revenue recognition changed mid-quarter for services]
 
 EXPENSES
-Total Operating Expenses: $9.8M
-- Salaries & Benefits: $6.2M (63%)
-- Marketing & Sales: $2.1M (21%)
-- R&D: $1.2M (12%)
-- Other: $0.3M (4%)
+Total Operating Expenses: \$9.8M
+- Salaries & Benefits: \$6.2M (63%)
+- Marketing & Sales: \$2.1M (21%)
+- R&D: \$1.2M (12%)
+- Other: \$0.3M (4%)
 
-Net Income: $2.6M
-[UNCERTAINTY TRIGGER: Includes $0.8M one-time gain from asset sale]
+Net Income: \$2.6M
+[UNCERTAINTY TRIGGER: Includes \$0.8M one-time gain from asset sale]
 
 CUSTOMER METRICS
 New Customers: 47 (Q3) vs 31 (Q2)
 Customer Churn: 3.2% monthly
 [UNCERTAINTY TRIGGER: Churn calculation methodology changed, not comparable to previous quarters]
 
-Average Contract Value: $78K
+Average Contract Value: \$78K
 [UNCERTAINTY TRIGGER: Excludes pilot customers, skews actual average]
 
 CASH FLOW
-Operating Cash Flow: $3.1M
-Free Cash Flow: $2.4M (after $0.7M CapEx)
-Cash on Hand: $15.7M (end of quarter)
-[UNCERTAINTY TRIGGER: Pending $2.3M payment from major customer]
+Operating Cash Flow: \$3.1M
+Free Cash Flow: \$2.4M (after \$0.7M CapEx)
+Cash on Hand: \$15.7M (end of quarter)
+[UNCERTAINTY TRIGGER: Pending \$2.3M payment from major customer]
 
 KEY PERFORMANCE INDICATORS
-Monthly Recurring Revenue: $3.2M
+Monthly Recurring Revenue: \$3.2M
 [UNCERTAINTY TRIGGER: Includes one-time setup fees as recurring, may inflate actual MRR]
 
-Customer Acquisition Cost: $12K
-Customer Lifetime Value: $180K
+Customer Acquisition Cost: \$12K
+Customer Lifetime Value: \$180K
 LTV:CAC Ratio: 15:1
 [UNCERTAINTY TRIGGER: LTV calculation based on 18-month average, newer cohorts may differ]
 
@@ -224,10 +224,10 @@ Market Share: Estimated 12% in our segment
 [UNCERTAINTY TRIGGER: Market share estimate based on limited survey data]
 
 FORWARD GUIDANCE
-Q4 2024 Revenue Projection: $14-16M
+Q4 2024 Revenue Projection: \$14-16M
 [UNCERTAINTY TRIGGER: Based on current pipeline, but major deals uncertain]
 
-Full Year 2024: $48-52M revenue target
+Full Year 2024: \$48-52M revenue target
 [UNCERTAINTY TRIGGER: Assumes no macro economic deterioration]
 
 RISKS & UNCERTAINTIES

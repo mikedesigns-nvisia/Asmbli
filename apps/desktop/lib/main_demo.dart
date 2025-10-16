@@ -45,7 +45,7 @@ class DemoAppWrapper extends ConsumerWidget {
           ),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         ),

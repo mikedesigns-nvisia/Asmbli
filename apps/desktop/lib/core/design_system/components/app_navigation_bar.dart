@@ -104,6 +104,15 @@ class AppNavigationBar extends ConsumerWidget {
  onPressed: () => context.go(AppRoutes.settings),
  isActive: currentRoute == AppRoutes.settings,
  ),
+ const SizedBox(width: SpacingTokens.lg),
+ 
+ // Temporary Reasoning Demo button (remove after demos)
+ HeaderButton(
+ text: 'Reasoning Demo',
+ icon: Icons.psychology,
+ onPressed: () => context.go(AppRoutes.reasoningDemo),
+ isActive: currentRoute == AppRoutes.reasoningDemo,
+ ),
  
  // Spacer to push New Chat button to the right
  const Spacer(),
