@@ -26,9 +26,9 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
           Container(
             width: 48,
             decoration: BoxDecoration(
-              color: ThemeColors(context).surface.withOpacity(0.7),
+              color: ThemeColors(context).surface.withValues(alpha: 0.7),
               border: Border(
-                left: BorderSide(color: ThemeColors(context).border.withOpacity(0.3)),
+                left: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
               ),
             ),
             child: Column(
@@ -37,9 +37,9 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
                   onPressed: () => setState(() => isCollapsed = false),
                   icon: const Icon(Icons.chevron_left, size: 20),
                   style: IconButton.styleFrom(
-                    backgroundColor: ThemeColors(context).surface.withOpacity(0.8),
+                    backgroundColor: ThemeColors(context).surface.withValues(alpha: 0.8),
                     foregroundColor: ThemeColors(context).onSurfaceVariant,
-                    side: BorderSide(color: ThemeColors(context).border.withOpacity(0.5)),
+                    side: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.5)),
                   ),
                   tooltip: 'Show Conversations',
                 ),
@@ -60,9 +60,9 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
   Widget _buildSidebarContent() {
     return Container(
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.7),
+        color: ThemeColors(context).surface.withValues(alpha: 0.7),
         border: Border(
-          left: BorderSide(color: ThemeColors(context).border.withOpacity(0.3)),
+          left: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
         ),
       ),
       child: Column(
@@ -105,10 +105,10 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
             padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.cardPadding, vertical: SpacingTokens.sm),
             decoration: BoxDecoration(
               color: _showTopicsSection 
-                ? ThemeColors(context).primary.withOpacity(0.05)
+                ? ThemeColors(context).primary.withValues(alpha: 0.05)
                 : Colors.transparent,
               border: Border(
-                bottom: BorderSide(color: ThemeColors(context).border.withOpacity(0.3)),
+                bottom: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
               ),
             ),
             child: InkWell(
@@ -143,7 +143,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
                             Text(
                               'Group conversations into topics',
                               style: TextStyles.caption.copyWith(
-                                color: ThemeColors(context).onSurfaceVariant.withOpacity(0.7),
+                                color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.7),
                                 fontSize: 10,
                               ),
                             ),
@@ -178,7 +178,7 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
             padding: const EdgeInsets.all(SpacingTokens.cardPadding),
             decoration: BoxDecoration(
               border: Border(
-                top: BorderSide(color: ThemeColors(context).border.withOpacity(0.3)),
+                top: BorderSide(color: ThemeColors(context).border.withValues(alpha: 0.3)),
               ),
             ),
             child: Column(
@@ -224,9 +224,9 @@ class _ImprovedConversationSidebarState extends ConsumerState<ImprovedConversati
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.3),
+        color: ThemeColors(context).surface.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: ThemeColors(context).border.withOpacity(0.2)),
+        border: Border.all(color: ThemeColors(context).border.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [

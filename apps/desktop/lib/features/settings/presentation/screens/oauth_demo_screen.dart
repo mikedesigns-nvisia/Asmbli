@@ -61,7 +61,7 @@ class OAuthDemoScreen extends StatelessWidget {
                             width: 64,
                             height: 64,
                             decoration: BoxDecoration(
-                              color: colors.primary.withOpacity(0.1),
+                              color: colors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(32),
                             ),
                             child: Icon(
@@ -114,7 +114,7 @@ class OAuthDemoScreen extends StatelessWidget {
                             width: 64,
                             height: 64,
                             decoration: BoxDecoration(
-                              color: Colors.orange.withOpacity(0.1),
+                              color: Colors.orange.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(32),
                             ),
                             child: Icon(

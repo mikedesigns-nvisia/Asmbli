@@ -34,7 +34,7 @@ class SimpleOAuthDemo extends StatelessWidget {
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(60),
                   ),
                   child: Icon(
@@ -115,7 +115,7 @@ class SimpleOAuthDemo extends StatelessWidget {
             vertical: 2,
           ),
           decoration: BoxDecoration(
-            color: colors.onSurfaceVariant.withOpacity(0.1),
+            color: colors.onSurfaceVariant.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
@@ -135,10 +135,10 @@ class SimpleOAuthDemo extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.6),
+        color: colors.surface.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         border: Border.all(
-          color: colors.border.withOpacity(0.3),
+          color: colors.border.withValues(alpha: 0.3),
           width: 0.5,
         ),
       ),
@@ -148,7 +148,7 @@ class SimpleOAuthDemo extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: colors.onSurfaceVariant.withOpacity(0.1),
+              color: colors.onSurfaceVariant.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(22),
             ),
             child: Icon(

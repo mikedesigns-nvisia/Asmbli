@@ -24,12 +24,12 @@ class MCPStatusIndicator extends ConsumerWidget {
       ),
       decoration: BoxDecoration(
         color: enabledServers.isNotEmpty 
-            ? ThemeColors(context).primary.withOpacity(0.1)
+            ? ThemeColors(context).primary.withValues(alpha: 0.1)
             : ThemeColors(context).surface,
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
           color: enabledServers.isNotEmpty 
-              ? ThemeColors(context).primary.withOpacity(0.3)
+              ? ThemeColors(context).primary.withValues(alpha: 0.3)
               : ThemeColors(context).border,
         ),
       ),

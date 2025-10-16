@@ -266,7 +266,7 @@ class _MCPScriptTerminalState extends ConsumerState<MCPScriptTerminal> {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: colors.primary.withOpacity(0.1),
+                      color: colors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Icon(
@@ -309,7 +309,7 @@ class _MCPScriptTerminalState extends ConsumerState<MCPScriptTerminal> {
           if (_isExpanded) ...[
             Divider(
               height: 1,
-              color: colors.border.withOpacity(0.2),
+              color: colors.border.withValues(alpha: 0.2),
             ),
             Padding(
               padding: const EdgeInsets.all(SpacingTokens.lg),
@@ -382,7 +382,7 @@ class _MCPScriptTerminalState extends ConsumerState<MCPScriptTerminal> {
                             vertical: SpacingTokens.xs,
                           ),
                           decoration: BoxDecoration(
-                            color: colors.success.withOpacity(0.1),
+                            color: colors.success.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                           ),
                           child: Row(
@@ -416,12 +416,12 @@ class _MCPScriptTerminalState extends ConsumerState<MCPScriptTerminal> {
                         child: Container(
                           height: 200,
                           decoration: BoxDecoration(
-                            color: colors.surface.withOpacity(0.3),
+                            color: colors.surface.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                             border: Border.all(
                               color: _validationError != null
-                                  ? colors.error.withOpacity(0.5)
-                                  : colors.border.withOpacity(0.3),
+                                  ? colors.error.withValues(alpha: 0.5)
+                                  : colors.border.withValues(alpha: 0.3),
                             ),
                           ),
                           child: TextField(
@@ -445,7 +445,7 @@ class _MCPScriptTerminalState extends ConsumerState<MCPScriptTerminal> {
 }''',
                               hintStyle: TextStyles.bodySmall.copyWith(
                                 fontFamily: 'monospace',
-                                color: colors.onSurfaceVariant.withOpacity(0.6),
+                                color: colors.onSurfaceVariant.withValues(alpha: 0.6),
                               ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.all(SpacingTokens.lg),
@@ -461,10 +461,10 @@ class _MCPScriptTerminalState extends ConsumerState<MCPScriptTerminal> {
                         child: Container(
                           height: 200,
                           decoration: BoxDecoration(
-                            color: colors.surface.withOpacity(0.1),
+                            color: colors.surface.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                             border: Border.all(
-                              color: colors.border.withOpacity(0.2),
+                              color: colors.border.withValues(alpha: 0.2),
                             ),
                           ),
                           child: Column(
@@ -477,7 +477,7 @@ class _MCPScriptTerminalState extends ConsumerState<MCPScriptTerminal> {
                                   vertical: SpacingTokens.sm,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: colors.surface.withOpacity(0.2),
+                                  color: colors.surface.withValues(alpha: 0.2),
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(BorderRadiusTokens.md),
                                     topRight: Radius.circular(BorderRadiusTokens.md),
@@ -525,7 +525,7 @@ class _MCPScriptTerminalState extends ConsumerState<MCPScriptTerminal> {
                     Container(
                       padding: const EdgeInsets.all(SpacingTokens.sm),
                       decoration: BoxDecoration(
-                        color: colors.error.withOpacity(0.1),
+                        color: colors.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                       ),
                       child: Row(

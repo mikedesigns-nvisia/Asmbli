@@ -149,7 +149,7 @@ class _UnifiedSettingsScreenState extends ConsumerState<UnifiedSettingsScreen> {
   Widget _buildSearchBar(ThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.9),
+        color: colors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         border: Border.all(color: colors.border),
       ),
@@ -162,7 +162,7 @@ class _UnifiedSettingsScreenState extends ConsumerState<UnifiedSettingsScreen> {
         decoration: InputDecoration(
           hintText: 'Search settings...',
           hintStyle: TextStyles.bodyMedium.copyWith(
-            color: colors.onSurfaceVariant.withOpacity(0.6),
+            color: colors.onSurfaceVariant.withValues(alpha: 0.6),
           ),
           prefixIcon: Icon(
             Icons.search,
@@ -252,7 +252,7 @@ class _UnifiedSettingsScreenState extends ConsumerState<UnifiedSettingsScreen> {
           margin: const EdgeInsets.only(right: SpacingTokens.lg),
           padding: const EdgeInsets.all(SpacingTokens.lg),
           decoration: BoxDecoration(
-            color: colors.surface.withOpacity(0.7),
+            color: colors.surface.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
             border: Border.all(color: colors.border),
           ),

@@ -8,6 +8,7 @@ import '../models/reasoning_capabilities.dart';
 import '../presentation/widgets/block_palette.dart';
 import '../services/reasoning_llm_service.dart';
 import '../services/workflow_execution_engine.dart';
+import '../services/workflow_persistence_service.dart';
 import '../../../core/services/llm/unified_llm_service.dart';
 import '../../../core/di/service_locator.dart';
 
@@ -15,6 +16,7 @@ import '../../../core/di/service_locator.dart';
 class CanvasNotifier extends StateNotifier<CanvasState> {
   late final ReasoningLLMService _reasoningService;
   late final WorkflowExecutionEngine _executionEngine;
+  late final WorkflowPersistenceService _persistenceService;
   WorkflowExecutionResult? _lastExecutionResult;
   bool _isExecuting = false;
   String? _currentExecutingBlockId;
@@ -30,6 +32,7 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
       final unifiedLLMService = ServiceLocator.instance.get<UnifiedLLMService>();
       _reasoningService = ReasoningLLMService(unifiedLLMService);
       _executionEngine = WorkflowExecutionEngine(_reasoningService);
+      _persistenceService = ServiceLocator.instance.get<WorkflowPersistenceService>();
       
       // Listen to execution events
       _executionEngine.executionEvents.listen((event) {
@@ -42,11 +45,11 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
   }
 
   void _handleExecutionEvent(ExecutionEvent event) {
-    if (event is _BlockStarted) {
+    if (event is BlockStarted) {
       _currentExecutingBlockId = event.blockId;
-    } else if (event is _BlockCompleted) {
+    } else if (event is BlockCompleted) {
       _currentExecutingBlockId = null;
-    } else if (event is _ExecutionCompleted || event is _ExecutionFailed) {
+    } else if (event is ExecutionCompleted || event is ExecutionFailed) {
       _isExecuting = false;
       _currentExecutingBlockId = null;
     }
@@ -90,6 +93,7 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
       updatedAt: DateTime.now(),
     );
     state = state.copyWith(workflow: updatedWorkflow);
+    markAsModified();
   }
 
   // Block management
@@ -109,6 +113,7 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
     );
 
     state = state.copyWith(workflow: updatedWorkflow);
+    markAsModified();
   }
 
   void removeBlock(String blockId) {
@@ -162,6 +167,7 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
     );
 
     state = state.copyWith(workflow: updatedWorkflow);
+    markAsModified();
   }
 
   void updateBlockProperties(String blockId, Map<String, dynamic> properties) {
@@ -178,6 +184,7 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
     );
 
     state = state.copyWith(workflow: updatedWorkflow);
+    markAsModified();
   }
 
   // Connection management
@@ -213,6 +220,7 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
     );
 
     state = state.copyWith(workflow: updatedWorkflow);
+    markAsModified();
   }
 
   void removeConnection(String connectionId) {
@@ -226,6 +234,7 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
     );
 
     state = state.copyWith(workflow: updatedWorkflow);
+    markAsModified();
   }
 
   // Selection management
@@ -551,6 +560,116 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
              blockTop < bottom &&
              blockBottom > top;
     }).toList();
+  }
+
+  // Persistence methods
+  
+  /// Save the current workflow to database
+  Future<void> saveWorkflow() async {
+    try {
+      await _persistenceService.saveWorkflow(state.workflow);
+      
+      // Update state to reflect saved status
+      state = state.copyWith(
+        uiState: {
+          ...state.uiState,
+          'lastSaved': DateTime.now().toIso8601String(),
+          'hasUnsavedChanges': false,
+        },
+      );
+    } catch (e) {
+      print('Error saving workflow: $e');
+      rethrow;
+    }
+  }
+
+  /// Load a workflow by ID
+  Future<void> loadWorkflowById(String workflowId) async {
+    try {
+      final workflow = await _persistenceService.loadWorkflow(workflowId);
+      if (workflow != null) {
+        loadWorkflow(workflow);
+      }
+    } catch (e) {
+      print('Error loading workflow: $e');
+      rethrow;
+    }
+  }
+
+  /// Export workflow as JSON
+  Future<String> exportWorkflowAsJson() async {
+    try {
+      return await _persistenceService.exportWorkflowAsJson(state.workflow.id);
+    } catch (e) {
+      print('Error exporting workflow: $e');
+      rethrow;
+    }
+  }
+
+  /// Import workflow from JSON
+  Future<void> importWorkflowFromJson(String jsonData) async {
+    try {
+      final workflow = await _persistenceService.importWorkflowFromJson(jsonData);
+      loadWorkflow(workflow);
+    } catch (e) {
+      print('Error importing workflow: $e');
+      rethrow;
+    }
+  }
+
+  /// Duplicate current workflow
+  Future<void> duplicateWorkflow({String? newName}) async {
+    try {
+      final duplicate = await _persistenceService.duplicateWorkflow(
+        state.workflow.id,
+        newName: newName,
+      );
+      loadWorkflow(duplicate);
+    } catch (e) {
+      print('Error duplicating workflow: $e');
+      rethrow;
+    }
+  }
+
+  /// Delete workflow
+  Future<void> deleteWorkflow(String workflowId) async {
+    try {
+      await _persistenceService.deleteWorkflow(workflowId);
+      
+      // If deleting current workflow, create new empty one
+      if (state.workflow.id == workflowId) {
+        createNewWorkflow();
+      }
+    } catch (e) {
+      print('Error deleting workflow: $e');
+      rethrow;
+    }
+  }
+
+  /// Get all workflows
+  Future<List<ReasoningWorkflow>> getAllWorkflows({
+    bool includeTemplates = true,
+    String? searchQuery,
+  }) async {
+    try {
+      return await _persistenceService.loadAllWorkflows(
+        includeTemplates: includeTemplates,
+        searchQuery: searchQuery,
+      );
+    } catch (e) {
+      print('Error loading workflows: $e');
+      return [];
+    }
+  }
+
+  /// Mark workflow as having unsaved changes
+  void markAsModified() {
+    state = state.copyWith(
+      uiState: {
+        ...state.uiState,
+        'hasUnsavedChanges': true,
+      },
+    );
   }
 }
 

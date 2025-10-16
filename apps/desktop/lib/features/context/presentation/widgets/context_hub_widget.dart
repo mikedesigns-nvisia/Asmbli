@@ -77,7 +77,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
       width: double.infinity,
       padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.8),
+        color: colors.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: colors.border),
       ),
@@ -99,9 +99,9 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
                             return Container(
                               padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
                               decoration: BoxDecoration(
-                                color: colors.primary.withOpacity(0.1),
+                                color: colors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: colors.primary.withOpacity(0.2)),
+                                border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
                               ),
                               child: Row(
                                 children: [
@@ -357,7 +357,7 @@ class _ContextHubWidgetState extends ConsumerState<ContextHubWidget> {
               Container(
                 padding: EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withOpacity(0.1),
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(

@@ -3,13 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../models/logic_block.dart';
 import '../../models/canvas_state.dart';
 import '../../providers/canvas_provider.dart';
+import '../../services/workflow_execution_service.dart';
 import 'logic_block_widget.dart';
 import 'connection_painter.dart';
 import 'canvas_grid.dart';
 import 'block_palette.dart';
+import 'execution_overlay.dart';
 
 /// Main visual reasoning canvas implementing dual-flow architecture
 class ReasoningCanvas extends ConsumerStatefulWidget {
@@ -94,7 +97,7 @@ class _ReasoningCanvasState extends ConsumerState<ReasoningCanvas> {
               : null,
           child: Stack(
             children: [
-              // Background for interactions
+              // Background for canvas interactions
               GestureDetector(
                 onTapDown: _handleCanvasTapDown,
                 onTapUp: _handleCanvasTapUp,
@@ -140,6 +143,49 @@ class _ReasoningCanvasState extends ConsumerState<ReasoningCanvas> {
               // Selection rectangle (for multi-select)
               if (canvasState.dragState.dragType == DragType.canvas && canvasState.dragState.isDragging)
                 _buildSelectionRectangle(canvasState, colors),
+              
+              // Top-level DragTarget to capture block drops anywhere on canvas
+              Positioned.fill(
+                child: DragTarget<LogicBlockTemplate>(
+                  onAcceptWithDetails: (details) => _handleBlockDrop(details.data, details.offset),
+                  onMove: (details) => print('🔄 Drag moving over canvas: ${details.data.label}'),
+                  onWillAccept: (data) {
+                    print('🎯 Will accept drag data: ${data?.label}');
+                    return data != null;
+                  },
+                  builder: (context, candidateData, rejectedData) {
+                    return IgnorePointer(
+                      ignoring: candidateData.isEmpty, // Only absorb events when dragging
+                      child: Container(
+                        color: candidateData.isNotEmpty 
+                            ? colors.primary.withValues(alpha: 0.1) 
+                            : Colors.transparent,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              
+              // Execution overlay - shows real-time execution status
+              Consumer(
+                builder: (context, ref, child) {
+                  final executionService = ServiceLocator.instance.get<WorkflowExecutionService>();
+                  return StreamBuilder<WorkflowExecutionContext>(
+                    stream: executionService.executionUpdates,
+                    builder: (context, snapshot) {
+                      final executionContext = snapshot.data;
+                      final isExecuting = executionContext?.state == WorkflowExecutionState.running;
+                      
+                      return ExecutionOverlay(
+                        blocks: canvasState.workflow.blocks,
+                        executionContext: executionContext,
+                        isExecuting: isExecuting,
+                        currentBlockId: _getCurrentExecutingBlockId(executionContext),
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -243,7 +289,7 @@ class _ReasoningCanvasState extends ConsumerState<ReasoningCanvas> {
         height: height,
         decoration: BoxDecoration(
           border: Border.all(color: colors.primary, width: 2),
-          color: colors.primary.withOpacity(0.1),
+          color: colors.primary.withValues(alpha: 0.1),
         ),
       ),
     );
@@ -339,6 +385,47 @@ class _ReasoningCanvasState extends ConsumerState<ReasoningCanvas> {
     ref.read(canvasProvider.notifier).startConnection(blockId, pin, position, type);
   }
 
+  void _handleBlockDrop(LogicBlockTemplate template, Offset dropOffset) {
+    print('🎯 Block drop detected: ${template.label} at $dropOffset');
+    
+    // Convert global drop position to canvas coordinates
+    final RenderBox? renderBox = _canvasKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) {
+      print('❌ Canvas RenderBox not found');
+      return;
+    }
+    
+    final localOffset = renderBox.globalToLocal(dropOffset);
+    final transform = _transformationController.value;
+    
+    // Apply inverse transform to get canvas coordinates
+    final canvasOffset = transform.getTranslation();
+    final scale = transform.getMaxScaleOnAxis();
+    
+    final canvasPosition = Position(
+      x: (localOffset.dx - canvasOffset.x) / scale,
+      y: (localOffset.dy - canvasOffset.y) / scale,
+    );
+    
+    print('📍 Canvas position calculated: $canvasPosition');
+    
+    // Add the block to the canvas
+    ref.read(canvasProvider.notifier).addBlock(template, canvasPosition);
+    print('✅ Block added to canvas: ${template.label}');
+    
+    // Show success feedback
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${template.label} added to canvas',
+          style: TextStyles.bodyMedium.copyWith(color: Colors.white),
+        ),
+        backgroundColor: ThemeColors(context).success,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   // Utility methods
   Position _getLocalPosition(Offset globalPosition) {
     final RenderBox renderBox = _canvasKey.currentContext!.findRenderObject() as RenderBox;
@@ -373,5 +460,19 @@ class _ReasoningCanvasState extends ConsumerState<ReasoningCanvas> {
 
   void _toggleGrid() {
     ref.read(canvasProvider.notifier).toggleGrid();
+  }
+
+  /// Determines which block is currently executing based on execution context
+  String? _getCurrentExecutingBlockId(WorkflowExecutionContext? context) {
+    if (context == null || context.state != WorkflowExecutionState.running) {
+      return null;
+    }
+    
+    // Find the block that's currently active (being executed)
+    final activeResult = context.blockResults
+        .where((r) => r.state == BlockExecutionState.active)
+        .firstOrNull;
+    
+    return activeResult?.blockId;
   }
 }

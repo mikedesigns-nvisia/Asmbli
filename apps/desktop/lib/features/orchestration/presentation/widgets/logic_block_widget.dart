@@ -42,46 +42,60 @@ class LogicBlockWidget extends ConsumerWidget {
       onPanStart: onPanStart,
       onPanUpdate: onPanUpdate,
       onPanEnd: onPanEnd,
-      child: Container(
-        width: block.defaultWidth,
-        height: block.defaultHeight,
-        decoration: BoxDecoration(
-          color: _getBlockColor(colors),
-          border: Border.all(
-            color: _getBorderColor(colors),
-            width: isSelected ? 2.5 : (isHovered ? 2.0 : 1.5),
-          ),
-          borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-          boxShadow: [
-            if (isSelected || isActive || isHovered)
-              BoxShadow(
-                color: _getBlockAccentColor().withOpacity(0.3),
-                blurRadius: isActive ? 12 : 8,
-                spreadRadius: isActive ? 2 : 1,
-              ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            // Main block content
-            _buildBlockContent(colors),
-            
-            // Connection pins
-            ..._buildConnectionPins(colors),
-            
-            // Status indicators
-            if (block.mcpToolIds.isNotEmpty)
-              Positioned(
-                top: 4,
-                right: 4,
-                child: Icon(
-                  Icons.extension,
-                  size: 12,
-                  color: colors.accent,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return IntrinsicWidth(
+            child: IntrinsicHeight(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: _getMinWidth(),
+                  maxWidth: _getMaxWidth(),
+                  minHeight: _getMinHeight(), 
+                  maxHeight: _getMaxHeight(),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: _getBlockColor(colors),
+                    border: Border.all(
+                      color: _getBorderColor(colors),
+                      width: isSelected ? 2.5 : (isHovered ? 2.0 : 1.5),
+                    ),
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+                    boxShadow: [
+                      if (isSelected || isActive || isHovered)
+                        BoxShadow(
+                          color: _getBlockAccentColor().withValues(alpha: 0.3),
+                          blurRadius: isActive ? 12 : 8,
+                          spreadRadius: isActive ? 2 : 1,
+                        ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      // Main block content
+                      _buildBlockContent(colors),
+                      
+                      // Connection pins
+                      ..._buildConnectionPins(colors),
+                      
+                      // Status indicators
+                      if (block.mcpToolIds.isNotEmpty)
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: Icon(
+                            Icons.extension,
+                            size: 12,
+                            color: colors.accent,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-          ],
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -91,8 +105,10 @@ class LogicBlockWidget extends ConsumerWidget {
       padding: const EdgeInsets.all(SpacingTokens.sm),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Block icon
               Icon(
@@ -102,33 +118,37 @@ class LogicBlockWidget extends ConsumerWidget {
               ),
               const SizedBox(width: SpacingTokens.xs),
               
-              // Block label
-              Expanded(
+              // Block label - allow text to wrap if needed
+              Flexible(
                 child: Text(
                   block.label,
                   style: TextStyles.bodySmall.copyWith(
                     color: colors.onSurface,
                     fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                   ),
-                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  maxLines: _getMaxLabelLines(),
                 ),
               ),
             ],
           ),
           
-          // Block type indicator for small blocks
-          if (block.defaultHeight <= 50)
-            Text(
-              _getTypeLabel(),
-              style: TextStyles.caption.copyWith(
-                color: colors.onSurfaceVariant,
-                fontSize: 10,
+          // Block type indicator - show when there's extended content
+          if (_shouldShowTypeLabel())
+            Padding(
+              padding: const EdgeInsets.only(top: SpacingTokens.xs),
+              child: Text(
+                _getTypeLabel(),
+                style: TextStyles.caption.copyWith(
+                  color: colors.onSurfaceVariant,
+                  fontSize: 10,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           
           // Additional content for larger blocks
-          if (block.defaultHeight > 50)
-            ..._buildExtendedContent(colors),
+          ..._buildExtendedContent(colors),
         ],
       ),
     );
@@ -187,73 +207,71 @@ class LogicBlockWidget extends ConsumerWidget {
   }
 
   List<Widget> _buildConnectionPins(ThemeColors colors) {
-    final pins = <Widget>[];
-    
-    // Input pins (left side)
-    if (_hasInputs()) {
-      pins.add(
+    return [
+      // Input pins (left side)
+      if (_hasInputs()) ...[
         Positioned(
           left: -6,
-          top: block.defaultHeight / 2 - 6,
-          child: _buildConnectionPin(
-            'input',
-            ConnectionType.execution,
-            colors,
-            isInput: true,
-          ),
-        ),
-      );
-      
-      // Data input pin (slightly below execution)
-      if (block.type != LogicBlockType.goal) {
-        pins.add(
-          Positioned(
-            left: -6,
-            top: block.defaultHeight / 2 + 4,
-            child: _buildConnectionPin(
-              'data_input',
-              ConnectionType.data,
-              colors,
-              isInput: true,
+          top: 0,
+          bottom: 0,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildConnectionPin(
+                  'input',
+                  ConnectionType.execution,
+                  colors,
+                  isInput: true,
+                ),
+                if (block.type != LogicBlockType.goal) ...[
+                  const SizedBox(height: 8),
+                  _buildConnectionPin(
+                    'data_input',
+                    ConnectionType.data,
+                    colors,
+                    isInput: true,
+                  ),
+                ],
+              ],
             ),
           ),
-        );
-      }
-    }
-    
-    // Output pins (right side)
-    if (_hasOutputs()) {
-      pins.add(
+        ),
+      ],
+      
+      // Output pins (right side)
+      if (_hasOutputs()) ...[
         Positioned(
           right: -6,
-          top: block.defaultHeight / 2 - 6,
-          child: _buildConnectionPin(
-            'output',
-            ConnectionType.execution,
-            colors,
-            isInput: false,
-          ),
-        ),
-      );
-      
-      // Data output pin
-      if (block.type != LogicBlockType.exit) {
-        pins.add(
-          Positioned(
-            right: -6,
-            top: block.defaultHeight / 2 + 4,
-            child: _buildConnectionPin(
-              'data_output',
-              ConnectionType.data,
-              colors,
-              isInput: false,
+          top: 0,
+          bottom: 0,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildConnectionPin(
+                  'output',
+                  ConnectionType.execution,
+                  colors,
+                  isInput: false,
+                ),
+                if (block.type != LogicBlockType.exit) ...[
+                  const SizedBox(height: 8),
+                  _buildConnectionPin(
+                    'data_output',
+                    ConnectionType.data,
+                    colors,
+                    isInput: false,
+                  ),
+                ],
+              ],
             ),
           ),
-        );
-      }
-    }
-    
-    return pins;
+        ),
+      ],
+    ];
   }
 
   Widget _buildConnectionPin(
@@ -294,13 +312,13 @@ class LogicBlockWidget extends ConsumerWidget {
 
   Color _getBlockColor(ThemeColors colors) {
     if (isActive) {
-      return _getBlockAccentColor().withOpacity(0.15);
+      return _getBlockAccentColor().withValues(alpha: 0.15);
     }
     if (isSelected) {
       return colors.surface;
     }
     if (isHovered) {
-      return colors.surface.withOpacity(0.8);
+      return colors.surface.withValues(alpha: 0.8);
     }
     return colors.background;
   }
@@ -313,9 +331,9 @@ class LogicBlockWidget extends ConsumerWidget {
       return colors.primary;
     }
     if (isHovered) {
-      return _getBlockAccentColor().withOpacity(0.6);
+      return _getBlockAccentColor().withValues(alpha: 0.6);
     }
-    return _getBlockAccentColor().withOpacity(0.4);
+    return _getBlockAccentColor().withValues(alpha: 0.4);
   }
 
   Color _getBlockAccentColor() {
@@ -378,5 +396,63 @@ class LogicBlockWidget extends ConsumerWidget {
   bool _hasOutputs() {
     // Exit blocks don't have outputs (they're ending points)
     return block.type != LogicBlockType.exit;
+  }
+
+  // Helper methods for responsive sizing
+  double _getMinWidth() {
+    switch (block.type) {
+      case LogicBlockType.gateway:
+        return 120.0;
+      case LogicBlockType.reasoning:
+        return 140.0;
+      default:
+        return 100.0;
+    }
+  }
+
+  double _getMaxWidth() {
+    switch (block.type) {
+      case LogicBlockType.gateway:
+        return 220.0;
+      case LogicBlockType.reasoning:
+        return 240.0;
+      default:
+        return 200.0;
+    }
+  }
+
+  double _getMinHeight() {
+    switch (block.type) {
+      case LogicBlockType.reasoning:
+        return 60.0;
+      default:
+        return 45.0;
+    }
+  }
+
+  double _getMaxHeight() {
+    switch (block.type) {
+      case LogicBlockType.reasoning:
+        return 120.0;
+      default:
+        return 80.0;
+    }
+  }
+
+  int _getMaxLabelLines() {
+    switch (block.type) {
+      case LogicBlockType.reasoning:
+        return 3;
+      case LogicBlockType.gateway:
+        return 2;
+      default:
+        return 2;
+    }
+  }
+
+  bool _shouldShowTypeLabel() {
+    // Always show type label for blocks with extended content
+    return block.type == LogicBlockType.reasoning || 
+           block.type == LogicBlockType.gateway;
   }
 }

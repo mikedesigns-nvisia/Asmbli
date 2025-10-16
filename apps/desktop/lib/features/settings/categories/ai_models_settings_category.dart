@@ -221,7 +221,7 @@ class _AiModelsSettingsCategoryState extends ConsumerState<AiModelsSettingsCateg
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   ),
                   child: Icon(
@@ -251,7 +251,7 @@ class _AiModelsSettingsCategoryState extends ConsumerState<AiModelsSettingsCateg
                                 vertical: SpacingTokens.xs,
                               ),
                               decoration: BoxDecoration(
-                                color: colors.accent.withOpacity(0.1),
+                                color: colors.accent.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                               ),
                               child: Text(
@@ -357,7 +357,7 @@ class _AiModelsSettingsCategoryState extends ConsumerState<AiModelsSettingsCateg
               Container(
                 padding: const EdgeInsets.all(SpacingTokens.sm),
                 decoration: BoxDecoration(
-                  color: colors.error.withOpacity(0.1),
+                  color: colors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   border: Border.all(color: colors.error),
                 ),

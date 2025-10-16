@@ -33,7 +33,7 @@ class _BlockPaletteState extends ConsumerState<BlockPalette> {
     
     return AsmblCard(
       child: SizedBox(
-        width: 240,
+        width: 280,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -184,18 +184,20 @@ class _BlockPaletteState extends ConsumerState<BlockPalette> {
   Widget _buildBlockItem(LogicBlockTemplate template, ThemeColors colors) {
     return Draggable<LogicBlockTemplate>(
       data: template,
+      onDragStarted: () => print('🚀 Started dragging: ${template.label}'),
+      onDragEnd: (details) => print('🏁 Drag ended: ${template.label}, wasAccepted: ${details.wasAccepted}'),
       feedback: Material(
         color: Colors.transparent,
         child: Container(
           width: 120,
           height: 50,
           decoration: BoxDecoration(
-            color: _getBlockColor(template.type).withOpacity(0.9),
+            color: _getBlockColor(template.type).withValues(alpha: 0.9),
             border: Border.all(color: _getBlockColor(template.type), width: 2),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -227,7 +229,7 @@ class _BlockPaletteState extends ConsumerState<BlockPalette> {
       decoration: BoxDecoration(
         color: colors.surface,
         border: Border.all(
-          color: _getBlockColor(template.type).withOpacity(0.3),
+          color: _getBlockColor(template.type).withValues(alpha: 0.3),
           width: 1,
         ),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
@@ -267,7 +269,7 @@ class _BlockPaletteState extends ConsumerState<BlockPalette> {
                   style: TextStyles.caption.copyWith(
                     color: colors.onSurfaceVariant,
                   ),
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -302,7 +304,7 @@ class _BlockPaletteState extends ConsumerState<BlockPalette> {
       LogicBlockTemplate(
         type: LogicBlockType.context,
         label: 'Context Filter',
-        description: 'Retrieve and filter relevant information',
+        description: 'Retrieve and filter relevant info',
         keywords: ['data', 'filter', 'context', 'information', 'rag'],
       ),
       LogicBlockTemplate(
@@ -334,7 +336,7 @@ class _BlockPaletteState extends ConsumerState<BlockPalette> {
       LogicBlockTemplate(
         type: LogicBlockType.trace,
         label: 'Trace Events',
-        description: 'Log execution for debugging',
+        description: 'Log execution for debug',
         keywords: ['log', 'trace', 'debug', 'monitor'],
       ),
     ];

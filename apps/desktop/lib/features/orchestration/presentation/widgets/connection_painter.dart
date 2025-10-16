@@ -79,12 +79,12 @@ class ConnectionPainter extends CustomPainter {
     // Style based on connection type (research recommendation: thick for execution, thin for data)
     if (type == ConnectionType.execution) {
       paint.color = isPending 
-          ? colors.onSurface.withOpacity(0.6) 
+          ? colors.onSurface.withValues(alpha: 0.6) 
           : colors.onSurface;
       paint.strokeWidth = isPending ? 2.5 : 3.0;
     } else {
       paint.color = isPending 
-          ? colors.primary.withOpacity(0.6) 
+          ? colors.primary.withValues(alpha: 0.6) 
           : colors.primary;
       paint.strokeWidth = isPending ? 1.5 : 2.0;
     }
@@ -152,7 +152,7 @@ class ConnectionPainter extends CustomPainter {
       
       if (tangent != null) {
         final dotPaint = Paint()
-          ..color = paint.color.withOpacity(0.8)
+          ..color = paint.color.withValues(alpha: 0.8)
           ..style = PaintingStyle.fill;
         
         canvas.drawCircle(tangent.position, dotSize, dotPaint);

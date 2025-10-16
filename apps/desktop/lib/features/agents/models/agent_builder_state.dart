@@ -5,7 +5,6 @@ import '../../../core/models/mcp_catalog_entry.dart';
 /// Enumeration for different builder modes
 enum AgentBuilderMode {
   wizard,     // Step-by-step guided flow
-  dashboard,  // All-in-one view
   template,   // Starting from a template
 }
 
@@ -16,6 +15,7 @@ enum AgentBuilderStep {
   tools,          // MCP server selection
   context,        // Knowledge/context documents
   modelConfig,    // Model settings
+  reasoningFlows, // Visual reasoning workflows
   testing,        // Live testing
   review,         // Final review before creation
 }
@@ -65,6 +65,11 @@ class AgentBuilderState extends ChangeNotifier {
   bool _enableWebSearch = false;
   bool _enableCodeExecution = false;
 
+  // Reasoning Flows
+  List<String> _reasoningWorkflowIds = [];
+  String? _defaultReasoningWorkflowId;
+  bool _enableReasoningFlows = false;
+
   // Testing
   List<Map<String, String>> _testConversations = [];
   bool _isTestingMode = false;
@@ -110,6 +115,10 @@ class AgentBuilderState extends ChangeNotifier {
   bool get enableMemory => _enableMemory;
   bool get enableWebSearch => _enableWebSearch;
   bool get enableCodeExecution => _enableCodeExecution;
+
+  List<String> get reasoningWorkflowIds => List.unmodifiable(_reasoningWorkflowIds);
+  String? get defaultReasoningWorkflowId => _defaultReasoningWorkflowId;
+  bool get enableReasoningFlows => _enableReasoningFlows;
 
   List<Map<String, String>> get testConversations => List.unmodifiable(_testConversations);
   bool get isTestingMode => _isTestingMode;
@@ -348,6 +357,38 @@ class AgentBuilderState extends ChangeNotifier {
     _markDirty();
   }
 
+  // Reasoning Flows Updates
+  void updateEnableReasoningFlows(bool enable) {
+    _enableReasoningFlows = enable;
+    _markDirty();
+    _validateStep(AgentBuilderStep.reasoningFlows);
+  }
+
+  void addReasoningWorkflow(String workflowId) {
+    if (!_reasoningWorkflowIds.contains(workflowId)) {
+      _reasoningWorkflowIds.add(workflowId);
+      _markDirty();
+      _validateStep(AgentBuilderStep.reasoningFlows);
+    }
+  }
+
+  void removeReasoningWorkflow(String workflowId) {
+    _reasoningWorkflowIds.remove(workflowId);
+    if (_defaultReasoningWorkflowId == workflowId) {
+      _defaultReasoningWorkflowId = null;
+    }
+    _markDirty();
+    _validateStep(AgentBuilderStep.reasoningFlows);
+  }
+
+  void setDefaultReasoningWorkflow(String? workflowId) {
+    _defaultReasoningWorkflowId = workflowId;
+    if (workflowId != null && !_reasoningWorkflowIds.contains(workflowId)) {
+      _reasoningWorkflowIds.add(workflowId);
+    }
+    _markDirty();
+  }
+
   // Testing
   void enterTestingMode() {
     _isTestingMode = true;
@@ -393,6 +434,11 @@ class AgentBuilderState extends ChangeNotifier {
         break;
       case AgentBuilderStep.context:
         // Context is optional
+        break;
+      case AgentBuilderStep.reasoningFlows:
+        if (_enableReasoningFlows && _reasoningWorkflowIds.isEmpty) {
+          errors.add('At least one reasoning workflow is required when reasoning flows are enabled');
+        }
         break;
       case AgentBuilderStep.modelConfig:
         if (_selectedModel.trim().isEmpty) errors.add('Model selection is required');
@@ -472,6 +518,9 @@ class AgentBuilderState extends ChangeNotifier {
         'toolConfigurations': _toolConfigurations,
         'contextDocuments': _contextDocuments,
         'knowledgeFiles': _knowledgeFiles,
+        'enableReasoningFlows': _enableReasoningFlows,
+        'reasoningWorkflowIds': _reasoningWorkflowIds,
+        'defaultReasoningWorkflowId': _defaultReasoningWorkflowId,
         'createdAt': DateTime.now().toIso8601String(),
         'lastModified': DateTime.now().toIso8601String(),
         'builderVersion': '2.0',
@@ -502,6 +551,9 @@ class AgentBuilderState extends ChangeNotifier {
       'contextDocuments': _contextDocuments,
       'knowledgeFiles': _knowledgeFiles,
       'contextSettings': _contextSettings,
+      'enableReasoningFlows': _enableReasoningFlows,
+      'reasoningWorkflowIds': _reasoningWorkflowIds,
+      'defaultReasoningWorkflowId': _defaultReasoningWorkflowId,
       'modelProvider': _modelProvider,
       'modelName': _modelName,
       'performanceTier': _performanceTier,
@@ -540,6 +592,9 @@ class AgentBuilderState extends ChangeNotifier {
     _toolConfigurations = {};
     _contextDocuments = [];
     _knowledgeFiles = [];
+    _enableReasoningFlows = false;
+    _reasoningWorkflowIds = [];
+    _defaultReasoningWorkflowId = null;
     _modelProvider = 'OpenAI';
     _modelName = 'gpt-4o';
     _performanceTier = 'Balanced';
@@ -585,6 +640,9 @@ class AgentBuilderState extends ChangeNotifier {
     );
     _contextDocuments = List<String>.from(config['contextDocuments'] ?? []);
     _knowledgeFiles = List<String>.from(config['knowledgeFiles'] ?? []);
+    _enableReasoningFlows = config['enableReasoningFlows'] ?? false;
+    _reasoningWorkflowIds = List<String>.from(config['reasoningWorkflowIds'] ?? []);
+    _defaultReasoningWorkflowId = config['defaultReasoningWorkflowId'];
 
     _hasUnsavedChanges = false;
   }

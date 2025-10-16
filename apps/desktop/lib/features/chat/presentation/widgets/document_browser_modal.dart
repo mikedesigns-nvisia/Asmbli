@@ -204,7 +204,7 @@ class _DocumentBrowserModalState extends ConsumerState<DocumentBrowserModal> {
                       color: colors.onSurface,
                     ),
                   ),
-                  backgroundColor: colors.primary.withOpacity(0.1),
+                  backgroundColor: colors.primary.withValues(alpha: 0.1),
                   side: BorderSide.none,
                 )).toList(),
               ),

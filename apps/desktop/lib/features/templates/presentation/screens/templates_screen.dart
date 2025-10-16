@@ -151,9 +151,9 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  flex: 2,
  child: Container(
  decoration: BoxDecoration(
- color: Colors.white.withOpacity(0.8),
+ color: Colors.white.withValues(alpha: 0.8),
  borderRadius: BorderRadius.circular(8),
- border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+ border: Border.all(color: AppTheme.lightBorder.withValues(alpha: 0.5)),
  ),
  child: TextField(
  onChanged: (value) => setState(() => searchQuery = value),
@@ -180,9 +180,9 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
  decoration: BoxDecoration(
- color: Colors.white.withOpacity(0.8),
+ color: Colors.white.withValues(alpha: 0.8),
  borderRadius: BorderRadius.circular(8),
- border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+ border: Border.all(color: AppTheme.lightBorder.withValues(alpha: 0.5)),
  ),
  child: DropdownButton<String>(
  value: selectedCategory,
@@ -269,9 +269,9 @@ class _TemplateCard extends StatelessWidget {
  Widget build(BuildContext context) {
  return Container(
  decoration: BoxDecoration(
- color: Colors.white.withOpacity(0.9),
+ color: Colors.white.withValues(alpha: 0.9),
  borderRadius: BorderRadius.circular(12),
- border: Border.all(color: AppTheme.lightBorder.withOpacity(0.5)),
+ border: Border.all(color: AppTheme.lightBorder.withValues(alpha: 0.5)),
  ),
  child: Column(
  crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,7 +284,7 @@ class _TemplateCard extends StatelessWidget {
  Container(
  padding: const EdgeInsets.all(8),
  decoration: BoxDecoration(
- color: AppTheme.lightBorder.withOpacity(0.3),
+ color: AppTheme.lightBorder.withValues(alpha: 0.3),
  borderRadius: BorderRadius.circular(8),
  ),
  child: Icon(
@@ -350,7 +350,7 @@ class _TemplateCard extends StatelessWidget {
  return Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
- color: AppTheme.lightBorder.withOpacity(0.5),
+ color: AppTheme.lightBorder.withValues(alpha: 0.5),
  borderRadius: BorderRadius.circular(12),
  ),
  child: Text(
@@ -388,10 +388,10 @@ class _TemplateCard extends StatelessWidget {
  return Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
- color: AppTheme.lightPrimary.withOpacity(0.1),
+ color: AppTheme.lightPrimary.withValues(alpha: 0.1),
  borderRadius: BorderRadius.circular(6),
  border: Border.all(
- color: AppTheme.lightPrimary.withOpacity(0.3),
+ color: AppTheme.lightPrimary.withValues(alpha: 0.3),
  width: 1,
  ),
  ),

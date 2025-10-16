@@ -378,7 +378,7 @@ class AppColorSchemes {
         brightness: brightness,
         primary: primary,
         onPrimary: onPrimary,
-        secondary: isDark ? surface.withOpacity(0.8) : surfaceVariant,
+        secondary: isDark ? surface.withValues(alpha: 0.8) : surfaceVariant,
         onSecondary: onSurface,
         tertiary: accent,
         onTertiary: onAccent,

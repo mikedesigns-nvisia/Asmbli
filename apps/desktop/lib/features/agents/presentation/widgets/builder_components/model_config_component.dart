@@ -52,7 +52,7 @@ class ModelConfigComponent extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(SpacingTokens.sm),
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
           ),
           child: Icon(
@@ -141,9 +141,9 @@ class ModelConfigComponent extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: colors.accent.withOpacity(0.1),
+                color: colors.accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                border: Border.all(color: colors.accent.withOpacity(0.3)),
+                border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,7 +274,7 @@ class ModelConfigComponent extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Row(
@@ -325,7 +325,7 @@ class ModelConfigComponent extends ConsumerWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: isSelected
-                    ? colors.primary.withOpacity(0.1)
+                    ? colors.primary.withValues(alpha: 0.1)
                     : colors.surface,
                 border: isSelected
                     ? Border.all(color: colors.primary, width: 2)
@@ -401,7 +401,7 @@ class ModelConfigComponent extends ConsumerWidget {
               padding: const EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? colors.primary.withOpacity(0.1)
+                    ? colors.primary.withValues(alpha: 0.1)
                     : colors.surface,
                 border: Border.all(
                   color: isSelected
@@ -485,9 +485,9 @@ class ModelConfigComponent extends ConsumerWidget {
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: colors.primary,
-            inactiveTrackColor: colors.primary.withOpacity(0.3),
+            inactiveTrackColor: colors.primary.withValues(alpha: 0.3),
             thumbColor: colors.primary,
-            overlayColor: colors.primary.withOpacity(0.1),
+            overlayColor: colors.primary.withValues(alpha: 0.1),
           ),
           child: Slider(
             value: value,

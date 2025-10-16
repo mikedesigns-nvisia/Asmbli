@@ -129,7 +129,7 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
             hintStyle: TextStyle(color: colors.onSurfaceVariant),
             prefixIcon: Icon(Icons.search, color: colors.onSurfaceVariant),
             filled: true,
-            fillColor: colors.surface.withOpacity(0.3),
+            fillColor: colors.surface.withValues(alpha: 0.3),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               borderSide: BorderSide(color: colors.border),
@@ -206,8 +206,8 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
       label: Text(label),
       selected: selected,
       onSelected: (_) => onTap(),
-      backgroundColor: colors.surface.withOpacity(0.3),
-      selectedColor: colors.primary.withOpacity(0.2),
+      backgroundColor: colors.surface.withValues(alpha: 0.3),
+      selectedColor: colors.primary.withValues(alpha: 0.2),
       checkmarkColor: colors.primary,
       labelStyle: TextStyle(
         color: selected ? colors.primary : colors.onSurfaceVariant,
@@ -237,8 +237,8 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
               _selectedDifficulty = selected ? difficulty : null;
             });
           },
-          backgroundColor: colors.surface.withOpacity(0.3),
-          selectedColor: colors.primary.withOpacity(0.2),
+          backgroundColor: colors.surface.withValues(alpha: 0.3),
+          selectedColor: colors.primary.withValues(alpha: 0.2),
           checkmarkColor: colors.primary,
           labelStyle: TextStyle(
             color: isSelected ? colors.primary : colors.onSurfaceVariant,
@@ -266,8 +266,8 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
               _selectedCategory = selected ? category : null;
             });
           },
-          backgroundColor: colors.surface.withOpacity(0.3),
-          selectedColor: colors.accent.withOpacity(0.2),
+          backgroundColor: colors.surface.withValues(alpha: 0.3),
+          selectedColor: colors.accent.withValues(alpha: 0.2),
           checkmarkColor: colors.accent,
           labelStyle: TextStyle(
             color: isSelected ? colors.accent : colors.onSurfaceVariant,
@@ -311,7 +311,7 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: colors.accent.withOpacity(0.2),
+                        color: colors.accent.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -366,7 +366,7 @@ class _MCPCatalogScreenState extends ConsumerState<MCPCatalogScreen> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: colors.accent.withOpacity(0.2),
+                        color: colors.accent.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(

@@ -37,13 +37,13 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard> {
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
             border: Border.all(
               color: _isHovered
-                ? colors.border.withOpacity(0.6)
-                : colors.border.withOpacity(0.3),
+                ? colors.border.withValues(alpha: 0.6)
+                : colors.border.withValues(alpha: 0.3),
               width: 1,
             ),
             boxShadow: _isHovered ? [
               BoxShadow(
-                color: colors.onSurface.withOpacity(0.05),
+                color: colors.onSurface.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -72,7 +72,7 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard> {
           width: 20,
           height: 20,
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -107,9 +107,9 @@ class _MCPCatalogEntryCardState extends State<MCPCatalogEntryCard> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.primary.withOpacity(0.1),
+                        color: colors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
-                        border: Border.all(color: colors.primary.withOpacity(0.3)),
+                        border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         'Official',

@@ -29,7 +29,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
             end: Alignment.bottomRight,
             colors: [
               colors.background,
-              colors.background.withOpacity(0.8),
+              colors.background.withValues(alpha: 0.8),
             ],
           ),
         ),
@@ -50,9 +50,9 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.pageHorizontal),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.8),
+        color: colors.surface.withValues(alpha: 0.8),
         border: Border(
-          bottom: BorderSide(color: colors.border.withOpacity(0.5)),
+          bottom: BorderSide(color: colors.border.withValues(alpha: 0.5)),
         ),
       ),
       child: Row(
@@ -113,7 +113,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.1),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(Icons.brightness_6, color: colors.primary, size: 20),
@@ -157,7 +157,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
       child: Container(
         padding: const EdgeInsets.all(SpacingTokens.componentSpacing),
         decoration: BoxDecoration(
-          color: isSelected ? colors.primary.withOpacity(0.1) : colors.surfaceVariant.withOpacity(0.3),
+          color: isSelected ? colors.primary.withValues(alpha: 0.1) : colors.surfaceVariant.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           border: Border.all(
             color: isSelected ? colors.primary : colors.border,
@@ -197,7 +197,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                 Container(
                   padding: const EdgeInsets.all(SpacingTokens.iconSpacing),
                   decoration: BoxDecoration(
-                    color: colors.accent.withOpacity(0.1),
+                    color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(Icons.palette, color: colors.accent, size: 20),
@@ -259,7 +259,7 @@ class _AppearanceSettingsScreenState extends ConsumerState<AppearanceSettingsScr
                     decoration: BoxDecoration(
                       color: color,
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                      border: Border.all(color: colors.border.withOpacity(0.3)),
+                      border: Border.all(color: colors.border.withValues(alpha: 0.3)),
                     ),
                   )).toList(),
                 ),

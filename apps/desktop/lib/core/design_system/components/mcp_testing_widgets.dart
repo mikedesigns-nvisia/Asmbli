@@ -76,10 +76,10 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -138,7 +138,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1 + (_pulseController.value * 0.1)),
+              color: colors.primary.withValues(alpha: 0.1 + (_pulseController.value * 0.1)),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Center(
@@ -164,7 +164,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Icon(
@@ -179,7 +179,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Icon(
@@ -239,7 +239,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
         const SizedBox(height: 12),
         LinearProgressIndicator(
           valueColor: AlwaysStoppedAnimation(colors.primary),
-          backgroundColor: colors.primary.withOpacity(0.1),
+          backgroundColor: colors.primary.withValues(alpha: 0.1),
         ),
         const SizedBox(height: 8),
         Text(
@@ -286,10 +286,10 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.05),
+              color: statusColor.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
-                color: statusColor.withOpacity(0.2),
+                color: statusColor.withValues(alpha: 0.2),
               ),
             ),
             child: Text(
@@ -327,7 +327,7 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -407,10 +407,10 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colors.success.withOpacity(0.05),
+        color: colors.success.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: colors.success.withOpacity(0.2),
+          color: colors.success.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -447,10 +447,10 @@ class _MCPConnectionTesterState extends State<MCPConnectionTester> with TickerPr
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -592,10 +592,10 @@ class MCPConnectionStatus extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: color.withOpacity(0.3),
+              color: color.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -621,7 +621,7 @@ class MCPConnectionStatus extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -727,10 +727,10 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -771,7 +771,7 @@ class _MCPHealthDashboardState extends State<MCPHealthDashboard> {
                   ? colors.success
                   : Colors.orange,
             ),
-            backgroundColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+            backgroundColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
           ),
           const SizedBox(height: 8),
           Text(

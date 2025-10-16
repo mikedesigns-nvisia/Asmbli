@@ -103,7 +103,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
             Icon(
               Icons.edit,
               size: 16,
-              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
           ],
         ),
@@ -119,7 +119,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
           color: ThemeColors(context).primary,
           width: 2,
         ),
-        color: theme.colorScheme.surface.withOpacity(0.9),
+        color: theme.colorScheme.surface.withValues(alpha: 0.9),
       ),
       child: Row(
         children: [
@@ -143,7 +143,7 @@ class _EditableConversationTitleState extends ConsumerState<EditableConversation
                 hintStyle: GoogleFonts.fustat(
                   fontSize: 20,
                   fontWeight: FontWeight.w400,
-                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
               ),
               maxLines: 1,

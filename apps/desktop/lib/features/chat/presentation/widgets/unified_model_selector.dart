@@ -45,7 +45,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
       decoration: BoxDecoration(
         border: Border.all(color: theme.colorScheme.outline),
         borderRadius: BorderRadius.circular(6),
-        color: theme.colorScheme.surface.withOpacity(0.8),
+        color: theme.colorScheme.surface.withValues(alpha: 0.8),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -173,7 +173,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withOpacity(0.1),
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(
@@ -216,7 +216,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).primary.withOpacity(0.1),
+                  color: ThemeColors(context).primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(
@@ -232,7 +232,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
-                  color: ThemeColors(context).error.withOpacity(0.1),
+                  color: ThemeColors(context).error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(
@@ -330,12 +330,12 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.5),
+        color: ThemeColors(context).surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: model.isLocal 
-            ? ThemeColors(context).primary.withOpacity(0.3)
-            : ThemeColors(context).accent.withOpacity(0.3),
+            ? ThemeColors(context).primary.withValues(alpha: 0.3)
+            : ThemeColors(context).accent.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -384,7 +384,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: ThemeColors(context).success.withOpacity(0.2),
+              color: ThemeColors(context).success.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
@@ -400,7 +400,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.orange.withOpacity(0.2),
+              color: Colors.orange.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Text(
@@ -416,7 +416,7 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Text(
@@ -434,8 +434,8 @@ class _UnifiedModelSelectorState extends ConsumerState<UnifiedModelSelector> {
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
           color: model.isConfigured 
-            ? ThemeColors(context).accent.withOpacity(0.2)
-            : Colors.grey.withOpacity(0.2),
+            ? ThemeColors(context).accent.withValues(alpha: 0.2)
+            : Colors.grey.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(

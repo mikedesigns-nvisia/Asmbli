@@ -127,7 +127,7 @@ class ConversationArchiveModal extends ConsumerWidget {
  Icon(
  Icons.archive_outlined,
  size: 64,
- color: ThemeColors(context).onSurfaceVariant.withOpacity(0.5),
+ color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
  ),
  const SizedBox(height: SpacingTokens.xl),
  Text(
@@ -322,7 +322,7 @@ class _ArchivedConversationItem extends StatelessWidget {
  onPressed: onRestore,
  icon: const Icon(Icons.unarchive, size: 18),
  style: IconButton.styleFrom(
- backgroundColor: ThemeColors(context).primary.withOpacity(0.1),
+ backgroundColor: ThemeColors(context).primary.withValues(alpha: 0.1),
  foregroundColor: ThemeColors(context).primary,
  ),
  tooltip: 'Restore',
@@ -334,7 +334,7 @@ class _ArchivedConversationItem extends StatelessWidget {
  onPressed: onDelete,
  icon: const Icon(Icons.delete_forever, size: 18),
  style: IconButton.styleFrom(
- backgroundColor: ThemeColors(context).error.withOpacity(0.1),
+ backgroundColor: ThemeColors(context).error.withValues(alpha: 0.1),
  foregroundColor: ThemeColors(context).error,
  ),
  tooltip: 'Delete Forever',

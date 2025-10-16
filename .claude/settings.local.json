@@ -56,13 +56,14 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(flutter run:*)",
       "Bash(where uvx)",
-      "Bash(dart analyze:*)"
+      "Bash(dart analyze:*)",
+      "Bash(flutter packages pub run build_runner build:*)"
     ],
     "deny": [],
-    "ask": [],
     "defaultMode": "acceptEdits",
     "additionalDirectories": [
       "C:\\c"
-    ]
+    ],
+    "ask": []
   }
 }

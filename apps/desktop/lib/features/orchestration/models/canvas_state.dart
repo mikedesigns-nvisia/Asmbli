@@ -127,6 +127,20 @@ class PendingConnection {
   
   factory PendingConnection.fromJson(Map<String, dynamic> json) => _$PendingConnectionFromJson(json);
   Map<String, dynamic> toJson() => _$PendingConnectionToJson(this);
+  
+  PendingConnection copyWith({
+    String? sourceBlockId,
+    String? sourcePin,
+    Position? currentPosition,
+    ConnectionType? type,
+  }) {
+    return PendingConnection(
+      sourceBlockId: sourceBlockId ?? this.sourceBlockId,
+      sourcePin: sourcePin ?? this.sourcePin,
+      currentPosition: currentPosition ?? this.currentPosition,
+      type: type ?? this.type,
+    );
+  }
 }
 
 /// Complete canvas state including workflow and UI state

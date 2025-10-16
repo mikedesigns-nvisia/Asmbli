@@ -229,7 +229,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
 
   Widget _buildTabBar(ThemeColors colors) {
     return Container(
-      color: colors.surface.withOpacity(0.5),
+      color: colors.surface.withValues(alpha: 0.5),
       child: TabBar(
         controller: _tabController,
         tabs: [
@@ -260,7 +260,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: ThemeColors(context).primary.withOpacity(0.2),
+                color: ThemeColors(context).primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -340,7 +340,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
                       setState(() => _currentFilter = filter);
                     },
                     backgroundColor: colors.surface,
-                    selectedColor: colors.primary.withOpacity(0.2),
+                    selectedColor: colors.primary.withValues(alpha: 0.2),
                     labelStyle: TextStyles.labelMedium.copyWith(
                       color: isSelected ? colors.primary : colors.onSurfaceVariant,
                     ),
@@ -384,7 +384,7 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
           Icon(
             Icons.search_off,
             size: 64,
-            color: colors.onSurfaceVariant.withOpacity(0.5),
+            color: colors.onSurfaceVariant.withValues(alpha: 0.5),
           ),
           const SizedBox(height: SpacingTokens.lg),
           Text(
@@ -522,9 +522,9 @@ class _EnhancedOAuthSettingsScreenState extends ConsumerState<EnhancedOAuthSetti
                       vertical: SpacingTokens.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: colors.primary.withOpacity(0.1),
+                      color: colors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                      border: Border.all(color: colors.primary.withOpacity(0.3)),
+                      border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
                     ),
                     child: Text(
                       scope,

@@ -14,7 +14,7 @@ ReasoningCapabilities _$ReasoningCapabilitiesFromJson(
       structuredOutput: json['structuredOutput'] as bool? ?? false,
       contextLength: json['contextLength'] as bool? ?? false,
       streaming: json['streaming'] as bool? ?? true,
-      maxTokens: json['maxTokens'] as int? ?? 4096,
+      maxTokens: (json['maxTokens'] as num?)?.toInt() ?? 4096,
       confidenceSupport: (json['confidenceSupport'] as num?)?.toDouble() ?? 0.5,
       reasoningPatterns: (json['reasoningPatterns'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -50,7 +50,7 @@ Map<String, dynamic> _$CapabilityDetectionResultToJson(
         CapabilityDetectionResult instance) =>
     <String, dynamic>{
       'modelName': instance.modelName,
-      'capabilities': instance.capabilities.toJson(),
+      'capabilities': instance.capabilities,
       'confidenceScore': instance.confidenceScore,
       'detectedAt': instance.detectedAt.toIso8601String(),
       'testResults': instance.testResults,

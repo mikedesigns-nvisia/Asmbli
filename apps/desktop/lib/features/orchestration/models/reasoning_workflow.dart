@@ -11,7 +11,9 @@ class ReasoningWorkflow {
   final String? description;
   final List<LogicBlock> blocks;
   final List<BlockConnection> connections;
-  final Map<String, dynamic> metadata;
+  final List<String> tags;
+  final bool isTemplate;
+  final Map<String, dynamic>? metadata;
   final DateTime createdAt;
   final DateTime updatedAt;
   
@@ -21,7 +23,9 @@ class ReasoningWorkflow {
     this.description,
     required this.blocks,
     required this.connections,
-    this.metadata = const {},
+    this.tags = const [],
+    this.isTemplate = false,
+    this.metadata,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -35,6 +39,8 @@ class ReasoningWorkflow {
     String? description,
     List<LogicBlock>? blocks,
     List<BlockConnection>? connections,
+    List<String>? tags,
+    bool? isTemplate,
     Map<String, dynamic>? metadata,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -45,6 +51,8 @@ class ReasoningWorkflow {
       description: description ?? this.description,
       blocks: blocks ?? this.blocks,
       connections: connections ?? this.connections,
+      tags: tags ?? this.tags,
+      isTemplate: isTemplate ?? this.isTemplate,
       metadata: metadata ?? this.metadata,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

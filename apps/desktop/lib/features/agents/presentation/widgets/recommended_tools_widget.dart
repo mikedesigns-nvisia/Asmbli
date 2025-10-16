@@ -197,7 +197,7 @@ class _RecommendedToolsWidgetState extends ConsumerState<RecommendedToolsWidget>
                   Container(
                     padding: const EdgeInsets.all(SpacingTokens.xs),
                     decoration: BoxDecoration(
-                      color: colors.primary.withOpacity(0.1),
+                      color: colors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     ),
                     child: Icon(
@@ -214,7 +214,7 @@ class _RecommendedToolsWidgetState extends ConsumerState<RecommendedToolsWidget>
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.accent.withOpacity(0.1),
+                        color: colors.accent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
                       ),
                       child: Text(
@@ -262,7 +262,7 @@ class _RecommendedToolsWidgetState extends ConsumerState<RecommendedToolsWidget>
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: colors.onSurface.withOpacity(0.1),
+                      color: colors.onSurface.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
                     ),
                     child: Text(

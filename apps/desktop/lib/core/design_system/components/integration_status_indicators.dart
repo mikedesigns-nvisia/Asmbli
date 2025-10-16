@@ -148,10 +148,10 @@ class IntegrationStatusIndicators {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: colors.warning.withOpacity(0.1),
+          color: colors.warning.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: colors.warning.withOpacity(0.3),
+            color: colors.warning.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -193,7 +193,7 @@ class IntegrationStatusIndicators {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(3),
             ),
             child: Text(
@@ -209,7 +209,7 @@ class IntegrationStatusIndicators {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             decoration: BoxDecoration(
-              color: colors.onSurfaceVariant.withOpacity(0.1),
+              color: colors.onSurfaceVariant.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(3),
             ),
             child: Text(
@@ -239,7 +239,7 @@ class IntegrationStatusIndicators {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: colors.foreground.withOpacity(0.3),
+              color: colors.foreground.withValues(alpha: 0.3),
               blurRadius: 2,
               spreadRadius: 1,
             ),
@@ -311,32 +311,32 @@ class IntegrationHealth {
 StatusColors _getStatusColors(ThemeColors colors, IntegrationStatus status) {
   if (!status.definition.isAvailable) {
     return StatusColors(
-      background: colors.onSurfaceVariant.withOpacity(0.1),
+      background: colors.onSurfaceVariant.withValues(alpha: 0.1),
       foreground: colors.onSurfaceVariant,
-      border: colors.onSurfaceVariant.withOpacity(0.2),
+      border: colors.onSurfaceVariant.withValues(alpha: 0.2),
     );
   }
 
   if (!status.isConfigured) {
     return StatusColors(
-      background: colors.primary.withOpacity(0.1),
+      background: colors.primary.withValues(alpha: 0.1),
       foreground: colors.primary,
-      border: colors.primary.withOpacity(0.3),
+      border: colors.primary.withValues(alpha: 0.3),
     );
   }
 
   if (!status.isEnabled) {
     return StatusColors(
-      background: colors.warning.withOpacity(0.1),
+      background: colors.warning.withValues(alpha: 0.1),
       foreground: colors.warning,
-      border: colors.warning.withOpacity(0.3),
+      border: colors.warning.withValues(alpha: 0.3),
     );
   }
 
   return StatusColors(
-    background: colors.success.withOpacity(0.1),
+    background: colors.success.withValues(alpha: 0.1),
     foreground: colors.success,
-    border: colors.success.withOpacity(0.3),
+    border: colors.success.withValues(alpha: 0.3),
   );
 }
 
@@ -358,27 +358,27 @@ StatusColors _getDifficultyColors(ThemeColors colors, String difficulty) {
   switch (difficulty.toLowerCase()) {
     case 'easy':
       return StatusColors(
-        background: colors.success.withOpacity(0.1),
+        background: colors.success.withValues(alpha: 0.1),
         foreground: colors.success,
-        border: colors.success.withOpacity(0.3),
+        border: colors.success.withValues(alpha: 0.3),
       );
     case 'medium':
       return StatusColors(
-        background: colors.warning.withOpacity(0.1),
+        background: colors.warning.withValues(alpha: 0.1),
         foreground: colors.warning,
-        border: colors.warning.withOpacity(0.3),
+        border: colors.warning.withValues(alpha: 0.3),
       );
     case 'hard':
       return StatusColors(
-        background: colors.error.withOpacity(0.1),
+        background: colors.error.withValues(alpha: 0.1),
         foreground: colors.error,
-        border: colors.error.withOpacity(0.3),
+        border: colors.error.withValues(alpha: 0.3),
       );
     default:
       return StatusColors(
-        background: colors.onSurfaceVariant.withOpacity(0.1),
+        background: colors.onSurfaceVariant.withValues(alpha: 0.1),
         foreground: colors.onSurfaceVariant,
-        border: colors.onSurfaceVariant.withOpacity(0.2),
+        border: colors.onSurfaceVariant.withValues(alpha: 0.2),
       );
   }
 }
@@ -396,27 +396,27 @@ StatusColors _getHealthColors(ThemeColors colors, IntegrationHealthStatus status
   switch (status) {
     case IntegrationHealthStatus.healthy:
       return StatusColors(
-        background: colors.success.withOpacity(0.1),
+        background: colors.success.withValues(alpha: 0.1),
         foreground: colors.success,
-        border: colors.success.withOpacity(0.3),
+        border: colors.success.withValues(alpha: 0.3),
       );
     case IntegrationHealthStatus.warning:
       return StatusColors(
-        background: colors.warning.withOpacity(0.1),
+        background: colors.warning.withValues(alpha: 0.1),
         foreground: colors.warning,
-        border: colors.warning.withOpacity(0.3),
+        border: colors.warning.withValues(alpha: 0.3),
       );
     case IntegrationHealthStatus.error:
       return StatusColors(
-        background: colors.error.withOpacity(0.1),
+        background: colors.error.withValues(alpha: 0.1),
         foreground: colors.error,
-        border: colors.error.withOpacity(0.3),
+        border: colors.error.withValues(alpha: 0.3),
       );
     case IntegrationHealthStatus.unknown:
       return StatusColors(
-        background: colors.onSurfaceVariant.withOpacity(0.1),
+        background: colors.onSurfaceVariant.withValues(alpha: 0.1),
         foreground: colors.onSurfaceVariant,
-        border: colors.onSurfaceVariant.withOpacity(0.2),
+        border: colors.onSurfaceVariant.withValues(alpha: 0.2),
       );
   }
 }

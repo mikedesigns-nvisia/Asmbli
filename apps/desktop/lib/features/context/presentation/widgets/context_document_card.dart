@@ -73,16 +73,16 @@ class _ContextDocumentCardState extends State<ContextDocumentCard>
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                     border: Border.all(
                       color: _isHovered
-                          ? cardColors.borderColor.withOpacity(0.8)
-                          : cardColors.borderColor.withOpacity(0.3),
+                          ? cardColors.borderColor.withValues(alpha: 0.8)
+                          : cardColors.borderColor.withValues(alpha: 0.3),
                       width: _isHovered ? 2 : 1,
                     ),
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        cardColors.backgroundColor.withOpacity(0.05),
-                        cardColors.backgroundColor.withOpacity(0.02),
+                        cardColors.backgroundColor.withValues(alpha: 0.05),
+                        cardColors.backgroundColor.withValues(alpha: 0.02),
                       ],
                     ),
                   ),
@@ -262,7 +262,7 @@ class _ContextDocumentCardState extends State<ContextDocumentCard>
       case ContextType.examples:
         return colors.success;
       case ContextType.knowledge:
-        return colors.primary.withOpacity(0.8);
+        return colors.primary.withValues(alpha: 0.8);
       case ContextType.custom:
         return colors.onSurfaceVariant;
     }

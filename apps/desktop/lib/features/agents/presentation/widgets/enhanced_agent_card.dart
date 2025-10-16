@@ -78,16 +78,16 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
                     border: Border.all(
                       color: _isHovered 
-                        ? cardColors.borderColor.withOpacity(0.8) 
-                        : cardColors.borderColor.withOpacity(0.3),
+                        ? cardColors.borderColor.withValues(alpha: 0.8) 
+                        : cardColors.borderColor.withValues(alpha: 0.3),
                       width: _isHovered ? 2 : 1,
                     ),
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        cardColors.backgroundColor.withOpacity(0.05),
-                        cardColors.backgroundColor.withOpacity(0.02),
+                        cardColors.backgroundColor.withValues(alpha: 0.05),
+                        cardColors.backgroundColor.withValues(alpha: 0.02),
                       ],
                     ),
                   ),
@@ -100,6 +100,8 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
                       _buildDescription(colors),
                       SizedBox(height: SpacingTokens.xs),
                       _buildCapabilities(colors, cardColors),
+                      SizedBox(height: SpacingTokens.xs),
+                      _buildReasoning(colors, cardColors),
                       Spacer(),
                       _buildFooter(colors),
                     ],
@@ -123,7 +125,7 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
             Container(
               padding: EdgeInsets.all(SpacingTokens.xs),
               decoration: BoxDecoration(
-                color: cardColors.backgroundColor.withOpacity(0.15),
+                color: cardColors.backgroundColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
               ),
               child: Icon(
@@ -301,10 +303,10 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
                 vertical: SpacingTokens.xxs,
               ),
               decoration: BoxDecoration(
-                color: cardColors.accentColor.withOpacity(0.1),
+                color: cardColors.accentColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
                 border: Border.all(
-                  color: cardColors.accentColor.withOpacity(0.3),
+                  color: cardColors.accentColor.withValues(alpha: 0.3),
                 ),
               ),
               child: Text(
@@ -317,6 +319,153 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
             );
           }).toList(),
         ),
+      ],
+    );
+  }
+
+  Widget _buildReasoning(ThemeColors colors, _CardColors cardColors) {
+    // Check if agent has reasoning workflows or configuration
+    final config = widget.agent.configuration;
+    final hasReasoningFlows = config['enableReasoningFlows'] == true;
+    final reasoningWorkflows = config['reasoningWorkflowIds'] as List? ?? [];
+    final defaultWorkflow = config['defaultReasoningWorkflowId'] as String?;
+    
+    // If no reasoning capabilities, don't show this section
+    if (!hasReasoningFlows && reasoningWorkflows.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.psychology_outlined,
+              size: 12,
+              color: colors.onSurfaceVariant,
+            ),
+            SizedBox(width: SpacingTokens.xs),
+            Text(
+              'Reasoning',
+              style: TextStyles.caption.copyWith(
+                color: colors.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: SpacingTokens.xxs),
+        
+        // Show reasoning status and workflows
+        Row(
+          children: [
+            // Reasoning enabled indicator
+            if (hasReasoningFlows) ...[
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: SpacingTokens.xs,
+                  vertical: SpacingTokens.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.success.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
+                  border: Border.all(
+                    color: colors.success.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.check_circle_outline,
+                      size: 10,
+                      color: colors.success,
+                    ),
+                    SizedBox(width: SpacingTokens.xxs),
+                    Text(
+                      'Visual Reasoning',
+                      style: TextStyles.caption.copyWith(
+                        color: colors.success,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (reasoningWorkflows.isNotEmpty) SizedBox(width: SpacingTokens.xs),
+            ],
+            
+            // Workflow count
+            if (reasoningWorkflows.isNotEmpty) ...[
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: SpacingTokens.xs,
+                  vertical: SpacingTokens.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: cardColors.accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
+                  border: Border.all(
+                    color: cardColors.accentColor.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.account_tree,
+                      size: 10,
+                      color: cardColors.accentColor,
+                    ),
+                    SizedBox(width: SpacingTokens.xxs),
+                    Text(
+                      '${reasoningWorkflows.length} workflow${reasoningWorkflows.length == 1 ? '' : 's'}',
+                      style: TextStyles.caption.copyWith(
+                        color: cardColors.accentColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            
+            // Default workflow indicator
+            if (defaultWorkflow != null) ...[
+              SizedBox(width: SpacingTokens.xs),
+              Icon(
+                Icons.star_outline,
+                size: 10,
+                color: colors.warning,
+              ),
+            ],
+          ],
+        ),
+        
+        // If no visual reasoning but might have basic reasoning patterns
+        if (!hasReasoningFlows && reasoningWorkflows.isEmpty) ...[
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: SpacingTokens.xs,
+              vertical: SpacingTokens.xxs,
+            ),
+            decoration: BoxDecoration(
+              color: colors.onSurfaceVariant.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
+              border: Border.all(
+                color: colors.onSurfaceVariant.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Text(
+              'Basic reasoning',
+              style: TextStyles.caption.copyWith(
+                color: colors.onSurfaceVariant,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -348,10 +497,10 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
             vertical: SpacingTokens.xxs,
           ),
           decoration: BoxDecoration(
-            color: _getStatusColor(colors).withOpacity(0.1),
+            color: _getStatusColor(colors).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
             border: Border.all(
-              color: _getStatusColor(colors).withOpacity(0.3),
+              color: _getStatusColor(colors).withValues(alpha: 0.3),
             ),
           ),
           child: Text(
@@ -414,10 +563,10 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
         vertical: SpacingTokens.xxs,
       ),
       decoration: BoxDecoration(
-        color: cardColors.accentColor.withOpacity(0.1),
+        color: cardColors.accentColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
         border: Border.all(
-          color: cardColors.accentColor.withOpacity(0.3),
+          color: cardColors.accentColor.withValues(alpha: 0.3),
         ),
       ),
       child: Text(

@@ -194,7 +194,7 @@ class _AgentMCPInstallDialogState extends ConsumerState<AgentMCPInstallDialog> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: colors.primary.withOpacity(0.1),
+            color: colors.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -298,7 +298,7 @@ class _AgentMCPInstallDialogState extends ConsumerState<AgentMCPInstallDialog> {
                   child: Container(
                     height: 2,
                     color: isCompleted ? colors.success :
-                           colors.border.withOpacity(0.3),
+                           colors.border.withValues(alpha: 0.3),
                     margin: EdgeInsets.symmetric(horizontal: SpacingTokens.xs),
                   ),
                 ),
@@ -393,9 +393,9 @@ class _AgentMCPInstallDialogState extends ConsumerState<AgentMCPInstallDialog> {
             margin: EdgeInsets.only(top: SpacingTokens.md),
             padding: EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: colors.warning.withOpacity(0.1),
+              color: colors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              border: Border.all(color: colors.warning.withOpacity(0.3)),
+              border: Border.all(color: colors.warning.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
@@ -516,9 +516,9 @@ class _AgentMCPInstallDialogState extends ConsumerState<AgentMCPInstallDialog> {
           Container(
             padding: EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: colors.error.withOpacity(0.1),
+              color: colors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              border: Border.all(color: colors.error.withOpacity(0.3)),
+              border: Border.all(color: colors.error.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
@@ -546,7 +546,7 @@ class _AgentMCPInstallDialogState extends ConsumerState<AgentMCPInstallDialog> {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: colors.success.withOpacity(0.1),
+            color: colors.success.withValues(alpha: 0.1),
             shape: BoxShape.circle,
             border: Border.all(color: colors.success, width: 3),
           ),
@@ -574,9 +574,9 @@ class _AgentMCPInstallDialogState extends ConsumerState<AgentMCPInstallDialog> {
         Container(
           padding: EdgeInsets.all(SpacingTokens.md),
           decoration: BoxDecoration(
-            color: colors.success.withOpacity(0.05),
+            color: colors.success.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-            border: Border.all(color: colors.success.withOpacity(0.2)),
+            border: Border.all(color: colors.success.withValues(alpha: 0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -642,9 +642,9 @@ class _AgentMCPInstallDialogState extends ConsumerState<AgentMCPInstallDialog> {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.5),
+        color: colors.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-        border: Border.all(color: colors.border.withOpacity(0.3)),
+        border: Border.all(color: colors.border.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -843,9 +843,9 @@ class _AgentMCPInstallDialogState extends ConsumerState<AgentMCPInstallDialog> {
               width: double.infinity,
               padding: EdgeInsets.all(SpacingTokens.md),
               decoration: BoxDecoration(
-                color: colors.surface.withOpacity(0.5),
+                color: colors.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                border: Border.all(color: colors.border.withOpacity(0.3)),
+                border: Border.all(color: colors.border.withValues(alpha: 0.3)),
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -916,9 +916,9 @@ class _AgentMCPInstallDialogState extends ConsumerState<AgentMCPInstallDialog> {
           Container(
             padding: EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: colors.error.withOpacity(0.1),
+              color: colors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              border: Border.all(color: colors.error.withOpacity(0.3)),
+              border: Border.all(color: colors.error.withValues(alpha: 0.3)),
             ),
             child: Text(
               _installationError!,

@@ -103,13 +103,13 @@ class _HelpTipWidgetState extends State<_HelpTipWidget>
                 borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
                 boxShadow: [
                   BoxShadow(
-                    color: colors.onSurface.withOpacity(0.1),
+                    color: colors.onSurface.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
                 ],
                 border: Border.all(
-                  color: colors.border.withOpacity(0.3),
+                  color: colors.border.withValues(alpha: 0.3),
                   width: 0.5,
                 ),
               ),
@@ -123,7 +123,7 @@ class _HelpTipWidgetState extends State<_HelpTipWidget>
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: colors.primary.withOpacity(0.1),
+                          color: colors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
@@ -375,10 +375,10 @@ class InlineHelp extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: (color ?? colors.primary).withOpacity(0.1),
+        color: (color ?? colors.primary).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
-          color: (color ?? colors.primary).withOpacity(0.3),
+          color: (color ?? colors.primary).withValues(alpha: 0.3),
           width: 0.5,
         ),
       ),
@@ -474,7 +474,7 @@ class _ProgressiveDisclosureState extends State<ProgressiveDisclosure>
               horizontal: SpacingTokens.md,
             ),
             decoration: BoxDecoration(
-              color: colors.surface.withOpacity(0.3),
+              color: colors.surface.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Row(

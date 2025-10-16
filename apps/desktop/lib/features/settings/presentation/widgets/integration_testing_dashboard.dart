@@ -270,7 +270,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? colors.primary.withOpacity(0.1)
+                        ? colors.primary.withValues(alpha: 0.1)
                         : colors.background,
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                     border: Border.all(
@@ -329,7 +329,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
         labelColor: colors.primary,
         unselectedLabelColor: colors.onSurfaceVariant,
         indicator: BoxDecoration(
-          color: colors.primary.withOpacity(0.1),
+          color: colors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
         ),
       ),
@@ -626,7 +626,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
       width: 20,
       height: 20,
       decoration: BoxDecoration(
-        color: colors.primary.withOpacity(0.1),
+        color: colors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Icon(
@@ -644,7 +644,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(3),
       ),
       child: Text(
@@ -684,8 +684,8 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
         borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
         border: Border.all(
           color: test.status == TestStatus.passed
-              ? colors.success.withOpacity(0.3)
-              : colors.error.withOpacity(0.3),
+              ? colors.success.withValues(alpha: 0.3)
+              : colors.error.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -787,7 +787,7 @@ class _IntegrationTestingDashboardState extends ConsumerState<IntegrationTesting
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.sm, vertical: SpacingTokens.xs),
                 decoration: BoxDecoration(
-                  color: _getScoreColor(colors, result.overallScore).withOpacity(0.1),
+                  color: _getScoreColor(colors, result.overallScore).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                 ),
                 child: Text(

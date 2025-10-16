@@ -58,7 +58,7 @@ Map<String, dynamic> _$LogicBlockToJson(LogicBlock instance) =>
       'id': instance.id,
       'type': _$LogicBlockTypeEnumMap[instance.type]!,
       'label': instance.label,
-      'position': instance.position.toJson(),
+      'position': instance.position,
       'properties': instance.properties,
       'mcpToolIds': instance.mcpToolIds,
     };
@@ -72,29 +72,3 @@ const _$LogicBlockTypeEnumMap = {
   LogicBlockType.trace: 'trace',
   LogicBlockType.exit: 'exit',
 };
-
-T $enumDecode<T>(
-  Map<T, Object> enumValues,
-  Object? source, {
-  T? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}

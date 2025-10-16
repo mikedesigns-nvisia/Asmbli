@@ -599,6 +599,54 @@ abstract class ExecutionEvent {
   factory ExecutionEvent.earlyTermination(String executionId, String blockId, String reason) = _EarlyTermination;
 }
 
+/// Execution started event
+class ExecutionStarted extends ExecutionEvent {
+  final String workflowId;
+  ExecutionStarted(String executionId, this.workflowId) : super(executionId, DateTime.now());
+}
+
+/// Execution completed event
+class ExecutionCompleted extends ExecutionEvent {
+  final bool successful;
+  ExecutionCompleted(String executionId, this.successful) : super(executionId, DateTime.now());
+}
+
+/// Execution failed event
+class ExecutionFailed extends ExecutionEvent {
+  final String error;
+  ExecutionFailed(String executionId, this.error) : super(executionId, DateTime.now());
+}
+
+/// Block started event
+class BlockStarted extends ExecutionEvent {
+  final String blockId;
+  final LogicBlockType type;
+  BlockStarted(String executionId, this.blockId, this.type) : super(executionId, DateTime.now());
+}
+
+/// Block completed event
+class BlockCompleted extends ExecutionEvent {
+  final String blockId;
+  final bool successful;
+  final double confidence;
+  BlockCompleted(String executionId, this.blockId, this.successful, this.confidence) : super(executionId, DateTime.now());
+}
+
+/// Block error event
+class BlockError extends ExecutionEvent {
+  final String blockId;
+  final String error;
+  BlockError(String executionId, this.blockId, this.error) : super(executionId, DateTime.now());
+}
+
+/// Early termination event
+class EarlyTermination extends ExecutionEvent {
+  final String blockId;
+  final String reason;
+  EarlyTermination(String executionId, this.blockId, this.reason) : super(executionId, DateTime.now());
+}
+
+// Private implementation classes for factory methods
 class _ExecutionStarted extends ExecutionEvent {
   final String workflowId;
   _ExecutionStarted(String executionId, this.workflowId) : super(executionId, DateTime.now());

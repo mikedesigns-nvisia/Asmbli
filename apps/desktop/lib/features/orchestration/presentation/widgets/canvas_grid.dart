@@ -16,7 +16,7 @@ class CanvasGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = colors.border.withOpacity(0.1)
+      ..color = colors.border.withValues(alpha: 0.1)
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
 
@@ -47,7 +47,7 @@ class CanvasGridPainter extends CustomPainter {
     // Draw origin indicator (slightly thicker lines at 0,0)
     if (size.width > 0 && size.height > 0) {
       final originPaint = Paint()
-        ..color = colors.border.withOpacity(0.3)
+        ..color = colors.border.withValues(alpha: 0.3)
         ..strokeWidth = 1.0
         ..style = PaintingStyle.stroke;
 

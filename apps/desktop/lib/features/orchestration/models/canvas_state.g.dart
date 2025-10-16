@@ -17,7 +17,7 @@ CanvasViewport _$CanvasViewportFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$CanvasViewportToJson(CanvasViewport instance) =>
     <String, dynamic>{
       'zoom': instance.zoom,
-      'offset': instance.offset.toJson(),
+      'offset': instance.offset,
     };
 
 SelectionState _$SelectionStateFromJson(Map<String, dynamic> json) =>
@@ -42,7 +42,8 @@ DragState _$DragStateFromJson(Map<String, dynamic> json) => DragState(
       draggedBlockId: json['draggedBlockId'] as String?,
       dragStartPosition: json['dragStartPosition'] == null
           ? null
-          : Position.fromJson(json['dragStartPosition'] as Map<String, dynamic>),
+          : Position.fromJson(
+              json['dragStartPosition'] as Map<String, dynamic>),
       currentDragPosition: json['currentDragPosition'] == null
           ? null
           : Position.fromJson(
@@ -53,8 +54,8 @@ DragState _$DragStateFromJson(Map<String, dynamic> json) => DragState(
 Map<String, dynamic> _$DragStateToJson(DragState instance) => <String, dynamic>{
       'isDragging': instance.isDragging,
       'draggedBlockId': instance.draggedBlockId,
-      'dragStartPosition': instance.dragStartPosition?.toJson(),
-      'currentDragPosition': instance.currentDragPosition?.toJson(),
+      'dragStartPosition': instance.dragStartPosition,
+      'currentDragPosition': instance.currentDragPosition,
       'dragType': _$DragTypeEnumMap[instance.dragType],
     };
 
@@ -77,13 +78,18 @@ Map<String, dynamic> _$PendingConnectionToJson(PendingConnection instance) =>
     <String, dynamic>{
       'sourceBlockId': instance.sourceBlockId,
       'sourcePin': instance.sourcePin,
-      'currentPosition': instance.currentPosition.toJson(),
+      'currentPosition': instance.currentPosition,
       'type': _$ConnectionTypeEnumMap[instance.type]!,
     };
 
+const _$ConnectionTypeEnumMap = {
+  ConnectionType.execution: 'execution',
+  ConnectionType.data: 'data',
+};
+
 CanvasState _$CanvasStateFromJson(Map<String, dynamic> json) => CanvasState(
-      workflow: ReasoningWorkflow.fromJson(
-          json['workflow'] as Map<String, dynamic>),
+      workflow:
+          ReasoningWorkflow.fromJson(json['workflow'] as Map<String, dynamic>),
       viewport: json['viewport'] == null
           ? const CanvasViewport()
           : CanvasViewport.fromJson(json['viewport'] as Map<String, dynamic>),
@@ -104,23 +110,12 @@ CanvasState _$CanvasStateFromJson(Map<String, dynamic> json) => CanvasState(
 
 Map<String, dynamic> _$CanvasStateToJson(CanvasState instance) =>
     <String, dynamic>{
-      'workflow': instance.workflow.toJson(),
-      'viewport': instance.viewport.toJson(),
-      'selection': instance.selection.toJson(),
-      'dragState': instance.dragState.toJson(),
-      'pendingConnection': instance.pendingConnection?.toJson(),
+      'workflow': instance.workflow,
+      'viewport': instance.viewport,
+      'selection': instance.selection,
+      'dragState': instance.dragState,
+      'pendingConnection': instance.pendingConnection,
       'isGridVisible': instance.isGridVisible,
       'isMinimapVisible': instance.isMinimapVisible,
       'uiState': instance.uiState,
     };
-
-T? $enumDecodeNullable<T>(
-  Map<T, Object> enumValues,
-  Object? source, {
-  T? unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return $enumDecode<T>(enumValues, source, unknownValue: unknownValue);
-}

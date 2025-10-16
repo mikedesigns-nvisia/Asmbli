@@ -10,6 +10,7 @@ import '../widgets/builder_components/master_prompt_editor_component.dart';
 import '../widgets/builder_components/tool_selector_component.dart';
 import '../widgets/builder_components/context_library_component.dart';
 import '../widgets/builder_components/model_config_component.dart';
+import '../widgets/builder_components/reasoning_flows_component.dart';
 import '../widgets/builder_components/testing_panel_component.dart';
 import '../widgets/builder_components/review_component.dart';
 
@@ -41,7 +42,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 7, vsync: this);
+    _tabController = TabController(length: 8, vsync: this);
     _pageController = PageController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -142,7 +143,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.headerPadding),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.8),
+        color: colors.surface.withValues(alpha: 0.8),
         border: Border(bottom: BorderSide(color: colors.border)),
       ),
       child: Row(
@@ -173,11 +174,6 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
 
           const Spacer(),
 
-          // Mode selector
-          _buildModeSelector(builderState, colors),
-
-          const SizedBox(width: SpacingTokens.lg),
-
           // Action buttons
           Row(
             children: [
@@ -204,63 +200,10 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
     );
   }
 
-  Widget _buildModeSelector(AgentBuilderState builderState, ThemeColors colors) {
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-        border: Border.all(color: colors.border),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: AgentBuilderMode.values.map((mode) {
-          final isSelected = builderState.mode == mode;
-          return InkWell(
-            onTap: () => builderState.setMode(mode),
-            borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SpacingTokens.md,
-                vertical: SpacingTokens.sm,
-              ),
-              decoration: BoxDecoration(
-                color: isSelected ? colors.primary.withOpacity(0.1) : null,
-                borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    _getModeIcon(mode),
-                    size: 16,
-                    color: isSelected ? colors.primary : colors.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: SpacingTokens.xs),
-                  Text(
-                    _getModeLabel(mode),
-                    style: TextStyles.bodySmall.copyWith(
-                      color: isSelected ? colors.primary : colors.onSurfaceVariant,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
 
   Widget _buildContent(AgentBuilderState builderState, ThemeColors colors) {
-    switch (builderState.mode) {
-      case AgentBuilderMode.wizard:
-        return _buildWizardMode(builderState, colors);
-      case AgentBuilderMode.dashboard:
-        return _buildDashboardMode(builderState, colors);
-      case AgentBuilderMode.template:
-        return _buildTemplateMode(builderState, colors);
-    }
+    // Always use wizard mode for clean step-by-step experience
+    return _buildWizardMode(builderState, colors);
   }
 
   Widget _buildWizardMode(AgentBuilderState builderState, ThemeColors colors) {
@@ -283,6 +226,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
               ToolSelectorComponent(),
               ContextLibraryComponent(),
               ModelConfigComponent(),
+              ReasoningFlowsComponent(),
               TestingPanelComponent(),
               ReviewComponent(),
             ],
@@ -292,64 +236,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
     );
   }
 
-  Widget _buildDashboardMode(AgentBuilderState builderState, ThemeColors colors) {
-    return Padding(
-      padding: const EdgeInsets.all(SpacingTokens.lg),
-      child: Row(
-        children: [
-          // Left column
-          Expanded(
-            flex: 2,
-            child: Column(
-              children: [
-                Expanded(child: BasicInfoComponent()),
-                const SizedBox(height: SpacingTokens.lg),
-                Expanded(child: MasterPromptEditorComponent()),
-              ],
-            ),
-          ),
 
-          const SizedBox(width: SpacingTokens.lg),
-
-          // Middle column
-          Expanded(
-            flex: 2,
-            child: Column(
-              children: [
-                Expanded(child: ToolSelectorComponent()),
-                const SizedBox(height: SpacingTokens.lg),
-                Expanded(child: ContextLibraryComponent()),
-              ],
-            ),
-          ),
-
-          const SizedBox(width: SpacingTokens.lg),
-
-          // Right column
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: [
-                Expanded(child: ModelConfigComponent()),
-                const SizedBox(height: SpacingTokens.lg),
-                Expanded(child: TestingPanelComponent()),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTemplateMode(AgentBuilderState builderState, ThemeColors colors) {
-    // TODO: Implement template selection mode
-    return Center(
-      child: Text(
-        'Template Mode - Coming Soon',
-        style: TextStyles.titleLarge.copyWith(color: colors.onSurfaceVariant),
-      ),
-    );
-  }
 
   Widget _buildStepIndicator(AgentBuilderState builderState, ThemeColors colors) {
     return Container(
@@ -373,10 +260,10 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
                 ),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? colors.primary.withOpacity(0.1)
+                      ? colors.primary.withValues(alpha: 0.1)
                       : isCompleted
-                          ? colors.accent.withOpacity(0.1)
-                          : colors.surface.withOpacity(0.5),
+                          ? colors.accent.withValues(alpha: 0.1)
+                          : colors.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   border: Border.all(
                     color: isActive
@@ -428,14 +315,12 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
   }
 
   Widget _buildFooter(AgentBuilderState builderState, ThemeColors colors) {
-    if (builderState.mode != AgentBuilderMode.wizard) {
-      return const SizedBox.shrink();
-    }
+    // Always show footer since we're always in wizard mode
 
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.8),
+        color: colors.surface.withValues(alpha: 0.8),
         border: Border(top: BorderSide(color: colors.border)),
       ),
       child: Row(
@@ -472,21 +357,6 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
   }
 
   // Helper Methods
-  IconData _getModeIcon(AgentBuilderMode mode) {
-    switch (mode) {
-      case AgentBuilderMode.wizard: return Icons.assistant;
-      case AgentBuilderMode.dashboard: return Icons.dashboard;
-      case AgentBuilderMode.template: return Icons.library_books;
-    }
-  }
-
-  String _getModeLabel(AgentBuilderMode mode) {
-    switch (mode) {
-      case AgentBuilderMode.wizard: return 'Wizard';
-      case AgentBuilderMode.dashboard: return 'Dashboard';
-      case AgentBuilderMode.template: return 'Template';
-    }
-  }
 
   IconData _getStepIcon(AgentBuilderStep step) {
     switch (step) {
@@ -495,6 +365,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
       case AgentBuilderStep.tools: return Icons.extension;
       case AgentBuilderStep.context: return Icons.library_books;
       case AgentBuilderStep.modelConfig: return Icons.settings;
+      case AgentBuilderStep.reasoningFlows: return Icons.account_tree;
       case AgentBuilderStep.testing: return Icons.science;
       case AgentBuilderStep.review: return Icons.preview;
     }
@@ -507,6 +378,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
       case AgentBuilderStep.tools: return 'Tools';
       case AgentBuilderStep.context: return 'Context';
       case AgentBuilderStep.modelConfig: return 'Model';
+      case AgentBuilderStep.reasoningFlows: return 'Reasoning';
       case AgentBuilderStep.testing: return 'Testing';
       case AgentBuilderStep.review: return 'Review';
     }

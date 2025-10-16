@@ -105,6 +105,10 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
           
           // MCP Tools section
           _buildMcpToolsSection(colors, block),
+          const SizedBox(height: SpacingTokens.md),
+          
+          // Evaluation & Quality Gates section
+          _buildEvaluationSection(colors, block),
         ],
       ),
     );
@@ -114,10 +118,10 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: _getBlockColor(block.type).withOpacity(0.1),
+        color: _getBlockColor(block.type).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: _getBlockColor(block.type).withOpacity(0.3),
+          color: _getBlockColor(block.type).withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -182,6 +186,7 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
               child: _buildTextField(
                 label: 'X Position',
                 value: block.position.x.round().toString(),
+                onChanged: (_) {}, // Read-only, no action needed
                 readOnly: true,
                 colors: colors,
               ),
@@ -191,6 +196,7 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
               child: _buildTextField(
                 label: 'Y Position',
                 value: block.position.y.round().toString(),
+                onChanged: (_) {}, // Read-only, no action needed
                 readOnly: true,
                 colors: colors,
               ),
@@ -648,7 +654,7 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
           Icon(
             Icons.touch_app,
             size: 48,
-            color: colors.onSurfaceVariant.withOpacity(0.5),
+            color: colors.onSurfaceVariant.withValues(alpha: 0.5),
           ),
           const SizedBox(height: SpacingTokens.md),
           Text(
@@ -689,9 +695,7 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
         updatedAt: DateTime.now(),
       );
       
-      ref.read(canvasProvider.notifier).state = ref.read(canvasProvider).copyWith(
-        workflow: updatedWorkflow,
-      );
+      ref.read(canvasProvider.notifier).loadWorkflow(updatedWorkflow);
     } else {
       // Update block properties
       final updatedProperties = Map<String, dynamic>.from(block.properties);
@@ -768,4 +772,227 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
         return 'Evaluate completion and quality';
     }
   }
+
+  Widget _buildEvaluationSection(ThemeColors colors, LogicBlock block) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.verified, size: 16, color: colors.primary),
+            const SizedBox(width: SpacingTokens.xs),
+            Text(
+              'Quality & Evaluation',
+              style: TextStyles.bodyMedium.copyWith(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: SpacingTokens.sm),
+        
+        // Confidence Threshold
+        _buildSliderField(
+          label: 'Confidence Threshold',
+          value: 0.8, // Default value, would come from block properties
+          min: 0.0,
+          max: 1.0,
+          divisions: 20,
+          onChanged: (value) => _updateBlockProperty(block.id, 'confidenceThreshold', value),
+          colors: colors,
+        ),
+        
+        // Quality Gates
+        _buildQualityGatesConfig(colors, block),
+        
+        // Validation Rules
+        _buildValidationRulesConfig(colors, block),
+        
+        // Recovery Strategy
+        _buildRecoveryStrategyConfig(colors, block),
+      ],
+    );
+  }
+
+  Widget _buildSliderField({
+    required String label,
+    required double value,
+    required double min,
+    required double max,
+    required int divisions,
+    required ValueChanged<double> onChanged,
+    required ThemeColors colors,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyles.bodySmall.copyWith(color: colors.onSurface),
+            ),
+            Text(
+              '${(value * 100).toStringAsFixed(0)}%',
+              style: TextStyles.bodySmall.copyWith(
+                color: colors.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: SpacingTokens.xs),
+        Slider(
+          value: value,
+          min: min,
+          max: max,
+          divisions: divisions,
+          onChanged: onChanged,
+          activeColor: colors.primary,
+          inactiveColor: colors.primary.withValues(alpha: 0.3),
+        ),
+        const SizedBox(height: SpacingTokens.sm),
+      ],
+    );
+  }
+
+  Widget _buildQualityGatesConfig(ThemeColors colors, LogicBlock block) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Quality Gates',
+          style: TextStyles.bodySmall.copyWith(
+            color: colors.onSurface,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.xs),
+        
+        _buildCheckboxOption(
+          'Validate output format',
+          true, // Would come from block properties
+          (value) => _updateBlockProperty(block.id, 'validateFormat', value),
+          colors,
+        ),
+        
+        _buildCheckboxOption(
+          'Check for hallucinations',
+          true,
+          (value) => _updateBlockProperty(block.id, 'checkHallucinations', value),
+          colors,
+        ),
+        
+        _buildCheckboxOption(
+          'Verify citations',
+          false,
+          (value) => _updateBlockProperty(block.id, 'verifyCitations', value),
+          colors,
+        ),
+        
+        _buildCheckboxOption(
+          'Toxicity filter',
+          true,
+          (value) => _updateBlockProperty(block.id, 'toxicityFilter', value),
+          colors,
+        ),
+        
+        const SizedBox(height: SpacingTokens.sm),
+      ],
+    );
+  }
+
+  Widget _buildValidationRulesConfig(ThemeColors colors, LogicBlock block) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Validation Rules',
+          style: TextStyles.bodySmall.copyWith(
+            color: colors.onSurface,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.xs),
+        
+        _buildTextField(
+          label: 'Custom Validation Script',
+          value: '', // Would come from block properties
+          onChanged: (value) => _updateBlockProperty(block.id, 'validationScript', value),
+          colors: colors,
+          maxLines: 3,
+        ),
+        
+        const SizedBox(height: SpacingTokens.sm),
+      ],
+    );
+  }
+
+  Widget _buildRecoveryStrategyConfig(ThemeColors colors, LogicBlock block) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recovery Strategy',
+          style: TextStyles.bodySmall.copyWith(
+            color: colors.onSurface,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.xs),
+        
+        _buildDropdownField(
+          label: 'On Failure',
+          value: 'retry', // Would come from block properties
+          options: const [
+            ('retry', 'Retry with backoff'),
+            ('fallback', 'Use fallback block'),
+            ('degrade', 'Degrade gracefully'),
+            ('escalate', 'Escalate to user'),
+            ('fail', 'Fail immediately'),
+          ],
+          onChanged: (value) => _updateBlockProperty(block.id, 'recoveryStrategy', value),
+          colors: colors,
+        ),
+        
+        _buildTextField(
+          label: 'Max Retry Attempts',
+          value: '3',
+          onChanged: (value) => _updateBlockProperty(block.id, 'maxRetries', int.tryParse(value) ?? 3),
+          colors: colors,
+          keyboardType: TextInputType.number,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCheckboxOption(
+    String label,
+    bool value,
+    ValueChanged<bool> onChanged,
+    ThemeColors colors,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
+      child: Row(
+        children: [
+          Checkbox(
+            value: value,
+            onChanged: (newValue) => onChanged(newValue ?? false),
+            activeColor: colors.primary,
+          ),
+          const SizedBox(width: SpacingTokens.xs),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyles.bodySmall.copyWith(color: colors.onSurface),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

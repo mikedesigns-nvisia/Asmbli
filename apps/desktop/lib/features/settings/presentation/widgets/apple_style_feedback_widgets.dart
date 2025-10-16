@@ -121,12 +121,12 @@ class _AppleStyleButtonState extends State<AppleStyleButton>
               ),
               decoration: BoxDecoration(
                 color: _isPressed 
-                    ? (widget.pressedColor ?? colors.primary.withOpacity(0.8))
+                    ? (widget.pressedColor ?? colors.primary.withValues(alpha: 0.8))
                     : (widget.backgroundColor ?? colors.primary),
                 borderRadius: widget.borderRadius ?? BorderRadius.circular(BorderRadiusTokens.lg),
                 boxShadow: _isPressed ? [] : [
                   BoxShadow(
-                    color: colors.primary.withOpacity(0.3),
+                    color: colors.primary.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -582,15 +582,15 @@ class _AppleStyleCardState extends State<AppleStyleCard>
               child: Container(
                 padding: widget.padding ?? EdgeInsets.all(SpacingTokens.lg),
                 decoration: BoxDecoration(
-                  color: widget.backgroundColor ?? colors.surface.withOpacity(0.6),
+                  color: widget.backgroundColor ?? colors.surface.withValues(alpha: 0.6),
                   borderRadius: widget.borderRadius ?? BorderRadius.circular(BorderRadiusTokens.lg),
                   border: Border.all(
-                    color: colors.border.withOpacity(0.3),
+                    color: colors.border.withValues(alpha: 0.3),
                     width: 0.5,
                   ),
                   boxShadow: _isPressed ? [] : [
                     BoxShadow(
-                      color: colors.onSurface.withOpacity(0.05),
+                      color: colors.onSurface.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),

@@ -193,7 +193,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
               Container(
                 padding: EdgeInsets.all(SpacingTokens.lg),
                 decoration: BoxDecoration(
-                  color: colors.surface.withOpacity(0.3),
+                  color: colors.surface.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                   border: Border.all(color: colors.border),
                 ),
@@ -256,10 +256,10 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.md),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.3),
+        color: colors.surface.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(
-          color: isConfigured ? colors.primary.withOpacity(0.3) : colors.border,
+          color: isConfigured ? colors.primary.withValues(alpha: 0.3) : colors.border,
         ),
       ),
       child: Row(
@@ -267,7 +267,7 @@ class _MCPSelectionStepState extends ConsumerState<MCPSelectionStep> {
           Container(
             padding: EdgeInsets.all(SpacingTokens.sm),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
             ),
             child: Icon(

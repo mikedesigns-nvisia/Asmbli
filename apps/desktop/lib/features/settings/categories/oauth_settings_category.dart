@@ -186,7 +186,7 @@ class _OAuthSettingsCategoryState extends ConsumerState<OAuthSettingsCategory> {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: _getProviderColor(provider).withOpacity(0.1),
+                    color: _getProviderColor(provider).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
                   ),
                   child: Icon(
@@ -282,7 +282,7 @@ class _OAuthSettingsCategoryState extends ConsumerState<OAuthSettingsCategory> {
           child: Container(
             padding: const EdgeInsets.all(SpacingTokens.md),
             decoration: BoxDecoration(
-              color: colors.surface.withOpacity(0.5),
+              color: colors.surface.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
               border: Border.all(color: colors.border),
             ),

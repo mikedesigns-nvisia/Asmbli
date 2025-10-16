@@ -178,9 +178,9 @@ class _OAuthSecurityPanelState extends ConsumerState<OAuthSecurityPanel> {
     return Container(
       padding: EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [

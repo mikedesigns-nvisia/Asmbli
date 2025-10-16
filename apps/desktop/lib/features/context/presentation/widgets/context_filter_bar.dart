@@ -30,14 +30,14 @@ class ContextFilterBar extends StatelessWidget {
  decoration: InputDecoration(
  hintText: 'Search documents...',
  hintStyle: TextStyles.bodyMedium.copyWith(
- color: colors.onSurfaceVariant.withOpacity(0.6),
+ color: colors.onSurfaceVariant.withValues(alpha: 0.6),
  ),
  prefixIcon: Icon(
  Icons.search,
  color: colors.onSurfaceVariant,
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withOpacity(0.3),
+ fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  borderSide: BorderSide(color: colors.border),
@@ -72,7 +72,7 @@ class ContextFilterBar extends StatelessWidget {
  color: colors.onSurfaceVariant,
  ),
  filled: true,
- fillColor: colors.surfaceVariant.withOpacity(0.3),
+ fillColor: colors.surfaceVariant.withValues(alpha: 0.3),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
  borderSide: BorderSide(color: colors.border),

@@ -13,6 +13,12 @@ import '../../models/model_config.dart';
 /// Handles macOS-specific installation paths, permissions, and security features
 class MacOSOllamaService extends OllamaService {
   final MacOSServiceProvider _macOSService;
+  
+  // Initialization tracking
+  bool _isInitialized = false;
+  Completer<void>? _initializationCompleter;
+  String? _ollamaBinaryPath;
+  Process? _ollamaProcess;
 
   // macOS-specific paths where Ollama might be installed
   static const List<String> _macOSOllamaPaths = [
@@ -223,6 +229,12 @@ class MacOSOllamaService extends OllamaService {
       debugPrint('❌ Failed to start Ollama process: $e');
       return false;
     }
+  }
+
+  /// Wait for Ollama to start up
+  Future<void> _waitForStartup() async {
+    // Simple startup delay - in a production app you might ping the Ollama API
+    await Future.delayed(const Duration(seconds: 2));
   }
 
   /// Check execute permissions for a file

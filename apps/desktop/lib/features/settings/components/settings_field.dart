@@ -126,7 +126,7 @@ class SettingsField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyles.bodyMedium.copyWith(
-            color: colors.onSurfaceVariant.withOpacity(0.6),
+            color: colors.onSurfaceVariant.withValues(alpha: 0.6),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(SpacingTokens.md),
@@ -194,7 +194,7 @@ class SettingsToggle extends StatelessWidget {
     
     return Container(
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.5),
+        color: colors.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
         border: Border.all(color: colors.border),
       ),

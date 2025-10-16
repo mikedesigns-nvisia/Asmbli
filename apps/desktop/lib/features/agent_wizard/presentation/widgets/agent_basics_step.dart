@@ -186,7 +186,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
                     padding: const EdgeInsets.all(SpacingTokens.md),
                     decoration: BoxDecoration(
                       color: isSelected 
-                          ? ThemeColors(context).primary.withOpacity(0.1)
+                          ? ThemeColors(context).primary.withValues(alpha: 0.1)
                           : ThemeColors(context).surface,
                       borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
                       border: Border.all(
@@ -344,7 +344,7 @@ class _AgentBasicsStepState extends State<AgentBasicsStep> {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyles.bodyMedium.copyWith(
-              color: ThemeColors(context).onSurfaceVariant.withOpacity(0.6),
+              color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.6),
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusTokens.md),

@@ -31,7 +31,7 @@ class _ConversationInputState extends ConsumerState<ConversationInput> {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.lg),
       decoration: BoxDecoration(
-        color: ThemeColors(context).surface.withOpacity(0.8),
+        color: ThemeColors(context).surface.withValues(alpha: 0.8),
         border: Border(
           top: BorderSide(
             color: ThemeColors(context).border,

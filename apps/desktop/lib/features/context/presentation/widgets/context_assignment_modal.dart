@@ -141,7 +141,7 @@ class _ContextAssignmentModalState extends ConsumerState<ContextAssignmentModal>
  Icon(
  Icons.library_books_outlined,
  size: 48,
- color: ColorTokens.foregroundVariant.withOpacity(0.5),
+ color: ColorTokens.foregroundVariant.withValues(alpha: 0.5),
  ),
  const SizedBox(height: SpacingTokens.md),
  Text(
