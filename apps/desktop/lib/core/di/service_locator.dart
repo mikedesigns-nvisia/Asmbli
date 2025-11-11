@@ -8,6 +8,7 @@ import '../services/desktop/desktop_agent_service.dart';
 import '../services/desktop/desktop_conversation_service.dart';
 import '../services/desktop/desktop_storage_service.dart';
 import '../services/desktop/desktop_service_provider.dart';
+import '../services/canvas_local_server.dart';
 import '../services/llm/unified_llm_service.dart';
 import '../services/mcp_bridge_service.dart';
 import '../services/context_mcp_resource_service.dart';
@@ -164,6 +165,9 @@ class ServiceLocator {
     // Register data layer services
     registerSingleton<AgentService>(DesktopAgentService());
     registerSingleton<ConversationService>(DesktopConversationService());
+    
+    // Register canvas services
+    registerSingleton<CanvasLocalServer>(CanvasLocalServer());
     
     // Register orchestration services
     final workflowPersistence = WorkflowPersistenceService.instance;

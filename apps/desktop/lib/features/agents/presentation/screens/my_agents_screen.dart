@@ -19,7 +19,7 @@ class MyAgentsScreen extends ConsumerStatefulWidget {
 }
 
 class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
- int selectedTab = 0; // 0 = My Agents, 1 = Agent Library
+ int selectedTab = 0; // 0 = My AI Team, 1 = Hire AI Employee
  String searchQuery = '';
  String selectedCategory = 'All';
  String agentSearchQuery = '';
@@ -47,6 +47,15 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['brave-search', 'memory', 'filesystem'],
  exampleUse: 'Find recent papers on quantum computing with proper citations',
  popularity: 95,
+ reasoningFlow: ReasoningFlow.hierarchical,
+ taskOutline: [
+   'Parse research query and identify key concepts',
+   'Search academic databases for relevant papers',
+   'Evaluate source credibility and relevance',
+   'Extract key findings and methodologies',
+   'Format citations according to style guide',
+   'Synthesize findings into coherent summary'
+ ],
  ),
  AgentTemplate(
  name: 'Code Reviewer',
@@ -57,6 +66,15 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['github', 'git', 'filesystem', 'memory'],
  exampleUse: 'Review React components for security vulnerabilities',
  popularity: 87,
+ reasoningFlow: ReasoningFlow.parallel,
+ taskOutline: [
+   'Parse code structure and dependencies',
+   'Run security vulnerability scans',
+   'Check coding standards compliance',
+   'Analyze performance implications',
+   'Generate detailed feedback report',
+   'Suggest specific improvements'
+ ],
  ),
  AgentTemplate(
  name: 'Content Writer',
@@ -67,6 +85,15 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['brave-search', 'web-fetch', 'memory', 'filesystem'],
  exampleUse: 'Create engaging blog posts about sustainable technology',
  popularity: 92,
+ reasoningFlow: ReasoningFlow.iterative,
+ taskOutline: [
+   'Analyze topic and target keywords',
+   'Research current trends and competitor content',
+   'Generate initial content outline',
+   'Write draft with SEO optimization',
+   'Review and refine for tone consistency',
+   'Finalize with meta descriptions and tags'
+ ],
  ),
  AgentTemplate(
  name: 'Data Analyst',
@@ -564,9 +591,80 @@ _buildCompactHeaderWithTabs(),
  );
  }
 
+ Widget _buildAIEmployeeHeroSection() {
+ return Container(
+ padding: const EdgeInsets.all(SpacingTokens.xl),
+ child: Column(
+ children: [
+ // Main headline
+ Text(
+ 'Agent Templates',
+ style: TextStyles.pageTitle.copyWith(
+ color: ThemeColors(context).onSurface,
+ fontSize: 32,
+ fontWeight: FontWeight.bold,
+ ),
+ textAlign: TextAlign.center,
+ ),
+ 
+ const SizedBox(height: SpacingTokens.md),
+ 
+ // Subtitle
+ Text(
+ 'Pre-configured agent templates for common workflows and tasks.',
+ style: TextStyles.bodyLarge.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ textAlign: TextAlign.center,
+ ),
+ 
+ const SizedBox(height: SpacingTokens.xl),
+ 
+ // Quick stats row
+ Row(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ _buildStatCard('${templates.length}', 'Available'),
+ const SizedBox(width: SpacingTokens.xl),
+ _buildStatCard('${categories.length - 1}', 'Categories'),
+ const SizedBox(width: SpacingTokens.xl),
+ _buildStatCard('Ready', 'To Deploy'),
+ ],
+ ),
+ ],
+ ),
+ );
+ }
+
+ Widget _buildStatCard(String number, String label) {
+ return Column(
+ children: [
+ Text(
+ number,
+ style: TextStyles.pageTitle.copyWith(
+ color: ThemeColors(context).primary,
+ fontSize: 24,
+ fontWeight: FontWeight.bold,
+ ),
+ ),
+ Text(
+ label,
+ style: TextStyles.bodySmall.copyWith(
+ color: ThemeColors(context).onSurfaceVariant,
+ ),
+ ),
+ ],
+ );
+ }
+
  Widget _buildAgentLibraryContent() {
  return Column(
  children: [
+ // Hero section for AI Employees
+ _buildAIEmployeeHeroSection(),
+ 
+ const SizedBox(height: SpacingTokens.xl),
+ 
  // Search and Filter Section - Responsive Layout
  LayoutBuilder(
  builder: (context, constraints) {
@@ -605,8 +703,8 @@ _buildCompactHeaderWithTabs(),
  
  // Filter Chips
  Wrap(
- spacing: SpacingTokens.xs,
- runSpacing: SpacingTokens.xs,
+ spacing: SpacingTokens.sm,
+ runSpacing: SpacingTokens.sm,
  children: _buildFilterChips(),
  ),
  ],
@@ -648,8 +746,8 @@ _buildCompactHeaderWithTabs(),
  Expanded(
  flex: 3,
  child: Wrap(
- spacing: SpacingTokens.xs,
- runSpacing: SpacingTokens.xs,
+ spacing: SpacingTokens.sm,
+ runSpacing: SpacingTokens.sm,
  children: _buildFilterChips(),
  ),
  ),
@@ -674,7 +772,7 @@ _buildCompactHeaderWithTabs(),
  itemBuilder: (context, index) {
  return EnhancedAgentTemplateCard(
  template: filteredTemplates[index],
- onUseTemplate: () => _useTemplate(filteredTemplates[index]),
+ onUseTemplate: () => _createFromTemplate(filteredTemplates[index]),
  onPreview: () => _previewTemplate(filteredTemplates[index]),
  );
  },
@@ -684,7 +782,7 @@ _buildCompactHeaderWithTabs(),
  );
  }
 
- void _useTemplate(AgentTemplate template) async {
+ void _createFromTemplate(AgentTemplate template) async {
    final colors = ThemeColors(context);
    
    try {
@@ -1029,10 +1127,10 @@ _buildCompactHeaderWithTabs(),
                  ),
                  SizedBox(width: SpacingTokens.sm),
                  AsmblButton.primary(
-                   text: template.isComingSoon ? 'Coming Soon' : 'Use Template',
+                   text: template.isComingSoon ? 'Coming Soon' : 'Create Agent',
                    onPressed: template.isComingSoon ? null : () {
                      Navigator.of(context).pop();
-                     _useTemplate(template);
+                     _createFromTemplate(template);
                    },
                  ),
                ],
@@ -1527,13 +1625,13 @@ This template gives you a starting point - modify it to create your perfect AI a
                    children: [
                      const Spacer(),
                      _TabButton(
-                       text: 'My Agents',
+                       text: 'My AI Team',
                        isSelected: selectedTab == 0,
                        onTap: () => setState(() => selectedTab = 0),
                      ),
                      const SizedBox(width: SpacingTokens.sm),
                      _TabButton(
-                       text: 'Agent Library',
+                       text: 'Agent Templates',
                        isSelected: selectedTab == 1,
                        onTap: () => setState(() => selectedTab = 1),
                      ),

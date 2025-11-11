@@ -7,6 +7,7 @@ export 'tokens/theme_colors.dart';
 export 'components/asmbli_card.dart';
 export 'components/asmbli_button.dart';
 export 'components/header_button.dart';
+export 'components/dropdown_header_button.dart';
 export 'components/app_navigation_bar.dart';
 export 'components/asmbli_dropdown.dart';
 export 'components/unified_mcp_server_card.dart';

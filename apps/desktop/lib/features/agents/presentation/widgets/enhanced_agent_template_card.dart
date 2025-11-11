@@ -92,6 +92,8 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
                       SizedBox(height: SpacingTokens.xs),
                       _buildDescription(colors),
                       SizedBox(height: SpacingTokens.xs),
+                      _buildReasoningFlow(colors, cardColors),
+                      SizedBox(height: SpacingTokens.xs),
                       _buildTags(colors, cardColors),
                       SizedBox(height: SpacingTokens.xs),
                       _buildMCPServers(colors, cardColors),
@@ -297,13 +299,13 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
             ],
           ),
         ),
-        // Use template button
-        _buildUseButton(colors, cardColors),
+        // Hire button
+        _buildHireButton(colors, cardColors),
       ],
     );
   }
 
-  Widget _buildUseButton(ThemeColors colors, _CardColors cardColors) {
+  Widget _buildHireButton(ThemeColors colors, _CardColors cardColors) {
     if (widget.template.isComingSoon) {
       return Container(
         padding: EdgeInsets.symmetric(
@@ -346,7 +348,7 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
             ),
             SizedBox(width: SpacingTokens.xs),
             Text(
-              'Use Template',
+              'Create',
               style: TextStyles.caption.copyWith(
                 color: cardColors.accentColor,
                 fontWeight: FontWeight.w500,
@@ -502,7 +504,7 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
                         }
                       },
                       icon: Icon(Icons.add_circle_outline),
-                      label: Text('Use Template'),
+                      label: Text('Create Agent'),
                     ),
                 ],
               ),
@@ -563,6 +565,42 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
       borderColor: baseColor,
       iconColor: baseColor,
       accentColor: baseColor,
+    );
+  }
+
+  Widget _buildReasoningFlow(ThemeColors colors, _CardColors cardColors) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: SpacingTokens.sm,
+        vertical: SpacingTokens.xs,
+      ),
+      decoration: BoxDecoration(
+        color: cardColors.backgroundColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(
+          color: cardColors.borderColor.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            widget.template.reasoningFlow.icon,
+            style: TextStyle(
+              fontSize: 12,
+              color: cardColors.iconColor,
+            ),
+          ),
+          SizedBox(width: SpacingTokens.xs),
+          Text(
+            widget.template.reasoningFlow.name,
+            style: TextStyles.caption.copyWith(
+              color: cardColors.iconColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

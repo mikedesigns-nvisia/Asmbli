@@ -50,6 +50,10 @@ dependencies:
   # Network & HTTP
   http: ^1.1.0
   
+  # WebView
+  webview_flutter: ^4.4.4
+  webview_flutter_platform_interface: ^2.10.0
+  
   # JSON & Serialization
   json_annotation: ^4.8.1
   
@@ -89,6 +93,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/canvas/
 
 msix_config:
   display_name: AgentEngine

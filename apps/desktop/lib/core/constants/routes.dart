@@ -19,10 +19,13 @@ class AppRoutes {
  static const String integrations = '/integrations';
  static const String integrationHub = '/integration-hub';
  static const String marketplace = '/marketplace';
+ static const String canvas = '/canvas';
  
- // Demo routes (remove after video recording)
+ // Demo routes
  static const String demoChat = '/demo-chat';
- static const String reasoningDemo = '/reasoning-demo';
+ static const String demoOnboarding = '/demo-onboarding';
+ static const String demoUnified = '/demo-unified';
+ static const String controlledOnboarding = '/controlled-onboarding';
  
  // Route names for easier identification
  static const Map<String, String> routeNames = {
@@ -41,8 +44,11 @@ class AppRoutes {
  integrations: 'Add Integrations',
  integrationHub: 'Integration Hub',
  marketplace: 'Marketplace',
- demoChat: 'Demo Chat', // Remove after video
- reasoningDemo: 'Reasoning Demo', // Remove after video
+ canvas: 'Visual Canvas',
+ demoChat: 'Demo Chat',
+ demoOnboarding: 'Demo Showcase',
+ demoUnified: 'Unified Demo',
+ controlledOnboarding: 'Agent Configuration',
  };
  
  // Helper method to get route name
@@ -67,7 +73,10 @@ class AppRoutes {
  integrations,
  integrationHub,
  marketplace,
- demoChat, // Remove after video
- reasoningDemo, // Remove after video
+ canvas,
+ demoChat,
+ demoOnboarding,
+ demoUnified,
+ controlledOnboarding,
  ];
 }

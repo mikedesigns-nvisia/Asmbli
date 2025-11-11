@@ -62,6 +62,19 @@ class DemoModeService {
           targetAudience: 'Engineers and Technical Leaders',
           demoScript: TechnicalDemoScript(),
         );
+      
+      case DemoScenario.canvasDemo:
+        return DemoConfiguration(
+          title: 'AI Design Agent + Canvas Demo',
+          duration: Duration(minutes: 10),
+          keyFeatures: [
+            'Conversational UI design',
+            'Real-time canvas integration',
+            'Live code generation',
+          ],
+          targetAudience: 'Designers and Product Teams',
+          demoScript: CanvasDemoScript(),
+        );
     }
   }
 
@@ -110,6 +123,8 @@ class DemoModeService {
         return EnterpriseDemoData();
       case DemoScenario.technicalDemo:
         return TechnicalDemoData();
+      case DemoScenario.canvasDemo:
+        return CanvasDemoData();
     }
   }
 }
@@ -118,7 +133,8 @@ class DemoModeService {
 enum DemoScenario {
   vcDemo,
   enterpriseDemo,
-  technicalDemo;
+  technicalDemo,
+  canvasDemo;
 
   static DemoScenario fromString(String value) {
     switch (value.toLowerCase()) {
@@ -134,6 +150,10 @@ enum DemoScenario {
       case 'technical':
       case 'engineering':
         return DemoScenario.technicalDemo;
+      case 'canvas_demo':
+      case 'canvas':
+      case 'design':
+        return DemoScenario.canvasDemo;
       default:
         return DemoScenario.vcDemo;
     }
@@ -422,6 +442,110 @@ class TechnicalDemoData extends DemoData {
         'ollama_confidence_estimation': '2.3s avg',
         'api_execution': '15.7s avg',
         'accuracy': '91.3%',
+      },
+    };
+  }
+}
+
+/// Canvas demo script focusing on AI-driven design
+class CanvasDemoScript extends DemoScript {
+  @override
+  List<String> getTalkingPoints(String phase) {
+    switch (phase) {
+      case 'intro':
+        return [
+          'Traditional UI design requires specialized tools and expertise',
+          'Designers and developers often work in isolation',
+          'Converting designs to code is time-intensive and error-prone',
+        ];
+      
+      case 'conversation_demo':
+        return [
+          'Watch as we describe a design idea in natural language',
+          'AI understands design intent and Material 3 principles',
+          'Real-time canvas creation with proper spacing and components',
+        ];
+      
+      case 'live_canvas':
+        return [
+          'Elements appear instantly in the live canvas',
+          'Proper Material 3 design tokens automatically applied',
+          'Interactive preview with working form elements',
+        ];
+      
+      case 'code_generation':
+        return [
+          'One-click export to production Flutter code',
+          'Includes proper component structure and styling',
+          'Integrates with existing design systems',
+        ];
+      
+      case 'design_systems':
+        return [
+          'AI applies design system constraints automatically',
+          'Consistent spacing, colors, and typography',
+          'Multiple design system support (Material 3, custom)',
+        ];
+      
+      case 'mic_drop':
+        return [
+          'First conversational interface for UI design',
+          'Real-time collaboration between designers and AI',
+          'From idea to production code in seconds',
+          'Democratizes UI design for non-designers',
+        ];
+      
+      default:
+        return [];
+    }
+  }
+
+  @override
+  Map<String, dynamic> getPhaseData(String phase) {
+    return {};
+  }
+}
+
+/// Canvas demo specific data
+class CanvasDemoData extends DemoData {
+  @override
+  Map<String, dynamic> getDocuments() {
+    return {
+      'design_brief': {
+        'title': 'Mobile Banking App Redesign',
+        'type': 'design_specification',
+        'requirements': [
+          'Material 3 design language',
+          'Accessibility compliance',
+          'Mobile-first responsive design',
+        ],
+      },
+    };
+  }
+
+  @override
+  Map<String, dynamic> getWorkflows() {
+    return {
+      'design_creation': {
+        'steps': ['conversation', 'canvas_generation', 'code_export'],
+        'ai_confidence': 0.92,
+        'design_system': 'Material 3',
+      },
+    };
+  }
+
+  @override
+  Map<String, dynamic> getConfidenceData() {
+    return {
+      'design_accuracy': {
+        'layout_structure': 0.94,
+        'design_system_compliance': 0.91,
+        'accessibility_score': 0.88,
+      },
+      'generation_speed': {
+        'average_time_to_canvas': '3.2s',
+        'code_export_time': '1.8s',
+        'total_design_cycle': '5.0s',
       },
     };
   }

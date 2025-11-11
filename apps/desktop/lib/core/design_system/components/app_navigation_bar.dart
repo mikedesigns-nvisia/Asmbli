@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../tokens/spacing_tokens.dart';
 import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
-import 'header_button.dart';
+import 'dropdown_header_button.dart';
 import 'asmbli_button.dart';
 import '../../constants/routes.dart';
 import '../../../providers/conversation_provider.dart';
@@ -57,61 +57,80 @@ class AppNavigationBar extends ConsumerWidget {
  ),
  const SizedBox(width: SpacingTokens.xxl),
  
- // Navigation Buttons
- HeaderButton(
+ // Navigation Dropdowns
+ DropdownHeaderButton(
+ text: 'Workspace',
+ icon: Icons.work_outline,
+ isActive: _isWorkspaceRoute(currentRoute),
+ items: [
+ DropdownItem(
  text: 'Chat',
  icon: Icons.chat_bubble_outline,
- onPressed: () => context.go(AppRoutes.chat),
+ onTap: () => context.go(AppRoutes.chat),
  isActive: currentRoute == AppRoutes.chat,
+ ),
+ DropdownItem(
+ text: 'My Agents',
+ icon: Icons.smart_toy,
+ onTap: () => context.go(AppRoutes.agents),
+ isActive: currentRoute == AppRoutes.agents,
+ ),
+ DropdownItem(
+ text: 'Canvas',
+ icon: Icons.palette,
+ onTap: () => context.go(AppRoutes.canvas),
+ isActive: currentRoute == AppRoutes.canvas,
+ ),
+ ],
  ),
  const SizedBox(width: SpacingTokens.lg),
 
- HeaderButton(
- text: 'My Agents',
- icon: Icons.smart_toy,
- onPressed: () => context.go(AppRoutes.agents),
- isActive: currentRoute == AppRoutes.agents,
- ),
- const SizedBox(width: SpacingTokens.lg),
- 
- HeaderButton(
+ DropdownHeaderButton(
+ text: 'Development',
+ icon: Icons.developer_mode,
+ isActive: _isDevelopmentRoute(currentRoute),
+ items: [
+ DropdownItem(
  text: 'Context',
  icon: Icons.library_books,
- onPressed: () => context.go(AppRoutes.context),
+ onTap: () => context.go(AppRoutes.context),
  isActive: currentRoute == AppRoutes.context,
  ),
- const SizedBox(width: SpacingTokens.lg),
- 
- HeaderButton(
+ DropdownItem(
  text: 'Tools',
  icon: Icons.extension,
- onPressed: () => context.go(AppRoutes.integrationHub),
+ onTap: () => context.go(AppRoutes.integrationHub),
  isActive: currentRoute == AppRoutes.integrationHub,
  ),
- const SizedBox(width: SpacingTokens.lg),
- 
- HeaderButton(
+ DropdownItem(
  text: 'Reasoning Flows',
  icon: Icons.account_tree,
- onPressed: () => context.go(AppRoutes.orchestration),
+ onTap: () => context.go(AppRoutes.orchestration),
  isActive: currentRoute == AppRoutes.orchestration,
  ),
- const SizedBox(width: SpacingTokens.lg),
- 
- HeaderButton(
+ DropdownItem(
  text: 'Settings',
  icon: Icons.settings,
- onPressed: () => context.go(AppRoutes.settings),
+ onTap: () => context.go(AppRoutes.settings),
  isActive: currentRoute == AppRoutes.settings,
+ ),
+ ],
  ),
  const SizedBox(width: SpacingTokens.lg),
  
- // Temporary Reasoning Demo button (remove after demos)
- HeaderButton(
- text: 'Reasoning Demo',
- icon: Icons.psychology,
- onPressed: () => context.go(AppRoutes.reasoningDemo),
- isActive: currentRoute == AppRoutes.reasoningDemo,
+ // Demo showcase
+ DropdownHeaderButton(
+ text: 'Demos',
+ icon: Icons.play_circle_outline,
+ isActive: _isDemoRoute(currentRoute),
+ items: [
+ DropdownItem(
+ text: 'Demo Showcase',
+ icon: Icons.auto_awesome,
+ onTap: () => context.go(AppRoutes.demoOnboarding),
+ isActive: currentRoute == AppRoutes.demoOnboarding,
+ ),
+ ],
  ),
  
  // Spacer to push New Chat button to the right
@@ -128,6 +147,10 @@ class AppNavigationBar extends ConsumerWidget {
  ),
  ),
  );
+ }
+
+ bool _isDemoRoute(String route) {
+ return route == AppRoutes.demoOnboarding;
  }
  
  Future<void> _startNewChat(BuildContext context, WidgetRef ref) async {
@@ -169,5 +192,18 @@ class AppNavigationBar extends ConsumerWidget {
        );
      }
    }
+ }
+
+ bool _isWorkspaceRoute(String route) {
+   return route == AppRoutes.chat ||
+       route == AppRoutes.agents ||
+       route == AppRoutes.canvas;
+ }
+
+ bool _isDevelopmentRoute(String route) {
+   return route == AppRoutes.context ||
+       route == AppRoutes.integrationHub ||
+       route == AppRoutes.orchestration ||
+       route == AppRoutes.settings;
  }
 }

@@ -38,7 +38,10 @@ import 'core/services/feature_flag_service.dart';
 import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
 import 'features/tools/presentation/screens/tools_screen.dart';
 import 'features/chat/presentation/demo/contextual_context_demo.dart';
-import 'demo/scenarios/complete_vc_demo.dart';
+import 'features/canvas/presentation/canvas_screen.dart';
+import 'demo/demo_onboarding.dart';
+import 'demo/unified_showcase_demo.dart';
+import 'demo/components/controlled_onboarding_flow.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/services/desktop/hive_cleanup_service.dart';
 import 'core/error/app_error_handler.dart';
@@ -359,10 +362,36 @@ final _router = GoRouter(
  path: '/contextual-context-demo',
  builder: (context, state) => const ContextualContextDemo(),
  ),
- // Reasoning Demo
+ // Demo Routes
  GoRoute(
- path: AppRoutes.reasoningDemo,
- builder: (context, state) => const CompleteVCDemo(),
+ path: AppRoutes.demoOnboarding,
+ builder: (context, state) => const DemoOnboarding(),
+ ),
+ GoRoute(
+ path: AppRoutes.demoUnified,
+ builder: (context, state) {
+   final agentTypeParam = state.uri.queryParameters['agentType'];
+   final agentType = agentTypeParam != null ? int.tryParse(agentTypeParam) : null;
+   return UnifiedShowcaseDemo(selectedAgentType: agentType);
+ },
+ ),
+ GoRoute(
+ path: AppRoutes.controlledOnboarding,
+ builder: (context, state) {
+  final agentTypeParam = state.uri.queryParameters['agentType'];
+  final agentType = agentTypeParam != null ? int.tryParse(agentTypeParam) : 0;
+  
+  return ControlledOnboardingFlow(
+    selectedAgentType: agentType,
+   onComplete: (data) {
+     context.go('${AppRoutes.demoUnified}?agentType=$agentType');
+   },
+ );
+},
+),
+ GoRoute(
+ path: AppRoutes.canvas,
+ builder: (context, state) => const CanvasScreen(),
  ),
  GoRoute(
  path: AppRoutes.settings,

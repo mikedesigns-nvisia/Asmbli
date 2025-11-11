@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/design_system/design_system.dart';
 import 'services/demo_mode_service.dart';
-import 'scenarios/vc_demo_scenario.dart';
+import 'demo_onboarding.dart';
 
 /// Main demo application that routes to appropriate demo scenario
 class DemoApp extends StatefulWidget {
@@ -61,16 +61,8 @@ class _DemoAppState extends State<DemoApp> {
   }
 
   Widget _buildDemoScenario() {
-    switch (_demoService.demoScenario) {
-      case DemoScenario.vcDemo:
-        return const VCDemoScenario();
-      
-      case DemoScenario.enterpriseDemo:
-        return _buildPlaceholderDemo('Enterprise Demo');
-      
-      case DemoScenario.technicalDemo:
-        return _buildPlaceholderDemo('Technical Demo');
-    }
+    // Start with onboarding for agent selection
+    return const DemoOnboarding();
   }
 
   Widget _buildPlaceholderDemo(String title) {
@@ -192,13 +184,24 @@ class DemoSelector extends StatelessWidget {
                       
                       _buildDemoCard(
                         context,
-                        'Technical Demo',
-                        '15 minutes',
-                        'Architecture deep-dive, implementation details',
-                        'Under the hood for engineers',
-                        Icons.code,
+                        'Agent Platform Demo',
+                        '10 minutes',
+                        'AI employees in action, chat interface, orchestration',
+                        'Motion-like capabilities with user ownership',
+                        Icons.hub,
                         colors,
                         DemoScenario.technicalDemo,
+                      ),
+                      
+                      _buildDemoCard(
+                        context,
+                        'AI Design Agent + Canvas',
+                        '10 minutes',
+                        'Conversational UI design, real-time canvas, code generation',
+                        'From conversation to live code in seconds',
+                        Icons.palette,
+                        colors,
+                        DemoScenario.canvasDemo,
                       ),
                     ],
                   ),
@@ -206,7 +209,7 @@ class DemoSelector extends StatelessWidget {
                 
                 const SizedBox(height: SpacingTokens.lg),
                 Text(
-                  'To run a specific demo:\nflutter run --dart-define=DEMO_MODE=true --dart-define=DEMO_SCENARIO=vc_demo',
+                  'To run a specific demo:\nflutter run --dart-define=DEMO_MODE=true --dart-define=DEMO_SCENARIO=technical_demo',
                   style: TextStyles.bodyMedium.copyWith(
                     color: colors.onSurfaceVariant,
                     fontFamily: 'Courier',

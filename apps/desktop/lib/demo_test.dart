@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'demo/components/confidence_microscopy_widget.dart';
+import 'demo/components/confidence_indicator.dart';
 
 void main() {
   runApp(const DemoTestApp());

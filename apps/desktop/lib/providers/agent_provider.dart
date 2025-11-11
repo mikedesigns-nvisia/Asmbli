@@ -73,11 +73,11 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
       final result = await _agentBusinessService.createAgent(
         name: agent.name,
         description: agent.description,
-        capabilities: [], // capabilities: agent.capabilities, // Not available in base Agent class
-        modelId: '', // modelId: agent.modelId, // Not available in base Agent class
-        mcpServers: _getMCPServersFromMetadata(agent),
-        contextDocs: _getContextDocsFromMetadata(agent),
-        configuration: {}, // agent.metadata not available in base Agent class
+        capabilities: agent.capabilities,
+        modelId: agent.configuration['modelId'] as String? ?? '',
+        mcpServers: agent.configuration['selectedTools'] as List<String>? ?? [],
+        contextDocs: agent.configuration['contextDocuments'] as List<String>? ?? [],
+        configuration: agent.configuration,
       );
       
       if (result.isSuccess) {
@@ -97,11 +97,11 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
         agent: agent,
         name: agent.name,
         description: agent.description,
-        capabilities: [], // capabilities: agent.capabilities, // Not available in base Agent class
-        modelId: '', // modelId: agent.modelId, // Not available in base Agent class
-        mcpServers: _getMCPServersFromMetadata(agent),
-        contextDocs: _getContextDocsFromMetadata(agent),
-        configuration: {}, // agent.metadata not available in base Agent class
+        capabilities: agent.capabilities,
+        modelId: agent.configuration['modelId'] as String? ?? '',
+        mcpServers: agent.configuration['selectedTools'] as List<String>? ?? [],
+        contextDocs: agent.configuration['contextDocuments'] as List<String>? ?? [],
+        configuration: agent.configuration,
       );
       
       if (result.isSuccess) {
@@ -169,8 +169,7 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
 
   // Helper methods to extract metadata
   List<String> _getMCPServersFromMetadata(Agent agent) {
-    // agent.metadata not available in base Agent class
-    final mcpServers = null; // agent.metadata?['mcpServers'];
+    final mcpServers = agent.configuration['selectedTools'];
     if (mcpServers is List) {
       return List<String>.from(mcpServers);
     }
@@ -178,8 +177,7 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
   }
 
   List<String> _getContextDocsFromMetadata(Agent agent) {
-    // agent.metadata not available in base Agent class
-    final contextDocs = null; // agent.metadata?['contextDocuments'];
+    final contextDocs = agent.configuration['contextDocuments'];
     if (contextDocs is List) {
       return List<String>.from(contextDocs);
     }
@@ -343,9 +341,11 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
           agent: updatedAgent,
           name: updatedAgent.name,
           description: updatedAgent.description,
-          capabilities: [],
-          modelId: '',
-          configuration: updatedConfig ?? {},
+          capabilities: updatedAgent.capabilities,
+          modelId: updatedAgent.configuration['modelId'] as String? ?? '',
+          mcpServers: updatedAgent.configuration['selectedTools'] as List<String>? ?? [],
+          contextDocs: updatedAgent.configuration['contextDocuments'] as List<String>? ?? [],
+          configuration: updatedConfig,
         );
         if (!updateResult.isSuccess) {
           print('Failed to update agent: ${updateResult.error}');

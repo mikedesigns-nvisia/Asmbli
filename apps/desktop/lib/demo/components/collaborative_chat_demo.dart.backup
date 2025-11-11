@@ -1,0 +1,2805 @@
+import 'package:flutter/material.dart';
+import 'dart:async';
+import '../../core/design_system/design_system.dart';
+import '../models/demo_models.dart';
+import 'inline_collaboration_controls.dart';
+
+/// Chat-focused demo showing realistic AI collaboration
+class CollaborativeChatDemo extends StatefulWidget {
+  final String scenario;
+  final Function(HumanIntervention)? onInterventionNeeded;
+
+  const CollaborativeChatDemo({
+    super.key,
+    required this.scenario,
+    this.onInterventionNeeded,
+  });
+
+  @override
+  State<CollaborativeChatDemo> createState() => CollaborativeChatDemoState();
+}
+
+class CollaborativeChatDemoState extends State<CollaborativeChatDemo>
+    with TickerProviderStateMixin {
+  late AnimationController _typingController;
+  late AnimationController _gradientController;
+  late ScrollController _scrollController;
+  
+  List<ChatMessage> _messages = [];
+  bool _isTyping = false;
+  bool _showConfidenceInspector = false; // Kept for compatibility but not displayed
+  ConfidenceTree? _currentConfidenceTree; // Kept for compatibility but not displayed
+  String? _pendingUserResponse;
+  Set<int> _expandedReasoningMessages = {};
+  bool _taskSuccessAchieved = false;
+  bool _demoStarted = false;
+  String _previewMessage = '';
+  final TextEditingController _previewController = TextEditingController();
+  
+  @override
+  void initState() {
+    super.initState();
+    try {
+      _typingController = AnimationController(
+        duration: const Duration(milliseconds: 1500),
+        vsync: this,
+      )..repeat();
+      
+      _gradientController = AnimationController(
+        duration: const Duration(milliseconds: 2000),
+        vsync: this,
+      )..repeat(reverse: true);
+      
+      _scrollController = ScrollController();
+      
+      // Initialize preview message based on scenario
+      _initializePreviewMessage();
+      
+      // Don't auto-start anymore - wait for user trigger
+    } catch (e) {
+      print('Demo initialization error: $e');
+    }
+  }
+
+  void _initializePreviewMessage() {
+    switch (widget.scenario) {
+      case 'loan_analysis':
+        _previewMessage = "Hi, I need help analyzing a loan application. The applicant is Sarah Chen, 34, software engineer at Google making \$145k annually. She's applying for a \$320k home loan. She mentioned having some student loans and a car payment but good credit history.";
+        break;
+      case 'investment_analysis':
+        _previewMessage = "I need help analyzing this startup pitch deck for a potential investment. Can you walk me through the key factors?";
+        break;
+      case 'document_review':
+        _previewMessage = "I need help analyzing our mobile app PRD and backend integration SOW. Can you review the scope, timeline feasibility, and help me plan the next steps for this project?";
+        break;
+      case 'infrastructure_monitoring':
+        _previewMessage = "🚨 High CPU alert on production server cluster. Database connections are spiking and I see some failed deployments in GitHub. Can you help me investigate and resolve this?";
+        break;
+      default:
+        _previewMessage = "Hello! I need help with analyzing some data.";
+    }
+    _previewController.text = _previewMessage;
+  }
+
+  void _startDemoWithMessage(String message) {
+    print('🚀 Starting demo with scenario: ${widget.scenario}');
+    setState(() {
+      _demoStarted = true;
+      _messages.add(ChatMessage(
+        content: message,
+        isUser: true,
+        timestamp: DateTime.now(),
+      ));
+    });
+    
+    // Start the demo conversation
+    _startDemoConversation();
+  }
+
+  void _startDemoConversation() async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      if (!mounted) return;
+      
+      switch (widget.scenario) {
+        case 'loan_analysis':
+          await _runLoanAnalysisDemo();
+          break;
+        case 'investment_analysis':
+          await _runInvestmentAnalysisDemo();
+          break;
+        case 'document_review':
+          await _runDocumentReviewDemo();
+          break;
+        case 'market_research':
+          await _runMarketResearchDemo();
+          break;
+        case 'infrastructure_monitoring':
+          await _runInfrastructureDemo();
+          break;
+        default:
+          // Show error message for unknown scenario
+          await _addMessage(ChatMessage(
+            content: "Unknown demo scenario: '${widget.scenario}'. Please select a valid demo from the navigation menu.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "System",
+            isSystemMessage: true,
+          ));
+      }
+    } catch (e) {
+      print('Demo error: $e');
+      if (mounted) {
+        await _addMessage(ChatMessage(
+          content: "Demo encountered an issue but I'm still here to help! Try refreshing the page.",
+          isUser: false,
+          timestamp: DateTime.now(),
+          agentName: "System",
+          isSystemMessage: true,
+        ));
+      }
+    }
+  }
+
+  Future<void> _runLoanAnalysisDemo() async {
+    // Message already added by _startDemoWithMessage
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "I'll help you analyze Sarah's loan application systematically. Let me extract the key details and run a comprehensive analysis.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Loan Analysis AI",
+    ));
+
+    // Add collaboration control showing active agents
+    await Future.delayed(const Duration(milliseconds: 800));
+    await _addMessage(ChatMessage(
+      content: "",
+      isUser: false,
+      timestamp: DateTime.now(),
+      isCollaboration: true,
+      collaborationType: 'thinking',
+      collaborationData: {
+        'agent': 'Loan Officer',
+        'task': 'Analyzing application structure and requirements',
+      },
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "Parsing application details... Found: Applicant (Sarah Chen, 34), Income (\$145k), Employer (Google), Requested amount (\$320k), Purpose (Home loan).",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Application Parser",
+      reasoningSteps: [
+        ReasoningStep(
+          step: "1. Text Analysis",
+          description: "Extracted structured data from natural language input: name, age, occupation, income, loan amount, and purpose.",
+          confidence: 0.98,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 245),
+        ),
+        ReasoningStep(
+          step: "2. Data Validation",
+          description: "Verified data consistency and completeness. All required fields present with reasonable values.",
+          confidence: 0.95,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 156),
+        ),
+        ReasoningStep(
+          step: "3. Classification",
+          description: "Categorized as residential home loan based on amount (\$320k) and context clues.",
+          confidence: 0.92,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 89),
+        ),
+      ],
+    ));
+
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "✅ **Income Analysis Complete (92% confidence)**\n\n• Annual Income: \$145,000\n• Employment: Stable (Google - major tech company)\n• Debt-to-Income estimate needed for final assessment",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Income Analyzer",
+      confidence: 0.92,
+    ));
+
+    await _simulateTyping();
+    // Show agent handoff
+    await Future.delayed(const Duration(milliseconds: 600));
+    await _addMessage(ChatMessage(
+      content: "",
+      isUser: false,
+      timestamp: DateTime.now(),
+      isCollaboration: true,
+      collaborationType: 'handoff',
+      collaborationData: {
+        'from': 'Income Analyzer',
+        'to': 'Credit Risk Assessor',
+        'reason': 'Income verification complete, proceeding to credit analysis',
+      },
+    ));
+
+    await _addMessage(ChatMessage(
+      content: "Now analyzing credit risk and existing debt obligations. I need to be careful here since debt details were mentioned but not specific.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Credit Risk Assessor",
+      reasoningSteps: [
+        ReasoningStep(
+          step: "1. Risk Assessment",
+          description: "Identified uncertainty: student loans and car payment mentioned without specific amounts. This affects DTI calculation accuracy.",
+          confidence: 0.72,
+          model: "GPT-4o",
+          processingTime: Duration(milliseconds: 312),
+        ),
+        ReasoningStep(
+          step: "2. Employment Verification",
+          description: "Google employment is highly stable (Fortune 500, tech sector). Strong positive indicator for creditworthiness.",
+          confidence: 0.94,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 178),
+        ),
+        ReasoningStep(
+          step: "3. Income Analysis",
+          description: "\$145k income suggests good repayment capacity, but need debt specifics for final assessment.",
+          confidence: 0.78,
+          model: "Claude 4 Haiku",
+          processingTime: Duration(milliseconds: 145),
+        ),
+      ],
+    ));
+
+    // Show agent consensus before uncertainty
+    await Future.delayed(const Duration(milliseconds: 800));
+    await _addMessage(ChatMessage(
+      content: "",
+      isUser: false,
+      timestamp: DateTime.now(),
+      isCollaboration: true,
+      collaborationType: 'consensus',
+      collaborationData: {
+        'confidence': '87',
+        'agents': '3',
+      },
+    ));
+
+    // Trigger uncertainty about debt details
+    await _triggerLoanUncertainty();
+  }
+
+  Future<void> _runInvestmentAnalysisDemo() async {
+    // Message already added by _startDemoWithMessage
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "I'd be happy to help analyze this pitch deck! Let me break down the key investment factors systematically.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Investment Analyst",
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "I'll examine: Business model, market opportunity, financial projections, team, and competitive positioning. Let me start with the business model...",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Investment Analyst",
+      reasoningSteps: [
+        ReasoningStep(
+          step: "1. Framework Selection",
+          description: "Applied standard VC due diligence framework: Business model → Market → Financials → Team → Competition.",
+          confidence: 0.96,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 189),
+        ),
+        ReasoningStep(
+          step: "2. Priority Assessment",
+          description: "Business model analysis prioritized first as it determines revenue sustainability and scalability potential.",
+          confidence: 0.91,
+          model: "GPT-4o",
+          processingTime: Duration(milliseconds: 234),
+        ),
+        ReasoningStep(
+          step: "3. Risk Identification",
+          description: "Early-stage analysis requires careful validation of assumptions and market claims.",
+          confidence: 0.88,
+          model: "Claude 4 Haiku",
+          processingTime: Duration(milliseconds: 167),
+        ),
+      ],
+    ));
+
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "✅ **Business Model Analysis Complete (94% confidence)**\n\nSolid B2B SaaS model with recurring revenue. Clear value proposition for enterprise customers.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Business Model Analyst",
+      confidence: 0.94,
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "Now analyzing market opportunity and competitive landscape. This requires careful validation of market size claims.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Market Analyst",
+      reasoningSteps: [
+        ReasoningStep(
+          step: "1. Market Size Validation",
+          description: "Cross-referencing claimed TAM of \$50B with industry reports. Finding inconsistencies in methodology.",
+          confidence: 0.72,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 312),
+        ),
+        ReasoningStep(
+          step: "2. Competitive Analysis",
+          description: "Identified 15 direct competitors, 3 with significant market share. Differentiation claims need verification.",
+          confidence: 0.68,
+          model: "GPT-4o",
+          processingTime: Duration(milliseconds: 278),
+        ),
+        ReasoningStep(
+          step: "3. Go-to-Market Assessment",
+          description: "Customer acquisition strategy appears optimistic. Conversion rate assumptions may be high.",
+          confidence: 0.64,
+          model: "Claude 4 Haiku",
+          processingTime: Duration(milliseconds: 189),
+        ),
+      ],
+    ));
+
+    // Trigger uncertainty
+    await _triggerUncertaintyScenario();
+  }
+
+  Future<void> _runDocumentReviewDemo() async {
+    // Message already added by _startDemoWithMessage
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "I'll help you analyze this project comprehensively. Let me start by extracting the key requirements and scope from your PRD and SOW documents.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Project Analysis AI",
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "Analyzing project requirements... Found: Mobile app with 15 core features, backend API integration, 3-month timeline, team of 6 developers.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Requirements Analyzer",
+      reasoningSteps: [
+        ReasoningStep(
+          step: "1. Scope Extraction",
+          description: "Parsed PRD to identify 15 core features: user auth, profile management, real-time messaging, push notifications, offline sync, etc.",
+          confidence: 0.96,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 298),
+        ),
+        ReasoningStep(
+          step: "2. Technical Analysis",
+          description: "Identified backend integration requirements: REST APIs, WebSocket connections, database design, third-party services.",
+          confidence: 0.92,
+          model: "GPT-4o",
+          processingTime: Duration(milliseconds: 234),
+        ),
+        ReasoningStep(
+          step: "3. Resource Assessment",
+          description: "Team composition: 2 frontend, 2 backend, 1 mobile, 1 QA engineer. Skills align with requirements.",
+          confidence: 0.89,
+          model: "Claude 4 Haiku",
+          processingTime: Duration(milliseconds: 156),
+        ),
+      ],
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "✅ **Timeline Analysis Complete (88% confidence)**\n\n• 3-month timeline is aggressive but feasible\n• Critical path identified: backend API development → mobile integration → testing\n• Recommend 2-week buffer for integration testing",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Timeline Validator",
+      confidence: 0.88,
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "⚠️ **Resource Concern Detected**\n\nThe SOW shows overlapping backend and mobile development phases, but we only have 1 mobile developer for 15 features. This could create a bottleneck. Should I suggest timeline adjustments or additional resources?",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Resource Assessor",
+      isUncertainty: true,
+      confidence: 0.72,
+    ));
+
+    // This would trigger human intervention for project planning decisions
+    await _triggerProjectPlanningIntervention();
+  }
+
+  Future<void> _runMarketResearchDemo() async {
+    // Message already added by _startDemoWithMessage
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "Let me analyze the AI productivity tools market across several dimensions...",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Market Researcher",
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "Analyzing market segments: writing assistants, code copilots, meeting tools, and workflow automation.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Market Segment Analyzer",
+      reasoningSteps: [
+        ReasoningStep(
+          step: "1. Market Segmentation",
+          description: "Identified 4 key segments: writing assistants (\$2.1B), code copilots (\$1.8B), meeting tools (\$900M), workflow automation (\$3.2B).",
+          confidence: 0.91,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 267),
+        ),
+        ReasoningStep(
+          step: "2. Competition Mapping",
+          description: "Mapped 47 competitors across segments. High concentration in writing tools, emerging opportunities in workflow automation.",
+          confidence: 0.86,
+          model: "GPT-4o",
+          processingTime: Duration(milliseconds: 334),
+        ),
+        ReasoningStep(
+          step: "3. Growth Trend Analysis",
+          description: "Code copilots showing 340% YoY growth, meeting tools plateauing. Workflow automation has highest potential.",
+          confidence: 0.79,
+          model: "Claude 4 Haiku",
+          processingTime: Duration(milliseconds: 198),
+        ),
+      ],
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "✅ **Market Segmentation Complete (92% confidence)**\n\nIdentified 4 major categories with 50+ key players.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Market Researcher",
+      confidence: 0.92,
+    ));
+
+    await _triggerMarketUncertainty();
+  }
+
+  Future<void> _runInfrastructureDemo() async {
+    // Message already added by _startDemoWithMessage
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "I'll immediately analyze the alert using our integrated monitoring tools. Let me check system metrics, database connections, and recent GitHub deployments.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Alert Response AI",
+    ));
+
+    // Show active monitoring agents
+    await Future.delayed(const Duration(milliseconds: 600));
+    await _addMessage(ChatMessage(
+      content: "",
+      isUser: false,
+      timestamp: DateTime.now(),
+      isCollaboration: true,
+      collaborationType: 'thinking',
+      collaborationData: {
+        'agent': 'Infrastructure Monitor',
+        'task': 'Analyzing system alerts and performance metrics',
+      },
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "Connecting to database MCP tool and GitHub MCP tool for comprehensive analysis...",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "MCP Integration Manager",
+      reasoningSteps: [
+        ReasoningStep(
+          step: "1. Database MCP Connection",
+          description: "Connected to PostgreSQL cluster via Database MCP. Found 847 active connections (limit: 900). Connection pool exhaustion imminent.",
+          confidence: 0.98,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 234),
+        ),
+        ReasoningStep(
+          step: "2. GitHub MCP Analysis",
+          description: "Via GitHub MCP: Latest deployment (commit a7f3b2c) deployed service-auth v2.1.4 with new JWT caching 38 minutes ago.",
+          confidence: 0.96,
+          model: "GPT-4o",
+          processingTime: Duration(milliseconds: 189),
+        ),
+        ReasoningStep(
+          step: "3. Correlation Detection",
+          description: "Timeline correlation: CPU spikes started 35 minutes ago, 3 minutes after deployment. Strong causal relationship detected.",
+          confidence: 0.92,
+          model: "Claude 4 Haiku",
+          processingTime: Duration(milliseconds: 167),
+        ),
+      ],
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "📊 **Database Analysis via MCP** (Database Tool Connected)\n\n• Connection pool: 847/900 (94% utilization)\n• Slow queries: 23 queries >5s execution time\n• Lock contention detected on user_sessions table",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Database Monitor",
+      confidence: 0.94,
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "🔍 **GitHub Deployment Analysis via MCP** (GitHub Tool Connected)\n\n• Recent deploy: service-auth v2.1.4 (38 min ago)\n• Commit: a7f3b2c - 'Optimize JWT token caching for performance'\n• Deploy status: SUCCESS\n• Previous version: v2.1.3 (stable for 2 weeks)",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "GitHub Integration Agent",
+      confidence: 0.97,
+      reasoningSteps: [
+        ReasoningStep(
+          step: "1. Deployment History Analysis",
+          description: "Retrieved last 10 deployments via GitHub API. v2.1.4 introduced new Redis caching layer for JWT tokens.",
+          confidence: 0.95,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 278),
+        ),
+        ReasoningStep(
+          step: "2. Code Change Impact",
+          description: "Analyzed diff: new JWT caching creates connection pool per service instance instead of shared pool.",
+          confidence: 0.89,
+          model: "GPT-4o",
+          processingTime: Duration(milliseconds: 312),
+        ),
+      ],
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "⚠️ **Critical Issue Identified**\n\nThe new JWT caching in service-auth v2.1.4 is creating individual database connection pools per service instance instead of using the shared pool. With 15 service instances, we're consuming 15x normal connections.\n\nThis explains the CPU spikes - the database is struggling with connection overhead and our application is retrying failed connections.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Root Cause Analyzer",
+      confidence: 0.76,
+      reasoningSteps: [
+        ReasoningStep(
+          step: "1. Connection Pool Analysis",
+          description: "Discovered each service instance creates its own 60-connection pool instead of sharing. 15 instances × 60 = 900 connections (at limit).",
+          confidence: 0.89,
+          model: "Claude 4.5 Sonnet",
+          processingTime: Duration(milliseconds: 245),
+        ),
+        ReasoningStep(
+          step: "2. Impact Assessment",
+          description: "Connection exhaustion causes 500ms+ response times, triggering application retries and amplifying CPU usage.",
+          confidence: 0.81,
+          model: "GPT-4o",
+          processingTime: Duration(milliseconds: 198),
+        ),
+        ReasoningStep(
+          step: "3. Timeline Correlation",
+          description: "Issue started 3 minutes post-deployment at 14:23. 95% confidence this deployment caused the problem.",
+          confidence: 0.95,
+          model: "Claude 4 Haiku",
+          processingTime: Duration(milliseconds: 156),
+        ),
+      ],
+    ));
+
+    // Show intervention opportunity
+    await Future.delayed(const Duration(milliseconds: 1000));
+    await _addMessage(ChatMessage(
+      content: "",
+      isUser: false,
+      timestamp: DateTime.now(),
+      isCollaboration: true,
+      collaborationType: 'intervention',
+      collaborationData: {
+        'question': 'Critical infrastructure issue identified. Multiple resolution approaches available. Human input needed to choose the best strategy based on risk tolerance.',
+      },
+    ));
+
+    // Trigger intervention callback to show persistent AI panel
+    if (widget.onInterventionNeeded != null) {
+      widget.onInterventionNeeded!(HumanIntervention(
+        reason: 'Critical infrastructure issue identified',
+        confidence: 0.35, // Low confidence triggers intervention
+        context: {
+          'scenario': 'infrastructure_monitoring',
+          'question': 'Multiple resolution approaches available. Human input needed to choose the best strategy based on risk tolerance.',
+        },
+      ));
+    }
+
+    // Wait for user acknowledgment before presenting options
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
+
+    await _addMessage(ChatMessage(
+      content: "That makes perfect sense! The deployment timing matches exactly. What are our options to fix this quickly?",
+      isUser: true,
+      timestamp: DateTime.now(),
+    ));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "I have 3 immediate resolution options. Given the critical nature, I recommend option 1 for fastest recovery:\n\n1. **Immediate Rollback** (2 minutes) - Revert to v2.1.3\n2. **Emergency Patch** (15 minutes) - Fix connection pooling in current version\n3. **Database Scaling** (30 minutes) - Increase connection limits\n\nWhich approach would you prefer?",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Resolution Planner",
+      isUncertainty: true,
+      confidence: 0.91,
+    ));
+
+    await _triggerInfrastructureUncertainty();
+  }
+
+  Future<void> _triggerProjectPlanningIntervention() async {
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Project Feasibility Analysis',
+          confidence: 0.68,
+          children: [
+            ConfidenceNode(
+              label: 'Technical Requirements Assessment',
+              confidence: 0.94,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Timeline Feasibility',
+              confidence: 0.88,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Resource Allocation Risk',
+              confidence: 0.32, // Very low - triggers intervention
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Mobile development bottleneck detected - need PM decision',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+
+    await _addMessage(ChatMessage(
+      content: "🤔 **Human Input Needed**\n\nI've identified a potential resource bottleneck. How would you like to proceed:\n\n1. Extend timeline by 4 weeks to reduce mobile dev pressure?\n2. Hire additional mobile developer?\n3. Reduce scope by deferring 5 lower-priority features?\n\nWhat's your preference?",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Next Steps Planner",
+      isUncertainty: true,
+    ));
+
+    setState(() {
+      _pendingUserResponse = "project_planning_decision";
+    });
+  }
+
+  Future<void> _triggerDocumentUncertainty() async {
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Contract Review Analysis',
+          confidence: 0.64,
+          children: [
+            ConfidenceNode(
+              label: 'Standard Terms Assessment',
+              confidence: 0.91,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Liability Clause Interpretation',
+              confidence: 0.28, // Very low - triggers intervention
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Unclear liability language detected',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    await _addMessage(ChatMessage(
+      content: "⚠️ **Legal Uncertainty Detected**\n\nThe liability clause contains ambiguous language:\n\n\"Party shall not be liable for any damages arising from use.\"\n\nThis could be interpreted multiple ways. Should this apply to gross negligence?",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Legal Reviewer",
+      isUncertainty: true,
+      confidence: 0.28,
+    ));
+
+    setState(() {
+      _pendingUserResponse = 'liability_interpretation';
+    });
+  }
+
+  Future<void> _triggerMarketUncertainty() async {
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Market Analysis',
+          confidence: 0.58,
+          children: [
+            ConfidenceNode(
+              label: 'Market Sizing',
+              confidence: 0.89,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Competitive Pricing Analysis',
+              confidence: 0.31, // Very low - triggers intervention
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Inconsistent pricing data across sources',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    await _addMessage(ChatMessage(
+      content: "⚠️ **Pricing Data Conflict**\n\nI found inconsistent pricing information:\n• Company websites: \$29-199/month\n• Industry reports: \$50-300/month\n• User surveys: \$15-150/month\n\nWhich source should I prioritize for competitive analysis?",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Market Researcher",
+      isUncertainty: true,
+      confidence: 0.31,
+    ));
+
+    setState(() {
+      _pendingUserResponse = 'pricing_data_conflict';
+    });
+  }
+
+  Future<void> _triggerInfrastructureUncertainty() async {
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Incident Resolution Plan',
+          confidence: 0.67,
+          children: [
+            ConfidenceNode(
+              label: 'Root Cause Analysis',
+              confidence: 0.89,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Impact Assessment',
+              confidence: 0.94,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Resolution Strategy',
+              confidence: 0.29, // Very low - triggers intervention
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Multiple resolution paths available',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    await _addMessage(ChatMessage(
+      content: "⚠️ **Resolution Strategy Uncertainty**\n\nI have 3 potential resolution approaches:\n\n1. **Immediate restart** (fast but disruptive)\n2. **Gradual service migration** (slower but safer)\n3. **Memory optimization patch** (takes time to develop)\n\nEstimated downtime: 5min vs 0min vs 2hrs. Which approach fits your risk tolerance?",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Infrastructure Agent",
+      isUncertainty: true,
+      confidence: 0.29,
+    ));
+
+    setState(() {
+      _pendingUserResponse = 'resolution_strategy';
+    });
+  }
+
+  Future<void> _showReasoningProcess() async {
+    if (!mounted) return;
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Business Model Analysis',
+          confidence: 0.94,
+          children: [
+            ConfidenceNode(
+              label: 'Revenue Model Assessment',
+              confidence: 0.97,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Value Proposition Clarity',
+              confidence: 0.91,
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Analyzing business model components',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(milliseconds: 2000));
+
+    setState(() {
+      _showConfidenceInspector = false;
+    });
+  }
+
+  Future<void> _triggerLoanUncertainty() async {
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Loan Risk Assessment',
+          confidence: 0.61,
+          children: [
+            ConfidenceNode(
+              label: 'Income Verification',
+              confidence: 0.92,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Employment Stability',
+              confidence: 0.89,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Debt-to-Income Ratio',
+              confidence: 0.34, // Very low - triggers intervention
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Credit Score Assessment',
+              confidence: 0.28, // Very low - triggers intervention
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Insufficient debt details for accurate DTI calculation',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    await _addMessage(ChatMessage(
+      content: "⚠️ **Missing Critical Information**\n\nI need specific debt details to calculate accurate DTI ratio:\n\n• Student loan monthly payment amount?\n• Car payment monthly amount?\n• Any credit card balances?\n• Current credit score?\n\nCan you provide these details for a proper loan assessment?",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Credit Risk Assessor",
+      isUncertainty: true,
+      confidence: 0.34,
+    ));
+
+    setState(() {
+      _pendingUserResponse = 'loan_debt_details';
+    });
+  }
+
+  Future<void> _triggerUncertaintyScenario() async {
+    // Show market analysis with uncertainty
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Market Opportunity Analysis',
+          confidence: 0.42,
+          children: [
+            ConfidenceNode(
+              label: 'Total Addressable Market',
+              confidence: 0.23, // Very low - triggers intervention
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Market Growth Rate',
+              confidence: 0.78,
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Conflicting market data detected',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    await _addMessage(ChatMessage(
+      content: "⚠️ **Uncertainty Detected**\n\nI found conflicting data about market size:\n• Company claims: \$50M TAM\n• Industry report: \$12M TAM\n\nWhich source should I trust for this analysis?",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Investment Analyst",
+      isUncertainty: true,
+      confidence: 0.23,
+    ));
+
+    // Show user response options
+    setState(() {
+      _pendingUserResponse = 'market_size_conflict';
+    });
+  }
+
+  Future<void> _handleUserResponse(String response) async {
+    final currentScenario = _pendingUserResponse;
+    
+    setState(() {
+      _pendingUserResponse = null;
+      _showConfidenceInspector = false;
+    });
+
+    // Handle loan analysis responses
+    if (currentScenario == 'loan_debt_details') {
+      switch (response) {
+        case 'provide_full_details':
+          await _addMessage(ChatMessage(
+            content: "Student loan: \$480/month, Car payment: \$520/month, Credit card minimum: \$180/month, Credit score: 745",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Perfect! Now I can calculate accurate DTI and provide a comprehensive loan assessment.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Credit Risk Assessor",
+          ));
+
+          await _continueWithLoanResolution(0.91);
+          break;
+
+        case 'estimate_from_credit':
+          await _addMessage(ChatMessage(
+            content: "Use estimates from the credit bureau report we have on file.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "I'll use the credit report data, though direct confirmation would be more accurate.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Credit Risk Assessor",
+          ));
+
+          await _continueWithLoanResolution(0.83);
+          break;
+
+        case 'request_documents':
+          await _addMessage(ChatMessage(
+            content: "Let's request official debt statements from the applicant.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Good approach! I'll prepare a document request list for the most accurate assessment.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Credit Risk Assessor",
+          ));
+
+          await _continueWithLoanResolution(0.88);
+          break;
+      }
+    }
+    
+    // Handle investment analysis responses
+    else if (currentScenario == 'market_size_conflict') {
+      switch (response) {
+        case 'use_industry_report':
+          await _addMessage(ChatMessage(
+            content: "Use the industry report figure (\$12M). It's more conservative for investment analysis.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Perfect! Using the conservative \$12M figure. This gives us a more realistic market assessment.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Investment Analyst",
+          ));
+
+          await _continueWithResolution(0.89);
+          break;
+
+        case 'use_company_data':
+          await _addMessage(ChatMessage(
+            content: "Let's use the company's \$50M figure. They might have more recent data.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Got it. Using \$50M TAM, but I'll note the discrepancy in our risk assessment.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Investment Analyst",
+          ));
+
+          await _continueWithResolution(0.76);
+          break;
+
+        case 'analyze_both':
+          await _addMessage(ChatMessage(
+            content: "Can you analyze both scenarios and show me the investment implications of each?",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Excellent approach! I'll run the analysis with both figures and show you the range of outcomes.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Investment Analyst",
+          ));
+
+          await _continueWithResolution(0.91);
+          break;
+      }
+    }
+    
+    // Handle legal review responses
+    else if (currentScenario == 'liability_interpretation') {
+      switch (response) {
+        case 'exclude_gross_negligence':
+          await _addMessage(ChatMessage(
+            content: "Exclude gross negligence from the liability limitation. That's too risky to waive.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Agreed. I'll recommend adding 'except in cases of gross negligence or willful misconduct' to the clause.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Legal Reviewer",
+          ));
+
+          await _continueWithResolution(0.94);
+          break;
+
+        case 'accept_as_is':
+          await _addMessage(ChatMessage(
+            content: "The clause seems standard. Let's accept it as written.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Understood, but I'll flag this as a moderate risk item in the summary.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Legal Reviewer",
+          ));
+
+          await _continueWithResolution(0.73);
+          break;
+
+        case 'request_clarification':
+          await _addMessage(ChatMessage(
+            content: "Let's request clarification from the other party on this clause.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Good strategy. I'll draft a clarification request focusing on the scope of liability exclusions.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Legal Reviewer",
+          ));
+
+          await _continueWithResolution(0.88);
+          break;
+      }
+    }
+    
+    // Handle market research responses
+    else if (currentScenario == 'pricing_data_conflict') {
+      switch (response) {
+        case 'prioritize_company_websites':
+          await _addMessage(ChatMessage(
+            content: "Use company websites as primary source. They're most current and official.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Good choice. Company pricing is official, though may not reflect actual paid amounts after discounts.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Market Researcher",
+          ));
+
+          await _continueWithResolution(0.84);
+          break;
+
+        case 'blend_all_sources':
+          await _addMessage(ChatMessage(
+            content: "Create a blended analysis using all three sources with appropriate weightings.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Excellent! I'll weight: 50% company sites, 30% industry reports, 20% user surveys for a comprehensive view.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Market Researcher",
+          ));
+
+          await _continueWithResolution(0.93);
+          break;
+
+        case 'focus_user_surveys':
+          await _addMessage(ChatMessage(
+            content: "Focus on user surveys - they reflect actual spending behavior.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Smart insight! User surveys often reveal lower actual spend due to discounts and freemium models.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Market Researcher",
+          ));
+
+          await _continueWithResolution(0.87);
+          break;
+      }
+    }
+    
+    // Handle infrastructure monitoring responses
+    else if (currentScenario == 'resolution_strategy') {
+      switch (response) {
+        case 'immediate_restart':
+          await _addMessage(ChatMessage(
+            content: "Go with immediate restart. We need to minimize impact quickly.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Executing immediate restart sequence. Estimated 5min downtime. All traffic routing to backup cluster.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Infrastructure Agent",
+          ));
+
+          await _continueWithResolution(0.91);
+          break;
+
+        case 'gradual_migration':
+          await _addMessage(ChatMessage(
+            content: "Use gradual service migration. Zero downtime is critical for our SLA.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Smart choice! Initiating gradual migration. Moving services one by one while monitoring CPU levels.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Infrastructure Agent",
+          ));
+
+          await _continueWithResolution(0.95);
+          break;
+
+        case 'develop_patch':
+          await _addMessage(ChatMessage(
+            content: "Let's develop the memory optimization patch for a permanent fix.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Good long-term thinking! I'll deploy a temporary memory limit while developing the optimization patch.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Infrastructure Agent",
+          ));
+
+          await _continueWithResolution(0.88);
+          break;
+      }
+    }
+    
+    // Handle project planning responses
+    else if (currentScenario == 'project_planning_decision') {
+      switch (response) {
+        case 'extend_timeline':
+          await _addMessage(ChatMessage(
+            content: "Let's extend the timeline by 4 weeks. This will reduce pressure on our mobile developer.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Excellent choice! I'll update the project timeline and redistribute tasks for better balance.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Next Steps Planner",
+          ));
+
+          await _continueWithProjectResolution(0.93);
+          break;
+
+        case 'hire_developer':
+          await _addMessage(ChatMessage(
+            content: "Let's hire an additional mobile developer to meet the original timeline.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Smart approach! I'll help create the job posting and onboarding plan to get them productive quickly.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Next Steps Planner",
+          ));
+
+          await _continueWithProjectResolution(0.89);
+          break;
+
+        case 'reduce_scope':
+          await _addMessage(ChatMessage(
+            content: "Let's reduce scope by deferring 5 lower-priority features to keep the timeline.",
+            isUser: true,
+            timestamp: DateTime.now(),
+          ));
+
+          await _simulateTyping();
+          await _addMessage(ChatMessage(
+            content: "Good strategy! I'll prioritize the core features and create a roadmap for the deferred items.",
+            isUser: false,
+            timestamp: DateTime.now(),
+            agentName: "Next Steps Planner",
+          ));
+
+          await _continueWithProjectResolution(0.91);
+          break;
+      }
+    }
+  }
+
+  Future<void> _continueWithLoanResolution(double finalConfidence) async {
+    // Update confidence tree with loan resolution
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Complete Loan Assessment',
+          confidence: finalConfidence,
+          children: [
+            ConfidenceNode(
+              label: 'Income Verification',
+              confidence: 0.92,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Employment Stability',
+              confidence: 0.89,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Debt-to-Income Ratio',
+              confidence: finalConfidence,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Credit Assessment',
+              confidence: 0.87,
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Complete loan analysis with human verification',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(milliseconds: 2000));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "✅ **Loan Analysis Complete (${(finalConfidence * 100).toInt()}% confidence)**\n\n**DTI Ratio: 18.4%** (Excellent - well below 28% threshold)\n**Credit Score: 745** (Very Good)\n**Employment: Stable** (Google, 2+ years)\n\n**Recommendation: APPROVE**\n• Loan Amount: \$320,000\n• Interest Rate: 6.25% (prime rate)\n• Term: 30 years\n• Monthly Payment: \$1,970",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Loan Recommendation Engine",
+      confidence: finalConfidence,
+      isComplete: true,
+    ));
+
+    setState(() {
+      _showConfidenceInspector = false;
+    });
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "This demonstrates how AI can help loan officers make faster, more accurate decisions with human oversight on critical details! 🏡",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Loan Analysis AI",
+      isSystemMessage: true,
+    ));
+  }
+
+  Future<void> _continueWithResolution(double finalConfidence) async {
+    // Update confidence tree with resolution
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Complete Investment Analysis',
+          confidence: finalConfidence,
+          children: [
+            ConfidenceNode(
+              label: 'Business Model',
+              confidence: 0.94,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Market Opportunity',
+              confidence: finalConfidence,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Risk Assessment',
+              confidence: 0.87,
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Analysis complete with human input',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(milliseconds: 2000));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "✅ **Analysis Complete (${(finalConfidence * 100).toInt()}% confidence)**\n\nFinal recommendation: **PROCEED WITH CAUTION**\n\n📊 Your input resolved the market uncertainty and improved our analysis quality significantly.",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Investment Analyst",
+      confidence: finalConfidence,
+      isComplete: true,
+    ));
+
+    setState(() {
+      _showConfidenceInspector = false;
+    });
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "This is exactly the kind of collaborative analysis that makes AI agents truly powerful - combining AI speed with human judgment! 🚀",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Investment Analyst",
+      isSystemMessage: true,
+    ));
+  }
+
+  Future<void> _continueWithProjectResolution(double finalConfidence) async {
+    // Update confidence tree with project resolution
+    setState(() {
+      _currentConfidenceTree = ConfidenceTree(
+        rootNode: ConfidenceNode(
+          label: 'Project Planning Complete',
+          confidence: finalConfidence,
+          children: [
+            ConfidenceNode(
+              label: 'Resource Assessment',
+              confidence: 0.94,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Timeline Feasibility',
+              confidence: finalConfidence,
+              isLeaf: true,
+            ),
+            ConfidenceNode(
+              label: 'Risk Mitigation',
+              confidence: 0.89,
+              isLeaf: true,
+            ),
+          ],
+        ),
+        reasoning: 'Project planning complete with human decision',
+        timestamp: DateTime.now(),
+      );
+      _showConfidenceInspector = true; // Still set but panel not displayed
+    });
+
+    await Future.delayed(const Duration(milliseconds: 2000));
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "✅ **Project Plan Updated (${(finalConfidence * 100).toInt()}% confidence)**\n\n**Next Steps:**\n• Updated project timeline and resource allocation\n• Identified dependencies and critical path\n• Created risk mitigation strategies\n• Set up milestone tracking and review points\n\n**Status: Ready to proceed with implementation!**",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Next Steps Planner",
+      confidence: finalConfidence,
+      isComplete: true,
+    ));
+
+    setState(() {
+      _showConfidenceInspector = false;
+    });
+
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "This demonstrates how AI can help project managers make data-driven decisions while ensuring human oversight on critical resource planning! 📋",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "Next Steps Planner",
+      isSystemMessage: true,
+    ));
+  }
+
+  Future<void> _simulateTyping() async {
+    if (!mounted) return;
+    setState(() => _isTyping = true);
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (!mounted) return;
+    setState(() => _isTyping = false);
+  }
+
+  Future<void> _addMessage(ChatMessage message) async {
+    if (!mounted) return;
+    print('📨 Adding message - isCollaboration: ${message.isCollaboration}, type: ${message.collaborationType}');
+    setState(() {
+      _messages.add(message);
+    });
+    
+    // Check for task success if this is a completion message
+    if (message.isComplete && message.confidence != null && message.confidence! >= 0.90 && !_taskSuccessAchieved) {
+      _triggerTaskSuccess(message.confidence!);
+    }
+    
+    // Auto-scroll to bottom
+    await Future.delayed(const Duration(milliseconds: 100));
+    if (!mounted) return;
+    if (_scrollController.hasClients) {
+      try {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      } catch (e) {
+        print('Scroll error: $e');
+      }
+    }
+  }
+
+  Future<void> _triggerTaskSuccess(double finalConfidence) async {
+    if (!mounted) return;
+    
+    setState(() {
+      _taskSuccessAchieved = true;
+    });
+
+    // Wait a moment before showing success message
+    await Future.delayed(const Duration(milliseconds: 1500));
+    
+    if (!mounted) return;
+    
+    // Add success indicator message
+    await _addTaskSuccessMessage(finalConfidence);
+  }
+
+  Future<void> _addTaskSuccessMessage(double confidence) async {
+    await _simulateTyping();
+    await _addMessage(ChatMessage(
+      content: "🎉 **Task Successfully Completed!**\n\n✅ High confidence achieved (${(confidence * 100).toInt()}%)\n✅ Human-AI collaboration successful\n✅ Decision-making process complete\n\nThis demonstrates the power of human oversight in AI workflows!",
+      isUser: false,
+      timestamp: DateTime.now(),
+      agentName: "System",
+      isSystemMessage: true,
+      isTaskSuccess: true,
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = ThemeColors(context);
+
+    return Column(
+      children: [
+        // Chat header
+        Container(
+          padding: const EdgeInsets.all(SpacingTokens.lg),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            border: Border(bottom: BorderSide(color: colors.border)),
+          ),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: colors.primary,
+                child: Icon(Icons.psychology, color: Colors.white, size: 20),
+              ),
+              const SizedBox(width: SpacingTokens.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _getChatTitle(widget.scenario),
+                      style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
+                    ),
+                    Text(
+                      'Real-time reasoning • Human collaboration',
+                      style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  if (_showConfidenceInspector)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: SpacingTokens.md,
+                        vertical: SpacingTokens.sm,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colors.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                        border: Border.all(color: colors.primary),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.visibility, color: colors.primary, size: 16),
+                          const SizedBox(width: SpacingTokens.xs),
+                          Text(
+                            'Reasoning Visible',
+                            style: TextStyles.bodySmall.copyWith(
+                              color: colors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (_showConfidenceInspector) const SizedBox(width: SpacingTokens.sm),
+                  AsmblButton.outline(
+                    text: 'Restart Demo',
+                    onPressed: _restartDemo,
+                    size: AsmblButtonSize.small,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // Chat messages or preview
+        Expanded(
+          child: _demoStarted 
+            ? ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(SpacingTokens.lg),
+                itemCount: _messages.length + (_isTyping ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == _messages.length && _isTyping) {
+                    return _buildTypingIndicator(colors);
+                  }
+                  
+                  return _buildChatMessage(_messages[index], colors);
+                },
+              )
+            : _buildChatPreview(colors),
+        ),
+
+        // Control panel completely removed - using inline collaboration messages only
+      ],
+    );
+  }
+
+  Widget _buildChatMessage(ChatMessage message, ThemeColors colors) {
+    // Handle collaboration messages specially
+    if (message.isCollaboration) {
+      print('🎨 Building collaboration message: ${message.collaborationType}');
+      return AgentCollaborationMessage(
+        type: message.collaborationType ?? 'thinking',
+        data: message.collaborationData ?? {},
+        onInterventionTrigger: () {
+          print('🎭 Intervention trigger callback in chat demo');
+          // When intervention modal is closed, trigger the main callback
+          if (message.collaborationType == 'intervention') {
+            widget.onInterventionNeeded?.call(HumanIntervention(
+              reason: 'User responded to intervention',
+              confidence: 0.35,
+              context: message.collaborationData ?? {},
+            ));
+          }
+        },
+      );
+    }
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: SpacingTokens.md),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!message.isUser) ...[
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: message.isTaskSuccess
+                  ? Colors.green.withOpacity(0.2)
+                  : message.isSystemMessage 
+                      ? colors.accent.withOpacity(0.2) 
+                      : colors.primary.withOpacity(0.2),
+              child: Icon(
+                message.isTaskSuccess 
+                    ? Icons.check_circle 
+                    : message.isSystemMessage 
+                        ? Icons.auto_awesome 
+                        : Icons.psychology,
+                size: 16,
+                color: message.isTaskSuccess
+                    ? Colors.green
+                    : message.isSystemMessage 
+                        ? colors.accent 
+                        : colors.primary,
+              ),
+            ),
+            const SizedBox(width: SpacingTokens.md),
+          ],
+          
+          Expanded(
+            child: Column(
+              crossAxisAlignment: message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                if (!message.isUser && message.agentName != null) ...[
+                  Text(
+                    message.agentName!,
+                    style: TextStyles.bodySmall.copyWith(
+                      color: colors.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: SpacingTokens.xs),
+                ],
+                
+                message.isUncertainty 
+                    ? _buildUncertaintyContainer(
+                        Container(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.7,
+                          ),
+                          padding: const EdgeInsets.all(SpacingTokens.md),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                message.content,
+                                style: TextStyles.bodyMedium.copyWith(
+                                  color: Colors.orange.shade800,
+                                  height: 1.4,
+                                ),
+                              ),
+                              if (message.confidence != null) ...[
+                                const SizedBox(height: SpacingTokens.sm),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.psychology,
+                                      size: 16,
+                                      color: _getConfidenceColor(message.confidence!),
+                                    ),
+                                    const SizedBox(width: SpacingTokens.xs),
+                                    Text(
+                                      'Confidence: ${(message.confidence! * 100).toInt()}%',
+                                      style: TextStyles.bodySmall.copyWith(
+                                        color: _getConfidenceColor(message.confidence!),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                              if (message.reasoningSteps != null && message.reasoningSteps!.isNotEmpty) ...[
+                                const SizedBox(height: SpacingTokens.sm),
+                                _buildReasoningDropdown(message, colors),
+                              ],
+                            ],
+                          ),
+                        ),
+                        colors,
+                      )
+                    : Container(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.7,
+                        ),
+                        padding: const EdgeInsets.all(SpacingTokens.md),
+                        decoration: BoxDecoration(
+                          color: message.isUser 
+                              ? colors.primary 
+                              : message.isTaskSuccess
+                                  ? Colors.green.withOpacity(0.1)
+                                  : message.isSystemMessage
+                                      ? colors.accent.withOpacity(0.1)
+                                      : colors.surface,
+                          borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+                          border: message.isTaskSuccess
+                              ? Border.all(color: Colors.green, width: 2)
+                              : message.isSystemMessage
+                                  ? Border.all(color: colors.accent)
+                                  : Border.all(color: colors.border),
+                          boxShadow: message.isTaskSuccess
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.green.withOpacity(0.2),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              message.content,
+                              style: TextStyles.bodyMedium.copyWith(
+                                color: message.isUser 
+                                    ? Colors.white 
+                                    : colors.onSurface,
+                                height: 1.4,
+                              ),
+                            ),
+                      
+                            if (message.confidence != null) ...[
+                              const SizedBox(height: SpacingTokens.sm),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.psychology,
+                                    size: 16,
+                                    color: _getConfidenceColor(message.confidence!),
+                                  ),
+                                  const SizedBox(width: SpacingTokens.xs),
+                                  Text(
+                                    'Confidence: ${(message.confidence! * 100).toInt()}%',
+                                    style: TextStyles.bodySmall.copyWith(
+                                      color: _getConfidenceColor(message.confidence!),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+
+                            if (message.reasoningSteps != null && message.reasoningSteps!.isNotEmpty) ...[
+                              const SizedBox(height: SpacingTokens.sm),
+                              _buildReasoningDropdown(message, colors),
+                            ],
+                          ],
+                        ),
+                      ),
+                
+                const SizedBox(height: SpacingTokens.xs),
+                Text(
+                  _formatTime(message.timestamp),
+                  style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
+          
+          if (message.isUser) ...[
+            const SizedBox(width: SpacingTokens.md),
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: colors.surfaceVariant,
+              child: Icon(Icons.person, size: 16, color: colors.onSurfaceVariant),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChatPreview(ThemeColors colors) {
+    return Padding(
+      padding: const EdgeInsets.all(SpacingTokens.lg),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Welcome message
+          Container(
+            padding: const EdgeInsets.all(SpacingTokens.xl),
+            decoration: BoxDecoration(
+              color: colors.primary.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
+              border: Border.all(color: colors.primary.withOpacity(0.2)),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.auto_awesome,
+                  size: 48,
+                  color: colors.primary,
+                ),
+                const SizedBox(height: SpacingTokens.lg),
+                Text(
+                  'AI Collaboration Demo',
+                  style: TextStyles.pageTitle.copyWith(color: colors.primary),
+                ),
+                const SizedBox(height: SpacingTokens.sm),
+                Text(
+                  'Start a conversation to see real-time AI reasoning and human collaboration',
+                  style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: SpacingTokens.xxl),
+          
+          // Message preview with editable text
+          Container(
+            constraints: BoxConstraints(maxWidth: 600),
+            padding: const EdgeInsets.all(SpacingTokens.lg),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+              border: Border.all(color: colors.border),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.onSurface.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 16,
+                      backgroundColor: colors.surfaceVariant,
+                      child: Icon(Icons.person, size: 16, color: colors.onSurfaceVariant),
+                    ),
+                    const SizedBox(width: SpacingTokens.md),
+                    Text(
+                      'You',
+                      style: TextStyles.bodyMedium.copyWith(
+                        color: colors.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: SpacingTokens.md),
+                TextField(
+                  controller: _previewController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    hintText: 'Type your message...',
+                    hintStyle: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+                      borderSide: BorderSide(color: colors.border),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+                      borderSide: BorderSide(color: colors.border),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+                      borderSide: BorderSide(color: colors.primary),
+                    ),
+                    filled: true,
+                    fillColor: colors.surfaceVariant,
+                    contentPadding: const EdgeInsets.all(SpacingTokens.md),
+                  ),
+                  style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
+                ),
+                const SizedBox(height: SpacingTokens.lg),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Edit the message above or use as-is',
+                      style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
+                    ),
+                    AsmblButton.primary(
+                      text: 'Start Demo',
+                      icon: Icons.send,
+                      onPressed: () {
+                        final message = _previewController.text.trim();
+                        if (message.isNotEmpty) {
+                          _startDemoWithMessage(message);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypingIndicator(ThemeColors colors) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: SpacingTokens.md),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: colors.primary.withOpacity(0.2),
+            child: Icon(Icons.psychology, size: 16, color: colors.primary),
+          ),
+          const SizedBox(width: SpacingTokens.md),
+          Container(
+            padding: const EdgeInsets.all(SpacingTokens.md),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+              border: Border.all(color: colors.border),
+            ),
+            child: AnimatedBuilder(
+              animation: _typingController,
+              builder: (context, child) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (int i = 0; i < 3; i++) ...[
+                      Container(
+                        width: 8,
+                        height: 8,
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        decoration: BoxDecoration(
+                          color: colors.primary.withOpacity(
+                            0.3 + 0.7 * (((_typingController.value + i * 0.3) % 1.0)),
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUnifiedControlPanel(ThemeColors colors) {
+    return Container(
+      margin: const EdgeInsets.all(SpacingTokens.lg),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+        border: Border.all(color: colors.primary.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: colors.primary.withOpacity(0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.all(SpacingTokens.lg),
+            decoration: BoxDecoration(
+              color: colors.primary.withOpacity(0.05),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(BorderRadiusTokens.lg),
+                topRight: Radius.circular(BorderRadiusTokens.lg),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.psychology, color: colors.primary, size: 20),
+                const SizedBox(width: SpacingTokens.sm),
+                Text(
+                  'AI Collaboration Control Panel',
+                  style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
+                ),
+                const Spacer(),
+                if (_taskSuccessAchieved)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SpacingTokens.sm,
+                      vertical: SpacingTokens.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                      border: Border.all(color: Colors.green),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.green, size: 16),
+                        const SizedBox(width: SpacingTokens.xs),
+                        Text(
+                          'Task Success!',
+                          style: TextStyles.bodySmall.copyWith(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_taskSuccessAchieved) const SizedBox(width: SpacingTokens.sm),
+                if (_showConfidenceInspector && _currentConfidenceTree != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SpacingTokens.sm,
+                      vertical: SpacingTokens.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _getConfidenceColor(_currentConfidenceTree!.rootNode.confidence).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                      border: Border.all(color: _getConfidenceColor(_currentConfidenceTree!.rootNode.confidence)),
+                    ),
+                    child: Text(
+                      'Overall: ${(_currentConfidenceTree!.rootNode.confidence * 100).toInt()}%',
+                      style: TextStyles.bodySmall.copyWith(
+                        color: _getConfidenceColor(_currentConfidenceTree!.rootNode.confidence),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(SpacingTokens.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Live reasoning section (with progressive disclosure)
+                if (_showConfidenceInspector && _currentConfidenceTree != null) ...[
+                  _buildLiveReasoningSection(colors),
+                  const SizedBox(height: SpacingTokens.lg),
+                ],
+
+                // User response section
+                if (_pendingUserResponse != null) ...[
+                  _buildUserResponseSection(colors),
+                  const SizedBox(height: SpacingTokens.lg),
+                ],
+
+                // Text input section (always available)
+                _buildTextInputSection(colors),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLiveReasoningSection(ThemeColors colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.auto_awesome, color: colors.accent, size: 16),
+            const SizedBox(width: SpacingTokens.sm),
+            Text(
+              'Live AI Reasoning',
+              style: TextStyles.bodyMedium.copyWith(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              'Processing...',
+              style: TextStyles.bodySmall.copyWith(
+                color: colors.accent,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: SpacingTokens.md),
+        _buildReasoningNode(_currentConfidenceTree!.rootNode, colors),
+      ],
+    );
+  }
+
+  Widget _buildUserResponseSection(ThemeColors colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.touch_app, color: colors.primary, size: 16),
+            const SizedBox(width: SpacingTokens.sm),
+            Text(
+              'Your Response',
+              style: TextStyles.bodyMedium.copyWith(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: SpacingTokens.md),
+        Wrap(
+          spacing: SpacingTokens.md,
+          runSpacing: SpacingTokens.sm,
+          children: _getResponseOptions(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextInputSection(ThemeColors colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.keyboard, color: colors.onSurfaceVariant, size: 16),
+            const SizedBox(width: SpacingTokens.sm),
+            Text(
+              'Custom Input',
+              style: TextStyles.bodyMedium.copyWith(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: SpacingTokens.md),
+        Container(
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+            border: Border.all(color: colors.border),
+          ),
+          child: TextField(
+            maxLines: 2,
+            decoration: InputDecoration(
+              hintText: 'Type your custom response or question...',
+              hintStyle: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.all(SpacingTokens.md),
+            ),
+            style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.md),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            AsmblButton.outline(
+              text: 'Send Custom Response',
+              icon: Icons.send,
+              onPressed: () {
+                // TODO: Handle custom text input
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Custom input functionality coming soon!'),
+                    backgroundColor: colors.accent,
+                  ),
+                );
+              },
+              size: AsmblButtonSize.small,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserResponseOptions(ThemeColors colors) {
+    return Container(
+      padding: const EdgeInsets.all(SpacingTokens.lg),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(top: BorderSide(color: colors.border)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Your response:',
+            style: TextStyles.bodyMedium.copyWith(
+              color: colors.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: SpacingTokens.md),
+          
+          Wrap(
+            spacing: SpacingTokens.md,
+            runSpacing: SpacingTokens.sm,
+            children: _getResponseOptions(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _getResponseOptions() {
+    switch (_pendingUserResponse) {
+      case 'loan_debt_details':
+        return [
+          AsmblButton.primary(
+            text: 'Provide Full Details',
+            onPressed: () => _handleUserResponse('provide_full_details'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.secondary(
+            text: 'Estimate from Credit Report',
+            onPressed: () => _handleUserResponse('estimate_from_credit'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.outline(
+            text: 'Request Documents',
+            onPressed: () => _handleUserResponse('request_documents'),
+            size: AsmblButtonSize.medium,
+          ),
+        ];
+      
+      case 'market_size_conflict':
+        return [
+          AsmblButton.primary(
+            text: 'Use Industry Report (\$12M)',
+            onPressed: () => _handleUserResponse('use_industry_report'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.secondary(
+            text: 'Use Company Data (\$50M)',
+            onPressed: () => _handleUserResponse('use_company_data'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.outline(
+            text: 'Analyze Both Scenarios',
+            onPressed: () => _handleUserResponse('analyze_both'),
+            size: AsmblButtonSize.medium,
+          ),
+        ];
+      
+      case 'liability_interpretation':
+        return [
+          AsmblButton.primary(
+            text: 'Exclude Gross Negligence',
+            onPressed: () => _handleUserResponse('exclude_gross_negligence'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.secondary(
+            text: 'Accept As Written',
+            onPressed: () => _handleUserResponse('accept_as_is'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.outline(
+            text: 'Request Clarification',
+            onPressed: () => _handleUserResponse('request_clarification'),
+            size: AsmblButtonSize.medium,
+          ),
+        ];
+        
+      case 'pricing_data_conflict':
+        return [
+          AsmblButton.primary(
+            text: 'Use Company Websites',
+            onPressed: () => _handleUserResponse('prioritize_company_websites'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.secondary(
+            text: 'Blend All Sources',
+            onPressed: () => _handleUserResponse('blend_all_sources'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.outline(
+            text: 'Focus User Surveys',
+            onPressed: () => _handleUserResponse('focus_user_surveys'),
+            size: AsmblButtonSize.medium,
+          ),
+        ];
+
+      case 'resolution_strategy':
+        return [
+          AsmblButton.primary(
+            text: 'Immediate Restart (5min downtime)',
+            onPressed: () => _handleUserResponse('immediate_restart'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.secondary(
+            text: 'Gradual Migration (0min downtime)',
+            onPressed: () => _handleUserResponse('gradual_migration'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.outline(
+            text: 'Develop Patch (2hr fix)',
+            onPressed: () => _handleUserResponse('develop_patch'),
+            size: AsmblButtonSize.medium,
+          ),
+        ];
+
+      case 'project_planning_decision':
+        return [
+          AsmblButton.primary(
+            text: 'Extend Timeline by 4 Weeks',
+            onPressed: () => _handleUserResponse('extend_timeline'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.secondary(
+            text: 'Hire Additional Mobile Developer',
+            onPressed: () => _handleUserResponse('hire_developer'),
+            size: AsmblButtonSize.medium,
+          ),
+          AsmblButton.outline(
+            text: 'Reduce Scope by 5 Features',
+            onPressed: () => _handleUserResponse('reduce_scope'),
+            size: AsmblButtonSize.medium,
+          ),
+        ];
+        
+      default:
+        return [];
+    }
+  }
+
+  Widget _buildConfidenceInspector(ThemeColors colors) {
+    return Container(
+      margin: const EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.all(SpacingTokens.lg),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+        border: Border.all(color: colors.primary),
+        boxShadow: [
+          BoxShadow(
+            color: colors.primary.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.psychology, color: colors.primary, size: 20),
+              const SizedBox(width: SpacingTokens.sm),
+              Text(
+                'AI Reasoning Inspector',
+                style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
+              ),
+              const Spacer(),
+              Text(
+                'Overall: ${(_currentConfidenceTree!.rootNode.confidence * 100).toInt()}%',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: _getConfidenceColor(_currentConfidenceTree!.rootNode.confidence),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: SpacingTokens.md),
+          
+          _buildReasoningNode(_currentConfidenceTree!.rootNode, colors),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReasoningNode(ConfidenceNode node, ThemeColors colors) {
+    final nodeColor = _getConfidenceColor(node.confidence);
+    
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(SpacingTokens.md),
+          decoration: BoxDecoration(
+            color: nodeColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+            border: Border.all(color: nodeColor),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                node.confidence < 0.5 ? Icons.warning : Icons.check_circle,
+                color: nodeColor,
+                size: 16,
+              ),
+              const SizedBox(width: SpacingTokens.sm),
+              Expanded(
+                child: Text(
+                  node.label,
+                  style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
+                ),
+              ),
+              Text(
+                '${(node.confidence * 100).toInt()}%',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: nodeColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        if (node.children.isNotEmpty) ...[
+          const SizedBox(height: SpacingTokens.sm),
+          Container(
+            margin: const EdgeInsets.only(left: SpacingTokens.lg),
+            child: Column(
+              children: node.children
+                  .map((child) => Padding(
+                        padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
+                        child: _buildReasoningNode(child, colors),
+                      ))
+                  .toList(),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildReasoningDropdown(ChatMessage message, ThemeColors colors) {
+    final messageIndex = _messages.indexOf(message);
+    final isExpanded = _expandedReasoningMessages.contains(messageIndex);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.primary.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(color: colors.primary.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          // Header with expand/collapse
+          InkWell(
+            onTap: () {
+              setState(() {
+                if (isExpanded) {
+                  _expandedReasoningMessages.remove(messageIndex);
+                } else {
+                  _expandedReasoningMessages.add(messageIndex);
+                }
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.all(SpacingTokens.sm),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.psychology,
+                    size: 16,
+                    color: colors.primary,
+                  ),
+                  const SizedBox(width: SpacingTokens.sm),
+                  Expanded(
+                    child: Text(
+                      'AI Reasoning Process (${message.reasoningSteps!.length} steps)',
+                      style: TextStyles.bodySmall.copyWith(
+                        color: colors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    isExpanded ? Icons.expand_less : Icons.expand_more,
+                    size: 20,
+                    color: colors.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          // Expanded reasoning content
+          if (isExpanded) ...[
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.all(SpacingTokens.sm),
+              child: Column(
+                children: message.reasoningSteps!.map((step) => 
+                  _buildReasoningStep(step, colors)
+                ).toList(),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReasoningStep(ReasoningStep step, ThemeColors colors) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.sm),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SpacingTokens.sm,
+                  vertical: SpacingTokens.xs,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                ),
+                child: Text(
+                  step.step,
+                  style: TextStyles.caption.copyWith(
+                    color: colors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                step.model,
+                style: TextStyles.caption.copyWith(
+                  color: colors.onSurfaceVariant,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: SpacingTokens.sm),
+          Text(
+            step.description,
+            style: TextStyles.bodySmall.copyWith(color: colors.onSurface),
+          ),
+          const SizedBox(height: SpacingTokens.sm),
+          Row(
+            children: [
+              Icon(
+                Icons.speed,
+                size: 12,
+                color: colors.onSurfaceVariant,
+              ),
+              const SizedBox(width: SpacingTokens.xs),
+              Text(
+                '${step.processingTime.inMilliseconds}ms',
+                style: TextStyles.caption.copyWith(color: colors.onSurfaceVariant),
+              ),
+              const SizedBox(width: SpacingTokens.md),
+              Icon(
+                Icons.psychology,
+                size: 12,
+                color: _getConfidenceColor(step.confidence),
+              ),
+              const SizedBox(width: SpacingTokens.xs),
+              Text(
+                '${(step.confidence * 100).toInt()}%',
+                style: TextStyles.caption.copyWith(
+                  color: _getConfidenceColor(step.confidence),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getChatTitle(String scenario) {
+    switch (scenario) {
+      case 'loan_analysis':
+        return 'AI Loan Officer Assistant';
+      case 'investment_analysis':
+        return 'AI Investment Analyst';
+      case 'document_review':
+        return 'AI Project Manager Assistant';
+      case 'infrastructure_monitoring':
+        return 'AI Infrastructure Monitor';
+      default:
+        return 'AI Assistant';
+    }
+  }
+
+  Widget _buildUncertaintyContainer(Widget child, ThemeColors colors) {
+    return AnimatedBuilder(
+      animation: _gradientController,
+      builder: (context, _) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+            border: Border.all(color: Colors.orange, width: 2),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              stops: [
+                0.0,
+                0.3 + _gradientController.value * 0.2,
+                0.6 + _gradientController.value * 0.2,
+                1.0,
+              ],
+              colors: [
+                Colors.orange.shade50,
+                Colors.orange.shade100.withOpacity(0.8 + _gradientController.value * 0.2),
+                Colors.yellow.shade50.withOpacity(0.6 + _gradientController.value * 0.4),
+                Colors.orange.shade50,
+              ],
+            ),
+          ),
+          child: child,
+        );
+      },
+    );
+  }
+
+  Color _getConfidenceColor(double confidence) {
+    if (confidence >= 0.8) return Colors.green;
+    if (confidence >= 0.6) return Colors.orange;
+    return Colors.red;
+  }
+
+  String _formatTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final diff = now.difference(dateTime);
+    
+    if (diff.inMinutes < 1) return 'now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m';
+    return '${diff.inHours}h';
+  }
+
+  void _restartDemo() {
+    if (!mounted) return;
+    setState(() {
+      _messages.clear();
+      _isTyping = false;
+      _showConfidenceInspector = false;
+      _currentConfidenceTree = null;
+      _pendingUserResponse = null;
+      _taskSuccessAchieved = false;
+      _demoStarted = false;
+      _expandedReasoningMessages.clear();
+    });
+    
+    // Re-initialize preview message
+    _initializePreviewMessage();
+  }
+
+  void resetDemo() {
+    _restartDemo();
+  }
+
+  @override
+  void dispose() {
+    try {
+      _typingController.stop();
+      _typingController.dispose();
+      _gradientController.stop();
+      _gradientController.dispose();
+      _scrollController.dispose();
+      _previewController.dispose();
+    } catch (e) {
+      print('Dispose error: $e');
+    }
+    super.dispose();
+  }
+}
+
+class ChatMessage {
+  final String content;
+  final bool isUser;
+  final DateTime timestamp;
+  final String? agentName;
+  final double? confidence;
+  final bool showReasoning;
+  final bool isUncertainty;
+  final bool isComplete;
+  final bool isSystemMessage;
+  final bool isTaskSuccess;
+  final List<ReasoningStep>? reasoningSteps;
+  final bool isCollaboration;
+  final String? collaborationType; // 'thinking', 'handoff', 'consensus', 'intervention'
+  final Map<String, dynamic>? collaborationData;
+
+  ChatMessage({
+    required this.content,
+    required this.isUser,
+    required this.timestamp,
+    this.agentName,
+    this.confidence,
+    this.showReasoning = false,
+    this.isUncertainty = false,
+    this.isComplete = false,
+    this.isSystemMessage = false,
+    this.isTaskSuccess = false,
+    this.reasoningSteps,
+    this.isCollaboration = false,
+    this.collaborationType,
+    this.collaborationData,
+  });
+}
+
+class ReasoningStep {
+  final String step;
+  final String description;
+  final double confidence;
+  final String model;
+  final Duration processingTime;
+  
+  ReasoningStep({
+    required this.step,
+    required this.description,
+    required this.confidence,
+    required this.model,
+    required this.processingTime,
+  });
+}
