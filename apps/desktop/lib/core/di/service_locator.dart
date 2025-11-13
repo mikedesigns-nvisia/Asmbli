@@ -17,7 +17,13 @@ import '../services/theme_service.dart';
 import '../services/model_config_service.dart';
 import '../services/mcp_settings_service.dart';
 import '../services/claude_api_service.dart';
+import '../services/openai_api_service.dart';
+import '../services/google_api_service.dart';
+import '../services/kimi_api_service.dart';
 import '../services/ollama_service.dart';
+import '../services/design_agent_orchestrator_service.dart';
+import '../services/agent_model_recommendation_service.dart';
+import '../services/smart_agent_orchestrator_service.dart';
 import '../services/mcp_server_execution_service.dart';
 import '../services/mcp_catalog_service.dart';
 import '../services/github_mcp_registry_service.dart';
@@ -132,7 +138,7 @@ class ServiceLocator {
     debugPrint('🔄 Service locator reset');
   }
 
-  /// Initialize all services
+  /// Initialize all services with timeout protection
   Future<void> initialize() async {
     if (_isInitialized) {
       debugPrint('⚠️ Service locator already initialized');
@@ -142,16 +148,110 @@ class ServiceLocator {
     try {
       debugPrint('🚀 Initializing service locator...');
       
-      await _registerCoreServices();
-      await _registerBusinessServices();
-      await _initializeServices();
+      // Try full initialization first, fallback to minimal mode if it fails
+      try {
+        await _registerCoreServicesWithTimeout();
+        await _registerBusinessServicesWithTimeout();
+        await _initializeServicesWithTimeout();
+        debugPrint('✅ Full service locator initialized successfully');
+      } catch (e) {
+        debugPrint('⚠️ Full initialization failed, switching to minimal mode: $e');
+        await _initializeMinimalMode();
+        debugPrint('✅ Minimal service locator initialized successfully');
+      }
       
       _isInitialized = true;
-      debugPrint('✅ Service locator initialized successfully');
     } catch (error, stackTrace) {
-      debugPrint('❌ Service locator initialization failed: $error');
+      debugPrint('❌ Service locator initialization failed completely: $error');
       debugPrint('Stack trace: $stackTrace');
       rethrow;
+    }
+  }
+
+  /// Timeout-protected core services registration
+  Future<void> _registerCoreServicesWithTimeout() async {
+    try {
+      debugPrint('📦 Starting core services registration...');
+      await _registerCoreServices().timeout(const Duration(seconds: 8));
+      debugPrint('✅ Core services registered successfully');
+    } on TimeoutException {
+      debugPrint('⏰ Core services registration timed out after 8 seconds');
+      throw Exception('Core services registration timeout');
+    }
+  }
+
+  /// Timeout-protected business services registration  
+  Future<void> _registerBusinessServicesWithTimeout() async {
+    try {
+      debugPrint('💼 Starting business services registration...');
+      await _registerBusinessServices().timeout(const Duration(seconds: 5));
+      debugPrint('✅ Business services registered successfully');
+    } on TimeoutException {
+      debugPrint('⏰ Business services registration timed out after 5 seconds');
+      throw Exception('Business services registration timeout');
+    }
+  }
+
+  /// Timeout-protected services initialization
+  Future<void> _initializeServicesWithTimeout() async {
+    try {
+      debugPrint('🔧 Starting services initialization...');
+      await _initializeServices().timeout(const Duration(seconds: 10));
+      debugPrint('✅ Services initialized successfully');
+    } on TimeoutException {
+      debugPrint('⏰ Services initialization timed out after 10 seconds');
+      throw Exception('Services initialization timeout');
+    }
+  }
+
+  /// Initialize only essential services for design agent functionality
+  Future<void> _initializeMinimalMode() async {
+    debugPrint('🔧 Initializing emergency minimal mode...');
+    
+    try {
+      // Essential storage service
+      final storageService = DesktopStorageService.instance;
+      await storageService.initialize();
+      registerSingleton<DesktopStorageService>(storageService);
+      debugPrint('✅ Emergency storage service initialized');
+
+      // Essential data services (no MCP or complex dependencies)
+      registerSingleton<AgentService>(DesktopAgentService());
+      registerSingleton<ConversationService>(DesktopConversationService());
+      debugPrint('✅ Emergency data services initialized');
+      
+      // Essential theme service
+      registerSingleton<ThemeService>(ThemeService());
+      debugPrint('✅ Emergency theme service initialized');
+      
+      // Try to add basic LLM support if possible
+      try {
+        final desktopServiceProvider = DesktopServiceProvider.instance;
+        final ollamaService = OllamaService(desktopServiceProvider);
+        registerSingleton<OllamaService>(ollamaService);
+        
+        final modelConfigService = ModelConfigService(storageService, ollamaService);
+        await modelConfigService.initialize();
+        registerSingleton<ModelConfigService>(modelConfigService);
+        debugPrint('✅ Emergency model services initialized');
+      } catch (e) {
+        debugPrint('⚠️ Could not initialize model services in emergency mode: $e');
+      }
+
+      debugPrint('🎯 Emergency mode ready - Basic functionality available');
+      debugPrint('⚠️ Some features may be limited in emergency mode');
+      
+    } catch (e) {
+      debugPrint('❌ Emergency minimal mode initialization failed: $e');
+      // Even if this fails, allow the app to continue with absolute minimum
+      try {
+        final storageService = DesktopStorageService.instance;
+        registerSingleton<DesktopStorageService>(storageService);
+        registerSingleton<ThemeService>(ThemeService());
+        debugPrint('💀 Ultra-minimal mode - basic app shell only');
+      } catch (e2) {
+        debugPrint('💀 Complete failure - continuing anyway: $e2');
+      }
     }
   }
 
@@ -208,12 +308,34 @@ class ServiceLocator {
     final claudeApiService = ClaudeApiService(mcpSettingsService);
     registerSingleton<ClaudeApiService>(claudeApiService);
     
+    final openaiApiService = OpenAIApiService();
+    registerSingleton<OpenAIApiService>(openaiApiService);
+    
+    final googleApiService = GoogleApiService();
+    registerSingleton<GoogleApiService>(googleApiService);
+    
+    final kimiApiService = KimiApiService();
+    registerSingleton<KimiApiService>(kimiApiService);
+    
     final modelConfigService = ModelConfigService(storageService, ollamaService);
     await modelConfigService.initialize();
     registerSingleton<ModelConfigService>(modelConfigService);
     
-    final unifiedLlmService = UnifiedLLMService(modelConfigService, claudeApiService, ollamaService);
+    final unifiedLlmService = UnifiedLLMService(modelConfigService, claudeApiService, ollamaService, openaiApiService, googleApiService, kimiApiService);
+    await unifiedLlmService.initialize();
     registerSingleton<UnifiedLLMService>(unifiedLlmService);
+    
+    // Register Model Recommendation Service
+    final modelRecommendationService = AgentModelRecommendationService(modelConfigService, unifiedLlmService);
+    registerSingleton<AgentModelRecommendationService>(modelRecommendationService);
+    
+    // Register Smart Agent Orchestrator
+    final smartAgentOrchestrator = SmartAgentOrchestratorService(unifiedLlmService, modelRecommendationService);
+    registerSingleton<SmartAgentOrchestratorService>(smartAgentOrchestrator);
+    
+    // Register Design Agent Orchestrator
+    final designAgentOrchestrator = DesignAgentOrchestratorService(unifiedLlmService);
+    registerSingleton<DesignAgentOrchestratorService>(designAgentOrchestrator);
     
     final mcpBridgeService = MCPBridgeService(mcpSettingsService);
     registerSingleton<MCPBridgeService>(mcpBridgeService);

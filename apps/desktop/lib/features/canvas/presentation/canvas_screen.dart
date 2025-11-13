@@ -163,36 +163,63 @@ class _CanvasScreenState extends ConsumerState<CanvasScreen> {
               Expanded(
                 child: Row(
                   children: [
-                    // AI Chat Sidebar
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: _isSidebarCollapsed ? 0 : 280,
-                      child: _isSidebarCollapsed ? null : _buildAISidebar(context),
+                    // Main canvas area (moved to left)
+                    Expanded(
+                      child: _buildCanvasContent(colors),
                     ),
                     
-                    // Sidebar Toggle (when collapsed)
+                    // Sidebar Toggle (when collapsed) - now on the right
                     if (_isSidebarCollapsed)
                       Container(
                         width: 48,
-                        color: colors.surface.withOpacity(0.7),
+                        decoration: BoxDecoration(
+                          color: colors.surface.withOpacity(0.7),
+                          border: Border(left: BorderSide(color: colors.border)),
+                        ),
                         child: Column(
                           children: [
                             const SizedBox(height: SpacingTokens.md),
                             IconButton(
                               onPressed: () => setState(() => _isSidebarCollapsed = false),
-                              icon: const Icon(Icons.chevron_right, size: 20),
+                              icon: const Icon(Icons.chevron_left, size: 20),
                               style: IconButton.styleFrom(
                                 backgroundColor: colors.surface.withOpacity(0.8),
                                 foregroundColor: colors.onSurfaceVariant,
                               ),
                             ),
+                            const Spacer(),
+                            // Quick access buttons when collapsed
+                            IconButton(
+                              onPressed: () {
+                                setState(() => _isSidebarCollapsed = false);
+                                // Could trigger specific AI action
+                              },
+                              icon: const Icon(Icons.auto_awesome, size: 20),
+                              tooltip: 'AI Design Assistant',
+                              style: IconButton.styleFrom(
+                                foregroundColor: colors.primary,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() => _isSidebarCollapsed = false);
+                              },
+                              icon: const Icon(Icons.palette, size: 20),
+                              tooltip: 'Design System',
+                              style: IconButton.styleFrom(
+                                foregroundColor: colors.accent,
+                              ),
+                            ),
+                            const SizedBox(height: SpacingTokens.md),
                           ],
                         ),
                       ),
                     
-                    // Main canvas area
-                    Expanded(
-                      child: _buildCanvasContent(colors),
+                    // AI Chat Sidebar - now on the right
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      width: _isSidebarCollapsed ? 0 : 320,
+                      child: _isSidebarCollapsed ? null : _buildAISidebar(context),
                     ),
                   ],
                 ),
@@ -510,28 +537,52 @@ class _CanvasScreenState extends ConsumerState<CanvasScreen> {
     
     return Container(
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.7),
-        border: Border(right: BorderSide(color: colors.border)),
+        color: colors.surface.withOpacity(0.95),
+        border: Border(left: BorderSide(color: colors.border)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(-2, 0),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Sidebar Header
-          Padding(
+          Container(
             padding: const EdgeInsets.all(SpacingTokens.lg),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              border: Border(bottom: BorderSide(color: colors.border.withOpacity(0.5))),
+            ),
             child: Row(
               children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.auto_awesome,
+                    color: colors.primary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: SpacingTokens.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '🎨 Design Assistant',
+                        'Design Assistant',
                         style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
                       ),
-                      const SizedBox(height: SpacingTokens.xs),
+                      const SizedBox(height: 2),
                       Text(
-                        'Get AI help with your design',
+                        'AI-powered design help',
                         style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
                       ),
                     ],
@@ -539,7 +590,7 @@ class _CanvasScreenState extends ConsumerState<CanvasScreen> {
                 ),
                 IconButton(
                   onPressed: () => setState(() => _isSidebarCollapsed = true),
-                  icon: const Icon(Icons.chevron_left, size: 20),
+                  icon: const Icon(Icons.chevron_right, size: 20),
                   style: IconButton.styleFrom(
                     foregroundColor: colors.onSurfaceVariant,
                   ),
