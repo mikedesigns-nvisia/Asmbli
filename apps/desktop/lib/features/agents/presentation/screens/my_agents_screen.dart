@@ -127,13 +127,22 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  ),
  AgentTemplate(
  name: 'Design Agent',
- description: 'Comprehensive design assistant with Figma integration, code generation, and GitHub collaboration',
+ description: 'Visual design assistant with interactive canvas, Material Design components, and prototyping capabilities',
  category: 'Design',
- tags: ['design-systems', 'ui-ux', 'figma', 'components', 'collaboration'],
+ tags: ['material-design', 'ui-ux', 'canvas', 'prototyping', 'components', 'wireframes'],
  mcpStack: true,
- mcpServers: ['figma', 'github', 'filesystem', 'memory'],
- exampleUse: 'Generate design system components from Figma files',
- popularity: 91,
+ mcpServers: ['figma', 'github', 'canvas-mcp', 'filesystem', 'memory'],
+ exampleUse: 'Create Material Design wireframes and generate component code',
+ popularity: 95,
+ reasoningFlow: ReasoningFlow.iterative,
+ taskOutline: [
+   'Analyze design requirements and user needs',
+   'Create wireframes and mockups on interactive canvas',
+   'Apply Material Design 3 principles and guidelines',
+   'Generate responsive component structures',
+   'Iterate based on feedback and design principles',
+   'Export design assets and component code'
+ ],
  ),
  // DevOps & Infrastructure
  AgentTemplate(
@@ -837,7 +846,8 @@ _buildCompactHeaderWithTabs(),
      if (context.mounted) {
        Navigator.of(context).pop();
        
-       // Show success message
+       // Show success message with template-specific routing
+       final bool isDesignAgent = template.category == 'Design';
        ScaffoldMessenger.of(context).showSnackBar(
          SnackBar(
            content: Text(
@@ -846,10 +856,14 @@ _buildCompactHeaderWithTabs(),
            ),
            backgroundColor: colors.success,
            action: SnackBarAction(
-             label: 'Edit Agent',
+             label: isDesignAgent ? 'Open Canvas' : 'Edit Agent',
              textColor: Colors.white,
              onPressed: () {
-               context.go('/agents/configure/${createdAgent.id}');
+               if (isDesignAgent) {
+                 context.go(AppRoutes.canvas);
+               } else {
+                 context.go('/agents/configure/${createdAgent.id}');
+               }
              },
            ),
          ),
@@ -1152,7 +1166,7 @@ _buildCompactHeaderWithTabs(),
      'Data Analysis' => ['data-analysis', 'visualization', 'statistics', 'reporting'],
      'Customer Support' => ['customer-service', 'troubleshooting', 'communication', 'ticket-management'],
      'Marketing' => ['marketing', 'campaigns', 'analytics', 'strategy'],
-     'Design' => ['design', 'ui-ux', 'prototyping', 'figma'],
+     'Design' => ['design', 'ui-ux', 'prototyping', 'canvas', 'material-design', 'wireframes', 'figma'],
      'DevOps' => ['devops', 'deployment', 'automation', 'infrastructure'],
      'Database' => ['database', 'sql', 'optimization', 'administration'],
      'Security' => ['security', 'penetration-testing', 'vulnerability-assessment', 'auditing'],
@@ -1236,6 +1250,18 @@ Always prioritize customer satisfaction while being helpful, patient, and soluti
 • Staying current with marketing trends and best practices  
 
 Always focus on data-driven strategies that deliver measurable results and authentic brand engagement.''';
+
+     case 'Design':
+       return '''You are an expert ${template.name.toLowerCase()} specializing in Material Design and modern UI/UX principles. You excel at:
+
+• Creating intuitive, accessible user interfaces following Material Design 3 guidelines
+• Generating wireframes, prototypes, and interactive designs on the canvas
+• Applying proper color theory, typography, and spacing systems
+• Building responsive component libraries and design systems
+• Collaborating through visual design tools and code generation
+• Translating user requirements into polished design solutions
+
+Always prioritize user experience, accessibility (WCAG guidelines), and design consistency. Use the interactive canvas to create visual mockups and explain design decisions with clear reasoning.''';
 
      default:
        return '''You are a helpful AI assistant specializing in ${template.name.toLowerCase()}. 
@@ -1723,7 +1749,15 @@ This template gives you a starting point - modify it to create your perfect AI a
  }
 
  void _openAgentChat(Agent agent) {
- context.go('${AppRoutes.chat}?agent=${agent.id}');
+ // Open canvas for Design Agents, chat for others
+ final isDesignAgent = agent.capabilities.contains('design') || 
+                       agent.capabilities.contains('canvas') ||
+                       agent.capabilities.contains('ui-ux');
+ if (isDesignAgent) {
+   context.go(AppRoutes.canvas);
+ } else {
+   context.go('${AppRoutes.chat}?agent=${agent.id}');
+ }
  }
 }
 
@@ -1736,8 +1770,15 @@ class _AgentCard extends StatelessWidget {
  Widget build(BuildContext context) {
  return AsmblCard(
  onTap: () {
- // Navigate to agent chat
- context.go('${AppRoutes.chat}?agent=${agent.id}');
+ // Navigate to canvas for Design Agents, chat for others
+ final isDesignAgent = agent.capabilities.contains('design') || 
+                       agent.capabilities.contains('canvas') ||
+                       agent.capabilities.contains('ui-ux');
+ if (isDesignAgent) {
+   context.go(AppRoutes.canvas);
+ } else {
+   context.go('${AppRoutes.chat}?agent=${agent.id}');
+ }
  },
  child: Padding(
  padding: const EdgeInsets.all(SpacingTokens.componentSpacing),

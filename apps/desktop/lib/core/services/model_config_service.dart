@@ -516,7 +516,15 @@ final readyModelConfigsProvider = Provider<List<ModelConfig>>((ref) {
 
 // Provider for currently selected model (for chat)
 final selectedModelProvider = StateProvider<ModelConfig?>((ref) {
-  // Default to the default model config
+  // Try default model first
   final defaultModel = ref.watch(defaultModelConfigProvider);
-  return defaultModel;
+  if (defaultModel != null) {
+    return defaultModel;
+  }
+  
+  // If no default set, use the first available configured model
+  final allModels = ref.watch(allModelConfigsProvider);
+  final configuredModels = allModels.values.where((model) => model.isConfigured).toList();
+  
+  return configuredModels.isNotEmpty ? configuredModels.first : null;
 });

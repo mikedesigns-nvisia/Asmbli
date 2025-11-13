@@ -30,7 +30,7 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
   final _apiKeyController = TextEditingController();
   
   String selectedProvider = 'Anthropic';
-  String selectedModel = 'claude-3-5-sonnet-20241022';
+  String selectedModel = 'claude-4-5-sonnet-20250929';
   bool _isObscured = true;
   bool _isTesting = false;
   bool _isTestSuccessful = false;
@@ -38,19 +38,41 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
 
   final Map<String, List<String>> _providerModels = {
     'Anthropic': [
-      'claude-3-5-sonnet-20241022',
-      'claude-3-5-sonnet-20240620',
-      'claude-3-5-haiku-20241022',
-      'claude-3-opus-20240229',
-      'claude-3-sonnet-20240229',
-      'claude-3-haiku-20240307',
+      'claude-4-5-sonnet-20250929',  // Latest Sonnet 4.5 with enhanced coding capabilities (Sep 2025)
+      'claude-4-1-opus-20250805',    // Latest Opus 4.1 for complex reasoning (Aug 2025)
+      'claude-4-5-haiku-20251111',   // Latest Haiku 4.5 - fast & cost-effective (Nov 2025)
+      'claude-4-sonnet-20250522',    // Sonnet 4 with 1M context support (May 2025)
+      'claude-3-5-sonnet-20241022',  // Previous Sonnet 3.5 with enhanced capabilities
+      'claude-3-5-haiku-20241022',   // Previous Haiku 3.5 - fast, efficient model
     ],
     'OpenAI': [
-      'gpt-4o',
-      'gpt-4o-mini',
-      'gpt-4-turbo',
-      'gpt-4',
-      'gpt-3.5-turbo',
+      'gpt-4.1',                     // Latest GPT-4.1 with improved coding & 1M context (2025)
+      'gpt-4.1-mini',                // Fast, efficient GPT-4.1 mini variant
+      'gpt-4.1-nano',                // Ultra-efficient GPT-4.1 nano
+      'o3-pro',                      // Latest O3 Pro reasoning model (2025)
+      'o4-mini',                     // O4-mini for fast reasoning (2025)
+      'o1-preview',                  // O1 reasoning model preview
+      'o1-mini',                     // Smaller O1 reasoning model
+      'gpt-4o',                      // GPT-4 Omni (multimodal)
+      'gpt-4o-mini',                 // Smaller, faster GPT-4o
+    ],
+    'Google': [
+      'gemini-2.5-pro',              // Latest Gemini 2.5 Pro - most capable coding model (2025)
+      'gemini-2.5-flash',            // Gemini 2.5 Flash with thinking capabilities (2025)
+      'gemini-2.5-flash-lite',       // Fast, low-cost Gemini 2.5 variant
+      'gemini-2.0-pro-experimental', // Gemini 2.0 Pro with 2M context (experimental)
+      'gemini-2.0-flash',            // Gemini 2.0 Flash - generally available
+      'gemini-2.0-flash-lite',       // Cost-optimized Gemini 2.0 Flash-Lite
+      'gemini-1.5-pro',              // Previous generation Gemini Pro
+      'gemini-pro-vision',           // Gemini with vision capabilities
+    ],
+    'Moonshot (Kimi)': [
+      'moonshot-v1-auto',            // Auto-select model (8k/32k/128k) for cost optimization (2025)
+      'kimi-k2-thinking',            // Latest K2 Thinking model with reasoning (Nov 2025)
+      'kimi-k2-instruct-0905',      // K2 Instruct with 256K context (Sep 2025)
+      'moonshot-v1-128k',            // Kimi 128K context model
+      'moonshot-v1-32k',             // Kimi 32K context model
+      'moonshot-v1-8k',              // Kimi 8K context model
     ],
   };
 
@@ -539,20 +561,22 @@ class _ApiKeyDialogState extends ConsumerState<ApiKeyDialog> {
           ? 'https://api.anthropic.com'
           : selectedProvider == 'OpenAI'
             ? 'https://api.openai.com'
-            : 'https://generativelanguage.googleapis.com',
+            : selectedProvider == 'Google'
+              ? 'https://generativelanguage.googleapis.com'
+              : selectedProvider == 'Moonshot (Kimi)'
+                ? 'https://api.moonshot.cn'
+                : 'https://api.anthropic.com',
         isDefault: widget.existingModelConfig?.isDefault ?? 
                    widget.existingConfig?.isDefault ?? 
-                   currentConfigs.isEmpty,
+                   false, // Don't automatically set as default
         enabled: true,
         status: ModelStatus.ready, // API models are ready once configured
       );
 
       await modelConfigsNotifier.addModel(modelConfig);
       
-      // Set as default if it's the first one
-      if (currentConfigs.isEmpty) {
-        await modelConfigsNotifier.setDefault(configId);
-      }
+      // Note: Users can manually set defaults through model management UI
+      // No automatic default setting with multiple providers
 
       if (mounted) {
         Navigator.of(context).pop(true);

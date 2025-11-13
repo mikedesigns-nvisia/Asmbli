@@ -17,6 +17,88 @@ class ClaudeApiService {
     _dio.options.receiveTimeout = const Duration(seconds: 60);
   }
 
+  /// Send a vision message with image to Claude API
+  Future<ClaudeResponse> sendVisionMessage({
+    required String message,
+    required String base64Image,
+    required String apiKey,
+    String model = 'claude-3-5-sonnet-20241022',
+    double temperature = 0.7,
+    int maxTokens = 2048,
+    String? systemPrompt,
+    List<Map<String, dynamic>>? conversationHistory,
+  }) async {
+    try {
+      // Build messages array from conversation history
+      List<Map<String, dynamic>> messages = [];
+      
+      // Add conversation history if provided
+      if (conversationHistory != null) {
+        messages.addAll(conversationHistory);
+      }
+      
+      // Add the new user message with image
+      messages.add({
+        'role': 'user',
+        'content': [
+          {
+            'type': 'image',
+            'source': {
+              'type': 'base64',
+              'media_type': 'image/png',
+              'data': base64Image.split(',').last, // Remove data:image/png;base64, prefix
+            }
+          },
+          {
+            'type': 'text',
+            'text': message,
+          }
+        ],
+      });
+
+      // Build request payload
+      final requestData = {
+        'model': model,
+        'max_tokens': maxTokens,
+        'temperature': temperature,
+        'messages': messages,
+      };
+
+      // Add system prompt if provided
+      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
+        requestData['system'] = systemPrompt;
+      }
+
+      // Make API call
+      final response = await _dio.post(
+        '/v1/messages',
+        data: requestData,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': _apiVersion,
+          },
+        ),
+      );
+
+      return ClaudeResponse.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        final errorData = e.response?.data;
+        throw ClaudeApiException(
+          'Claude Vision API error: ${errorData?['error']?['message'] ?? e.message}',
+          statusCode: e.response?.statusCode,
+          errorData: errorData,
+        );
+      } else {
+        throw ClaudeApiException('Network error: ${e.message}');
+      }
+    } catch (e) {
+      throw ClaudeApiException('Unexpected error: $e');
+    }
+  }
+
   /// Send a message to Claude API and get response
   Future<ClaudeResponse> sendMessage({
     required String message,

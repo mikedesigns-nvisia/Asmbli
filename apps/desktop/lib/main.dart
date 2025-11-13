@@ -38,7 +38,8 @@ import 'core/services/feature_flag_service.dart';
 import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
 import 'features/tools/presentation/screens/tools_screen.dart';
 import 'features/chat/presentation/demo/contextual_context_demo.dart';
-import 'features/canvas/presentation/canvas_screen.dart';
+import 'features/canvas/presentation/excalidraw_canvas_screen.dart';
+import 'features/canvas/presentation/enhanced_excalidraw_demo.dart';
 import 'demo/demo_onboarding.dart';
 import 'demo/unified_showcase_demo.dart';
 import 'demo/components/controlled_onboarding_flow.dart';
@@ -183,64 +184,41 @@ void main() async {
   });
 }
 
-/// Wrapper to initialize vector system before main app
+/// Wrapper that launches the app immediately without blocking on vector system
 class VectorInitializedApp extends ConsumerWidget {
   const VectorInitializedApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch vector system initialization
-    final vectorInitialization = ref.watch(vectorSystemInitializationProvider);
+    // Initialize vector system in background (don't block startup)
+    _initializeVectorSystemInBackground(ref);
     
-    return vectorInitialization.when(
-      data: (_) => const AsmblDesktopApp(),
-      loading: () => MaterialApp(
-        home: Scaffold(
-          backgroundColor: const Color(0xFF0A0E1A),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1A1F2E),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      const CircularProgressIndicator(
-                        color: Color(0xFF4ECDC4),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'Setting up your workspace...',
-                        style: GoogleFonts.fustat(
-                                                   fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Preparing your knowledge base and context',
-                        style: GoogleFonts.fustat(
-                                                   color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      error: (error, stackTrace) {
-        print('❌ Vector system initialization failed: $error');
-        // Continue with main app even if vector system fails
-        return const AsmblDesktopApp();
-      },
-    );
+    // Launch app immediately
+    return const AsmblDesktopApp();
+  }
+  
+  /// Initialize vector system in background without blocking startup
+  void _initializeVectorSystemInBackground(WidgetRef ref) {
+    // Delay initialization to ensure app is fully loaded first
+    Future.delayed(const Duration(seconds: 2), () async {
+      try {
+        print('🔄 Starting vector system initialization in background...');
+        
+        // Initialize with shorter timeout to prevent hanging on permission dialogs
+        await ref.read(vectorSystemInitializationProvider.future).timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            print('⏰ Vector system initialization timed out - continuing without it');
+            print('💡 This may happen if file permissions are pending');
+          },
+        );
+        
+        print('✅ Vector system initialized successfully in background');
+      } catch (e) {
+        print('⚠️ Vector system initialization failed: $e - app will work without it');
+        print('💡 Vector search features will be unavailable');
+      }
+    });
   }
 }
 
@@ -262,6 +240,27 @@ class _AsmblDesktopAppState extends ConsumerState<AsmblDesktopApp> {
 
   Future<void> _checkOSTrust() async {
     try {
+      // Add timeout to prevent hanging
+      await Future.any([
+        _performTrustCheck(),
+        Future.delayed(const Duration(seconds: 2), () {
+          print('🔒 OS trust check timed out after 2 seconds - proceeding anyway');
+        }),
+      ]);
+    } catch (e) {
+      print('🔒 OS trust check failed: $e');
+    } finally {
+      // Always proceed after check or timeout
+      if (mounted) {
+        setState(() {
+          _isCheckingTrust = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _performTrustCheck() async {
+    try {
       final osTrustManager = OSTrustManager();
       final trustStatus = await osTrustManager.checkTrustStatus();
       final trustInfo = TrustInfo.fromStatus(trustStatus);
@@ -276,21 +275,8 @@ class _AsmblDesktopAppState extends ConsumerState<AsmblDesktopApp> {
           print('  • $rec');
         }
       }
-      
-      // For apps that don't store/transmit user data, we proceed regardless of trust
-      // The OS handles the actual security decisions (SmartScreen, UAC, etc.)
-      if (mounted) {
-        setState(() {
-          _isCheckingTrust = false;
-        });
-      }
     } catch (e) {
-      print('🔒 OS trust check failed: $e');
-      if (mounted) {
-        setState(() {
-          _isCheckingTrust = false; // Proceed normally
-        });
-      }
+      print('🔒 Trust check error: $e');
     }
   }
 
@@ -391,7 +377,11 @@ final _router = GoRouter(
 ),
  GoRoute(
  path: AppRoutes.canvas,
- builder: (context, state) => const CanvasScreen(),
+ builder: (context, state) => const ExcalidrawCanvasScreen(),
+ ),
+ GoRoute(
+ path: '/enhanced-excalidraw-demo',
+ builder: (context, state) => const EnhancedExcalidrawDemo(),
  ),
  GoRoute(
  path: AppRoutes.settings,

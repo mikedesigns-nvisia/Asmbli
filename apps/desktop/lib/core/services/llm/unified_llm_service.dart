@@ -4,6 +4,9 @@ import 'local_llm_provider.dart';
 import 'api_llm_provider.dart';
 import '../model_config_service.dart';
 import '../claude_api_service.dart';
+import '../openai_api_service.dart';
+import '../google_api_service.dart';
+import '../kimi_api_service.dart';
 import '../ollama_service.dart';
 
 /// Unified LLM service that routes requests to appropriate providers
@@ -11,12 +14,18 @@ class UnifiedLLMService {
   final ModelConfigService _modelConfigService;
   final ClaudeApiService _claudeApiService;
   final OllamaService _ollamaService;
+  final OpenAIApiService _openaiApiService;
+  final GoogleApiService _googleApiService;
+  final KimiApiService _kimiApiService;
   final Map<String, LLMProvider> _providers = {};
   
   UnifiedLLMService(
     this._modelConfigService,
     this._claudeApiService,
     this._ollamaService,
+    this._openaiApiService,
+    this._googleApiService,
+    this._kimiApiService,
   );
 
   /// Initialize the service and register providers
@@ -37,7 +46,7 @@ class UnifiedLLMService {
       if (modelConfig.isLocal) {
         provider = LocalLLMProvider(modelConfig, _ollamaService);
       } else {
-        provider = ApiLLMProvider(modelConfig, _claudeApiService);
+        provider = ApiLLMProvider(modelConfig, _claudeApiService, _openaiApiService, _googleApiService, _kimiApiService);
       }
       
       _providers[modelConfig.id] = provider;
@@ -91,6 +100,88 @@ class UnifiedLLMService {
     final chatContext = context ?? const ChatContext();
     
     yield* provider.chatStream(message, chatContext);
+  }
+
+  /// Send a vision message with image using a vision-capable model
+  Future<LLMResponse> visionChat({
+    required String message,
+    required String base64Image,
+    String? modelId,
+    ChatContext? context,
+  }) async {
+    // Get a vision-capable provider
+    final provider = await _getVisionProviderForRequest(modelId);
+    
+    final chatContext = context ?? const ChatContext();
+    
+    // Support vision for both API and local providers
+    if (provider is ApiLLMProvider) {
+      return await provider.visionChat(message, base64Image, chatContext);
+    } else if (provider is LocalLLMProvider) {
+      return await provider.visionChat(message, base64Image, chatContext);
+    } else {
+      throw UnsupportedError('Vision chat is not supported by this provider type');
+    }
+  }
+
+  /// Get a vision-capable provider for the request
+  Future<LLMProvider> _getVisionProviderForRequest(String? modelId) async {
+    LLMProvider? provider;
+    
+    if (modelId != null) {
+      provider = getProvider(modelId);
+      if (provider == null) {
+        throw Exception('Model $modelId not found');
+      }
+    } else {
+      // Find a vision-capable provider
+      provider = _findVisionCapableProvider();
+      if (provider == null) {
+        throw Exception('No vision-capable models available');
+      }
+    }
+    
+    // Verify the provider supports vision
+    if (!_providerSupportsVision(provider)) {
+      throw Exception('Model ${provider.name} does not support vision capabilities');
+    }
+    
+    return provider;
+  }
+
+  /// Find a vision-capable provider from available providers
+  LLMProvider? _findVisionCapableProvider() {
+    // Look for Claude models first (they support vision)
+    for (final provider in _providers.values) {
+      if (_providerSupportsVision(provider)) {
+        return provider;
+      }
+    }
+    return null;
+  }
+
+  /// Check if a provider supports vision capabilities
+  bool _providerSupportsVision(LLMProvider provider) {
+    final modelConfig = provider.modelConfig;
+    
+    // Check API providers (Claude, OpenAI)
+    if (provider is ApiLLMProvider) {
+      // Check if model has vision capability or is a known vision model
+      final hasVisionCapability = modelConfig.capabilities.contains('vision');
+      final isClaudeVision = modelConfig.model.contains('claude-3');
+      final isGPTVision = modelConfig.model.contains('gpt-4') && 
+                         (modelConfig.model.contains('vision') || modelConfig.model.contains('turbo'));
+      
+      return hasVisionCapability || isClaudeVision || isGPTVision;
+    }
+    
+    // Check local providers (LLaVA models)
+    if (provider is LocalLLMProvider) {
+      return modelConfig.capabilities.contains('vision') ||
+             modelConfig.ollamaModelId?.toLowerCase().contains('llava') == true;
+    }
+    
+    return false;
   }
 
   /// Get recommended provider for a task type
@@ -247,11 +338,18 @@ final unifiedLLMServiceProvider = Provider<UnifiedLLMService>((ref) {
   final modelConfigService = ref.read(modelConfigServiceProvider);
   final claudeApiService = ref.read(claudeApiServiceProvider);
   final ollamaService = ref.read(ollamaServiceProvider);
+  final openaiApiService = ref.read(openaiApiServiceProvider);
+  final googleApiService = ref.read(googleApiServiceProvider);
+  
+  final kimiApiService = ref.read(kimiApiServiceProvider);
   
   final service = UnifiedLLMService(
     modelConfigService,
     claudeApiService,
     ollamaService,
+    openaiApiService,
+    googleApiService,
+    kimiApiService,
   );
   
   // Initialize the service

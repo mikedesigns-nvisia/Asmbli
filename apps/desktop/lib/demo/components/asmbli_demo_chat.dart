@@ -421,10 +421,10 @@ class _AsmblDemoChatState extends ConsumerState<AsmblDemoChat>
       widget.onCanvasUpdate?.call('git_commit');
     }
 
-    // Trigger demo completion after a delay
-    Future.delayed(const Duration(seconds: 3), () {
-      widget.onDemoComplete?.call();
-    });
+    // TODO: Demo completion should be triggered by user interaction, not automatically
+    // Future.delayed(const Duration(seconds: 3), () {
+    //   widget.onDemoComplete?.call();
+    // });
   }
 
   void _showUserChatOptions() {
@@ -604,6 +604,11 @@ class _AsmblDemoChatState extends ConsumerState<AsmblDemoChat>
     required String situation,
     required List<ProposedAction> actions,
   }) {
+    debugPrint('🔍 Requesting enhanced verification: $title');
+    debugPrint('🔍 Actions count: ${actions.length}');
+    debugPrint('🔍 First action title: ${actions.isNotEmpty ? actions.first.title : "none"}');
+    debugPrint('🔍 Enhanced verification callback available: ${widget.onEnhancedVerificationNeeded != null}');
+    
     widget.onEnhancedVerificationNeeded?.call(EnhancedVerificationRequest(
       title: title,
       situation: situation,
@@ -627,6 +632,7 @@ class _AsmblDemoChatState extends ConsumerState<AsmblDemoChat>
   }
 
   List<ProposedAction> _getFirstVerificationActions() {
+    debugPrint('🔍 Building first verification actions for scenario: ${widget.scenario}');
     switch (widget.scenario) {
       case 'operations-manager':
         return [
@@ -679,7 +685,10 @@ class _AsmblDemoChatState extends ConsumerState<AsmblDemoChat>
             description: 'Generate initial dashboard design based on requirements',
             icon: Icons.design_services,
             isRecommended: true,
-            onSelect: () => _executeFirstActionWithContext('Create Mockup'),
+            onSelect: () {
+              debugPrint('🎯 Create Mockup button clicked!');
+              _executeFirstActionWithContext('Create Mockup');
+            },
           ),
           ProposedAction(
             title: 'Review Examples',
@@ -937,11 +946,16 @@ class _AsmblDemoChatState extends ConsumerState<AsmblDemoChat>
 
   // Action execution with context tracking
   void _executeFirstActionWithContext(String actionTitle) {
+    debugPrint('🎬 _executeFirstActionWithContext called with: $actionTitle');
+    debugPrint('🎬 Widget scenario: ${widget.scenario}');
+    debugPrint('🎬 Canvas update callback available: ${widget.onCanvasUpdate != null}');
+    
     _selectAction(actionTitle, 1);
     _executeFirstAction();
     
     // Update canvas with action context
     if (widget.scenario == 'design-assistant') {
+      debugPrint('🎬 Calling canvas update for wireframe with context: $actionTitle');
       widget.onCanvasUpdate?.call('wireframe', actionContext: actionTitle);
     } else if (widget.scenario == 'coding-agent') {
       widget.onCanvasUpdate?.call('show_editor', actionContext: actionTitle);

@@ -1006,7 +1006,7 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  
  // Description
  Text(
- 'Chat directly with ${ref.read(defaultModelConfigProvider)?.name ?? 'your AI assistant'}.\nAdd context documents for better help, or load an agent\nfrom the sidebar for enhanced capabilities.',
+ 'Chat with AI using any of your configured models.\nAdd context documents for better help, or load an agent\nfrom the sidebar for enhanced capabilities.',
  style: GoogleFonts.fustat(
   color: theme.colorScheme.onSurfaceVariant,
  height: 1.5,

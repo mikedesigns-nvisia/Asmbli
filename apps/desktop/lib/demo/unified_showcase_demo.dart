@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../core/design_system/design_system.dart';
+import '../core/widgets/excalidraw_canvas.dart';
 import 'components/enhanced_ai_reasoning_simulator.dart';
 import 'components/confidence_indicator.dart';
 import 'components/demo_container.dart';
@@ -98,6 +99,11 @@ class _UnifiedShowcaseDemoState extends State<UnifiedShowcaseDemo>
   // Action context tracking
   String? _currentActionContext;
   List<String> _actionHistory = [];
+  
+  // Excalidraw canvas state
+  final GlobalKey _excalidrawKey = GlobalKey();
+  bool _canvasHasContent = false;
+  String? _currentDrawingData;
   
   // Verification modal state
   VerificationRequest? _currentVerification;
@@ -235,6 +241,9 @@ class _UnifiedShowcaseDemoState extends State<UnifiedShowcaseDemo>
   }
 
   void _handleCanvasUpdate(String stage, {String? actionContext}) {
+    debugPrint('🔄 _handleCanvasUpdate called with stage: $stage, actionContext: $actionContext');
+    debugPrint('🔄 Current agent type: ${widget.selectedAgentType}');
+    
     if (mounted) {
       setState(() {
         // Track action context
@@ -244,19 +253,37 @@ class _UnifiedShowcaseDemoState extends State<UnifiedShowcaseDemo>
         }
         
         if (widget.selectedAgentType == 1) { // Design Assistant
+          debugPrint('🎨 Design Assistant stage update: $stage');
           switch (stage) {
             case 'start_design':
               _showCanvas = true;
               _canvasStage = 0; // Empty canvas ready
+              debugPrint('🎨 Canvas stage set to 0 (empty)');
               break;
             case 'wireframe':
               _canvasStage = 1; // Show wireframe
+              debugPrint('🎨 Canvas stage set to 1 (wireframe)');
+              // Trigger wireframe generation in Excalidraw
+              Future.delayed(const Duration(milliseconds: 500), () {
+                debugPrint('🎨 Delayed wireframe generation trigger executing...');
+                _triggerWireframeGeneration();
+              });
               break;
             case 'styled':
               _canvasStage = 2; // Show styled version
+              debugPrint('🎨 Canvas stage set to 2 (styled)');
+              // Future: Could add styled elements here
+              Future.delayed(const Duration(milliseconds: 500), () {
+                _triggerWireframeGeneration();
+              });
               break;
             case 'interactive':
               _canvasStage = 3; // Show interactive version
+              debugPrint('🎨 Canvas stage set to 3 (interactive)');
+              // Future: Could add interactive elements here
+              Future.delayed(const Duration(milliseconds: 500), () {
+                _triggerWireframeGeneration();
+              });
               break;
           }
         } else if (widget.selectedAgentType == 3) { // Coding Agent
@@ -967,9 +994,7 @@ class _UnifiedShowcaseDemoState extends State<UnifiedShowcaseDemo>
         ),
         
         Expanded(
-          child: Center(
-            child: _buildMockDesign(colors),
-          ),
+          child: _buildExcalidrawCanvas(colors),
         ),
       ],
     );
@@ -2569,6 +2594,65 @@ class _UnifiedShowcaseDemoState extends State<UnifiedShowcaseDemo>
         ),
       ],
     );
+  }
+
+  Widget _buildExcalidrawCanvas(ThemeColors colors) {
+    return Container(
+      margin: const EdgeInsets.all(SpacingTokens.md),
+      child: ExcalidrawCanvas(
+        key: _excalidrawKey,
+        darkMode: Theme.of(context).brightness == Brightness.dark,
+        sessionId: 'design_assistant_${widget.selectedAgentType}_${DateTime.now().millisecondsSinceEpoch}',
+        onDrawingChanged: (drawingData) {
+          setState(() {
+            _canvasHasContent = true;
+            _currentDrawingData = drawingData;
+          });
+        },
+        onDrawingSaved: (drawingData) {
+          debugPrint('🎨 Drawing saved: ${drawingData.length} characters');
+          // Could integrate with MCP or local storage here
+        },
+        onPNGExported: (base64PNG) {
+          debugPrint('📸 PNG exported: ${base64PNG.length} characters');
+          // Could save PNG or send to chat
+        },
+        onError: (error) {
+          debugPrint('❌ Excalidraw error: $error');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Canvas error: $error'),
+              backgroundColor: colors.error,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _triggerWireframeGeneration() {
+    debugPrint('🎯 _triggerWireframeGeneration called, _canvasStage: $_canvasStage');
+    debugPrint('🎯 _excalidrawKey.currentState: ${_excalidrawKey.currentState}');
+    
+    // Add wireframe elements based on canvas stage
+    if (_excalidrawKey.currentState != null) {
+      debugPrint('🎯 Canvas state exists, calling addWireframeTemplate for stage $_canvasStage');
+      switch (_canvasStage) {
+        case 1: // Wireframe stage
+          (_excalidrawKey.currentState as dynamic).addWireframeTemplate();
+          break;
+        case 2: // Styled stage - could add more elements
+          // Future: Add styled elements programmatically
+          (_excalidrawKey.currentState as dynamic).addWireframeTemplate();
+          break;
+        case 3: // Interactive stage - could add interactive elements
+          // Future: Add interactive annotations
+          (_excalidrawKey.currentState as dynamic).addWireframeTemplate();
+          break;
+      }
+    } else {
+      debugPrint('❌ Cannot trigger wireframe generation - canvas state is null');
+    }
   }
 
   Widget _buildAnalysisStatusBar(ThemeColors colors) {

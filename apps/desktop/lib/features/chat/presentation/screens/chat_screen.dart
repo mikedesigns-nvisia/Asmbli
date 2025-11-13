@@ -999,7 +999,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  // Description
  Text(
- 'Chat directly with ${ref.read(defaultModelConfigProvider)?.name ?? 'your AI assistant'}.\nAdd context documents for better help, or load an agent\nfrom the sidebar for enhanced capabilities.',
+ 'Chat with AI using any of your configured models.\nAdd context documents for better help, or load an agent\nfrom the sidebar for enhanced capabilities.',
  style: GoogleFonts.fustat(
   color: theme.colorScheme.onSurfaceVariant,
  height: 1.5,
@@ -1689,15 +1689,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  /// Create a new direct chat conversation with the selected model
  Future<void> _startNewDirectChat() async {
    try {
-     // Get the selected model (default if none selected)
-     final selectedModel = ref.read(selectedModelProvider) ?? ref.read(defaultModelConfigProvider);
+     // Get the selected model (falls back to first configured model if none selected)
+     final selectedModel = ref.read(selectedModelProvider);
      
      if (selectedModel == null) {
        // Show error if no model is configured
        ScaffoldMessenger.of(context).showSnackBar(
          SnackBar(
-           content: Text('Please configure at least one AI model in Settings'),
-           backgroundColor: ThemeColors(context).primary,
+           content: Text('Please configure at least one AI model in Settings to start chatting'),
+           backgroundColor: ThemeColors(context).warning,
+           action: SnackBarAction(
+             label: 'Settings',
+             onPressed: () => context.push(AppRoutes.settings),
+             textColor: Colors.white,
+           ),
          ),
        );
        return;

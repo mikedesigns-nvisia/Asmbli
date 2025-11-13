@@ -107,6 +107,70 @@ class LocalLLMProvider extends LLMProvider {
     }
   }
 
+  /// Send a vision message with image (LLaVA models)
+  Future<LLMResponse> visionChat(String message, String base64Image, ChatContext context) async {
+    if (_modelConfig.ollamaModelId == null) {
+      throw LLMProviderException(
+        'Model ID not configured for local model',
+        providerName: name,
+      );
+    }
+
+    // Check if model supports vision
+    if (!_supportsVision()) {
+      throw LLMProviderException(
+        'Model ${_modelConfig.ollamaModelId} does not support vision capabilities',
+        providerName: name,
+      );
+    }
+
+    try {
+      // For LLaVA models, we need to use Ollama's vision API
+      final response = await _ollamaService.generateVisionResponse(
+        model: _modelConfig.ollamaModelId!,
+        prompt: message,
+        base64Image: base64Image,
+        systemPrompt: context.systemPrompt,
+      );
+
+      return LLMResponse(
+        content: response,
+        modelUsed: _modelConfig.ollamaModelId!,
+        usage: null, // Local models don't report token usage
+        metadata: {
+          'provider': 'local',
+          'visionEnabled': true,
+          'hasImage': true,
+          'hasMCPCapabilities': context.hasMCPCapabilities,
+          'hasContextDocuments': context.hasContextDocuments,
+          'mcpServersAvailable': context.mcpServers,
+          'contextDocumentsCount': context.contextDocuments.length,
+        },
+      );
+    } catch (e) {
+      throw LLMProviderException(
+        'Failed to get vision response from local model: $e',
+        providerName: name,
+        originalError: e,
+      );
+    }
+  }
+
+  /// Check if the current model supports vision
+  bool _supportsVision() {
+    final modelId = _modelConfig.ollamaModelId?.toLowerCase() ?? '';
+    
+    // LLaVA models support vision
+    final isLLaVA = modelId.contains('llava') || 
+                    modelId.contains('llama-vision') ||
+                    modelId.contains('bakllava');
+    
+    // Check capabilities list
+    final hasVisionCapability = _modelConfig.capabilities.contains('vision');
+    
+    return isLLaVA || hasVisionCapability;
+  }
+
   @override
   Future<bool> testConnection() async {
     try {

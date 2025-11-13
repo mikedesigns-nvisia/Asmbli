@@ -9,7 +9,7 @@ import '../widgets/builder_components/basic_info_component.dart';
 import '../widgets/builder_components/master_prompt_editor_component.dart';
 import '../widgets/builder_components/tool_selector_component.dart';
 import '../widgets/builder_components/context_library_component.dart';
-import '../widgets/builder_components/model_config_component.dart';
+import '../widgets/builder_components/enhanced_model_config_component.dart';
 import '../widgets/builder_components/reasoning_flows_component.dart';
 import '../widgets/builder_components/testing_panel_component.dart';
 import '../widgets/builder_components/review_component.dart';
@@ -225,7 +225,7 @@ class _AgentBuilderScreenState extends ConsumerState<AgentBuilderScreen> with Ti
               MasterPromptEditorComponent(),
               ToolSelectorComponent(),
               ContextLibraryComponent(),
-              ModelConfigComponent(),
+              EnhancedModelConfigComponent(),
               ReasoningFlowsComponent(),
               TestingPanelComponent(),
               ReviewComponent(),

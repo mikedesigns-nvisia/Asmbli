@@ -1,19 +1,33 @@
 import 'llm_provider.dart';
 import '../claude_api_service.dart';
+import '../openai_api_service.dart';
+import '../google_api_service.dart';
+import '../kimi_api_service.dart';
 import '../../models/model_config.dart';
 
 /// API-based LLM provider (Claude, GPT, etc.)
 class ApiLLMProvider extends LLMProvider {
   final ModelConfig _modelConfig;
-  final ClaudeApiService _apiService;
+  final ClaudeApiService? _claudeApiService;
+  final OpenAIApiService? _openaiApiService;
+  final GoogleApiService? _googleApiService;
+  final KimiApiService? _kimiApiService;
 
-  ApiLLMProvider(this._modelConfig, this._apiService);
+  ApiLLMProvider(
+    this._modelConfig, 
+    this._claudeApiService, [
+    this._openaiApiService,
+    this._googleApiService,
+    this._kimiApiService,
+  ]);
 
   @override
   String get name => '${_modelConfig.provider} (${_modelConfig.name})';
 
   @override
   ModelConfig get modelConfig => _modelConfig;
+
+  String get modelId => _modelConfig.id;
 
   @override
   Future<bool> get isAvailable async {
@@ -61,17 +75,84 @@ class ApiLLMProvider extends LLMProvider {
     }
 
     try {
-      final response = await _apiService.sendMessage(
-        message: message,
-        apiKey: _modelConfig.apiKey,
-        model: _modelConfig.model,
-        systemPrompt: context.systemPrompt,
-        conversationHistory: context.messages,
-        temperature: 0.7,
-        maxTokens: 4096,
-      );
-
-      final llmResponse = LLMResponse.fromClaudeResponse(response);
+      LLMResponse llmResponse;
+      
+      if (_isClaudeModel() && _claudeApiService != null) {
+        final response = await _claudeApiService!.sendMessage(
+          message: message,
+          apiKey: _modelConfig.apiKey,
+          model: _modelConfig.model,
+          systemPrompt: context.systemPrompt,
+          conversationHistory: context.messages,
+          temperature: 0.7,
+          maxTokens: 4096,
+        );
+        llmResponse = LLMResponse.fromClaudeResponse(response);
+      } else if (_isOpenAIModel() && _openaiApiService != null) {
+        final response = await _openaiApiService!.sendMessage(
+          message: message,
+          apiKey: _modelConfig.apiKey,
+          model: _modelConfig.model,
+          systemPrompt: context.systemPrompt,
+          conversationHistory: context.messages,
+          temperature: 0.7,
+          maxTokens: 4096,
+        );
+        llmResponse = LLMResponse(
+          content: response.content,
+          modelUsed: response.model,
+          usage: TokenUsage(
+            inputTokens: response.usage.promptTokens,
+            outputTokens: response.usage.completionTokens,
+          ),
+          metadata: {'provider': 'openai'},
+        );
+      } else if (_isGoogleModel() && _googleApiService != null) {
+        final response = await _googleApiService!.sendMessage(
+          message: message,
+          apiKey: _modelConfig.apiKey,
+          model: _modelConfig.model,
+          systemPrompt: context.systemPrompt,
+          conversationHistory: context.messages,
+          temperature: 0.7,
+          maxTokens: 4096,
+        );
+        llmResponse = LLMResponse(
+          content: response.content,
+          modelUsed: response.model,
+          usage: response.usageMetadata != null 
+              ? TokenUsage(
+                  inputTokens: response.usageMetadata!.promptTokenCount,
+                  outputTokens: response.usageMetadata!.candidatesTokenCount,
+                )
+              : null,
+          metadata: {'provider': 'google'},
+        );
+      } else if (_isKimiModel() && _kimiApiService != null) {
+        final response = await _kimiApiService!.sendMessage(
+          message: message,
+          apiKey: _modelConfig.apiKey,
+          model: _modelConfig.model,
+          systemPrompt: context.systemPrompt,
+          conversationHistory: context.messages,
+          temperature: 0.7,
+          maxTokens: 4096,
+        );
+        llmResponse = LLMResponse(
+          content: response.content,
+          modelUsed: response.model,
+          usage: TokenUsage(
+            inputTokens: response.usage.promptTokens,
+            outputTokens: response.usage.completionTokens,
+          ),
+          metadata: {'provider': 'kimi'},
+        );
+      } else {
+        throw LLMProviderException(
+          'Unsupported model provider: ${_modelConfig.provider}',
+          providerName: name,
+        );
+      }
       
       // Enhance metadata with context information
       return LLMResponse(
@@ -88,9 +169,9 @@ class ApiLLMProvider extends LLMProvider {
         },
       );
     } catch (e) {
-      if (e is ClaudeApiException) {
+      if (e is ClaudeApiException || e is OpenAIApiException || e is GoogleApiException || e is KimiApiException) {
         throw LLMProviderException(
-          'API request failed: ${e.message}',
+          'API request failed: ${e.toString()}',
           providerName: name,
           originalError: e,
         );
@@ -114,19 +195,62 @@ class ApiLLMProvider extends LLMProvider {
     }
 
     try {
-      yield* _apiService.streamMessage(
-        message: message,
-        apiKey: _modelConfig.apiKey,
-        model: _modelConfig.model,
-        systemPrompt: context.systemPrompt,
-        conversationHistory: context.messages,
-        temperature: 0.7,
-        maxTokens: 4096,
-      );
-    } catch (e) {
-      if (e is ClaudeApiException) {
+      if (_isClaudeModel() && _claudeApiService != null) {
+        yield* _claudeApiService!.streamMessage(
+          message: message,
+          apiKey: _modelConfig.apiKey,
+          model: _modelConfig.model,
+          systemPrompt: context.systemPrompt,
+          conversationHistory: context.messages,
+          temperature: 0.7,
+          maxTokens: 4096,
+        );
+      } else if (_isOpenAIModel() && _openaiApiService != null) {
+        // OpenAI doesn't have streaming in this implementation yet
+        final response = await _openaiApiService!.sendMessage(
+          message: message,
+          apiKey: _modelConfig.apiKey,
+          model: _modelConfig.model,
+          systemPrompt: context.systemPrompt,
+          conversationHistory: context.messages,
+          temperature: 0.7,
+          maxTokens: 4096,
+        );
+        yield response.content;
+      } else if (_isGoogleModel() && _googleApiService != null) {
+        // Google doesn't have streaming in this implementation yet
+        final response = await _googleApiService!.sendMessage(
+          message: message,
+          apiKey: _modelConfig.apiKey,
+          model: _modelConfig.model,
+          systemPrompt: context.systemPrompt,
+          conversationHistory: context.messages,
+          temperature: 0.7,
+          maxTokens: 4096,
+        );
+        yield response.content;
+      } else if (_isKimiModel() && _kimiApiService != null) {
+        // Kimi doesn't have streaming in this implementation yet
+        final response = await _kimiApiService!.sendMessage(
+          message: message,
+          apiKey: _modelConfig.apiKey,
+          model: _modelConfig.model,
+          systemPrompt: context.systemPrompt,
+          conversationHistory: context.messages,
+          temperature: 0.7,
+          maxTokens: 4096,
+        );
+        yield response.content;
+      } else {
         throw LLMProviderException(
-          'API streaming request failed: ${e.message}',
+          'Unsupported streaming model provider: ${_modelConfig.provider}',
+          providerName: name,
+        );
+      }
+    } catch (e) {
+      if (e is ClaudeApiException || e is OpenAIApiException || e is GoogleApiException || e is KimiApiException) {
+        throw LLMProviderException(
+          'API streaming request failed: ${e.toString()}',
           providerName: name,
           originalError: e,
         );
@@ -140,6 +264,199 @@ class ApiLLMProvider extends LLMProvider {
     }
   }
 
+  /// Send a vision message with image (Claude 3.5 Sonnet and GPT-4V)
+  Future<LLMResponse> visionChat(String message, String base64Image, ChatContext context) async {
+    if (!await isAvailable) {
+      throw LLMProviderException(
+        'API provider not available. Check API key configuration.',
+        providerName: name,
+      );
+    }
+
+    // Check if model supports vision
+    if (!_supportsVision()) {
+      throw LLMProviderException(
+        'Model ${_modelConfig.model} does not support vision capabilities',
+        providerName: name,
+      );
+    }
+
+    try {
+      if (_isClaudeModel()) {
+        return await _handleClaudeVision(message, base64Image, context);
+      } else if (_isOpenAIModel()) {
+        return await _handleOpenAIVision(message, base64Image, context);
+      } else if (_isGoogleModel()) {
+        return await _handleGoogleVision(message, base64Image, context);
+      } else {
+        throw LLMProviderException(
+          'Unsupported vision model: ${_modelConfig.model}',
+          providerName: name,
+        );
+      }
+    } catch (e) {
+      if (e is ClaudeApiException || e is OpenAIApiException || e is GoogleApiException || e is KimiApiException) {
+        throw LLMProviderException(
+          'Vision API request failed: ${e.toString()}',
+          providerName: name,
+          originalError: e,
+        );
+      } else {
+        throw LLMProviderException(
+          'Unexpected vision error: $e',
+          providerName: name,
+          originalError: e,
+        );
+      }
+    }
+  }
+
+  Future<LLMResponse> _handleClaudeVision(String message, String base64Image, ChatContext context) async {
+    final response = await _claudeApiService!.sendVisionMessage(
+      message: message,
+      base64Image: base64Image,
+      apiKey: _modelConfig.apiKey,
+      model: _modelConfig.model,
+      systemPrompt: context.systemPrompt,
+      conversationHistory: context.messages,
+      temperature: 0.7,
+      maxTokens: 4096,
+    );
+
+    final llmResponse = LLMResponse.fromClaudeResponse(response);
+    
+    return LLMResponse(
+      content: llmResponse.content,
+      modelUsed: llmResponse.modelUsed,
+      usage: llmResponse.usage,
+      metadata: {
+        ...llmResponse.metadata,
+        'provider': 'claude',
+        'visionEnabled': true,
+        'hasImage': true,
+        'hasMCPCapabilities': context.hasMCPCapabilities,
+        'hasContextDocuments': context.hasContextDocuments,
+        'mcpServersAvailable': context.mcpServers,
+        'contextDocumentsCount': context.contextDocuments.length,
+      },
+    );
+  }
+
+  Future<LLMResponse> _handleOpenAIVision(String message, String base64Image, ChatContext context) async {
+    final response = await _openaiApiService!.sendVisionMessage(
+      message: message,
+      base64Image: base64Image,
+      apiKey: _modelConfig.apiKey,
+      model: _modelConfig.model,
+      systemPrompt: context.systemPrompt,
+      conversationHistory: context.messages,
+      temperature: 0.7,
+      maxTokens: 4096,
+    );
+
+    return LLMResponse(
+      content: response.content,
+      modelUsed: response.model,
+      usage: TokenUsage(
+        inputTokens: response.usage.promptTokens,
+        outputTokens: response.usage.completionTokens,
+      ),
+      metadata: {
+        'provider': 'openai',
+        'visionEnabled': true,
+        'hasImage': true,
+        'hasMCPCapabilities': context.hasMCPCapabilities,
+        'hasContextDocuments': context.hasContextDocuments,
+        'mcpServersAvailable': context.mcpServers,
+        'contextDocumentsCount': context.contextDocuments.length,
+      },
+    );
+  }
+
+  Future<LLMResponse> _handleGoogleVision(String message, String base64Image, ChatContext context) async {
+    final response = await _googleApiService!.sendVisionMessage(
+      message: message,
+      base64Image: base64Image,
+      apiKey: _modelConfig.apiKey,
+      model: _modelConfig.model,
+      systemPrompt: context.systemPrompt,
+      conversationHistory: context.messages,
+      temperature: 0.7,
+      maxTokens: 4096,
+    );
+
+    return LLMResponse(
+      content: response.content,
+      modelUsed: response.model,
+      usage: response.usageMetadata != null 
+          ? TokenUsage(
+              inputTokens: response.usageMetadata!.promptTokenCount,
+              outputTokens: response.usageMetadata!.candidatesTokenCount,
+            )
+          : null,
+      metadata: {
+        'provider': 'google',
+        'visionEnabled': true,
+        'hasImage': true,
+        'hasMCPCapabilities': context.hasMCPCapabilities,
+        'hasContextDocuments': context.hasContextDocuments,
+        'mcpServersAvailable': context.mcpServers,
+        'contextDocumentsCount': context.contextDocuments.length,
+      },
+    );
+  }
+
+  /// Check if the current model supports vision
+  bool _supportsVision() {
+    final model = _modelConfig.model.toLowerCase();
+    
+    // Claude 3.5 Sonnet and above support vision
+    final claudeVision = model.contains('claude-3') && (
+      model.contains('sonnet') || 
+      model.contains('opus') ||
+      model.contains('haiku')
+    );
+    
+    // GPT-4 Vision models
+    final gptVision = model.contains('gpt-4') && (
+      model.contains('vision') ||
+      model.contains('turbo') ||
+      model.contains('preview')
+    );
+    
+    // Google Gemini Vision models
+    final geminiVision = model.contains('gemini') && (
+      model.contains('vision') ||
+      model.contains('pro-vision')
+    );
+    
+    // Check capabilities list
+    final hasVisionCapability = _modelConfig.capabilities.contains('vision');
+    
+    return claudeVision || gptVision || geminiVision || hasVisionCapability;
+  }
+
+  bool _isClaudeModel() {
+    return _modelConfig.provider.toLowerCase().contains('claude') ||
+           _modelConfig.model.toLowerCase().contains('claude');
+  }
+
+  bool _isOpenAIModel() {
+    return _modelConfig.provider.toLowerCase().contains('openai') ||
+           _modelConfig.model.toLowerCase().contains('gpt');
+  }
+
+  bool _isGoogleModel() {
+    return _modelConfig.provider.toLowerCase().contains('google') ||
+           _modelConfig.model.toLowerCase().contains('gemini');
+  }
+
+  bool _isKimiModel() {
+    return _modelConfig.provider.toLowerCase().contains('kimi') ||
+           _modelConfig.provider.toLowerCase().contains('moonshot') ||
+           _modelConfig.model.toLowerCase().contains('moonshot');
+  }
+
   @override
   Future<bool> testConnection() async {
     try {
@@ -147,8 +464,17 @@ class ApiLLMProvider extends LLMProvider {
         return false;
       }
 
-      // Use existing API key test method
-      return await _apiService.testApiKey(_modelConfig.apiKey);
+      if (_isClaudeModel() && _claudeApiService != null) {
+        return await _claudeApiService!.testApiKey(_modelConfig.apiKey);
+      } else if (_isOpenAIModel() && _openaiApiService != null) {
+        return await _openaiApiService!.testApiKey(_modelConfig.apiKey);
+      } else if (_isGoogleModel() && _googleApiService != null) {
+        return await _googleApiService!.testApiKey(_modelConfig.apiKey);
+      } else if (_isKimiModel() && _kimiApiService != null) {
+        return await _kimiApiService!.testApiKey(_modelConfig.apiKey);
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }

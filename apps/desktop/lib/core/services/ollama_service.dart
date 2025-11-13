@@ -377,6 +377,46 @@ class OllamaService {
     }
   }
 
+  /// Generate a vision response using a local LLaVA model
+  Future<String> generateVisionResponse({
+    required String model,
+    required String prompt,
+    required String base64Image,
+    String? systemPrompt,
+  }) async {
+    try {
+      final requestData = <String, dynamic>{
+        'model': model,
+        'prompt': prompt,
+        'stream': false,
+        'images': [base64Image.split(',').last], // Remove data:image/png;base64, prefix if present
+        'options': {
+          'temperature': 0.7,
+          'top_p': 0.9,
+        },
+      };
+
+      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
+        requestData['system'] = systemPrompt;
+      }
+
+      final response = await _dio.post(
+        '/api/generate',
+        data: requestData,
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = response.data as Map<String, dynamic>;
+        return responseData['response'] as String? ?? '';
+      } else {
+        throw Exception('Failed to generate vision response: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Failed to generate vision response: $e');
+      rethrow;
+    }
+  }
+
   /// Get available models for download (no hardcoded samples - user must install through Ollama)
   List<ModelConfig> getAvailableModels() {
     // Return empty list - users should use ollama CLI to install models

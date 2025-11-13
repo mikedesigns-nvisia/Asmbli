@@ -1,0 +1,337 @@
+{
+  "id": "material3",
+  "name": "Material Design 3",
+  "version": "1.0.0",
+  "tokens": {
+    "colors": {
+      "primary": "#6750A4",
+      "onPrimary": "#FFFFFF",
+      "primaryContainer": "#EADDFF",
+      "onPrimaryContainer": "#21005D",
+      "secondary": "#625B71",
+      "onSecondary": "#FFFFFF",
+      "secondaryContainer": "#E8DEF8",
+      "onSecondaryContainer": "#1D192B",
+      "tertiary": "#7D5260",
+      "onTertiary": "#FFFFFF",
+      "error": "#BA1A1A",
+      "onError": "#FFFFFF",
+      "errorContainer": "#FFDAD6",
+      "onErrorContainer": "#410002",
+      "background": "#FFFBFE",
+      "onBackground": "#1C1B1F",
+      "surface": "#FFFBFE",
+      "onSurface": "#1C1B1F",
+      "surfaceVariant": "#E7E0EC",
+      "onSurfaceVariant": "#49454F",
+      "outline": "#79747E",
+      "outlineVariant": "#CAC4D0"
+    },
+    "typography": {
+      "displayLarge": {
+        "fontSize": 57,
+        "lineHeight": 64,
+        "fontWeight": 400,
+        "letterSpacing": -0.25
+      },
+      "displayMedium": {
+        "fontSize": 45,
+        "lineHeight": 52,
+        "fontWeight": 400,
+        "letterSpacing": 0
+      },
+      "displaySmall": {
+        "fontSize": 36,
+        "lineHeight": 44,
+        "fontWeight": 400,
+        "letterSpacing": 0
+      },
+      "headlineLarge": {
+        "fontSize": 32,
+        "lineHeight": 40,
+        "fontWeight": 400,
+        "letterSpacing": 0
+      },
+      "headlineMedium": {
+        "fontSize": 28,
+        "lineHeight": 36,
+        "fontWeight": 400,
+        "letterSpacing": 0
+      },
+      "headlineSmall": {
+        "fontSize": 24,
+        "lineHeight": 32,
+        "fontWeight": 400,
+        "letterSpacing": 0
+      },
+      "titleLarge": {
+        "fontSize": 22,
+        "lineHeight": 28,
+        "fontWeight": 400,
+        "letterSpacing": 0
+      },
+      "titleMedium": {
+        "fontSize": 16,
+        "lineHeight": 24,
+        "fontWeight": 500,
+        "letterSpacing": 0.15
+      },
+      "titleSmall": {
+        "fontSize": 14,
+        "lineHeight": 20,
+        "fontWeight": 500,
+        "letterSpacing": 0.1
+      },
+      "bodyLarge": {
+        "fontSize": 16,
+        "lineHeight": 24,
+        "fontWeight": 400,
+        "letterSpacing": 0.5
+      },
+      "bodyMedium": {
+        "fontSize": 14,
+        "lineHeight": 20,
+        "fontWeight": 400,
+        "letterSpacing": 0.25
+      },
+      "bodySmall": {
+        "fontSize": 12,
+        "lineHeight": 16,
+        "fontWeight": 400,
+        "letterSpacing": 0.4
+      },
+      "labelLarge": {
+        "fontSize": 14,
+        "lineHeight": 20,
+        "fontWeight": 500,
+        "letterSpacing": 0.1
+      },
+      "labelMedium": {
+        "fontSize": 12,
+        "lineHeight": 16,
+        "fontWeight": 500,
+        "letterSpacing": 0.5
+      },
+      "labelSmall": {
+        "fontSize": 11,
+        "lineHeight": 16,
+        "fontWeight": 500,
+        "letterSpacing": 0.5
+      }
+    },
+    "spacing": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "xxl": 48
+    },
+    "borderRadius": {
+      "xs": 4,
+      "sm": 8,
+      "md": 12,
+      "lg": 16,
+      "xl": 28,
+      "full": 9999
+    },
+    "elevation": {
+      "level0": {
+        "shadowColor": "#000000",
+        "shadowOffset": { "x": 0, "y": 0 },
+        "shadowRadius": 0,
+        "shadowOpacity": 0
+      },
+      "level1": {
+        "shadowColor": "#000000",
+        "shadowOffset": { "x": 0, "y": 1 },
+        "shadowRadius": 3,
+        "shadowOpacity": 0.12
+      },
+      "level2": {
+        "shadowColor": "#000000",
+        "shadowOffset": { "x": 0, "y": 2 },
+        "shadowRadius": 6,
+        "shadowOpacity": 0.14
+      },
+      "level3": {
+        "shadowColor": "#000000",
+        "shadowOffset": { "x": 0, "y": 4 },
+        "shadowRadius": 8,
+        "shadowOpacity": 0.16
+      },
+      "level4": {
+        "shadowColor": "#000000",
+        "shadowOffset": { "x": 0, "y": 6 },
+        "shadowRadius": 10,
+        "shadowOpacity": 0.18
+      },
+      "level5": {
+        "shadowColor": "#000000",
+        "shadowOffset": { "x": 0, "y": 8 },
+        "shadowRadius": 12,
+        "shadowOpacity": 0.20
+      }
+    },
+    "breakpoints": {
+      "mobile": 600,
+      "tablet": 905,
+      "desktop": 1240,
+      "wide": 1440
+    }
+  },
+  "components": {
+    "button": {
+      "type": "button",
+      "defaultVariant": "filled",
+      "variants": {
+        "filled": {
+          "name": "Filled Button",
+          "props": {
+            "height": 40,
+            "paddingHorizontal": 24,
+            "paddingVertical": 10,
+            "borderRadius": 20,
+            "backgroundColor": "{{tokens.colors.primary}}",
+            "color": "{{tokens.colors.onPrimary}}",
+            "fontSize": 14,
+            "fontWeight": 500,
+            "letterSpacing": 0.1,
+            "textTransform": "none",
+            "elevation": "level1"
+          }
+        },
+        "outlined": {
+          "name": "Outlined Button",
+          "props": {
+            "height": 40,
+            "paddingHorizontal": 24,
+            "paddingVertical": 10,
+            "borderRadius": 20,
+            "backgroundColor": "transparent",
+            "borderColor": "{{tokens.colors.outline}}",
+            "borderWidth": 1,
+            "color": "{{tokens.colors.primary}}",
+            "fontSize": 14,
+            "fontWeight": 500,
+            "letterSpacing": 0.1,
+            "textTransform": "none"
+          }
+        },
+        "text": {
+          "name": "Text Button",
+          "props": {
+            "height": 40,
+            "paddingHorizontal": 12,
+            "paddingVertical": 10,
+            "backgroundColor": "transparent",
+            "color": "{{tokens.colors.primary}}",
+            "fontSize": 14,
+            "fontWeight": 500,
+            "letterSpacing": 0.1,
+            "textTransform": "none"
+          }
+        },
+        "elevated": {
+          "name": "Elevated Button",
+          "props": {
+            "height": 40,
+            "paddingHorizontal": 24,
+            "paddingVertical": 10,
+            "borderRadius": 20,
+            "backgroundColor": "{{tokens.colors.surface}}",
+            "color": "{{tokens.colors.primary}}",
+            "fontSize": 14,
+            "fontWeight": 500,
+            "letterSpacing": 0.1,
+            "textTransform": "none",
+            "elevation": "level2"
+          }
+        },
+        "tonal": {
+          "name": "Tonal Button",
+          "props": {
+            "height": 40,
+            "paddingHorizontal": 24,
+            "paddingVertical": 10,
+            "borderRadius": 20,
+            "backgroundColor": "{{tokens.colors.secondaryContainer}}",
+            "color": "{{tokens.colors.onSecondaryContainer}}",
+            "fontSize": 14,
+            "fontWeight": 500,
+            "letterSpacing": 0.1,
+            "textTransform": "none"
+          }
+        }
+      },
+      "props": {}
+    },
+    "card": {
+      "type": "container",
+      "defaultVariant": "elevated",
+      "variants": {
+        "elevated": {
+          "name": "Elevated Card",
+          "props": {
+            "padding": 16,
+            "borderRadius": 12,
+            "backgroundColor": "{{tokens.colors.surface}}",
+            "elevation": "level1"
+          }
+        },
+        "filled": {
+          "name": "Filled Card",
+          "props": {
+            "padding": 16,
+            "borderRadius": 12,
+            "backgroundColor": "{{tokens.colors.surfaceVariant}}"
+          }
+        },
+        "outlined": {
+          "name": "Outlined Card",
+          "props": {
+            "padding": 16,
+            "borderRadius": 12,
+            "backgroundColor": "{{tokens.colors.surface}}",
+            "borderColor": "{{tokens.colors.outline}}",
+            "borderWidth": 1
+          }
+        }
+      },
+      "props": {}
+    },
+    "textField": {
+      "type": "input",
+      "defaultVariant": "outlined",
+      "variants": {
+        "outlined": {
+          "name": "Outlined Text Field",
+          "props": {
+            "height": 56,
+            "paddingHorizontal": 16,
+            "borderRadius": 4,
+            "backgroundColor": "transparent",
+            "borderColor": "{{tokens.colors.outline}}",
+            "borderWidth": 1,
+            "fontSize": 16,
+            "color": "{{tokens.colors.onSurface}}"
+          }
+        },
+        "filled": {
+          "name": "Filled Text Field",
+          "props": {
+            "height": 56,
+            "paddingHorizontal": 16,
+            "borderRadius": 4,
+            "backgroundColor": "{{tokens.colors.surfaceVariant}}",
+            "borderBottomWidth": 1,
+            "borderColor": "{{tokens.colors.onSurfaceVariant}}",
+            "fontSize": 16,
+            "color": "{{tokens.colors.onSurface}}"
+          }
+        }
+      },
+      "props": {}
+    }
+  }
+}
