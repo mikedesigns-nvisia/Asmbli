@@ -185,7 +185,7 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
       child: Column(
         children: [
           _buildAgentHeader(colors),
-          _buildCompactModeSelector(colors),
+          // Mode selector removed - single model approach
           _buildAIModelInfo(colors),
           _buildContextPanel(colors),
           Expanded(
@@ -199,7 +199,7 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
   
   void _initializeChat() {
     _chatMessages.add(ChatMessage(
-      message: "Hello! I can work in two modes:\n\n🧠 **Plan Mode** - Let's collaborate to create a comprehensive strategy\n🚀 **Act Mode** - I'll take direct actions based on our plan\n\nHow would you like to start?",
+      message: "Hello! I'm your design agent with canvas tool calling.\n\n✨ **I can create visual elements directly on the canvas**\n🎨 Try: \"create a blue circle\" or \"add a dashboard wireframe\"\n\nWhat would you like to design?",
       isAgent: true,
       timestamp: DateTime.now(),
     ));
@@ -256,12 +256,26 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
           ),
           const SizedBox(width: SpacingTokens.sm),
           Expanded(
-            child: Text(
-              'Design Agent',
-              style: TextStyles.bodyMedium.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colors.onSurface,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Design Agent',
+                  style: TextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: colors.onSurface,
+                  ),
+                ),
+                if (_isServiceAvailable)
+                  Text(
+                    '📱 Single Model • Tool Calling Ready',
+                    style: TextStyles.caption.copyWith(
+                      color: colors.success,
+                      fontSize: 10,
+                    ),
+                  ),
+              ],
             ),
           ),
           // Specs button
@@ -390,7 +404,7 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
             setState(() {
               _agentMode = mode;
             });
-            _addModeChangeMessage(mode);
+            // Mode change removed - single model approach
           },
           borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
           child: Padding(
@@ -533,74 +547,47 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
   }
 
   Widget _buildAIModelInfo(ThemeColors colors) {
+    if (!_isServiceAvailable) return const SizedBox.shrink();
+    
+    final modelId = widget.agent.configuration['modelConfiguration']['primaryModelId'] ?? 'local_llama3.1_8b';
+    final modelName = _getHumanReadableModelName(modelId);
+    final hasToolCalling = modelId.contains('llama3.1');
+    
     return Container(
+      padding: const EdgeInsets.all(SpacingTokens.sm),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.5),
+        color: colors.success.withOpacity(0.05),
         border: Border(bottom: BorderSide(color: colors.border)),
       ),
-      child: Column(
+      child: Row(
         children: [
-          // Header with toggle
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: SpacingTokens.md,
-              vertical: SpacingTokens.xs,
-            ),
-            child: Row(
+          Icon(
+            hasToolCalling ? Icons.build_circle : Icons.chat_bubble,
+            color: colors.success,
+            size: 16,
+          ),
+          const SizedBox(width: SpacingTokens.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.psychology, color: colors.accent, size: 14),
-                const SizedBox(width: SpacingTokens.xs),
                 Text(
-                  'AI Models',
-                  style: TextStyles.caption.copyWith(
+                  modelName,
+                  style: TextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: colors.onSurface,
                   ),
                 ),
-                const Spacer(),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.refresh, size: 16),
-                      onPressed: _refreshModels,
-                      style: IconButton.styleFrom(
-                        foregroundColor: colors.accent,
-                        padding: const EdgeInsets.all(SpacingTokens.xs),
-                      ),
-                      tooltip: 'Refresh models',
+                if (hasToolCalling)
+                  Text(
+                    'Canvas tool calling enabled',
+                    style: TextStyles.caption.copyWith(
+                      color: colors.success,
                     ),
-                    IconButton(
-                      icon: Icon(
-                        _showModelSelector ? Icons.expand_less : Icons.tune,
-                        size: 16,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _showModelSelector = !_showModelSelector;
-                        });
-                        if (_showModelSelector && _availableModels.isEmpty) {
-                          _refreshModels();
-                        }
-                      },
-                      style: IconButton.styleFrom(
-                        foregroundColor: colors.primary,
-                        padding: const EdgeInsets.all(SpacingTokens.xs),
-                      ),
-                      tooltip: _showModelSelector ? 'Hide model selector' : 'Select models',
-                    ),
-                  ],
-                ),
+                  ),
               ],
             ),
           ),
-          
-          if (_showModelSelector) ...[
-            _buildModelSelector(colors),
-          ] else ...[
-            // Compact model display
-            _buildCompactModelDisplay(colors),
-          ],
         ],
       ),
     );
@@ -797,7 +784,8 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
     }
   }
   
-  Future<void> _refreshModels() async {
+  // Model refresh removed - single model approach
+  Future<void> _checkModelStatus() async {
     debugPrint('🔄 Design agent: Refreshing models...');
     // Service already initialized
     
@@ -1049,12 +1037,8 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
       if (widget.onProcessMessage != null) {
         response = await widget.onProcessMessage!(message);
       } else {
-        // Fallback to original mode-based processing
-        if (_agentMode == 'plan') {
-          response = await _generatePlanModeResponse(message);
-        } else {
-          response = await _generateActModeResponse(message);
-        }
+        // Fallback to simple chat response
+        response = 'I can help you create visual elements on the canvas. Try asking me to create shapes, wireframes, or templates.';
       }
       
       // Remove thinking indicator and add real response
