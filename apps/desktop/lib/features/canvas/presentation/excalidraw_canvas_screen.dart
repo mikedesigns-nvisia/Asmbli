@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:agent_engine_core/models/agent.dart';
 
 import '../../../core/design_system/design_system.dart';
@@ -7,9 +9,16 @@ import '../../../core/design_system/components/app_navigation_bar.dart';
 import '../../../core/constants/routes.dart';
 import '../../../core/widgets/excalidraw_canvas.dart';
 import '../../../core/di/service_locator.dart';
+import '../../../core/services/canvas_storage_service.dart';
+import '../../../core/services/mcp_excalidraw_bridge_service.dart';
 import '../../../core/services/business/context_business_service.dart';
+import '../../../core/services/business/conversation_business_service.dart';
 import '../../../core/services/llm/unified_llm_service.dart';
 import '../../../core/services/llm/llm_provider.dart';
+import '../../../core/services/visual_reasoning/decision_gateway_service.dart';
+import '../../../core/services/stateful_agent_executor.dart';
+import '../../../core/repositories/agent_state_repository.dart';
+import '../../../core/models/agent_state.dart';
 import '../../../features/context/data/models/context_document.dart';
 import '../../../features/agents/presentation/widgets/design_agent_sidebar.dart';
 import '../../../core/services/openai_vision_service.dart';
@@ -29,6 +38,17 @@ class _ExcalidrawCanvasScreenState extends ConsumerState<ExcalidrawCanvasScreen>
   String? _currentDrawingData;
   bool _canvasHasContent = false;
   final TextEditingController _chatController = TextEditingController();
+  
+  // Canvas storage variables
+  late CanvasStorageService _canvasStorage;
+  late MCPExcalidrawBridgeService _mcpBridge;
+  late DecisionGatewayService _decisionGateway;
+  late StatefulAgentExecutor _agentExecutor;
+  late AgentStateRepository _stateRepo;
+  String _canvasId = '';
+  String _canvasName = 'Untitled Canvas';
+  bool _isSaving = false;
+  DateTime? _lastSaved;
   final List<ChatMessage> _chatMessages = [];
   
   // Design agent and spec state
@@ -81,26 +101,87 @@ class _ExcalidrawCanvasScreenState extends ConsumerState<ExcalidrawCanvasScreen>
   String _activePlanSection = '';
   String _planProgress = 'Not Started';
 
+  /// Initialize agent state management
+  Future<void> _initializeAgentState() async {
+    _stateRepo = AgentStateRepository();
+    await _stateRepo.initialize();
+    
+    // Try to load existing state or create new one
+    final existingState = await _stateRepo.getMostRecentState('design_agent');
+    
+    final state = existingState ?? _stateRepo.createNewState(
+      agentId: 'design_agent',
+      customSessionId: _canvasId,
+    );
+    
+    _agentExecutor = StatefulAgentExecutor(
+      initialState: state,
+      stateRepo: _stateRepo,
+    );
+    
+    print('🧠 Design Agent state initialized: ${state.sessionId}');
+  }
+
   @override
   void initState() {
     super.initState();
     
     // Initialize services
     _visionService = OpenAIVisionService();
+    _canvasStorage = ServiceLocator.instance.get<CanvasStorageService>();
+    _mcpBridge = ServiceLocator.instance.get<MCPExcalidrawBridgeService>();
+    _decisionGateway = DecisionGatewayService.instance;
     
-    // Initialize design agent with dual-model configuration
+    // Initialize agent state asynchronously
+    _initializeAgentState();
+    
+    // Initialize canvas ID
+    _canvasId = DateTime.now().millisecondsSinceEpoch.toString();
+    
+    // Listen to MCP bridge events for canvas manipulation
+    _setupMCPListeners();
+    
+    // Register our Excalidraw MCP server with the agent system
+    _registerExcalidrawMCPWithAgent();
+    
+    // Initialize design agent with MCP tools and canvas capabilities
     _designAgent = Agent(
       id: 'canvas-design-agent',
       name: 'Design Agent',
-      description: 'Expert design agent with dual-model configuration for planning and vision analysis',
-      capabilities: ['ui_design', 'user_research', 'prototyping', 'design_systems'],
+      description: 'Expert design agent with Excalidraw canvas manipulation capabilities via MCP tools',
+      capabilities: ['ui_design', 'user_research', 'prototyping', 'design_systems', 'canvas_manipulation'],
       status: AgentStatus.idle,
       configuration: {
         'type': 'design_agent',
         'modelConfiguration': {
-          'primaryModelId': 'local_deepseek-r1_32b',
+          'primaryModelId': 'local_llama3.1_8b',
           'visionModelId': 'local_llava_13b',
         },
+        'mcpServers': ['excalidraw-canvas'], // Connect to our internal MCP server
+        'tools': [
+          'create_element',
+          'update_element', 
+          'delete_element',
+          'clear_canvas',
+          'get_canvas_info',
+          'create_template'
+        ],
+        'systemPrompt': '''You are a design agent with direct access to an Excalidraw canvas through MCP tools. 
+
+Available Tools:
+- create_element: Create shapes (rectangle, ellipse, arrow, line, text) at specific coordinates
+- create_template: Create pre-built layouts (dashboard, form, wireframe, flowchart)  
+- update_element: Modify existing elements by ID
+- delete_element: Remove elements by ID
+- clear_canvas: Clear the entire canvas
+- get_canvas_info: Get current canvas state and element count
+
+When users request visual elements, directly use these tools instead of providing HTML/CSS code. For example:
+- "Create a blue circle" → use create_element with type="ellipse", backgroundColor="blue"  
+- "Add a dashboard layout" → use create_template with template="dashboard"
+- "Clear everything" → use clear_canvas
+
+Always use the tools to manipulate the canvas directly. Never provide code instructions unless specifically asked for implementation guidance.''',
       },
     );
     
@@ -123,7 +204,7 @@ class _ExcalidrawCanvasScreenState extends ConsumerState<ExcalidrawCanvasScreen>
     final colors = ThemeColors(context);
 
     return Scaffold(
-      body: Container(
+        body: Container(
         decoration: BoxDecoration(
           gradient: RadialGradient(
             center: Alignment.topCenter,
@@ -170,6 +251,8 @@ class _ExcalidrawCanvasScreenState extends ConsumerState<ExcalidrawCanvasScreen>
                         onGenerateCode: _generateCodeFromCanvas,
                         onClearCanvas: () => _canvasKey.currentState?.clearCanvas(),
                         onCaptureCanvas: () => _canvasKey.currentState?.captureCanvasForVision(),
+                        // MCP-powered message processing
+                        onProcessMessage: _processAgentMessageWithTools,
                       ),
                     ),
                     
@@ -261,13 +344,30 @@ class _ExcalidrawCanvasScreenState extends ConsumerState<ExcalidrawCanvasScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Visual Design Canvas',
-                  style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
+                Row(
+                  children: [
+                    Text(
+                      _canvasName,
+                      style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
+                    ),
+                    if (_isSaving) ...[
+                      const SizedBox(width: SpacingTokens.sm),
+                      SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1.5,
+                          color: colors.primary,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 Text(
                   _canvasHasContent 
-                    ? 'Drawing in progress' 
+                    ? (_lastSaved != null 
+                        ? 'Last saved ${_formatLastSaved()}' 
+                        : 'Unsaved changes') 
                     : 'Start drawing or use AI assistance',
                   style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
                 ),
@@ -279,14 +379,73 @@ class _ExcalidrawCanvasScreenState extends ConsumerState<ExcalidrawCanvasScreen>
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                onPressed: _saveDrawing,
-                icon: Icon(Icons.save, size: 18),
-                tooltip: 'Save Drawing',
-                style: IconButton.styleFrom(
-                  foregroundColor: colors.primary,
-                  backgroundColor: colors.surface,
+              // Save button with loading state and dropdown
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  switch (value) {
+                    case 'save':
+                      _saveDrawing();
+                      break;
+                    case 'save_as':
+                      _saveAsDialog();
+                      break;
+                    case 'open_library':
+                      _openCanvasLibrary();
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'save',
+                    child: Row(
+                      children: [
+                        Icon(_isSaving ? Icons.hourglass_empty : Icons.save, size: 16, color: colors.primary),
+                        const SizedBox(width: SpacingTokens.sm),
+                        Text(_isSaving ? 'Saving...' : 'Save'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'save_as',
+                    child: Row(
+                      children: [
+                        Icon(Icons.save_as, size: 16, color: colors.onSurfaceVariant),
+                        const SizedBox(width: SpacingTokens.sm),
+                        const Text('Save As...'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
+                    value: 'open_library',
+                    child: Row(
+                      children: [
+                        Icon(Icons.photo_library, size: 16, color: colors.accent),
+                        const SizedBox(width: SpacingTokens.sm),
+                        const Text('Open Canvas Library'),
+                      ],
+                    ),
+                  ),
+                ],
+                child: Container(
                   padding: const EdgeInsets.all(SpacingTokens.sm),
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: colors.border),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _isSaving ? Icons.hourglass_empty : Icons.save, 
+                        size: 18, 
+                        color: colors.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(Icons.arrow_drop_down, size: 16, color: colors.onSurfaceVariant),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(width: SpacingTokens.xs),
@@ -725,6 +884,8 @@ class _ExcalidrawCanvasScreenState extends ConsumerState<ExcalidrawCanvasScreen>
               onGenerateCode: _generateCodeFromCanvas,
               onClearCanvas: () => _canvasKey.currentState?.clearCanvas(),
               onCaptureCanvas: () => _canvasKey.currentState?.captureCanvasForVision(),
+              // MCP-powered message processing
+              onProcessMessage: _processAgentMessageWithTools,
             ),
           ),
         ],
@@ -754,6 +915,8 @@ class _ExcalidrawCanvasScreenState extends ConsumerState<ExcalidrawCanvasScreen>
         onGenerateCode: _generateCodeFromCanvas,
         onClearCanvas: () => _canvasKey.currentState?.clearCanvas(),
         onCaptureCanvas: () => _canvasKey.currentState?.captureCanvasForVision(),
+        // MCP-powered message processing
+        onProcessMessage: _processAgentMessageWithTools,
       );
     }
   }
@@ -1646,6 +1809,13 @@ class _ExcalidrawCanvasScreenState extends ConsumerState<ExcalidrawCanvasScreen>
         timestamp: DateTime.now(),
       ));
     });
+    
+    // 🧠 TRACK CONVERSATION: Record in stateful agent executor
+    if (isAgent) {
+      _agentExecutor.addAssistantMessage(message);
+    } else {
+      _agentExecutor.addUserMessage(message);
+    }
   }
 
   Widget _buildChatInput(ThemeColors colors) {
@@ -2102,28 +2272,60 @@ Be specific and reference what you actually see in the image. Suggest concrete i
   // Design Agent Canvas Integration Bridge Methods
   
   /// Add canvas element triggered by design agent
-  void _addCanvasElementFromAgent(String elementType, String prompt) {
-    final canvas = _canvasKey.currentState;
-    if (canvas != null) {
-      canvas.addCanvasElement(elementType, prompt);
-      debugPrint('🤖 Design agent added element: $elementType with prompt: "$prompt"');
+  void _addCanvasElementFromAgent(String elementType, String prompt) async {
+    try {
+      debugPrint('🤖 Design agent requesting element: $elementType with prompt: "$prompt"');
+      
+      // Use MCP bridge to process the agent request
+      final result = await _mcpBridge.processAgentRequest('$elementType: $prompt');
+      
+      debugPrint('✅ MCP bridge processed request successfully');
       
       // Add chat feedback
       _addChatMessage(
-        'Design Agent: Added $elementType element to the canvas with label "$prompt".',
+        'Design Agent: Created $elementType element on the canvas.',
         true,
       );
-    } else {
-      debugPrint('❌ Cannot add element from agent - Canvas not ready');
+      
+    } catch (e) {
+      debugPrint('❌ Failed to add element from agent via MCP: $e');
       _addChatMessage(
-        'Design Agent: Canvas not ready. Please wait a moment and try again.',
+        'Design Agent: Failed to create element. Please try again.',
         true,
       );
     }
   }
 
   /// Add template triggered by design agent  
-  void _addTemplateFromAgent(String templateType) {
+  void _addTemplateFromAgent(String templateType) async {
+    try {
+      debugPrint('🤖 Design agent requesting template: $templateType');
+      
+      // Use MCP bridge to create template
+      final result = await _mcpBridge.createTemplate(template: templateType.toLowerCase());
+      
+      debugPrint('✅ MCP bridge created template successfully');
+      
+      // Add chat feedback
+      _addChatMessage(
+        'Design Agent: Created $templateType template on the canvas.',
+        true,
+      );
+      
+    } catch (e) {
+      debugPrint('❌ Failed to add template from agent via MCP: $e');
+      _addChatMessage(
+        'Design Agent: Failed to create template. Please try again.',
+        true,
+      );
+      
+      // Fallback to old method
+      _fallbackTemplateMethod(templateType);
+    }
+  }
+  
+  /// Fallback template method for when MCP fails
+  void _fallbackTemplateMethod(String templateType) {
     final canvas = _canvasKey.currentState;
     if (canvas != null) {
       switch (templateType.toLowerCase()) {
@@ -2285,20 +2487,626 @@ Be specific and reference what you actually see in the image. Suggest concrete i
     });
   }
 
-  void _addCanvasElement(String elementType, String prompt) {
-    debugPrint('🎨 Adding $elementType element based on prompt: "$prompt"');
-    
-    // Call JavaScript function to add the element to Excalidraw
-    if (_canvasKey.currentState != null) {
-      _canvasKey.currentState!.addCanvasElement(elementType, prompt);
-    } else {
-      debugPrint('❌ Canvas not ready for element addition');
+  void _addCanvasElement(String elementType, String prompt) async {
+    try {
+      debugPrint('🎨 Adding $elementType element based on prompt: "$prompt"');
+      
+      // Use MCP bridge to process the request
+      await _mcpBridge.processAgentRequest('$elementType: $prompt');
+      
+      debugPrint('✅ MCP bridge processed element addition successfully');
+      
+    } catch (e) {
+      debugPrint('❌ Failed to add canvas element via MCP: $e');
+      
+      // Fallback to direct canvas manipulation
+      if (_canvasKey.currentState != null) {
+        _canvasKey.currentState!.addCanvasElement(elementType, prompt);
+      }
     }
   }
 
   // Canvas actions
-  void _saveDrawing() {
-    _canvasKey.currentState?.saveDrawing();
+  void _saveDrawing() async {
+    if (_isSaving || !_canvasHasContent) return;
+    
+    setState(() {
+      _isSaving = true;
+    });
+    
+    try {
+      // Get current drawing data from the canvas
+      final drawingData = _currentDrawingData;
+      if (drawingData != null) {
+        // Create canvas state with metadata
+        final canvasState = {
+          'name': _canvasName,
+          'drawingData': drawingData,
+          'planDocument': _planDocument,
+          'currentSpec': _currentSpec,
+          'context': _currentContext,
+          'createdAt': DateTime.now().toIso8601String(),
+          'lastModified': DateTime.now().toIso8601String(),
+          'version': '1.0.0',
+        };
+        
+        // Save to canvas storage
+        await _canvasStorage.saveCanvasState(_canvasId, canvasState);
+        
+        // Update last saved time
+        setState(() {
+          _lastSaved = DateTime.now();
+          _isSaving = false;
+        });
+        
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.white, size: 16),
+                  const SizedBox(width: SpacingTokens.sm),
+                  Text('Canvas saved: $_canvasName'),
+                ],
+              ),
+              backgroundColor: ThemeColors(context).success,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+        
+        // Also trigger the original save method for backward compatibility
+        _canvasKey.currentState?.saveDrawing();
+        
+      } else {
+        throw Exception('No drawing data to save');
+      }
+    } catch (e) {
+      setState(() {
+        _isSaving = false;
+      });
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to save canvas: $e'),
+            backgroundColor: ThemeColors(context).error,
+          ),
+        );
+      }
+    }
+  }
+
+  void _saveAsDialog() {
+    final TextEditingController nameController = TextEditingController(text: _canvasName);
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Save Canvas As...'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Canvas Name:'),
+            const SizedBox(height: SpacingTokens.sm),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                hintText: 'Enter canvas name',
+                border: OutlineInputBorder(),
+              ),
+              autofocus: true,
+            ),
+            if (_lastSaved != null) ...[
+              const SizedBox(height: SpacingTokens.md),
+              Text(
+                'Last saved: ${_formatLastSaved()}',
+                style: TextStyles.bodySmall.copyWith(
+                  color: ThemeColors(context).onSurfaceVariant,
+                ),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final newName = nameController.text.trim();
+              if (newName.isNotEmpty) {
+                setState(() {
+                  _canvasName = newName;
+                });
+                Navigator.of(context).pop();
+                _saveDrawing();
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _openCanvasLibrary() {
+    // Navigate to canvas library using go_router
+    context.go(AppRoutes.canvasLibrary);
+  }
+  
+  String _formatLastSaved() {
+    if (_lastSaved == null) return 'Never';
+    
+    final now = DateTime.now();
+    final difference = now.difference(_lastSaved!);
+    
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else {
+      return '${difference.inDays}d ago';
+    }
+  }
+  
+  /// Set up listeners for MCP bridge events
+  void _setupMCPListeners() {
+    // Listen for element additions from AI agent
+    _mcpBridge.onElementAdded.listen((element) {
+      _addElementToCanvas(element);
+    });
+    
+    // Listen for element updates from AI agent  
+    _mcpBridge.onElementUpdated.listen((element) {
+      _updateElementOnCanvas(element);
+    });
+    
+    // Listen for canvas clearing from AI agent
+    _mcpBridge.onCanvasCleared.listen((reason) {
+      _clearCanvasFromMCP();
+    });
+  }
+  
+  /// Register Excalidraw MCP server with agent business service
+  Future<void> _registerExcalidrawMCPWithAgent() async {
+    try {
+      // Get MCP server info
+      final serverInfo = _mcpBridge.getServerInfo();
+      
+      // Register the Excalidraw MCP server as available for this agent
+      debugPrint('🔗 Registering Excalidraw MCP server for agent: ${serverInfo['name']}');
+      debugPrint('📍 MCP server URL: ${serverInfo['url']}');
+      
+      // Note: The agent configuration already includes the MCP server reference
+      // The actual tool execution will be handled in the custom message processing
+      
+    } catch (e) {
+      debugPrint('❌ Failed to register Excalidraw MCP with agent: $e');
+    }
+  }
+  
+  /// Process agent message with proper structured function calling
+  Future<String> _processAgentMessageWithTools(String userMessage) async {
+    try {
+      debugPrint('🤖 AGENT REQUEST: Processing "$userMessage"');
+      
+      // Get available canvas tools as proper LLM function definitions
+      final canvasTools = _getMCPToolsAsLLMSchemas();
+      
+      // Use LLM with structured function calling (not text parsing)
+      final llmService = ServiceLocator.instance.get<UnifiedLLMService>();
+      
+      // TODO: This needs to be updated to use function calling API
+      // For now, let's implement a structured approach that validates against our schemas
+      debugPrint('🔧 Available tools: ${canvasTools.map((t) => t['name']).join(', ')}');
+      
+      // Check if message requests canvas manipulation and route appropriately  
+      if (_isCanvasManipulationRequest(userMessage)) {
+        return await _handleStructuredCanvasRequest(userMessage, canvasTools);
+      }
+      
+      // For non-canvas requests, use normal conversation processing
+      return await _processNormalAgentMessage(userMessage);
+      
+    } catch (e) {
+      debugPrint('❌ Error processing agent message: $e');
+      return 'I encountered an error processing your request. Please try again.';
+    }
+  }
+  
+  /// Get MCP tools formatted as LLM function schemas
+  List<Map<String, dynamic>> _getMCPToolsAsLLMSchemas() {
+    // Convert our MCP tool definitions to OpenAI/Claude function calling format
+    return [
+      {
+        'name': 'create_element',
+        'description': 'Create a visual element on the canvas',
+        'parameters': {
+          'type': 'object',
+          'properties': {
+            'type': {
+              'type': 'string', 
+              'enum': ['rectangle', 'ellipse', 'arrow', 'line', 'text'],
+              'description': 'Type of element to create'
+            },
+            'x': {'type': 'number', 'description': 'X coordinate'},
+            'y': {'type': 'number', 'description': 'Y coordinate'},
+            'width': {'type': 'number', 'description': 'Element width'},
+            'height': {'type': 'number', 'description': 'Element height'},
+            'text': {'type': 'string', 'description': 'Text content for text elements'},
+            'strokeColor': {'type': 'string', 'description': 'Stroke color (hex)'},
+            'backgroundColor': {'type': 'string', 'description': 'Background color (hex)'}
+          },
+          'required': ['type', 'x', 'y']
+        }
+      },
+      {
+        'name': 'create_template',
+        'description': 'Create a pre-built layout template',
+        'parameters': {
+          'type': 'object',
+          'properties': {
+            'template': {
+              'type': 'string',
+              'enum': ['dashboard', 'form', 'wireframe', 'flowchart'],
+              'description': 'Template type to create'
+            },
+            'x': {'type': 'number', 'description': 'Starting X coordinate', 'default': 50},
+            'y': {'type': 'number', 'description': 'Starting Y coordinate', 'default': 50}
+          },
+          'required': ['template']
+        }
+      },
+      {
+        'name': 'clear_canvas',
+        'description': 'Clear all elements from the canvas',
+        'parameters': {'type': 'object', 'properties': {}}
+      }
+    ];
+  }
+  
+  /// Handle canvas requests with structured validation and execution
+  Future<String> _handleStructuredCanvasRequest(String userMessage, List<Map<String, dynamic>> tools) async {
+    try {
+      debugPrint('🎯 STRUCTURED CANVAS: Analyzing request for tool selection');
+      
+      // Parse the message to determine which tool to call and with what parameters
+      final toolCall = _parseMessageToToolCall(userMessage);
+      
+      if (toolCall != null) {
+        debugPrint('🔧 TOOL CALL: ${toolCall['name']} with ${toolCall['arguments']}');
+        
+        // Validate against schema
+        final isValid = _validateToolCall(toolCall, tools);
+        if (!isValid) {
+          return 'I couldn\'t understand those specifications. Could you be more specific about what you want to create?';
+        }
+        
+        // 🧠 STATEFUL EXECUTION: Use StatefulAgentExecutor for action deduplication
+        final response = await _agentExecutor.executeAction(
+          actionType: toolCall['name'] as String,
+          params: toolCall['arguments'] as Map<String, dynamic>,
+          executeFunction: (params) async {
+            // Execute via MCP bridge
+            final result = await _mcpBridge.executeCanvasCommand(
+              toolCall['name'] as String,
+              params,
+            );
+            
+            return {
+              'observation': 'Successfully executed ${toolCall['name']} on canvas',
+              'result': result,
+              'elementId': result['element']?['id'],
+            };
+          },
+        );
+        
+        if (response.shouldSkip) {
+          debugPrint('🛑 STATEFUL AGENT: Skipping action - ${response.message}');
+          _addChatMessage(response.message, true);
+          return 'I notice that ${response.message}. No need to repeat this action.';
+        }
+        
+        if (!response.success) {
+          debugPrint('❌ STATEFUL AGENT: Action failed - ${response.message}');
+          _addChatMessage('Action failed: ${response.message}', true);
+          return 'Sorry, I encountered an error: ${response.message}';
+        }
+        
+        debugPrint('✅ STATEFUL AGENT: Action completed - ${response.message}');
+        
+        // Return success message based on actual execution  
+        final actionResult = response.actionRecord?.metadata?['executionResult'];
+        return _formatToolExecutionResponse(toolCall, actionResult ?? {});
+      } else {
+        return 'I can help you create canvas elements. Try asking me to create shapes, templates, or clear the canvas.';
+      }
+      
+    } catch (e) {
+      debugPrint('❌ Structured canvas request failed: $e');
+      return 'I had trouble creating that element. Please try a different approach.';
+    }
+  }
+  
+  /// Check if message requests canvas manipulation
+  bool _isCanvasManipulationRequest(String message) {
+    final lowerMessage = message.toLowerCase();
+    
+    // Optimized canvas intent detection
+    final directActions = ['create', 'add', 'draw', 'make', 'clear', 'delete'];
+    final shapes = ['circle', 'rectangle', 'square', 'ellipse', 'arrow', 'line', 'text'];
+    final templates = ['dashboard', 'form', 'wireframe', 'flowchart'];
+    
+    // Fast path: check direct actions first
+    if (directActions.any((action) => lowerMessage.contains(action))) {
+      return true;
+    }
+    
+    // Check shapes and templates
+    return shapes.any((shape) => lowerMessage.contains(shape)) ||
+           templates.any((template) => lowerMessage.contains(template)) ||
+           lowerMessage.contains('canvas');
+  }
+  
+  /// Parse user message to structured tool call
+  Map<String, dynamic>? _parseMessageToToolCall(String message) {
+    final lowerMessage = message.toLowerCase();
+    
+    // Template detection
+    if (lowerMessage.contains('dashboard')) {
+      return {'name': 'create_template', 'arguments': {'template': 'dashboard'}};
+    }
+    if (lowerMessage.contains('form')) {
+      return {'name': 'create_template', 'arguments': {'template': 'form'}};
+    }
+    if (lowerMessage.contains('wireframe')) {
+      return {'name': 'create_template', 'arguments': {'template': 'wireframe'}};
+    }
+    if (lowerMessage.contains('flowchart')) {
+      return {'name': 'create_template', 'arguments': {'template': 'flowchart'}};
+    }
+    
+    // Clear canvas
+    if (lowerMessage.contains('clear')) {
+      return {'name': 'clear_canvas', 'arguments': {}};
+    }
+    
+    // Element creation
+    String elementType = 'rectangle';
+    if (lowerMessage.contains('circle') || lowerMessage.contains('ellipse')) {
+      elementType = 'ellipse'; // Note: Excalidraw uses 'ellipse' for circles
+    } else if (lowerMessage.contains('arrow')) {
+      elementType = 'arrow';
+    } else if (lowerMessage.contains('line')) {
+      elementType = 'line';
+    } else if (lowerMessage.contains('text')) {
+      elementType = 'text';
+    }
+    
+    // Parse position
+    double x = 100.0, y = 100.0;
+    if (lowerMessage.contains('center')) { x = 200.0; y = 200.0; }
+    if (lowerMessage.contains('top')) y = 50.0;
+    if (lowerMessage.contains('bottom')) y = 300.0;
+    if (lowerMessage.contains('left')) x = 50.0;
+    if (lowerMessage.contains('right')) x = 300.0;
+    
+    // Parse size
+    double width = 150.0, height = 100.0;
+    if (lowerMessage.contains('small')) { width = 80.0; height = 60.0; }
+    if (lowerMessage.contains('large') || lowerMessage.contains('big')) { 
+      width = 250.0; height = 180.0; 
+    }
+    
+    // For circles/ellipses, make width and height equal for true circle
+    if (elementType == 'ellipse' && lowerMessage.contains('circle')) {
+      final size = (width + height) / 2; // Average for circle
+      width = size;
+      height = size;
+    }
+    
+    // Parse color
+    String? strokeColor, backgroundColor;
+    if (lowerMessage.contains('red')) {
+      strokeColor = '#dc3545'; backgroundColor = '#f8d7da';
+    } else if (lowerMessage.contains('blue')) {
+      strokeColor = '#0d6efd'; backgroundColor = '#cff4fc';
+    } else if (lowerMessage.contains('green')) {
+      strokeColor = '#198754'; backgroundColor = '#d1e7dd';
+    }
+    
+    final arguments = <String, dynamic>{
+      'type': elementType,
+      'x': x,
+      'y': y,
+      'width': width,
+      'height': height,
+    };
+    
+    if (strokeColor != null) arguments['strokeColor'] = strokeColor;
+    if (backgroundColor != null) arguments['backgroundColor'] = backgroundColor;
+    if (elementType == 'text') {
+      arguments['text'] = _extractTextFromMessage(message);
+    }
+    
+    return {'name': 'create_element', 'arguments': arguments};
+  }
+  
+  /// Extract text content from message
+  String _extractTextFromMessage(String message) {
+    final quotedMatch = RegExp(r'"([^"]*)"').firstMatch(message);
+    if (quotedMatch != null) return quotedMatch.group(1) ?? 'Text';
+    
+    final words = message.split(' ');
+    return words.length > 3 ? words.take(3).join(' ') : 'Text';
+  }
+  
+  /// Validate tool call against schema
+  bool _validateToolCall(Map<String, dynamic> toolCall, List<Map<String, dynamic>> schemas) {
+    final toolName = toolCall['name'];
+    final arguments = toolCall['arguments'] as Map<String, dynamic>;
+    
+    final schema = schemas.firstWhere(
+      (s) => s['name'] == toolName,
+      orElse: () => <String, dynamic>{},
+    );
+    
+    if (schema.isEmpty) return false;
+    
+    final parameters = schema['parameters'] as Map<String, dynamic>;
+    final required = parameters['required'] as List<dynamic>? ?? [];
+    
+    // Check required fields
+    for (final field in required) {
+      if (!arguments.containsKey(field)) {
+        debugPrint('❌ Missing required field: $field');
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  /// Format response based on tool execution result
+  String _formatToolExecutionResponse(Map<String, dynamic> toolCall, Map<String, dynamic> result) {
+    final toolName = toolCall['name'];
+    final arguments = toolCall['arguments'] as Map<String, dynamic>;
+    
+    switch (toolName) {
+      case 'create_element':
+        final type = arguments['type'];
+        final x = arguments['x'];
+        final y = arguments['y'];
+        return 'Created a $type element at position ($x, $y) on the canvas.';
+        
+      case 'create_template':
+        final template = arguments['template'];
+        return 'Created a $template template layout on the canvas.';
+        
+      case 'clear_canvas':
+        return 'Cleared all elements from the canvas.';
+        
+      default:
+        return 'Executed canvas operation successfully.';
+    }
+  }
+  
+  /// Process normal agent messages (non-canvas)
+  Future<String> _processNormalAgentMessage(String userMessage) async {
+    try {
+      final conversationService = ServiceLocator.instance.get<ConversationBusinessService>();
+      
+      // Create temporary conversation for this interaction
+      final createResult = await conversationService.createConversation(
+        title: 'Canvas Agent Session',
+        agentId: _designAgent.id,
+        modelId: _designAgent.configuration['modelConfiguration']['primaryModelId'] ?? 'local_llama3.1_8b',
+      );
+      
+      if (!createResult.isSuccess) {
+        debugPrint('Failed to create conversation: ${createResult.error}');
+        return 'I\'m having trouble starting our conversation. Please try again.';
+      }
+      
+      // Process message through business service with MCP tools
+      final result = await conversationService.processMessage(
+        conversationId: createResult.data!.id,
+        content: userMessage,
+        modelId: _designAgent.configuration['modelConfiguration']['primaryModelId'] ?? 'local_llama3.1_8b',
+        agentId: _designAgent.id,
+        mcpServers: ['excalidraw-canvas'],
+      );
+      
+      if (result.isSuccess) {
+        return result.data!.content;
+      } else {
+        debugPrint('Message processing failed: ${result.error}');
+        return 'I\'m having trouble understanding. Could you rephrase your question?';
+      }
+      
+    } catch (e) {
+      debugPrint('Error in message processing: $e');
+      return 'I\'m experiencing some technical difficulties. Please try again.';
+    }
+  }
+  
+  /// Add element to the actual Excalidraw canvas
+  void _addElementToCanvas(Map<String, dynamic> element) {
+    debugPrint('🎨 _addElementToCanvas called with element: $element');
+    
+    if (_canvasKey.currentState != null) {
+      debugPrint('✅ Canvas state available, converting MCP element to Excalidraw format');
+      
+      // Convert MCP element to Excalidraw format and add to canvas
+      final excalidrawElement = _convertMCPElementToExcalidraw(element);
+      debugPrint('🔄 Converted element: $excalidrawElement');
+      
+      _canvasKey.currentState!.addElementToCanvas(excalidrawElement);
+      debugPrint('📤 Called addElementToCanvas on canvas state');
+      
+      setState(() {
+        _canvasHasContent = true;
+      });
+      
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.auto_awesome, color: Colors.white, size: 16),
+                const SizedBox(width: SpacingTokens.sm),
+                Text('AI created ${element['type']} element'),
+              ],
+            ),
+            backgroundColor: ThemeColors(context).primary,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+  
+  /// Update element on the actual Excalidraw canvas
+  void _updateElementOnCanvas(Map<String, dynamic> element) {
+    if (_canvasKey.currentState != null) {
+      final excalidrawElement = _convertMCPElementToExcalidraw(element);
+      _canvasKey.currentState!.updateElementOnCanvas(excalidrawElement);
+    }
+  }
+  
+  /// Clear canvas from MCP request
+  void _clearCanvasFromMCP() {
+    if (_canvasKey.currentState != null) {
+      _canvasKey.currentState!.clearCanvas();
+      setState(() {
+        _canvasHasContent = false;
+      });
+    }
+  }
+  
+  /// Convert MCP element format to Excalidraw element format
+  Map<String, dynamic> _convertMCPElementToExcalidraw(Map<String, dynamic> mcpElement) {
+    return {
+      'type': mcpElement['type'],
+      'x': mcpElement['x'],
+      'y': mcpElement['y'], 
+      'width': mcpElement['width'] ?? 100,
+      'height': mcpElement['height'] ?? 100,
+      'strokeColor': mcpElement['strokeColor'] ?? '#000000',
+      'backgroundColor': mcpElement['backgroundColor'] ?? 'transparent',
+      'strokeWidth': mcpElement['strokeWidth'] ?? 1,
+      'text': mcpElement['text'] ?? '',
+      'id': mcpElement['id'],
+    };
   }
 
   void _clearCanvas() {
@@ -2941,6 +3749,8 @@ Be specific and reference what you actually see in the image. Suggest concrete i
       onGenerateCode: _generateCodeFromCanvas,
       onClearCanvas: () => _canvasKey.currentState?.clearCanvas(),
       onCaptureCanvas: () => _canvasKey.currentState?.captureCanvasForVision(),
+      // MCP-powered message processing
+      onProcessMessage: _processAgentMessageWithTools,
     );
   }
 

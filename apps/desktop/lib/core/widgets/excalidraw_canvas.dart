@@ -3,8 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 import '../design_system/design_system.dart';
+import '../di/service_locator.dart';
+import '../services/mcp_excalidraw_bridge_service.dart';
 
 /// Excalidraw canvas widget that embeds Excalidraw in a WebView
 /// Provides drawing, saving, and loading functionality for wireframes and diagrams
@@ -111,10 +114,64 @@ class ExcalidrawCanvasState extends State<ExcalidrawCanvas> {
     // Don't set _isLoaded here - wait for JavaScript 'webViewReady' message
     // The JavaScript will send us a message when Excalidraw is fully initialized
     
+    // Start polling as a fallback in case the message doesn't come through
+    _startReadinessPolling();
+    
     // Load initial data if provided (will be handled when JS is ready)
     if (widget.initialData != null) {
       // Store for later when JS is ready
       debugPrint('📱 Initial data will be loaded when JS is ready');
+    }
+  }
+
+  void _startReadinessPolling() {
+    // Poll every 500ms for up to 10 seconds to check if Excalidraw is ready
+    Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (_isLoaded || !mounted) {
+        timer.cancel();
+        return;
+      }
+      
+      if (timer.tick > 20) { // 10 seconds max
+        timer.cancel();
+        debugPrint('⏰ Readiness polling timed out - trying fallback activation');
+        _fallbackActivation();
+        return;
+      }
+      
+      // Poll JavaScript for readiness
+      _executeJavaScriptWithResult('window.excalidrawReady ? "READY:" + window.excalidrawInitTimestamp : "NOT_READY"')
+          .then((result) {
+        if (result != null && result.toString().startsWith('READY:')) {
+          debugPrint('🔍 Polling detected Excalidraw is ready!');
+          timer.cancel();
+          _handleReadinessDetected();
+        }
+      }).catchError((e) {
+        // Ignore polling errors
+      });
+    });
+  }
+
+  void _fallbackActivation() {
+    debugPrint('🚨 Fallback activation - assuming Excalidraw loaded after 10 seconds');
+    _handleReadinessDetected();
+  }
+
+  void _handleReadinessDetected() {
+    if (!_isLoaded) {
+      debugPrint('✅ Excalidraw readiness confirmed - activating canvas');
+      setState(() {
+        _isLoaded = true;
+      });
+      
+      // Set initial theme
+      _updateTheme();
+      
+      // Load initial data if provided
+      if (widget.initialData != null) {
+        _loadDrawingData(widget.initialData!);
+      }
     }
   }
 
@@ -129,18 +186,8 @@ class ExcalidrawCanvasState extends State<ExcalidrawCanvas> {
       
       switch (type) {
         case 'webViewReady':
-          debugPrint('✅ WebView ready message received');
-          setState(() {
-            _isLoaded = true;
-          });
-          
-          // Set initial theme
-          _updateTheme();
-          
-          // Load initial data if provided
-          if (widget.initialData != null) {
-            _loadDrawingData(widget.initialData!);
-          }
+          debugPrint('✅ WebView ready message received via channel');
+          _handleReadinessDetected();
           break;
           
         case 'drawingChanged':
@@ -170,6 +217,18 @@ class ExcalidrawCanvasState extends State<ExcalidrawCanvas> {
         case 'excalidrawReady':
           debugPrint('✅ Excalidraw API is ready');
           _isExcalidrawReady = true;
+          break;
+          
+        case 'elementAdded':
+          final success = data['success'] ?? false;
+          if (success) {
+            debugPrint('✅ Element successfully added to canvas: ${data['elementId']}');
+            setState(() {
+              _hasContent = true;
+            });
+          } else {
+            debugPrint('❌ Element addition failed: ${data['error']}');
+          }
           break;
           
         case 'drawingSaved':
@@ -313,10 +372,19 @@ class ExcalidrawCanvasState extends State<ExcalidrawCanvas> {
   }
 
   void _executeJavaScript(String script) {
-    debugPrint('📋 Executing JavaScript: $script');
     _webViewController.runJavaScript(script).catchError((error) {
-      debugPrint('❌ JavaScript execution failed: $error');
+      debugPrint('JavaScript execution failed: $error');
     });
+  }
+
+  Future<String?> _executeJavaScriptWithResult(String script) async {
+    try {
+      final result = await _webViewController.runJavaScriptReturningResult(script);
+      return result?.toString();
+    } catch (error) {
+      debugPrint('❌ JS result failed: $error');
+      return null;
+    }
   }
 
   // Public methods for external control
@@ -334,12 +402,6 @@ class ExcalidrawCanvasState extends State<ExcalidrawCanvas> {
       } else {
         _executeJavaScript('loadDrawing()');
       }
-    }
-  }
-
-  void clearCanvas() {
-    if (_isLoaded) {
-      _executeJavaScript('clearCanvas()');
     }
   }
 
@@ -371,12 +433,7 @@ class ExcalidrawCanvasState extends State<ExcalidrawCanvas> {
   }
 
   void addCanvasElement(String elementType, String prompt) {
-    debugPrint('🎨 addCanvasElement called: $elementType, prompt: "$prompt"');
-    debugPrint('🎨 Canvas state - _isLoaded: $_isLoaded, _isExcalidrawReady: $_isExcalidrawReady');
-    
     if (_isLoaded && _isExcalidrawReady) {
-      debugPrint('🎨 Both WebView and ExcalidrawAPI are ready - executing JavaScript');
-      // Escape quotes and newlines in the prompt for JavaScript
       final String escapedPrompt = prompt.replaceAll('"', '\\"').replaceAll('\n', '\\n');
       _executeJavaScript('window.addCanvasElement && window.addCanvasElement("$elementType", "$escapedPrompt")');
       setState(() {
@@ -392,6 +449,87 @@ class ExcalidrawCanvasState extends State<ExcalidrawCanvas> {
           addCanvasElement(elementType, prompt);
         }
       });
+    }
+  }
+
+  /// Add element to canvas with detailed properties using native Excalidraw API
+  void addElementToCanvas(Map<String, dynamic> element) {
+    debugPrint('🎨 EXCALIDRAW CANVAS: addElementToCanvas called with: $element');
+    
+    if (_isLoaded && _isExcalidrawReady) {
+      // Convert MCP format to Excalidraw skeleton format
+      final excalidrawElement = _convertToExcalidrawFormat(element);
+      final elementJson = jsonEncode(excalidrawElement);
+      
+      debugPrint('🎯 CALLING native Excalidraw API with: $elementJson');
+      
+      // Call native Excalidraw API through convertToExcalidrawElements
+      _executeJavaScript('window.addCanvasElement && window.addCanvasElement($elementJson)');
+      setState(() {
+        _hasContent = true;
+      });
+    } else {
+      debugPrint('❌ Cannot add element - Canvas not ready');
+      // Retry in 1 second if not ready
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          addElementToCanvas(element);
+        }
+      });
+    }
+  }
+  
+  /// Convert MCP format to Excalidraw skeleton format
+  Map<String, dynamic> _convertToExcalidrawFormat(Map<String, dynamic> element) {
+    final converted = <String, dynamic>{
+      'type': element['type'] ?? 'rectangle',
+      'x': (element['x'] ?? 100).toDouble(),
+      'y': (element['y'] ?? 100).toDouble(),
+      'width': (element['width'] ?? 150).toDouble(),
+      'height': (element['height'] ?? 100).toDouble(),
+    };
+    
+    // Add optional properties if present
+    if (element['strokeColor'] != null) {
+      converted['strokeColor'] = element['strokeColor'];
+    }
+    if (element['backgroundColor'] != null) {
+      converted['backgroundColor'] = element['backgroundColor'];
+    }
+    if (element['strokeWidth'] != null) {
+      converted['strokeWidth'] = (element['strokeWidth'] as num).toInt();
+    }
+    if (element['text'] != null && element['text'].toString().isNotEmpty) {
+      converted['label'] = {'text': element['text']};
+    }
+    
+    debugPrint('🔄 Converted MCP element to Excalidraw format: $converted');
+    return converted;
+  }
+
+  /// Update element on canvas
+  void updateElementOnCanvas(Map<String, dynamic> element) {
+    debugPrint('🔄 updateElementOnCanvas called: ${element['id']}');
+    
+    if (_isLoaded && _isExcalidrawReady) {
+      final elementJson = jsonEncode(element);
+      _executeJavaScript('window.updateElement && window.updateElement($elementJson)');
+    } else {
+      debugPrint('❌ Cannot update element - Canvas not ready');
+    }
+  }
+
+  /// Clear canvas
+  void clearCanvas() {
+    debugPrint('🗑️ clearCanvas called');
+    
+    if (_isLoaded && _isExcalidrawReady) {
+      _executeJavaScript('window.clearCanvas && window.clearCanvas()');
+      setState(() {
+        _hasContent = false;
+      });
+    } else {
+      debugPrint('❌ Cannot clear canvas - Canvas not ready');
     }
   }
 
@@ -576,6 +714,209 @@ class ExcalidrawCanvasState extends State<ExcalidrawCanvas> {
         ),
       ),
     );
+  }
+
+  // ===== TEST SUITE METHODS =====
+  
+  void runComprehensiveTestSuite() {
+    debugPrint('🧪 === STARTING 10-MINUTE TEST SUITE ===');
+    
+    // Phase 1: WebView & API Tests (0-2 min)
+    _runPhase1Tests();
+    
+    // Schedule remaining phases
+    Timer(const Duration(seconds: 120), _runPhase2Tests);
+    Timer(const Duration(seconds: 240), _runPhase3Tests); 
+    Timer(const Duration(seconds: 360), _runPhase4Tests);
+    Timer(const Duration(seconds: 480), _runPhase5Tests);
+    Timer(const Duration(seconds: 600), () {
+      debugPrint('🏁 === 10-MINUTE TEST SUITE COMPLETE ===');
+      _generateTestReport();
+    });
+  }
+  
+  void _runPhase1Tests() {
+    debugPrint('\n🟦 PHASE 1 (0-2min): WebView & Excalidraw API Tests');
+    
+    // Test 1: Check WebView status
+    debugPrint('Test 1.1: WebView Status - _isLoaded: $_isLoaded, _isExcalidrawReady: $_isExcalidrawReady');
+    
+    // Test 2: Run JavaScript test suite
+    if (_isLoaded) {
+      debugPrint('Test 1.2: Running JavaScript test suite...');
+      _executeJavaScript('window.runTestSuite && window.runTestSuite()');
+    } else {
+      debugPrint('❌ Test 1.2 FAILED: WebView not loaded');
+    }
+    
+    // Test 3: Check element count
+    Timer(const Duration(seconds: 5), () {
+      _executeJavaScript('window.getElementStats && window.getElementStats()');
+    });
+  }
+  
+  void _runPhase2Tests() {
+    debugPrint('\n🟩 PHASE 2 (2-4min): MCP Server Communication Tests');
+    
+    // Test 2.1: Check MCP server
+    try {
+      final mcpBridge = ServiceLocator.instance.get<MCPExcalidrawBridgeService>();
+      debugPrint('Test 2.1: MCP Bridge Service - Available: ${mcpBridge.isInitialized}');
+    } catch (e) {
+      debugPrint('❌ Test 2.1 FAILED: Cannot get MCP Bridge Service - $e');
+    }
+    
+    // Test 2.2: Test direct Flutter->JavaScript call
+    debugPrint('Test 2.2: Direct Flutter->JavaScript element creation');
+    final testElement = {
+      'type': 'rectangle',
+      'x': 150,
+      'y': 150, 
+      'width': 120,
+      'height': 80,
+      'strokeColor': '#ff00ff'
+    };
+    addElementToCanvas(testElement);
+    
+    // Verify after 3 seconds
+    Timer(const Duration(seconds: 3), () {
+      _executeJavaScript('console.log("Phase 2 verification:"); window.getElementStats && window.getElementStats()');
+    });
+  }
+  
+  void _runPhase3Tests() {
+    debugPrint('\n🟨 PHASE 3 (4-6min): Agent Command Execution Tests');
+    
+    // Test 3.1: Test MCP command through bridge
+    debugPrint('Test 3.1: Testing MCP Bridge element creation');
+    try {
+      final mcpBridge = ServiceLocator.instance.get<MCPExcalidrawBridgeService>();
+      
+      // Create element via MCP bridge
+      mcpBridge.executeCanvasCommand('create_element', {
+        'type': 'ellipse',
+        'x': 300.0,
+        'y': 200.0,
+        'width': 100.0,
+        'height': 100.0,
+        'strokeColor': '#00ff00'
+      });
+      
+      debugPrint('✅ Test 3.1: MCP command sent');
+    } catch (e) {
+      debugPrint('❌ Test 3.1 FAILED: MCP Bridge error - $e');
+    }
+    
+    // Test 3.2: Multiple rapid commands
+    Timer(const Duration(seconds: 30), () {
+      debugPrint('Test 3.2: Multiple rapid MCP commands');
+      for (int i = 0; i < 3; i++) {
+        try {
+          final mcpBridge = ServiceLocator.instance.get<MCPExcalidrawBridgeService>();
+          mcpBridge.executeCanvasCommand('create_element', {
+            'type': 'diamond',
+            'x': 400.0 + (i * 60.0),
+            'y': 100.0,
+            'width': 50.0,
+            'height': 50.0,
+            'strokeColor': '#0066cc'
+          });
+        } catch (e) {
+          debugPrint('❌ Test 3.2.$i FAILED: $e');
+        }
+      }
+    });
+  }
+  
+  void _runPhase4Tests() {
+    debugPrint('\n🟪 PHASE 4 (6-8min): Full Integration Pipeline Tests');
+    
+    // Test 4.1: Simulate agent workflow
+    debugPrint('Test 4.1: Simulating full agent workflow');
+    
+    // Clear canvas first
+    clearCanvas();
+    Timer(const Duration(seconds: 2), () {
+      
+      // Agent creates multiple elements in sequence
+      final elements = [
+        {'type': 'rectangle', 'x': 50, 'y': 50, 'width': 200, 'height': 40, 'text': 'Header'},
+        {'type': 'rectangle', 'x': 50, 'y': 110, 'width': 90, 'height': 150, 'text': 'Sidebar'},
+        {'type': 'rectangle', 'x': 160, 'y': 110, 'width': 90, 'height': 150, 'text': 'Content'},
+        {'type': 'arrow', 'x': 140, 'y': 180, 'width': 20, 'height': 2}
+      ];
+      
+      for (int i = 0; i < elements.length; i++) {
+        Timer(Duration(seconds: i * 2), () {
+          debugPrint('Test 4.1.${i+1}: Creating ${elements[i]['type']}');
+          addElementToCanvas(elements[i]);
+        });
+      }
+    });
+    
+    // Test 4.2: Performance test
+    Timer(const Duration(seconds: 45), () {
+      debugPrint('Test 4.2: Performance test - rapid element creation');
+      final stopwatch = Stopwatch()..start();
+      
+      for (int i = 0; i < 10; i++) {
+        addElementToCanvas({
+          'type': 'ellipse',
+          'x': 500 + (i % 5) * 30,
+          'y': 200 + (i ~/ 5) * 30,
+          'width': 20,
+          'height': 20,
+          'strokeColor': '#ff6600'
+        });
+      }
+      
+      stopwatch.stop();
+      debugPrint('⏱️ Test 4.2: Created 10 elements in ${stopwatch.elapsedMilliseconds}ms');
+    });
+  }
+  
+  void _runPhase5Tests() {
+    debugPrint('\n🟫 PHASE 5 (8-10min): Stress Test & Error Recovery');
+    
+    // Test 5.1: Error recovery
+    debugPrint('Test 5.1: Error recovery - invalid elements');
+    addElementToCanvas({'type': 'invalid_type', 'x': 0, 'y': 0});
+    addElementToCanvas({'invalid': 'data'});
+    
+    // Test 5.2: Large canvas test
+    Timer(const Duration(seconds: 30), () {
+      debugPrint('Test 5.2: Large canvas stress test');
+      clearCanvas();
+      
+      Timer(const Duration(seconds: 2), () {
+        // Create a complex wireframe
+        addWireframeTemplate();
+        Timer(const Duration(seconds: 1), () => addMobileAppTemplate());
+      });
+    });
+    
+    // Test 5.3: Final verification
+    Timer(const Duration(seconds: 60), () {
+      debugPrint('Test 5.3: Final verification');
+      _executeJavaScript('''
+        console.log("=== FINAL TEST RESULTS ===");
+        window.getElementStats && window.getElementStats();
+        console.log("Ready state:", isReady);
+        console.log("API available:", !!excalidrawAPI);
+      ''');
+    });
+  }
+  
+  void _generateTestReport() {
+    debugPrint('\n📊 === GENERATING TEST REPORT ===');
+    _executeJavaScript('''
+      const elements = excalidrawAPI ? excalidrawAPI.getSceneElements() : [];
+      console.log("FINAL REPORT:");
+      console.log("- Total elements created:", elements.length);
+      console.log("- Canvas ready state:", isReady);
+      console.log("- API functional:", !!excalidrawAPI);
+      console.log("- Test complete timestamp:", Date.now());
+    ''');
   }
 
   @override

@@ -9,6 +9,8 @@ import '../services/desktop/desktop_conversation_service.dart';
 import '../services/desktop/desktop_storage_service.dart';
 import '../services/desktop/desktop_service_provider.dart';
 import '../services/canvas_local_server.dart';
+import '../services/canvas_storage_service.dart';
+import '../services/mcp_excalidraw_bridge_service.dart';
 import '../services/llm/unified_llm_service.dart';
 import '../services/mcp_bridge_service.dart';
 import '../services/context_mcp_resource_service.dart';
@@ -21,7 +23,9 @@ import '../services/openai_api_service.dart';
 import '../services/google_api_service.dart';
 import '../services/kimi_api_service.dart';
 import '../services/ollama_service.dart';
-import '../services/design_agent_orchestrator_service.dart';
+// import '../services/design_agent_orchestrator_service.dart'; // Removed for single model optimization
+import '../services/visual_reasoning/decision_gateway_service.dart';
+import '../services/minimal_agent_state_service.dart';
 import '../services/agent_model_recommendation_service.dart';
 import '../services/smart_agent_orchestrator_service.dart';
 import '../services/mcp_server_execution_service.dart';
@@ -269,6 +273,10 @@ class ServiceLocator {
     // Register canvas services
     registerSingleton<CanvasLocalServer>(CanvasLocalServer());
     
+    final canvasStorage = CanvasStorageService();
+    await canvasStorage.initialize();
+    registerSingleton<CanvasStorageService>(canvasStorage);
+    
     // Register orchestration services
     final workflowPersistence = WorkflowPersistenceService.instance;
     await workflowPersistence.initialize();
@@ -333,12 +341,25 @@ class ServiceLocator {
     final smartAgentOrchestrator = SmartAgentOrchestratorService(unifiedLlmService, modelRecommendationService);
     registerSingleton<SmartAgentOrchestratorService>(smartAgentOrchestrator);
     
-    // Register Design Agent Orchestrator
-    final designAgentOrchestrator = DesignAgentOrchestratorService(unifiedLlmService);
-    registerSingleton<DesignAgentOrchestratorService>(designAgentOrchestrator);
+    // Design Agent Orchestrator removed for single model optimization
     
     final mcpBridgeService = MCPBridgeService(mcpSettingsService);
     registerSingleton<MCPBridgeService>(mcpBridgeService);
+    
+    // Register MCP Excalidraw Bridge (after MCPBridgeService is registered)
+    final mcpExcalidrawBridge = MCPExcalidrawBridgeService.instance;
+    await mcpExcalidrawBridge.initialize();
+    registerSingleton<MCPExcalidrawBridgeService>(mcpExcalidrawBridge);
+    
+    // Register Visual Reasoning services
+    final decisionGateway = DecisionGatewayService.instance;
+    await decisionGateway.initialize();
+    registerSingleton<DecisionGatewayService>(decisionGateway);
+    
+    // Register MVP Agent State service
+    final agentState = MinimalAgentStateService.instance;
+    await agentState.initialize();
+    registerSingleton<MinimalAgentStateService>(agentState);
     
     registerSingleton<ContextMCPResourceService>(ContextMCPResourceService());
     registerSingleton<AgentContextPromptService>(AgentContextPromptService());

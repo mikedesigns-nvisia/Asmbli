@@ -5,7 +5,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/agent_template.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../../../core/services/design_agent_orchestrator_service.dart';
+// import '../../../../core/services/design_agent_orchestrator_service.dart'; // Removed for single model optimization
 import '../../../../core/services/llm/unified_llm_service.dart';
 import '../../../../core/services/llm/llm_provider.dart';
 import '../../../../core/services/model_config_service.dart';
@@ -27,6 +27,9 @@ class DesignAgentSidebar extends ConsumerStatefulWidget {
   final Function()? onClearCanvas;
   final Function()? onCaptureCanvas;
   
+  // MCP-powered message processing callback
+  final Future<String> Function(String message)? onProcessMessage;
+  
   const DesignAgentSidebar({
     super.key,
     required this.agent,
@@ -39,6 +42,7 @@ class DesignAgentSidebar extends ConsumerStatefulWidget {
     this.onGenerateCode,
     this.onClearCanvas,
     this.onCaptureCanvas,
+    this.onProcessMessage,
   });
 
   @override
@@ -51,8 +55,7 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
   final List<ChatMessage> _chatMessages = [];
   final TextEditingController _chatController = TextEditingController();
   
-  // LLM bridge service
-  DesignAgentOrchestratorService? _orchestratorService;
+  // LLM service for single model approach
   bool _isServiceAvailable = false;
   UnifiedLLMService? _llmService;
   
@@ -80,7 +83,6 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
     super.initState();
     _initializeChat();
     _initializeLLMService();
-    _initializeOrchestratorService();
   }
   
   Future<void> _initializeLLMService() async {
@@ -159,29 +161,7 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
     }
   }
   
-  Future<void> _initializeOrchestratorService() async {
-    try {
-      _orchestratorService = ServiceLocator.instance.get<DesignAgentOrchestratorService>();
-      debugPrint('🔍 Design agent: Initializing orchestrator service...');
-      
-      _isServiceAvailable = await _orchestratorService!.initialize();
-      debugPrint('🔍 Design agent: Service available = $_isServiceAvailable');
-      
-      if (_isServiceAvailable) {
-        _addChatMessage('🎯 Connected to AI models: DeepSeek R1 (Planning) & LLaVA Vision (Actions)', true);
-      } else {
-        _addChatMessage('⚠️ AI models not fully available. Using fallback responses.', true);
-        
-        // Try to get more debug info about available models
-        final (planningId, visionId) = await _orchestratorService!.findDesignModels();
-        debugPrint('🔍 Design agent: Found planning model: $planningId');
-        debugPrint('🔍 Design agent: Found vision model: $visionId');
-      }
-    } catch (e) {
-      debugPrint('❌ Error initializing orchestrator service: $e');
-      _addChatMessage('⚠️ Could not connect to AI models. Using fallback responses.', true);
-    }
-  }
+  // Duplicate method removed
 
   @override
   void dispose() {
@@ -208,7 +188,6 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
           _buildCompactModeSelector(colors),
           _buildAIModelInfo(colors),
           _buildContextPanel(colors),
-          _buildTabBar(colors),
           Expanded(
             child: _buildTabContent(colors),
           ),
@@ -282,6 +261,47 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
               style: TextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: colors.onSurface,
+              ),
+            ),
+          ),
+          // Specs button
+          Container(
+            margin: const EdgeInsets.only(right: SpacingTokens.xs),
+            child: Material(
+              color: _activeTab == 'specs' ? colors.primary.withValues(alpha: 0.1) : Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _activeTab = _activeTab == 'specs' ? 'chat' : 'specs';
+                  });
+                },
+                borderRadius: BorderRadius.circular(6),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SpacingTokens.sm,
+                    vertical: SpacingTokens.xs,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.assignment,
+                        size: 16,
+                        color: _activeTab == 'specs' ? colors.primary : colors.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: SpacingTokens.xs),
+                      Text(
+                        'Specs',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: _activeTab == 'specs' ? FontWeight.w600 : FontWeight.w400,
+                          color: _activeTab == 'specs' ? colors.primary : colors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -498,7 +518,12 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
           ),
           IconButton(
             icon: Icon(Icons.close, size: 12),
-            onPressed: () => _removeContext(context),
+            onPressed: () {
+              setState(() {
+                _contexts.remove(context);
+              });
+              _updateSpecifications();
+            },
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints.tightFor(width: 20, height: 20),
           ),
@@ -768,13 +793,13 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
       debugPrint('🔧 Updated agent configuration: Plan=$_selectedPlanModelId, Act=$_selectedActModelId');
       
       // Reinitialize orchestrator with new models
-      _initializeOrchestratorService();
+      // Service already initialized
     }
   }
   
   Future<void> _refreshModels() async {
     debugPrint('🔄 Design agent: Refreshing models...');
-    await _initializeLLMService();
+    // Service already initialized
     
     if (_availableModels.isNotEmpty) {
       _addChatMessage('🔄 Refreshed model list: ${_availableModels.length} models available', true);
@@ -978,6 +1003,13 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
   }
 
   void _addChatMessage(String message, bool isAgent) {
+    // Prevent duplicate messages (dynamic UX improvement)
+    if (_chatMessages.isNotEmpty && 
+        _chatMessages.last.message == message && 
+        _chatMessages.last.isAgent == isAgent) {
+      return; // Skip duplicate message
+    }
+    
     setState(() {
       _chatMessages.add(ChatMessage(
         message: message,
@@ -1013,10 +1045,16 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
     try {
       String response = '';
       
-      if (_agentMode == 'plan') {
-        response = await _generatePlanModeResponse(message);
+      // Use MCP-powered message processing
+      if (widget.onProcessMessage != null) {
+        response = await widget.onProcessMessage!(message);
       } else {
-        response = await _generateActModeResponse(message);
+        // Fallback to original mode-based processing
+        if (_agentMode == 'plan') {
+          response = await _generatePlanModeResponse(message);
+        } else {
+          response = await _generateActModeResponse(message);
+        }
       }
       
       // Remove thinking indicator and add real response
@@ -1050,7 +1088,7 @@ class _DesignAgentSidebarState extends ConsumerState<DesignAgentSidebar> {
   }
 
   Future<String> _generatePlanModeResponse(String message) async {
-    if (!_isServiceAvailable || _orchestratorService == null || _selectedPlanModelId == null) {
+    if (!_isServiceAvailable || _llmService == null) {
       return _getFallbackPlanResponse(message);
     }
     
@@ -1129,7 +1167,7 @@ Provide a structured plan including:
   }
 
   Future<String> _generateActModeResponse(String message) async {
-    if (!_isServiceAvailable || _orchestratorService == null || _selectedActModelId == null) {
+    if (!_isServiceAvailable || _llmService == null) {
       return _getFallbackActResponse(message);
     }
     
@@ -1486,12 +1524,7 @@ Focus on concrete actions and specific implementation details.''';
             ElevatedButton(
               onPressed: () {
                 if (_contextController.text.isNotEmpty) {
-                  _addContext(
-                    DesignContext(
-                      name: _contextController.text,
-                      type: _contextType,
-                    ),
-                  );
+                  _addContext();
                   _contextController.clear();
                   Navigator.pop(context);
                 }
@@ -1504,34 +1537,7 @@ Focus on concrete actions and specific implementation details.''';
     );
   }
 
-  void _addContext(DesignContext context) {
-    setState(() {
-      _contexts.add(context);
-    });
-    _notifySpecUpdate();
-  }
 
-  void _removeContext(DesignContext context) {
-    setState(() {
-      _contexts.remove(context);
-    });
-    _notifySpecUpdate();
-  }
-
-  IconData _getContextIcon(String type) {
-    final icons = {
-      'brand_guidelines': Icons.business,
-      'design_system': Icons.dashboard,
-      'competitor_analysis': Icons.compare,
-      'user_personas': Icons.people,
-      'style_reference': Icons.palette,
-      'color_palette': Icons.color_lens,
-      'typography': Icons.text_fields,
-      'component_library': Icons.widgets,
-      'constraints': Icons.warning,
-    };
-    return icons[type] ?? Icons.folder;
-  }
 
   Color _getContextColor(String type) {
     final colors = ThemeColors(context);
@@ -1549,61 +1555,6 @@ Focus on concrete actions and specific implementation details.''';
     return colorMap[type] ?? colors.onSurfaceVariant;
   }
 
-  // Tab Bar for switching between Chat and Specs
-  Widget _buildTabBar(ThemeColors colors) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: colors.border)),
-      ),
-      child: Row(
-        children: [
-          _buildTab('chat', 'Chat', Icons.chat_bubble_outline, colors),
-          _buildTab('specs', 'Specs', Icons.assignment, colors),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTab(String tabId, String label, IconData icon, ThemeColors colors) {
-    final isActive = _activeTab == tabId;
-    
-    return Expanded(
-      child: Material(
-        color: isActive ? colors.primary.withOpacity(0.1) : Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              _activeTab = tabId;
-            });
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: SpacingTokens.md,
-              vertical: SpacingTokens.sm,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  size: 16,
-                  color: isActive ? colors.primary : colors.onSurfaceVariant,
-                ),
-                const SizedBox(width: SpacingTokens.xs),
-                Text(
-                  label,
-                  style: TextStyles.caption.copyWith(
-                    color: isActive ? colors.primary : colors.onSurface,
-                    fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   // Tab Content
   Widget _buildTabContent(ThemeColors colors) {
@@ -1619,13 +1570,8 @@ Focus on concrete actions and specific implementation details.''';
 
   // Specs Panel - Project specifications view
   Widget _buildSpecsPanel(ThemeColors colors) {
-    final hasSpecs = widget.agent.configuration?.isNotEmpty ?? false;
-    
-    if (hasSpecs) {
-      return _buildSpecsViewer(colors);
-    } else {
-      return _buildSpecsCreator(colors);
-    }
+    // Always show the interactive specs creator interface
+    return _buildSpecsCreator(colors);
   }
 
   Widget _buildSpecsViewer(ThemeColors colors) {
@@ -1765,51 +1711,485 @@ Focus on concrete actions and specific implementation details.''';
   Widget _buildSpecsCreator(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(SpacingTokens.lg),
-            decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-              border: Border.all(color: colors.primary.withOpacity(0.3)),
-            ),
-            child: Column(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
               children: [
-                Icon(Icons.assignment, color: colors.primary, size: 32),
-                const SizedBox(height: SpacingTokens.md),
+                Icon(Icons.assignment, color: colors.primary, size: 20),
+                const SizedBox(width: SpacingTokens.sm),
                 Text(
-                  'Create Specifications',
+                  'Project Specifications',
                   style: TextStyles.cardTitle.copyWith(
-                    color: colors.primary,
+                    color: colors.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: SpacingTokens.sm),
-                Text(
-                  'Switch to Chat tab and ask me to help create project specifications.',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: colors.onSurface,
+              ],
+            ),
+            const SizedBox(height: SpacingTokens.sm),
+            Text(
+              'Define your project requirements and design goals',
+              style: TextStyles.bodySmall.copyWith(
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: SpacingTokens.lg),
+            
+            // Project Type Section
+            _buildSpecSection(
+              'Project Type',
+              Icons.category,
+              colors,
+              child: Column(
+                children: [
+                  _buildSpecOption('Web Application', 'web_app', colors),
+                  _buildSpecOption('Mobile App', 'mobile_app', colors),
+                  _buildSpecOption('Desktop App', 'desktop_app', colors),
+                  _buildSpecOption('Dashboard', 'dashboard', colors),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: SpacingTokens.lg),
+            
+            // Design Phase Section
+            _buildSpecSection(
+              'Design Phase',
+              Icons.timeline,
+              colors,
+              child: Column(
+                children: [
+                  _buildSpecOption('Concept', 'concept', colors, isPhase: true),
+                  _buildSpecOption('Wireframes', 'wireframes', colors, isPhase: true),
+                  _buildSpecOption('High-Fidelity', 'high_fidelity', colors, isPhase: true),
+                  _buildSpecOption('Prototype', 'prototype', colors, isPhase: true),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: SpacingTokens.lg),
+            
+            // Target Platforms Section
+            _buildSpecSection(
+              'Target Platforms',
+              Icons.devices,
+              colors,
+              child: Column(
+                children: [
+                  _buildPlatformCheckbox('Responsive Web', 'responsive_web', colors),
+                  _buildPlatformCheckbox('iOS', 'ios', colors),
+                  _buildPlatformCheckbox('Android', 'android', colors),
+                  _buildPlatformCheckbox('Desktop', 'desktop', colors),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: SpacingTokens.lg),
+            
+            // Requirements Section
+            _buildSpecSection(
+              'Key Requirements',
+              Icons.list_alt,
+              colors,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Enter main project requirements...',
+                      hintStyle: TextStyle(color: colors.onSurfaceVariant),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: colors.border),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: colors.primary, width: 2),
+                      ),
+                      contentPadding: const EdgeInsets.all(SpacingTokens.md),
+                    ),
+                    maxLines: 3,
+                    style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
                   ),
-                  textAlign: TextAlign.center,
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: SpacingTokens.lg),
+            
+            // Design Context Section
+            _buildSpecSection(
+              'Design Context',
+              Icons.palette,
+              colors,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _contextController,
+                    decoration: InputDecoration(
+                      hintText: 'Add context item (e.g., brand colors, style guide)...',
+                      hintStyle: TextStyle(color: colors.onSurfaceVariant),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: colors.border),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: colors.primary, width: 2),
+                      ),
+                      contentPadding: const EdgeInsets.all(SpacingTokens.md),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.add, color: colors.primary),
+                        onPressed: _addContext,
+                      ),
+                    ),
+                    style: TextStyles.bodyMedium.copyWith(color: colors.onSurface),
+                    onSubmitted: (_) => _addContext(),
+                  ),
+                  const SizedBox(height: SpacingTokens.sm),
+                  DropdownButtonFormField<String>(
+                    value: _contextType,
+                    decoration: InputDecoration(
+                      labelText: 'Context Type',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: SpacingTokens.md,
+                        vertical: SpacingTokens.sm,
+                      ),
+                    ),
+                    items: [
+                      DropdownMenuItem(value: 'brand_guidelines', child: Text('Brand Guidelines')),
+                      DropdownMenuItem(value: 'existing_design', child: Text('Existing Design')),
+                      DropdownMenuItem(value: 'inspiration', child: Text('Design Inspiration')),
+                      DropdownMenuItem(value: 'style_guide', child: Text('Style Guide')),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          _contextType = value;
+                        });
+                      }
+                    },
+                  ),
+                  if (_contexts.isNotEmpty) ...[
+                    const SizedBox(height: SpacingTokens.md),
+                    ...(_contexts.map((context) => _buildContextItem(context, colors))),
+                  ],
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: SpacingTokens.xl),
+            
+            // Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: AsmblButton.secondary(
+                    text: 'Clear All',
+                    icon: Icons.clear,
+                    onPressed: _clearSpecs,
+                  ),
                 ),
-                const SizedBox(height: SpacingTokens.md),
-                AsmblButton.primary(
-                  text: 'Go to Chat',
-                  icon: Icons.chat,
-                  onPressed: () {
-                    setState(() {
-                      _activeTab = 'chat';
-                    });
-                  },
+                const SizedBox(width: SpacingTokens.md),
+                Expanded(
+                  child: AsmblButton.primary(
+                    text: 'Save Specs',
+                    icon: Icons.save,
+                    onPressed: _saveSpecs,
+                  ),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Helper methods for the spec-driven design interface
+  Widget _buildSpecSection(String title, IconData icon, ThemeColors colors, {required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(SpacingTokens.md),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+        border: Border.all(color: colors.border.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: colors.primary, size: 16),
+              const SizedBox(width: SpacingTokens.sm),
+              Text(
+                title,
+                style: TextStyles.bodyMedium.copyWith(
+                  color: colors.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: SpacingTokens.md),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpecOption(String label, String value, ThemeColors colors, {bool isPhase = false}) {
+    final isSelected = isPhase ? _designPhase == value : _projectType == value;
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (isPhase) {
+            _designPhase = value;
+          } else {
+            _projectType = value;
+          }
+        });
+        _updateSpecifications();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: SpacingTokens.sm,
+          vertical: SpacingTokens.xs,
+        ),
+        margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
+        decoration: BoxDecoration(
+          color: isSelected ? colors.primary.withValues(alpha: 0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: isSelected ? colors.primary : colors.border.withValues(alpha: 0.5),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+              size: 16,
+              color: isSelected ? colors.primary : colors.onSurfaceVariant,
+            ),
+            const SizedBox(width: SpacingTokens.sm),
+            Text(
+              label,
+              style: TextStyles.bodySmall.copyWith(
+                color: isSelected ? colors.primary : colors.onSurface,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlatformCheckbox(String label, String value, ThemeColors colors) {
+    final isSelected = _selectedPlatforms.contains(value);
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (isSelected) {
+            _selectedPlatforms.remove(value);
+          } else {
+            _selectedPlatforms.add(value);
+          }
+        });
+        _updateSpecifications();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: SpacingTokens.sm,
+          vertical: SpacingTokens.xs,
+        ),
+        margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
+        decoration: BoxDecoration(
+          color: isSelected ? colors.primary.withValues(alpha: 0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: isSelected ? colors.primary : colors.border.withValues(alpha: 0.5),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+              size: 16,
+              color: isSelected ? colors.primary : colors.onSurfaceVariant,
+            ),
+            const SizedBox(width: SpacingTokens.sm),
+            Text(
+              label,
+              style: TextStyles.bodySmall.copyWith(
+                color: isSelected ? colors.primary : colors.onSurface,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContextItem(DesignContext context, ThemeColors colors) {
+    return Container(
+      padding: const EdgeInsets.all(SpacingTokens.sm),
+      margin: const EdgeInsets.only(bottom: SpacingTokens.xs),
+      decoration: BoxDecoration(
+        color: colors.background.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: colors.border.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            _getContextIcon(context.type),
+            size: 16,
+            color: colors.onSurfaceVariant,
+          ),
+          const SizedBox(width: SpacingTokens.sm),
+          Expanded(
+            child: Text(
+              context.name,
+              style: TextStyles.bodySmall.copyWith(
+                color: colors.onSurface,
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.close, size: 14),
+            onPressed: () {
+              setState(() {
+                _contexts.remove(context);
+              });
+              _updateSpecifications();
+            },
+            style: IconButton.styleFrom(
+              foregroundColor: colors.onSurfaceVariant,
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(20, 20),
             ),
           ),
         ],
       ),
     );
+  }
+
+  IconData _getContextIcon(String type) {
+    switch (type) {
+      case 'brand_guidelines':
+        return Icons.business;
+      case 'existing_design':
+        return Icons.design_services;
+      case 'inspiration':
+        return Icons.lightbulb;
+      case 'style_guide':
+        return Icons.color_lens;
+      default:
+        return Icons.folder;
+    }
+  }
+
+  void _addContext() {
+    if (_contextController.text.trim().isNotEmpty) {
+      setState(() {
+        _contexts.add(DesignContext(
+          name: _contextController.text.trim(),
+          type: _contextType,
+        ));
+        _contextController.clear();
+      });
+      _updateSpecifications();
+    }
+  }
+
+  void _clearSpecs() {
+    setState(() {
+      _projectType = 'web_app';
+      _designPhase = 'concept';
+      _selectedPlatforms = ['responsive_web'];
+      _contexts.clear();
+    });
+    _updateSpecifications();
+  }
+
+  void _saveSpecs() {
+    _updateSpecifications();
+    
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check, color: Colors.white, size: 16),
+            const SizedBox(width: 8),
+            const Text('Specifications saved successfully'),
+          ],
+        ),
+        backgroundColor: ThemeColors(context).success,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _updateSpecifications() {
+    final specs = {
+      'projectType': _projectType,
+      'designPhase': _designPhase,
+      'platforms': _selectedPlatforms,
+      'contexts': _contexts.map((c) => c.toMap()).toList(),
+      'lastUpdated': DateTime.now().toIso8601String(),
+    };
+    
+    widget.onSpecUpdate(specs);
+  }
+  
+  /// Get human-readable model name from technical model ID
+  String _getHumanReadableModelName(String? modelId) {
+    if (modelId == null) return 'Unknown Model';
+    
+    // Post-modern model name mapping with capabilities
+    if (modelId.contains('llama3.1')) {
+      return 'Llama3.1 8B (🛠️ Tool Calling)';
+    } else if (modelId.contains('deepseek-r1')) {
+      if (modelId.contains('32b')) {
+        return 'DeepSeek R1 32B (🧠 Reasoning)';
+      } else {
+        return 'DeepSeek R1 8B (💭 Planning)';
+      }
+    } else if (modelId.contains('llava')) {
+      return 'LLaVA 13B (👁️ Vision)';
+    } else if (modelId.contains('mistral')) {
+      return 'Mistral Small 3.1 (⚡ Fast)';
+    } else if (modelId.contains('gemma')) {
+      return 'Gemma3 27B (🔬 Analytical)';
+    } else {
+      // Fallback - extract readable name from ID
+      final cleanId = modelId.replaceAll('local_', '').replaceAll('_', ' ');
+      return cleanId.split(' ').map((word) => 
+        word.isNotEmpty ? word[0].toUpperCase() + word.substring(1).toLowerCase() : word
+      ).join(' ');
+    }
+  }
+  
+  /// Add contextual canvas feedback to make chat feel dynamic (Motiff/Figma pattern)
+  String _addContextualCanvasFeedback(String response, String userMessage) {
+    // Keep it simple - only add feedback for specific successful actions
+    if (response.contains('created') || response.contains('added')) {
+      return response + '\n\n🎨 *Try variations: different colors, sizes, or positions*';
+    }
+    return response;
   }
 }
 

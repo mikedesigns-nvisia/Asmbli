@@ -35,7 +35,7 @@ class _DesignAgentSidebarDemoState extends ConsumerState<DesignAgentSidebarDemo>
       configuration: {
         'type': 'design_agent',
         'modelConfiguration': {
-          'primaryModelId': 'local_deepseek-r1_32b',
+          'primaryModelId': 'local_llama3.1_8b',
           'visionModelId': 'local_llava_13b',
         },
       },

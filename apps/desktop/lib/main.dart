@@ -40,6 +40,7 @@ import 'features/tools/presentation/screens/tools_screen.dart';
 import 'features/chat/presentation/demo/contextual_context_demo.dart';
 import 'features/canvas/presentation/excalidraw_canvas_screen.dart';
 import 'features/canvas/presentation/enhanced_excalidraw_demo.dart';
+import 'features/canvas/presentation/canvas_library_screen.dart';
 import 'demo/demo_onboarding.dart';
 import 'demo/unified_showcase_demo.dart';
 import 'demo/components/controlled_onboarding_flow.dart';
@@ -378,6 +379,10 @@ final _router = GoRouter(
  GoRoute(
  path: AppRoutes.canvas,
  builder: (context, state) => const ExcalidrawCanvasScreen(),
+ ),
+GoRoute(
+ path: AppRoutes.canvasLibrary,
+ builder: (context, state) => const CanvasLibraryScreen(),
  ),
  GoRoute(
  path: '/enhanced-excalidraw-demo',

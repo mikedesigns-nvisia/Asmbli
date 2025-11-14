@@ -17,7 +17,7 @@ extension DesignAgentBusinessService on AgentBusinessService {
   }) async {
     try {
       // Get the orchestrator service
-      final orchestrator = ServiceLocator.instance.get<DesignAgentOrchestratorService>();
+      // Design orchestrator removed for single model optimization
       
       // Initialize and verify models are available
       final isReady = await orchestrator.initialize();
@@ -100,18 +100,9 @@ extension DesignAgentBusinessService on AgentBusinessService {
   }
   
   /// Get the design agent orchestrator for a specific agent
-  Future<DesignAgentOrchestratorService?> getDesignOrchestrator(String agentId) async {
-    final agentResult = await getAgentById(agentId);
-    if (!agentResult.isSuccess || agentResult.data == null) {
-      return null;
-    }
-    
-    final agent = agentResult.data!;
-    if (!isDesignAgent(agent)) {
-      return null;
-    }
-    
-    return ServiceLocator.instance.get<DesignAgentOrchestratorService>();
+  /// Removed for single model optimization
+  Future<void> getDesignOrchestrator(String agentId) async {
+    // No longer needed with simplified architecture
   }
   
   /// Execute a design workflow with the agent

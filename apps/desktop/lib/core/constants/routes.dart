@@ -20,6 +20,7 @@ class AppRoutes {
  static const String integrationHub = '/integration-hub';
  static const String marketplace = '/marketplace';
  static const String canvas = '/canvas';
+ static const String canvasLibrary = '/canvas-library';
  
  // Demo routes
  static const String demoChat = '/demo-chat';
@@ -45,6 +46,7 @@ class AppRoutes {
  integrationHub: 'Integration Hub',
  marketplace: 'Marketplace',
  canvas: 'Visual Canvas',
+ canvasLibrary: 'Canvas Library',
  demoChat: 'Demo Chat',
  demoOnboarding: 'Demo Showcase',
  demoUnified: 'Unified Demo',
@@ -74,6 +76,7 @@ class AppRoutes {
  integrationHub,
  marketplace,
  canvas,
+ canvasLibrary,
  demoChat,
  demoOnboarding,
  demoUnified,

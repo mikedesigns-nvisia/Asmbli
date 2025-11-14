@@ -1,3389 +1,449 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excalidraw - Asmbli Integration</title>
-    <!-- React and ReactDOM -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Excalidraw Canvas</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Excalidraw -->
     <script crossorigin src="https://unpkg.com/@excalidraw/excalidraw@0.17.6/dist/excalidraw.production.min.js"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #fafafa;
-        }
-        
-        .excalidraw-container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-        }
-        
-        .toolbar {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
-            background: white;
-            border-radius: 8px;
-            padding: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: none; /* Hide HTML toolbar to avoid overlap with Flutter buttons */
-            gap: 8px;
-        }
-        
-        .toolbar button {
-            background: #4ECDC4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        
-        .toolbar button:hover {
-            background: #45b7aa;
-        }
-        
-        .toolbar button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        /* Theme variables for dynamic theming */
-        :root {
-            --primary-color: #4ECDC4;
-            --primary-hover: #45b7aa;
-            --background: #fafafa;
-            --surface: white;
-            --text: #333;
-        }
-        
-        /* Dark theme */
-        .dark-theme {
-            --primary-color: #4ECDC4;
-            --primary-hover: #5dd5cd;
-            --background: #1a1a1a;
-            --surface: #2d2d2d;
-            --text: #ffffff;
-        }
-        
-        .dark-theme body {
-            background-color: var(--background);
-            color: var(--text);
-        }
-        
-        .dark-theme .toolbar {
-            background: var(--surface);
-            border: 1px solid #444;
-        }
+        body { margin: 0; padding: 0; overflow: hidden; }
+        #app { width: 100vw; height: 100vh; }
     </style>
 </head>
 <body>
-    <div class="excalidraw-container">
-        <div class="toolbar">
-            <button id="save-btn" onclick="saveDrawing()">💾 Save</button>
-            <button id="load-btn" onclick="loadDrawing()">📁 Load</button>
-            <button id="clear-btn" onclick="clearCanvas()">🗑️ Clear</button>
-            <button id="export-btn" onclick="exportPNG()">📸 Export PNG</button>
-        </div>
-        <div id="excalidraw-app"></div>
-    </div>
-
+    <div id="app"></div>
+    
     <script>
-        let excalidrawAPI = null;
-        let currentTheme = 'light';
+        const { Excalidraw, convertToExcalidrawElements } = ExcalidrawLib;
         
-        // Initialize Excalidraw
-        const initializeExcalidraw = () => {
-            const App = () => {
-                const [excalidrawData, setExcalidrawData] = React.useState({
-                    elements: [],
-                    appState: {
-                        theme: currentTheme,
-                        viewBackgroundColor: currentTheme === 'dark' ? '#1a1a1a' : '#fafafa',
-                        gridSize: null,
-                        zenModeEnabled: false,
-                        isLoading: false,
-                    },
-                    files: null,
+        // Global API reference
+        let excalidrawAPI = null;
+        let isReady = false;
+        
+        // Store for pending operations
+        const pendingOperations = [];
+        
+        // Expose functions to Flutter with detailed debugging
+        window.addCanvasElement = function(elementData) {
+            if (!isReady || !excalidrawAPI) {
+                pendingOperations.push({ type: 'add', data: elementData });
+                return;
+            }
+            
+            try {
+                const element = typeof elementData === 'string' 
+                    ? JSON.parse(elementData) 
+                    : elementData;
+                
+                const newElements = convertToExcalidrawElements([element]);
+                
+                // Get current scene elements
+                console.log('📋 Getting current scene elements...');
+                const currentElements = excalidrawAPI.getSceneElements();
+                
+                // Fast update
+                excalidrawAPI.updateScene({
+                    elements: [...currentElements, ...newElements],
                 });
-
-                return React.createElement(ExcalidrawLib.Excalidraw, {
-                    ref: (api) => {
-                        console.log('🎨 Excalidraw ref callback called with:', api ? 'API object' : 'null');
-                        if (api) {
-                            excalidrawAPI = api;
-                            console.log('✅ ExcalidrawAPI set successfully');
-                            console.log('🎨 API methods available:', Object.keys(api));
+                
+                // Notify Flutter of success
+                if (window.flutter_inappwebview?.callHandler) {
+                    window.flutter_inappwebview.callHandler('flutter_inappwebview', JSON.stringify({
+                        type: 'elementAdded',
+                        success: true,
+                        elementId: newElements[0].id
+                    }));
+                }
+                
+            } catch (error) {
+                console.error('❌ Error adding element:', error);
+                console.error('❌ Stack trace:', error.stack);
+                if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
+                    window.flutter_inappwebview.callHandler('flutter_inappwebview', JSON.stringify({
+                        type: 'elementAdded',
+                        success: false,
+                        error: error.message,
+                        stack: error.stack
+                    }));
+                }
+            }
+        };
+        
+        window.updateCanvasElement = function(elementData) {
+            if (!isReady || !excalidrawAPI) {
+                pendingOperations.push({ type: 'update', data: elementData });
+                return;
+            }
+            
+            try {
+                const element = typeof elementData === 'string' 
+                    ? JSON.parse(elementData) 
+                    : elementData;
+                
+                const currentElements = excalidrawAPI.getSceneElements();
+                const updatedElements = currentElements.map(el => 
+                    el.id === element.id ? { ...el, ...element } : el
+                );
+                
+                excalidrawAPI.updateScene({
+                    elements: updatedElements,
+                });
+                
+            } catch (error) {
+                console.error('❌ Error updating element:', error);
+            }
+        };
+        
+        window.clearCanvas = function() {
+            if (!isReady || !excalidrawAPI) {
+                pendingOperations.push({ type: 'clear', data: null });
+                return;
+            }
+            
+            excalidrawAPI.updateScene({
+                elements: [],
+            });
+        };
+        
+        window.getCanvasElements = function() {
+            if (!isReady || !excalidrawAPI) {
+                return JSON.stringify([]);
+            }
+            
+            const elements = excalidrawAPI.getSceneElements();
+            return JSON.stringify(elements);
+        };
+        
+        // Template functions for common layouts
+        window.addWireframeElements = function() {
+            if (!isReady || !excalidrawAPI) {
+                pendingOperations.push({ type: 'wireframe', data: null });
+                return;
+            }
+            
+            const wireframeElements = [
+                {
+                    type: 'rectangle',
+                    x: 100,
+                    y: 100,
+                    width: 300,
+                    height: 60,
+                    label: { text: 'Header' }
+                },
+                {
+                    type: 'rectangle', 
+                    x: 100,
+                    y: 180,
+                    width: 140,
+                    height: 200,
+                    label: { text: 'Sidebar' }
+                },
+                {
+                    type: 'rectangle',
+                    x: 260,
+                    y: 180, 
+                    width: 140,
+                    height: 200,
+                    label: { text: 'Content' }
+                }
+            ];
+            
+            const newElements = convertToExcalidrawElements(wireframeElements);
+            const currentElements = excalidrawAPI.getSceneElements();
+            
+            excalidrawAPI.updateScene({
+                elements: [...currentElements, ...newElements],
+            });
+        };
+        
+        window.addMobileAppTemplate = function() {
+            if (!isReady || !excalidrawAPI) {
+                pendingOperations.push({ type: 'mobile', data: null });
+                return;
+            }
+            
+            const mobileElements = [
+                {
+                    type: 'rectangle',
+                    x: 150,
+                    y: 100,
+                    width: 250,
+                    height: 400,
+                    strokeWidth: 3,
+                    label: { text: 'Mobile App Frame' }
+                },
+                {
+                    type: 'rectangle',
+                    x: 170,
+                    y: 120,
+                    width: 210,
+                    height: 50,
+                    label: { text: 'Header' }
+                },
+                {
+                    type: 'rectangle',
+                    x: 170,
+                    y: 190,
+                    width: 210,
+                    height: 250,
+                    label: { text: 'Content Area' }
+                },
+                {
+                    type: 'rectangle',
+                    x: 170,
+                    y: 460,
+                    width: 210,
+                    height: 20,
+                    label: { text: 'Bottom Nav' }
+                }
+            ];
+            
+            const newElements = convertToExcalidrawElements(mobileElements);
+            const currentElements = excalidrawAPI.getSceneElements();
+            
+            excalidrawAPI.updateScene({
+                elements: [...currentElements, ...newElements],
+            });
+        };
+        
+        // Process pending operations
+        function processPendingOperations() {
+            console.log(`📦 Processing ${pendingOperations.length} pending operations`);
+            
+            while (pendingOperations.length > 0) {
+                const op = pendingOperations.shift();
+                
+                switch (op.type) {
+                    case 'add':
+                        window.addCanvasElement(op.data);
+                        break;
+                    case 'update':
+                        window.updateCanvasElement(op.data);
+                        break;
+                    case 'clear':
+                        window.clearCanvas();
+                        break;
+                    case 'wireframe':
+                        window.addWireframeElements();
+                        break;
+                    case 'mobile':
+                        window.addMobileAppTemplate();
+                        break;
+                }
+            }
+        }
+        
+        // Modern React component using official best practices
+        function App() {
+            const [excalidrawAPI, setExcalidrawAPI] = React.useState(null);
+            
+            // Handle API initialization - modern approach
+            React.useEffect(() => {
+                if (excalidrawAPI) {
+                    // Store global reference
+                    window.excalidrawAPI = excalidrawAPI;
+                    isReady = true;
+                    
+                    console.log('✅ Excalidraw API ready (modern pattern)');
+                    
+                    // Small delay to ensure React render is complete
+                    setTimeout(() => {
+                        // Test API functionality
+                        try {
+                            const currentElements = excalidrawAPI.getSceneElements();
+                            console.log('🧪 API test successful, current elements:', currentElements.length);
                             
-                            // Set up right-click event listener after API is ready
-                            setTimeout(() => setupContextMenuListeners(), 100);
+                            // Set global ready flag
+                            window.excalidrawReady = true;
+                            window.excalidrawInitTimestamp = Date.now();
                             
-                            // Notify Flutter that Excalidraw is ready
-                            if (window.flutter_inappwebview) {
-                                window.flutter_inappwebview.postMessage(JSON.stringify({
-                                    type: 'excalidrawReady',
-                                    message: 'Excalidraw API is now available'
+                            // Notify Flutter using the channel pattern
+                            if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
+                                window.flutter_inappwebview.callHandler('flutter_inappwebview', JSON.stringify({
+                                    type: 'webViewReady',
+                                    apiTested: true,
+                                    timestamp: Date.now()
                                 }));
+                                console.log('📡 Sent verified ready signal to Flutter');
                             }
-                        } else {
-                            console.log('⚠️ Excalidraw ref callback called with null');
+                            
+                            // Process any pending operations
+                            processPendingOperations();
+                            
+                        } catch (apiError) {
+                            console.error('❌ API test failed:', apiError);
+                            // Don't mark as ready if API isn't working
                         }
+                    }, 50); // Small delay for React render completion
+                }
+            }, [excalidrawAPI]); // Dependency on the API state
+            
+            return React.createElement(
+                'div',
+                { style: { height: '100%', width: '100%' } },
+                React.createElement(Excalidraw, {
+                    // Official pattern: capture API reference
+                    excalidrawAPI: (api) => {
+                        console.log('🔗 Excalidraw API received:', !!api);
+                        setExcalidrawAPI(api);
                     },
-                    initialData: excalidrawData,
                     onChange: (elements, appState, files) => {
                         // Notify Flutter of changes
-                        if (window.flutter_inappwebview) {
-                            window.flutter_inappwebview.postMessage(JSON.stringify({
+                        if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
+                            window.flutter_inappwebview.callHandler('flutter_inappwebview', JSON.stringify({
                                 type: 'drawingChanged',
-                                elements: elements.length,
-                                hasContent: elements.length > 0
+                                hasContent: elements.length > 0,
+                                elementCount: elements.length
                             }));
                         }
                     },
-                    onPointerUpdate: (payload) => {
-                        // Optional: Track user interaction
-                    },
-                    UIOptions: {
-                        canvasActions: {
-                            loadScene: false, // We'll handle this via our toolbar
-                            export: false,    // We'll handle this via our toolbar
-                            saveToActiveFile: false,
-                        },
-                        tools: {
-                            image: false, // Simplify for demo
-                        }
-                    },
-                    renderTopRightUI: () => null, // Hide default top-right UI
-                });
-            };
-
-            const container = document.getElementById('excalidraw-app');
-            const root = ReactDOM.createRoot(container);
-            root.render(React.createElement(App));
-        };
-
-        // Flutter communication functions
-        const saveDrawing = () => {
-            if (excalidrawAPI) {
+                })
+            );
+        }
+        
+        // ===== COMPREHENSIVE TEST SUITE =====
+        window.runTestSuite = function() {
+            console.log('\n🧪 === STARTING COMPREHENSIVE TEST SUITE ===');
+            
+            // Test 1: Basic API availability
+            console.log('🔍 TEST 1: API Availability');
+            console.log('- ExcalidrawLib exists:', typeof ExcalidrawLib !== 'undefined');
+            console.log('- convertToExcalidrawElements exists:', typeof convertToExcalidrawElements !== 'undefined');
+            console.log('- excalidrawAPI exists:', !!excalidrawAPI);
+            console.log('- isReady flag:', isReady);
+            
+            if (!excalidrawAPI) {
+                console.log('❌ TEST 1 FAILED: No excalidrawAPI');
+                return;
+            }
+            
+            // Test 2: API Methods
+            console.log('\n🔍 TEST 2: API Methods');
+            console.log('- getSceneElements:', typeof excalidrawAPI.getSceneElements);
+            console.log('- updateScene:', typeof excalidrawAPI.updateScene);
+            
+            try {
                 const elements = excalidrawAPI.getSceneElements();
-                const appState = excalidrawAPI.getAppState();
-                const files = excalidrawAPI.getFiles();
-                
-                const drawingData = {
-                    elements: elements,
-                    appState: {
-                        theme: appState.theme,
-                        viewBackgroundColor: appState.viewBackgroundColor,
-                        gridSize: appState.gridSize,
-                    },
-                    files: files
+                console.log('- Current elements:', elements.length);
+                console.log('✅ TEST 2 PASSED: API methods work');
+            } catch (e) {
+                console.log('❌ TEST 2 FAILED:', e.message);
+                return;
+            }
+            
+            // Test 3: Element Creation
+            console.log('\n🔍 TEST 3: Element Creation');
+            try {
+                const testElement = {
+                    type: 'rectangle',
+                    x: 50,
+                    y: 50,
+                    width: 100,
+                    height: 50,
+                    strokeColor: '#ff0000'
                 };
                 
-                // Send to Flutter
-                if (window.flutter_inappwebview) {
-                    window.flutter_inappwebview.postMessage(JSON.stringify({
-                        type: 'drawingSaved',
-                        data: JSON.stringify(drawingData)
-                    }));
+                console.log('- Creating test element:', testElement);
+                const converted = convertToExcalidrawElements([testElement]);
+                console.log('- Converted elements:', converted);
+                
+                const beforeCount = excalidrawAPI.getSceneElements().length;
+                excalidrawAPI.updateScene({
+                    elements: [...excalidrawAPI.getSceneElements(), ...converted]
+                });
+                const afterCount = excalidrawAPI.getSceneElements().length;
+                
+                console.log('- Elements before:', beforeCount, 'after:', afterCount);
+                
+                if (afterCount > beforeCount) {
+                    console.log('✅ TEST 3 PASSED: Element creation works');
                 } else {
-                    console.log('Drawing saved:', drawingData);
+                    console.log('❌ TEST 3 FAILED: Element count unchanged');
                 }
+            } catch (e) {
+                console.log('❌ TEST 3 FAILED:', e.message);
             }
-        };
-        
-        const loadDrawing = () => {
-            // Request drawing data from Flutter
-            if (window.flutter_inappwebview) {
-                window.flutter_inappwebview.postMessage(JSON.stringify({
-                    type: 'loadDrawing'
-                }));
-            }
-        };
-        
-        const clearCanvas = () => {
-            if (excalidrawAPI) {
-                excalidrawAPI.updateScene({
-                    elements: [],
-                    appState: {
-                        theme: currentTheme,
-                        viewBackgroundColor: currentTheme === 'dark' ? '#1a1a1a' : '#fafafa',
-                    }
-                });
-                
-                // Notify Flutter
-                if (window.flutter_inappwebview) {
-                    window.flutter_inappwebview.postMessage(JSON.stringify({
-                        type: 'drawingCleared'
-                    }));
-                }
-            }
-        };
-        
-        const exportPNG = async () => {
-            if (excalidrawAPI) {
-                try {
-                    const elements = excalidrawAPI.getSceneElements();
-                    const appState = excalidrawAPI.getAppState();
-                    const files = excalidrawAPI.getFiles();
-                    
-                    const blob = await ExcalidrawLib.exportToBlob({
-                        elements,
-                        appState,
-                        files,
-                        mimeType: "image/png",
-                        quality: 0.8,
-                    });
-                    
-                    // Convert blob to base64 for Flutter
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        const base64data = reader.result;
-                        if (window.flutter_inappwebview) {
-                            window.flutter_inappwebview.postMessage(JSON.stringify({
-                                type: 'pngExported',
-                                data: base64data
-                            }));
-                        }
-                    };
-                    reader.readAsDataURL(blob);
-                    
-                } catch (error) {
-                    console.error('Export failed:', error);
-                    if (window.flutter_inappwebview) {
-                        window.flutter_inappwebview.postMessage(JSON.stringify({
-                            type: 'error',
-                            message: error.message
-                        }));
-                    }
-                }
-            }
-        };
-        
-        // Capture canvas screenshot for vision analysis
-        window.captureCanvasForVision = async () => {
-            if (!excalidrawAPI) {
-                console.error('❌ ExcalidrawAPI not available for vision capture');
-                return;
-            }
-
+            
+            // Test 4: Multiple Elements
+            console.log('\n🔍 TEST 4: Multiple Element Types');
             try {
-                const elements = excalidrawAPI.getSceneElements();
-                const appState = excalidrawAPI.getAppState();
-                const files = excalidrawAPI.getFiles();
-                
-                // Export as PNG for vision analysis
-                const blob = await ExcalidrawLib.exportToBlob({
-                    elements,
-                    appState,
-                    files,
-                    mimeType: "image/png",
-                    quality: 0.9, // Higher quality for vision analysis
-                });
-                
-                // Convert to base64
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const base64data = reader.result;
-                    
-                    // Send to Flutter for vision analysis
-                    if (window.flutter_inappwebview) {
-                        window.flutter_inappwebview.postMessage(JSON.stringify({
-                            type: 'canvasVisionCapture',
-                            data: base64data,
-                            elementsCount: elements.length,
-                            timestamp: Date.now()
-                        }));
-                        console.log('🔍 Canvas captured for vision analysis:', elements.length, 'elements');
-                    }
-                };
-                reader.readAsDataURL(blob);
-                
-            } catch (error) {
-                console.error('❌ Vision capture failed:', error);
-                if (window.flutter_inappwebview) {
-                    window.flutter_inappwebview.postMessage(JSON.stringify({
-                        type: 'visionCaptureError',
-                        message: error.message
-                    }));
-                }
-            }
-        };
-
-        // Flutter-callable functions
-        window.setTheme = (theme) => {
-            currentTheme = theme;
-            document.body.className = theme === 'dark' ? 'dark-theme' : '';
-            
-            if (excalidrawAPI) {
-                excalidrawAPI.updateScene({
-                    appState: {
-                        theme: theme,
-                        viewBackgroundColor: theme === 'dark' ? '#1a1a1a' : '#fafafa',
-                    }
-                });
-            }
-        };
-        
-        window.loadDrawingData = (dataString) => {
-            try {
-                const drawingData = JSON.parse(dataString);
-                if (excalidrawAPI) {
-                    excalidrawAPI.updateScene(drawingData);
-                }
-            } catch (error) {
-                console.error('Failed to load drawing data:', error);
-            }
-        };
-        
-        window.addWireframeElements = () => {
-            console.log('🎨 addWireframeElements called, excalidrawAPI:', excalidrawAPI);
-            
-            if (!excalidrawAPI) {
-                console.error('❌ Cannot add wireframe elements - excalidrawAPI not available');
-                return;
-            }
-            
-            console.log('🎨 ExcalidrawAPI available, checking methods...');
-            console.log('🎨 updateScene method:', typeof excalidrawAPI.updateScene);
-            console.log('🎨 getSceneElements method:', typeof excalidrawAPI.getSceneElements);
-            
-            console.log('🎨 Adding wireframe elements to canvas');
-            try {
-                // Add some pre-made wireframe elements for demo (using proper Excalidraw format)
-                const wireframeElements = [
-                    {
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: "header-" + Date.now(),
-                        fillStyle: "hachure",
-                        strokeWidth: 2,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: 100,
-                        y: 50,
-                        strokeColor: "#4ECDC4",
-                        backgroundColor: "transparent",
-                        width: 800,
-                        height: 60,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                    },
-                    {
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: "header-text-" + Date.now(),
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: 120,
-                        y: 65,
-                        strokeColor: "#333",
-                        backgroundColor: "transparent",
-                        width: 200,
-                        height: 30,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 20,
-                        fontFamily: 1,
-                        text: "Dashboard Header",
-                        textAlign: "left",
-                        verticalAlign: "middle",
-                        containerId: null,
-                        originalText: "Dashboard Header",
-                        lineHeight: 1.25,
-                    },
-                    {
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: "card1-" + Date.now(),
-                        fillStyle: "hachure",
-                        strokeWidth: 2,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: 100,
-                        y: 150,
-                        strokeColor: "#4ECDC4",
-                        backgroundColor: "transparent",
-                        width: 380,
-                        height: 250,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                    },
-                    {
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: "card2-" + Date.now(),
-                        fillStyle: "hachure",
-                        strokeWidth: 2,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: 520,
-                        y: 150,
-                        strokeColor: "#4ECDC4",
-                        backgroundColor: "transparent",
-                        width: 380,
-                        height: 250,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                    }
+                const elements = [
+                    { type: 'ellipse', x: 200, y: 50, width: 80, height: 60, strokeColor: '#0066cc' },
+                    { type: 'diamond', x: 350, y: 50, width: 70, height: 70, strokeColor: '#009900' },
+                    { type: 'arrow', x: 120, y: 150, width: 100, height: 2, strokeColor: '#cc6600' }
                 ];
                 
-                console.log('🎨 Created wireframe elements array:', wireframeElements.length, 'elements');
-                console.log('🎨 First element:', wireframeElements[0]);
-                
-                console.log('🎨 Calling excalidrawAPI.updateScene...');
+                const beforeCount = excalidrawAPI.getSceneElements().length;
+                const converted = convertToExcalidrawElements(elements);
                 excalidrawAPI.updateScene({
-                    elements: wireframeElements
+                    elements: [...excalidrawAPI.getSceneElements(), ...converted]
                 });
-                console.log('🎨 updateScene called successfully');
+                const afterCount = excalidrawAPI.getSceneElements().length;
                 
-                // Check if elements were actually added
-                setTimeout(() => {
-                    const currentElements = excalidrawAPI.getSceneElements();
-                    console.log('🎨 Scene elements after update:', currentElements.length);
-                    if (currentElements.length === 0) {
-                        console.error('❌ No elements found in scene after update!');
-                    } else {
-                        console.log('✅ Elements successfully added to scene');
-                    }
-                }, 100);
+                console.log('- Added', elements.length, 'elements');
+                console.log('- Count change:', afterCount - beforeCount);
                 
-            } catch (error) {
-                console.error('❌ Error adding wireframe elements:', error);
-                console.error('Error details:', error.message, error.stack);
+                if (afterCount >= beforeCount + elements.length) {
+                    console.log('✅ TEST 4 PASSED: Multiple elements work');
+                } else {
+                    console.log('❌ TEST 4 FAILED: Expected', elements.length, 'got', afterCount - beforeCount);
+                }
+            } catch (e) {
+                console.log('❌ TEST 4 FAILED:', e.message);
             }
+            
+            console.log('\n🎯 === TEST SUITE COMPLETE ===\n');
         };
-
-        // Enhanced function to add various element types including arrows, forms, and icons
-        window.addCanvasElement = (elementType, prompt = "") => {
-            if (!excalidrawAPI) {
-                console.error('❌ ExcalidrawAPI not available for element creation');
-                return;
-            }
-
-            console.log(`🎨 Adding ${elementType} element based on prompt: "${prompt}"`);
-            
-            try {
-                const currentElements = excalidrawAPI.getSceneElements();
-                let newElements = [];
-                const baseX = 200 + (currentElements.length * 50); // Offset to avoid overlap
-                const baseY = 150 + (currentElements.length * 30);
-                const elementId = `${elementType}-${Date.now()}`;
-
-                switch (elementType) {
-                    case 'text':
-                        const textContent = extractTextFromPrompt(prompt) || 'Sample Text';
-                        newElements.push({
-                            type: "text",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId,
-                            fillStyle: "hachure",
-                            strokeWidth: 1,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX,
-                            y: baseY,
-                            strokeColor: "#1e1e1e",
-                            backgroundColor: "transparent",
-                            width: textContent.length * 12, // Approximate width
-                            height: 20,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false,
-                            fontSize: 16,
-                            fontFamily: 1,
-                            text: textContent,
-                            baseline: 14,
-                            textAlign: "left",
-                            verticalAlign: "top"
-                        });
-                        break;
-
-                    case 'rectangle':
-                    case 'box':
-                        newElements.push({
-                            type: "rectangle",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId,
-                            fillStyle: "hachure",
-                            strokeWidth: 2,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX,
-                            y: baseY,
-                            strokeColor: "#4ECDC4",
-                            backgroundColor: "transparent",
-                            width: 120,
-                            height: 80,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false
-                        });
-                        break;
-
-                    case 'circle':
-                    case 'ellipse':
-                        newElements.push({
-                            type: "ellipse",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId,
-                            fillStyle: "hachure",
-                            strokeWidth: 2,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX,
-                            y: baseY,
-                            strokeColor: "#4ECDC4",
-                            backgroundColor: "transparent",
-                            width: 100,
-                            height: 100,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false
-                        });
-                        break;
-
-                    case 'arrow':
-                        newElements.push({
-                            type: "arrow",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId,
-                            fillStyle: "hachure",
-                            strokeWidth: 2,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX,
-                            y: baseY,
-                            strokeColor: "#4ECDC4",
-                            backgroundColor: "transparent",
-                            width: 150,
-                            height: 0,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false,
-                            points: [[0, 0], [150, 0]],
-                            lastCommittedPoint: null,
-                            startBinding: null,
-                            endBinding: null,
-                            startArrowhead: null,
-                            endArrowhead: "arrow"
-                        });
-                        break;
-
-                    case 'diamond':
-                        newElements.push({
-                            type: "diamond",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId,
-                            fillStyle: "hachure",
-                            strokeWidth: 2,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX,
-                            y: baseY,
-                            strokeColor: "#4ECDC4",
-                            backgroundColor: "transparent",
-                            width: 120,
-                            height: 80,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false
-                        });
-                        break;
-
-                    case 'input':
-                    case 'form-input':
-                        // Create an input field as rounded rectangle with placeholder text
-                        const inputText = extractTextFromPrompt(prompt) || 'Enter text...';
-                        newElements.push({
-                            type: "rectangle",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId + "-bg",
-                            fillStyle: "hachure",
-                            strokeWidth: 1,
-                            strokeStyle: "solid",
-                            roughness: 0,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX,
-                            y: baseY,
-                            strokeColor: "#a0a0a0",
-                            backgroundColor: "transparent",
-                            width: 200,
-                            height: 35,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [elementId],
-                            roundness: { type: 3, value: 4 },
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false
-                        });
-                        
-                        newElements.push({
-                            type: "text",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId + "-text",
-                            fillStyle: "hachure",
-                            strokeWidth: 1,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 60,
-                            angle: 0,
-                            x: baseX + 10,
-                            y: baseY + 10,
-                            strokeColor: "#888888",
-                            backgroundColor: "transparent",
-                            width: inputText.length * 8,
-                            height: 16,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [elementId],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false,
-                            fontSize: 14,
-                            fontFamily: 1,
-                            text: inputText,
-                            baseline: 12,
-                            textAlign: "left",
-                            verticalAlign: "top"
-                        });
-                        break;
-
-                    case 'checkbox':
-                        newElements.push({
-                            type: "rectangle",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId + "-box",
-                            fillStyle: "hachure",
-                            strokeWidth: 2,
-                            strokeStyle: "solid",
-                            roughness: 0,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX,
-                            y: baseY,
-                            strokeColor: "#4ECDC4",
-                            backgroundColor: "transparent",
-                            width: 20,
-                            height: 20,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [elementId],
-                            roundness: { type: 3, value: 2 },
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false
-                        });
-                        
-                        const checkboxText = extractTextFromPrompt(prompt) || 'Checkbox label';
-                        newElements.push({
-                            type: "text",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId + "-label",
-                            fillStyle: "hachure",
-                            strokeWidth: 1,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX + 30,
-                            y: baseY + 3,
-                            strokeColor: "#1e1e1e",
-                            backgroundColor: "transparent",
-                            width: checkboxText.length * 8,
-                            height: 14,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [elementId],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false,
-                            fontSize: 14,
-                            fontFamily: 1,
-                            text: checkboxText,
-                            baseline: 12,
-                            textAlign: "left",
-                            verticalAlign: "top"
-                        });
-                        break;
-
-                    case 'icon-home':
-                    case 'icon-user':
-                    case 'icon-settings':
-                        // Create simple icon representations using basic shapes and text
-                        let iconSymbol = '⌂'; // Home
-                        if (elementType === 'icon-user') iconSymbol = '👤';
-                        if (elementType === 'icon-settings') iconSymbol = '⚙️';
-                        
-                        newElements.push({
-                            type: "ellipse",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId + "-bg",
-                            fillStyle: "solid",
-                            strokeWidth: 1,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX,
-                            y: baseY,
-                            strokeColor: "#e0e0e0",
-                            backgroundColor: "#f5f5f5",
-                            width: 40,
-                            height: 40,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [elementId],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false
-                        });
-                        
-                        newElements.push({
-                            type: "text",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId + "-icon",
-                            fillStyle: "hachure",
-                            strokeWidth: 1,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX + 15,
-                            y: baseY + 12,
-                            strokeColor: "#4ECDC4",
-                            backgroundColor: "transparent",
-                            width: 18,
-                            height: 18,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [elementId],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false,
-                            fontSize: 16,
-                            fontFamily: 1,
-                            text: iconSymbol,
-                            baseline: 14,
-                            textAlign: "center",
-                            verticalAlign: "middle"
-                        });
-                        break;
-
-                    case 'button':
-                        // Create a button as a rectangle with text
-                        const buttonText = extractTextFromPrompt(prompt) || 'Button';
-                        newElements.push({
-                            type: "rectangle",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId + "-bg",
-                            fillStyle: "solid",
-                            strokeWidth: 2,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX,
-                            y: baseY,
-                            strokeColor: "#4ECDC4",
-                            backgroundColor: "#4ECDC4",
-                            width: Math.max(buttonText.length * 8 + 20, 80),
-                            height: 35,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [elementId],
-                            roundness: { type: 3, value: 8 },
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false
-                        });
-
-                        newElements.push({
-                            type: "text",
-                            version: 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            isDeleted: false,
-                            id: elementId + "-text",
-                            fillStyle: "hachure",
-                            strokeWidth: 1,
-                            strokeStyle: "solid",
-                            roughness: 1,
-                            opacity: 100,
-                            angle: 0,
-                            x: baseX + 10,
-                            y: baseY + 8,
-                            strokeColor: "#ffffff",
-                            backgroundColor: "transparent",
-                            width: buttonText.length * 8,
-                            height: 18,
-                            seed: Math.floor(Math.random() * 1000000),
-                            groupIds: [elementId],
-                            roundness: null,
-                            boundElements: null,
-                            updated: Date.now(),
-                            link: null,
-                            locked: false,
-                            fontSize: 14,
-                            fontFamily: 1,
-                            text: buttonText,
-                            baseline: 12,
-                            textAlign: "left",
-                            verticalAlign: "top"
-                        });
-                        break;
-
-                    default:
-                        console.warn(`⚠️ Unknown element type: ${elementType}`);
-                        return;
-                }
-
-                if (newElements.length > 0) {
-                    excalidrawAPI.updateScene({
-                        elements: [...currentElements, ...newElements]
-                    });
-                    console.log(`✅ ${elementType} element(s) added successfully (${newElements.length} elements)`);
-                }
-
-            } catch (error) {
-                console.error(`❌ Error adding ${elementType} element:`, error);
-            }
+        
+        window.clearTestElements = function() {
+            console.log('🧹 Clearing all elements');
+            excalidrawAPI.updateScene({ elements: [] });
+            console.log('✅ Canvas cleared');
         };
-
-        // Template functions for common layouts
-        window.addMobileAppTemplate = () => {
-            if (!excalidrawAPI) {
-                console.error('❌ ExcalidrawAPI not available for template creation');
-                return;
-            }
-
-            console.log('🎨 Adding mobile app template');
-            
-            try {
-                const currentElements = excalidrawAPI.getSceneElements();
-                const templateElements = [];
-                const baseX = 100;
-                const baseY = 50;
-                
-                // Mobile frame
-                templateElements.push({
-                    type: "rectangle",
-                    version: 1,
-                    versionNonce: Math.floor(Math.random() * 1000000),
-                    isDeleted: false,
-                    id: `mobile-frame-${Date.now()}`,
-                    fillStyle: "hachure",
-                    strokeWidth: 3,
-                    strokeStyle: "solid",
-                    roughness: 1,
-                    opacity: 100,
-                    angle: 0,
-                    x: baseX,
-                    y: baseY,
-                    strokeColor: "#333333",
-                    backgroundColor: "transparent",
-                    width: 320,
-                    height: 600,
-                    seed: Math.floor(Math.random() * 1000000),
-                    groupIds: ["mobile-template"],
-                    roundness: { type: 3, value: 20 },
-                    boundElements: null,
-                    updated: Date.now(),
-                    link: null,
-                    locked: false
-                });
-
-                // Header bar
-                templateElements.push({
-                    type: "rectangle",
-                    version: 1,
-                    versionNonce: Math.floor(Math.random() * 1000000),
-                    isDeleted: false,
-                    id: `mobile-header-${Date.now()}`,
-                    fillStyle: "solid",
-                    strokeWidth: 1,
-                    strokeStyle: "solid",
-                    roughness: 1,
-                    opacity: 100,
-                    angle: 0,
-                    x: baseX + 10,
-                    y: baseY + 10,
-                    strokeColor: "#4ECDC4",
-                    backgroundColor: "#4ECDC4",
-                    width: 300,
-                    height: 60,
-                    seed: Math.floor(Math.random() * 1000000),
-                    groupIds: ["mobile-template"],
-                    roundness: { type: 3, value: 8 },
-                    boundElements: null,
-                    updated: Date.now(),
-                    link: null,
-                    locked: false
-                });
-
-                // App title
-                templateElements.push({
-                    type: "text",
-                    version: 1,
-                    versionNonce: Math.floor(Math.random() * 1000000),
-                    isDeleted: false,
-                    id: `mobile-title-${Date.now()}`,
-                    fillStyle: "hachure",
-                    strokeWidth: 1,
-                    strokeStyle: "solid",
-                    roughness: 1,
-                    opacity: 100,
-                    angle: 0,
-                    x: baseX + 130,
-                    y: baseY + 35,
-                    strokeColor: "#ffffff",
-                    backgroundColor: "transparent",
-                    width: 80,
-                    height: 20,
-                    seed: Math.floor(Math.random() * 1000000),
-                    groupIds: ["mobile-template"],
-                    roundness: null,
-                    boundElements: null,
-                    updated: Date.now(),
-                    link: null,
-                    locked: false,
-                    fontSize: 18,
-                    fontFamily: 1,
-                    text: "App Name",
-                    baseline: 16,
-                    textAlign: "center",
-                    verticalAlign: "middle"
-                });
-
-                // Content cards
-                for (let i = 0; i < 3; i++) {
-                    templateElements.push({
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: `mobile-card-${i}-${Date.now()}`,
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 25,
-                        y: baseY + 100 + (i * 120),
-                        strokeColor: "#e0e0e0",
-                        backgroundColor: "transparent",
-                        width: 270,
-                        height: 100,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: ["mobile-template"],
-                        roundness: { type: 3, value: 8 },
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                }
-
-                // Bottom navigation
-                templateElements.push({
-                    type: "rectangle",
-                    version: 1,
-                    versionNonce: Math.floor(Math.random() * 1000000),
-                    isDeleted: false,
-                    id: `mobile-nav-${Date.now()}`,
-                    fillStyle: "solid",
-                    strokeWidth: 1,
-                    strokeStyle: "solid",
-                    roughness: 1,
-                    opacity: 100,
-                    angle: 0,
-                    x: baseX + 10,
-                    y: baseY + 530,
-                    strokeColor: "#f0f0f0",
-                    backgroundColor: "#f0f0f0",
-                    width: 300,
-                    height: 60,
-                    seed: Math.floor(Math.random() * 1000000),
-                    groupIds: ["mobile-template"],
-                    roundness: { type: 3, value: 8 },
-                    boundElements: null,
-                    updated: Date.now(),
-                    link: null,
-                    locked: false
-                });
-
-                excalidrawAPI.updateScene({
-                    elements: [...currentElements, ...templateElements]
-                });
-                
-                console.log(`✅ Mobile app template added successfully (${templateElements.length} elements)`);
-            } catch (error) {
-                console.error('❌ Error adding mobile app template:', error);
-            }
-        };
-
-        window.addWebHeaderTemplate = () => {
-            if (!excalidrawAPI) {
-                console.error('❌ ExcalidrawAPI not available for template creation');
-                return;
-            }
-
-            console.log('🎨 Adding web header template');
-            
-            try {
-                const currentElements = excalidrawAPI.getSceneElements();
-                const templateElements = [];
-                const baseX = 100;
-                const baseY = 50;
-                
-                // Header background
-                templateElements.push({
-                    type: "rectangle",
-                    version: 1,
-                    versionNonce: Math.floor(Math.random() * 1000000),
-                    isDeleted: false,
-                    id: `web-header-${Date.now()}`,
-                    fillStyle: "solid",
-                    strokeWidth: 1,
-                    strokeStyle: "solid",
-                    roughness: 1,
-                    opacity: 100,
-                    angle: 0,
-                    x: baseX,
-                    y: baseY,
-                    strokeColor: "#4ECDC4",
-                    backgroundColor: "#4ECDC4",
-                    width: 1000,
-                    height: 80,
-                    seed: Math.floor(Math.random() * 1000000),
-                    groupIds: ["web-header-template"],
-                    roundness: null,
-                    boundElements: null,
-                    updated: Date.now(),
-                    link: null,
-                    locked: false
-                });
-
-                // Logo
-                templateElements.push({
-                    type: "rectangle",
-                    version: 1,
-                    versionNonce: Math.floor(Math.random() * 1000000),
-                    isDeleted: false,
-                    id: `web-logo-${Date.now()}`,
-                    fillStyle: "solid",
-                    strokeWidth: 2,
-                    strokeStyle: "solid",
-                    roughness: 1,
-                    opacity: 100,
-                    angle: 0,
-                    x: baseX + 20,
-                    y: baseY + 15,
-                    strokeColor: "#ffffff",
-                    backgroundColor: "#ffffff",
-                    width: 50,
-                    height: 50,
-                    seed: Math.floor(Math.random() * 1000000),
-                    groupIds: ["web-header-template"],
-                    roundness: { type: 3, value: 8 },
-                    boundElements: null,
-                    updated: Date.now(),
-                    link: null,
-                    locked: false
-                });
-
-                // Company name
-                templateElements.push({
-                    type: "text",
-                    version: 1,
-                    versionNonce: Math.floor(Math.random() * 1000000),
-                    isDeleted: false,
-                    id: `web-company-${Date.now()}`,
-                    fillStyle: "hachure",
-                    strokeWidth: 1,
-                    strokeStyle: "solid",
-                    roughness: 1,
-                    opacity: 100,
-                    angle: 0,
-                    x: baseX + 90,
-                    y: baseY + 35,
-                    strokeColor: "#ffffff",
-                    backgroundColor: "transparent",
-                    width: 120,
-                    height: 24,
-                    seed: Math.floor(Math.random() * 1000000),
-                    groupIds: ["web-header-template"],
-                    roundness: null,
-                    boundElements: null,
-                    updated: Date.now(),
-                    link: null,
-                    locked: false,
-                    fontSize: 20,
-                    fontFamily: 1,
-                    text: "Company",
-                    baseline: 18,
-                    textAlign: "left",
-                    verticalAlign: "middle"
-                });
-
-                // Navigation menu items
-                const menuItems = ["Home", "About", "Services", "Contact"];
-                for (let i = 0; i < menuItems.length; i++) {
-                    templateElements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: `web-menu-${i}-${Date.now()}`,
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 700 + (i * 80),
-                        y: baseY + 35,
-                        strokeColor: "#ffffff",
-                        backgroundColor: "transparent",
-                        width: 60,
-                        height: 18,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: ["web-header-template"],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 16,
-                        fontFamily: 1,
-                        text: menuItems[i],
-                        baseline: 14,
-                        textAlign: "center",
-                        verticalAlign: "middle"
-                    });
-                }
-
-                excalidrawAPI.updateScene({
-                    elements: [...currentElements, ...templateElements]
-                });
-                
-                console.log(`✅ Web header template added successfully (${templateElements.length} elements)`);
-            } catch (error) {
-                console.error('❌ Error adding web header template:', error);
-            }
-        };
-
-        // Right-click context menu functionality
-        let contextMenuElement = null;
-        let selectedElementForContext = null;
-
-        // Create context menu HTML structure
-        function createContextMenu() {
-            const menu = document.createElement('div');
-            menu.id = 'excalidraw-context-menu';
-            menu.style.cssText = `
-                position: absolute;
-                background: white;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-                padding: 8px 0;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 10000;
-                min-width: 150px;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                font-size: 14px;
-                display: none;
-            `;
-            
-            const menuItems = [
-                { text: 'Duplicate', icon: '📋', action: 'duplicate' },
-                { text: 'Delete', icon: '🗑️', action: 'delete' },
-                { text: 'Change Color', icon: '🎨', action: 'color' },
-                { text: 'Bring to Front', icon: '⬆️', action: 'front' },
-                { text: 'Send to Back', icon: '⬇️', action: 'back' },
-                { text: 'Copy Element', icon: '📄', action: 'copy' }
-            ];
-
-            menuItems.forEach(item => {
-                const menuItem = document.createElement('div');
-                menuItem.style.cssText = `
-                    padding: 8px 16px;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    transition: background-color 0.2s;
-                `;
-                menuItem.innerHTML = `<span>${item.icon}</span><span>${item.text}</span>`;
-                
-                menuItem.addEventListener('mouseenter', () => {
-                    menuItem.style.backgroundColor = '#f5f5f5';
-                });
-                
-                menuItem.addEventListener('mouseleave', () => {
-                    menuItem.style.backgroundColor = 'transparent';
-                });
-                
-                menuItem.addEventListener('click', () => {
-                    handleContextMenuAction(item.action);
-                    hideContextMenu();
-                });
-                
-                menu.appendChild(menuItem);
-            });
-
-            document.body.appendChild(menu);
-            return menu;
-        }
-
-        // Handle context menu actions
-        function handleContextMenuAction(action) {
-            if (!excalidrawAPI || !selectedElementForContext) return;
-
-            const currentElements = excalidrawAPI.getSceneElements();
-            const element = selectedElementForContext;
-            
-            console.log(`🎯 Handling context menu action: ${action} for element:`, element.id);
-
-            try {
-                switch (action) {
-                    case 'duplicate':
-                        duplicateElement(element, currentElements);
-                        break;
-                    case 'delete':
-                        deleteElement(element, currentElements);
-                        break;
-                    case 'color':
-                        changeElementColor(element, currentElements);
-                        break;
-                    case 'front':
-                        bringToFront(element, currentElements);
-                        break;
-                    case 'back':
-                        sendToBack(element, currentElements);
-                        break;
-                    case 'copy':
-                        copyElementToClipboard(element);
-                        break;
-                }
-            } catch (error) {
-                console.error(`❌ Error handling context menu action ${action}:`, error);
-            }
-        }
-
-        // Duplicate element
-        function duplicateElement(element, currentElements) {
-            const duplicated = {
-                ...element,
-                id: `duplicate-${element.type}-${Date.now()}`,
-                x: element.x + 20,
-                y: element.y + 20,
-                version: element.version + 1,
-                versionNonce: Math.floor(Math.random() * 1000000),
-                updated: Date.now()
+        
+        window.getElementStats = function() {
+            const elements = excalidrawAPI.getSceneElements();
+            const stats = {
+                total: elements.length,
+                byType: elements.reduce((acc, el) => {
+                    acc[el.type] = (acc[el.type] || 0) + 1;
+                    return acc;
+                }, {})
             };
-
-            excalidrawAPI.updateScene({
-                elements: [...currentElements, duplicated]
-            });
-        }
-
-        // Delete element
-        function deleteElement(element, currentElements) {
-            const updatedElements = currentElements.filter(el => el.id !== element.id);
-            excalidrawAPI.updateScene({
-                elements: updatedElements
-            });
-        }
-
-        // Change element color
-        function changeElementColor(element, currentElements) {
-            const colors = ['#4ECDC4', '#FF6B6B', '#4ECDC4', '#45B7AA', '#96CEB4', '#FECA57', '#FF9FF3'];
-            const currentColorIndex = colors.indexOf(element.strokeColor);
-            const newColorIndex = (currentColorIndex + 1) % colors.length;
-            const newColor = colors[newColorIndex];
-
-            const updatedElements = currentElements.map(el => {
-                if (el.id === element.id) {
-                    return {
-                        ...el,
-                        strokeColor: newColor,
-                        backgroundColor: el.fillStyle === 'solid' ? newColor : el.backgroundColor,
-                        version: el.version + 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        updated: Date.now()
-                    };
-                }
-                return el;
-            });
-
-            excalidrawAPI.updateScene({
-                elements: updatedElements
-            });
-        }
-
-        // Bring element to front
-        function bringToFront(element, currentElements) {
-            const otherElements = currentElements.filter(el => el.id !== element.id);
-            const updatedElements = [...otherElements, {
-                ...element,
-                version: element.version + 1,
-                versionNonce: Math.floor(Math.random() * 1000000),
-                updated: Date.now()
-            }];
-
-            excalidrawAPI.updateScene({
-                elements: updatedElements
-            });
-        }
-
-        // Send element to back
-        function sendToBack(element, currentElements) {
-            const otherElements = currentElements.filter(el => el.id !== element.id);
-            const updatedElements = [{
-                ...element,
-                version: element.version + 1,
-                versionNonce: Math.floor(Math.random() * 1000000),
-                updated: Date.now()
-            }, ...otherElements];
-
-            excalidrawAPI.updateScene({
-                elements: updatedElements
-            });
-        }
-
-        // Copy element to clipboard
-        function copyElementToClipboard(element) {
-            const elementData = {
-                type: element.type,
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height,
-                strokeColor: element.strokeColor,
-                backgroundColor: element.backgroundColor,
-                text: element.text || ''
-            };
-            
-            // Notify Flutter about the copied element
-            if (window.flutter_inappwebview) {
-                window.flutter_inappwebview.postMessage(JSON.stringify({
-                    type: 'elementCopied',
-                    elementData: elementData
-                }));
-            }
-            
-            console.log('📄 Element copied to clipboard:', elementData);
-        }
-
-        // Show context menu
-        function showContextMenu(x, y, element) {
-            if (!contextMenuElement) {
-                contextMenuElement = createContextMenu();
-            }
-            
-            selectedElementForContext = element;
-            contextMenuElement.style.left = `${x}px`;
-            contextMenuElement.style.top = `${y}px`;
-            contextMenuElement.style.display = 'block';
-            
-            // Hide menu when clicking elsewhere
-            setTimeout(() => {
-                document.addEventListener('click', hideContextMenu, { once: true });
-            }, 10);
-        }
-
-        // Hide context menu
-        function hideContextMenu() {
-            if (contextMenuElement) {
-                contextMenuElement.style.display = 'none';
-            }
-            selectedElementForContext = null;
-        }
-
-        // Set up context menu event listeners
-        function setupContextMenuListeners() {
-            console.log('🎯 Setting up context menu listeners');
-            
-            // Find the Excalidraw canvas element
-            const canvasContainer = document.querySelector('#excalidraw-app');
-            if (!canvasContainer) {
-                console.error('❌ Could not find Excalidraw canvas container');
-                return;
-            }
-
-            // Add right-click event listener to the canvas container
-            canvasContainer.addEventListener('contextmenu', (event) => {
-                event.preventDefault();
-                
-                // Get the element at the click position (simplified approach)
-                if (excalidrawAPI) {
-                    const elements = excalidrawAPI.getSceneElements();
-                    const appState = excalidrawAPI.getAppState();
-                    
-                    // Find if we clicked on an element (basic proximity check)
-                    const clickX = event.offsetX;
-                    const clickY = event.offsetY;
-                    
-                    // Simple element detection (improved version would need proper coordinate transformation)
-                    const clickedElement = elements.find(element => {
-                        return clickX >= element.x && clickX <= element.x + element.width &&
-                               clickY >= element.y && clickY <= element.y + element.height;
-                    });
-
-                    if (clickedElement) {
-                        console.log('🎯 Right-clicked on element:', clickedElement.type, clickedElement.id);
-                        showContextMenu(event.pageX, event.pageY, clickedElement);
-                    } else {
-                        hideContextMenu();
-                    }
-                }
-            });
-
-            // Hide context menu on left click
-            canvasContainer.addEventListener('click', () => {
-                hideContextMenu();
-            });
-
-            console.log('✅ Context menu listeners set up successfully');
-        }
-
-        // Element modification function
-        window.modifyElement = (elementId, modifications) => {
-            if (!excalidrawAPI) {
-                console.error('❌ ExcalidrawAPI not available for element modification');
-                return;
-            }
-
-            console.log(`🛠️ Modifying element ${elementId}:`, modifications);
-
-            try {
-                const currentElements = excalidrawAPI.getSceneElements();
-                const updatedElements = currentElements.map(element => {
-                    if (element.id === elementId) {
-                        return {
-                            ...element,
-                            ...modifications,
-                            version: element.version + 1,
-                            versionNonce: Math.floor(Math.random() * 1000000),
-                            updated: Date.now()
-                        };
-                    }
-                    return element;
-                });
-
-                excalidrawAPI.updateScene({
-                    elements: updatedElements
-                });
-
-                console.log(`✅ Element ${elementId} modified successfully`);
-            } catch (error) {
-                console.error(`❌ Error modifying element ${elementId}:`, error);
-            }
+            console.log('📊 Element Stats:', stats);
+            return stats;
         };
-
-        // Asmbli Design Library - Flutter Components
-        window.asmblDesignLibrary = {
-            // Material Design Components
-            material: {
-                appBar: {
-                    name: 'AppBar',
-                    description: 'Material Design app bar with title and actions',
-                    category: 'navigation'
-                },
-                floatingActionButton: {
-                    name: 'FloatingActionButton',
-                    description: 'Circular floating action button',
-                    category: 'buttons'
-                },
-                bottomNavigationBar: {
-                    name: 'BottomNavigationBar',
-                    description: 'Material bottom navigation with multiple tabs',
-                    category: 'navigation'
-                },
-                card: {
-                    name: 'Card',
-                    description: 'Material Design card with elevation',
-                    category: 'containers'
-                },
-                listTile: {
-                    name: 'ListTile',
-                    description: 'Material list item with leading, title, subtitle, trailing',
-                    category: 'lists'
-                },
-                textField: {
-                    name: 'TextField',
-                    description: 'Material text input field with label',
-                    category: 'inputs'
-                },
-                elevatedButton: {
-                    name: 'ElevatedButton',
-                    description: 'Material elevated button with shadow',
-                    category: 'buttons'
-                },
-                outlinedButton: {
-                    name: 'OutlinedButton',
-                    description: 'Material button with outline border',
-                    category: 'buttons'
-                },
-                textButton: {
-                    name: 'TextButton',
-                    description: 'Material text-only button',
-                    category: 'buttons'
-                },
-                chip: {
-                    name: 'Chip',
-                    description: 'Material chip with optional avatar and delete',
-                    category: 'misc'
-                },
-                snackBar: {
-                    name: 'SnackBar',
-                    description: 'Material bottom notification bar',
-                    category: 'feedback'
-                },
-                dialog: {
-                    name: 'AlertDialog',
-                    description: 'Material dialog with title, content, actions',
-                    category: 'feedback'
-                }
-            },
-            
-            // Layout Components
-            layout: {
-                container: {
-                    name: 'Container',
-                    description: 'Basic container with padding, margin, decoration',
-                    category: 'containers'
-                },
-                column: {
-                    name: 'Column',
-                    description: 'Vertical layout container',
-                    category: 'layout'
-                },
-                row: {
-                    name: 'Row',
-                    description: 'Horizontal layout container',
-                    category: 'layout'
-                },
-                stack: {
-                    name: 'Stack',
-                    description: 'Overlay layout for positioning widgets',
-                    category: 'layout'
-                },
-                expanded: {
-                    name: 'Expanded',
-                    description: 'Widget that expands to fill available space',
-                    category: 'layout'
-                },
-                sizedBox: {
-                    name: 'SizedBox',
-                    description: 'Fixed size box for spacing',
-                    category: 'layout'
-                },
-                padding: {
-                    name: 'Padding',
-                    description: 'Widget that insets its child',
-                    category: 'layout'
-                },
-                center: {
-                    name: 'Center',
-                    description: 'Centers its child widget',
-                    category: 'layout'
-                }
-            },
-            
-            // Custom Asmbli Components (from design system)
-            asmbli: {
-                asmblButton: {
-                    name: 'AsmblButton',
-                    description: 'Asmbli design system button with variants',
-                    category: 'buttons'
-                },
-                asmblCard: {
-                    name: 'AsmblCard',
-                    description: 'Asmbli design system card component',
-                    category: 'containers'
-                },
-                asmblInput: {
-                    name: 'AsmblInput',
-                    description: 'Asmbli design system input field',
-                    category: 'inputs'
-                },
-                appNavigationBar: {
-                    name: 'AppNavigationBar',
-                    description: 'Asmbli app navigation bar',
-                    category: 'navigation'
-                }
-            },
-            
-            // Form Components
-            forms: {
-                form: {
-                    name: 'Form',
-                    description: 'Form wrapper with validation',
-                    category: 'forms'
-                },
-                formField: {
-                    name: 'TextFormField',
-                    description: 'Form input field with validation',
-                    category: 'forms'
-                },
-                dropdownButton: {
-                    name: 'DropdownButton',
-                    description: 'Dropdown selection widget',
-                    category: 'forms'
-                },
-                checkbox: {
-                    name: 'Checkbox',
-                    description: 'Checkbox form input',
-                    category: 'forms'
-                },
-                radio: {
-                    name: 'Radio',
-                    description: 'Radio button form input',
-                    category: 'forms'
-                },
-                switch: {
-                    name: 'Switch',
-                    description: 'Toggle switch input',
-                    category: 'forms'
-                },
-                slider: {
-                    name: 'Slider',
-                    description: 'Range slider input',
-                    category: 'forms'
-                }
-            }
-        };
-
-        // Add Flutter component to canvas
-        window.addFlutterComponent = (componentKey, category) => {
-            if (!excalidrawAPI) {
-                console.error('❌ ExcalidrawAPI not available for component creation');
-                return;
-            }
-
-            console.log(`🎨 Adding Flutter component: ${componentKey} from ${category}`);
-            
-            try {
-                const currentElements = excalidrawAPI.getSceneElements();
-                const baseX = 200 + (currentElements.length * 60);
-                const baseY = 150 + (currentElements.length * 40);
-                const elementId = `flutter-${componentKey}-${Date.now()}`;
-                
-                const componentElements = createFlutterComponentElements(componentKey, category, baseX, baseY, elementId);
-                
-                excalidrawAPI.updateScene({
-                    elements: [...currentElements, ...componentElements]
-                });
-                
-                console.log(`✅ Flutter component ${componentKey} added successfully`);
-            } catch (error) {
-                console.error(`❌ Error adding Flutter component ${componentKey}:`, error);
-            }
-        };
-
-        // Create Flutter component elements based on type
-        function createFlutterComponentElements(componentKey, category, baseX, baseY, elementId) {
-            const elements = [];
-            const groupId = `flutter-${componentKey}-group`;
-
-            switch (componentKey) {
-                case 'appBar':
-                    // AppBar background
-                    elements.push({
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-bg",
-                        fillStyle: "solid",
-                        strokeWidth: 0,
-                        strokeStyle: "solid",
-                        roughness: 0,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX,
-                        y: baseY,
-                        strokeColor: "#6200EA",
-                        backgroundColor: "#6200EA",
-                        width: 360,
-                        height: 56,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                    
-                    // AppBar title
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-title",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 16,
-                        y: baseY + 16,
-                        strokeColor: "#FFFFFF",
-                        backgroundColor: "transparent",
-                        width: 120,
-                        height: 24,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 20,
-                        fontFamily: 1,
-                        text: "App Title",
-                        baseline: 18,
-                        textAlign: "left",
-                        verticalAlign: "middle"
-                    });
-                    
-                    // Menu/back icon
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-icon",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 320,
-                        y: baseY + 16,
-                        strokeColor: "#FFFFFF",
-                        backgroundColor: "transparent",
-                        width: 24,
-                        height: 24,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 18,
-                        fontFamily: 1,
-                        text: "⋮",
-                        baseline: 16,
-                        textAlign: "center",
-                        verticalAlign: "middle"
-                    });
-                    break;
-
-                case 'floatingActionButton':
-                    // FAB circle
-                    elements.push({
-                        type: "ellipse",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-circle",
-                        fillStyle: "solid",
-                        strokeWidth: 0,
-                        strokeStyle: "solid",
-                        roughness: 0,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX,
-                        y: baseY,
-                        strokeColor: "#FF5722",
-                        backgroundColor: "#FF5722",
-                        width: 56,
-                        height: 56,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                    
-                    // FAB icon
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-icon",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 20,
-                        y: baseY + 18,
-                        strokeColor: "#FFFFFF",
-                        backgroundColor: "transparent",
-                        width: 16,
-                        height: 20,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 18,
-                        fontFamily: 1,
-                        text: "+",
-                        baseline: 16,
-                        textAlign: "center",
-                        verticalAlign: "middle"
-                    });
-                    break;
-
-                case 'elevatedButton':
-                    // Button background
-                    elements.push({
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-bg",
-                        fillStyle: "solid",
-                        strokeWidth: 0,
-                        strokeStyle: "solid",
-                        roughness: 0,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX,
-                        y: baseY,
-                        strokeColor: "#6200EA",
-                        backgroundColor: "#6200EA",
-                        width: 120,
-                        height: 36,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: { type: 3, value: 4 },
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                    
-                    // Button text
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-text",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 24,
-                        y: baseY + 8,
-                        strokeColor: "#FFFFFF",
-                        backgroundColor: "transparent",
-                        width: 72,
-                        height: 20,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 14,
-                        fontFamily: 1,
-                        text: "BUTTON",
-                        baseline: 12,
-                        textAlign: "center",
-                        verticalAlign: "middle"
-                    });
-                    break;
-
-                case 'textField':
-                    // TextField background
-                    elements.push({
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-bg",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 0,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX,
-                        y: baseY,
-                        strokeColor: "#757575",
-                        backgroundColor: "transparent",
-                        width: 280,
-                        height: 48,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: { type: 3, value: 4 },
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                    
-                    // TextField label
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-label",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 12,
-                        y: baseY + 14,
-                        strokeColor: "#757575",
-                        backgroundColor: "transparent",
-                        width: 60,
-                        height: 20,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 16,
-                        fontFamily: 1,
-                        text: "Label",
-                        baseline: 14,
-                        textAlign: "left",
-                        verticalAlign: "middle"
-                    });
-                    break;
-
-                case 'card':
-                    // Card background
-                    elements.push({
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-bg",
-                        fillStyle: "solid",
-                        strokeWidth: 0,
-                        strokeStyle: "solid",
-                        roughness: 0,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX,
-                        y: baseY,
-                        strokeColor: "#FFFFFF",
-                        backgroundColor: "#FFFFFF",
-                        width: 300,
-                        height: 120,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: { type: 3, value: 8 },
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                    
-                    // Card shadow (simplified)
-                    elements.push({
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-shadow",
-                        fillStyle: "solid",
-                        strokeWidth: 0,
-                        strokeStyle: "solid",
-                        roughness: 0,
-                        opacity: 20,
-                        angle: 0,
-                        x: baseX + 2,
-                        y: baseY + 2,
-                        strokeColor: "#000000",
-                        backgroundColor: "#000000",
-                        width: 300,
-                        height: 120,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: { type: 3, value: 8 },
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                    
-                    // Card content
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-content",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 16,
-                        y: baseY + 16,
-                        strokeColor: "#212121",
-                        backgroundColor: "transparent",
-                        width: 200,
-                        height: 88,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 14,
-                        fontFamily: 1,
-                        text: "Card Title\n\nCard content goes here with\nmultiple lines of text.",
-                        baseline: 12,
-                        textAlign: "left",
-                        verticalAlign: "top"
-                    });
-                    break;
-
-                case 'listTile':
-                    // ListTile background
-                    elements.push({
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-bg",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 0,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX,
-                        y: baseY,
-                        strokeColor: "#E0E0E0",
-                        backgroundColor: "transparent",
-                        width: 320,
-                        height: 72,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                    
-                    // Leading icon/avatar
-                    elements.push({
-                        type: "ellipse",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-leading",
-                        fillStyle: "solid",
-                        strokeWidth: 0,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 16,
-                        y: baseY + 16,
-                        strokeColor: "#757575",
-                        backgroundColor: "#757575",
-                        width: 40,
-                        height: 40,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                    
-                    // Title text
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-title",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 72,
-                        y: baseY + 20,
-                        strokeColor: "#212121",
-                        backgroundColor: "transparent",
-                        width: 180,
-                        height: 16,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 16,
-                        fontFamily: 1,
-                        text: "List Item Title",
-                        baseline: 14,
-                        textAlign: "left",
-                        verticalAlign: "top"
-                    });
-                    
-                    // Subtitle text
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-subtitle",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 72,
-                        y: baseY + 40,
-                        strokeColor: "#757575",
-                        backgroundColor: "transparent",
-                        width: 180,
-                        height: 14,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 14,
-                        fontFamily: 1,
-                        text: "Subtitle or description",
-                        baseline: 12,
-                        textAlign: "left",
-                        verticalAlign: "top"
-                    });
-                    
-                    // Trailing icon
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-trailing",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 280,
-                        y: baseY + 24,
-                        strokeColor: "#757575",
-                        backgroundColor: "transparent",
-                        width: 24,
-                        height: 24,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 16,
-                        fontFamily: 1,
-                        text: "›",
-                        baseline: 14,
-                        textAlign: "center",
-                        verticalAlign: "middle"
-                    });
-                    break;
-
-                default:
-                    // Default component - simple rectangle with label
-                    elements.push({
-                        type: "rectangle",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-bg",
-                        fillStyle: "hachure",
-                        strokeWidth: 2,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX,
-                        y: baseY,
-                        strokeColor: "#6200EA",
-                        backgroundColor: "transparent",
-                        width: 120,
-                        height: 60,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: { type: 3, value: 4 },
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false
-                    });
-                    
-                    elements.push({
-                        type: "text",
-                        version: 1,
-                        versionNonce: Math.floor(Math.random() * 1000000),
-                        isDeleted: false,
-                        id: elementId + "-label",
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x: baseX + 10,
-                        y: baseY + 20,
-                        strokeColor: "#6200EA",
-                        backgroundColor: "transparent",
-                        width: 100,
-                        height: 20,
-                        seed: Math.floor(Math.random() * 1000000),
-                        groupIds: [groupId],
-                        roundness: null,
-                        boundElements: null,
-                        updated: Date.now(),
-                        link: null,
-                        locked: false,
-                        fontSize: 12,
-                        fontFamily: 1,
-                        text: componentKey.charAt(0).toUpperCase() + componentKey.slice(1),
-                        baseline: 10,
-                        textAlign: "center",
-                        verticalAlign: "middle"
-                    });
-            }
-
-            return elements;
+        
+        // Render app (React 18 compatible)
+        const container = document.getElementById('app');
+        const root = ReactDOM.createRoot ? ReactDOM.createRoot(container) : container;
+        
+        if (ReactDOM.createRoot) {
+            root.render(React.createElement(App));
+        } else {
+            ReactDOM.render(React.createElement(App), container);
         }
-
-        // Add template with multiple Flutter components
-        window.addFlutterScreenTemplate = (templateType) => {
-            if (!excalidrawAPI) {
-                console.error('❌ ExcalidrawAPI not available for template creation');
-                return;
-            }
-
-            console.log(`🎨 Adding Flutter screen template: ${templateType}`);
-            
-            try {
-                const currentElements = excalidrawAPI.getSceneElements();
-                let templateElements = [];
-                const baseX = 100;
-                const baseY = 50;
-
-                switch (templateType) {
-                    case 'dashboard':
-                        // Create a complete Flutter dashboard screen
-                        templateElements = [
-                            ...createFlutterComponentElements('appBar', 'material', baseX, baseY, 'dashboard-appbar'),
-                            ...createFlutterComponentElements('card', 'material', baseX + 30, baseY + 80, 'dashboard-card1'),
-                            ...createFlutterComponentElements('card', 'material', baseX + 30, baseY + 220, 'dashboard-card2'),
-                            ...createFlutterComponentElements('floatingActionButton', 'material', baseX + 320, baseY + 300, 'dashboard-fab'),
-                        ];
-                        break;
-                        
-                    case 'list':
-                        // Create a Flutter list screen
-                        templateElements = [
-                            ...createFlutterComponentElements('appBar', 'material', baseX, baseY, 'list-appbar'),
-                            ...createFlutterComponentElements('listTile', 'material', baseX + 20, baseY + 80, 'list-item1'),
-                            ...createFlutterComponentElements('listTile', 'material', baseX + 20, baseY + 160, 'list-item2'),
-                            ...createFlutterComponentElements('listTile', 'material', baseX + 20, baseY + 240, 'list-item3'),
-                            ...createFlutterComponentElements('floatingActionButton', 'material', baseX + 320, baseY + 340, 'list-fab'),
-                        ];
-                        break;
-                        
-                    case 'form':
-                        // Create a Flutter form screen
-                        templateElements = [
-                            ...createFlutterComponentElements('appBar', 'material', baseX, baseY, 'form-appbar'),
-                            ...createFlutterComponentElements('textField', 'material', baseX + 40, baseY + 100, 'form-field1'),
-                            ...createFlutterComponentElements('textField', 'material', baseX + 40, baseY + 170, 'form-field2'),
-                            ...createFlutterComponentElements('elevatedButton', 'material', baseX + 130, baseY + 250, 'form-submit'),
-                        ];
-                        break;
-                }
-
-                excalidrawAPI.updateScene({
-                    elements: [...currentElements, ...templateElements]
-                });
-                
-                console.log(`✅ Flutter ${templateType} template added successfully`);
-            } catch (error) {
-                console.error(`❌ Error adding Flutter template ${templateType}:`, error);
-            }
-        };
-
-        // Code generation function using OpenAI Vision API
-        window.generateCodeFromWireframe = async () => {
-            if (!excalidrawAPI) {
-                console.error('❌ ExcalidrawAPI not available for code generation');
-                return;
-            }
-
-            console.log('🔄 Starting wireframe to code generation');
-
-            try {
-                // Capture current canvas as image
-                const elements = excalidrawAPI.getSceneElements();
-                const appState = excalidrawAPI.getAppState();
-                const files = excalidrawAPI.getFiles();
-
-                if (elements.length === 0) {
-                    console.warn('⚠️ No elements to generate code from');
-                    if (window.flutter_inappwebview) {
-                        window.flutter_inappwebview.postMessage(JSON.stringify({
-                            type: 'codeGenerationError',
-                            message: 'No elements found on canvas to generate code from'
+        
+        console.log('🚀 Excalidraw initialized with native API');
+        
+        // Fallback ready signal (in case React initialization takes too long)
+        setTimeout(() => {
+            if (!isReady) {
+                console.log('⚠️ React/Excalidraw taking time, sending fallback ready signal');
+                try {
+                    if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
+                        window.flutter_inappwebview.callHandler('flutter_inappwebview', JSON.stringify({
+                            type: 'webViewReady'
                         }));
+                        console.log('📡 Sent fallback webViewReady signal');
                     }
-                    return;
-                }
-
-                // Export as PNG for vision analysis
-                const blob = await ExcalidrawLib.exportToBlob({
-                    elements,
-                    appState,
-                    files,
-                    mimeType: "image/png",
-                    quality: 0.9,
-                });
-
-                // Convert to base64
-                const reader = new FileReader();
-                reader.onloadend = async () => {
-                    const base64Image = reader.result.split(',')[1]; // Remove data:image/png;base64, prefix
-
-                    // Send to Flutter for API call (since we can't make direct API calls from here)
-                    if (window.flutter_inappwebview) {
-                        window.flutter_inappwebview.postMessage(JSON.stringify({
-                            type: 'generateCodeRequest',
-                            imageData: base64Image,
-                            elementsCount: elements.length,
-                            prompt: 'Generate clean, responsive HTML and CSS code for this wireframe. Use modern CSS features like flexbox and grid. Include proper semantic HTML5 elements and make it mobile-responsive with a clean, professional design.'
-                        }));
-                        console.log('🔄 Code generation request sent to Flutter');
-                    } else {
-                        console.error('❌ Flutter communication not available');
-                    }
-                };
-                reader.readAsDataURL(blob);
-
-            } catch (error) {
-                console.error('❌ Error generating code from wireframe:', error);
-                if (window.flutter_inappwebview) {
-                    window.flutter_inappwebview.postMessage(JSON.stringify({
-                        type: 'codeGenerationError',
-                        message: error.message
-                    }));
+                } catch (e) {
+                    console.error('❌ Fallback ready signal failed:', e);
                 }
             }
-        };
-
-        // Helper function to extract text content from prompts
-        function extractTextFromPrompt(prompt) {
-            const lowerPrompt = prompt.toLowerCase();
-            
-            // Look for patterns like "text that says X", "button with X", "add X text"
-            const patterns = [
-                /(?:text|button|label).*?(?:says?|with|labeled?)\s+['""]([^'""]+)['""]/, // "text that says 'Hello'"
-                /(?:text|button|label).*?(?:says?|with|labeled?)\s+(\w+(?:\s+\w+)*)/, // "text that says Hello World"
-                /add\s+['""]([^'""]+)['""]/, // "add 'Hello World'"
-                /(?:create|make|add)\s+(\w+(?:\s+\w+)*)\s+(?:text|button|label)/, // "create Hello button"
-            ];
-
-            for (const pattern of patterns) {
-                const match = prompt.match(pattern);
-                if (match && match[1]) {
-                    return match[1];
-                }
-            }
-
-            // Fallback: look for quoted strings
-            const quotedMatch = prompt.match(/['""]([^'""]+)['""]/) || prompt.match(/(\w+(?:\s+\w+){0,3})/);
-            return quotedMatch ? quotedMatch[1] : null;
-        }
-        
-        // Initialize when DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 DOM Content Loaded - starting Excalidraw initialization');
-            
-            // Check if dependencies are loaded
-            console.log('🔍 Checking dependencies...');
-            console.log('React available:', typeof React !== 'undefined');
-            console.log('ReactDOM available:', typeof ReactDOM !== 'undefined');
-            console.log('ExcalidrawLib available:', typeof ExcalidrawLib !== 'undefined');
-            
-            if (typeof React === 'undefined') {
-                console.error('❌ React is not loaded');
-                return;
-            }
-            if (typeof ReactDOM === 'undefined') {
-                console.error('❌ ReactDOM is not loaded');
-                return;
-            }
-            if (typeof ExcalidrawLib === 'undefined') {
-                console.error('❌ ExcalidrawLib is not loaded');
-                return;
-            }
-            
-            // Test Flutter communication
-            if (window.flutter_inappwebview) {
-                console.log('✅ Flutter communication channel available');
-                window.flutter_inappwebview.postMessage(JSON.stringify({
-                    type: 'webViewReady',
-                    message: 'Excalidraw WebView is ready'
-                }));
-            } else {
-                console.warn('❌ Flutter communication channel NOT available');
-            }
-            
-            // Small delay to ensure React/Excalidraw are loaded
-            setTimeout(() => {
-                console.log('🎨 Starting Excalidraw initialization...');
-                initializeExcalidraw();
-            }, 100);
-        });
-        
-        // Forward console logs to Flutter for debugging
-        const originalLog = console.log;
-        const originalError = console.error;
-        const originalWarn = console.warn;
-        
-        console.log = function(...args) {
-            originalLog.apply(console, args);
-            if (window.flutter_inappwebview) {
-                window.flutter_inappwebview.postMessage(JSON.stringify({
-                    type: 'console_log',
-                    level: 'log',
-                    message: args.join(' ')
-                }));
-            }
-        };
-        
-        console.error = function(...args) {
-            originalError.apply(console, args);
-            if (window.flutter_inappwebview) {
-                window.flutter_inappwebview.postMessage(JSON.stringify({
-                    type: 'console_log',
-                    level: 'error',
-                    message: args.join(' ')
-                }));
-            }
-        };
-        
-        console.warn = function(...args) {
-            originalWarn.apply(console, args);
-            if (window.flutter_inappwebview) {
-                window.flutter_inappwebview.postMessage(JSON.stringify({
-                    type: 'console_log',
-                    level: 'warn',
-                    message: args.join(' ')
-                }));
-            }
-        };
-        
-        // Handle any unhandled errors
-        window.onerror = (message, source, lineno, colno, error) => {
-            if (window.flutter_inappwebview) {
-                window.flutter_inappwebview.postMessage(JSON.stringify({
-                    type: 'error',
-                    message: message,
-                    source: source,
-                    line: lineno,
-                    column: colno
-                }));
-            }
-        };
-    </script>
-    
-    <!-- Asmbli Design Library for Flutter Components -->
-    <script>
-        // Include the component library inline for now
-        // In production, this could be loaded from component_library.js
-        
-        // Asmbli Design Library - Flutter Components for Excalidraw
-        // This file contains the component library definitions and creation functions
-
-        // Component library definitions
-        window.asmblDesignLibrary = {
-          material: {
-            appBar: {
-              name: "AppBar",
-              description: "Material Design app bar with title and actions",
-              category: "material",
-              flutterWidget: "AppBar",
-              excalidrawElements: ["rectangle", "text"]
-            },
-            floatingActionButton: {
-              name: "FAB", 
-              description: "Circular floating action button",
-              category: "material",
-              flutterWidget: "FloatingActionButton",
-              excalidrawElements: ["ellipse", "text"]
-            },
-            elevatedButton: {
-              name: "Button",
-              description: "Material elevated button", 
-              category: "material",
-              flutterWidget: "ElevatedButton",
-              excalidrawElements: ["rectangle", "text"]
-            },
-            card: {
-              name: "Card",
-              description: "Material Design card container",
-              category: "material", 
-              flutterWidget: "Card",
-              excalidrawElements: ["rectangle"]
-            },
-            listTile: {
-              name: "ListTile",
-              description: "Single fixed-height row",
-              category: "material",
-              flutterWidget: "ListTile", 
-              excalidrawElements: ["rectangle", "text", "ellipse"]
-            }
-          },
-          
-          layout: {
-            container: {
-              name: "Container",
-              description: "Box model container widget",
-              category: "layout",
-              flutterWidget: "Container",
-              excalidrawElements: ["rectangle"]
-            },
-            column: {
-              name: "Column", 
-              description: "Vertical layout widget",
-              category: "layout",
-              flutterWidget: "Column",
-              excalidrawElements: ["rectangle"]
-            },
-            row: {
-              name: "Row",
-              description: "Horizontal layout widget",
-              category: "layout", 
-              flutterWidget: "Row",
-              excalidrawElements: ["rectangle"]
-            },
-            stack: {
-              name: "Stack",
-              description: "Overlay layout widget", 
-              category: "layout",
-              flutterWidget: "Stack",
-              excalidrawElements: ["rectangle"]
-            },
-            gridView: {
-              name: "GridView",
-              description: "Scrollable grid layout",
-              category: "layout",
-              flutterWidget: "GridView",
-              excalidrawElements: ["rectangle"]
-            }
-          },
-          
-          forms: {
-            textField: {
-              name: "TextField",
-              description: "Text input field",
-              category: "forms",
-              flutterWidget: "TextField", 
-              excalidrawElements: ["rectangle", "text"]
-            },
-            checkbox: {
-              name: "Checkbox",
-              description: "Checkbox input",
-              category: "forms",
-              flutterWidget: "Checkbox",
-              excalidrawElements: ["rectangle"]
-            },
-            radioButton: {
-              name: "Radio",
-              description: "Radio button input",
-              category: "forms",
-              flutterWidget: "Radio",
-              excalidrawElements: ["ellipse"]
-            },
-            dropdown: {
-              name: "Dropdown", 
-              description: "Dropdown selection",
-              category: "forms",
-              flutterWidget: "DropdownButton",
-              excalidrawElements: ["rectangle", "text"]
-            },
-            slider: {
-              name: "Slider",
-              description: "Range slider input",
-              category: "forms",
-              flutterWidget: "Slider",
-              excalidrawElements: ["line", "ellipse"]
-            }
-          },
-          
-          asmbli: {
-            asmblButton: {
-              name: "AsmblButton",
-              description: "Custom Asmbli button component",
-              category: "asmbli", 
-              flutterWidget: "AsmblButton",
-              excalidrawElements: ["rectangle", "text"]
-            },
-            asmblCard: {
-              name: "AsmblCard",
-              description: "Custom Asmbli card component",
-              category: "asmbli",
-              flutterWidget: "AsmblCard",
-              excalidrawElements: ["rectangle"]
-            },
-            asmblModal: {
-              name: "Modal",
-              description: "Asmbli modal dialog",
-              category: "asmbli",
-              flutterWidget: "AsmblModal",
-              excalidrawElements: ["rectangle"]
-            },
-            asmblToast: {
-              name: "Toast",
-              description: "Asmbli toast notification", 
-              category: "asmbli",
-              flutterWidget: "AsmblToast",
-              excalidrawElements: ["rectangle", "text"]
-            }
-          }
-        };
-
-        // Flutter component creation functions
-        window.addFlutterComponent = function(componentKey, category) {
-          console.log(`🎨 Creating Flutter component: ${componentKey} from ${category}`);
-          
-          if (!window.excalidrawAPI) {
-            console.error('❌ Excalidraw API not ready');
-            return;
-          }
-
-          const component = window.asmblDesignLibrary[category]?.[componentKey];
-          if (!component) {
-            console.error(`❌ Component not found: ${componentKey} in ${category}`);
-            return;
-          }
-
-          const elements = [];
-          const baseX = Math.random() * 400 + 100;
-          const baseY = Math.random() * 400 + 100;
-          const componentWidth = getComponentWidth(componentKey);
-          const componentHeight = getComponentHeight(componentKey);
-          
-          try {
-            switch (componentKey) {
-              case 'appBar':
-                elements.push(...createAppBarComponent(baseX, baseY, componentWidth, componentHeight));
-                break;
-              case 'floatingActionButton':
-                elements.push(...createFABComponent(baseX, baseY, 56, 56));
-                break;
-              case 'elevatedButton':
-                elements.push(...createButtonComponent(baseX, baseY, componentWidth, componentHeight, 'ElevatedButton'));
-                break;
-              case 'card':
-                elements.push(...createCardComponent(baseX, baseY, componentWidth, componentHeight));
-                break;
-              case 'listTile':
-                elements.push(...createListTileComponent(baseX, baseY, componentWidth, componentHeight));
-                break;
-              case 'textField':
-                elements.push(...createTextFieldComponent(baseX, baseY, componentWidth, componentHeight));
-                break;
-              case 'checkbox':
-                elements.push(...createCheckboxComponent(baseX, baseY, 24, 24));
-                break;
-              case 'radioButton':
-                elements.push(...createRadioButtonComponent(baseX, baseY, 24, 24));
-                break;
-              case 'container':
-              case 'column':
-              case 'row':
-              case 'stack':
-              case 'gridView':
-                elements.push(...createLayoutComponent(baseX, baseY, componentWidth, componentHeight, component.name));
-                break;
-              default:
-                // Generic component creation
-                elements.push(...createGenericComponent(baseX, baseY, componentWidth, componentHeight, component.name));
-            }
-
-            if (elements.length > 0) {
-              window.excalidrawAPI.updateScene({
-                elements: [...window.excalidrawAPI.getSceneElements(), ...elements]
-              });
-              console.log(`✅ Created Flutter ${componentKey} component with ${elements.length} elements`);
-            }
-          } catch (error) {
-            console.error(`❌ Error creating Flutter component ${componentKey}:`, error);
-          }
-        };
-
-        // Component size helpers
-        function getComponentWidth(componentKey) {
-          const widths = {
-            'appBar': 320,
-            'floatingActionButton': 56,
-            'elevatedButton': 120,
-            'card': 200,
-            'listTile': 280,
-            'textField': 200,
-            'checkbox': 24,
-            'radioButton': 24,
-            'container': 150,
-            'column': 120,
-            'row': 200,
-            'stack': 150,
-            'gridView': 250
-          };
-          return widths[componentKey] || 120;
-        }
-
-        function getComponentHeight(componentKey) {
-          const heights = {
-            'appBar': 56,
-            'floatingActionButton': 56,
-            'elevatedButton': 36,
-            'card': 120,
-            'listTile': 56,
-            'textField': 48,
-            'checkbox': 24,
-            'radioButton': 24,
-            'container': 100,
-            'column': 150,
-            'row': 80,
-            'stack': 120,
-            'gridView': 200
-          };
-          return heights[componentKey] || 100;
-        }
-
-        // Specific component creation functions  
-        function createAppBarComponent(x, y, width, height) {
-          const elements = [];
-          
-          // AppBar background
-          elements.push({
-            type: "rectangle",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "solid",
-            strokeWidth: 1,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#2196F3",
-            backgroundColor: "#2196F3",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: { type: 1, value: 4 },
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          });
-          
-          // Title text
-          elements.push({
-            type: "text",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "solid",
-            strokeWidth: 1,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x + 16,
-            y: y + height/2 - 10,
-            strokeColor: "#FFFFFF",
-            backgroundColor: "transparent",
-            width: 80,
-            height: 20,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: null,
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false,
-            fontSize: 16,
-            fontFamily: 1,
-            text: "AppBar Title",
-            textAlign: "left",
-            verticalAlign: "middle",
-            containerId: null,
-            originalText: "AppBar Title",
-            lineHeight: 1.25
-          });
-          
-          return elements;
-        }
-
-        function createFABComponent(x, y, width, height) {
-          return [{
-            type: "ellipse",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "solid",
-            strokeWidth: 2,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#2196F3",
-            backgroundColor: "#2196F3",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: null,
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          }];
-        }
-
-        function createButtonComponent(x, y, width, height, buttonType) {
-          return [{
-            type: "rectangle",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "solid",
-            strokeWidth: 1,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#2196F3",
-            backgroundColor: "#E3F2FD",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: { type: 1, value: 8 },
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          }];
-        }
-
-        function createCardComponent(x, y, width, height) {
-          return [{
-            type: "rectangle",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "solid",
-            strokeWidth: 1,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#E0E0E0",
-            backgroundColor: "#FFFFFF",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: { type: 1, value: 8 },
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          }];
-        }
-
-        function createListTileComponent(x, y, width, height) {
-          const elements = [];
-          
-          // Background
-          elements.push({
-            type: "rectangle",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "solid",
-            strokeWidth: 1,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#E0E0E0",
-            backgroundColor: "#FAFAFA",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: null,
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          });
-          
-          // Leading icon circle
-          elements.push({
-            type: "ellipse",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "solid",
-            strokeWidth: 1,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x + 16,
-            y: y + height/2 - 20,
-            strokeColor: "#2196F3",
-            backgroundColor: "#E3F2FD",
-            width: 40,
-            height: 40,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: null,
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          });
-          
-          return elements;
-        }
-
-        function createTextFieldComponent(x, y, width, height) {
-          return [{
-            type: "rectangle",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "solid",
-            strokeWidth: 2,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#2196F3",
-            backgroundColor: "#FFFFFF",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: { type: 1, value: 4 },
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          }];
-        }
-
-        function createCheckboxComponent(x, y, width, height) {
-          return [{
-            type: "rectangle",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "hachure",
-            strokeWidth: 2,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#2196F3",
-            backgroundColor: "transparent",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: { type: 1, value: 2 },
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          }];
-        }
-
-        function createRadioButtonComponent(x, y, width, height) {
-          return [{
-            type: "ellipse",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "hachure",
-            strokeWidth: 2,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#2196F3",
-            backgroundColor: "transparent",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: null,
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          }];
-        }
-
-        function createLayoutComponent(x, y, width, height, componentName) {
-          return [{
-            type: "rectangle",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "hachure",
-            strokeWidth: 2,
-            strokeStyle: "dashed",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#9C27B0",
-            backgroundColor: "transparent",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: { type: 1, value: 4 },
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          }];
-        }
-
-        function createGenericComponent(x, y, width, height, componentName) {
-          return [{
-            type: "rectangle",
-            version: 1,
-            versionNonce: Math.floor(Math.random() * 1000000),
-            isDeleted: false,
-            id: generateId(),
-            fillStyle: "solid",
-            strokeWidth: 2,
-            strokeStyle: "solid",
-            roughness: 0,
-            opacity: 100,
-            angle: 0,
-            x: x,
-            y: y,
-            strokeColor: "#4CAF50",
-            backgroundColor: "#E8F5E8",
-            width: width,
-            height: height,
-            seed: Math.floor(Math.random() * 1000000),
-            groupIds: [],
-            frameId: null,
-            roundness: { type: 1, value: 4 },
-            boundElements: [],
-            updated: 1,
-            link: null,
-            locked: false
-          }];
-        }
-
-        // Flutter screen template functions
-        window.addFlutterScreenTemplate = function(templateType) {
-          console.log(`🎨 Creating Flutter screen template: ${templateType}`);
-          
-          if (!window.excalidrawAPI) {
-            console.error('❌ Excalidraw API not ready');
-            return;
-          }
-
-          const elements = [];
-          
-          try {
-            switch (templateType) {
-              case 'dashboard':
-                elements.push(...createDashboardTemplate());
-                break;
-              case 'list':
-                elements.push(...createListTemplate());
-                break;
-              case 'form':
-                elements.push(...createFormTemplate());
-                break;
-              default:
-                console.error(`❌ Unknown template type: ${templateType}`);
-                return;
-            }
-
-            if (elements.length > 0) {
-              window.excalidrawAPI.updateScene({
-                elements: [...window.excalidrawAPI.getSceneElements(), ...elements]
-              });
-              console.log(`✅ Created Flutter ${templateType} template with ${elements.length} elements`);
-            }
-          } catch (error) {
-            console.error(`❌ Error creating Flutter template ${templateType}:`, error);
-          }
-        };
-
-        function createDashboardTemplate() {
-          const elements = [];
-          const baseX = 50;
-          const baseY = 50;
-          
-          // AppBar
-          elements.push(...createAppBarComponent(baseX, baseY, 320, 56));
-          
-          // Stats cards row
-          for (let i = 0; i < 3; i++) {
-            elements.push(...createCardComponent(baseX + i * 110, baseY + 80, 100, 80));
-          }
-          
-          // Main content area
-          elements.push(...createCardComponent(baseX, baseY + 180, 320, 200));
-          
-          return elements;
-        }
-
-        function createListTemplate() {
-          const elements = [];
-          const baseX = 50;
-          const baseY = 50;
-          
-          // AppBar
-          elements.push(...createAppBarComponent(baseX, baseY, 320, 56));
-          
-          // List items
-          for (let i = 0; i < 6; i++) {
-            elements.push(...createListTileComponent(baseX, baseY + 80 + i * 60, 320, 56));
-          }
-          
-          return elements;
-        }
-
-        function createFormTemplate() {
-          const elements = [];
-          const baseX = 50;
-          const baseY = 50;
-          
-          // AppBar
-          elements.push(...createAppBarComponent(baseX, baseY, 320, 56));
-          
-          // Form fields
-          const fieldSpacing = 70;
-          for (let i = 0; i < 4; i++) {
-            elements.push(...createTextFieldComponent(baseX + 20, baseY + 80 + i * fieldSpacing, 280, 48));
-          }
-          
-          // Submit button
-          elements.push(...createButtonComponent(baseX + 20, baseY + 80 + 4 * fieldSpacing + 20, 280, 48, 'Submit'));
-          
-          return elements;
-        }
-
-        // Utility function for generating element IDs
-        function generateId() {
-          return Date.now().toString(36) + Math.random().toString(36).substr(2);
-        }
-
-        console.log('🎨 Asmbli Design Library loaded with', Object.keys(window.asmblDesignLibrary).length, 'categories');
+        }, 3000); // Wait 3 seconds then send fallback
     </script>
 </body>
 </html>

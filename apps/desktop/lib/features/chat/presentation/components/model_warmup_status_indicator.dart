@@ -4,11 +4,18 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/model_warmup_service.dart';
 
 /// Model warmup status indicator - shows when models are being prepared
-class ModelWarmupStatusIndicator extends ConsumerWidget {
+class ModelWarmupStatusIndicator extends ConsumerStatefulWidget {
   const ModelWarmupStatusIndicator({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ModelWarmupStatusIndicator> createState() => _ModelWarmupStatusIndicatorState();
+}
+
+class _ModelWarmupStatusIndicatorState extends ConsumerState<ModelWarmupStatusIndicator> {
+  bool _isDismissed = false;
+
+  @override
+  Widget build(BuildContext context) {
     final warmupStatusAsync = ref.watch(modelWarmUpStatusProvider);
     
     return warmupStatusAsync.when(
@@ -17,8 +24,13 @@ class ModelWarmupStatusIndicator extends ConsumerWidget {
         // final readyModels = statusMap.values.where((s) => s.isReady).toList();
         final hasError = statusMap.values.any((s) => s.hasError);
         
-        // Don't show anything if no warmup is happening and all models are ready
-        if (warmingModels.isEmpty && !hasError) {
+        // Reset dismissed state if models start warming up again
+        if (warmingModels.isNotEmpty && _isDismissed) {
+          _isDismissed = false;
+        }
+        
+        // Don't show anything if dismissed, no warmup is happening, and all models are ready
+        if (_isDismissed || (warmingModels.isEmpty && !hasError)) {
           return const SizedBox.shrink();
         }
         
@@ -65,7 +77,7 @@ class ModelWarmupStatusIndicator extends ConsumerWidget {
               
               // Status text
               Text(
-                _getStatusText(warmingModels.length, hasError),
+                _getStatusText(warmingModels.length, hasError, statusMap),
                 style: TextStyles.bodySmall.copyWith(
                   color: hasError 
                       ? ThemeColors(context).error
@@ -74,17 +86,33 @@ class ModelWarmupStatusIndicator extends ConsumerWidget {
                 ),
               ),
               
-              // Expandable details
-              if (statusMap.isNotEmpty) ...[
+              // Close button for errors or expandable details for other states
+              if (hasError) ...[
+                const SizedBox(width: SpacingTokens.sm),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _isDismissed = true;
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: Icon(
+                      Icons.close,
+                      size: 16,
+                      color: ThemeColors(context).error,
+                    ),
+                  ),
+                ),
+              ] else if (statusMap.isNotEmpty) ...[
                 const SizedBox(width: SpacingTokens.xs),
                 
                 PopupMenuButton<String>(
                   icon: Icon(
                     Icons.keyboard_arrow_down,
                     size: 14,
-                    color: hasError 
-                        ? ThemeColors(context).error
-                        : ThemeColors(context).primary,
+                    color: ThemeColors(context).primary,
                   ),
                   offset: const Offset(0, 30),
                   itemBuilder: (context) {
@@ -162,8 +190,13 @@ class ModelWarmupStatusIndicator extends ConsumerWidget {
     );
   }
   
-  String _getStatusText(int warmingCount, bool hasError) {
+  String _getStatusText(int warmingCount, bool hasError, Map<String, ModelWarmUpStatus> statusMap) {
     if (hasError) {
+      // Check if some models are ready while others failed
+      final hasReady = statusMap.values.any((s) => s.isReady);
+      if (hasReady) {
+        return 'Not all models loaded';
+      }
       return 'Model setup failed';
     }
     if (warmingCount > 0) {

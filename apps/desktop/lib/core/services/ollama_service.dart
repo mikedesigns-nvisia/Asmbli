@@ -26,7 +26,7 @@ class OllamaService {
   OllamaService(this._desktopService) : _dio = Dio() {
     _dio.options.baseUrl = 'http://127.0.0.1:11434';
     _dio.options.connectTimeout = const Duration(seconds: 10);
-    _dio.options.receiveTimeout = const Duration(seconds: 30);
+    _dio.options.receiveTimeout = const Duration(minutes: 5); // Increased for large models
   }
 
   /// Check if Ollama is available and running
@@ -487,36 +487,24 @@ class OllamaService {
     final name = ollamaName.toLowerCase();
     final capabilities = <String>[];
     
-    // Reasoning/thinking models
-    if (name.contains('qwq') || name.contains('reasoning') || name.contains('think')) {
-      capabilities.addAll(['reasoning', 'thinking', 'math']);
+    // Only mark confirmed function calling models
+    if (name.contains('llama3.1')) {
+      capabilities.add('function_calling');
     }
     
-    // Code-focused models
-    if (name.contains('code') || name.contains('coder') || name.contains('programming') ||
-        name.contains('dev') || name.contains('instruct')) {
-      capabilities.addAll(['code', 'programming', 'instruct']);
+    // Vision models
+    if (name.contains('llava') || name.contains('vision')) {
+      capabilities.addAll(['vision', 'multimodal']);
     }
     
-    // Math/science models
-    if (name.contains('math') || name.contains('science') || name.contains('research')) {
-      capabilities.addAll(['math', 'research', 'analysis']);
+    // Reasoning models  
+    if (name.contains('deepseek-r1') || name.contains('qwq') || name.contains('o1')) {
+      capabilities.addAll(['reasoning', 'thinking']);
     }
     
-    // Chat/conversation models
-    if (name.contains('chat') || name.contains('conversation') || name.contains('assistant')) {
-      capabilities.addAll(['chat', 'conversation']);
-    }
-    
-    // Large general-purpose models (usually good at multiple tasks)
-    if (name.contains('llama') || name.contains('gemma') || name.contains('gpt') ||
-        name.contains('mistral') || name.contains('qwen')) {
-      capabilities.addAll(['general', 'reasoning', 'chat']);
-    }
-    
-    // Multimodal models
-    if (name.contains('vision') || name.contains('multimodal') || name.contains('visual')) {
-      capabilities.addAll(['multimodal', 'vision', 'image']);
+    // General chat models
+    if (name.contains('llama') || name.contains('gemma') || name.contains('mistral')) {
+      capabilities.add('chat');
     }
     
     // Language-specific models

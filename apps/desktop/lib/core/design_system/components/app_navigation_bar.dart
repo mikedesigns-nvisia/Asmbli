@@ -6,6 +6,7 @@ import '../tokens/typography_tokens.dart';
 import '../tokens/theme_colors.dart';
 import 'dropdown_header_button.dart';
 import 'asmbli_button.dart';
+import 'theme_toggle.dart';
 import '../../constants/routes.dart';
 import '../../../providers/conversation_provider.dart';
 
@@ -76,7 +77,13 @@ class AppNavigationBar extends ConsumerWidget {
  isActive: currentRoute == AppRoutes.agents,
  ),
  DropdownItem(
- text: 'Canvas',
+ text: 'Canvas Library',
+ icon: Icons.photo_library,
+ onTap: () => context.go(AppRoutes.canvasLibrary),
+ isActive: currentRoute == AppRoutes.canvasLibrary,
+ ),
+ DropdownItem(
+ text: 'Canvas Editor',
  icon: Icons.palette,
  onTap: () => context.go(AppRoutes.canvas),
  isActive: currentRoute == AppRoutes.canvas,
@@ -133,16 +140,21 @@ class AppNavigationBar extends ConsumerWidget {
  ],
  ),
  
- // Spacer to push New Chat button to the right
+ // Spacer to push right-aligned items to the right
  const Spacer(),
  
- // New Chat button (only visible on Chat route)
- if (currentRoute == AppRoutes.chat)
+ // Theme Toggle (top-right)
+ const ThemeToggle(),
+ 
+ // New Chat button (only visible on Chat routes)
+ if (currentRoute == AppRoutes.chat || currentRoute == AppRoutes.chatV2) ...[
+   const SizedBox(width: SpacingTokens.lg),
    AsmblButton.primary(
      text: 'New Chat',
      icon: Icons.add,
      onPressed: () => _startNewChat(context, ref),
    ),
+ ],
  ],
  ),
  ),
@@ -196,8 +208,10 @@ class AppNavigationBar extends ConsumerWidget {
 
  bool _isWorkspaceRoute(String route) {
    return route == AppRoutes.chat ||
+       route == AppRoutes.chatV2 ||
        route == AppRoutes.agents ||
-       route == AppRoutes.canvas;
+       route == AppRoutes.canvas ||
+       route == AppRoutes.canvasLibrary;
  }
 
  bool _isDevelopmentRoute(String route) {
