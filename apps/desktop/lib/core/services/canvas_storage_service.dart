@@ -381,6 +381,39 @@ class CanvasStorageService {
       return [];
     }
   }
+  
+  /// Save canvas agent chat message
+  Future<void> saveCanvasChat(Map<String, dynamic> message) async {
+    try {
+      const chatKey = 'canvas_agent_chat';
+      final existingChat = _storage.getPreference<List<dynamic>>(chatKey) ?? [];
+      
+      // Add new message
+      existingChat.add(message);
+      
+      // Keep only last 100 messages to prevent storage bloat
+      if (existingChat.length > 100) {
+        existingChat.removeRange(0, existingChat.length - 100);
+      }
+      
+      await _storage.setPreference(chatKey, existingChat);
+      print('💬 Canvas chat message saved');
+    } catch (e) {
+      print('❌ Failed to save canvas chat: $e');
+    }
+  }
+  
+  /// Get canvas agent chat history
+  List<Map<String, dynamic>> getCanvasChat() {
+    try {
+      const chatKey = 'canvas_agent_chat';
+      final chat = _storage.getPreference<List<dynamic>>(chatKey) ?? [];
+      return chat.cast<Map<String, dynamic>>();
+    } catch (e) {
+      print('❌ Failed to load canvas chat: $e');
+      return [];
+    }
+  }
 
   /// Dispose service
   void dispose() {

@@ -9,6 +9,8 @@ import '../../../core/design_system/components/app_navigation_bar.dart';
 import '../../../core/constants/routes.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/services/canvas_storage_service.dart';
+import '../../agents/presentation/widgets/design_agent_sidebar.dart';
+import 'package:agent_engine_core/models/agent.dart';
 
 /// Canvas Library screen for browsing saved canvases and starting new design sessions
 class CanvasLibraryScreen extends ConsumerStatefulWidget {
@@ -26,12 +28,14 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
   String _searchQuery = '';
   String _sortBy = 'date'; // 'date', 'name', 'size'
   bool _isGridView = true;
-  String _activeTab = 'recent'; // 'recent', 'saved', 'templates'
+  String _activeTab = 'recent'; // 'recent', 'chat', 'saved', 'templates'
+  late Agent _designAgent;
 
   @override
   void initState() {
     super.initState();
     _canvasStorage = ServiceLocator.instance.get<CanvasStorageService>();
+    _createDesignAgent();
     _loadSavedCanvases();
     _loadAgentActivities();
   }
@@ -743,6 +747,24 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
     }
   }
   
+  void _createDesignAgent() {
+    // Create a canvas-focused design agent
+    _designAgent = Agent(
+      id: 'canvas_design_agent',
+      name: 'Canvas Design Agent',
+      description: 'AI agent specialized in creating visual designs and canvas elements',
+      instructions: 'You are a design agent that creates visual elements on canvas. You can create shapes, wireframes, templates, and layouts. Always be helpful and creative.',
+      configuration: {
+        'modelConfiguration': {
+          'primaryModelId': 'local_llama3.1_8b',
+        },
+        'capabilities': ['canvas_design', 'tool_calling', 'visual_creation'],
+      },
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
+  
   Widget _buildTabSelector(ThemeColors colors) {
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -755,7 +777,9 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
       ),
       child: Row(
         children: [
-          _buildTabButton('recent', '🕰️ Recent Agent Items', colors),
+          _buildTabButton('recent', '🕰️ Recent Items', colors),
+          const SizedBox(width: SpacingTokens.sm),
+          _buildTabButton('chat', '🤖 Design Agent', colors),
           const SizedBox(width: SpacingTokens.sm),
           _buildTabButton('saved', '💾 Saved Canvases', colors),
           const SizedBox(width: SpacingTokens.sm),
@@ -794,6 +818,8 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
     switch (_activeTab) {
       case 'recent':
         return _buildRecentAgentItems(colors);
+      case 'chat':
+        return _buildCanvasAgentChat(colors);
       case 'saved':
         return _savedCanvases.isEmpty ? _buildEmptyState(colors) : _buildCanvasGrid(colors);
       case 'templates':
@@ -902,6 +928,99 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
     );
   }
   
+  Widget _buildCanvasAgentChat(ThemeColors colors) {
+    return Container(
+      padding: const EdgeInsets.all(SpacingTokens.lg),
+      child: Column(
+        children: [
+          // Chat header
+          Container(
+            padding: const EdgeInsets.all(SpacingTokens.md),
+            decoration: BoxDecoration(
+              color: colors.primary.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+              border: Border.all(color: colors.primary.withOpacity(0.1)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(SpacingTokens.sm),
+                  decoration: BoxDecoration(
+                    color: colors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.design_services,
+                    color: colors.primary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: SpacingTokens.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Canvas Design Agent',
+                        style: TextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: colors.onSurface,
+                        ),
+                      ),
+                      Text(
+                        'Create visual elements with natural language',
+                        style: TextStyles.caption.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                AsmblButton.primary(
+                  text: 'Open Canvas',
+                  icon: Icons.open_in_new,
+                  size: AsmblButtonSize.small,
+                  onPressed: () => context.push(AppRoutes.canvas),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: SpacingTokens.lg),
+          
+          // Embedded design agent sidebar
+          Expanded(
+            child: DesignAgentSidebar(
+              agent: _designAgent,
+              onSpecUpdate: (spec) {}, // Canvas library doesn't need spec updates
+              onContextUpdate: (context) {}, // Canvas library doesn't need context updates
+              onProcessMessage: _processCanvasAgentMessage,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  /// Process canvas agent messages in library context
+  Future<String> _processCanvasAgentMessage(String message) async {
+    // For library context, provide helpful responses about canvas capabilities
+    final lowerMessage = message.toLowerCase();
+    
+    if (lowerMessage.contains('canvas') || lowerMessage.contains('open')) {
+      return 'I can help you create visual designs! Click "Open Canvas" above to start working on the canvas where I can create actual elements for you.';
+    }
+    
+    if (lowerMessage.contains('create') || lowerMessage.contains('make') || lowerMessage.contains('design')) {
+      return 'I\'d love to help you create that! Let\'s go to the canvas where I can use my tool calling abilities to create real visual elements. Click "Open Canvas" to get started.';
+    }
+    
+    if (lowerMessage.contains('help') || lowerMessage.contains('what')) {
+      return 'I\'m your Canvas Design Agent! I can:\n\n• Create shapes (circles, rectangles, lines)\n• Add templates (dashboards, wireframes)\n• Design layouts and flowcharts\n\nTo use my full capabilities, open the canvas where I can create actual visual elements!';
+    }
+    
+    return 'I\'m ready to help with visual design! Open the canvas above to start creating, or ask me about my design capabilities.';
+  }
+  
   Widget _buildTemplatesGrid(ThemeColors colors) {
     // Placeholder for canvas templates
     return Center(
@@ -950,6 +1069,6 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
   
   void _openCanvasWithActivity(Map<String, dynamic> activity) {
     // Navigate to canvas and potentially restore the specific activity
-    context.push(AppRoutes.excalidrawCanvas);
+    context.push(AppRoutes.canvas);
   }
 }

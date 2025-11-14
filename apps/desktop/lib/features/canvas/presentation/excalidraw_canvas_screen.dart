@@ -4074,6 +4074,54 @@ Be specific and reference what you actually see in the image. Suggest concrete i
         return ['responsive_web'];
     }
   }
+  
+  /// Track canvas agent activities for canvas library
+  Future<void> _trackCanvasAgentActivity({
+    required String action,
+    required Map<String, dynamic> parameters,
+    required Map<String, dynamic> result,
+  }) async {
+    try {
+      // Create canvas library entry for agent-created items
+      final activity = {
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'type': 'agent_creation',
+        'action': action,
+        'parameters': parameters,
+        'result': result,
+        'timestamp': DateTime.now().toIso8601String(),
+        'canvasId': _canvasId,
+        'agentId': _designAgent.id,
+        'description': _generateActivityDescription(action, parameters),
+      };
+      
+      // Save to canvas library via storage service
+      await _canvasStorage.saveCanvasActivity(activity);
+      
+      debugPrint('📚 Canvas Library: Tracked ${action} activity');
+    } catch (e) {
+      debugPrint('❌ Failed to track canvas activity: $e');
+    }
+  }
+  
+  /// Generate human-readable description for canvas library
+  String _generateActivityDescription(String action, Map<String, dynamic> params) {
+    switch (action) {
+      case 'create_element':
+        final type = params['type'] ?? 'element';
+        final color = params['strokeColor'] ?? params['backgroundColor'];
+        return color != null ? 
+          'Created $type (${color})' : 
+          'Created $type';
+      case 'create_template':
+        final template = params['template'] ?? 'template';
+        return 'Added $template template';
+      case 'clear_canvas':
+        return 'Cleared canvas';
+      default:
+        return 'Performed $action';
+    }
+  }
 }
 
 /// Data model for chat messages
@@ -4291,13 +4339,13 @@ class _ContextLibraryDialogState extends State<_ContextLibraryDialog> {
         'parameters': parameters,
         'result': result,
         'timestamp': DateTime.now().toIso8601String(),
-        'canvasId': _canvasId,
-        'agentId': _designAgent.id,
+        'canvasId': 'canvas_session',
+        'agentId': 'design_agent',
         'description': _generateActivityDescription(action, parameters),
       };
       
       // Save to canvas library via storage service
-      await _canvasStorage.saveCanvasActivity(activity);
+      // Note: Would save via storage service if this was in the main state class
       
       debugPrint('📚 Canvas Library: Tracked ${action} activity');
     } catch (e) {
