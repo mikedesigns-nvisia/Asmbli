@@ -349,6 +349,39 @@ class CanvasStorageService {
     }
   }
 
+  /// Save canvas agent activity for library
+  Future<void> saveCanvasActivity(Map<String, dynamic> activity) async {
+    try {
+      const activitiesKey = 'canvas_agent_activities';
+      final existingActivities = _storage.getPreference<List<dynamic>>(activitiesKey) ?? [];
+      
+      // Add new activity at the beginning (most recent first)
+      existingActivities.insert(0, activity);
+      
+      // Keep only last 100 activities to prevent storage bloat
+      if (existingActivities.length > 100) {
+        existingActivities.removeRange(100, existingActivities.length);
+      }
+      
+      await _storage.setPreference(activitiesKey, existingActivities);
+      print('📚 Canvas activity saved: ${activity['description']}');
+    } catch (e) {
+      print('❌ Failed to save canvas activity: $e');
+    }
+  }
+  
+  /// Get recent canvas agent activities for library
+  List<Map<String, dynamic>> getCanvasActivities() {
+    try {
+      const activitiesKey = 'canvas_agent_activities';
+      final activities = _storage.getPreference<List<dynamic>>(activitiesKey) ?? [];
+      return activities.cast<Map<String, dynamic>>();
+    } catch (e) {
+      print('❌ Failed to load canvas activities: $e');
+      return [];
+    }
+  }
+
   /// Dispose service
   void dispose() {
     stopAutoSave();

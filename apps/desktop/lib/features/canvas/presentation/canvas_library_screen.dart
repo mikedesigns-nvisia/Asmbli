@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,16 +21,19 @@ class CanvasLibraryScreen extends ConsumerStatefulWidget {
 class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
   late CanvasStorageService _canvasStorage;
   List<Map<String, dynamic>> _savedCanvases = [];
+  List<Map<String, dynamic>> _agentActivities = [];
   bool _isLoading = true;
   String _searchQuery = '';
   String _sortBy = 'date'; // 'date', 'name', 'size'
   bool _isGridView = true;
+  String _activeTab = 'recent'; // 'recent', 'saved', 'templates'
 
   @override
   void initState() {
     super.initState();
     _canvasStorage = ServiceLocator.instance.get<CanvasStorageService>();
     _loadSavedCanvases();
+    _loadAgentActivities();
   }
 
   Future<void> _loadSavedCanvases() async {
@@ -50,6 +54,17 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
           ),
         );
       }
+    }
+  }
+  
+  Future<void> _loadAgentActivities() async {
+    try {
+      final activities = _canvasStorage.getCanvasActivities();
+      setState(() {
+        _agentActivities = activities;
+      });
+    } catch (e) {
+      debugPrint('Failed to load agent activities: $e');
     }
   }
 
@@ -104,13 +119,14 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
               // Search and filters
               _buildSearchAndFilters(colors),
               
+              // Tabs
+              _buildTabSelector(colors),
+              
               // Content
               Expanded(
                 child: _isLoading 
                   ? _buildLoadingState(colors)
-                  : _savedCanvases.isEmpty
-                    ? _buildEmptyState(colors)
-                    : _buildCanvasGrid(colors),
+                  : _buildTabContent(colors),
               ),
             ],
           ),
@@ -152,7 +168,7 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
                 ),
                 const SizedBox(height: SpacingTokens.xs),
                 Text(
-                  'Browse saved designs and start new visual design sessions',
+                  'Recent agent creations, saved canvases, and design templates',
                   style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
                 ),
               ],
@@ -725,5 +741,215 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
         );
       }
     }
+  }
+  
+  Widget _buildTabSelector(ThemeColors colors) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: SpacingTokens.lg,
+        vertical: SpacingTokens.sm,
+      ),
+      decoration: BoxDecoration(
+        color: colors.surface.withOpacity(0.5),
+        border: Border(bottom: BorderSide(color: colors.border)),
+      ),
+      child: Row(
+        children: [
+          _buildTabButton('recent', '🕰️ Recent Agent Items', colors),
+          const SizedBox(width: SpacingTokens.sm),
+          _buildTabButton('saved', '💾 Saved Canvases', colors),
+          const SizedBox(width: SpacingTokens.sm),
+          _buildTabButton('templates', '🎨 Templates', colors),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildTabButton(String tab, String label, ThemeColors colors) {
+    final isActive = _activeTab == tab;
+    return Material(
+      color: isActive ? colors.primary.withOpacity(0.1) : Colors.transparent,
+      borderRadius: BorderRadius.circular(6),
+      child: InkWell(
+        onTap: () => setState(() => _activeTab = tab),
+        borderRadius: BorderRadius.circular(6),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: SpacingTokens.md,
+            vertical: SpacingTokens.sm,
+          ),
+          child: Text(
+            label,
+            style: TextStyles.bodySmall.copyWith(
+              color: isActive ? colors.primary : colors.onSurfaceVariant,
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildTabContent(ThemeColors colors) {
+    switch (_activeTab) {
+      case 'recent':
+        return _buildRecentAgentItems(colors);
+      case 'saved':
+        return _savedCanvases.isEmpty ? _buildEmptyState(colors) : _buildCanvasGrid(colors);
+      case 'templates':
+        return _buildTemplatesGrid(colors);
+      default:
+        return _buildRecentAgentItems(colors);
+    }
+  }
+  
+  Widget _buildRecentAgentItems(ThemeColors colors) {
+    if (_agentActivities.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.smart_toy_outlined,
+              size: 64,
+              color: colors.onSurfaceVariant,
+            ),
+            const SizedBox(height: SpacingTokens.lg),
+            Text(
+              'No Agent Activities Yet',
+              style: TextStyles.sectionTitle.copyWith(
+                color: colors.onSurface,
+              ),
+            ),
+            const SizedBox(height: SpacingTokens.sm),
+            Text(
+              'Start creating with the design agent to see recent items here',
+              style: TextStyles.bodyMedium.copyWith(
+                color: colors.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+    
+    return ListView.builder(
+      padding: const EdgeInsets.all(SpacingTokens.lg),
+      itemCount: _agentActivities.length,
+      itemBuilder: (context, index) {
+        final activity = _agentActivities[index];
+        return _buildAgentActivityCard(activity, colors);
+      },
+    );
+  }
+  
+  Widget _buildAgentActivityCard(Map<String, dynamic> activity, ThemeColors colors) {
+    final timestamp = DateTime.tryParse(activity['timestamp'] ?? '') ?? DateTime.now();
+    final timeAgo = _formatTimeAgo(timestamp);
+    
+    return Card(
+      margin: const EdgeInsets.only(bottom: SpacingTokens.md),
+      child: Padding(
+        padding: const EdgeInsets.all(SpacingTokens.md),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(SpacingTokens.sm),
+              decoration: BoxDecoration(
+                color: colors.accent.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                _getActivityIcon(activity['action']),
+                color: colors.accent,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: SpacingTokens.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    activity['description'] ?? 'Agent Activity',
+                    style: TextStyles.bodyMedium.copyWith(
+                      color: colors.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: SpacingTokens.xs),
+                  Text(
+                    timeAgo,
+                    style: TextStyles.caption.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.open_in_new, size: 20),
+              onPressed: () => _openCanvasWithActivity(activity),
+              style: IconButton.styleFrom(
+                foregroundColor: colors.primary,
+              ),
+              tooltip: 'Open canvas',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildTemplatesGrid(ThemeColors colors) {
+    // Placeholder for canvas templates
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.dashboard_customize,
+            size: 64,
+            color: colors.onSurfaceVariant,
+          ),
+          const SizedBox(height: SpacingTokens.lg),
+          Text(
+            'Templates Coming Soon',
+            style: TextStyles.sectionTitle.copyWith(
+              color: colors.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  IconData _getActivityIcon(String? action) {
+    switch (action) {
+      case 'create_element':
+        return Icons.add_circle_outline;
+      case 'create_template':
+        return Icons.dashboard;
+      case 'clear_canvas':
+        return Icons.clear_all;
+      default:
+        return Icons.auto_fix_high;
+    }
+  }
+  
+  String _formatTimeAgo(DateTime timestamp) {
+    final diff = DateTime.now().difference(timestamp);
+    
+    if (diff.inMinutes < 1) return 'Just now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+  }
+  
+  void _openCanvasWithActivity(Map<String, dynamic> activity) {
+    // Navigate to canvas and potentially restore the specific activity
+    context.push(AppRoutes.excalidrawCanvas);
   }
 }

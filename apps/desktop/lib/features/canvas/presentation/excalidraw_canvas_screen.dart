@@ -2794,7 +2794,7 @@ Be specific and reference what you actually see in the image. Suggest concrete i
           actionType: toolCall['name'] as String,
           params: toolCall['arguments'] as Map<String, dynamic>,
           executeFunction: (params) async {
-            // Execute via MCP bridge
+            // Execute via MCP bridge and track for canvas library
             final result = await _mcpBridge.executeCanvasCommand(
               toolCall['name'] as String,
               params,
@@ -2821,6 +2821,13 @@ Be specific and reference what you actually see in the image. Suggest concrete i
         }
         
         debugPrint('✅ STATEFUL AGENT: Action completed - ${response.message}');
+        
+        // Track canvas agent activity for library
+        await _trackCanvasAgentActivity(
+          action: toolCall['name'] as String,
+          parameters: toolCall['arguments'] as Map<String, dynamic>,
+          result: response.actionRecord?.metadata?['executionResult'] ?? {},
+        );
         
         // Return success message based on actual execution  
         final actionResult = response.actionRecord?.metadata?['executionResult'];
@@ -4266,6 +4273,54 @@ class _ContextLibraryDialogState extends State<_ContextLibraryDialog> {
         return Icons.edit_note;
       default:
         return Icons.description;
+    }
+  }
+  
+  /// Track canvas agent activities for canvas library
+  Future<void> _trackCanvasAgentActivity({
+    required String action,
+    required Map<String, dynamic> parameters,
+    required Map<String, dynamic> result,
+  }) async {
+    try {
+      // Create canvas library entry for agent-created items
+      final activity = {
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'type': 'agent_creation',
+        'action': action,
+        'parameters': parameters,
+        'result': result,
+        'timestamp': DateTime.now().toIso8601String(),
+        'canvasId': _canvasId,
+        'agentId': _designAgent.id,
+        'description': _generateActivityDescription(action, parameters),
+      };
+      
+      // Save to canvas library via storage service
+      await _canvasStorage.saveCanvasActivity(activity);
+      
+      debugPrint('📚 Canvas Library: Tracked ${action} activity');
+    } catch (e) {
+      debugPrint('❌ Failed to track canvas activity: $e');
+    }
+  }
+  
+  /// Generate human-readable description for canvas library
+  String _generateActivityDescription(String action, Map<String, dynamic> params) {
+    switch (action) {
+      case 'create_element':
+        final type = params['type'] ?? 'element';
+        final color = params['strokeColor'] ?? params['backgroundColor'];
+        return color != null ? 
+          'Created $type (${color})' : 
+          'Created $type';
+      case 'create_template':
+        final template = params['template'] ?? 'template';
+        return 'Added $template template';
+      case 'clear_canvas':
+        return 'Cleared canvas';
+      default:
+        return 'Performed $action';
     }
   }
 }
