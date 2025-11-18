@@ -1,0 +1,21 @@
+{
+  "name": "Asmbli Design Agent",
+  "description": "Enables programmatic design creation via AI agents using MCP protocol",
+  "version": "0.1.0",
+  "permissions": [
+    "content:read",
+    "content:write",
+    "library:read",
+    "library:write",
+    "user:read"
+  ],
+  "main": "plugin.js",
+  "author": {
+    "name": "Asmbli Team",
+    "email": "support@asmbli.app"
+  },
+  "icon": "icon.png",
+  "host": {
+    "penpot": ">=2.0.0"
+  }
+}
