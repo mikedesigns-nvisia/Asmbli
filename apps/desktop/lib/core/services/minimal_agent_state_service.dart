@@ -1,15 +1,16 @@
 import 'dart:async';
 import '../di/service_locator.dart';
-import 'mcp_excalidraw_bridge_service.dart';
 
 /// Minimal Agent State Service - MVP for Beta Launch
 /// Solves Design Agent hallucination problem with simplest possible implementation
+/// ⚠️ DEPRECATED: This service was designed for Excalidraw canvas system.
+/// Will be removed or refactored for PenPOT plugin architecture.
 class MinimalAgentStateService {
   static MinimalAgentStateService? _instance;
   static MinimalAgentStateService get instance => _instance ??= MinimalAgentStateService._();
   MinimalAgentStateService._();
 
-  late MCPExcalidrawBridgeService _mcpBridge;
+  // late MCPExcalidrawBridgeService _mcpBridge; // Commented out - Excalidraw removed
   
   // Simple in-memory state for beta (will upgrade to persistence later)
   final Map<String, List<SimpleAction>> _sessionActions = {};
@@ -19,11 +20,11 @@ class MinimalAgentStateService {
 
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
-    _mcpBridge = ServiceLocator.instance.get<MCPExcalidrawBridgeService>();
+
+    // _mcpBridge = ServiceLocator.instance.get<MCPExcalidrawBridgeService>(); // Commented out - Excalidraw removed
     _isInitialized = true;
-    
-    print('🧠 Minimal Agent State Service initialized (Beta MVP)');
+
+    print('🧠 Minimal Agent State Service initialized (Beta MVP - Excalidraw deprecated)');
   }
 
   /// Check if similar action was recently performed
@@ -158,8 +159,10 @@ class MinimalAgentStateService {
   /// Get current canvas state
   Future<Map<String, dynamic>> _getCurrentCanvasState() async {
     try {
-      final elements = _mcpBridge.getElements();
-      final canvasInfo = await _mcpBridge.getCanvasInfo();
+      // final elements = _mcpBridge.getElements(); // Commented out - Excalidraw removed
+      // final canvasInfo = await _mcpBridge.getCanvasInfo(); // Commented out - Excalidraw removed
+      final elements = [];
+      final canvasInfo = {};
       
       return {
         'elementCount': elements.length,

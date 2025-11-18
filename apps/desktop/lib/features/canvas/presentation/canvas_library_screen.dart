@@ -752,16 +752,15 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
     _designAgent = Agent(
       id: 'canvas_design_agent',
       name: 'Canvas Design Agent',
-      description: 'AI agent specialized in creating visual designs and canvas elements',
-      instructions: 'You are a design agent that creates visual elements on canvas. You can create shapes, wireframes, templates, and layouts. Always be helpful and creative.',
+      description: 'AI agent specialized in creating visual designs and canvas elements. Creates shapes, wireframes, templates, and layouts.',
+      capabilities: ['canvas_design', 'tool_calling', 'visual_creation'],
       configuration: {
         'modelConfiguration': {
           'primaryModelId': 'local_llama3.1_8b',
         },
-        'capabilities': ['canvas_design', 'tool_calling', 'visual_creation'],
+        'instructions': 'You are a design agent that creates visual elements on canvas. You can create shapes, wireframes, templates, and layouts. Always be helpful and creative.',
       },
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+      status: AgentStatus.idle,
     );
   }
   
@@ -781,9 +780,11 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
           const SizedBox(width: SpacingTokens.sm),
           _buildTabButton('chat', '🤖 Design Agent', colors),
           const SizedBox(width: SpacingTokens.sm),
+          _buildTabButton('penpot', '🎨 Penpot Canvas', colors),
+          const SizedBox(width: SpacingTokens.sm),
           _buildTabButton('saved', '💾 Saved Canvases', colors),
           const SizedBox(width: SpacingTokens.sm),
-          _buildTabButton('templates', '🎨 Templates', colors),
+          _buildTabButton('templates', '📐 Templates', colors),
         ],
       ),
     );
@@ -820,6 +821,8 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
         return _buildRecentAgentItems(colors);
       case 'chat':
         return _buildCanvasAgentChat(colors);
+      case 'penpot':
+        return _buildPenpotCanvasTools(colors);
       case 'saved':
         return _savedCanvases.isEmpty ? _buildEmptyState(colors) : _buildCanvasGrid(colors);
       case 'templates':
@@ -1070,5 +1073,380 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
   void _openCanvasWithActivity(Map<String, dynamic> activity) {
     // Navigate to canvas and potentially restore the specific activity
     context.push(AppRoutes.canvas);
+  }
+
+  /// Penpot Canvas Tools Integration
+  /// Provides access to design tokens, export, canvas state, and history
+  Widget _buildPenpotCanvasTools(ThemeColors colors) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(SpacingTokens.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(SpacingTokens.sm),
+                decoration: BoxDecoration(
+                  color: colors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.palette,
+                  color: colors.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: SpacingTokens.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Penpot Canvas Tools',
+                      style: TextStyles.sectionTitle.copyWith(
+                        color: colors.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: SpacingTokens.xs),
+                    Text(
+                      'Design tokens, export controls, and canvas management',
+                      style: TextStyles.bodyMedium.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              AsmblButton.primary(
+                text: 'Open Penpot Canvas',
+                icon: Icons.open_in_new,
+                size: AsmblButtonSize.small,
+                onPressed: () => context.push(AppRoutes.canvas),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: SpacingTokens.xxl),
+
+          // Design Tokens Section
+          AsmblCard(
+            child: Padding(
+              padding: const EdgeInsets.all(SpacingTokens.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.color_lens, color: colors.accent, size: 20),
+                      const SizedBox(width: SpacingTokens.sm),
+                      Text(
+                        'Design Tokens',
+                        style: TextStyles.cardTitle.copyWith(
+                          color: colors.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: SpacingTokens.md),
+                  Text(
+                    'Define your brand colors, typography, spacing, and effects for consistent designs',
+                    style: TextStyles.bodyMedium.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: SpacingTokens.lg),
+                  Wrap(
+                    spacing: SpacingTokens.sm,
+                    runSpacing: SpacingTokens.sm,
+                    children: [
+                      _buildToolChip(colors, 'Colors', Icons.palette),
+                      _buildToolChip(colors, 'Typography', Icons.text_fields),
+                      _buildToolChip(colors, 'Spacing', Icons.space_bar),
+                      _buildToolChip(colors, 'Effects', Icons.auto_awesome),
+                    ],
+                  ),
+                  const SizedBox(height: SpacingTokens.md),
+                  AsmblButton.secondary(
+                    text: 'Manage Design Tokens',
+                    icon: Icons.settings,
+                    size: AsmblButtonSize.small,
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Design tokens are managed through context documents tagged with "design-tokens"'),
+                          backgroundColor: colors.primary,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: SpacingTokens.lg),
+
+          // Export Controls Section
+          AsmblCard(
+            child: Padding(
+              padding: const EdgeInsets.all(SpacingTokens.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.file_download, color: colors.accent, size: 20),
+                      const SizedBox(width: SpacingTokens.sm),
+                      Text(
+                        'Export Capabilities',
+                        style: TextStyles.cardTitle.copyWith(
+                          color: colors.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: SpacingTokens.md),
+                  Text(
+                    'Export your designs in multiple formats for production use',
+                    style: TextStyles.bodyMedium.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: SpacingTokens.lg),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildExportCard(colors, 'PNG', Icons.image,
+                          'Raster images (1x-4x scale)'),
+                      ),
+                      const SizedBox(width: SpacingTokens.md),
+                      Expanded(
+                        child: _buildExportCard(colors, 'SVG', Icons.code,
+                          'Vector graphics (scalable)'),
+                      ),
+                      const SizedBox(width: SpacingTokens.md),
+                      Expanded(
+                        child: _buildExportCard(colors, 'PDF', Icons.picture_as_pdf,
+                          'Print-ready documents'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: SpacingTokens.lg),
+
+          // Canvas State & History Section
+          Row(
+            children: [
+              Expanded(
+                child: AsmblCard(
+                  child: Padding(
+                    padding: const EdgeInsets.all(SpacingTokens.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.visibility, color: colors.accent, size: 20),
+                            const SizedBox(width: SpacingTokens.sm),
+                            Text(
+                              'Canvas State',
+                              style: TextStyles.cardTitle.copyWith(
+                                color: colors.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: SpacingTokens.md),
+                        Text(
+                          'Real-time visibility into canvas elements, statistics, and queries',
+                          style: TextStyles.bodySmall.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: SpacingTokens.lg),
+                        _buildFeatureRow(colors, 'Element tree view'),
+                        _buildFeatureRow(colors, 'Statistics & counts'),
+                        _buildFeatureRow(colors, 'Query by type'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: SpacingTokens.lg),
+              Expanded(
+                child: AsmblCard(
+                  child: Padding(
+                    padding: const EdgeInsets.all(SpacingTokens.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.history, color: colors.accent, size: 20),
+                            const SizedBox(width: SpacingTokens.sm),
+                            Text(
+                              'Design History',
+                              style: TextStyles.cardTitle.copyWith(
+                                color: colors.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: SpacingTokens.md),
+                        Text(
+                          'Undo/redo functionality and action tracking (up to 50 entries)',
+                          style: TextStyles.bodySmall.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: SpacingTokens.lg),
+                        _buildFeatureRow(colors, 'Undo/redo actions'),
+                        _buildFeatureRow(colors, 'History summary'),
+                        _buildFeatureRow(colors, 'Action tracking'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: SpacingTokens.lg),
+
+          // MCP Tools Info
+          AsmblCard(
+            child: Padding(
+              padding: const EdgeInsets.all(SpacingTokens.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.construction, color: colors.accent, size: 20),
+                      const SizedBox(width: SpacingTokens.sm),
+                      Text(
+                        'MCP Tools Available',
+                        style: TextStyles.cardTitle.copyWith(
+                          color: colors.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: SpacingTokens.md),
+                  Text(
+                    '23 MCP tools for AI agents to programmatically control Penpot',
+                    style: TextStyles.bodyMedium.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: SpacingTokens.lg),
+                  Wrap(
+                    spacing: SpacingTokens.xs,
+                    runSpacing: SpacingTokens.xs,
+                    children: [
+                      _buildMCPToolBadge(colors, 'Basic: 6 tools'),
+                      _buildMCPToolBadge(colors, 'Advanced: 7 tools'),
+                      _buildMCPToolBadge(colors, 'Professional: 10 tools'),
+                      _buildMCPToolBadge(colors, 'Expert: 7 tools'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildToolChip(ThemeColors colors, String label, IconData icon) {
+    return Chip(
+      avatar: Icon(icon, size: 16, color: colors.primary),
+      label: Text(
+        label,
+        style: TextStyles.bodySmall.copyWith(
+          color: colors.onSurface,
+        ),
+      ),
+      backgroundColor: colors.surface,
+      side: BorderSide(color: colors.border),
+    );
+  }
+
+  Widget _buildExportCard(ThemeColors colors, String format, IconData icon, String description) {
+    return Container(
+      padding: const EdgeInsets.all(SpacingTokens.md),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: colors.primary, size: 32),
+          const SizedBox(height: SpacingTokens.sm),
+          Text(
+            format,
+            style: TextStyles.bodyMedium.copyWith(
+              color: colors.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: SpacingTokens.xs),
+          Text(
+            description,
+            style: TextStyles.caption.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureRow(ThemeColors colors, String feature) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: SpacingTokens.xs),
+      child: Row(
+        children: [
+          Icon(Icons.check_circle, size: 16, color: colors.success),
+          const SizedBox(width: SpacingTokens.xs),
+          Text(
+            feature,
+            style: TextStyles.bodySmall.copyWith(
+              color: colors.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMCPToolBadge(ThemeColors colors, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: SpacingTokens.sm,
+        vertical: SpacingTokens.xs,
+      ),
+      decoration: BoxDecoration(
+        color: colors.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+        border: Border.all(color: colors.primary.withOpacity(0.2)),
+      ),
+      child: Text(
+        label,
+        style: TextStyles.caption.copyWith(
+          color: colors.primary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 }

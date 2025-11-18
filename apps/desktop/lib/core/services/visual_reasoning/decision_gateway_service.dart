@@ -1,15 +1,16 @@
 import 'dart:async';
 import '../../di/service_locator.dart';
-import '../mcp_excalidraw_bridge_service.dart';
 
 /// Decision Gateway Service - Implements Procedural Intelligence Block #3
 /// Prevents agent hallucinations by validating actions against current state
+/// ⚠️ DEPRECATED: This service was designed for Excalidraw canvas system.
+/// Will be removed or refactored for PenPOT plugin architecture.
 class DecisionGatewayService {
   static DecisionGatewayService? _instance;
   static DecisionGatewayService get instance => _instance ??= DecisionGatewayService._();
   DecisionGatewayService._();
 
-  late MCPExcalidrawBridgeService _mcpBridge;
+  // late MCPExcalidrawBridgeService _mcpBridge; // Commented out - Excalidraw removed
   bool _isInitialized = false;
 
   // Trace events for decision tracking
@@ -21,11 +22,11 @@ class DecisionGatewayService {
 
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
-    _mcpBridge = ServiceLocator.instance.get<MCPExcalidrawBridgeService>();
+
+    // _mcpBridge = ServiceLocator.instance.get<MCPExcalidrawBridgeService>(); // Commented out - Excalidraw removed
     _isInitialized = true;
-    
-    print('🚦 Decision Gateway Service initialized');
+
+    print('🚦 Decision Gateway Service initialized (Excalidraw deprecated)');
   }
 
   /// Core decision gateway - validates actions before execution
@@ -102,8 +103,10 @@ class DecisionGatewayService {
   /// Get current canvas state for context filtering
   Future<Map<String, dynamic>> _getCanvasState() async {
     try {
-      final elements = _mcpBridge.getElements();
-      final canvasInfo = await _mcpBridge.getCanvasInfo();
+      // final elements = _mcpBridge.getElements(); // Commented out - Excalidraw removed
+      // final canvasInfo = await _mcpBridge.getCanvasInfo(); // Commented out - Excalidraw removed
+      final elements = [];
+      final canvasInfo = {};
       
       return {
         'elementCount': elements.length,

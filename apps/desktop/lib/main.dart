@@ -38,8 +38,7 @@ import 'core/services/feature_flag_service.dart';
 import 'features/settings/presentation/widgets/adaptive_integration_router.dart';
 import 'features/tools/presentation/screens/tools_screen.dart';
 import 'features/chat/presentation/demo/contextual_context_demo.dart';
-import 'features/canvas/presentation/excalidraw_canvas_screen.dart';
-import 'features/canvas/presentation/enhanced_excalidraw_demo.dart';
+import 'features/canvas/presentation/penpot_canvas_screen.dart'; // Week 1: Penpot integration
 import 'features/canvas/presentation/canvas_library_screen.dart';
 import 'demo/demo_onboarding.dart';
 import 'demo/unified_showcase_demo.dart';
@@ -378,15 +377,11 @@ final _router = GoRouter(
 ),
  GoRoute(
  path: AppRoutes.canvas,
- builder: (context, state) => const ExcalidrawCanvasScreen(),
+ builder: (context, state) => const PenpotCanvasScreen(), // Week 1: Switched to Penpot
  ),
 GoRoute(
  path: AppRoutes.canvasLibrary,
  builder: (context, state) => const CanvasLibraryScreen(),
- ),
- GoRoute(
- path: '/enhanced-excalidraw-demo',
- builder: (context, state) => const EnhancedExcalidrawDemo(),
  ),
  GoRoute(
  path: AppRoutes.settings,

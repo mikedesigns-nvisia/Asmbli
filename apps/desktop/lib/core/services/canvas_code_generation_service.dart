@@ -6,7 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 import '../di/service_locator.dart';
-import './canvas_local_server.dart';
+// import './canvas_local_server.dart'; // Removed - old canvas system
 import './canvas_storage_service.dart';
 import './canvas_error_handler.dart';
 
@@ -43,7 +43,7 @@ class CanvasCodeGenerationService {
       final effectiveOptions = options ?? CodeGenerationOptions.withDefaults();
       
       // Call MCP server to generate code
-      final localServer = ServiceLocator.instance.get<CanvasLocalServer>();
+      // final localServer = ServiceLocator.instance.get<CanvasLocalServer>(); // Removed - old canvas system
       final mcpResponse = await _callMCPCodeGeneration(
         canvasState,
         format,

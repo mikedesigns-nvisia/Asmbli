@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../core/design_system/design_system.dart';
-import '../core/widgets/excalidraw_canvas.dart';
 import 'components/enhanced_ai_reasoning_simulator.dart';
 import 'components/confidence_indicator.dart';
 import 'components/demo_container.dart';
@@ -2597,35 +2596,38 @@ class _UnifiedShowcaseDemoState extends State<UnifiedShowcaseDemo>
   }
 
   Widget _buildExcalidrawCanvas(ThemeColors colors) {
+    // Note: Excalidraw has been replaced with PenPOT Canvas
+    // This demo section will be updated to use the new canvas integration
     return Container(
       margin: const EdgeInsets.all(SpacingTokens.md),
-      child: ExcalidrawCanvas(
-        key: _excalidrawKey,
-        darkMode: Theme.of(context).brightness == Brightness.dark,
-        sessionId: 'design_assistant_${widget.selectedAgentType}_${DateTime.now().millisecondsSinceEpoch}',
-        onDrawingChanged: (drawingData) {
-          setState(() {
-            _canvasHasContent = true;
-            _currentDrawingData = drawingData;
-          });
-        },
-        onDrawingSaved: (drawingData) {
-          debugPrint('🎨 Drawing saved: ${drawingData.length} characters');
-          // Could integrate with MCP or local storage here
-        },
-        onPNGExported: (base64PNG) {
-          debugPrint('📸 PNG exported: ${base64PNG.length} characters');
-          // Could save PNG or send to chat
-        },
-        onError: (error) {
-          debugPrint('❌ Excalidraw error: $error');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Canvas error: $error'),
-              backgroundColor: colors.error,
+      padding: const EdgeInsets.all(SpacingTokens.xxl),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(BorderRadiusTokens.lg),
+        border: Border.all(color: colors.border),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.draw_outlined,
+              size: 64,
+              color: colors.onSurfaceVariant,
             ),
-          );
-        },
+            const SizedBox(height: SpacingTokens.lg),
+            Text(
+              'Canvas Integration',
+              style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
+            ),
+            const SizedBox(height: SpacingTokens.sm),
+            Text(
+              'PenPOT Canvas integration coming soon',
+              style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

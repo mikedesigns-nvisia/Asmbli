@@ -8,15 +8,16 @@ import '../services/desktop/desktop_agent_service.dart';
 import '../services/desktop/desktop_conversation_service.dart';
 import '../services/desktop/desktop_storage_service.dart';
 import '../services/desktop/desktop_service_provider.dart';
-import '../services/canvas_local_server.dart';
 import '../services/canvas_storage_service.dart';
-import '../services/mcp_excalidraw_bridge_service.dart';
 import '../services/llm/unified_llm_service.dart';
 import '../services/mcp_bridge_service.dart';
 import '../services/context_mcp_resource_service.dart';
 import '../services/agent_context_prompt_service.dart';
 import '../services/theme_service.dart';
 import '../services/model_config_service.dart';
+import '../services/design_tokens_service.dart';
+import '../services/design_history_service.dart';
+import '../../features/context/data/repositories/context_repository.dart';
 import '../services/mcp_settings_service.dart';
 import '../services/claude_api_service.dart';
 import '../services/openai_api_service.dart';
@@ -49,6 +50,7 @@ import '../services/agent_mcp_configuration_service.dart';
 import '../services/agent_aware_mcp_installer.dart';
 import '../services/agent_mcp_session_service.dart';
 import '../services/direct_mcp_agent_service.dart';
+import '../services/plugin_bridge_server.dart';
 
 // Business services
 import '../services/business/base_business_service.dart';
@@ -269,10 +271,8 @@ class ServiceLocator {
     // Register data layer services
     registerSingleton<AgentService>(DesktopAgentService());
     registerSingleton<ConversationService>(DesktopConversationService());
-    
+
     // Register canvas services
-    registerSingleton<CanvasLocalServer>(CanvasLocalServer());
-    
     final canvasStorage = CanvasStorageService();
     await canvasStorage.initialize();
     registerSingleton<CanvasStorageService>(canvasStorage);
@@ -345,12 +345,9 @@ class ServiceLocator {
     
     final mcpBridgeService = MCPBridgeService(mcpSettingsService);
     registerSingleton<MCPBridgeService>(mcpBridgeService);
-    
-    // Register MCP Excalidraw Bridge (after MCPBridgeService is registered)
-    final mcpExcalidrawBridge = MCPExcalidrawBridgeService.instance;
-    await mcpExcalidrawBridge.initialize();
-    registerSingleton<MCPExcalidrawBridgeService>(mcpExcalidrawBridge);
-    
+
+    // NOTE: MCPExcalidrawBridgeService removed - Excalidraw system deprecated
+
     // Register Visual Reasoning services
     final decisionGateway = DecisionGatewayService.instance;
     await decisionGateway.initialize();
@@ -364,6 +361,12 @@ class ServiceLocator {
     registerSingleton<ContextMCPResourceService>(ContextMCPResourceService());
     registerSingleton<AgentContextPromptService>(AgentContextPromptService());
     registerSingleton<ThemeService>(ThemeService());
+
+    // Register ContextRepository and DesignTokensService for Penpot integration
+    final contextRepository = ContextRepository();
+    registerSingleton<ContextRepository>(contextRepository);
+    final designTokensService = DesignTokensService(contextRepository: contextRepository);
+    registerSingleton<DesignTokensService>(designTokensService);
     
     // Use the existing singleton BusinessEventBus
     registerSingleton<BusinessEventBus>(BusinessEventBus());
@@ -411,6 +414,11 @@ class ServiceLocator {
     // Register Direct MCP Agent Service (simplified integration)
     final directMcpService = DirectMCPAgentService.instance;
     registerSingleton<DirectMCPAgentService>(directMcpService);
+
+    // Register Plugin Bridge Server for PenPot plugin communication
+    final pluginBridgeServer = PluginBridgeServer(port: 3000);
+    await pluginBridgeServer.start();
+    registerSingleton<PluginBridgeServer>(pluginBridgeServer);
   }
 
   /// Register all business services
