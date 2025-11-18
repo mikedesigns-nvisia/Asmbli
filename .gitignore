@@ -45,3 +45,5 @@ coverage/
 
 # Misc
 .cache/
+# Next.js build artifacts
+apps/web/.next/

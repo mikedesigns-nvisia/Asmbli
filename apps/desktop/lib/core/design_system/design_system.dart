@@ -12,4 +12,3 @@ export 'components/app_navigation_bar.dart';
 export 'components/asmbli_dropdown.dart';
 export 'components/unified_mcp_server_card.dart';
 export 'components/theme_toggle.dart';
-export '../widgets/excalidraw_canvas.dart';
