@@ -52,7 +52,7 @@ dependencies:
   http: ^1.1.0
   
   # WebView
-  webview_flutter: ^4.4.4
+  webview_flutter: ^4.13.0
   webview_flutter_platform_interface: ^2.10.0
   
   # JSON & Serialization
@@ -95,7 +95,7 @@ flutter:
   assets:
     - assets/images/
     - assets/canvas/
-    - assets/excalidraw/
+    - assets/penpot_plugin/dist/
 
 msix_config:
   display_name: AgentEngine

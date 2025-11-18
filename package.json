@@ -20,10 +20,13 @@
   },
   "devDependencies": {
     "@types/node": "^20.5.0",
-    "typescript": "^5.0.2",
-    "eslint": "^8.45.0"
+    "eslint": "^8.45.0",
+    "typescript": "^5.0.2"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
   }
 }
