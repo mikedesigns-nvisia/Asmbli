@@ -1,0 +1,13 @@
+{
+  "name": "Asmbli Design Agent Plugin",
+  "description": "AI-powered design agent with MCP tools for creating and manipulating visual designs in PenPOT",
+  "version": "0.1.0",
+  "permissions": [
+    "content:read",
+    "content:write",
+    "library:read",
+    "library:write",
+    "user:read"
+  ],
+  "entry": "plugin.js"
+}
