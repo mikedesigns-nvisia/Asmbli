@@ -7,6 +7,7 @@ import 'package:agent_engine_core/models/conversation.dart' as core;
 import 'dart:async';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
+import '../../../../core/widgets/floating_notification.dart';
 import '../../../../providers/conversation_provider.dart';
 import '../../../../core/services/mcp_bridge_service.dart';
 import '../../../../core/services/mcp_settings_service.dart';
@@ -23,7 +24,6 @@ import '../widgets/streaming_message_widget.dart';
 import '../widgets/editable_conversation_title.dart';
 import '../widgets/context_sidebar_section.dart';
 import '../widgets/contextual_context_widget.dart';
-import '../components/model_warmup_status_indicator.dart';
 
 /// Chat screen with contextual context integration
 class ChatScreenWithContextual extends ConsumerStatefulWidget {
@@ -97,20 +97,7 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  children: [
  // Header
  const AppNavigationBar(currentRoute: AppRoutes.chat),
- 
- // Model warmup status notification
- const Padding(
-   padding: EdgeInsets.symmetric(
-     horizontal: SpacingTokens.headerPadding,
-     vertical: SpacingTokens.xs,
-   ),
-   child: Row(
-     children: [
-       ModelWarmupStatusIndicator(),
-     ],
-   ),
- ),
- 
+
  // Main Content
  Expanded(
  child: Row(
@@ -1562,12 +1549,10 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
      
      if (selectedModel == null) {
        // Show error if no model is configured
-       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
-           content: Text('Please configure at least one AI model in Settings'),
-           backgroundColor: ThemeColors(context).primary,
-         ),
-       );
+       FloatingNotification.warning(
+        context,
+        'Please configure at least one AI model in Settings',
+      );
        return;
      }
 
@@ -1599,11 +1584,9 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
 
    } catch (e) {
      // Show error message if conversation creation fails
-     ScaffoldMessenger.of(context).showSnackBar(
-       SnackBar(
-         content: Text('Failed to start new chat: $e'),
-         backgroundColor: Colors.red,
-       ),
+     FloatingNotification.error(
+       context,
+       'Failed to start new chat: $e',
      );
    }
  }
@@ -1651,11 +1634,9 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  
  } catch (e) {
  if (mounted) {
- ScaffoldMessenger.of(context).showSnackBar(
- SnackBar(
- content: Text('Failed to send message: $e'),
- backgroundColor: ThemeColors(context).error,
- ),
+ FloatingNotification.error(
+ context,
+ 'Failed to send message: $e',
  );
  }
  } finally {
@@ -1752,12 +1733,10 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
    if (selectedModel.isLocal) {
      // For local models, try to make them ready if Ollama is available
      if (mounted) {
-       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
-           content: Text('Local model "${selectedModel.name}" is not ready. Status: ${selectedModel.status}.\n\nTo fix:\n1. Install Ollama from ollama.ai\n2. Run: ollama pull ${selectedModel.ollamaModelId ?? selectedModel.name.toLowerCase()}'),
-           backgroundColor: ThemeColors(context).error,
-           duration: const Duration(seconds: 6),
-         ),
+       FloatingNotification.error(
+         context,
+         'Local model "${selectedModel.name}" is not ready. Status: ${selectedModel.status}.\n\nTo fix:\n1. Install Ollama from ollama.ai\n2. Run: ollama pull ${selectedModel.ollamaModelId ?? selectedModel.name.toLowerCase()}',
+         duration: const Duration(seconds: 6),
        );
      }
      throw Exception('Local model not ready. Status: ${selectedModel.status}. Please install Ollama and run: ollama pull ${selectedModel.ollamaModelId ?? selectedModel.name.toLowerCase()}');
@@ -2191,12 +2170,10 @@ Future<void> _updateConversationPrimingAfterSuccess(String conversationId, Model
     try {
       // Show feedback about creating new chat with selected model
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Starting new chat with ${model.name}'),
-            backgroundColor: ThemeColors(context).primary,
-            duration: const Duration(seconds: 2),
-          ),
+        FloatingNotification.info(
+          context,
+          'Starting new chat with ${model.name}',
+          duration: const Duration(seconds: 2),
         );
       }
 
@@ -2233,12 +2210,10 @@ Future<void> _updateConversationPrimingAfterSuccess(String conversationId, Model
     } catch (e) {
       // Show error message if conversation creation fails
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to start new chat with ${model.name}: $e'),
-            backgroundColor: ThemeColors(context).error,
-            duration: const Duration(seconds: 3),
-          ),
+        FloatingNotification.error(
+          context,
+          'Failed to start new chat with ${model.name}: $e',
+          duration: const Duration(seconds: 3),
         );
       }
     }
