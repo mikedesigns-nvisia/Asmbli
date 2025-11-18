@@ -24,26 +24,26 @@ class TypographyTokens {
 class TextStyles {
  // ===== HEADINGS =====
  
- // Page Headers - Primary page titles
+ // Page Headers - Primary page titles (lighter weight for dashboard feel)
  static TextStyle get pageTitle => GoogleFonts.fustat(
    fontSize: TypographyTokens.fontSizeXXL,  // 32px
-   fontWeight: TypographyTokens.bold,
+   fontWeight: TypographyTokens.medium,     // 500 (was bold 700)
    letterSpacing: -0.5,
    height: 1.2,
  );
- 
- // Section Headers - Main content sections
+
+ // Section Headers - Main content sections (lighter weight for dashboard feel)
  static TextStyle get sectionTitle => GoogleFonts.fustat(
    fontSize: TypographyTokens.fontSizeXL,   // 24px
-   fontWeight: TypographyTokens.semiBold,
+   fontWeight: TypographyTokens.regular,    // 400 (was semiBold 600)
    letterSpacing: -0.2,
    height: 1.3,
  );
- 
- // Card/Component Headers
+
+ // Card/Component Headers (lighter weight for dashboard feel)
  static TextStyle get cardTitle => GoogleFonts.fustat(
    fontSize: TypographyTokens.fontSizeLG,   // 20px
-   fontWeight: TypographyTokens.semiBold,
+   fontWeight: TypographyTokens.medium,     // 500 (was semiBold 600)
    letterSpacing: -0.1,
    height: 1.3,
  );
