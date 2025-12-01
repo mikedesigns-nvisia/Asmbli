@@ -4,14 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/mcp_catalog_entry.dart';
 import '../models/mcp_server_process.dart';
 import '../models/agent_mcp_server_config.dart';
-import 'agent_mcp_configuration_service.dart';
+import 'agent_mcp_service.dart';
 import 'mcp_server_execution_service.dart';
 
 /// Manages dynamic installation and execution of MCP servers from GitHub registry
 /// Handles runtime installation using uvx, npx, docker, etc.
 @Deprecated('Will be consolidated into MCPServerService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class DynamicMCPServerManager {
-  final AgentMCPConfigurationService _configService;
+  final AgentMCPService _configService;
   final MCPServerExecutionService _executionService;
 
   // Track running processes for GitHub registry tools
@@ -437,7 +437,7 @@ class DynamicMCPServerManager {
 
 /// Provider for Dynamic MCP Server Manager
 final dynamicMCPServerManagerProvider = Provider<DynamicMCPServerManager>((ref) {
-  final configService = ref.read(agentMCPConfigurationServiceProvider);
+  final configService = ref.read(agentMCPServiceProvider);
   final executionService = ref.read(mcpServerExecutionServiceProvider);
   return DynamicMCPServerManager(configService, executionService);
 });

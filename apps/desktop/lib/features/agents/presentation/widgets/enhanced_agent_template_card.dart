@@ -94,6 +94,8 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
                       SizedBox(height: SpacingTokens.xs),
                       _buildReasoningFlow(colors, cardColors),
                       SizedBox(height: SpacingTokens.xs),
+                      _buildRecommendedLLM(colors, cardColors),
+                      SizedBox(height: SpacingTokens.xs),
                       _buildTags(colors, cardColors),
                       SizedBox(height: SpacingTokens.xs),
                       _buildMCPServers(colors, cardColors),
@@ -602,6 +604,131 @@ class _EnhancedAgentTemplateCardState extends State<EnhancedAgentTemplateCard>
         ],
       ),
     );
+  }
+
+  Widget _buildRecommendedLLM(ThemeColors colors, _CardColors cardColors) {
+    final recommended = widget.template.recommendedModel;
+    if (recommended == null) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.psychology_outlined,
+              size: 12,
+              color: colors.onSurfaceVariant,
+            ),
+            SizedBox(width: SpacingTokens.xs),
+            Text(
+              'Recommended LLM',
+              style: TextStyles.caption.copyWith(
+                color: colors.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: SpacingTokens.xxs),
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: SpacingTokens.sm,
+            vertical: SpacingTokens.xs,
+          ),
+          decoration: BoxDecoration(
+            color: _getProviderColor(recommended.provider, colors).withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+            border: Border.all(
+              color: _getProviderColor(recommended.provider, colors).withValues(alpha: 0.3),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                _getProviderIcon(recommended.provider),
+                size: 12,
+                color: _getProviderColor(recommended.provider, colors),
+              ),
+              SizedBox(width: SpacingTokens.xs),
+              Flexible(
+                child: Text(
+                  recommended.displayName,
+                  style: TextStyles.caption.copyWith(
+                    color: _getProviderColor(recommended.provider, colors),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (recommended.isLocal) ...[
+                SizedBox(width: SpacingTokens.xs),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SpacingTokens.xxs,
+                    vertical: 1,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.success.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
+                  ),
+                  child: Text(
+                    'Local',
+                    style: TextStyles.caption.copyWith(
+                      fontSize: 9,
+                      color: colors.success,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        // Show alternatives count if available
+        if (widget.template.alternativeModels.isNotEmpty) ...[
+          SizedBox(height: SpacingTokens.xxs),
+          Text(
+            '+${widget.template.alternativeModels.length} alternatives',
+            style: TextStyles.caption.copyWith(
+              fontSize: 10,
+              color: colors.onSurfaceVariant.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Color _getProviderColor(String provider, ThemeColors colors) {
+    switch (provider.toLowerCase()) {
+      case 'openai':
+        return colors.success; // Green for OpenAI
+      case 'anthropic':
+        return colors.accent; // Accent for Anthropic
+      case 'google':
+        return colors.info; // Blue for Google
+      case 'ollama':
+        return colors.primary; // Primary for local Ollama
+      default:
+        return colors.onSurfaceVariant;
+    }
+  }
+
+  IconData _getProviderIcon(String provider) {
+    switch (provider.toLowerCase()) {
+      case 'openai':
+        return Icons.auto_awesome;
+      case 'anthropic':
+        return Icons.hub;
+      case 'google':
+        return Icons.cloud;
+      case 'ollama':
+        return Icons.computer;
+      default:
+        return Icons.psychology;
+    }
   }
 }
 

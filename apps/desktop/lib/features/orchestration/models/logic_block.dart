@@ -24,6 +24,9 @@ enum LogicBlockType {
   
   @JsonValue('exit')
   exit,
+
+  @JsonValue('human_verification')
+  humanVerification,
 }
 
 /// Connection types for visual flow representation
@@ -137,6 +140,8 @@ class LogicBlock {
         return '#607D8B'; // Blue Grey
       case LogicBlockType.exit:
         return '#4CAF50'; // Green
+      case LogicBlockType.humanVerification:
+        return '#E91E63'; // Pink
     }
   }
   
@@ -157,6 +162,8 @@ class LogicBlock {
         return 'timeline';
       case LogicBlockType.exit:
         return 'check_circle';
+      case LogicBlockType.humanVerification:
+        return 'verified_user';
     }
   }
   
@@ -167,6 +174,8 @@ class LogicBlock {
         return 140.0; // Slightly wider for decision text
       case LogicBlockType.reasoning:
         return 160.0; // Wider for reasoning display
+      case LogicBlockType.humanVerification:
+        return 160.0; // Wider for verification details
       default:
         return 120.0;
     }

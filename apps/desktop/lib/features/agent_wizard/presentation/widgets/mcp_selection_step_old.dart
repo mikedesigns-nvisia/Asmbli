@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/mcp_catalog_service.dart';
-import '../../../../core/services/mcp_health_monitor.dart';
+// import '../../../../core/services/mcp_health_monitor.dart'; // Removed - deprecated
 import '../../../../core/models/mcp_catalog_entry.dart';
 import '../../../settings/presentation/widgets/mcp_health_status_widget.dart';
 import '../../../settings/presentation/widgets/mcp_server_setup_dialog.dart';

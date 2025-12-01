@@ -651,6 +651,22 @@ class FeaturedMCPServersService {
         'SENTRY_AUTH_TOKEN': 'Sentry authentication token'
       },
     },
+    {
+      'id': 'mcp-server-image-gen',
+      'name': 'Image Generation Server',
+      'description': 'Generate images using DALL-E or other providers via MCP.',
+      'command': 'uvx mcp-server-image-gen',
+      'args': [],
+      'repository': 'https://github.com/modelcontextprotocol/servers',
+      'category': 'productivity',
+      'isOfficial': true,
+      'tags': ['image-generation', 'dall-e', 'ai', 'media'],
+      'capabilities': ['tools'],
+      'transport': 'stdio',
+      'requiredEnvVars': {
+        'OPENAI_API_KEY': 'OpenAI API key for DALL-E'
+      },
+    },
   ];
 
   /// Get all featured servers as MCPCatalogEntry objects

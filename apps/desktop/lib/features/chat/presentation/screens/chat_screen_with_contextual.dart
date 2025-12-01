@@ -5,15 +5,18 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agent_engine_core/models/conversation.dart' as core;
 import 'dart:async';
+import 'dart:ui';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../core/widgets/floating_notification.dart';
 import '../../../../providers/conversation_provider.dart';
-import '../../../../core/services/mcp_bridge_service.dart';
+// import '../../../../core/services/mcp_bridge_service.dart'; // REMOVED: MCPBridgeService deleted
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/llm/unified_llm_service.dart';
 import '../../../../core/services/llm/llm_provider.dart';
 import '../../../../core/services/model_config_service.dart';
+// DSPy Integration - unified AI backend
+import '../../../../core/services/dspy/dspy.dart';
 import '../../../../core/models/model_config.dart';
 import '../../../../core/services/agent_context_prompt_service.dart';
 import '../../../../core/services/model_warmup_service.dart';
@@ -24,19 +27,25 @@ import '../widgets/streaming_message_widget.dart';
 import '../widgets/editable_conversation_title.dart';
 import '../widgets/context_sidebar_section.dart';
 import '../widgets/contextual_context_widget.dart';
+import '../widgets/animated_context_toolbar.dart';
+import '../widgets/artifacts/artifact_workspace.dart';
+import '../widgets/chat_tab_bar.dart';
+import '../widgets/chat_status_bar.dart';
+import '../widgets/conversation_starter.dart';
+import '../../../../providers/agent_provider.dart';
 
 /// Chat screen with contextual context integration
 class ChatScreenWithContextual extends ConsumerStatefulWidget {
  final String? selectedTemplate;
-  
-  const ChatScreenWithContextual({super.key, this.selectedTemplate});
+ final String? agentId;
+
+  const ChatScreenWithContextual({super.key, this.selectedTemplate, this.agentId});
 
  @override
  ConsumerState<ChatScreenWithContextual> createState() => _ChatScreenWithContextualState();
 }
 
 class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContextual> {
- bool isSidebarCollapsed = false;
  final TextEditingController messageController = TextEditingController();
  
  @override
@@ -49,11 +58,79 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  try {
  // Services are initialized via Riverpod providers
  // No manual ServiceProvider needed - services auto-initialize when accessed
- 
+
+ // Set default model to Llama3.2 if no model is selected
+ _setDefaultModel();
+
  // Start model warm-up process in background (non-blocking)
  _startModelWarmUpInBackground();
  } catch (e) {
  print('Service initialization failed: $e');
+ }
+ }
+
+ void _setDefaultModel() {
+ try {
+   final currentModel = ref.read(selectedModelProvider);
+   final modelConfig = ref.read(modelConfigServiceProvider);
+   final allModels = modelConfig.allModelConfigs.values.toList();
+
+   debugPrint('🔍 _setDefaultModel called - current model: ${currentModel?.name ?? "null"}');
+   debugPrint('📋 Available models (${allModels.length} total):');
+   for (final model in allModels) {
+     debugPrint('  • ${model.name} (ID: ${model.id}, Ollama: ${model.ollamaModelId}, Local: ${model.isLocal})');
+   }
+
+   // Check if we should change the model:
+   // 1. No model is set, OR
+   // 2. Current model is not Llama3.2 and Llama3.2 is available
+   bool shouldSetLlama = false;
+   if (currentModel == null) {
+     debugPrint('ℹ️ No model currently set');
+     shouldSetLlama = true;
+   } else {
+     final isLlama32 = currentModel.name.toLowerCase().contains('llama3.2') ||
+                       currentModel.ollamaModelId?.toLowerCase().contains('llama3.2') == true;
+     if (!isLlama32) {
+       debugPrint('ℹ️ Current model is not Llama3.2, will try to switch');
+       shouldSetLlama = true;
+     } else {
+       debugPrint('✅ Current model is already Llama3.2: ${currentModel.name}');
+       return;
+     }
+   }
+
+   if (shouldSetLlama) {
+     // Try to find Llama3.2 model (case-insensitive search)
+     ModelConfig? llamaModel;
+     try {
+       llamaModel = allModels.firstWhere(
+         (model) {
+           final nameMatch = model.name.toLowerCase().contains('llama3.2');
+           final ollamaMatch = model.ollamaModelId?.toLowerCase().contains('llama3.2') == true;
+           debugPrint('  🔎 Checking ${model.name}: nameMatch=$nameMatch, ollamaMatch=$ollamaMatch');
+           return nameMatch || ollamaMatch;
+         },
+       );
+       debugPrint('✅ Found Llama3.2 model: ${llamaModel.name}');
+
+       // Set the model after the build cycle completes (Riverpod requirement)
+       Future.microtask(() {
+         if (mounted && llamaModel != null) {
+           ref.read(selectedModelProvider.notifier).state = llamaModel;
+           debugPrint('✅ Set default model to: ${llamaModel!.name} (ID: ${llamaModel!.id})');
+         }
+       });
+     } catch (e) {
+       debugPrint('⚠️ Llama3.2 not found in available models');
+       if (currentModel == null && allModels.isNotEmpty) {
+         debugPrint('⚠️ Falling back to first available model: ${allModels.first.name}');
+         ref.read(selectedModelProvider.notifier).state = allModels.first;
+       }
+     }
+   }
+ } catch (e) {
+   debugPrint('❌ Could not set default model: $e');
  }
  }
 
@@ -98,50 +175,19 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  // Header
  const AppNavigationBar(currentRoute: AppRoutes.chat),
 
- // Main Content
- Expanded(
- child: Row(
- children: [
- // Sidebar
- AnimatedContainer(
- duration: const Duration(milliseconds: 300),
- width: isSidebarCollapsed ? 0 : 280,
- child: isSidebarCollapsed ? null : _buildSidebar(context),
+ // Firefox-style Tab Bar
+ ChatTabBar(
+   onNewChat: () => _startNewDirectChat(),
  ),
- 
- // Sidebar Toggle (when collapsed)
- if (isSidebarCollapsed)
- Container(
- width: 48,
- decoration: BoxDecoration(
- color: theme.colorScheme.surface.withValues(alpha: 0.7),
- border: Border(right: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))),
+
+ // Status Bar (slim, fixed, replaces floating dock)
+ ChatStatusBar(
+   conversationId: ref.watch(selectedConversationIdProvider),
  ),
- child: Column(
- children: [
- const SizedBox(height: SpacingTokens.elementSpacing),
- IconButton(
- onPressed: () => setState(() => isSidebarCollapsed = false),
- icon: const Icon(Icons.chevron_right, size: 20),
- style: IconButton.styleFrom(
- backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
- foregroundColor: theme.colorScheme.onSurfaceVariant,
- side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
- ),
- ),
- ],
- ),
- ),
- 
- // Chat Area
+
+ // Main Content - Minimal chat UI (no sidebars)
  Expanded(
  child: _buildChatArea(context),
- ),
- 
- // Right Sidebar for Conversations
- const ImprovedConversationSidebar(),
- ],
- ),
  ),
  ],
  ),
@@ -154,39 +200,143 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  );
  }
 
+ /// Build the chat title with optional agent indicator
+ Widget _buildChatTitle(ThemeData theme, ThemeColors colors) {
+   // Check if we have an active agent
+   final agentId = widget.agentId;
+
+   if (agentId == null) {
+     // No agent - just show "Chat"
+     return Text(
+       'Chat',
+       style: GoogleFonts.fustat(
+         fontWeight: FontWeight.w600,
+         fontSize: 16,
+         color: theme.colorScheme.onSurface,
+       ),
+     );
+   }
+
+   // We have an agent - show agent indicator
+   final agentsAsync = ref.watch(agentsProvider);
+
+   return agentsAsync.when(
+     loading: () => Text(
+       'Chat',
+       style: GoogleFonts.fustat(
+         fontWeight: FontWeight.w600,
+         fontSize: 16,
+         color: theme.colorScheme.onSurface,
+       ),
+     ),
+     error: (_, __) => Text(
+       'Chat',
+       style: GoogleFonts.fustat(
+         fontWeight: FontWeight.w600,
+         fontSize: 16,
+         color: theme.colorScheme.onSurface,
+       ),
+     ),
+     data: (agents) {
+       final agent = agents.where((a) => a.id == agentId).firstOrNull;
+
+       if (agent == null) {
+         return Text(
+           'Chat',
+           style: GoogleFonts.fustat(
+             fontWeight: FontWeight.w600,
+             fontSize: 16,
+             color: theme.colorScheme.onSurface,
+           ),
+         );
+       }
+
+       // Show agent name with indicator
+       return Row(
+         mainAxisSize: MainAxisSize.min,
+         children: [
+           Container(
+             padding: EdgeInsets.symmetric(
+               horizontal: SpacingTokens.sm,
+               vertical: SpacingTokens.xxs,
+             ),
+             decoration: BoxDecoration(
+               color: colors.primary.withValues(alpha: 0.15),
+               borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+               border: Border.all(
+                 color: colors.primary.withValues(alpha: 0.3),
+               ),
+             ),
+             child: Row(
+               mainAxisSize: MainAxisSize.min,
+               children: [
+                 Icon(
+                   Icons.smart_toy,
+                   size: 14,
+                   color: colors.primary,
+                 ),
+                 const SizedBox(width: SpacingTokens.xs),
+                 Text(
+                   agent.name,
+                   style: GoogleFonts.fustat(
+                     fontWeight: FontWeight.w600,
+                     fontSize: 14,
+                     color: colors.primary,
+                   ),
+                 ),
+               ],
+             ),
+           ),
+           const SizedBox(width: SpacingTokens.sm),
+           // Clear agent button
+           InkWell(
+             onTap: () => context.go(AppRoutes.chat),
+             borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
+             child: Padding(
+               padding: const EdgeInsets.all(4),
+               child: Icon(
+                 Icons.close,
+                 size: 14,
+                 color: colors.onSurfaceVariant,
+               ),
+             ),
+           ),
+         ],
+       );
+     },
+   );
+ }
+
  Widget _buildChatHeader(ThemeData theme) {
  final selectedConversationId = ref.watch(selectedConversationIdProvider);
- 
+ final colors = ThemeColors(context);
+
+ // No conversation selected - show simple header
  if (selectedConversationId == null) {
- // No conversation selected - show default
- return Container(
- padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
- child: Row(
- children: [
- Text(
- 'Let\'s Talk',
- style: GoogleFonts.fustat(
-  fontWeight: FontWeight.w600,
- color: theme.colorScheme.onSurface,
- ),
- ),
- const Spacer(),
- Container(
- padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
- decoration: BoxDecoration(
- color: theme.colorScheme.surfaceContainerHighest,
- borderRadius: BorderRadius.circular(12),
- ),
- child: Text(
- 'Select a conversation',
- style: GoogleFonts.fustat(
-  color: theme.colorScheme.onSurfaceVariant,
- ),
- ),
- ),
- ],
- ),
- );
+   return Container(
+     padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
+     decoration: BoxDecoration(
+       border: Border(
+         bottom: BorderSide(
+           color: theme.colorScheme.outline.withValues(alpha: 0.2),
+           width: 1,
+         ),
+       ),
+     ),
+     child: Row(
+       children: [
+         Text(
+           'Chat',
+           style: GoogleFonts.fustat(
+             fontSize: 16,
+             fontWeight: FontWeight.w600,
+             color: colors.onSurface,
+           ),
+         ),
+         const Spacer(),
+       ],
+     ),
+   );
  }
 
  return ref.watch(conversationProvider(selectedConversationId)).when(
@@ -324,9 +474,6 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  ),
  ],
  
- // Priming status indicator for all conversations
- const SizedBox(width: 8),
- _buildPrimingStatusIndicator(context, conversation),
  ],
  ),
  );
@@ -365,300 +512,6 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  );
  }
 
-
- /// Build Model Selector for sidebar - no default model references
- Widget _buildModelSelector(BuildContext context) {
-   final theme = Theme.of(context);
-   final modelConfigService = ref.watch(modelConfigServiceProvider);
-   final selectedConversationId = ref.watch(selectedConversationIdProvider);
-   
-   // Use conversation-specific model or fallback to global
-   final selectedModel = selectedConversationId != null
-       ? ref.watch(conversationModelProvider(selectedConversationId))
-       : ref.watch(selectedModelProvider);
-   
-   // Get all configured models (both local and API)
-   final configuredModels = modelConfigService.allModelConfigs.values
-       .where((model) => model.isConfigured)
-       .toList();
-       
-   return Padding(
-     padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.elementSpacing),
-     child: Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-       children: [
-         // Section Header
-         Padding(
-           padding: const EdgeInsets.only(left: 4, bottom: 8),
-           child: Text(
-             selectedModel?.isLocal == true ? 'Local Model' : 'Cloud Model',
-             style: GoogleFonts.fustat(
-                             fontWeight: FontWeight.w500,
-               color: theme.colorScheme.onSurfaceVariant,
-             ),
-           ),
-         ),
-         
-         // Model Selection Card
-         AsmblCard(
-           child: Container(
-             width: double.infinity,
-             padding: const EdgeInsets.all(SpacingTokens.md),
-             child: configuredModels.isEmpty
-                 ? _buildNoModelsState(context)
-                 : _buildModelDropdown(context, configuredModels, selectedModel),
-           ),
-         ),
-       ],
-     ),
-   );
- }
- 
- /// Build no models configured state
- Widget _buildNoModelsState(BuildContext context) {
-   final theme = Theme.of(context);
-   return Column(
-     children: [
-       Icon(
-         Icons.model_training_outlined,
-         size: 32,
-         color: theme.colorScheme.onSurfaceVariant,
-       ),
-       const SizedBox(height: SpacingTokens.sm),
-       Text(
-         'No Models Configured',
-         style: TextStyles.bodyMedium.copyWith(
-           color: theme.colorScheme.onSurface,
-           fontWeight: FontWeight.w500,
-         ),
-       ),
-       const SizedBox(height: SpacingTokens.xs),
-       Text(
-         'Add AI models in Settings',
-         style: TextStyles.bodySmall.copyWith(
-           color: theme.colorScheme.onSurfaceVariant,
-         ),
-         textAlign: TextAlign.center,
-       ),
-     ],
-   );
- }
- 
- /// Build model dropdown
- Widget _buildModelDropdown(BuildContext context, List<ModelConfig> models, ModelConfig? selectedModel) {
-   final theme = Theme.of(context);
-   
-   return Column(
-     crossAxisAlignment: CrossAxisAlignment.start,
-     children: [
-       // Current Selection Display
-       if (false && selectedModel != null) ...[
-         Row(
-           children: [
-             Icon(
-               selectedModel.isLocal ? Icons.computer : Icons.cloud,
-               size: 16,
-               color: selectedModel.isLocal
-                   ? ThemeColors(context).accent
-                   : ThemeColors(context).primary,
-             ),
-             const SizedBox(width: SpacingTokens.xs),
-             Expanded(
-               child: Text(
-                 selectedModel.name,
-                 style: TextStyles.bodyMedium.copyWith(
-                   color: theme.colorScheme.onSurface,
-                   fontWeight: FontWeight.w500,
-                 ),
-               ),
-             ),
-             if (selectedModel.isLocal)
-               Container(
-                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                 decoration: BoxDecoration(
-                   color: ThemeColors(context).accent.withValues(alpha: 0.1),
-                   borderRadius: BorderRadius.circular(4),
-                 ),
-                 child: Text(
-                   'LOCAL',
-                   style: TextStyle(
-                                         fontWeight: FontWeight.w600,
-                     color: ThemeColors(context).accent,
-                   ),
-                 ),
-               ),
-           ],
-         ),
-         const SizedBox(height: SpacingTokens.sm),
-       ] else if (false) ...[
-         Text(
-           'Select a model to chat',
-           style: TextStyles.bodyMedium.copyWith(
-             color: theme.colorScheme.onSurfaceVariant,
-           ),
-         ),
-         const SizedBox(height: SpacingTokens.sm),
-       ],
-       
-       // Dropdown
-       DropdownButtonFormField<String>(
-         value: selectedModel?.id,
-         decoration: InputDecoration(
-           contentPadding: const EdgeInsets.symmetric(
-             horizontal: SpacingTokens.sm,
-             vertical: SpacingTokens.sm, // Increased from xs to sm for better text space
-           ),
-           border: OutlineInputBorder(
-             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-             borderSide: BorderSide(color: theme.colorScheme.outline),
-           ),
-           focusedBorder: OutlineInputBorder(
-             borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-             borderSide: BorderSide(color: ThemeColors(context).primary),
-           ),
-         ),
-         selectedItemBuilder: (context) {
-           return models.map<Widget>((model) {
-             return Container(
-               alignment: Alignment.centerLeft,
-               constraints: const BoxConstraints(minHeight: 40),
-               child: Text(
-                 model.name,
-                 style: TextStyles.bodyMedium.copyWith(
-                   color: theme.colorScheme.onSurface,
-                   fontWeight: FontWeight.w500,
-                 ),
-                 maxLines: 1,
-                 overflow: TextOverflow.ellipsis,
-               ),
-             );
-           }).toList();
-         },
-         hint: Text(
-           'Choose model...',
-           style: TextStyles.bodyMedium.copyWith(
-             color: theme.colorScheme.onSurfaceVariant,
-           ),
-         ),
-         isExpanded: true,
-         items: models.map((model) => DropdownMenuItem<String>(
-           value: model.id,
-           child: Container(
-             height: 56, // Increased height to prevent cramping
-             child: Row(
-               children: [
-                 Icon(
-                   model.isLocal ? Icons.computer : Icons.cloud,
-                   size: 16, // Slightly larger icon
-                   color: model.isLocal
-                       ? ThemeColors(context).accent
-                       : ThemeColors(context).primary,
-                 ),
-                 const SizedBox(width: SpacingTokens.sm), // Increased spacing
-                 Expanded(
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [
-                       Text(
-                         model.name,
-                         style: TextStyles.bodyMedium.copyWith(
-                           color: theme.colorScheme.onSurface,
-                           fontWeight: FontWeight.w500,
-                         ),
-                         maxLines: 1,
-                         overflow: TextOverflow.ellipsis,
-                       ),
-                       if (model.provider.isNotEmpty && !model.isLocal)
-                         Text(
-                           model.provider,
-                           style: TextStyles.bodySmall.copyWith(
-                             color: theme.colorScheme.onSurfaceVariant,
-                             fontSize: 11,
-                           ),
-                         ),
-                     ],
-                   ),
-                 ),
-                 
-                 const SizedBox(width: SpacingTokens.sm), // More space before badges
-                 
-                 // Status indicators row
-                 Row(
-                   mainAxisSize: MainAxisSize.min,
-                   children: [
-                     // Warm-up status indicator
-                     Consumer(
-                       builder: (context, ref, _) {
-                         final isReady = ref.watch(isModelReadyProvider(model.id));
-                         return Container(
-                           width: 8,
-                           height: 8,
-                           decoration: BoxDecoration(
-                             color: isReady 
-                               ? ThemeColors(context).success
-                               : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                             shape: BoxShape.circle,
-                           ),
-                         );
-                       },
-                     ),
-                     if (model.isLocal) ...[
-                       const SizedBox(width: SpacingTokens.sm),
-                       Container(
-                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                         decoration: BoxDecoration(
-                           color: ThemeColors(context).accent.withValues(alpha: 0.15),
-                           borderRadius: BorderRadius.circular(8),
-                         ),
-                         child: Text(
-                           'LOCAL',
-                           style: TextStyle(
-                             fontSize: 9,
-                             fontWeight: FontWeight.w600,
-                             color: ThemeColors(context).accent,
-                           ),
-                         ),
-                       ),
-                     ] else if (model.provider.isNotEmpty) ...[
-                       const SizedBox(width: SpacingTokens.sm),
-                       Container(
-                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                         decoration: BoxDecoration(
-                           color: ThemeColors(context).primary.withValues(alpha: 0.15),
-                           borderRadius: BorderRadius.circular(8),
-                         ),
-                         child: Text(
-                           model.provider.toUpperCase(),
-                           style: TextStyle(
-                             fontSize: 9,
-                             fontWeight: FontWeight.w600,
-                             color: ThemeColors(context).primary,
-                           ),
-                         ),
-                       ),
-                     ],
-                   ],
-                 ),
-               ],
-             ),
-           ),
-         )).toList(),
-         onChanged: (String? modelId) async {
-           final currentConversationId = ref.read(selectedConversationIdProvider);
-           if (modelId != null && currentConversationId != null) {
-             final service = ref.read(modelConfigServiceProvider);
-             final model = service.allModelConfigs[modelId];
-             if (model != null) {
-               // Create a new chat with the selected model
-               await _startNewChatWithModel(model);
-             }
-           }
-         },
-       ),
-     ],
-   );
- }
 
  Color _getConversationTypeColor(core.Conversation conversation, ThemeData theme) {
  final metadata = conversation.metadata;
@@ -794,8 +647,9 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  ),
  ),
  const SizedBox(width: SpacingTokens.componentSpacing),
+ // Collapse button removed - sidebars not used in minimal UI
  IconButton(
- onPressed: () => setState(() => isSidebarCollapsed = true),
+ onPressed: () {}, // No-op
  icon: const Icon(Icons.chevron_left, size: 20),
  style: IconButton.styleFrom(
  foregroundColor: theme.colorScheme.onSurfaceVariant,
@@ -815,12 +669,6 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  // Active Agent Context
  _buildActiveAgentContext(context),
  
- const SizedBox(height: SpacingTokens.sectionSpacing),
- 
- // Model Selection Section - Right below AI Assistant
- _buildModelSelector(context),
- 
- const SizedBox(height: SpacingTokens.sectionSpacing),
  
  // Agent Loader Section - Wrapped in Flexible to prevent overflow
  const AgentLoaderSection(),
@@ -846,24 +694,56 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
 
  Widget _buildChatArea(BuildContext context) {
  final theme = Theme.of(context);
+ final colors = ThemeColors(context);
+ final hasConversation = ref.watch(selectedConversationIdProvider) != null;
+
+ // Desktop OS-style interface with centered, window-like content
  return Container(
- decoration: const BoxDecoration(
- color: Colors.transparent,
+ decoration: BoxDecoration(
+ // Desktop wallpaper-like gradient background
+ gradient: RadialGradient(
+ center: Alignment.topCenter,
+ radius: 2.0,
+ colors: [
+ colors.backgroundGradientStart.withValues(alpha: 0.95),
+ colors.backgroundGradientMiddle.withValues(alpha: 0.98),
+ colors.backgroundGradientEnd,
+ ],
+ stops: const [0.0, 0.5, 1.0],
  ),
- child: Column(
+ ),
+ child: Stack(
  children: [
- // Chat Header - shows current conversation/agent
- _buildChatHeader(theme),
- 
- 
- // Messages Area or Empty State
- Expanded(
- child: _buildMessagesArea(context),
- ),
- 
-        // Contextual Input Area
-        _buildContextualInput(),
- /* Container(
+   Column(
+     children: [
+       // Minimal header (model selector only)
+       _buildChatHeader(theme),
+
+       // Main desktop workspace - centered content area
+       Expanded(
+         child: Center(
+           child: Container(
+             constraints: const BoxConstraints(maxWidth: 1200),
+             padding: const EdgeInsets.all(SpacingTokens.xxl),
+             child: hasConversation
+                 ? _buildConversationWindow(context)
+                 : _buildWelcomeDesktop(context),
+           ),
+         ),
+       ),
+     ],
+   ),
+
+   // Artifact workspace for interactive artifact windows
+   const ArtifactWorkspace(),
+
+   // Note: Floating dock removed - replaced by ChatTabBar + ChatStatusBar at top
+   ],
+   ),
+ );
+
+ /* Commented out old input area - now using ContextualInputArea
+ Container(
  padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
  child: Row(
  children: [
@@ -880,7 +760,7 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  if (event is KeyDownEvent) {
  final isEnterPressed = event.logicalKey == LogicalKeyboardKey.enter;
  final isShiftPressed = HardwareKeyboard.instance.isShiftPressed;
- 
+
  if (isEnterPressed && isShiftPressed) {
  // Shift+Enter: send message
  _sendMessage();
@@ -928,7 +808,7 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  onPressed: messageController.text.trim().isNotEmpty && !ref.watch(isLoadingProvider)
  ? _sendMessage
  : null,
- icon: ref.watch(isLoadingProvider) 
+ icon: ref.watch(isLoadingProvider)
  ? const SizedBox(
  width: 16,
  height: 16,
@@ -949,13 +829,11 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  ],
  ),
  */
- ],
- ),
- );
  }
 
  Widget _buildEmptyState(BuildContext context) {
  final theme = Theme.of(context);
+
  return Center(
  child: Container(
  constraints: const BoxConstraints(maxWidth: 400),
@@ -977,44 +855,212 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  color: theme.colorScheme.onSurfaceVariant,
  ),
  ),
- 
+
  const SizedBox(height: SpacingTokens.textSectionSpacing),
- 
- // Start a Conversation
+
  Text(
- 'LLM Chat',
+ 'Ready to chat',
  style: GoogleFonts.fustat(
   fontWeight: FontWeight.w600,
+  fontSize: 20,
  color: theme.colorScheme.onSurface,
  ),
  ),
- 
+
  const SizedBox(height: SpacingTokens.componentSpacing),
- 
- // Description
+
  Text(
- 'Chat with AI using any of your configured models.\nAdd context documents for better help, or load an agent\nfrom the sidebar for enhanced capabilities.',
+ 'Start typing in the input below to begin your conversation.',
  style: GoogleFonts.fustat(
   color: theme.colorScheme.onSurfaceVariant,
  height: 1.5,
  ),
  textAlign: TextAlign.center,
  ),
-
- const SizedBox(height: SpacingTokens.sectionSpacing),
-
- // Start New Chat Button
- AsmblButton.primary(
-   text: 'Start New Chat',
-   icon: Icons.chat_bubble_outline,
-   onPressed: () async {
-     await _startNewDirectChat();
-   },
- ),
  ],
  ),
  ),
  );
+ }
+
+ /// Simple "ready to chat" state for when a conversation is already open but has no messages
+ /// This is different from _buildEmptyConversationState which shows the full type selector
+ Widget _buildReadyToChatState(BuildContext context) {
+   final colors = ThemeColors(context);
+   final selectedModel = ref.watch(selectedModelProvider);
+
+   return Center(
+     child: Container(
+       constraints: const BoxConstraints(maxWidth: 500),
+       padding: const EdgeInsets.all(SpacingTokens.xxl),
+       child: Column(
+         mainAxisAlignment: MainAxisAlignment.center,
+         children: [
+           // Icon with gradient background
+           Container(
+             width: 80,
+             height: 80,
+             decoration: BoxDecoration(
+               gradient: LinearGradient(
+                 begin: Alignment.topLeft,
+                 end: Alignment.bottomRight,
+                 colors: [
+                   colors.primary.withValues(alpha: 0.15),
+                   colors.accent.withValues(alpha: 0.15),
+                 ],
+               ),
+               borderRadius: BorderRadius.circular(20),
+             ),
+             child: Icon(
+               Icons.chat_bubble_outline,
+               size: 40,
+               color: colors.primary,
+             ),
+           ),
+
+           const SizedBox(height: SpacingTokens.xl),
+
+           Text(
+             'Ready to Chat',
+             style: GoogleFonts.fustat(
+               fontWeight: FontWeight.w600,
+               fontSize: 24,
+               color: colors.onSurface,
+             ),
+           ),
+
+           const SizedBox(height: SpacingTokens.md),
+
+           // Show the current model
+           if (selectedModel != null)
+             Container(
+               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+               decoration: BoxDecoration(
+                 color: selectedModel.isLocal
+                     ? colors.success.withValues(alpha: 0.1)
+                     : colors.accent.withValues(alpha: 0.1),
+                 borderRadius: BorderRadius.circular(20),
+                 border: Border.all(
+                   color: selectedModel.isLocal
+                       ? colors.success.withValues(alpha: 0.3)
+                       : colors.accent.withValues(alpha: 0.3),
+                 ),
+               ),
+               child: Row(
+                 mainAxisSize: MainAxisSize.min,
+                 children: [
+                   Container(
+                     width: 8,
+                     height: 8,
+                     decoration: BoxDecoration(
+                       color: selectedModel.isLocal ? colors.success : colors.accent,
+                       shape: BoxShape.circle,
+                     ),
+                   ),
+                   const SizedBox(width: 8),
+                   Text(
+                     selectedModel.name,
+                     style: GoogleFonts.fustat(
+                       fontSize: 14,
+                       fontWeight: FontWeight.w500,
+                       color: selectedModel.isLocal ? colors.success : colors.accent,
+                     ),
+                   ),
+                   if (selectedModel.isLocal) ...[
+                     const SizedBox(width: 8),
+                     Text(
+                       'Local',
+                       style: GoogleFonts.fustat(
+                         fontSize: 12,
+                         color: colors.success,
+                       ),
+                     ),
+                   ],
+                 ],
+               ),
+             ),
+
+           const SizedBox(height: SpacingTokens.lg),
+
+           Text(
+             'Type your message below to start the conversation',
+             style: GoogleFonts.fustat(
+               color: colors.onSurfaceVariant,
+               fontSize: 14,
+               height: 1.5,
+             ),
+             textAlign: TextAlign.center,
+           ),
+
+           const SizedBox(height: SpacingTokens.md),
+
+           // Keyboard shortcut hint
+           Row(
+             mainAxisAlignment: MainAxisAlignment.center,
+             children: [
+               Icon(Icons.keyboard, size: 14, color: colors.onSurfaceVariant.withValues(alpha: 0.5)),
+               const SizedBox(width: 6),
+               Text(
+                 'Shift+Enter to send',
+                 style: GoogleFonts.fustat(
+                   fontSize: 12,
+                   color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+                 ),
+               ),
+             ],
+           ),
+         ],
+       ),
+     ),
+   );
+ }
+
+ /// Desktop-style conversation window with frosted glass effect
+ Widget _buildConversationWindow(BuildContext context) {
+ final colors = ThemeColors(context);
+
+ return Container(
+ decoration: BoxDecoration(
+ color: colors.surface.withValues(alpha: 0.7),
+ borderRadius: BorderRadius.circular(16),
+ border: Border.all(
+ color: colors.border.withValues(alpha: 0.2),
+ width: 1,
+ ),
+ boxShadow: [
+ BoxShadow(
+ color: Colors.black.withValues(alpha: 0.1),
+ blurRadius: 24,
+ offset: const Offset(0, 8),
+ spreadRadius: 0,
+ ),
+ ],
+ ),
+ child: ClipRRect(
+ borderRadius: BorderRadius.circular(16),
+ child: BackdropFilter(
+ filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+ child: Column(
+ children: [
+ // Messages area
+ Expanded(
+ child: _buildMessagesArea(context),
+ ),
+
+ // Input area at bottom
+ _buildContextualInput(),
+ ],
+ ),
+ ),
+ ),
+ );
+ }
+
+
+ /// Welcome screen for desktop - shown when no conversation
+ Widget _buildWelcomeDesktop(BuildContext context) {
+   // Use the same ConversationStarter as the empty state
+   return _buildEmptyConversationState(context);
  }
 
  Widget _buildMessagesArea(BuildContext context) {
@@ -1029,11 +1075,13 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  
  Widget _buildMessagesList(BuildContext context, String conversationId) {
  final messagesAsync = ref.watch(messagesProvider(conversationId));
- 
+
  return messagesAsync.when(
  data: (messages) {
  if (messages.isEmpty) {
- return _buildEmptyConversationState(context);
+ // Conversation is already selected - show simple "ready to chat" state
+ // not the full conversation type selector
+ return _buildReadyToChatState(context);
  }
  
  final theme = Theme.of(context);
@@ -1051,7 +1099,12 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  
  if (isAgentConversation) {
  return Container(
- margin: const EdgeInsets.symmetric(vertical: 8),
+ margin: const EdgeInsets.only(
+                    top: SpacingTokens.lg,
+                    bottom: SpacingTokens.lg,
+                    left: SpacingTokens.md,
+                    right: SpacingTokens.md,
+                  ),
  child: const StreamingMessageWidget(
  messageId: 'streaming-temp',
  role: 'assistant',
@@ -1071,7 +1124,12 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
  // Use streaming widget for assistant messages with MCP data
  if (!isUser && hasStreamingData) {
  return Container(
- margin: const EdgeInsets.symmetric(vertical: 8),
+ margin: const EdgeInsets.only(
+                    top: SpacingTokens.lg,
+                    bottom: SpacingTokens.lg,
+                    left: SpacingTokens.md,
+                    right: SpacingTokens.md,
+                  ),
  child: StreamingMessageWidget(
  messageId: message.id,
  role: 'assistant',
@@ -1081,7 +1139,12 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
 
  // Standard message display for simple messages
  return Container(
- margin: const EdgeInsets.symmetric(vertical: 8),
+ margin: const EdgeInsets.only(
+                    top: SpacingTokens.lg,
+                    bottom: SpacingTokens.lg,
+                    left: SpacingTokens.md,
+                    right: SpacingTokens.md,
+                  ),
  child: Row(
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
@@ -1591,47 +1654,131 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
    }
  }
 
+ /// Handle conversation start from ConversationStarter widget
+ Future<void> _handleConversationStart(ModelConfig model, ConversationType type) async {
+   try {
+     // Set the selected model
+     ref.read(selectedModelProvider.notifier).state = model;
+
+     // Create new conversation with type metadata
+     final businessService = ref.read(conversationBusinessServiceProvider);
+     final result = await businessService.createConversation(
+       title: 'Chat with ${model.name}',
+       agentId: null,
+       metadata: {
+         'type': type.name,
+         'modelId': model.id,
+         'modelName': model.name,
+       },
+     );
+
+     if (!result.isSuccess || result.data == null) {
+       throw Exception(result.error ?? 'Failed to create conversation');
+     }
+
+     final conversationId = result.data!.id;
+
+     // Set as active conversation
+     ref.read(selectedConversationIdProvider.notifier).state = conversationId;
+     ref.read(activeConversationTabProvider.notifier).state = conversationId;
+     ref.read(openConversationTabsProvider.notifier).openTab(conversationId);
+
+     debugPrint('✅ Started ${type.name} conversation with ${model.name}');
+   } catch (e) {
+     FloatingNotification.error(
+       context,
+       'Failed to start conversation: $e',
+     );
+   }
+ }
+
  void _sendMessage() async {
- final selectedConversationId = ref.read(selectedConversationIdProvider);
- if (messageController.text.trim().isEmpty || 
- ref.read(isLoadingProvider) || 
- selectedConversationId == null) {
+ if (messageController.text.trim().isEmpty || ref.read(isLoadingProvider)) {
    return;
+ }
+
+ var selectedConversationId = ref.read(selectedConversationIdProvider);
+
+ // If no conversation is selected, create a new one automatically
+ if (selectedConversationId == null) {
+   debugPrint('📝 No conversation selected, creating new chat automatically...');
+   final selectedModel = ref.read(selectedModelProvider) ?? ref.read(defaultModelConfigProvider);
+
+   if (selectedModel == null) {
+     FloatingNotification.warning(
+       context,
+       'Please configure at least one AI model in Settings',
+     );
+     return;
+   }
+
+   try {
+     // Create a new direct conversation
+     final conversationService = ref.read(conversationServiceProvider);
+     final newConversation = core.Conversation(
+       id: DateTime.now().millisecondsSinceEpoch.toString(),
+       title: 'Chat with ${selectedModel.name}',
+       messages: [],
+       createdAt: DateTime.now(),
+       lastModified: DateTime.now(),
+       metadata: {
+         'model_id': selectedModel.id,
+         'model_name': selectedModel.name,
+         'model_type': selectedModel.isLocal ? 'local' : 'api',
+         'created_from': 'auto_on_send',
+         'type': 'direct',
+       },
+     );
+
+     await conversationService.createConversation(newConversation);
+     ref.invalidate(conversationsProvider);
+     ref.read(selectedConversationIdProvider.notifier).state = newConversation.id;
+     selectedConversationId = newConversation.id;
+
+     debugPrint('✅ Auto-created conversation: ${newConversation.id}');
+   } catch (e) {
+     FloatingNotification.error(
+       context,
+       'Failed to create conversation: $e',
+     );
+     return;
+   }
  }
 
  try {
  ref.read(isLoadingProvider.notifier).state = true;
- 
- // Ensure conversation is primed before sending message
- final conversationModel = ref.read(conversationModelProvider(selectedConversationId)) 
-     ?? ref.read(selectedModelProvider);
- 
- if (conversationModel != null) {
-   final ensurePrimed = ref.read(ensureConversationPrimedProvider);
-   await ensurePrimed(selectedConversationId, conversationModel.id);
- }
- 
+
+ // Note: Conversation priming is handled by business service during creation
+ // Removed ensureConversationPrimedProvider call to prevent widget disposal issues
+
  final sendMessage = ref.read(sendMessageProvider);
  await sendMessage(
  conversationId: selectedConversationId,
  content: messageController.text.trim(),
  );
- 
+
  final messageContent = messageController.text.trim();
  messageController.clear();
- 
+
  // Get conversation details to check if it's an agent conversation
  final conversation = await ref.read(conversationProvider(selectedConversationId).future);
  final isAgentConversation = conversation.metadata?['type'] == 'agent';
- 
- if (isAgentConversation) {
- // Simple direct response for agent conversations (bypass MCP for now)
- await _handleAgentDirectResponse(selectedConversationId, messageContent, conversation);
+
+ // Check if DSPy mode is enabled (default: true)
+ final useDspy = ref.read(dspyModeEnabledProvider);
+
+ if (useDspy) {
+   // Use DSPy backend for all AI responses (recommended)
+   debugPrint('🧠 Using DSPy backend for response...');
+   await _handleDspyResponse(selectedConversationId, messageContent);
+ } else if (isAgentConversation) {
+   // Legacy: Simple direct response for agent conversations
+   await _handleAgentDirectResponse(selectedConversationId, messageContent, conversation);
  } else {
- // Standard API response for non-agent conversations
- await _handleStandardResponse(selectedConversationId);
+   // Legacy: Standard API response for non-agent conversations
+   await _handleStandardResponse(selectedConversationId);
  }
- 
+
  } catch (e) {
  if (mounted) {
  FloatingNotification.error(
@@ -1651,66 +1798,102 @@ class _ChatScreenWithContextualState extends ConsumerState<ChatScreenWithContext
   await _handleStandardResponse(conversationId);
 }
 
-Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationId, String userMessage, core.Conversation conversation) async {
- try {
- // Create streaming message with MCP metadata
- final streamingMessage = core.Message(
- id: DateTime.now().millisecondsSinceEpoch.toString(),
- content: '',
- role: core.MessageRole.assistant,
- timestamp: DateTime.now(),
- metadata: {
- 'streaming': true,
- 'processingStatus': 'initializing',
- 'mcpInteractions': <Map<String, dynamic>>[],
- 'toolResults': <Map<String, dynamic>>[],
- },
- );
+/// Handle response using DSPy backend
+/// This is the new unified AI backend that replaces 50+ fragmented services
+Future<void> _handleDspyResponse(String conversationId, String userMessage) async {
+  try {
+    // Check if DSPy backend is connected
+    final dspyService = ref.read(dspyServiceProvider);
+    final isConnected = ref.read(dspyIsConnectedProvider);
 
- final service = ref.read(conversationServiceProvider);
- await service.addMessage(conversationId, streamingMessage);
- ref.invalidate(messagesProvider(conversationId));
+    if (!isConnected) {
+      // Try to connect
+      final connected = await dspyService.connect();
+      if (!connected) {
+        throw Exception('DSPy backend is not running. Please start it with: cd dspy-backend && ./run.sh');
+      }
+    }
 
- // Process message through MCP bridge
- final enabledServers = (conversation.metadata?['mcpServers'] as List<dynamic>?)
- ?.map((server) => server['id'] as String)
- .toList() ?? <String>[];
- 
- final response = await mcpBridge.processMessage(
- conversationId: conversationId,
- message: userMessage,
- enabledServerIds: enabledServers,
- conversationMetadata: conversation.metadata,
- );
+    // Use DSPy conversation service for AI response
+    final dspyConversation = ref.read(dspyConversationServiceProvider);
 
- // Update message with final content and MCP interaction data
- print('DEBUG: MCP response content: "${response.response}"');
- print('DEBUG: MCP response length: ${response.response.length}');
- 
- final finalMessage = core.Message(
- id: streamingMessage.id,
- content: response.response,
- role: core.MessageRole.assistant,
- timestamp: streamingMessage.timestamp,
- metadata: {
- 'streaming': false,
- 'processingStatus': 'completed',
- 'mcpInteractions': response.metadata['interactions'] ?? [],
- 'toolResults': response.metadata['toolResults'] ?? [],
- 'executionTime': response.latency,
- 'mcpServersUsed': response.usedServers,
- },
- );
+    final response = await dspyConversation.processMessage(
+      conversationId: conversationId,
+      content: userMessage,
+    );
 
- await service.addMessage(conversationId, finalMessage);
- ref.invalidate(messagesProvider(conversationId));
+    // The DSPy conversation service handles saving messages,
+    // just refresh the UI
+    ref.invalidate(messagesProvider(conversationId));
 
- } catch (e) {
- print('MCP response error: $e');
- // Fallback to standard response
- await _handleStandardResponse(conversationId);
- }
- }
+    debugPrint('✅ DSPy response received: ${response.content.substring(0, response.content.length.clamp(0, 100))}...');
+
+  } catch (e) {
+    debugPrint('❌ DSPy response failed: $e');
+    rethrow;
+  }
+}
+
+// Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationId, String userMessage, core.Conversation conversation) async {
+//  try {
+//  // Create streaming message with MCP metadata
+//  final streamingMessage = core.Message(
+//  id: DateTime.now().millisecondsSinceEpoch.toString(),
+//  content: '',
+//  role: core.MessageRole.assistant,
+//  timestamp: DateTime.now(),
+//  metadata: {
+//  'streaming': true,
+//  'processingStatus': 'initializing',
+//  'mcpInteractions': <Map<String, dynamic>>[],
+//  'toolResults': <Map<String, dynamic>>[],
+//  },
+//  );
+// 
+//  final service = ref.read(conversationServiceProvider);
+//  await service.addMessage(conversationId, streamingMessage);
+//  ref.invalidate(messagesProvider(conversationId));
+// 
+//  // Process message through MCP bridge
+//  final enabledServers = (conversation.metadata?['mcpServers'] as List<dynamic>?)
+//  ?.map((server) => server['id'] as String)
+//  .toList() ?? <String>[];
+//  
+//  final response = await mcpBridge.processMessage(
+//  conversationId: conversationId,
+//  message: userMessage,
+//  enabledServerIds: enabledServers,
+//  conversationMetadata: conversation.metadata,
+//  );
+// 
+//  // Update message with final content and MCP interaction data
+//  print('DEBUG: MCP response content: "${response.response}"');
+//  print('DEBUG: MCP response length: ${response.response.length}');
+//  
+//  final finalMessage = core.Message(
+//  id: streamingMessage.id,
+//  content: response.response,
+//  role: core.MessageRole.assistant,
+//  timestamp: streamingMessage.timestamp,
+//  metadata: {
+//  'streaming': false,
+//  'processingStatus': 'completed',
+//  'mcpInteractions': response.metadata['interactions'] ?? [],
+//  'toolResults': response.metadata['toolResults'] ?? [],
+//  'executionTime': response.latency,
+//  'mcpServersUsed': response.usedServers,
+//  },
+//  );
+// 
+//  await service.addMessage(conversationId, finalMessage);
+//  ref.invalidate(messagesProvider(conversationId));
+// 
+//  } catch (e) {
+//  print('MCP response error: $e');
+//  // Fallback to standard response
+//  await _handleStandardResponse(conversationId);
+//  }
+//  }
 
  Future<void> _handleStandardResponse(String conversationId) async {
  try {
@@ -1809,53 +1992,53 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  },
  );
 
- // For non-agent conversations with global MCP servers, try to use MCP bridge
- if (globalMcpServers.isNotEmpty) {
-   print('🔗 Standard conversation using global MCP servers: $globalMcpServers');
-   try {
-     final mcpBridge = MCPBridgeService(mcpService);
-     final mcpResponse = await mcpBridge.processMessage(
-       conversationId: conversationId,
-       message: userMessage,
-       enabledServerIds: globalMcpServers,
-       conversationMetadata: {
-         ...conversation.metadata ?? {},
-         'mcpServers': globalMcpServers.map((id) => {'id': id}).toList(),
-         'contextDocuments': globalContextDocs,
-         'type': 'standard_with_mcp',
-       },
-     );
-     
-     // Create assistant message with MCP response
-     final assistantMessage = core.Message(
-       id: DateTime.now().millisecondsSinceEpoch.toString(),
-       content: mcpResponse.response,
-       role: core.MessageRole.assistant,
-       timestamp: DateTime.now(),
-       metadata: {
-         'modelUsed': selectedModel.id,
-         'responseType': 'mcp_enhanced',
-         'mcpServersUsed': globalMcpServers,
-         'mcpServersActuallyUsed': mcpResponse.usedServers,
-         'hasGlobalContext': globalContextDocs.isNotEmpty,
-         'mcpLatency': mcpResponse.latency,
-         'mcpMetadata': mcpResponse.metadata,
-       },
-     );
-     
-     await service.addMessage(conversationId, assistantMessage);
-     
-     // Update conversation priming status to success since message worked
-     await _updateConversationPrimingAfterSuccess(conversationId, selectedModel);
-     
-     ref.invalidate(messagesProvider(conversationId));
-     return;
-     
-   } catch (mcpError) {
-     print('⚠️ MCP processing failed for standard conversation, falling back to direct LLM: $mcpError');
-     // Fall through to direct LLM call
-   }
- }
+  //  // For non-agent conversations with global MCP servers, try to use MCP bridge
+  //  if (globalMcpServers.isNotEmpty) {
+  //    print('🔗 Standard conversation using global MCP servers: $globalMcpServers');
+  //    try {
+  //      final mcpBridge = MCPBridgeService(mcpService);
+  //      final mcpResponse = await mcpBridge.processMessage(
+  //        conversationId: conversationId,
+  //        message: userMessage,
+  //        enabledServerIds: globalMcpServers,
+  //        conversationMetadata: {
+  //          ...conversation.metadata ?? {},
+  //          'mcpServers': globalMcpServers.map((id) => {'id': id}).toList(),
+  //          'contextDocuments': globalContextDocs,
+  //          'type': 'standard_with_mcp',
+  //        },
+  //      );
+  //      
+  //      // Create assistant message with MCP response
+  //      final assistantMessage = core.Message(
+  //        id: DateTime.now().millisecondsSinceEpoch.toString(),
+  //        content: mcpResponse.response,
+  //        role: core.MessageRole.assistant,
+  //        timestamp: DateTime.now(),
+  //        metadata: {
+  //          'modelUsed': selectedModel.id,
+  //          'responseType': 'mcp_enhanced',
+  //          'mcpServersUsed': globalMcpServers,
+  //          'mcpServersActuallyUsed': mcpResponse.usedServers,
+  //          'hasGlobalContext': globalContextDocs.isNotEmpty,
+  //          'mcpLatency': mcpResponse.latency,
+  //          'mcpMetadata': mcpResponse.metadata,
+  //        },
+  //      );
+  //      
+  //      await service.addMessage(conversationId, assistantMessage);
+  //      
+  //      // Update conversation priming status to success since message worked
+  //      await _updateConversationPrimingAfterSuccess(conversationId, selectedModel);
+  //      
+  //      ref.invalidate(messagesProvider(conversationId));
+  //      return;
+  //      
+  //    } catch (mcpError) {
+  //      print('⚠️ MCP processing failed for standard conversation, falling back to direct LLM: $mcpError');
+  //      // Fall through to direct LLM call
+  //    }
+  //  }
 
  // Direct LLM call (fallback or when no global MCP servers)
  final response = await unifiedLLMService.chat(
@@ -1914,48 +2097,18 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  }
 
  Widget _buildEmptyConversationState(BuildContext context) {
- final theme = Theme.of(context);
- return Center(
- child: Container(
- constraints: const BoxConstraints(maxWidth: 400),
- child: Column(
- mainAxisAlignment: MainAxisAlignment.center,
- children: [
- Container(
- width: 64,
- height: 64,
- decoration: BoxDecoration(
- color: theme.colorScheme.surfaceContainerHighest,
- borderRadius: BorderRadius.circular(16),
- border: Border.all(color: theme.colorScheme.outline),
- ),
- child: Icon(
- Icons.chat_bubble_outline,
- size: 32,
- color: theme.colorScheme.onSurfaceVariant,
- ),
- ),
- const SizedBox(height: SpacingTokens.textSectionSpacing),
- Text(
- 'Let\'s Talk',
- style: GoogleFonts.fustat(
-  fontWeight: FontWeight.w600,
- color: theme.colorScheme.onSurface,
- ),
- ),
- const SizedBox(height: SpacingTokens.componentSpacing),
- Text(
- 'Type a message below to begin this conversation.',
- style: GoogleFonts.fustat(
-  color: theme.colorScheme.onSurfaceVariant,
- height: 1.5,
- ),
- textAlign: TextAlign.center,
- ),
- ],
- ),
- ),
- );
+   final modelConfigService = ref.watch(modelConfigServiceProvider);
+   final availableModels = modelConfigService.allModelConfigs.values
+       .where((m) => m.status == ModelStatus.ready)
+       .toList();
+   final selectedModel = ref.watch(selectedModelProvider);
+
+   return ConversationStarter(
+     availableModels: availableModels,
+     selectedModel: selectedModel,
+     onStart: (model, type) => _handleConversationStart(model, type),
+     onAgentSelect: () => context.go(AppRoutes.agents),
+   );
  }
  
  String _formatTime(DateTime time) {
@@ -1971,25 +2124,15 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  if (agentType == 'agent' && agentName != null && agentName.isNotEmpty) {
  return agentName;
  }
- 
- // For non-agent conversations, use the conversation title if it's meaningful
- if (conversation.title.isNotEmpty && 
- conversation.title != 'Let\'s Talk' && 
- conversation.title != 'New Chat' &&
- !conversation.title.startsWith('New Conversation')) {
- return conversation.title;
+
+ // For non-agent conversations, show the currently selected model
+ final selectedModel = ref.watch(selectedModelProvider);
+ if (selectedModel != null) {
+ return 'Chat with ${selectedModel.name}';
  }
- 
- // Fallback based on conversation type
- switch (agentType) {
- case 'agent':
- return agentName ?? 'Agent Assistant';
- case 'default_api':
- case 'direct_chat':
- return 'AI Assistant';
- default:
+
+ // Fallback if no model selected
  return 'Chat Session';
- }
  }
 
  /// Get description for conversation based on its type and current model
@@ -2012,70 +2155,6 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  return 'Chat Session';
  }
  }
-
-
-/// Build priming status indicator for conversation
-Widget _buildPrimingStatusIndicator(BuildContext context, core.Conversation conversation) {
- final primingStatus = ref.watch(conversationPrimingStatusProvider(conversation.id));
- final theme = Theme.of(context);
- 
- if (primingStatus == null) return Container();
- 
- final isPrimed = primingStatus['isPrimed'] as bool? ?? false;
- final primingAttempted = primingStatus['primingAttempted'] as bool? ?? false;
- final primingError = primingStatus['primingError'] as String?;
- 
- Color indicatorColor;
- String statusText;
- IconData statusIcon;
- 
- if (isPrimed) {
-   indicatorColor = ThemeColors(context).success;
-   statusText = 'PRIMED';
-   statusIcon = Icons.check_circle;
- } else if (primingError != null) {
-   indicatorColor = ThemeColors(context).error;
-   statusText = 'ERROR';
-   statusIcon = Icons.error;
- } else if (primingAttempted) {
-   indicatorColor = theme.colorScheme.onSurfaceVariant;
-   statusText = 'FAILED';
-   statusIcon = Icons.warning;
- } else {
-   indicatorColor = theme.colorScheme.onSurfaceVariant;
-   statusText = 'NOT PRIMED';
-   statusIcon = Icons.schedule;
- }
- 
- return Container(
-   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-   decoration: BoxDecoration(
-     color: indicatorColor.withValues(alpha: 0.1),
-     borderRadius: BorderRadius.circular(8),
-     border: Border.all(
-       color: indicatorColor.withValues(alpha: 0.3),
-     ),
-   ),
-   child: Row(
-     mainAxisSize: MainAxisSize.min,
-     children: [
-       Icon(
-         statusIcon,
-         size: 10,
-         color: indicatorColor,
-       ),
-       const SizedBox(width: 4),
-       Text(
-         statusText,
-         style: GoogleFonts.fustat(
-                     fontWeight: FontWeight.w600,
-           color: indicatorColor,
-         ),
-       ),
-     ],
-   ),
- );
-}
 
 /// Update conversation priming status to success after message works
 Future<void> _updateConversationPrimingAfterSuccess(String conversationId, ModelConfig model) async {

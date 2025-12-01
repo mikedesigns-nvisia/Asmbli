@@ -57,13 +57,14 @@
       "Bash(flutter run:*)",
       "Bash(where uvx)",
       "Bash(dart analyze:*)",
-      "Bash(flutter packages pub run build_runner build:*)"
+      "Bash(flutter packages pub run build_runner build:*)",
+      "Bash(pkill:*)"
     ],
     "deny": [],
+    "ask": [],
     "defaultMode": "acceptEdits",
     "additionalDirectories": [
       "C:\\c"
-    ],
-    "ask": []
+    ]
   }
 }

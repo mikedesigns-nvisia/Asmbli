@@ -1,10 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:agent_engine_core/models/agent.dart';
-import 'lib/core/services/mcp_integration_provider.dart';
-import 'lib/core/services/agent_mcp_configuration_service.dart';
-import 'lib/core/services/dynamic_mcp_server_manager.dart';
-import 'lib/core/services/mcp_catalog_service.dart';
 import 'lib/core/services/llm_tool_call_parser.dart';
 import 'lib/core/services/desktop/desktop_storage_service.dart';
 

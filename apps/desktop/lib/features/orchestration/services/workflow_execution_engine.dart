@@ -4,17 +4,21 @@ import '../models/reasoning_workflow.dart';
 import '../models/logic_block.dart';
 import '../models/canvas_state.dart';
 import 'reasoning_llm_service.dart';
+import '../../human_verification/services/human_verification_service.dart';
 
 /// Execution engine for reasoning workflows
 /// Orchestrates the execution of visual reasoning flows
 class WorkflowExecutionEngine {
   final ReasoningLLMService _reasoningService;
+  final HumanVerificationService _verificationService;
   final StreamController<ExecutionEvent> _eventController = StreamController.broadcast();
   
-  WorkflowExecutionEngine(this._reasoningService);
+  WorkflowExecutionEngine(this._reasoningService, this._verificationService);
   
   /// Stream of execution events for real-time monitoring
   Stream<ExecutionEvent> get executionEvents => _eventController.stream;
+  
+  // Removed submitHumanVerification as it is now handled by HumanVerificationService
   
   /// Execute a complete reasoning workflow
   Future<WorkflowExecutionResult> executeWorkflow(
@@ -152,9 +156,60 @@ class WorkflowExecutionEngine {
         
       case LogicBlockType.exit:
         return _executeExitBlock(block, state);
+
+      case LogicBlockType.humanVerification:
+        return _executeHumanVerificationBlock(block, state);
         
       default:
         throw UnsupportedError('Block type ${block.type} not supported');
+    }
+  }
+  
+  Future<BlockExecutionResult> _executeHumanVerificationBlock(
+    LogicBlock block,
+    WorkflowExecutionState state,
+  ) async {
+    final description = block.properties['description'] as String? ?? 'Verification required';
+    final timeoutSeconds = block.properties['timeout'] as int? ?? 300; // 5 minutes default
+    
+    _emitEvent(ExecutionEvent.humanVerificationRequired(
+      state.executionId, 
+      block.id, 
+      description,
+      state.currentContext,
+    ));
+    
+    try {
+      final result = await _verificationService.requestVerification(
+        source: 'Workflow: ${state.workflowId}',
+        title: block.label,
+        description: description,
+        data: state.currentContext,
+        timeout: Duration(seconds: timeoutSeconds),
+      );
+      
+      return BlockExecutionResult(
+        blockId: block.id,
+        blockType: block.type,
+        output: result.approved ? 'Approved' : 'Rejected',
+        confidence: 1.0,
+        reasoning: result.feedback ?? (result.approved ? 'User approved verification' : 'User rejected verification'),
+        isSuccessful: result.approved,
+        contextUpdates: {
+          'verification_approved': result.approved,
+          'verification_feedback': result.feedback,
+          'verification_timestamp': result.timestamp.toIso8601String(),
+        },
+      );
+    } catch (e) {
+      return BlockExecutionResult(
+        blockId: block.id,
+        blockType: block.type,
+        output: 'Error',
+        confidence: 0.0,
+        reasoning: 'Verification failed: $e',
+        isSuccessful: false,
+      );
     }
   }
   
@@ -597,6 +652,7 @@ abstract class ExecutionEvent {
   factory ExecutionEvent.blockCompleted(String executionId, String blockId, bool successful, double confidence) = _BlockCompleted;
   factory ExecutionEvent.blockError(String executionId, String blockId, String error) = _BlockError;
   factory ExecutionEvent.earlyTermination(String executionId, String blockId, String reason) = _EarlyTermination;
+  factory ExecutionEvent.humanVerificationRequired(String executionId, String blockId, String description, Map<String, dynamic> context) = _HumanVerificationRequired;
 }
 
 /// Execution started event
@@ -685,6 +741,13 @@ class _EarlyTermination extends ExecutionEvent {
   final String blockId;
   final String reason;
   _EarlyTermination(String executionId, this.blockId, this.reason) : super(executionId, DateTime.now());
+}
+
+class _HumanVerificationRequired extends ExecutionEvent {
+  final String blockId;
+  final String description;
+  final Map<String, dynamic> context;
+  _HumanVerificationRequired(String executionId, this.blockId, this.description, this.context) : super(executionId, DateTime.now());
 }
 
 /// Exception thrown during workflow execution

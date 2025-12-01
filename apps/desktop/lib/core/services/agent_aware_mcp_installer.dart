@@ -4,7 +4,7 @@ import 'package:agent_engine_core/models/agent.dart';
 import 'package:agent_engine_core/services/agent_service.dart';
 import '../models/mcp_catalog_entry.dart';
 import 'mcp_installation_service.dart';
-import 'agent_mcp_configuration_service.dart';
+import 'agent_mcp_service.dart';
 import 'desktop/desktop_agent_service.dart';
 import 'production_logger.dart';
 import '../di/service_locator.dart';
@@ -12,7 +12,7 @@ import '../di/service_locator.dart';
 /// Provider for the agent-aware MCP installer
 final agentAwareMCPInstallerProvider = Provider<AgentAwareMCPInstaller>((ref) {
   final mcpInstallationService = ref.read(mcpInstallationServiceProvider);
-  final agentMCPConfigService = ref.read(agentMCPConfigurationServiceProvider);
+  final agentMCPConfigService = ref.read(agentMCPServiceProvider);
   final agentService = ref.read(agentServiceProvider);
 
   return AgentAwareMCPInstaller(
@@ -83,7 +83,7 @@ class AgentMCPInstallationConfig {
 /// Service for installing MCP servers and linking them to specific agents
 class AgentAwareMCPInstaller {
   final MCPInstallationService _installationService;
-  final AgentMCPConfigurationService _configurationService;
+  final AgentMCPService _configurationService;
   final DesktopAgentService _agentService;
 
   // Stream controllers for real-time progress updates
@@ -333,8 +333,8 @@ final mcpInstallationServiceProvider = Provider<MCPInstallationService>((ref) {
   return ServiceLocator.instance.get<MCPInstallationService>();
 });
 
-final agentMCPConfigurationServiceProvider = Provider<AgentMCPConfigurationService>((ref) {
-  return ServiceLocator.instance.get<AgentMCPConfigurationService>();
+final agentMCPConfigurationServiceProvider = Provider<AgentMCPService>((ref) {
+  return ServiceLocator.instance.get<AgentMCPService>();
 });
 
 final agentServiceProvider = Provider<DesktopAgentService>((ref) {

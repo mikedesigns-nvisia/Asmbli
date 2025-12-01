@@ -223,6 +223,8 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
         return _buildTraceProperties(colors, block);
       case LogicBlockType.exit:
         return _buildExitProperties(colors, block);
+      case LogicBlockType.humanVerification:
+        return _buildHumanVerificationProperties(colors, block);
     }
   }
 
@@ -751,6 +753,8 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
         return Icons.timeline;
       case LogicBlockType.exit:
         return Icons.check_circle;
+      case LogicBlockType.humanVerification:
+        return Icons.verified_user;
     }
   }
 
@@ -770,6 +774,8 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
         return 'Log execution for debugging';
       case LogicBlockType.exit:
         return 'Evaluate completion and quality';
+      case LogicBlockType.humanVerification:
+        return 'Request human approval or verification';
     }
   }
 
@@ -992,6 +998,42 @@ class _PropertiesPanelState extends ConsumerState<PropertiesPanel> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildHumanVerificationProperties(ThemeColors colors, LogicBlock block) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Human Verification',
+          style: TextStyles.bodyMedium.copyWith(
+            color: colors.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: SpacingTokens.sm),
+
+        _buildTextField(
+          label: 'Verification Message',
+          value: block.properties['verificationMessage'] as String? ?? '',
+          onChanged: (value) => _updateBlockProperty(block.id, 'verificationMessage', value),
+          colors: colors,
+          maxLines: 3,
+        ),
+
+        _buildDropdownField(
+          label: 'Verification Type',
+          value: block.properties['verificationType'] as String? ?? 'approval',
+          options: const [
+            ('approval', 'Simple Approval'),
+            ('review', 'Review and Modify'),
+            ('validation', 'Validation Check'),
+          ],
+          onChanged: (value) => _updateBlockProperty(block.id, 'verificationType', value),
+          colors: colors,
+        ),
+      ],
     );
   }
 

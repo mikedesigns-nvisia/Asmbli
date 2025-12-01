@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/mcp_server.dart';
-import '../../../../core/services/mcp_conversation_bridge_service.dart';
+// import '../../../../core/services/mcp_conversation_bridge_service.dart'; // Removed - deprecated
 import '../../business/tools_service.dart';
 import 'tools_provider.dart';
 
@@ -8,14 +8,14 @@ import 'tools_provider.dart';
 class SimpleExecutionState {
   final List<AgentConnection> agentConnections;
   final List<MCPServer> installedServers;
-  final List<MCPConversationSession> activeSessions;
+  // final List<MCPConversationSession> activeSessions; // Removed - deprecated
   final bool isLoading;
   final String? error;
 
   const SimpleExecutionState({
     required this.agentConnections,
     required this.installedServers,
-    required this.activeSessions,
+    // required this.activeSessions, // Removed - deprecated
     required this.isLoading,
     this.error,
   });
@@ -24,7 +24,7 @@ class SimpleExecutionState {
     return const SimpleExecutionState(
       agentConnections: [],
       installedServers: [],
-      activeSessions: [],
+      // activeSessions: [], // Removed - deprecated
       isLoading: true,
     );
   }
@@ -32,14 +32,14 @@ class SimpleExecutionState {
   SimpleExecutionState copyWith({
     List<AgentConnection>? agentConnections,
     List<MCPServer>? installedServers,
-    List<MCPConversationSession>? activeSessions,
+    // List<MCPConversationSession>? activeSessions, // Removed - deprecated
     bool? isLoading,
     String? error,
   }) {
     return SimpleExecutionState(
       agentConnections: agentConnections ?? this.agentConnections,
       installedServers: installedServers ?? this.installedServers,
-      activeSessions: activeSessions ?? this.activeSessions,
+      // activeSessions: activeSessions ?? this.activeSessions, // Removed - deprecated
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
     );

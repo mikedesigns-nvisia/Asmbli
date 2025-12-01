@@ -65,7 +65,7 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
       onEnter: (_) => _handleHover(true),
       onExit: (_) => _handleHover(false),
       child: GestureDetector(
-        onTap: widget.onOpenChat ?? widget.onChat ?? () => context.go('${AppRoutes.chat}?agent=${widget.agent.id}'),
+        onTap: widget.onOpenChat ?? widget.onChat ?? () => _handleAgentTap(context),
         child: AnimatedBuilder(
           animation: _scaleAnimation,
           builder: (context, child) {
@@ -98,6 +98,8 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
                       _buildHeader(colors, cardColors),
                       SizedBox(height: SpacingTokens.xs),
                       _buildDescription(colors),
+                      SizedBox(height: SpacingTokens.xs),
+                      _buildConfiguredLLM(colors),
                       SizedBox(height: SpacingTokens.xs),
                       _buildCapabilities(colors, cardColors),
                       SizedBox(height: SpacingTokens.xs),
@@ -267,6 +269,152 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
+  }
+
+  Widget _buildConfiguredLLM(ThemeColors colors) {
+    final config = widget.agent.configuration;
+    final modelId = config['modelId'] as String?;
+    final modelName = config['modelName'] as String?;
+    final modelProvider = config['modelProvider'] as String?;
+
+    if (modelId == null && modelName == null) {
+      return const SizedBox.shrink();
+    }
+
+    final displayName = modelName ?? _getDisplayNameFromModelId(modelId ?? '');
+    final provider = modelProvider ?? _inferProviderFromModelId(modelId ?? '');
+    final isLocal = provider.toLowerCase() == 'ollama';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.psychology_outlined,
+              size: 12,
+              color: colors.onSurfaceVariant,
+            ),
+            SizedBox(width: SpacingTokens.xs),
+            Text(
+              'Configured LLM',
+              style: TextStyles.caption.copyWith(
+                color: colors.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: SpacingTokens.xxs),
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: SpacingTokens.sm,
+            vertical: SpacingTokens.xs,
+          ),
+          decoration: BoxDecoration(
+            color: _getProviderColor(provider, colors).withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+            border: Border.all(
+              color: _getProviderColor(provider, colors).withValues(alpha: 0.3),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                _getProviderIcon(provider),
+                size: 12,
+                color: _getProviderColor(provider, colors),
+              ),
+              SizedBox(width: SpacingTokens.xs),
+              Flexible(
+                child: Text(
+                  displayName,
+                  style: TextStyles.caption.copyWith(
+                    color: _getProviderColor(provider, colors),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (isLocal) ...[
+                SizedBox(width: SpacingTokens.xs),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SpacingTokens.xxs,
+                    vertical: 1,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.success.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(BorderRadiusTokens.xs),
+                  ),
+                  child: Text(
+                    'Local',
+                    style: TextStyles.caption.copyWith(
+                      fontSize: 9,
+                      color: colors.success,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getDisplayNameFromModelId(String modelId) {
+    final modelMap = {
+      'gpt-4o': 'GPT-4o',
+      'gpt-4o-mini': 'GPT-4o Mini',
+      'claude-3-5-sonnet-20241022': 'Claude 3.5 Sonnet',
+      'claude-3-5-haiku-20241022': 'Claude 3.5 Haiku',
+      'gemini-1.5-pro': 'Gemini 1.5 Pro',
+      'llama3.2:latest': 'Llama 3.2',
+      'deepseek-r1:8b': 'DeepSeek R1',
+      'llava:13b': 'LLaVA 13B',
+    };
+    return modelMap[modelId] ?? modelId.split(':').first.split('/').last;
+  }
+
+  String _inferProviderFromModelId(String modelId) {
+    if (modelId.startsWith('gpt') || modelId.contains('openai')) return 'openai';
+    if (modelId.startsWith('claude')) return 'anthropic';
+    if (modelId.startsWith('gemini')) return 'google';
+    if (modelId.contains(':') || modelId.contains('llama') || modelId.contains('llava') || modelId.contains('deepseek')) return 'ollama';
+    return 'unknown';
+  }
+
+  Color _getProviderColor(String provider, ThemeColors colors) {
+    switch (provider.toLowerCase()) {
+      case 'openai':
+        return colors.success;
+      case 'anthropic':
+        return colors.accent;
+      case 'google':
+        return colors.info;
+      case 'ollama':
+        return colors.primary;
+      default:
+        return colors.onSurfaceVariant;
+    }
+  }
+
+  IconData _getProviderIcon(String provider) {
+    switch (provider.toLowerCase()) {
+      case 'openai':
+        return Icons.auto_awesome;
+      case 'anthropic':
+        return Icons.hub;
+      case 'google':
+        return Icons.cloud;
+      case 'ollama':
+        return Icons.computer;
+      default:
+        return Icons.psychology;
+    }
   }
 
   Widget _buildCapabilities(ThemeColors colors, _CardColors cardColors) {
@@ -598,6 +746,22 @@ class _EnhancedAgentCardState extends State<EnhancedAgentCard>
       _animationController.forward();
     } else {
       _animationController.reverse();
+    }
+  }
+
+  void _handleAgentTap(BuildContext context) {
+    // Check if this is the Design Agent - navigate to canvas instead of chat
+    final isDesignAgent = widget.agent.id == 'design-agent-default' ||
+        widget.agent.name.toLowerCase().contains('design') ||
+        (widget.agent.capabilities.contains('canvas') &&
+         widget.agent.capabilities.contains('material-design'));
+
+    if (isDesignAgent) {
+      // Navigate to Penpot canvas for design agents
+      context.go(AppRoutes.canvas);
+    } else {
+      // Default: navigate to chat with this agent
+      context.go('${AppRoutes.chat}?agent=${widget.agent.id}');
     }
   }
 

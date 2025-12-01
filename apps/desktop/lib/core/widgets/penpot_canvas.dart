@@ -4,6 +4,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:convert';
 import 'dart:async';
 import '../design_system/design_system.dart';
+import '../interfaces/penpot_canvas_interface.dart';
 
 /// Penpot canvas widget - embeds Penpot web app in Flutter
 /// Provides JavaScript bridge for agent communication
@@ -14,7 +15,7 @@ class PenpotCanvas extends StatefulWidget {
   PenpotCanvasState createState() => PenpotCanvasState();
 }
 
-class PenpotCanvasState extends State<PenpotCanvas> {
+class PenpotCanvasState extends State<PenpotCanvas> implements PenpotCanvasInterface {
   late WebViewController _controller;
   bool _isLoaded = false;
   bool _isPluginLoaded = false;

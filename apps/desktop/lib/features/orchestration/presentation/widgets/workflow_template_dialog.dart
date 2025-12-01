@@ -550,6 +550,8 @@ class _WorkflowTemplateDialogState extends ConsumerState<WorkflowTemplateDialog>
         return 'Trace';
       case LogicBlockType.exit:
         return 'Exit';
+      case LogicBlockType.humanVerification:
+        return 'Human Verification';
     }
   }
 }

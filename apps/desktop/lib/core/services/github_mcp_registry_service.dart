@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/github_mcp_registry_models.dart';
+import '../models/mcp_catalog_entry.dart';
 import 'featured_mcp_servers_service.dart';
+import 'github_mcp_registry_client.dart';
 
 /// HTTP client for GitHub MCP Registry API
 class GitHubMCPRegistryApi {
@@ -127,6 +129,7 @@ class RegistryException implements Exception {
 class GitHubMCPRegistryService {
   final GitHubMCPRegistryApi _api;
   final FeaturedMCPServersService _featuredServers = FeaturedMCPServersService();
+  final GitHubMCPRegistryClient _readmeClient;
 
   // Cache for registry data
   List<GitHubMCPRegistryEntry>? _cachedServers;
@@ -146,7 +149,8 @@ class GitHubMCPRegistryService {
   static const int _circuitBreakerThreshold = 5;
   static const Duration _circuitBreakerCooldown = Duration(minutes: 5);
 
-  GitHubMCPRegistryService(this._api);
+  GitHubMCPRegistryService(this._api, {GitHubMCPRegistryClient? readmeClient})
+      : _readmeClient = readmeClient ?? GitHubMCPRegistryClient();
 
   /// Get the underlying API client for advanced operations
   GitHubMCPRegistryApi get api => _api;
@@ -190,8 +194,23 @@ class GitHubMCPRegistryService {
         return _cachedServers!.where((server) => server.isActive).toList();
       }
 
+      // Try README parsing as fallback before featured servers
+      try {
+        print('[GitHubMCPRegistryService] API failed, trying README parsing...');
+        final readmeServers = await _getServersFromReadme();
+        if (readmeServers.isNotEmpty) {
+          print('[GitHubMCPRegistryService] Successfully fetched ${readmeServers.length} servers from README');
+          // Cache the README results
+          _cachedServers = readmeServers;
+          _lastCacheTime = DateTime.now();
+          return readmeServers;
+        }
+      } catch (readmeError) {
+        print('[GitHubMCPRegistryService] README parsing also failed: $readmeError');
+      }
+
       // Final fallback: return featured servers
-      print('[GitHubMCPRegistryService] Using featured servers as fallback');
+      print('[GitHubMCPRegistryService] Using featured servers as final fallback');
       return _getFallbackServers();
     }
   }
@@ -357,6 +376,39 @@ class GitHubMCPRegistryService {
 
     // Cap at maximum delay
     return totalDelay > _maxRetryDelay ? _maxRetryDelay : totalDelay;
+  }
+
+  /// Get servers from GitHub README parsing
+  Future<List<GitHubMCPRegistryEntry>> _getServersFromReadme() async {
+    // Fetch servers from README via client
+    final catalogEntries = await _readmeClient.fetchServers();
+    
+    // Convert MCPCatalogEntry to GitHubMCPRegistryEntry for consistency
+    return catalogEntries.map((entry) => GitHubMCPRegistryEntry(
+      id: entry.id,
+      name: entry.name,
+      description: entry.description,
+      status: MCPServerStatus.active,
+      version: entry.version ?? '1.0.0',
+      packages: [
+        MCPRegistryPackage(
+          registryType: PackageRegistryType.npm,
+          identifier: entry.args.isNotEmpty ? entry.args.last : entry.id,
+        ),
+      ],
+      updatedAt: DateTime.now(),
+      meta: {
+        'from_readme': true,
+        'featured': entry.isFeatured,
+        'official': entry.isOfficial,
+        'remoteUrl': entry.remoteUrl,
+        'capabilities': entry.capabilities,
+        'tags': entry.tags,
+        'requiredEnvVars': entry.requiredEnvVars,
+        'optionalEnvVars': entry.optionalEnvVars,
+        'defaultEnvVars': entry.defaultEnvVars,
+      },
+    )).toList();
   }
 
   /// Get fallback servers (featured servers) when API is unavailable

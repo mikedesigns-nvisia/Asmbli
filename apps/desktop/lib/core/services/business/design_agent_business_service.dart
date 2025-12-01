@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:agent_engine_core/models/agent.dart';
+import '../../models/business_result.dart';
 import 'agent_business_service.dart';
-import '../design_agent_orchestrator_service.dart';
-import '../di/service_locator.dart';
 
 /// Extension of AgentBusinessService for design-specific agent functionality
 extension DesignAgentBusinessService on AgentBusinessService {

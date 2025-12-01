@@ -40,6 +40,7 @@ import 'features/tools/presentation/screens/tools_screen.dart';
 import 'features/chat/presentation/demo/contextual_context_demo.dart';
 import 'features/canvas/presentation/penpot_canvas_screen.dart'; // Week 1: Penpot integration
 import 'features/canvas/presentation/canvas_library_screen.dart';
+import 'features/human_verification/presentation/screens/human_verification_dashboard.dart';
 import 'demo/demo_onboarding.dart';
 import 'demo/unified_showcase_demo.dart';
 import 'demo/components/controlled_onboarding_flow.dart';
@@ -53,6 +54,11 @@ import 'core/services/oauth_auto_refresh_initializer.dart';
 import 'core/security/os_trust_manager.dart';
 import 'core/services/trust_service.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+// DSPy Integration - replaces 50+ fragmented AI services
+import 'core/services/dspy/dspy.dart';
+import 'core/services/desktop/desktop_agent_service.dart';
+import 'core/services/desktop/desktop_conversation_service.dart';
 
 void main() async {
   // Set up error zone for the entire app
@@ -162,6 +168,13 @@ void main() async {
       ProviderScope(
         overrides: [
           featureFlagServiceProvider.overrideWithValue(FeatureFlagService(prefs)),
+          // DSPy Integration - wire up local storage services
+          conversationRepositoryProvider.overrideWithValue(
+            DesktopConversationService(),
+          ),
+          agentRepositoryProvider.overrideWithValue(
+            DesktopAgentService(),
+          ),
         ],
         child: AppErrorHandler.errorBoundary(
           boundaryName: 'app_root',
@@ -330,7 +343,8 @@ final _router = GoRouter(
  path: AppRoutes.chat,
  builder: (context, state) {
    final template = state.uri.queryParameters['template'];
-   return ChatScreenWithContextual(selectedTemplate: template);
+   final agentId = state.uri.queryParameters['agent'];
+   return ChatScreenWithContextual(selectedTemplate: template, agentId: agentId);
  },
  ),
  // Temporarily disabled - missing file
@@ -440,6 +454,10 @@ GoRoute(
  GoRoute(
   path: AppRoutes.workflowMarketplace,
   builder: (context, state) => const WorkflowMarketplaceScreen(),
+ ),
+ GoRoute(
+  path: '/human-verification',
+  builder: (context, state) => const HumanVerificationDashboard(),
  ),
  ],
 );

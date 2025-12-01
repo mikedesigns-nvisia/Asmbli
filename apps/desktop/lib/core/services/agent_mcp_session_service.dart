@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/mcp_server_process.dart';
 import '../models/mcp_connection.dart';
-import 'agent_mcp_configuration_service.dart';
+import 'agent_mcp_service.dart';
 import 'mcp_process_manager.dart';
 import 'mcp_protocol_handler.dart';
 import 'production_logger.dart';
@@ -84,7 +84,7 @@ class MCPToolExecutionRequest {
 /// Handles the complete flow: agent → MCP server → tool execution → results
 @Deprecated('Will be consolidated into AgentMCPService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
 class AgentMCPSessionService {
-  final AgentMCPConfigurationService _configService;
+  final AgentMCPService _configService;
   final MCPProcessManager _processManager;
   final MCPProtocolHandler _protocolHandler;
 

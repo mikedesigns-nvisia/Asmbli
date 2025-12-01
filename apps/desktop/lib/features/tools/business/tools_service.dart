@@ -2,6 +2,7 @@ import 'dart:async';
 import '../models/mcp_server.dart';
 import '../../../core/services/mcp_settings_service.dart';
 import '../../../core/services/mcp_server_execution_service.dart';
+import '../../../core/services/agent_mcp_service.dart';
 import '../../../core/models/mcp_server_process.dart' show MCPServerConfig, MCPServerProcess;
 import '../../../core/data/mcp_server_configs.dart';
 import '../../../core/di/service_locator.dart';
@@ -16,6 +17,7 @@ class ToolsService {
   late final MCPSettingsService _settingsService;
   late final MCPServerExecutionService _executionService;
   late final AgentService _agentService;
+  late final AgentMCPService _agentMCPService;
 
   final StreamController<List<MCPServer>> _serversController = 
       StreamController<List<MCPServer>>.broadcast();
@@ -33,6 +35,7 @@ class ToolsService {
     _settingsService = ServiceLocator.instance.get<MCPSettingsService>();
     _executionService = ServiceLocator.instance.get<MCPServerExecutionService>();
     _agentService = ServiceLocator.instance.get<AgentService>();
+    _agentMCPService = ServiceLocator.instance.get<AgentMCPService>();
     
     // Load installed servers from real settings service
     await _loadInstalledServers();
@@ -362,6 +365,10 @@ class ToolsService {
       
       // Save the updated agent back to agent service
       await _agentService.updateAgent(updatedAgent);
+      
+      // ✨ NEW: Sync the execution layer config with the UI changes
+      // This ensures the agent can actually USE the tools that were enabled in the UI
+      await _agentMCPService.syncAgentServerConfigs(agentId, serverIds);
       
       // Reload agent connections to reflect the change
       await _loadAgentConnections();

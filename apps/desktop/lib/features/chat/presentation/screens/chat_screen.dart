@@ -9,7 +9,8 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../../core/constants/routes.dart';
 import '../../../../providers/conversation_provider.dart';
-import '../../../../core/services/mcp_bridge_service.dart';
+import '../../../../providers/artifact_parser_provider.dart';
+// import '../../../../core/services/mcp_bridge_service.dart'; // REMOVED: MCPBridgeService deleted
 import '../../../../core/services/mcp_settings_service.dart';
 import '../../../../core/services/llm/unified_llm_service.dart';
 import '../../../../core/services/llm/llm_provider.dart';
@@ -17,6 +18,7 @@ import '../../../../core/services/model_config_service.dart';
 import '../../../../core/models/model_config.dart';
 import '../../../../core/services/agent_context_prompt_service.dart';
 import '../../../../core/services/model_warmup_service.dart';
+import '../../../../core/services/quick_chat_model_service.dart';
 import '../widgets/improved_conversation_sidebar.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/agent_deployment_section.dart';
@@ -25,6 +27,10 @@ import '../widgets/editable_conversation_title.dart';
 import '../widgets/context_sidebar_section.dart';
 import '../widgets/contextual_context_widget.dart';
 import '../widgets/mcp_chat_integration.dart';
+import '../widgets/animated_context_toolbar.dart';
+import '../widgets/chat_tab_bar.dart';
+import '../widgets/chat_status_bar.dart';
+import '../widgets/artifacts/artifact_workspace.dart';
 import '../components/model_warmup_status_indicator.dart';
 import '../../../../core/services/mcp_process_manager.dart';
 import '../../../../core/models/mcp_server_process.dart' as mcp_models;
@@ -40,7 +46,6 @@ class ChatScreen extends ConsumerStatefulWidget {
 }
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
- bool isSidebarCollapsed = false;
  final TextEditingController messageController = TextEditingController();
  
  @override
@@ -64,9 +69,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  Future<void> _startModelWarmUpInBackground() async {
  try {
    AppLogger.info('Starting model warm-up for chat screen', component: 'Chat');
+
+   // OPTIMIZATION: Initialize and preload quick chat models FIRST for instant responses
+   debugPrint('🚀 Initializing Quick Chat service for instant agentless responses...');
+   final quickChatService = ref.read(quickChatModelServiceProvider);
+
+   // Initialize quick chat service (identifies small, fast models)
+   await quickChatService.initialize();
+
+   // Preload quick chat models in highest priority (run first)
+   unawaited(quickChatService.preloadQuickModels());
+
+   // Then warm up all other models in background (lower priority)
    final warmUpService = ref.read(modelWarmUpServiceProvider);
-   // Run warmup in background without blocking UI
    unawaited(warmUpService.warmUpAllModels());
+
    AppLogger.info('Model warm-up started in background', component: 'Chat');
  } catch (e) {
    AppLogger.error('Model warm-up failed', component: 'Chat', error: e);
@@ -101,49 +118,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  children: [
  // Header
  const AppNavigationBar(currentRoute: AppRoutes.chat),
- // Main Content
- Expanded(
- child: Row(
- children: [
- // Sidebar
- AnimatedContainer(
- duration: const Duration(milliseconds: 300),
- width: isSidebarCollapsed ? 0 : 280,
- child: isSidebarCollapsed ? null : _buildSidebar(context),
+
+ // Firefox-style Tab Bar
+ ChatTabBar(
+   onNewChat: () => _startNewDirectChat(),
  ),
- 
- // Sidebar Toggle (when collapsed)
- if (isSidebarCollapsed)
- Container(
- width: 48,
- decoration: BoxDecoration(
- color: theme.colorScheme.surface.withValues(alpha: 0.7),
- border: Border(right: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))),
+
+ // Status Bar (slim, fixed, replaces floating dock)
+ ChatStatusBar(
+   conversationId: ref.watch(selectedConversationIdProvider),
  ),
- child: Column(
- children: [
- IconButton(
- onPressed: () => setState(() => isSidebarCollapsed = false),
- icon: const Icon(Icons.chevron_right, size: 20),
- style: IconButton.styleFrom(
- backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
- foregroundColor: theme.colorScheme.onSurfaceVariant,
- side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
- ),
- ),
- ],
- ),
- ),
- 
- // Chat Area
+
+ // Main Content - Full width chat area
  Expanded(
  child: _buildChatArea(context),
- ),
- 
- // Right Sidebar for Conversations
- const ImprovedConversationSidebar(),
- ],
- ),
  ),
  ],
  ),
@@ -325,7 +313,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  ],
- 
+
  // Priming status indicator for all conversations
  const SizedBox(width: 8),
  _buildPrimingStatusIndicator(context, conversation),
@@ -756,6 +744,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  return 'Cloud';
  }
 
+ // Sidebar removed for minimal chat UI - keeping method for future gradual restoration
  Widget _buildSidebar(BuildContext context) {
  final theme = Theme.of(context);
  return Container(
@@ -797,8 +786,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  ),
  const SizedBox(width: SpacingTokens.componentSpacing),
+ // Collapse button removed - sidebars not used in minimal UI
  IconButton(
- onPressed: () => setState(() => isSidebarCollapsed = true),
+ onPressed: () {}, // No-op
  icon: const Icon(Icons.chevron_left, size: 20),
  style: IconButton.styleFrom(
  foregroundColor: theme.colorScheme.onSurfaceVariant,
@@ -855,17 +845,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ),
  child: Column(
  children: [
- // Chat Header - shows current conversation/agent
- _buildChatHeader(theme),
+ // Note: Chat header removed - info now in tab bar and status bar
 
- // MCP Contextual Recommendations
+ // MCP Contextual Recommendations (minimal)
  _buildMCPRecommendations(context),
- // Active MCP Servers Status
- _buildMCPServerStatus(context),
 
- // Messages Area or Empty State
+ // Messages Area or Empty State with Artifact Workspace Overlay
  Expanded(
- child: _buildMessagesArea(context),
+ child: Stack(
+ children: [
+ _buildMessagesArea(context),
+ // Artifact workspace overlay for OS-like windows
+ const ArtifactWorkspace(),
+ ],
+ ),
  ),
  
  // Input Area
@@ -955,6 +948,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  ],
  ),
  ),
+
+ // Note: Floating toolbar removed - replaced by fixed ChatTabBar + ChatStatusBar above
  ],
  ),
  );
@@ -1035,7 +1030,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
  
  Widget _buildMessagesList(BuildContext context, String conversationId) {
  final messagesAsync = ref.watch(messagesProvider(conversationId));
- 
+
+ // Activate artifact parser listener for this conversation
+ ref.watch(artifactParseListenerProvider(conversationId));
+
  return messagesAsync.when(
  data: (messages) {
  if (messages.isEmpty) {
@@ -1755,16 +1753,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
  try {
  ref.read(isLoadingProvider.notifier).state = true;
- 
- // Ensure conversation is primed before sending message
- final conversationModel = ref.read(conversationModelProvider(selectedConversationId)) 
-     ?? ref.read(selectedModelProvider);
- 
- if (conversationModel != null) {
-   final ensurePrimed = ref.read(ensureConversationPrimedProvider);
-   await ensurePrimed(selectedConversationId, conversationModel.id);
- }
- 
+
+ // OPTIMIZATION: Removed priming request to eliminate 1-5s delay on first message
+ // The model warmup service handles initial model loading in the background
+ // No need to prime before every first message - wastes time and creates latency
+
  final sendMessage = ref.read(sendMessageProvider);
  await sendMessage(
  conversationId: selectedConversationId,
@@ -1807,72 +1800,104 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   await _handleStandardResponse(conversationId);
 }
 
-Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationId, String userMessage, core.Conversation conversation) async {
- try {
- // Create streaming message with MCP metadata
- final streamingMessage = core.Message(
- id: DateTime.now().millisecondsSinceEpoch.toString(),
- content: '',
- role: core.MessageRole.assistant,
- timestamp: DateTime.now(),
- metadata: {
- 'streaming': true,
- 'processingStatus': 'initializing',
- 'mcpInteractions': <Map<String, dynamic>>[],
- 'toolResults': <Map<String, dynamic>>[],
- },
- );
-
- final service = ref.read(conversationServiceProvider);
- await service.addMessage(conversationId, streamingMessage);
- ref.invalidate(messagesProvider(conversationId));
-
- // Process message through MCP bridge
- final enabledServers = (conversation.metadata?['mcpServers'] as List<dynamic>?)
- ?.map((server) => server['id'] as String)
- .toList() ?? <String>[];
- 
- final response = await mcpBridge.processMessage(
- conversationId: conversationId,
- message: userMessage,
- enabledServerIds: enabledServers,
- conversationMetadata: conversation.metadata,
- );
-
- // Update message with final content and MCP interaction data
- AppLogger.debug('MCP response received: length=${response.response.length}', component: 'Chat.MCP');
- 
- final finalMessage = core.Message(
- id: streamingMessage.id,
- content: response.response,
- role: core.MessageRole.assistant,
- timestamp: streamingMessage.timestamp,
- metadata: {
- 'streaming': false,
- 'processingStatus': 'completed',
- 'mcpInteractions': response.metadata['interactions'] ?? [],
- 'toolResults': response.metadata['toolResults'] ?? [],
- 'executionTime': response.latency,
- 'mcpServersUsed': response.usedServers,
- },
- );
-
- await service.addMessage(conversationId, finalMessage);
- ref.invalidate(messagesProvider(conversationId));
-
- } catch (e) {
- print('MCP response error: $e');
- // Fallback to standard response
- await _handleStandardResponse(conversationId);
- }
- }
+// DEPRECATED: MCPBridgeService removed
+// Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationId, String userMessage, core.Conversation conversation) async {
+//  try {
+//  // Create streaming message with MCP metadata
+//  final streamingMessage = core.Message(
+//  id: DateTime.now().millisecondsSinceEpoch.toString(),
+//  content: '',
+//  role: core.MessageRole.assistant,
+//  timestamp: DateTime.now(),
+//  metadata: {
+//  'streaming': true,
+//  'processingStatus': 'initializing',
+//  'mcpInteractions': <Map<String, dynamic>>[],
+//  'toolResults': <Map<String, dynamic>>[],
+//  },
+//  );
+//
+//  final service = ref.read(conversationServiceProvider);
+//  await service.addMessage(conversationId, streamingMessage);
+//  ref.invalidate(messagesProvider(conversationId));
+//
+//  // Process message through MCP bridge
+//  final enabledServers = (conversation.metadata?['mcpServers'] as List<dynamic>?)
+//  ?.map((server) => server['id'] as String)
+//  .toList() ?? <String>[];
+//  
+//  final response = await mcpBridge.processMessage(
+//  conversationId: conversationId,
+//  message: userMessage,
+//  enabledServerIds: enabledServers,
+//  conversationMetadata: conversation.metadata,
+//  );
+//
+//  // Update message with final content and MCP interaction data
+//  AppLogger.debug('MCP response received: length=${response.response.length}', component: 'Chat.MCP');
+//  
+//  final finalMessage = core.Message(
+//  id: streamingMessage.id,
+//  content: response.response,
+//  role: core.MessageRole.assistant,
+//  timestamp: streamingMessage.timestamp,
+//  metadata: {
+//  'streaming': false,
+//  'processingStatus': 'completed',
+//  'mcpInteractions': response.metadata['interactions'] ?? [],
+//  'toolResults': response.metadata['toolResults'] ?? [],
+//  'executionTime': response.latency,
+//  'mcpServersUsed': response.usedServers,
+//  },
+//  );
+//
+//  await service.addMessage(conversationId, finalMessage);
+//  ref.invalidate(messagesProvider(conversationId));
+//
+//  } catch (e) {
+//  print('MCP response error: $e');
+//  // Fallback to standard response
+//  await _handleStandardResponse(conversationId);
+//  }
+//  }
 
  Future<void> _handleStandardResponse(String conversationId) async {
  try {
  // Get unified LLM service and conversation-specific model
  final unifiedLLMService = ref.read(unifiedLLMServiceProvider);
- final selectedModel = ref.read(conversationModelProvider(conversationId)) 
+ var selectedModel = ref.read(conversationModelProvider(conversationId))
      ?? ref.read(selectedModelProvider);
+
+ // OPTIMIZATION: Use quick chat model for instant responses in agentless chats
+ // Check if this is a simple agentless conversation that can benefit from a quick model
+ final conversation = await ref.read(conversationProvider(conversationId).future);
+ final isAgentConversation = conversation.metadata?['type'] == 'agent';
+ final hasGlobalMCP = ref.read(mcpSettingsServiceProvider).getAllMCPServers()
+     .where((server) => server.enabled).isNotEmpty;
+ final hasContextDocs = ref.read(mcpSettingsServiceProvider).globalContextDocuments.isNotEmpty;
+
+ // Use quick chat model if:
+ // 1. Not an agent conversation
+ // 2. No global MCP servers enabled
+ // 3. No global context documents
+ // 4. No specific model already selected for this conversation
+ final shouldUseQuickChat = !isAgentConversation && !hasGlobalMCP && !hasContextDocs &&
+                            ref.read(conversationModelProvider(conversationId)) == null;
+
+ if (shouldUseQuickChat) {
+   final quickChatService = ref.read(quickChatModelServiceProvider);
+   final quickModelId = quickChatService.getBestQuickChatModel();
+
+   if (quickModelId != null) {
+     final quickModel = ref.read(modelConfigServiceProvider).getModelConfig(quickModelId);
+     if (quickModel != null && quickModel.isConfigured) {
+       debugPrint('🚀 Using quick chat model: ${quickModel.name} for instant response');
+       selectedModel = quickModel;
+       // Mark as used to maintain keep-alive
+       quickChatService.markAsUsed(quickModelId);
+     }
+   }
+ }
 
  // Check if model is configured - different logic for local vs API models
  AppLogger.debug(
@@ -1926,10 +1951,8 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  final lastUserMessage = conversationHistory.removeLast();
  final userMessage = lastUserMessage['content'] as String;
 
- // Get conversation details to check for enhanced context and MCP integration
- final conversation = await ref.read(conversationProvider(conversationId).future);
- 
  // Enhanced system prompt with context integration for non-agent conversations
+ // (conversation already fetched earlier for quick chat check)
  String enhancedSystemPrompt;
  final baseSystemPrompt = conversation.metadata?['systemPrompt'] as String?;
  
@@ -1969,53 +1992,60 @@ Future<void> _handleMCPResponse(MCPBridgeService mcpBridge, String conversationI
  },
  );
 
- // For non-agent conversations with global MCP servers, try to use MCP bridge
- if (globalMcpServers.isNotEmpty) {
-   AppLogger.info('Standard conversation using global MCP servers: $globalMcpServers', component: 'Chat.MCP');
-   try {
-     final mcpBridge = MCPBridgeService(mcpService);
-     final mcpResponse = await mcpBridge.processMessage(
-       conversationId: conversationId,
-       message: userMessage,
-       enabledServerIds: globalMcpServers,
-       conversationMetadata: {
-         ...conversation.metadata ?? {},
-         'mcpServers': globalMcpServers.map((id) => {'id': id}).toList(),
-         'contextDocuments': globalContextDocs,
-         'type': 'standard_with_mcp',
-       },
-     );
-     
-     // Create assistant message with MCP response
-     final assistantMessage = core.Message(
-       id: DateTime.now().millisecondsSinceEpoch.toString(),
-       content: mcpResponse.response,
-       role: core.MessageRole.assistant,
-       timestamp: DateTime.now(),
-       metadata: {
-         'modelUsed': selectedModel.id,
-         'responseType': 'mcp_enhanced',
-         'mcpServersUsed': globalMcpServers,
-         'mcpServersActuallyUsed': mcpResponse.usedServers,
-         'hasGlobalContext': globalContextDocs.isNotEmpty,
-         'mcpLatency': mcpResponse.latency,
-         'mcpMetadata': mcpResponse.metadata,
-       },
-     );
-     
-     await service.addMessage(conversationId, assistantMessage);
-     
-     // Update conversation priming status to success since message worked
-     await _updateConversationPrimingAfterSuccess(conversationId, selectedModel);
-     
-     ref.invalidate(messagesProvider(conversationId));
-     return;
-     
-   } catch (mcpError) {
-     AppLogger.warning('MCP processing failed for standard conversation, falling back to direct LLM', component: 'Chat.MCP', error: mcpError);
-     // Fall through to direct LLM call
-   }
- }
+  // For non-agent conversations with global MCP servers, try to use MCP bridge
+  // DEPRECATED: MCPBridgeService removed, falling back to direct LLM
+  if (globalMcpServers.isNotEmpty) {
+    AppLogger.warning('Global MCP servers detected but MCPBridgeService unavailable, using direct LLM', component: 'Chat.MCP');
+    // Fall through to direct LLM call
+  }
+  /*
+  if (globalMcpServers.isNotEmpty) {
+    AppLogger.info('Standard conversation using global MCP servers: $globalMcpServers', component: 'Chat.MCP');
+    try {
+      final mcpBridge = MCPBridgeService(mcpService);
+      final mcpResponse = await mcpBridge.processMessage(
+        conversationId: conversationId,
+        message: userMessage,
+        enabledServerIds: globalMcpServers,
+        conversationMetadata: {
+          ...conversation.metadata ?? {},
+          'mcpServers': globalMcpServers.map((id) => {'id': id}).toList(),
+          'contextDocuments': globalContextDocs,
+          'type': 'standard_with_mcp',
+        },
+      );
+      
+      // Create assistant message with MCP response
+      final assistantMessage = core.Message(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        content: mcpResponse.response,
+        role: core.MessageRole.assistant,
+        timestamp: DateTime.now(),
+        metadata: {
+          'modelUsed': selectedModel.id,
+          'responseType': 'mcp_enhanced',
+          'mcpServersUsed': globalMcpServers,
+          'mcpServersActuallyUsed': mcpResponse.usedServers,
+          'hasGlobalContext': globalContextDocs.isNotEmpty,
+          'mcpLatency': mcpResponse.latency,
+          'mcpMetadata': mcpResponse.metadata,
+        },
+      );
+      
+      await service.addMessage(conversationId, assistantMessage);
+      
+      // Update conversation priming status to success since message worked
+      await _updateConversationPrimingAfterSuccess(conversationId, selectedModel);
+      
+      ref.invalidate(messagesProvider(conversationId));
+      return;
+      
+    } catch (mcpError) {
+      AppLogger.warning('MCP processing failed for standard conversation, falling back to direct LLM', component: 'Chat.MCP', error: mcpError);
+      // Fall through to direct LLM call
+    }
+  }
+  */
 
  // Direct LLM call (fallback or when no global MCP servers)
  final response = await unifiedLLMService.chat(

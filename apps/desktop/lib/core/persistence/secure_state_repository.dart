@@ -358,13 +358,15 @@ class SecureStateRepository {
   Future<DatabaseStats> getStats() async {
     _ensureInitialized();
 
-    final userCount = Sqflite.firstIntValue(
-      await _database.rawQuery('SELECT COUNT(DISTINCT user_id) FROM user_trust_scores')
-    ) ?? 0;
+    final userCountResult = await _database.rawQuery('SELECT COUNT(DISTINCT user_id) FROM user_trust_scores');
+    final userCount = userCountResult.isNotEmpty
+        ? (userCountResult.first.values.first as int?) ?? 0
+        : 0;
 
-    final auditLogCount = Sqflite.firstIntValue(
-      await _database.rawQuery('SELECT COUNT(*) FROM audit_log')
-    ) ?? 0;
+    final auditLogCountResult = await _database.rawQuery('SELECT COUNT(*) FROM audit_log');
+    final auditLogCount = auditLogCountResult.isNotEmpty
+        ? (auditLogCountResult.first.values.first as int?) ?? 0
+        : 0;
 
     final dbFile = File(_databasePath);
     final fileSize = await dbFile.exists() ? await dbFile.length() : 0;

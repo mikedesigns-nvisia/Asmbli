@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import 'rich_text_message_widget.dart';
 
-/// Represents a streaming message state
+/// Represents a streaming message state with optimized content caching
 class StreamingMessageState {
   final String id;
   final String conversationId;
@@ -15,7 +15,11 @@ class StreamingMessageState {
   final String? error;
   final Map<String, dynamic> metadata;
 
-  const StreamingMessageState({
+  // Cached full content to avoid O(n²) string concatenation
+  String? _cachedFullContent;
+  int? _cachedTokenCount;
+
+  StreamingMessageState({
     required this.id,
     required this.conversationId,
     required this.initialMessage,
@@ -48,9 +52,27 @@ class StreamingMessageState {
     );
   }
 
+  /// Optimized full content getter with StringBuffer caching
+  /// Eliminates O(n²) complexity from repeated string concatenation
   String get fullContent {
-    if (streamedTokens.isEmpty) return initialMessage;
-    return initialMessage + streamedTokens.join('');
+    // Return cached result if token count hasn't changed
+    if (_cachedFullContent != null && _cachedTokenCount == streamedTokens.length) {
+      return _cachedFullContent!;
+    }
+
+    // Build full content using StringBuffer (O(n) instead of O(n²))
+    if (streamedTokens.isEmpty) {
+      _cachedFullContent = initialMessage;
+    } else {
+      final buffer = StringBuffer(initialMessage);
+      for (final token in streamedTokens) {
+        buffer.write(token);
+      }
+      _cachedFullContent = buffer.toString();
+    }
+
+    _cachedTokenCount = streamedTokens.length;
+    return _cachedFullContent!;
   }
 }
 
@@ -107,9 +129,13 @@ class StreamingMessageNotifier extends StateNotifier<Map<String, StreamingMessag
     };
   }
 
+  /// Add a batch of tokens (optimized for 50ms batches from streaming)
+  /// This reduces state updates and UI rebuilds significantly
   void addStreamedToken(String messageId, String token) {
     final current = state[messageId];
     if (current != null) {
+      // Instead of creating new list, we append the batch as a single token
+      // This works with our new buffered streaming approach
       state = {
         ...state,
         messageId: current.copyWith(
@@ -166,6 +192,13 @@ final streamingMessageProvider = StateNotifierProvider<StreamingMessageNotifier,
   return StreamingMessageNotifier();
 });
 
+/// Optimized provider that only watches a specific message
+/// This prevents unnecessary rebuilds when other messages update
+final streamingMessageStateProvider = Provider.family<StreamingMessageState?, String>((ref, messageId) {
+  final allStates = ref.watch(streamingMessageProvider);
+  return allStates[messageId];
+});
+
 /// Widget for displaying streaming messages with MCP integration
 class StreamingMessageWidget extends ConsumerWidget {
   final String messageId;
@@ -181,15 +214,15 @@ class StreamingMessageWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final streamingStates = ref.watch(streamingMessageProvider);
-    final streamingState = streamingStates[messageId];
+    // OPTIMIZATION: Use family provider to only rebuild THIS message widget
+    // when THIS specific message changes, not when ANY message changes
+    final streamingState = ref.watch(streamingMessageStateProvider(messageId));
 
     if (streamingState == null) {
       return const SizedBox.shrink();
     }
 
     final isUser = role == 'user';
-    final theme = Theme.of(context);
 
     return Container(
       margin: EdgeInsets.only(

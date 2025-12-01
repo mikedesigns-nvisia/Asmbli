@@ -141,147 +141,223 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
 
   Widget _buildHeader(ThemeColors colors) {
     return Container(
-      padding: const EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.9),
-        border: Border(bottom: BorderSide(color: colors.border)),
+        color: colors.surface.withOpacity(0.5),
+        border: Border(bottom: BorderSide(color: colors.border.withOpacity(0.5))),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.auto_awesome,
-              color: colors.primary,
-              size: 28,
-            ),
-          ),
-          const SizedBox(width: SpacingTokens.lg),
-          
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Canvas Library',
-                  style: TextStyles.pageTitle.copyWith(color: colors.onSurface),
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: colors.onSurface,
+                    letterSpacing: -0.5,
+                  ),
                 ),
-                const SizedBox(height: SpacingTokens.xs),
+                const SizedBox(height: 4),
                 Text(
-                  'Recent agent creations, saved canvases, and design templates',
-                  style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+                  'Recent agent creations, saved canvases, and design templates.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: colors.onSurfaceVariant,
+                    height: 1.5,
+                  ),
                 ),
               ],
             ),
           ),
-          
-          // Quick actions
-          Row(
-            children: [
-              AsmblButton.secondary(
-                text: 'Import Canvas',
-                icon: Icons.file_upload,
-                size: AsmblButtonSize.small,
-                onPressed: _importCanvas,
-              ),
-              const SizedBox(width: SpacingTokens.sm),
-              AsmblButton.primary(
-                text: 'New Canvas',
-                icon: Icons.add,
-                size: AsmblButtonSize.small,
-                onPressed: _createNewCanvas,
-              ),
-            ],
+          const SizedBox(width: 16),
+          // Quick actions - compact ghost buttons
+          _buildGhostButton(
+            colors,
+            icon: Icons.file_upload,
+            label: 'Import Canvas',
+            onPressed: _importCanvas,
+          ),
+          const SizedBox(width: 8),
+          _buildPrimaryButton(
+            colors,
+            icon: Icons.add,
+            label: 'New Canvas',
+            onPressed: _createNewCanvas,
           ),
         ],
       ),
     );
   }
 
+  // Compact shadcn-style button helpers
+  Widget _buildGhostButton(ThemeColors colors, {required IconData icon, required String label, required VoidCallback onPressed}) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(6),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            border: Border.all(color: colors.border),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: colors.onSurfaceVariant),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: colors.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrimaryButton(ThemeColors colors, {required IconData icon, required String label, required VoidCallback onPressed}) {
+    return Material(
+      color: colors.primary,
+      borderRadius: BorderRadius.circular(6),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(6),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: Colors.white),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildSearchAndFilters(ThemeColors colors) {
     return Container(
-      padding: const EdgeInsets.all(SpacingTokens.lg),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
       child: Row(
         children: [
-          // Search field
+          // Search field - compact shadcn style
           Expanded(
             flex: 3,
             child: TextField(
               onChanged: (value) => setState(() => _searchQuery = value),
+              style: TextStyle(fontSize: 13, color: colors.onSurface),
               decoration: InputDecoration(
                 hintText: 'Search canvases...',
-                prefixIcon: Icon(Icons.search, color: colors.onSurfaceVariant),
+                hintStyle: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
+                prefixIcon: Icon(Icons.search, size: 16, color: colors.onSurfaceVariant),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.clear, color: colors.onSurfaceVariant),
+                        icon: Icon(Icons.clear, size: 14, color: colors.onSurfaceVariant),
                         onPressed: () => setState(() => _searchQuery = ''),
                       )
                     : null,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+                  borderRadius: BorderRadius.circular(6),
                   borderSide: BorderSide(color: colors.border),
                 ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(color: colors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(color: colors.primary),
+                ),
                 filled: true,
-                fillColor: colors.surface,
+                fillColor: colors.surface.withOpacity(0.5),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               ),
             ),
           ),
-          
-          const SizedBox(width: SpacingTokens.md),
-          
-          // Sort dropdown
+
+          const SizedBox(width: 12),
+
+          // Sort dropdown - compact
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             decoration: BoxDecoration(
-              color: colors.surface,
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
+              color: colors.surface.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(6),
               border: Border.all(color: colors.border),
             ),
-            child: DropdownButton<String>(
-              value: _sortBy,
-              isDense: true,
-              underline: const SizedBox(),
-              icon: Icon(Icons.sort, size: 16, color: colors.onSurfaceVariant),
-              style: TextStyles.bodySmall.copyWith(color: colors.onSurface),
-              items: const [
-                DropdownMenuItem(value: 'date', child: Text('Date')),
-                DropdownMenuItem(value: 'name', child: Text('Name')),
-              ],
-              onChanged: (value) => setState(() => _sortBy = value!),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _sortBy,
+                isDense: true,
+                style: TextStyle(fontSize: 13, color: colors.onSurface),
+                dropdownColor: colors.surface,
+                icon: Icon(Icons.keyboard_arrow_down, size: 16, color: colors.onSurfaceVariant),
+                items: const [
+                  DropdownMenuItem(value: 'date', child: Text('Date')),
+                  DropdownMenuItem(value: 'name', child: Text('Name')),
+                ],
+                onChanged: (value) => setState(() => _sortBy = value!),
+              ),
             ),
           ),
-          
-          const SizedBox(width: SpacingTokens.sm),
-          
-          // View toggle
-          IconButton(
+
+          const SizedBox(width: 8),
+
+          // View toggle - compact
+          _buildIconButton(
+            colors,
+            icon: _isGridView ? Icons.list : Icons.grid_view,
             onPressed: () => setState(() => _isGridView = !_isGridView),
-            icon: Icon(
-              _isGridView ? Icons.list : Icons.grid_view,
-              color: colors.primary,
-            ),
-            style: IconButton.styleFrom(
-              backgroundColor: colors.surface,
-              side: BorderSide(color: colors.border),
-            ),
           ),
-          
-          const SizedBox(width: SpacingTokens.sm),
-          
-          // Refresh button
-          IconButton(
+
+          const SizedBox(width: 8),
+
+          // Refresh button - compact
+          _buildIconButton(
+            colors,
+            icon: Icons.refresh,
             onPressed: _loadSavedCanvases,
-            icon: Icon(Icons.refresh, color: colors.primary),
-            style: IconButton.styleFrom(
-              backgroundColor: colors.surface,
-              side: BorderSide(color: colors.border),
-            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildIconButton(ThemeColors colors, {required IconData icon, required VoidCallback onPressed}) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(6),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            border: Border.all(color: colors.border),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(icon, size: 16, color: colors.onSurfaceVariant),
+        ),
       ),
     );
   }
@@ -292,17 +368,17 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 48,
-            height: 48,
+            width: 28,
+            height: 28,
             child: CircularProgressIndicator(
-              strokeWidth: 3,
+              strokeWidth: 2,
               color: colors.primary,
             ),
           ),
-          const SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: 16),
           Text(
             'Loading canvases...',
-            style: TextStyles.bodyLarge.copyWith(color: colors.onSurfaceVariant),
+            style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
           ),
         ],
       ),
@@ -315,34 +391,31 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(SpacingTokens.xl),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.xl),
+              color: colors.surface,
+              shape: BoxShape.circle,
+              border: Border.all(color: colors.border),
             ),
             child: Icon(
               Icons.palette_outlined,
-              size: 64,
-              color: colors.primary,
+              size: 28,
+              color: colors.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: SpacingTokens.xl),
+          const SizedBox(height: 16),
           Text(
             'No canvases yet',
-            style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: colors.onSurface),
           ),
-          const SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: 4),
           Text(
             'Create your first visual design canvas to get started',
-            style: TextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+            style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: SpacingTokens.xl),
-          AsmblButton.primary(
-            text: 'Create First Canvas',
-            icon: Icons.add,
-            onPressed: _createNewCanvas,
-          ),
+          const SizedBox(height: 16),
+          _buildPrimaryButton(colors, icon: Icons.add, label: 'Create First Canvas', onPressed: _createNewCanvas),
         ],
       ),
     );
@@ -350,16 +423,16 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
 
   Widget _buildCanvasGrid(ThemeColors colors) {
     final filtered = _filteredCanvases;
-    
+
     if (_isGridView) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.lg),
+        padding: const EdgeInsets.symmetric(horizontal: 32),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: SpacingTokens.lg,
-            mainAxisSpacing: SpacingTokens.lg,
-            childAspectRatio: 1.2,
+            crossAxisCount: 4,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.85, // Taller cards for rectangular preview
           ),
           itemCount: filtered.length,
           itemBuilder: (context, index) => _buildCanvasCard(filtered[index], colors),
@@ -380,99 +453,177 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
     final savedAt = DateTime.parse(canvas['savedAt'] as String);
     final id = canvas['id'] as String;
 
-    return AsmblCard(
-      onTap: () => _openCanvas(id),
-      child: Padding(
-        padding: const EdgeInsets.all(SpacingTokens.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Canvas thumbnail/preview
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-                  border: Border.all(color: colors.border),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.palette,
-                    size: 48,
-                    color: colors.primary.withOpacity(0.5),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openCanvas(id),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          decoration: BoxDecoration(
+            color: colors.surface.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: colors.border.withOpacity(0.5)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Penpot-style rectangular document preview (16:10 aspect ratio)
+              AspectRatio(
+                aspectRatio: 16 / 10,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(7)),
+                    border: Border(
+                      bottom: BorderSide(color: colors.border.withOpacity(0.3)),
+                    ),
+                  ),
+                  child: Stack(
+                    children: [
+                      // Grid pattern background (like Penpot canvas)
+                      Positioned.fill(
+                        child: CustomPaint(
+                          painter: _CanvasGridPainter(colors.border.withOpacity(0.15)),
+                        ),
+                      ),
+                      // Centered canvas icon
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: colors.surface.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: colors.border.withOpacity(0.3)),
+                          ),
+                          child: Icon(
+                            Icons.crop_landscape_rounded,
+                            size: 24,
+                            color: colors.primary.withOpacity(0.6),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-            
-            const SizedBox(height: SpacingTokens.sm),
-            
-            // Canvas info
-            Text(
-              name,
-              style: TextStyles.cardTitle.copyWith(color: colors.onSurface),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: SpacingTokens.xs),
-            Text(
-              _formatDate(savedAt),
-              style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
-            ),
-            
-            const SizedBox(height: SpacingTokens.sm),
-            
-            // Actions
-            Row(
-              children: [
-                Expanded(
-                  child: AsmblButton.secondary(
-                    text: 'Open',
-                    size: AsmblButtonSize.small,
-                    onPressed: () => _openCanvas(id),
+
+              // Canvas info section
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: colors.onSurface,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _formatDate(savedAt),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
+
+                      const Spacer(),
+
+                      // Compact action row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildCompactOpenButton(colors, () => _openCanvas(id)),
+                          ),
+                          const SizedBox(width: 4),
+                          _buildCompactIconButton(colors, Icons.delete_outline, () => _showDeleteConfirmation(id, name)),
+                          const SizedBox(width: 2),
+                          PopupMenuButton<String>(
+                            padding: EdgeInsets.zero,
+                            iconSize: 16,
+                            icon: Icon(Icons.more_horiz, size: 14, color: colors.onSurfaceVariant),
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 'duplicate',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.content_copy, size: 14, color: colors.onSurfaceVariant),
+                                    const SizedBox(width: 8),
+                                    Text('Duplicate', style: TextStyle(fontSize: 13, color: colors.onSurface)),
+                                  ],
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 'export',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.file_download, size: 14, color: colors.onSurfaceVariant),
+                                    const SizedBox(width: 8),
+                                    Text('Export', style: TextStyle(fontSize: 13, color: colors.onSurface)),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            onSelected: (action) => _handleCanvasAction(action, canvas),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: SpacingTokens.xs),
-                PopupMenuButton<String>(
-                  icon: Icon(Icons.more_vert, size: 16, color: colors.onSurfaceVariant),
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'duplicate',
-                      child: Row(
-                        children: [
-                          Icon(Icons.content_copy, size: 16, color: colors.onSurfaceVariant),
-                          const SizedBox(width: SpacingTokens.sm),
-                          const Text('Duplicate'),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'export',
-                      child: Row(
-                        children: [
-                          Icon(Icons.file_download, size: 16, color: colors.onSurfaceVariant),
-                          const SizedBox(width: SpacingTokens.sm),
-                          const Text('Export'),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, size: 16, color: colors.error),
-                          const SizedBox(width: SpacingTokens.sm),
-                          Text('Delete', style: TextStyle(color: colors.error)),
-                        ],
-                      ),
-                    ),
-                  ],
-                  onSelected: (action) => _handleCanvasAction(action, canvas),
-                ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactOpenButton(ThemeColors colors, VoidCallback onPressed) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            border: Border.all(color: colors.border),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.open_in_new, size: 12, color: colors.onSurfaceVariant),
+              const SizedBox(width: 4),
+              Text('Open', style: TextStyle(fontSize: 11, color: colors.onSurface)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactIconButton(ThemeColors colors, IconData icon, VoidCallback onPressed) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            border: Border.all(color: colors.border.withOpacity(0.5)),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Icon(icon, size: 14, color: colors.onSurfaceVariant),
         ),
       ),
     );
@@ -526,23 +677,31 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
               ),
             ),
             
-            // Actions
-            AsmblButton.secondary(
-              text: 'Open',
-              size: AsmblButtonSize.small,
+            // Actions - compact with visible delete
+            _buildGhostButton(
+              colors,
+              icon: Icons.open_in_new,
+              label: 'Open',
               onPressed: () => _openCanvas(id),
             ),
-            const SizedBox(width: SpacingTokens.sm),
+            const SizedBox(width: 8),
+            _buildIconButton(
+              colors,
+              icon: Icons.delete_outline,
+              onPressed: () => _showDeleteConfirmation(id, name),
+            ),
+            const SizedBox(width: 4),
             PopupMenuButton<String>(
-              icon: Icon(Icons.more_vert, color: colors.onSurfaceVariant),
+              padding: EdgeInsets.zero,
+              icon: Icon(Icons.more_horiz, size: 16, color: colors.onSurfaceVariant),
               itemBuilder: (context) => [
                 PopupMenuItem(
                   value: 'duplicate',
                   child: Row(
                     children: [
-                      Icon(Icons.content_copy, size: 16, color: colors.onSurfaceVariant),
-                      const SizedBox(width: SpacingTokens.sm),
-                      const Text('Duplicate'),
+                      Icon(Icons.content_copy, size: 14, color: colors.onSurfaceVariant),
+                      const SizedBox(width: 8),
+                      Text('Duplicate', style: TextStyle(fontSize: 13, color: colors.onSurface)),
                     ],
                   ),
                 ),
@@ -550,19 +709,9 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
                   value: 'export',
                   child: Row(
                     children: [
-                      Icon(Icons.file_download, size: 16, color: colors.onSurfaceVariant),
-                      const SizedBox(width: SpacingTokens.sm),
-                      const Text('Export'),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, size: 16, color: colors.error),
-                      const SizedBox(width: SpacingTokens.sm),
-                      Text('Delete', style: TextStyle(color: colors.error)),
+                      Icon(Icons.file_download, size: 14, color: colors.onSurfaceVariant),
+                      const SizedBox(width: 8),
+                      Text('Export', style: TextStyle(fontSize: 13, color: colors.onSurface)),
                     ],
                   ),
                 ),
@@ -766,49 +915,48 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
   
   Widget _buildTabSelector(ThemeColors colors) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: SpacingTokens.lg,
-        vertical: SpacingTokens.sm,
-      ),
-      decoration: BoxDecoration(
-        color: colors.surface.withOpacity(0.5),
-        border: Border(bottom: BorderSide(color: colors.border)),
-      ),
-      child: Row(
-        children: [
-          _buildTabButton('recent', '🕰️ Recent Items', colors),
-          const SizedBox(width: SpacingTokens.sm),
-          _buildTabButton('chat', '🤖 Design Agent', colors),
-          const SizedBox(width: SpacingTokens.sm),
-          _buildTabButton('penpot', '🎨 Penpot Canvas', colors),
-          const SizedBox(width: SpacingTokens.sm),
-          _buildTabButton('saved', '💾 Saved Canvases', colors),
-          const SizedBox(width: SpacingTokens.sm),
-          _buildTabButton('templates', '📐 Templates', colors),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: colors.surface.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: colors.border.withOpacity(0.5)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildTabButton('recent', 'Recent Items', colors),
+            _buildTabButton('chat', 'Design Agent', colors),
+            _buildTabButton('penpot', 'Penpot Canvas', colors),
+            _buildTabButton('saved', 'Saved Canvases', colors),
+            _buildTabButton('templates', 'Templates', colors),
+          ],
+        ),
       ),
     );
   }
-  
+
   Widget _buildTabButton(String tab, String label, ThemeColors colors) {
     final isActive = _activeTab == tab;
-    return Material(
-      color: isActive ? colors.primary.withOpacity(0.1) : Colors.transparent,
-      borderRadius: BorderRadius.circular(6),
-      child: InkWell(
-        onTap: () => setState(() => _activeTab = tab),
-        borderRadius: BorderRadius.circular(6),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: SpacingTokens.md,
-            vertical: SpacingTokens.sm,
-          ),
-          child: Text(
-            label,
-            style: TextStyles.bodySmall.copyWith(
-              color: isActive ? colors.primary : colors.onSurfaceVariant,
-              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-            ),
+    return GestureDetector(
+      onTap: () => setState(() => _activeTab = tab),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isActive ? colors.surface : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: isActive
+              ? [BoxShadow(color: colors.border.withOpacity(0.3), blurRadius: 4, offset: const Offset(0, 1))]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
+            color: isActive ? colors.onSurface : colors.onSurfaceVariant,
           ),
         ),
       ),
@@ -918,15 +1066,70 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
               ),
             ),
             IconButton(
-              icon: Icon(Icons.open_in_new, size: 20),
+              icon: const Icon(Icons.open_in_new, size: 18),
               onPressed: () => _openCanvasWithActivity(activity),
               style: IconButton.styleFrom(
                 foregroundColor: colors.primary,
               ),
               tooltip: 'Open canvas',
             ),
+            IconButton(
+              icon: const Icon(Icons.delete_outline, size: 18),
+              onPressed: () => _showDeleteActivityConfirmation(activity),
+              style: IconButton.styleFrom(
+                foregroundColor: colors.error,
+              ),
+              tooltip: 'Delete',
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDeleteActivityConfirmation(Map<String, dynamic> activity) {
+    final colors = ThemeColors(context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Delete Activity',
+          style: TextStyle(color: colors.onSurface),
+        ),
+        content: Text(
+          'Are you sure you want to remove this activity from your recent items?',
+          style: TextStyle(color: colors.onSurfaceVariant),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text('Cancel', style: TextStyle(color: colors.onSurfaceVariant)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              _deleteActivity(activity);
+            },
+            child: Text('Delete', style: TextStyle(color: colors.error)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteActivity(Map<String, dynamic> activity) {
+    setState(() {
+      _agentActivities.removeWhere((a) =>
+        a['timestamp'] == activity['timestamp'] &&
+        a['description'] == activity['description']
+      );
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Activity removed'),
+        backgroundColor: ThemeColors(context).success,
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -1449,4 +1652,33 @@ class _CanvasLibraryScreenState extends ConsumerState<CanvasLibraryScreen> {
       ),
     );
   }
+}
+
+/// Custom painter for canvas grid pattern (Penpot-style)
+class _CanvasGridPainter extends CustomPainter {
+  final Color gridColor;
+
+  _CanvasGridPainter(this.gridColor);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = gridColor
+      ..strokeWidth = 0.5;
+
+    const gridSize = 16.0;
+
+    // Draw vertical lines
+    for (double x = 0; x <= size.width; x += gridSize) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+
+    // Draw horizontal lines
+    for (double y = 0; y <= size.height; y += gridSize) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

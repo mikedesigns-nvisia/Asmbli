@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 
 import '../di/service_locator.dart';
-import './mcp_bridge_service.dart';
+// import './mcp_bridge_service.dart'; // REMOVED: MCPBridgeService deleted
 import './mcp_catalog_service.dart';
 
 /// Service to manage the Canvas MCP Server lifecycle
@@ -259,7 +259,9 @@ class CanvasMCPServerService {
   /// Check if server is responsive
   Future<bool> checkServerHealth() async {
     if (!_isRunning) return false;
-
+    // DEPRECATED: MCPBridgeService removed, checking process status only
+    return _serverProcess != null;
+    /*
     try {
       final mcpBridge = ServiceLocator.instance.get<MCPBridgeService>();
       final result = await mcpBridge.callCanvasTool('get_canvas_state', {});
@@ -268,5 +270,6 @@ class CanvasMCPServerService {
       print('❌ Canvas MCP Server health check failed: $e');
       return false;
     }
+    */
   }
 }

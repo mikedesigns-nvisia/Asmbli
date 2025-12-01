@@ -12,6 +12,11 @@ import '../core/models/model_config.dart';
 import '../core/services/business/conversation_business_service.dart';
 import '../core/di/service_locator.dart';
 
+/// DSPy Mode - Use DSPy backend for AI responses
+/// When enabled, all chat messages go through the DSPy Python backend
+/// instead of the fragmented local LLM services
+final dspyModeEnabledProvider = StateProvider<bool>((ref) => true);
+
 final conversationServiceProvider = Provider<ConversationService>((ref) {
  return DesktopConversationService();
 });
@@ -326,6 +331,57 @@ final conversationModelConfigProvider = Provider.family<ModelConfig?, String>((r
 // Provider for currently selected conversation ID
 final selectedConversationIdProvider = StateProvider<String?>((ref) => null);
 
+// ============================================================================
+// Multi-Tab State Management (Firefox-style browser tabs)
+// ============================================================================
+
+/// Provider for tracking open conversation tabs (ordered list of conversation IDs)
+final openConversationTabsProvider = StateNotifierProvider<OpenTabsNotifier, List<String>>((ref) {
+  return OpenTabsNotifier();
+});
+
+/// Provider for the currently active tab (conversation ID)
+final activeConversationTabProvider = StateProvider<String?>((ref) => null);
+
+/// Notifier for managing open tabs
+class OpenTabsNotifier extends StateNotifier<List<String>> {
+  OpenTabsNotifier() : super([]);
+
+  /// Open a new tab (adds to list if not already open)
+  void openTab(String conversationId) {
+    if (!state.contains(conversationId)) {
+      state = [...state, conversationId];
+    }
+  }
+
+  /// Close a tab
+  void closeTab(String conversationId) {
+    state = state.where((id) => id != conversationId).toList();
+  }
+
+  /// Reorder tabs (for drag-and-drop)
+  void reorderTabs(int oldIndex, int newIndex) {
+    if (oldIndex < 0 || oldIndex >= state.length) return;
+    if (newIndex < 0 || newIndex > state.length) return;
+
+    final newList = List<String>.from(state);
+    final item = newList.removeAt(oldIndex);
+    final adjustedIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
+    newList.insert(adjustedIndex.clamp(0, newList.length), item);
+    state = newList;
+  }
+
+  /// Close all tabs
+  void closeAllTabs() {
+    state = [];
+  }
+
+  /// Close all tabs except one
+  void closeOtherTabs(String keepTabId) {
+    state = state.contains(keepTabId) ? [keepTabId] : [];
+  }
+}
+
 // Provider to check if we need to run database cleanup
 final databaseHealthProvider = FutureProvider<bool>((ref) async {
   try {
@@ -567,3 +623,27 @@ Map<String, String> _getEnvironmentTokens() {
     'APP_VERSION': '1.0.0', // TODO: Get from package info
   };
 }
+
+/// Provider to check if Quick Chat is being used for a conversation
+/// Quick Chat is active when:
+/// - Not an agent conversation
+/// - No global MCP servers
+/// - No global context documents
+/// - No specific model selected (defaults to quick chat model)
+final isQuickChatActiveProvider = Provider.family<bool, String>((ref, conversationId) {
+  final conversationAsync = ref.watch(conversationProvider(conversationId));
+  final mcpService = ref.read(mcpSettingsServiceProvider);
+
+  return conversationAsync.maybeWhen(
+    data: (conversation) {
+      final isAgentConversation = conversation.metadata?['type'] == 'agent';
+      final hasGlobalMCP = mcpService.getAllMCPServers().any((server) => server.enabled);
+      final hasContextDocs = mcpService.globalContextDocuments.isNotEmpty;
+      final hasSelectedModel = conversation.metadata?['selectedModelId'] != null;
+
+      // Quick chat is active when it's a simple agentless conversation
+      return !isAgentConversation && !hasGlobalMCP && !hasContextDocs && !hasSelectedModel;
+    },
+    orElse: () => false,
+  );
+});

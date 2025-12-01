@@ -126,17 +126,26 @@ class TextStyles {
    letterSpacing: 0.2,
    height: 1.3,
  );
- 
- // ===== COMPATIBILITY ALIASES ===== 
- 
+
+ // Caption variant with medium weight
+ static TextStyle get captionMedium => GoogleFonts.fustat(
+   fontSize: TypographyTokens.fontSizeXS,   // 12px
+   fontWeight: TypographyTokens.medium,
+   letterSpacing: 0.2,
+   height: 1.3,
+ );
+
+ // ===== COMPATIBILITY ALIASES =====
+
  // Material Design compatibility
  static TextStyle get titleLarge => pageTitle;
- static TextStyle get titleMedium => cardTitle; 
+ static TextStyle get titleMedium => cardTitle;
  static TextStyle get titleSmall => labelLarge;
  static TextStyle get headlineLarge => pageTitle;
  static TextStyle get headlineMedium => sectionTitle;
  static TextStyle get headlineSmall => cardTitle;
  static TextStyle get headingMedium => cardTitle;
+ static TextStyle get headingSmall => labelLarge;
  
  // Legacy aliases removed - use labelMedium instead
 }

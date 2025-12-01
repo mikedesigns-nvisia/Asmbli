@@ -6,7 +6,7 @@ import 'package:agent_engine_core/services/agent_service.dart';
 import '../core/services/desktop/desktop_agent_service.dart';
 import '../core/services/mcp_installation_service.dart';
 import '../core/services/context_mcp_resource_service.dart';
-import '../core/services/mcp_conversation_bridge_service.dart';
+// import '../core/services/mcp_conversation_bridge_service.dart'; // Removed - deprecated
 import '../core/services/business/agent_business_service.dart';
 import '../core/di/service_locator.dart';
 
@@ -227,31 +227,10 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
   }
 
   /// Initialize MCP servers for conversation
+  /// DEPRECATED: MCPConversationBridgeService removed
   Future<void> _initializeMCPForConversation(Agent agent, String conversationId) async {
-    try {
-      final mcpBridge = _ref.read(mcpConversationBridgeServiceProvider);
-      
-      // Get environment variables for MCP servers (from settings or default)
-      final environmentVars = await _getAgentEnvironmentVars(agent);
-      
-      // Initialize MCP session for the conversation
-      final session = await mcpBridge.initializeConversationMCP(
-        conversationId,
-        agent,
-        environmentVars,
-      );
-      
-      print('✅ MCP session initialized for agent ${agent.id} in conversation $conversationId');
-      print('   - ${session.serverProcesses.length} servers started');
-      print('   - Server IDs: ${session.serverIds.join(', ')}');
-      
-      // Setup health monitoring
-      _monitorMCPSession(session);
-      
-    } catch (e) {
-      print('⚠️ Failed to initialize MCP for conversation: $e');
-      // Don't block agent loading for MCP issues
-    }
+    // TODO: Reimplement with AgentMCPService if needed
+    print('⚠️ MCP conversation initialization temporarily disabled');
   }
 
   /// Get environment variables for agent MCP servers
@@ -270,29 +249,10 @@ class AgentNotifier extends StateNotifier<AsyncValue<List<Agent>>> {
   }
 
   /// Monitor MCP session health
-  void _monitorMCPSession(MCPConversationSession session) {
-    // Listen to server messages for debugging
-    session.messageStream.listen(
-      (message) {
-        print('📢 MCP Message from ${message.serverId}: ${message.message}');
-      },
-      onError: (error) {
-        print('❌ MCP Message stream error: $error');
-      },
-    );
-    
-    // Setup periodic health checks
-    Timer.periodic(const Duration(minutes: 1), (timer) {
-      final status = _ref.read(mcpConversationBridgeServiceProvider)
-          .getSessionStatus(session.conversationId);
-      
-      if (!status.isActive) {
-        print('⚠️ MCP session ${session.conversationId} is no longer active');
-        timer.cancel();
-      } else if (status.healthyServerCount < status.serverCount) {
-        print('⚠️ MCP session ${session.conversationId}: ${status.healthyServerCount}/${status.serverCount} servers healthy');
-      }
-    });
+  /// DEPRECATED: MCPConversationSession removed
+  void _monitorMCPSession(dynamic session) {
+    // TODO: Reimplement with new MCP service if needed
+    print('⚠️ MCP session monitoring temporarily disabled');
   }
 
   /// Setup context resources as MCP resources for the agent

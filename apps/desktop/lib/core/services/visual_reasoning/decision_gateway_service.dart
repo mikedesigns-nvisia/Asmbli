@@ -1,33 +1,51 @@
 import 'dart:async';
 import '../../di/service_locator.dart';
+import '../mcp_penpot_server.dart';
 
 /// Decision Gateway Service - Implements Procedural Intelligence Block #3
 /// Prevents agent hallucinations by validating actions against current state
-/// ⚠️ DEPRECATED: This service was designed for Excalidraw canvas system.
-/// Will be removed or refactored for PenPOT plugin architecture.
+/// Connected to Penpot MCP Server for real-time canvas awareness.
 class DecisionGatewayService {
   static DecisionGatewayService? _instance;
   static DecisionGatewayService get instance => _instance ??= DecisionGatewayService._();
   DecisionGatewayService._();
 
-  // late MCPExcalidrawBridgeService _mcpBridge; // Commented out - Excalidraw removed
+  MCPPenpotServer? _penpotServer;
   bool _isInitialized = false;
+  bool _penpotAvailable = false;
 
   // Trace events for decision tracking
   final List<DecisionTrace> _decisionHistory = [];
   final StreamController<DecisionTrace> _traceController = StreamController.broadcast();
-  
+
   Stream<DecisionTrace> get onDecisionTrace => _traceController.stream;
   List<DecisionTrace> get decisionHistory => List.unmodifiable(_decisionHistory);
 
+  /// Initialize the service without requiring Penpot server
+  /// Penpot connection is optional and established when available
   Future<void> initialize() async {
     if (_isInitialized) return;
 
-    // _mcpBridge = ServiceLocator.instance.get<MCPExcalidrawBridgeService>(); // Commented out - Excalidraw removed
     _isInitialized = true;
-
-    print('🚦 Decision Gateway Service initialized (Excalidraw deprecated)');
+    print('🚦 Decision Gateway Service initialized (Penpot will connect when available)');
   }
+
+  /// Connect to Penpot server when it becomes available
+  void connectPenpotServer(MCPPenpotServer server) {
+    _penpotServer = server;
+    _penpotAvailable = true;
+    print('🚦 Decision Gateway connected to Penpot server');
+  }
+
+  /// Disconnect from Penpot server
+  void disconnectPenpotServer() {
+    _penpotServer = null;
+    _penpotAvailable = false;
+    print('🚦 Decision Gateway disconnected from Penpot server');
+  }
+
+  /// Check if Penpot server is available
+  bool get isPenpotAvailable => _penpotAvailable && _penpotServer != null;
 
   /// Core decision gateway - validates actions before execution
   Future<DecisionResult> evaluateAction({
@@ -103,16 +121,24 @@ class DecisionGatewayService {
   /// Get current canvas state for context filtering
   Future<Map<String, dynamic>> _getCanvasState() async {
     try {
-      // final elements = _mcpBridge.getElements(); // Commented out - Excalidraw removed
-      // final canvasInfo = await _mcpBridge.getCanvasInfo(); // Commented out - Excalidraw removed
-      final elements = [];
-      final canvasInfo = {};
+      if (_penpotServer == null || !_penpotServer!.isReady) {
+        return {'elementCount': 0, 'elements': []};
+      }
+
+      final result = await _penpotServer!.getCanvasStateDetailed();
+      
+      if (!result['success']) {
+        return {'elementCount': 0, 'elements': []};
+      }
+
+      final state = result['state'] as Map<String, dynamic>;
+      final elements = state['elements'] as List<dynamic>? ?? [];
       
       return {
         'elementCount': elements.length,
         'elements': elements,
-        'lastModified': canvasInfo['lastModified'],
-        'bounds': canvasInfo['bounds'],
+        'lastModified': DateTime.now().toIso8601String(), // Penpot doesn't provide this yet
+        'bounds': state['bounds'],
       };
     } catch (e) {
       print('⚠️ Could not get canvas state: $e');

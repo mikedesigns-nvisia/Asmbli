@@ -366,6 +366,8 @@ class LogicBlockWidget extends ConsumerWidget {
         return Icons.timeline;
       case LogicBlockType.exit:
         return Icons.check_circle;
+      case LogicBlockType.humanVerification:
+        return Icons.verified_user;
     }
   }
 
@@ -385,6 +387,8 @@ class LogicBlockWidget extends ConsumerWidget {
         return 'TRACE';
       case LogicBlockType.exit:
         return 'EXIT';
+      case LogicBlockType.humanVerification:
+        return 'VERIFY';
     }
   }
 

@@ -115,4 +115,54 @@ class DesktopAgentService implements AgentService {
       return [];
     }
   }
+
+  /// Seed default agents if they don't exist
+  /// Called during app initialization to ensure core agents are available
+  Future<void> seedDefaultAgents() async {
+    try {
+      // Check if Design Agent already exists
+      const designAgentId = 'design-agent-default';
+      final exists = await agentExists(designAgentId);
+
+      if (!exists) {
+        final designAgent = Agent(
+          id: designAgentId,
+          name: 'Design Agent',
+          description: 'Visual design assistant with interactive canvas, Material Design components, and prototyping capabilities',
+          capabilities: [
+            'material-design',
+            'ui-ux',
+            'canvas',
+            'prototyping',
+            'components',
+            'wireframes',
+          ],
+          configuration: {
+            'modelId': 'llava:13b',
+            'modelName': 'LLaVA 13B',
+            'modelProvider': 'ollama',
+            'selectedTools': ['figma', 'github', 'canvas-mcp', 'filesystem', 'memory'],
+            'enableReasoningFlows': true,
+            'reasoningFlow': 'iterative',
+            'taskOutline': [
+              'Analyze design requirements and user needs',
+              'Create wireframes and mockups on interactive canvas',
+              'Apply Material Design 3 principles and guidelines',
+              'Generate responsive component structures',
+              'Iterate based on feedback and design principles',
+              'Export design assets and component code',
+            ],
+            'category': 'Design',
+            'isDefaultAgent': true,
+          },
+          status: AgentStatus.active,
+        );
+
+        await createAgent(designAgent);
+        print('✅ Seeded default Design Agent');
+      }
+    } catch (e) {
+      print('⚠️ Failed to seed default agents: $e');
+    }
+  }
 }

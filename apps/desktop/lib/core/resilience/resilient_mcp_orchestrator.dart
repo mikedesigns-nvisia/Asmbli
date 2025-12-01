@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agent_engine_core/models/agent.dart';
 import '../models/mcp_capability.dart';
+import '../models/capability_result.dart';
 import '../data/mcp_server_configs.dart';
 import '../services/mcp_installation_service.dart';
 import '../services/mcp_safety_service.dart';

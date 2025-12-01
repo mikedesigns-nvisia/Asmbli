@@ -259,6 +259,9 @@ class WorkflowExecutionService {
         return _processTraceBlock(block, inputs, context);
       case LogicBlockType.exit:
         return _processExitBlock(block, inputs, context);
+      case LogicBlockType.humanVerification:
+        // TODO: Implement human verification execution
+        throw UnimplementedError('Human verification execution not yet implemented');
     }
   }
 

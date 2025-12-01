@@ -6,9 +6,11 @@ import 'package:uuid/uuid.dart';
 import 'base_business_service.dart';
 import '../llm/unified_llm_service.dart';
 import '../llm/llm_provider.dart';
-import '../mcp_bridge_service.dart';
+import '../agent_mcp_service.dart';
 import '../context_mcp_resource_service.dart';
 import '../agent_context_prompt_service.dart';
+import '../llm_tool_call_parser.dart';
+import '../../models/mcp_tool_result.dart';
 import '../../utils/null_safety_utils.dart';
 
 /// Business service for conversation and message processing
@@ -16,7 +18,7 @@ import '../../utils/null_safety_utils.dart';
 class ConversationBusinessService extends BaseBusinessService {
   final ConversationService _conversationRepository;
   final UnifiedLLMService _llmService;
-  final MCPBridgeService _mcpService;
+  final AgentMCPService _mcpService;
   final ContextMCPResourceService _contextService;
   final AgentContextPromptService _promptService;
   final BusinessEventBus _eventBus;
@@ -24,7 +26,7 @@ class ConversationBusinessService extends BaseBusinessService {
   ConversationBusinessService({
     required ConversationService conversationRepository,
     required UnifiedLLMService llmService,
-    required MCPBridgeService mcpService,
+    required AgentMCPService mcpService,
     required ContextMCPResourceService contextService,
     required AgentContextPromptService promptService,
     BusinessEventBus? eventBus,
@@ -141,25 +143,128 @@ class ConversationBusinessService extends BaseBusinessService {
       final fullContent = StringBuffer();
       final mcpResults = <MCPToolResult>[];
       final resourceData = <MCPResourceData>[];
+      
+      // Track conversation history for the loop
+      var currentHistory = conversation.messages.toList();
+      
+      String currentPrompt = userMessage.content;
+      bool isFinished = false;
+      int loopCount = 0;
+      const maxLoops = 10;
 
-      // Build context and prepare for streaming
-      final enrichedContext = await _buildContextForMessage(
-        conversation: conversation,
-        userMessage: userMessage,
-        contextDocs: contextDocs,
-        mcpServers: mcpServers,
-        agentId: agentId,
-      );
+      while (!isFinished && loopCount < maxLoops) {
+        loopCount++;
+        final currentResponseBuffer = StringBuffer();
+        
+        // Build context
+        final enrichedContext = await _buildContextForMessage(
+          conversation: conversation.copyWith(messages: currentHistory),
+          userMessage: userMessage, // Used for system prompt logic
+          contextDocs: contextDocs,
+          mcpServers: mcpServers,
+          agentId: agentId,
+        );
+        
+        // Prepare context map for provider
+        final contextMap = Map<String, dynamic>.from(enrichedContext.context);
+        final recentMessages = currentHistory
+            .take(20)
+            .map((m) => {
+                  'role': m.role.name,
+                  'content': m.content,
+                  'timestamp': m.timestamp.toIso8601String(),
+                })
+            .toList();
+        contextMap['conversationHistory'] = recentMessages;
 
-      // Start streaming from LLM
-      await for (final chunk in _llmService.chatStream(
-        message: enrichedContext.prompt,
-        modelId: modelId,
-        context: ChatContext(metadata: _buildChatContext(conversationId, null) ?? {}),
-      )) {
-        // Process streaming response chunks
-        fullContent.write(chunk);
-        yield MessageChunk.content(messageId, chunk);
+        // Start streaming from LLM
+        await for (final chunk in _llmService.chatStream(
+          message: currentPrompt,
+          modelId: modelId,
+          context: ChatContext(metadata: {
+            ..._buildChatContext(conversationId, null) ?? {},
+            ...contextMap,
+          }),
+        )) {
+          currentResponseBuffer.write(chunk);
+          fullContent.write(chunk);
+          yield MessageChunk.content(messageId, chunk);
+        }
+        
+        final responseText = currentResponseBuffer.toString();
+        
+        // Check for tool calls
+        final toolCalls = LLMToolCallParser.parseToolCalls(responseText);
+        
+        if (toolCalls.isNotEmpty) {
+          // Execute tools
+          final toolOutputs = StringBuffer();
+          toolOutputs.writeln("Tool Execution Results:");
+          
+          for (final call in toolCalls) {
+            yield MessageChunk.toolStatus(messageId, 'Executing ${call.name}...');
+            
+            try {
+              String? targetServerId = call.serverId;
+              if (targetServerId == null && mcpServers.isNotEmpty) {
+                 targetServerId = mcpServers.first;
+              }
+
+              final result = await _mcpService.executeTool(
+                call.name,
+                call.arguments,
+                serverId: targetServerId,
+              );
+              
+              final mcpResult = MCPToolResult(
+                serverId: result.serverId,
+                toolName: result.toolName,
+                arguments: result.arguments,
+                result: result.result,
+                success: result.success,
+                error: result.error,
+                timestamp: DateTime.now(),
+              );
+              
+              mcpResults.add(mcpResult);
+              yield MessageChunk.toolResult(messageId, mcpResult);
+              
+              toolOutputs.writeln("Tool '${call.name}' Output: ${result.result}");
+              
+            } catch (e) {
+              toolOutputs.writeln("Tool '${call.name}' Error: $e");
+              yield MessageChunk.error('Tool execution failed: $e');
+            }
+          }
+          
+          // Update history for next loop
+          if (loopCount == 1) {
+            currentHistory.add(userMessage);
+          } else {
+            // Add the previous tool output prompt to history
+            currentHistory.add(Message(
+              id: const Uuid().v4(),
+              content: currentPrompt,
+              role: MessageRole.user,
+              timestamp: DateTime.now(),
+              metadata: {'isToolOutput': true},
+            ));
+          }
+          
+          // Add assistant response to history
+          currentHistory.add(Message(
+            id: const Uuid().v4(),
+            content: responseText,
+            role: MessageRole.assistant,
+            timestamp: DateTime.now(),
+          ));
+          
+          // Set prompt for next loop
+          currentPrompt = toolOutputs.toString();
+          
+        } else {
+          isFinished = true;
+        }
       }
 
       // Create final assistant message
@@ -493,9 +598,13 @@ class ConversationBusinessService extends BaseBusinessService {
     }
 
     // Add MCP capabilities
-    if (mcpServers.isNotEmpty) {
-      final mcpCapabilities = await _mcpService.getCapabilitiesForServers(mcpServers);
-      contextBuilder.putString('mcpCapabilities', mcpCapabilities.toString());
+    if (mcpServers.isNotEmpty && agentId != null) {
+      try {
+        final tools = await _mcpService.getAvailableTools(agentId: agentId);
+        contextBuilder.putString('mcpCapabilities', tools.toString());
+      } catch (e) {
+        // Ignore errors for now
+      }
     }
 
     // Build system prompt
@@ -522,63 +631,9 @@ class ConversationBusinessService extends BaseBusinessService {
     }
   }
 
-  Future<MCPToolResult> _handleMCPToolCall({
-    required ToolCall toolCall,
-    required List<String> mcpServers,
-  }) async {
-    try {
-      final result = await _mcpService.callTool(
-        toolCall.name,
-        toolCall.arguments,
-        serverId: toolCall.serverId,
-      );
 
-      return MCPToolResult(
-        serverId: toolCall.serverId,
-        toolName: toolCall.name,
-        arguments: toolCall.arguments,
-        result: result,
-        success: true,
-        timestamp: DateTime.now(),
-      );
-    } catch (e) {
-      return MCPToolResult(
-        serverId: toolCall.serverId,
-        toolName: toolCall.name,
-        arguments: toolCall.arguments,
-        result: null,
-        success: false,
-        error: e.toString(),
-        timestamp: DateTime.now(),
-      );
-    }
-  }
 
-  Future<MCPResourceData> _handleResourceAccess({
-    required ResourceRequest resourceRequest,
-    required List<String> contextDocs,
-  }) async {
-    try {
-      final content = await _contextService.getResourceContent(
-        resourceRequest.uri,
-      );
 
-      return MCPResourceData(
-        serverId: resourceRequest.serverId,
-        resourceUri: resourceRequest.uri,
-        content: content,
-        success: true,
-      );
-    } catch (e) {
-      return MCPResourceData(
-        serverId: resourceRequest.serverId,
-        resourceUri: resourceRequest.uri,
-        content: '',
-        success: false,
-        error: e.toString(),
-      );
-    }
-  }
 
   Future<void> _updateConversationAfterMessage(
     Conversation conversation,
@@ -640,23 +695,14 @@ class ConversationBusinessService extends BaseBusinessService {
           ?.map((s) => s.toString())
           .toList() ?? [];
       
+      // 1. Validate MCP servers - Simplified
+      /*
       final mcpValidation = <String, dynamic>{};
       for (final serverId in mcpServers) {
-        try {
-          // Test MCP server connectivity without sending actual message
-          final capabilities = await _mcpService.getCapabilitiesForServers([serverId]);
-          mcpValidation[serverId] = {
-            'status': 'available',
-            'capabilities': capabilities.isNotEmpty,
-          };
-        } catch (e) {
-          mcpValidation[serverId] = {
-            'status': 'error',
-            'error': e.toString(),
-          };
-        }
+         // Validation logic removed as it relied on bridge
       }
       results['mcpValidation'] = mcpValidation;
+      */
 
       // 2. Validate context documents
       final contextDocs = (conversation.metadata?['contextDocuments'] as List<dynamic>?)
@@ -679,7 +725,8 @@ class ConversationBusinessService extends BaseBusinessService {
         }
       }
 
-      // 3. Send lightweight priming message through MCP bridge
+      // 3. Send lightweight priming message through MCP bridge - Skipped
+      /*
       final primingMessage = 'System initialization check. Confirm all agent capabilities are ready.';
       try {
         final mcpResponse = await _mcpService.callTool(
@@ -698,6 +745,7 @@ class ConversationBusinessService extends BaseBusinessService {
           'reason': 'No MCP test tool available',
         };
       }
+      */
 
       // 4. Test basic LLM connectivity with agent system prompt
       final systemPrompt = conversation.metadata?['systemPrompt'] as String? ??
@@ -868,6 +916,9 @@ class MessageChunk {
   factory MessageChunk.resourceData(String messageId, MCPResourceData data) =>
       MessageChunk._(type: 'resource_data', messageId: messageId, resourceData: data);
 
+  factory MessageChunk.toolStatus(String messageId, String status) =>
+      MessageChunk._(type: 'tool_status', messageId: messageId, content: status);
+
   factory MessageChunk.userMessage(Message message) =>
       MessageChunk._(type: 'user_message', messageId: message.id, userMessage: message);
 
@@ -879,6 +930,7 @@ class MessageChunk {
 
   bool get isContent => type == 'content';
   bool get isTool => type == 'tool_result';
+  bool get isToolStatus => type == 'tool_status';
   bool get isResource => type == 'resource_data';
   bool get isComplete => type == 'complete';
   bool get isError => type == 'error';

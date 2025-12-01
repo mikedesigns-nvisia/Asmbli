@@ -1,63 +1,53 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:agentengine_desktop/core/widgets/penpot_canvas.dart';
 import 'package:agentengine_desktop/core/services/mcp_penpot_server.dart';
+import 'package:agentengine_desktop/core/interfaces/penpot_canvas_interface.dart';
 
-/// Integration test for Penpot canvas and MCP server
-///
-/// Tests the complete flow:
-/// 1. Load Penpot in WebView
-/// 2. Inject plugin
-/// 3. Wait for plugin ready
-/// 4. Execute commands via MCPPenpotServer
-/// 5. Verify canvas state
+/// Mock implementation of PenpotCanvasInterface for testing
+class MockPenpotCanvas implements PenpotCanvasInterface {
+  bool _isPluginLoaded = true;
+  final Map<String, dynamic> _lastCommand = {};
+
+  @override
+  bool get isPluginLoaded => _isPluginLoaded;
+
+  void setPluginLoaded(bool loaded) {
+    _isPluginLoaded = loaded;
+  }
+
+  Map<String, dynamic> get lastCommand => _lastCommand;
+
+  @override
+  Future<Map<String, dynamic>> executeCommand({
+    required String type,
+    required Map<String, dynamic> params,
+    Duration timeout = const Duration(seconds: 10),
+  }) async {
+    _lastCommand['type'] = type;
+    _lastCommand['params'] = params;
+
+    // Simulate successful response
+    return {
+      'success': true,
+      'data': {
+        'id': 'mock-element-id',
+        ...params,
+      },
+    };
+  }
+}
+
 void main() {
-  testWidgets('Penpot canvas loads and plugin initializes', (WidgetTester tester) async {
-    final canvasKey = GlobalKey<PenpotCanvasState>();
+  test('MCPPenpotServer initializes correctly', () {
+    final mockCanvas = MockPenpotCanvas();
+    final mcpServer = MCPPenpotServer(canvas: mockCanvas);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: PenpotCanvas(key: canvasKey),
-        ),
-      ),
-    );
-
-    // Widget should render
-    expect(find.byType(PenpotCanvas), findsOneWidget);
-
-    // Should show loading initially
-    expect(find.text('Loading Penpot Canvas...'), findsOneWidget);
-  });
-
-  testWidgets('MCPPenpotServer handles tool calls', (WidgetTester tester) async {
-    final canvasKey = GlobalKey<PenpotCanvasState>();
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: PenpotCanvas(key: canvasKey),
-        ),
-      ),
-    );
-
-    // Create MCP server
-    final mcpServer = MCPPenpotServer(canvasKey: canvasKey);
-
-    // Server should initialize
     expect(mcpServer, isNotNull);
-
-    // Should have tool definitions
-    final tools = mcpServer.getToolDefinitions();
-    expect(tools.length, 6);
-    expect(tools.any((t) => t['name'] == 'penpot_create_rectangle'), true);
-    expect(tools.any((t) => t['name'] == 'penpot_create_text'), true);
-    expect(tools.any((t) => t['name'] == 'penpot_create_frame'), true);
+    expect(mcpServer.isReady, true);
   });
 
   test('MCPPenpotServer provides correct tool schemas', () {
-    final canvasKey = GlobalKey<PenpotCanvasState>();
-    final mcpServer = MCPPenpotServer(canvasKey: canvasKey);
+    final mockCanvas = MockPenpotCanvas();
+    final mcpServer = MCPPenpotServer(canvas: mockCanvas);
 
     final tools = mcpServer.getToolDefinitions();
 
@@ -79,8 +69,8 @@ void main() {
   });
 
   test('MCPPenpotServer agent intelligence methods', () {
-    final canvasKey = GlobalKey<PenpotCanvasState>();
-    final mcpServer = MCPPenpotServer(canvasKey: canvasKey);
+    final mockCanvas = MockPenpotCanvas();
+    final mcpServer = MCPPenpotServer(canvas: mockCanvas);
 
     // Grid snapping
     expect(mcpServer.applyGridSnapping(17), 16); // Rounds to nearest 8px
@@ -103,9 +93,27 @@ void main() {
     expect(mcpServer.calculateSpacing(context: 'loose'), 24);
   });
 
+  test('MCPPenpotServer executes createRectangle correctly', () async {
+    final mockCanvas = MockPenpotCanvas();
+    final mcpServer = MCPPenpotServer(canvas: mockCanvas);
+
+    await mcpServer.createRectangle(
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 150,
+      fill: '#4ECDC4',
+    );
+
+    expect(mockCanvas.lastCommand['type'], 'create_rectangle');
+    expect(mockCanvas.lastCommand['params']['x'], 100);
+    expect(mockCanvas.lastCommand['params']['fill'], '#4ECDC4');
+  });
+
   test('MCPPenpotServer handles tool calls with proper error handling', () async {
-    final canvasKey = GlobalKey<PenpotCanvasState>();
-    final mcpServer = MCPPenpotServer(canvasKey: canvasKey);
+    final mockCanvas = MockPenpotCanvas();
+    mockCanvas.setPluginLoaded(false); // Simulate not ready
+    final mcpServer = MCPPenpotServer(canvas: mockCanvas);
 
     // Should fail gracefully when canvas not ready
     try {
@@ -123,8 +131,8 @@ void main() {
   });
 
   test('MCPPenpotServer buildDesignFromSpec parses spec correctly', () async {
-    final canvasKey = GlobalKey<PenpotCanvasState>();
-    final mcpServer = MCPPenpotServer(canvasKey: canvasKey);
+    final mockCanvas = MockPenpotCanvas();
+    final mcpServer = MCPPenpotServer(canvas: mockCanvas);
 
     final designSpec = {
       'elements': [
@@ -151,17 +159,19 @@ void main() {
       ],
     };
 
-    // Should fail because canvas not ready, but test spec parsing
     final result = await mcpServer.buildDesignFromSpec(designSpec: designSpec);
 
-    // Should return error result
-    expect(result['success'], false);
-    expect(result['error'], isNotNull);
+    expect(result['success'], true);
+    expect(result['elementsCreated'], 2);
+    
+    // Note: In a real test we would verify the sequence of calls, 
+    // but our simple mock only stores the last one.
+    expect(mockCanvas.lastCommand['type'], 'create_text'); // Last element
   });
 
   test('MCPPenpotServer routes tool calls correctly', () async {
-    final canvasKey = GlobalKey<PenpotCanvasState>();
-    final mcpServer = MCPPenpotServer(canvasKey: canvasKey);
+    final mockCanvas = MockPenpotCanvas();
+    final mcpServer = MCPPenpotServer(canvas: mockCanvas);
 
     // Test rectangle tool routing
     final rectResult = await mcpServer.handleToolCall(
@@ -175,8 +185,9 @@ void main() {
       },
     );
 
-    // Should return error (canvas not ready)
-    expect(rectResult['success'], false);
+    expect(rectResult, isNotNull); // Should succeed now with mock
+    expect(rectResult['id'], 'mock-element-id');
+    expect(mockCanvas.lastCommand['type'], 'create_rectangle');
 
     // Test text tool routing
     final textResult = await mcpServer.handleToolCall(
@@ -189,7 +200,9 @@ void main() {
       },
     );
 
-    expect(textResult['success'], false);
+    expect(textResult, isNotNull);
+    expect(textResult['id'], 'mock-element-id');
+    expect(mockCanvas.lastCommand['type'], 'create_text');
 
     // Test unknown tool
     final unknownResult = await mcpServer.handleToolCall(

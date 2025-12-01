@@ -41,24 +41,25 @@ class _ContextualInputAreaState extends ConsumerState<ContextualInputArea> {
     final selectedConversationId = ref.watch(selectedConversationIdProvider);
     final sessionContext = ref.watch(sessionContextProvider(selectedConversationId));
     final showContextPrompt = ref.watch(showContextPromptProvider(selectedConversationId));
-    
+    final hasConversation = selectedConversationId != null;
+
     return Container(
       padding: const EdgeInsets.all(SpacingTokens.elementSpacing),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Context indicator bar (when context is added)
-          if (sessionContext.isNotEmpty)
+          // Context indicator bar (when context is added and has conversation)
+          if (hasConversation && sessionContext.isNotEmpty)
             _buildContextIndicatorBar(context, sessionContext, selectedConversationId),
-          
-          // Context prompt bar (when no context and prompt not dismissed)
-          if (sessionContext.isEmpty && showContextPrompt)
+
+          // Context prompt bar (only show when has conversation, no context, and prompt not dismissed)
+          if (hasConversation && sessionContext.isEmpty && showContextPrompt)
             _buildContextPromptBar(context, selectedConversationId),
-          
+
           // Space between context bars and input
-          if (sessionContext.isNotEmpty || (sessionContext.isEmpty && showContextPrompt))
+          if (hasConversation && (sessionContext.isNotEmpty || (sessionContext.isEmpty && showContextPrompt)))
             const SizedBox(height: SpacingTokens.sm),
-          
+
           // Main input area
           _buildMainInputArea(context),
         ],
@@ -291,116 +292,143 @@ class _ContextualInputAreaState extends ConsumerState<ContextualInputArea> {
 
   Widget _buildMainInputArea(BuildContext context) {
     final theme = Theme.of(context);
-    
-    return Row(
-      children: [
-        // Context attachment button
-        Container(
+    final selectedConversationId = ref.watch(selectedConversationIdProvider);
+    final hasConversation = selectedConversationId != null;
+
+    // Centered design when no conversation (Gemini-style)
+    // Bottom-aligned when conversation exists
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 800), // Max width for centered input
+        child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-            borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-            border: Border.all(color: Theme.of(context).colorScheme.outline),
-          ),
-          child: IconButton(
-            onPressed: () => _showContextFlow(context),
-            icon: Icon(
-              Icons.attach_file,
-              size: 18,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            style: IconButton.styleFrom(
-              padding: const EdgeInsets.all(10),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            tooltip: 'Add context',
-          ),
-        ),
-        
-        const SizedBox(width: SpacingTokens.sm),
-        
-        // Main text input
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
-              border: Border.all(color: Theme.of(context).colorScheme.outline),
-            ),
-            child: KeyboardListener(
-              focusNode: FocusNode(),
-              onKeyEvent: (KeyEvent event) {
-                if (event is KeyDownEvent) {
-                  final isEnterPressed = event.logicalKey == LogicalKeyboardKey.enter;
-                  final isShiftPressed = HardwareKeyboard.instance.isShiftPressed;
-                  
-                  if (isEnterPressed && isShiftPressed) {
-                    widget.onSendMessage();
-                    return;
-                  }
-                }
-              },
-              child: TextField(
-                controller: widget.messageController,
-                decoration: InputDecoration(
-                  hintText: 'Type your message... (Shift+Enter to send)',
-                  hintStyle: GoogleFonts.fustat(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                ),
-                style: GoogleFonts.fustat(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                maxLines: 5,
-                minLines: 1,
-                keyboardType: TextInputType.multiline,
-                textInputAction: TextInputAction.newline,
-                onChanged: (value) => setState(() {}),
-              ),
-            ),
-          ),
-        ),
-        
-        const SizedBox(width: SpacingTokens.sm),
-        
-        // Send button
-        Container(
-          decoration: BoxDecoration(
-            color: widget.messageController.text.trim().isNotEmpty && !widget.isLoading
-                ? ThemeColors(context).primary
-                : theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
+            borderRadius: BorderRadius.circular(hasConversation ? BorderRadiusTokens.sm : BorderRadiusTokens.xl),
             border: Border.all(
-              color: widget.messageController.text.trim().isNotEmpty && !widget.isLoading
-                  ? ThemeColors(context).primary
-                  : theme.colorScheme.outline,
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+              width: 1.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          child: IconButton(
-            onPressed: widget.messageController.text.trim().isNotEmpty && !widget.isLoading
-                ? widget.onSendMessage
-                : null,
-            icon: widget.isLoading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          child: KeyboardListener(
+            focusNode: FocusNode(),
+            onKeyEvent: (KeyEvent event) {
+              if (event is KeyDownEvent) {
+                final isEnterPressed = event.logicalKey == LogicalKeyboardKey.enter;
+                final isShiftPressed = HardwareKeyboard.instance.isShiftPressed;
+
+                if (isEnterPressed && isShiftPressed) {
+                  widget.onSendMessage();
+                  return;
+                }
+              }
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Context attachment button
+                Padding(
+                  padding: const EdgeInsets.all(SpacingTokens.sm),
+                  child: IconButton(
+                    onPressed: () => _showContextFlow(context),
+                    icon: Icon(
+                      Icons.attach_file,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-                  )
-                : const Icon(Icons.send, size: 18),
-            style: IconButton.styleFrom(
-              foregroundColor: widget.messageController.text.trim().isNotEmpty && !widget.isLoading
-                  ? Colors.white
-                  : theme.colorScheme.onSurfaceVariant,
-              padding: const EdgeInsets.all(12),
+                    style: IconButton.styleFrom(
+                      padding: const EdgeInsets.all(10),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    tooltip: 'Add context',
+                  ),
+                ),
+
+                // Main text input - RESPONSIVE, expands with content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: SpacingTokens.sm),
+                    child: TextField(
+                      controller: widget.messageController,
+                      decoration: InputDecoration(
+                        hintText: hasConversation
+                            ? 'Type your message... (Shift+Enter to send)'
+                            : 'Ask anything...',
+                        hintStyle: GoogleFonts.fustat(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: hasConversation ? 14 : 16,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: SpacingTokens.sm,
+                          vertical: SpacingTokens.md,
+                        ),
+                      ),
+                      style: GoogleFonts.fustat(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 15,
+                        height: 1.5,
+                      ),
+                      maxLines: null, // CRITICAL: null allows unlimited expansion
+                      minLines: 1, // Start with 1 line
+                      keyboardType: TextInputType.multiline,
+                      textInputAction: TextInputAction.newline,
+                      onChanged: (value) => setState(() {}),
+                    ),
+                  ),
+                ),
+
+                // Send button
+                Padding(
+                  padding: const EdgeInsets.all(SpacingTokens.sm),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    decoration: BoxDecoration(
+                      color: widget.messageController.text.trim().isNotEmpty && !widget.isLoading
+                          ? ThemeColors(context).primary
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(BorderRadiusTokens.sm),
+                    ),
+                    child: IconButton(
+                      onPressed: widget.messageController.text.trim().isNotEmpty && !widget.isLoading
+                          ? widget.onSendMessage
+                          : null,
+                      icon: widget.isLoading
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : Icon(
+                              Icons.arrow_upward,
+                              size: 20,
+                              color: widget.messageController.text.trim().isNotEmpty && !widget.isLoading
+                                  ? Colors.white
+                                  : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                            ),
+                      style: IconButton.styleFrom(
+                        padding: const EdgeInsets.all(10),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 

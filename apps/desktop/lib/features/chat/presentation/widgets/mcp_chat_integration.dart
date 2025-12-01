@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/mcp_capability.dart';
-import '../../../../core/services/mcp_orchestrator.dart';
+// import '../../../../core/services/mcp_orchestrator.dart'; // REMOVED: MCPOrchestrator deleted
 import '../../../../core/services/mcp_user_interface_service.dart';
 import '../../../../core/services/mcp_catalog_service.dart';
 import '../../../../core/design_system/components/mcp_progress_widget.dart';
@@ -407,7 +407,11 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
     ));
   }
 
+  // DEPRECATED: mcpOrchestratorProvider removed
   Future<void> _enableCapability(AgentCapability capability) async {
+    _addSystemMessage("⚠️ Capability management temporarily unavailable");
+    return;
+    /*
     if (widget.currentAgent == null) {
       _addSystemMessage("Please select an agent first to enable capabilities.");
       return;
@@ -441,6 +445,7 @@ class _MCPChatIntegrationState extends ConsumerState<MCPChatIntegration> {
     } catch (e) {
       _addSystemMessage("❌ Something went wrong: $e");
     }
+    */
   }
 
   ChatMessage _getCapabilityEnabledMessage(AgentCapability capability) {

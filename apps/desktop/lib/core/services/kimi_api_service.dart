@@ -85,6 +85,94 @@ class KimiApiService {
     }
   }
 
+  /// Stream a message from Kimi API
+  Stream<String> streamMessage({
+    required String message,
+    required String apiKey,
+    String model = 'moonshot-v1-8k',
+    double temperature = 0.3,
+    int maxTokens = 2048,
+    String? systemPrompt,
+    List<Map<String, dynamic>>? conversationHistory,
+  }) async* {
+    try {
+      // Build messages array
+      List<Map<String, dynamic>> messages = [];
+
+      if (systemPrompt != null && systemPrompt.trim().isNotEmpty) {
+        messages.add({
+          'role': 'system',
+          'content': systemPrompt,
+        });
+      }
+
+      if (conversationHistory != null) {
+        messages.addAll(conversationHistory);
+      }
+
+      messages.add({
+        'role': 'user',
+        'content': message,
+      });
+
+      final requestData = {
+        'model': model,
+        'messages': messages,
+        'temperature': temperature,
+        'max_tokens': maxTokens,
+        'stream': true,
+      };
+
+      final response = await _dio.post(
+        '/v1/chat/completions',
+        data: requestData,
+        options: Options(
+          responseType: ResponseType.stream,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $apiKey',
+            'Accept': 'text/event-stream',
+          },
+        ),
+      );
+
+      final stream = response.data.stream;
+      
+      await for (final chunk in stream) {
+        final String chunkStr = utf8.decode(chunk);
+        final lines = chunkStr.split('\n').where((line) => line.trim().isNotEmpty);
+        
+        for (final line in lines) {
+          if (line.startsWith('data: ')) {
+            final data = line.substring(6);
+            if (data == '[DONE]') continue;
+            
+            try {
+              final json = jsonDecode(data);
+              final choices = json['choices'] as List;
+              if (choices.isNotEmpty) {
+                final delta = choices[0]['delta'];
+                if (delta.containsKey('content')) {
+                  final content = delta['content'] as String?;
+                  if (content != null && content.isNotEmpty) {
+                    yield content;
+                  }
+                }
+              }
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+        }
+      }
+    } catch (e) {
+      if (e is DioException) {
+        throw KimiApiException('Kimi streaming error: ${e.message}');
+      }
+      throw KimiApiException('Unexpected streaming error: $e');
+    }
+  }
+
   /// Test API key validity
   Future<bool> testApiKey(String apiKey) async {
     try {

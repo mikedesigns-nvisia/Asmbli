@@ -58,123 +58,145 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
               // App Navigation Bar
               const AppNavigationBar(currentRoute: AppRoutes.context),
               
-              // Page Header
+              // Page Header - compact shadcn style
               Container(
-                padding: const EdgeInsets.all(SpacingTokens.headerPadding),
-                child: Column(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        HeaderButton(
-                          text: 'Back',
-                          icon: Icons.arrow_back,
-                          onPressed: () => context.go(AppRoutes.home),
-                        ),
-                        const Spacer(),
-                        Text(
-                          'Context Library',
-                          style: TextStyles.pageTitle.copyWith(
-                            color: colors.onSurface,
-                          ),
-                        ),
-                        const Spacer(),
-                        HeaderButton(
-                          text: 'Add Context',
-                          icon: Icons.add,
-                          onPressed: _showCreateContextFlow,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: SpacingTokens.lg),
-                    Text(
-                      'Manage your context documents, agent templates, and knowledge samples',
-                      style: TextStyles.bodyMedium.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Search Bar
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.xxl),
-                child: Row(
-                  children: [
                     Expanded(
-                      child: TextField(
-                        onChanged: (value) => setState(() => searchQuery = value),
-                        decoration: InputDecoration(
-                          hintText: 'Search context library...',
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                            borderSide: BorderSide(color: colors.border),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Context Library',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: colors.onSurface,
+                              letterSpacing: -0.5,
+                            ),
                           ),
-                          filled: true,
-                          fillColor: colors.surface.withValues(alpha: 0.7),
-                        ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Manage your context documents, agent templates, and knowledge samples.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: colors.onSurfaceVariant,
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    const SizedBox(width: 16),
+                    _buildGhostButton(
+                      colors,
+                      icon: Icons.arrow_back,
+                      label: 'Back',
+                      onPressed: () => context.go(AppRoutes.home),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildPrimaryButton(
+                      colors,
+                      icon: Icons.add,
+                      label: 'Add Context',
+                      onPressed: _showCreateContextFlow,
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: SpacingTokens.lg),
-
-              // Filter Chips
-              Container(
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.xxl),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: filterCategories.entries.map((entry) {
-                      final filterName = entry.key;
-                      final filterData = entry.value;
-                      final isSelected = _selectedFilter == filterName;
-                      
-                      return Padding(
-                        padding: const EdgeInsets.only(right: SpacingTokens.sm),
-                        child: FilterChip(
-                          label: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                filterData['icon'],
-                                size: 16,
-                                color: isSelected ? Colors.white : filterData['color'],
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                filterName,
-                                style: TextStyles.bodySmall.copyWith(
-                                  color: isSelected ? Colors.white : colors.onSurface,
-                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            setState(() => _selectedFilter = filterName);
-                          },
-                          selectedColor: filterData['color'],
-                          backgroundColor: colors.surface,
-                          side: BorderSide(
-                            color: isSelected ? filterData['color'] : colors.border,
-                            width: isSelected ? 2 : 1,
-                          ),
-                          elevation: isSelected ? 2 : 0,
-                        ),
-                      );
-                    }).toList(),
+              // Search Bar - compact shadcn style
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: TextField(
+                  onChanged: (value) => setState(() => searchQuery = value),
+                  style: TextStyle(fontSize: 13, color: colors.onSurface),
+                  decoration: InputDecoration(
+                    hintText: 'Search context library...',
+                    hintStyle: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
+                    prefixIcon: Icon(Icons.search, size: 16, color: colors.onSurfaceVariant),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: BorderSide(color: colors.border),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: BorderSide(color: colors.border),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: BorderSide(color: colors.primary),
+                    ),
+                    filled: true,
+                    fillColor: colors.surface.withValues(alpha: 0.5),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   ),
                 ),
               ),
 
-              const SizedBox(height: SpacingTokens.lg),
+              const SizedBox(height: 16),
+
+              // Filter Chips - compact tabs style
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: colors.surface.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: colors.border.withValues(alpha: 0.5)),
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: filterCategories.entries.map((entry) {
+                        final filterName = entry.key;
+                        final filterData = entry.value;
+                        final isSelected = _selectedFilter == filterName;
+
+                        return GestureDetector(
+                          onTap: () => setState(() => _selectedFilter = filterName),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 150),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isSelected ? colors.surface : Colors.transparent,
+                              borderRadius: BorderRadius.circular(6),
+                              boxShadow: isSelected
+                                  ? [BoxShadow(color: colors.border.withValues(alpha: 0.3), blurRadius: 4, offset: const Offset(0, 1))]
+                                  : null,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  filterData['icon'],
+                                  size: 14,
+                                  color: isSelected ? colors.onSurface : colors.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  filterName,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                                    color: isSelected ? colors.onSurface : colors.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
 
               // Main Content - Filtered View
               Expanded(
@@ -204,21 +226,28 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
 
   Widget _buildAllContentSection(ThemeColors colors) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Context Samples Section
+          // Context Samples Section - compact spacing
           Text(
             'Context Samples & Knowledge',
-            style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: colors.onSurface,
+            ),
           ),
-          const SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: 4),
           Text(
             'Ready-to-use context examples and knowledge templates',
-            style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
+            style: TextStyle(
+              fontSize: 13,
+              color: colors.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: 16),
           const ContextHubWidget(),
         ],
       ),
@@ -228,24 +257,93 @@ class _ContextLibraryScreenState extends ConsumerState<ContextLibraryScreen> {
 
   Widget _buildContextSamplesSection(ThemeColors colors) {
     return Padding(
-      padding: const EdgeInsets.all(SpacingTokens.xxl),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Context Samples & Knowledge',
-            style: TextStyles.sectionTitle.copyWith(color: colors.onSurface),
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: colors.onSurface,
+            ),
           ),
-          const SizedBox(height: SpacingTokens.sm),
+          const SizedBox(height: 4),
           Text(
             'Ready-to-use context examples filtered by category',
-            style: TextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
+            style: TextStyle(
+              fontSize: 13,
+              color: colors.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: SpacingTokens.lg),
+          const SizedBox(height: 16),
           const Expanded(
             child: ContextHubWidget(),
           ),
         ],
+      ),
+    );
+  }
+
+  // Compact shadcn-style button helpers
+  Widget _buildGhostButton(ThemeColors colors, {required IconData icon, required String label, required VoidCallback onPressed}) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(6),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            border: Border.all(color: colors.border),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: colors.onSurfaceVariant),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: colors.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrimaryButton(ThemeColors colors, {required IconData icon, required String label, required VoidCallback onPressed}) {
+    return Material(
+      color: colors.primary,
+      borderRadius: BorderRadius.circular(6),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(6),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: Colors.white),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -19,6 +19,9 @@ class AppColorSchemes {
   // Silver Onyx
   static const String silverOnyx = 'silver-onyx';
 
+  // Rose Quartz
+  static const String roseQuartz = 'rose-quartz';
+
   /// Get all available color scheme options for UI
   static List<ColorSchemeOption> get all => [
     const ColorSchemeOption(warmNeutral, 'Warm Neutral', [
@@ -46,6 +49,11 @@ class AppColorSchemes {
       Color(0xFF8A8A8A), // accent - medium silver
       Color(0xFFF8F8F8), // background - light silver
     ]),
+    const ColorSchemeOption(roseQuartz, 'Rose Quartz', [
+      Color(0xFFB76E79), // primary - rose quartz
+      Color(0xFFF8BBD0), // accent - soft pink
+      Color(0xFFFFF5F7), // background - blush white
+    ]),
   ];
 
   /// Get unique app background color for a specific color scheme
@@ -59,6 +67,8 @@ class AppColorSchemes {
         return isDark ? const Color(0xFF4A2117) : const Color(0xFFFFF7ED);
       case silverOnyx:
         return isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF8F8F8);
+      case roseQuartz:
+        return isDark ? const Color(0xFF2D1820) : const Color(0xFFFFF5F7);
       case warmNeutral:
       default:
         return isDark ? const Color(0xFF2B1F14) : const Color(0xFFFAF8F5);
@@ -76,6 +86,8 @@ class AppColorSchemes {
         return isDark ? _sunsetOrangeDarkTheme : _sunsetOrangeLightTheme;
       case silverOnyx:
         return isDark ? _silverOnyxDarkTheme : _silverOnyxLightTheme;
+      case roseQuartz:
+        return isDark ? _roseQuartzDarkTheme : _roseQuartzLightTheme;
       case warmNeutral:
       default:
         return isDark ? _warmNeutralDarkTheme : _warmNeutralLightTheme;
@@ -295,6 +307,60 @@ class AppColorSchemes {
       surfaceVariant: const Color(0xFF7A4B33),
       backgroundGradientStart: const Color(0xFF5C2D1F),
       backgroundGradientEnd: const Color(0xFF2E1810),
+    );
+  }
+
+  // ROSE QUARTZ THEMES
+
+  static ThemeData get _roseQuartzLightTheme {
+    const background = Color(0xFFFFF5F7); // Soft pink-white background
+    const surface = Color(0xFFFFFAFB); // Lighter rose surface
+    const primary = Color(0xFFB76E79); // Rose quartz primary
+    const accent = Color(0xFFF8BBD0); // Soft pink accent
+    const onSurface = Color(0xFF3A1420); // Deep rose text for contrast
+    const onSurfaceVariant = Color(0xFF6B3544); // Medium rose text
+    const border = Color(0xFFFDE4E8); // Soft pink border
+
+    return _buildThemeData(
+      brightness: Brightness.light,
+      background: background,
+      surface: surface,
+      primary: primary,
+      onPrimary: Colors.white,
+      accent: accent,
+      onAccent: const Color(0xFF3A1420),
+      onSurface: onSurface,
+      onSurfaceVariant: onSurfaceVariant,
+      border: border,
+      surfaceVariant: const Color(0xFFFFF0F3),
+      backgroundGradientStart: const Color(0xFFFFFAFB),
+      backgroundGradientEnd: const Color(0xFFFFE4E9),
+    );
+  }
+
+  static ThemeData get _roseQuartzDarkTheme {
+    const background = Color(0xFF2D1820); // Deep rose-brown background
+    const surface = Color(0xFF452633); // Rose-brown surface
+    const primary = Color(0xFFFFB3C1); // Bright rose accent
+    const accent = Color(0xFFF8BBD0); // Soft pink accent
+    const onSurface = Color(0xFFFFFAFC); // Bright pink-white
+    const onSurfaceVariant = Color(0xFFFFD4DD); // Light rose
+    const border = Color(0xFF5D3543);
+
+    return _buildThemeData(
+      brightness: Brightness.dark,
+      background: background,
+      surface: surface,
+      primary: primary,
+      onPrimary: const Color(0xFF2D1820),
+      accent: accent,
+      onAccent: const Color(0xFF2D1820),
+      onSurface: onSurface,
+      onSurfaceVariant: onSurfaceVariant,
+      border: border,
+      surfaceVariant: const Color(0xFF563040),
+      backgroundGradientStart: const Color(0xFF3D2028),
+      backgroundGradientEnd: const Color(0xFF1A0D14),
     );
   }
 

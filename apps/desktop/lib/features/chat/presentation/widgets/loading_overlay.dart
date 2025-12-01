@@ -37,8 +37,9 @@ class MessageLoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: SpacingTokens.sm),
+      padding: const EdgeInsets.all(SpacingTokens.md),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Claude avatar
           CircleAvatar(
@@ -52,7 +53,9 @@ class MessageLoadingIndicator extends StatelessWidget {
           ),
           const SizedBox(width: SpacingTokens.md),
           // Beautiful thinking animation
-          const ThinkingBubbleWidget(),
+          const Expanded(
+            child: ThinkingBubbleWidget(),
+          ),
         ],
       ),
     );

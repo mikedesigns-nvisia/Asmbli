@@ -5,8 +5,15 @@ import 'context_resource_server.dart';
 
 /// Service for exposing context documents as MCP resources
 /// Following MCP specification for resources: read-only data sources
-@Deprecated('Will be consolidated into MCPContextService. See docs/SERVICE_CONSOLIDATION_PLAN.md')
+import '../../features/context/data/repositories/context_repository.dart';
+
+/// Service for exposing context documents as MCP resources
+/// Following MCP specification for resources: read-only data sources
 class ContextMCPResourceService {
+  final ContextRepository _repository;
+
+  ContextMCPResourceService([ContextRepository? repository]) 
+      : _repository = repository ?? ContextRepository();
 
   /// Convert context documents to MCP resources for an agent
   static Future<List<MCPResource>> getAgentContextResources(String agentId, Ref ref) async {
@@ -141,26 +148,71 @@ class ContextMCPResourceService {
     }
   }
 
-  /// Assign context to agent (business service compatibility)
+  /// Assign context to agent
   Future<void> assignContextToAgent(String agentId, List<String> contextIds) async {
-    // Placeholder implementation - actual context assignment would be handled by context provider
+    for (final contextId in contextIds) {
+      await _repository.assignDocumentToAgent(
+        agentId: agentId,
+        contextDocumentId: contextId,
+      );
+    }
   }
 
-  /// Unassign context from agent (business service compatibility)
+  /// Unassign context from agent
   Future<void> unassignContextFromAgent(String agentId, List<String> contextIds) async {
-    // Placeholder implementation - actual context unassignment would be handled by context provider
+    final assignments = await _repository.getAssignmentsForAgent(agentId);
+    for (final assignment in assignments) {
+      if (contextIds.contains(assignment.contextDocumentId)) {
+        await _repository.removeAssignment(assignment.id);
+      }
+    }
   }
 
-  /// Get context content for documents (business service compatibility)
+  /// Get context content for documents
   Future<String> getContextForDocuments(List<String> contextIds) async {
-    // Placeholder implementation - would fetch and combine context document content
-    return contextIds.isEmpty ? '' : 'Context content for documents: ${contextIds.join(', ')}';
+    if (contextIds.isEmpty) return '';
+    
+    try {
+      final documents = await _repository.getDocuments();
+      final relevantDocs = documents.where((doc) => contextIds.contains(doc.id)).toList();
+      
+      if (relevantDocs.isEmpty) return '';
+      
+      final buffer = StringBuffer();
+      for (final doc in relevantDocs) {
+        buffer.writeln('--- Document: ${doc.title} (${doc.type.name}) ---');
+        buffer.writeln(doc.content);
+        buffer.writeln('--- End Document ---\n');
+      }
+      
+      return buffer.toString();
+    } catch (e) {
+      print('Error fetching context documents: $e');
+      return '';
+    }
   }
 
-  /// Get resource content (business service compatibility)
+  /// Get resource content
   Future<String> getResourceContent(String resourceId) async {
-    // Placeholder implementation - would fetch specific resource content
-    return 'Resource content for: $resourceId';
+    try {
+      // Handle URI format: context://type/id
+      String id = resourceId;
+      if (resourceId.startsWith('context://')) {
+        final parts = resourceId.split('/');
+        id = parts.last;
+      }
+      
+      final documents = await _repository.getDocuments();
+      final doc = documents.firstWhere(
+        (d) => d.id == id, 
+        orElse: () => throw Exception('Resource not found: $resourceId')
+      );
+      
+      return doc.content;
+    } catch (e) {
+      print('Error fetching resource content: $e');
+      return 'Error: Could not fetch content for $resourceId';
+    }
   }
 }
 

@@ -9,6 +9,7 @@ import 'asmbli_button.dart';
 import 'theme_toggle.dart';
 import '../../constants/routes.dart';
 import '../../../providers/conversation_provider.dart';
+import '../../../features/human_verification/presentation/widgets/verification_inbox_popover.dart';
 
 // Centralized navigation bar for all screens
 class AppNavigationBar extends ConsumerWidget {
@@ -116,6 +117,12 @@ class AppNavigationBar extends ConsumerWidget {
  isActive: currentRoute == AppRoutes.orchestration,
  ),
  DropdownItem(
+ text: 'Human Verification',
+ icon: Icons.verified_user,
+ onTap: () => context.go('/human-verification'),
+ isActive: currentRoute == '/human-verification',
+ ),
+ DropdownItem(
  text: 'Settings',
  icon: Icons.settings,
  onTap: () => context.go(AppRoutes.settings),
@@ -142,7 +149,11 @@ class AppNavigationBar extends ConsumerWidget {
  
  // Spacer to push right-aligned items to the right
  const Spacer(),
- 
+
+ // Human Verification Inbox
+ const VerificationInboxPopover(),
+ const SizedBox(width: SpacingTokens.md),
+
  // Theme Toggle (top-right)
  const ThemeToggle(),
  

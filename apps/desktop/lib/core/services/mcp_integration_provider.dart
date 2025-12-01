@@ -3,7 +3,7 @@ import 'package:agent_engine_core/models/agent.dart';
 import 'business/base_business_service.dart';
 import '../models/enhanced_agent.dart';
 import '../models/mcp_catalog_entry.dart';
-import 'agent_mcp_configuration_service.dart';
+import 'agent_mcp_service.dart';
 import 'dynamic_mcp_server_manager.dart';
 import 'enhanced_conversation_service.dart';
 import 'llm_tool_call_parser.dart';
@@ -15,7 +15,7 @@ import 'llm/unified_llm_service.dart';
 /// Centralized provider for MCP integration services
 /// Provides a single entry point for all MCP-related functionality
 class MCPIntegrationProvider {
-  final AgentMCPConfigurationService _configService;
+  final AgentMCPService _configService;
   final DynamicMCPServerManager _serverManager;
   final EnhancedConversationService _conversationService;
   final EnhancedAgentService _agentService;
@@ -225,7 +225,7 @@ final enhancedAgentServiceProvider = Provider<EnhancedAgentService>((ref) {
 });
 
 final mcpIntegrationProvider = Provider<MCPIntegrationProvider>((ref) {
-  final configService = ref.read(agentMCPConfigurationServiceProvider);
+  final configService = ref.read(agentMCPServiceProvider);
   final serverManager = ref.read(dynamicMCPServerManagerProvider);
   final agentService = ref.read(enhancedAgentServiceProvider);
 

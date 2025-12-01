@@ -38,13 +38,14 @@ class ThemeColors {
  // Detect the color scheme based on theme colors
  String _detectSchemeFromTheme() {
    final primaryColor = theme.colorScheme.primary;
-   
+
    if (isDark) {
      // Detect based on dark mode primary colors
      if (primaryColor == const Color(0xFF60A5FA)) return 'cool-blue';
      if (primaryColor == const Color(0xFFB8E6C8)) return 'forest-green';
      if (primaryColor == const Color(0xFFD4956B)) return 'sunset-orange';
      if (primaryColor == const Color(0xFFB8B8B8)) return 'silver-onyx';
+     if (primaryColor == const Color(0xFFFFB3C1)) return 'rose-quartz';
      return 'warm-neutral'; // E6C794
    } else {
      // Detect based on light mode primary colors
@@ -52,6 +53,7 @@ class ThemeColors {
      if (primaryColor == const Color(0xFF1E3B2B)) return 'forest-green';
      if (primaryColor == const Color(0xFF9A3412)) return 'sunset-orange';
      if (primaryColor == const Color(0xFF4A4A4A)) return 'silver-onyx';
+     if (primaryColor == const Color(0xFFB76E79)) return 'rose-quartz';
      return 'warm-neutral'; // 8B6F47
    }
  }
@@ -67,7 +69,7 @@ class ThemeColors {
  // Enhanced background gradients that get darker towards edges
  Color get backgroundGradientStart {
  final scheme = _actualColorScheme;
- 
+
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
@@ -78,6 +80,8 @@ class ThemeColors {
  return const Color(0xFF5C2D1F); // Desaturated orange center
  case 'silver-onyx':
  return const Color(0xFF2D2D2D); // Lighter charcoal center
+ case 'rose-quartz':
+ return const Color(0xFF3D2028); // Rose center
  default: // warm-neutral
  return const Color(0xFF3D2B1F); // Warm brown center
  }
@@ -91,6 +95,8 @@ class ThemeColors {
  return const Color(0xFFFFFBF7); // Almost white orange center
  case 'silver-onyx':
  return const Color(0xFFFAFAFA); // Lighter silver center
+ case 'rose-quartz':
+ return const Color(0xFFFFFAFB); // Light rose center
  default: // warm-neutral
  return const Color(0xFFFCFBF9); // Lighter cream center
  }
@@ -99,7 +105,7 @@ class ThemeColors {
  
  Color get backgroundGradientMiddle {
  final scheme = _actualColorScheme;
- 
+
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
@@ -110,6 +116,8 @@ class ThemeColors {
  return const Color(0xFF4A2117); // Main desaturated orange
  case 'silver-onyx':
  return const Color(0xFF1A1A1A); // Main onyx
+ case 'rose-quartz':
+ return const Color(0xFF2D1820); // Main rose
  default: // warm-neutral
  return const Color(0xFF2B1F14); // Main warm brown
  }
@@ -123,6 +131,8 @@ class ThemeColors {
  return const Color(0xFFFFF7ED); // Main light orange
  case 'silver-onyx':
  return const Color(0xFFF8F8F8); // Main silver
+ case 'rose-quartz':
+ return const Color(0xFFFFF5F7); // Main rose
  default: // warm-neutral
  return const Color(0xFFFAF8F5); // Main warm cream
  }
@@ -131,7 +141,7 @@ class ThemeColors {
  
  Color get backgroundGradientEnd {
  final scheme = _actualColorScheme;
- 
+
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
@@ -142,6 +152,8 @@ class ThemeColors {
  return const Color(0xFF2E1810); // Darker desaturated orange edges
  case 'silver-onyx':
  return const Color(0xFF0D0D0D); // Darker onyx edges
+ case 'rose-quartz':
+ return const Color(0xFF1A0D14); // Darker rose edges
  default: // warm-neutral
  return const Color(0xFF1F1611); // Darker warm brown edges
  }
@@ -155,6 +167,8 @@ class ThemeColors {
  return const Color(0xFFFED7AA); // Darker orange edges
  case 'silver-onyx':
  return const Color(0xFFE8E8E8); // Darker silver edges
+ case 'rose-quartz':
+ return const Color(0xFFFFE4E9); // Pink edges
  default: // warm-neutral
  return const Color(0xFFF0E6D6); // Darker cream edges
  }
@@ -184,6 +198,8 @@ class ThemeColors {
  Color get warning => isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
  Color get error => theme.colorScheme.error;
  Color get info => isDark ? const Color(0xFF3B82F6) : const Color(0xFF1D4ED8);
+ Color get highlight => accent;
+ Color get secondary => accent;
  
  // Interactive states - Enhanced for better visibility
  Color get hover => primary.withValues(alpha: isDark ? 0.08 : 0.06);
@@ -193,17 +209,19 @@ class ThemeColors {
  // Special colors
  Color get headerBackground {
  final scheme = _actualColorScheme;
- 
+
  if (isDark) {
  switch (scheme) {
  case 'cool-blue':
  return const Color(0xFF1E293B).withValues(alpha: 0.90); // Blue navigation background
  case 'forest-green':
- return const Color(0xFF1F3325).withValues(alpha: 0.90); // Forest navigation background 
+ return const Color(0xFF1F3325).withValues(alpha: 0.90); // Forest navigation background
  case 'sunset-orange':
  return const Color(0xFF664029).withValues(alpha: 0.90); // Warm orange navigation background
  case 'silver-onyx':
  return const Color(0xFF2D2D2D).withValues(alpha: 0.90); // Charcoal navigation background
+ case 'rose-quartz':
+ return const Color(0xFF452633).withValues(alpha: 0.90); // Rose navigation background
  default: // warm-neutral
  return const Color(0xFF423126).withValues(alpha: 0.90); // Warm brown navigation background
  }

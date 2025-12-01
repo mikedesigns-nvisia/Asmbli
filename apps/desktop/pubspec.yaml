@@ -24,6 +24,7 @@ dependencies:
   flutter_markdown: ^0.7.4+1
   markdown_widget: ^2.3.2+6
   flutter_highlighter: ^0.1.1
+  flutter_highlight: ^0.7.0
   markdown: ^7.2.2
   intl: ^0.20.2
   
@@ -43,6 +44,7 @@ dependencies:
   encrypt: ^5.0.1
   crypto: ^3.0.3
   pointycastle: ^3.7.3
+  flutter_secure_storage: ^9.0.0
   
   # File System & Git
   file_picker: ^8.0.0

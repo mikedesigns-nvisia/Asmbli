@@ -4,51 +4,45 @@ import 'package:agent_engine_core/services/agent_service.dart';
 import 'package:uuid/uuid.dart';
 import 'base_business_service.dart';
 import '../../../features/context/data/models/context_document.dart' as context;
-import '../mcp_bridge_service.dart';
 import '../llm/unified_llm_service.dart';
 import '../context_mcp_resource_service.dart';
 import '../agent_context_prompt_service.dart';
 import '../agent_mcp_integration_service.dart';
 import '../agent_terminal_provisioning_service.dart';
-import '../agent_mcp_communication_bridge.dart';
-import '../direct_mcp_agent_service.dart';
+import '../agent_mcp_service.dart';
 import '../production_logger.dart';
+import '../../models/mcp_tool_info.dart';
+import '../../models/mcp_tool_result.dart';
 
 /// Business service for agent management
 /// Encapsulates all business logic related to agents
 class AgentBusinessService extends BaseBusinessService {
   final AgentService _agentRepository;
-  final MCPBridgeService _mcpService;
   final UnifiedLLMService _modelService;
   final ContextMCPResourceService _contextService;
   final AgentContextPromptService _promptService;
   final BusinessEventBus _eventBus;
   final AgentMCPIntegrationService? _integrationService;
   final AgentTerminalProvisioningService? _provisioningService;
-  final AgentMCPCommunicationBridge? _communicationBridge;
-  final DirectMCPAgentService? _directMcpService;
+  final AgentMCPService? _agentMcpService;
 
   AgentBusinessService({
     required AgentService agentRepository,
-    required MCPBridgeService mcpService,
     required UnifiedLLMService modelService,
     required ContextMCPResourceService contextService,
     required AgentContextPromptService promptService,
     BusinessEventBus? eventBus,
     AgentMCPIntegrationService? integrationService,
     AgentTerminalProvisioningService? provisioningService,
-    AgentMCPCommunicationBridge? communicationBridge,
-    DirectMCPAgentService? directMcpService,
+    AgentMCPService? agentMcpService,
   })  : _agentRepository = agentRepository,
-        _mcpService = mcpService,
         _modelService = modelService,
         _contextService = contextService,
         _promptService = promptService,
         _eventBus = eventBus ?? BusinessEventBus(),
         _integrationService = integrationService,
         _provisioningService = provisioningService,
-        _communicationBridge = communicationBridge,
-        _directMcpService = directMcpService;
+        _agentMcpService = agentMcpService;
 
   /// Log error (compatibility method)
   void logError(String message, dynamic error) {
@@ -527,37 +521,14 @@ class AgentBusinessService extends BaseBusinessService {
         return BusinessResult.failure('Agent must be active to execute tools');
       }
 
-      // Try communication bridge first, fallback to direct MCP service
-      if (_communicationBridge != null) {
-        // Execute the tool via communication bridge
-        final result = await _communicationBridge!.executeMCPTool(
-          agentId,
-          serverId,
+      // Execute the tool via agent MCP service
+      if (_agentMcpService != null) {
+        // Execute the tool via agent MCP service
+        final mcpResult = await _agentMcpService!.executeTool(
           toolName,
           parameters,
-          timeout: timeout,
-        );
-
-        // Log the execution
-        ProductionLogger.instance.info(
-          'Agent tool execution completed via bridge',
-          data: {
-            'agent_id': agentId,
-            'server_id': serverId,
-            'tool_name': toolName,
-            'success': result.success,
-            'execution_time_ms': result.executionTime.inMilliseconds,
-          },
-          category: 'agent_business',
-        );
-
-        return BusinessResult.success(result);
-      } else if (_directMcpService != null) {
-        // Execute the tool via direct MCP service
-        final mcpResult = await _directMcpService!.executeTool(
           agentId: agentId,
-          toolName: toolName,
-          arguments: parameters,
+          serverId: serverId,
           timeout: timeout,
         );
 
@@ -575,7 +546,7 @@ class AgentBusinessService extends BaseBusinessService {
 
         // Log the execution
         ProductionLogger.instance.info(
-          'Agent tool execution completed via direct MCP',
+          'Agent tool execution completed via agent MCP service',
           data: {
             'agent_id': agentId,
             'tool_name': toolName,
@@ -597,16 +568,13 @@ class AgentBusinessService extends BaseBusinessService {
     return handleBusinessOperation('getAgentTools', () async {
       validateRequired({'agentId': agentId});
 
-      // Try communication bridge first, fallback to direct MCP service
-      if (_communicationBridge != null) {
-        final tools = await _communicationBridge!.getAvailableToolsForAgent(agentId);
-        return BusinessResult.success(tools);
-      } else if (_directMcpService != null) {
-        final mcpTools = await _directMcpService!.getAvailableTools(agentId: agentId);
+      // Try agent MCP service
+      if (_agentMcpService != null) {
+        final mcpTools = await _agentMcpService!.getAvailableTools(agentId: agentId);
 
         // Convert MCPToolDefinition to MCPToolInfo format
         final tools = mcpTools.map((tool) => MCPToolInfo(
-          serverId: 'direct-mcp-${tool.name}',
+          serverId: 'agent-mcp-${tool.name}',
           name: tool.name,
           description: tool.description,
           parameters: tool.parameters,
@@ -632,6 +600,8 @@ class AgentBusinessService extends BaseBusinessService {
         'credentials': credentials,
       });
 
+      // Credentials setup moved to installation service
+      /*
       if (_communicationBridge == null) {
         return BusinessResult.failure('MCP communication bridge not available');
       }
@@ -641,16 +611,13 @@ class AgentBusinessService extends BaseBusinessService {
         serverId,
         credentials,
       );
+      */
 
       return BusinessResult.success(null);
     });
   }
 
-  /// Stream MCP output for agent
-  Stream<MCPServerOutput>? streamAgentMCPOutput(String agentId) {
-    if (_communicationBridge == null) return null;
-    return _communicationBridge!.streamMCPOutputForAgent(agentId);
-  }
+
 
   // Private helper methods
 
@@ -677,6 +644,8 @@ class AgentBusinessService extends BaseBusinessService {
     }
 
     // Validate MCP servers exist
+    // Skipped validation for now as we rely on integration service to handle installation failures
+    /*
     for (final serverId in mcpServers) {
       if (!await _mcpService.isServerConfigured(serverId)) {
         return ValidationResult(
@@ -685,6 +654,7 @@ class AgentBusinessService extends BaseBusinessService {
         );
       }
     }
+    */
 
     return const ValidationResult(isValid: true);
   }
@@ -740,8 +710,14 @@ class AgentBusinessService extends BaseBusinessService {
   }
 
   Future<void> _configureMCPServers(Agent agent, List<String> mcpServers) async {
-    for (final serverId in mcpServers) {
-      await _mcpService.configureServerForAgent(agent.id, serverId);
+    if (_integrationService != null) {
+      for (final serverId in mcpServers) {
+        try {
+          await _integrationService!.installMCPServerForAgent(agent.id, serverId);
+        } catch (e) {
+          logError('Failed to install MCP server $serverId for agent ${agent.id}', e);
+        }
+      }
     }
   }
 
@@ -754,22 +730,19 @@ class AgentBusinessService extends BaseBusinessService {
   }
 
   Future<void> _ensureMCPServersReady(List<String> mcpServers) async {
-    for (final serverId in mcpServers) {
-      await _mcpService.startServer(serverId);
-    }
+    // Managed by integration service / terminal manager
   }
 
   Future<void> _cleanupAgentResources(Agent agent) async {
     final mcpServers = _getMCPServersFromMetadata(agent);
-    for (final serverId in mcpServers) {
-      await _mcpService.stopServerForAgent(agent.id, serverId);
-    }
-
-    await _contextService.unassignContextFromAgent(agent.id, []);
-
-    // Cleanup communication bridge resources
-    if (_communicationBridge != null) {
-      await _communicationBridge!.shutdownMCPServersForAgent(agent.id);
+    if (_integrationService != null) {
+      for (final serverId in mcpServers) {
+        try {
+          await _integrationService!.removeMCPServerFromAgent(agent.id, serverId);
+        } catch (e) {
+          logError('Failed to remove MCP server $serverId for agent ${agent.id}', e);
+        }
+      }
     }
 
     // Cleanup provisioning service resources

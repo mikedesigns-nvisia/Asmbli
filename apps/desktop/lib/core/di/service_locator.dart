@@ -10,7 +10,6 @@ import '../services/desktop/desktop_storage_service.dart';
 import '../services/desktop/desktop_service_provider.dart';
 import '../services/canvas_storage_service.dart';
 import '../services/llm/unified_llm_service.dart';
-import '../services/mcp_bridge_service.dart';
 import '../services/context_mcp_resource_service.dart';
 import '../services/agent_context_prompt_service.dart';
 import '../services/theme_service.dart';
@@ -46,11 +45,13 @@ import '../../features/orchestration/services/agent_workflow_integration_service
 
 // New agent-terminal architecture services
 import '../services/mcp_installation_service.dart';
-import '../services/agent_mcp_configuration_service.dart';
 import '../services/agent_aware_mcp_installer.dart';
 import '../services/agent_mcp_session_service.dart';
-import '../services/direct_mcp_agent_service.dart';
+import '../services/agent_mcp_service.dart';
 import '../services/plugin_bridge_server.dart';
+import '../../features/human_verification/services/human_verification_service.dart';
+import '../services/git_workspace_service.dart';
+import '../services/workspace_session_manager.dart';
 
 // Business services
 import '../services/business/base_business_service.dart';
@@ -222,8 +223,10 @@ class ServiceLocator {
       debugPrint('✅ Emergency storage service initialized');
 
       // Essential data services (no MCP or complex dependencies)
-      registerSingleton<AgentService>(DesktopAgentService());
+      final emergencyAgentService = DesktopAgentService();
+      registerSingleton<AgentService>(emergencyAgentService);
       registerSingleton<ConversationService>(DesktopConversationService());
+      await emergencyAgentService.seedDefaultAgents();
       debugPrint('✅ Emergency data services initialized');
       
       // Essential theme service
@@ -269,8 +272,12 @@ class ServiceLocator {
     registerSingleton<DesktopStorageService>(storageService);
 
     // Register data layer services
-    registerSingleton<AgentService>(DesktopAgentService());
+    final agentService = DesktopAgentService();
+    registerSingleton<AgentService>(agentService);
     registerSingleton<ConversationService>(DesktopConversationService());
+
+    // Seed default agents (Design Agent, etc.)
+    await agentService.seedDefaultAgents();
 
     // Register canvas services
     final canvasStorage = CanvasStorageService();
@@ -284,8 +291,10 @@ class ServiceLocator {
     
     final workflowMarketplace = WorkflowMarketplaceService.instance;
     registerSingleton<WorkflowMarketplaceService>(workflowMarketplace);
-    
+
     final workflowExecution = WorkflowExecutionService.instance;
+    // Note: WorkflowExecutionEngine is created within WorkflowExecutionService or manually
+    // We don't register it directly here, but if we did, we'd need to pass the verification service
     registerSingleton<WorkflowExecutionService>(workflowExecution);
     
     final agentWorkflowIntegration = AgentWorkflowIntegrationService.instance;
@@ -343,8 +352,9 @@ class ServiceLocator {
     
     // Design Agent Orchestrator removed for single model optimization
     
-    final mcpBridgeService = MCPBridgeService(mcpSettingsService);
-    registerSingleton<MCPBridgeService>(mcpBridgeService);
+    // MCPBridgeService removed
+    // final mcpBridgeService = MCPBridgeService(mcpSettingsService);
+    // registerSingleton<MCPBridgeService>(mcpBridgeService);
 
     // NOTE: MCPExcalidrawBridgeService removed - Excalidraw system deprecated
 
@@ -358,15 +368,15 @@ class ServiceLocator {
     await agentState.initialize();
     registerSingleton<MinimalAgentStateService>(agentState);
     
-    registerSingleton<ContextMCPResourceService>(ContextMCPResourceService());
-    registerSingleton<AgentContextPromptService>(AgentContextPromptService());
-    registerSingleton<ThemeService>(ThemeService());
-
     // Register ContextRepository and DesignTokensService for Penpot integration
     final contextRepository = ContextRepository();
     registerSingleton<ContextRepository>(contextRepository);
     final designTokensService = DesignTokensService(contextRepository: contextRepository);
     registerSingleton<DesignTokensService>(designTokensService);
+
+    registerSingleton<ContextMCPResourceService>(ContextMCPResourceService(contextRepository));
+    registerSingleton<AgentContextPromptService>(AgentContextPromptService());
+    registerSingleton<ThemeService>(ThemeService());
     
     // Use the existing singleton BusinessEventBus
     registerSingleton<BusinessEventBus>(BusinessEventBus());
@@ -375,14 +385,14 @@ class ServiceLocator {
     final mcpInstallationService = MCPInstallationService(mcpCatalogService);
     registerSingleton<MCPInstallationService>(mcpInstallationService);
 
-    // Register agent MCP configuration service
-    final agentMCPConfigService = AgentMCPConfigurationService(mcpCatalogService, storageService);
-    registerSingleton<AgentMCPConfigurationService>(agentMCPConfigService);
+    // Register new consolidated AgentMCPService
+    final agentMCPService = AgentMCPService(mcpCatalogService, storageService);
+    registerSingleton<AgentMCPService>(agentMCPService);
 
     // Register agent-aware MCP installer
     final agentAwareMCPInstaller = AgentAwareMCPInstaller(
       mcpInstallationService,
-      agentMCPConfigService,
+      agentMCPService,
       get<AgentService>() as DesktopAgentService,
     );
     registerSingleton<AgentAwareMCPInstaller>(agentAwareMCPInstaller);
@@ -405,20 +415,30 @@ class ServiceLocator {
 
     // Register agent MCP session service for tool execution
     final agentMCPSessionService = AgentMCPSessionService(
-      agentMCPConfigService,
+      agentMCPService,
       mcpProcessManager,
       mcpProtocolHandler,
     );
     registerSingleton<AgentMCPSessionService>(agentMCPSessionService);
 
-    // Register Direct MCP Agent Service (simplified integration)
-    final directMcpService = DirectMCPAgentService.instance;
-    registerSingleton<DirectMCPAgentService>(directMcpService);
+
 
     // Register Plugin Bridge Server for PenPot plugin communication
     final pluginBridgeServer = PluginBridgeServer(port: 3000);
     await pluginBridgeServer.start();
     registerSingleton<PluginBridgeServer>(pluginBridgeServer);
+
+    // Register Human Verification Service
+    final humanVerificationService = HumanVerificationService();
+    registerSingleton<HumanVerificationService>(humanVerificationService);
+
+    // Register Workspace services for IDE Prototyping Agent
+    final gitWorkspaceService = GitWorkspaceService();
+    registerSingleton<GitWorkspaceService>(gitWorkspaceService);
+
+    final workspaceSessionManager = WorkspaceSessionManager(gitService: gitWorkspaceService);
+    await workspaceSessionManager.initialize();
+    registerSingleton<WorkspaceSessionManager>(workspaceSessionManager);
   }
 
   /// Register all business services
@@ -426,21 +446,20 @@ class ServiceLocator {
     // Agent business service
     registerLazySingleton<AgentBusinessService>(() => AgentBusinessService(
       agentRepository: get<AgentService>(),
-      mcpService: get<MCPBridgeService>(),
       modelService: get<UnifiedLLMService>(),
       contextService: get<ContextMCPResourceService>(),
       promptService: get<AgentContextPromptService>(),
       eventBus: get<BusinessEventBus>(),
       integrationService: null, // Temporarily disabled until dependencies are fixed
-      communicationBridge: null, // Temporarily disabled due to complex dependencies
-      directMcpService: get<DirectMCPAgentService>(), // Use our simplified MCP service
+      provisioningService: null, 
+      agentMcpService: get<AgentMCPService>(),
     ));
 
     // Conversation business service
     registerLazySingleton<ConversationBusinessService>(() => ConversationBusinessService(
       conversationRepository: get<ConversationService>(),
       llmService: get<UnifiedLLMService>(),
-      mcpService: get<MCPBridgeService>(),
+      mcpService: get<AgentMCPService>(),
       contextService: get<ContextMCPResourceService>(),
       promptService: get<AgentContextPromptService>(),
       eventBus: get<BusinessEventBus>(),

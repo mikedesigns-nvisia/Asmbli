@@ -164,6 +164,135 @@ class GoogleApiService {
     }
   }
 
+  /// Stream a message from Gemini API
+  Stream<String> streamMessage({
+    required String message,
+    required String apiKey,
+    String model = 'gemini-pro',
+    double temperature = 0.7,
+    int maxTokens = 2048,
+    String? systemPrompt,
+    List<Map<String, dynamic>>? conversationHistory,
+  }) async* {
+    try {
+      // Build the request parts
+      List<Map<String, dynamic>> parts = [
+        {
+          'text': systemPrompt != null && systemPrompt.trim().isNotEmpty
+              ? '$systemPrompt\n\n$message'
+              : message,
+        }
+      ];
+
+      if (conversationHistory != null && conversationHistory.isNotEmpty) {
+        final contextParts = conversationHistory.map((msg) => {
+          'text': '${msg['role']}: ${msg['content']}'
+        }).toList();
+        parts.insertAll(0, contextParts);
+      }
+
+      final requestData = {
+        'contents': [
+          {
+            'parts': parts,
+          }
+        ],
+        'generationConfig': {
+          'temperature': temperature,
+          'maxOutputTokens': maxTokens,
+        }
+      };
+
+      final response = await _dio.post(
+        '/v1/models/$model:streamGenerateContent',
+        data: requestData,
+        options: Options(
+          responseType: ResponseType.stream,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey,
+          },
+        ),
+      );
+
+      final stream = response.data.stream;
+      StringBuffer buffer = StringBuffer();
+      int openBraces = 0;
+      bool inString = false;
+      bool escaped = false;
+
+      await for (final chunk in stream.transform(utf8.decoder)) {
+        final String chunkStr = chunk;
+        
+        for (int i = 0; i < chunkStr.length; i++) {
+          final char = chunkStr[i];
+          buffer.write(char);
+          
+          if (escaped) {
+            escaped = false;
+            continue;
+          }
+          
+          if (char == '\\') {
+            escaped = true;
+            continue;
+          }
+          
+          if (char == '"') {
+            inString = !inString;
+            continue;
+          }
+          
+          if (!inString) {
+            if (char == '{') {
+              openBraces++;
+            } else if (char == '}') {
+              openBraces--;
+              
+              if (openBraces == 0 && buffer.toString().trim().startsWith('{')) {
+                // Found a complete JSON object
+                final jsonStr = buffer.toString().trim();
+                try {
+                  final json = jsonDecode(jsonStr);
+                  final candidates = json['candidates'] as List?;
+                  if (candidates != null && candidates.isNotEmpty) {
+                    final content = candidates[0]['content'];
+                    if (content != null) {
+                      final parts = content['parts'] as List?;
+                      if (parts != null && parts.isNotEmpty) {
+                        final text = parts[0]['text'] as String?;
+                        if (text != null) {
+                          yield text;
+                        }
+                      }
+                    }
+                  }
+                } catch (e) {
+                  // Ignore parse errors
+                }
+                buffer.clear();
+              }
+            } else if (char == '[' && buffer.length < 5) {
+              // Ignore starting bracket of the array
+              buffer.clear();
+            } else if (char == ',' && openBraces == 0) {
+              // Ignore comma separators between objects
+              buffer.clear();
+            } else if (char == ']' && openBraces == 0) {
+              // End of array
+              buffer.clear();
+            }
+          }
+        }
+      }
+    } catch (e) {
+      if (e is DioException) {
+        throw GoogleApiException('Google Gemini streaming error: ${e.message}');
+      }
+      throw GoogleApiException('Unexpected streaming error: $e');
+    }
+  }
+
   /// Test API key validity
   Future<bool> testApiKey(String apiKey) async {
     try {

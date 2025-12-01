@@ -28,7 +28,9 @@ class MacOSOllamaService extends OllamaService {
     '/opt/local/bin/ollama', // MacPorts
   ];
 
-  MacOSOllamaService(this._macOSService) : super(_macOSService);
+  MacOSOllamaService(MacOSServiceProvider macOSService)
+      : _macOSService = macOSService,
+        super(macOSService);
 
   /// Check if we're running in macOS app sandbox
   Future<bool> get _isAppSandboxed async {

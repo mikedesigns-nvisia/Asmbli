@@ -206,8 +206,7 @@ class ApiLLMProvider extends LLMProvider {
           maxTokens: 4096,
         );
       } else if (_isOpenAIModel() && _openaiApiService != null) {
-        // OpenAI doesn't have streaming in this implementation yet
-        final response = await _openaiApiService!.sendMessage(
+        yield* _openaiApiService!.streamMessage(
           message: message,
           apiKey: _modelConfig.apiKey,
           model: _modelConfig.model,
@@ -216,10 +215,8 @@ class ApiLLMProvider extends LLMProvider {
           temperature: 0.7,
           maxTokens: 4096,
         );
-        yield response.content;
       } else if (_isGoogleModel() && _googleApiService != null) {
-        // Google doesn't have streaming in this implementation yet
-        final response = await _googleApiService!.sendMessage(
+        yield* _googleApiService!.streamMessage(
           message: message,
           apiKey: _modelConfig.apiKey,
           model: _modelConfig.model,
@@ -228,10 +225,8 @@ class ApiLLMProvider extends LLMProvider {
           temperature: 0.7,
           maxTokens: 4096,
         );
-        yield response.content;
       } else if (_isKimiModel() && _kimiApiService != null) {
-        // Kimi doesn't have streaming in this implementation yet
-        final response = await _kimiApiService!.sendMessage(
+        yield* _kimiApiService!.streamMessage(
           message: message,
           apiKey: _modelConfig.apiKey,
           model: _modelConfig.model,
@@ -240,7 +235,6 @@ class ApiLLMProvider extends LLMProvider {
           temperature: 0.7,
           maxTokens: 4096,
         );
-        yield response.content;
       } else {
         throw LLMProviderException(
           'Unsupported streaming model provider: ${_modelConfig.provider}',

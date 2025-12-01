@@ -101,18 +101,29 @@ Week 4 enhancements: Element manipulation, transformations, grouping, and layer 
   }
 
   void _initializeMCPServer() {
-    try {
-      final designTokensService = ServiceLocator.instance.get<DesignTokensService>();
-      final historyService = DesignHistoryService();
+    // Defer initialization until after first build when canvas state is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      try {
+        final canvasState = _canvasKey.currentState;
+        if (canvasState == null) {
+          debugPrint('⚠️ Canvas state not available yet for MCP server initialization');
+          return;
+        }
 
-      _mcpServer = MCPPenpotServer(
-        canvasKey: _canvasKey,
-        designTokensService: designTokensService,
-        historyService: historyService,
-      );
-    } catch (e) {
-      debugPrint('Error initializing MCP server: $e');
-    }
+        final designTokensService = ServiceLocator.instance.get<DesignTokensService>();
+        final historyService = DesignHistoryService();
+
+        _mcpServer = MCPPenpotServer(
+          canvas: canvasState,  // Pass the canvas state which implements PenpotCanvasInterface
+          designTokensService: designTokensService,
+          historyService: historyService,
+        );
+        
+        debugPrint('✅ MCPPenpotServer initialized');
+      } catch (e) {
+        debugPrint('❌ Error initializing MCP server: $e');
+      }
+    });
   }
 
   /// Process design message through AI and execute MCP tools

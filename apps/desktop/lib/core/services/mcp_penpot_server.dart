@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import '../widgets/penpot_canvas.dart';
+import '../interfaces/penpot_canvas_interface.dart';
 import '../models/design_tokens.dart';
 import '../models/canvas_state.dart';
 import '../models/design_history.dart';
@@ -20,7 +21,7 @@ import 'design_history_service.dart';
 /// Week 3: Context library integration, design tokens, history/undo
 /// Week 4: Element manipulation, real-time streaming, Watch Mode
 class MCPPenpotServer {
-  final GlobalKey<PenpotCanvasState> canvasKey;
+  final PenpotCanvasInterface canvas;
   final DesignTokensService? designTokensService;
   final DesignHistoryService? historyService;
 
@@ -28,15 +29,13 @@ class MCPPenpotServer {
   final _updateController = StreamController<CanvasUpdateEvent>.broadcast();
 
   MCPPenpotServer({
-    required this.canvasKey,
+    required this.canvas,
     this.designTokensService,
     this.historyService,
   });
 
-  PenpotCanvasState? get _canvas => canvasKey.currentState;
-
   /// Check if canvas is ready for commands
-  bool get isReady => _canvas?.isPluginLoaded ?? false;
+  bool get isReady => canvas.isPluginLoaded;
 
   /// Stream of canvas update events for Watch Mode
   Stream<CanvasUpdateEvent> get updateStream => _updateController.stream;
@@ -74,7 +73,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'create_rectangle',
         params: {
           if (x != null) 'x': x,
@@ -132,7 +131,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'create_text',
         params: {
           'content': content,
@@ -188,7 +187,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'create_frame',
         params: {
           if (x != null) 'x': x,
@@ -234,7 +233,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'get_canvas_state',
         params: {},
       );
@@ -260,7 +259,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'clear_canvas',
         params: {},
       );
@@ -309,7 +308,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'create_ellipse',
         params: {
           if (x != null) 'x': x,
@@ -365,7 +364,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'create_path',
         params: {
           'pathData': pathData,
@@ -419,7 +418,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'create_image',
         params: {
           'dataUrl': dataUrl,
@@ -470,7 +469,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'create_component',
         params: {
           'elementIds': elementIds,
@@ -517,7 +516,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'create_color_style',
         params: {
           'name': name,
@@ -565,7 +564,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'create_typography_style',
         params: {
           'name': name,
@@ -614,7 +613,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'apply_layout_constraints',
         params: {
           'elementId': elementId,
@@ -690,7 +689,7 @@ class MCPPenpotServer {
 
     try {
       // Get basic canvas state from plugin
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'get_canvas_state',
         params: {},
       );
@@ -955,7 +954,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'export_png',
         params: {
           if (scale != null) 'scale': scale,
@@ -1008,7 +1007,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'export_svg',
         params: {
           if (elementId != null) 'elementId': elementId,
@@ -1060,7 +1059,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'export_pdf',
         params: {
           if (elementId != null) 'elementId': elementId,
@@ -1123,7 +1122,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'update_element',
         params: {
           'elementId': elementId,
@@ -1182,7 +1181,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'transform_element',
         params: {
           'elementId': elementId,
@@ -1233,7 +1232,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'delete_element',
         params: {
           'elementId': elementId,
@@ -1281,7 +1280,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'duplicate_element',
         params: {
           'elementId': elementId,
@@ -1329,7 +1328,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'group_elements',
         params: {
           'elementIds': elementIds,
@@ -1373,7 +1372,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'ungroup_elements',
         params: {
           'groupId': groupId,
@@ -1417,7 +1416,7 @@ class MCPPenpotServer {
     }
 
     try {
-      final response = await _canvas!.executeCommand(
+      final response = await canvas.executeCommand(
         type: 'reorder_element',
         params: {
           'elementId': elementId,

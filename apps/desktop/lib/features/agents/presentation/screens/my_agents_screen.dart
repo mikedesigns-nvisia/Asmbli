@@ -48,6 +48,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  exampleUse: 'Find recent papers on quantum computing with proper citations',
  popularity: 95,
  reasoningFlow: ReasoningFlow.hierarchical,
+ recommendedModel: RecommendedLLM.claude35Sonnet,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.gemini15Pro],
  taskOutline: [
    'Parse research query and identify key concepts',
    'Search academic databases for relevant papers',
@@ -60,13 +62,15 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  AgentTemplate(
  name: 'Code Reviewer',
  description: 'Automated code review with best practices and security checks',
- category: 'Development', 
+ category: 'Development',
  tags: ['code-review', 'security', 'best-practices'],
  mcpStack: true,
  mcpServers: ['github', 'git', 'filesystem', 'memory'],
  exampleUse: 'Review React components for security vulnerabilities',
  popularity: 87,
  reasoningFlow: ReasoningFlow.parallel,
+ recommendedModel: RecommendedLLM.deepseekR1,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.claude35Sonnet],
  taskOutline: [
    'Parse code structure and dependencies',
    'Run security vulnerability scans',
@@ -86,6 +90,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  exampleUse: 'Create engaging blog posts about sustainable technology',
  popularity: 92,
  reasoningFlow: ReasoningFlow.iterative,
+ recommendedModel: RecommendedLLM.claude35Sonnet,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.llama32],
  taskOutline: [
    'Analyze topic and target keywords',
    'Research current trends and competitor content',
@@ -104,6 +110,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['postgres', 'python', 'jupyter', 'memory', 'filesystem'],
  exampleUse: 'Analyze customer churn patterns and create visualizations',
  popularity: 78,
+ recommendedModel: RecommendedLLM.gpt4o,
+ alternativeModels: [RecommendedLLM.deepseekR1, RecommendedLLM.claude35Sonnet],
  ),
  AgentTemplate(
  name: 'Customer Support Bot',
@@ -114,6 +122,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['jira', 'slack', 'zendesk', 'memory'],
  exampleUse: 'Handle customer inquiries and route tickets efficiently',
  popularity: 89,
+ recommendedModel: RecommendedLLM.gpt4oMini,
+ alternativeModels: [RecommendedLLM.claude35Haiku, RecommendedLLM.llama32],
  ),
  AgentTemplate(
  name: 'Marketing Strategist',
@@ -124,6 +134,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['brave-search', 'google-analytics', 'notion', 'memory'],
  exampleUse: 'Plan social media campaigns with performance tracking',
  popularity: 84,
+ recommendedModel: RecommendedLLM.claude35Sonnet,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.gemini15Pro],
  ),
  AgentTemplate(
  name: 'Design Agent',
@@ -135,6 +147,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  exampleUse: 'Create Material Design wireframes and generate component code',
  popularity: 95,
  reasoningFlow: ReasoningFlow.iterative,
+ recommendedModel: RecommendedLLM.llava13b,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.gemini15Pro],
  taskOutline: [
    'Analyze design requirements and user needs',
    'Create wireframes and mockups on interactive canvas',
@@ -154,6 +168,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['aws', 'docker', 'kubernetes', 'shell', 'memory'],
  exampleUse: 'Automate deployment pipelines and manage cloud infrastructure',
  popularity: 88,
+ recommendedModel: RecommendedLLM.deepseekR1,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.claude35Sonnet],
  ),
  AgentTemplate(
  name: 'Database Administrator',
@@ -164,6 +180,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['postgres', 'mysql', 'redis', 'mongodb', 'memory'],
  exampleUse: 'Optimize database queries and manage backup strategies',
  popularity: 82,
+ recommendedModel: RecommendedLLM.deepseekR1,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.llama32],
  ),
  // Security
  AgentTemplate(
@@ -175,6 +193,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['nmap', 'burp-suite', 'filesystem', 'shell', 'memory'],
  exampleUse: 'Conduct security audits and vulnerability assessments',
  popularity: 85,
+ recommendedModel: RecommendedLLM.gpt4o,
+ alternativeModels: [RecommendedLLM.deepseekR1, RecommendedLLM.claude35Sonnet],
  ),
  // Product & Analytics
  AgentTemplate(
@@ -186,6 +206,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['jira', 'google-analytics', 'slack', 'memory', 'filesystem'],
  exampleUse: 'Plan product roadmaps and track success metrics',
  popularity: 86,
+ recommendedModel: RecommendedLLM.claude35Sonnet,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.gemini15Pro],
  ),
  AgentTemplate(
  name: 'Data Scientist',
@@ -196,6 +218,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['python', 'jupyter', 'postgres', 'memory', 'filesystem'],
  exampleUse: 'Build ML models and analyze complex datasets',
  popularity: 90,
+ recommendedModel: RecommendedLLM.gpt4o,
+ alternativeModels: [RecommendedLLM.deepseekR1, RecommendedLLM.claude35Sonnet],
  ),
  // API & Development
  AgentTemplate(
@@ -207,6 +231,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['postman', 'swagger-ui', 'graphql', 'memory', 'filesystem'],
  exampleUse: 'Design robust APIs with comprehensive documentation',
  popularity: 83,
+ recommendedModel: RecommendedLLM.deepseekR1,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.claude35Sonnet],
  ),
  AgentTemplate(
  name: 'QA Automation Engineer',
@@ -217,6 +243,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['selenium', 'browserbase', 'jest', 'github', 'memory'],
  exampleUse: 'Create comprehensive test suites and automation frameworks',
  popularity: 81,
+ recommendedModel: RecommendedLLM.deepseekR1,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.llama32],
  ),
  // Blockchain & Web3
  AgentTemplate(
@@ -228,6 +256,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['ethereum', 'ipfs', 'the-graph', 'memory', 'filesystem'],
  exampleUse: 'Develop and audit smart contracts for DeFi protocols',
  popularity: 79,
+ recommendedModel: RecommendedLLM.gpt4o,
+ alternativeModels: [RecommendedLLM.deepseekR1, RecommendedLLM.claude35Sonnet],
  ),
  AgentTemplate(
  name: 'UX Designer',
@@ -238,6 +268,8 @@ class _MyAgentsScreenState extends ConsumerState<MyAgentsScreen> {
  mcpServers: ['figma', 'hotjar', 'airtable', 'memory', 'filesystem'],
  exampleUse: 'Create user-centered designs with comprehensive research',
  popularity: 87,
+ recommendedModel: RecommendedLLM.llava13b,
+ alternativeModels: [RecommendedLLM.gpt4o, RecommendedLLM.gemini15Pro],
  ),
  // Coming Soon - AI/ML
  AgentTemplate(
@@ -601,48 +633,52 @@ _buildCompactHeaderWithTabs(),
  }
 
  Widget _buildAIEmployeeHeroSection() {
- return Container(
- padding: const EdgeInsets.all(SpacingTokens.xl),
- child: Column(
- children: [
- // Main headline
- Text(
- 'Agent Templates',
- style: TextStyles.pageTitle.copyWith(
- color: ThemeColors(context).onSurface,
- fontSize: 32,
- fontWeight: FontWeight.bold,
- ),
- textAlign: TextAlign.center,
- ),
- 
- const SizedBox(height: SpacingTokens.md),
- 
- // Subtitle
- Text(
- 'Pre-configured agent templates for common workflows and tasks.',
- style: TextStyles.bodyLarge.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- ),
- textAlign: TextAlign.center,
- ),
- 
- const SizedBox(height: SpacingTokens.xl),
- 
- // Quick stats row
- Row(
- mainAxisAlignment: MainAxisAlignment.center,
- children: [
- _buildStatCard('${templates.length}', 'Available'),
- const SizedBox(width: SpacingTokens.xl),
- _buildStatCard('${categories.length - 1}', 'Categories'),
- const SizedBox(width: SpacingTokens.xl),
- _buildStatCard('Ready', 'To Deploy'),
- ],
- ),
- ],
- ),
- );
+   final colors = ThemeColors(context);
+   return Container(
+     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+     child: Row(
+       children: [
+         // Quick stats row - compact inline
+         _buildStatBadge(colors, '${templates.length}', 'Available'),
+         const SizedBox(width: 12),
+         _buildStatBadge(colors, '${categories.length - 1}', 'Categories'),
+         const SizedBox(width: 12),
+         _buildStatBadge(colors, 'Ready', 'To Deploy'),
+       ],
+     ),
+   );
+ }
+
+ Widget _buildStatBadge(ThemeColors colors, String number, String label) {
+   return Container(
+     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+     decoration: BoxDecoration(
+       color: colors.surface.withValues(alpha: 0.5),
+       borderRadius: BorderRadius.circular(6),
+       border: Border.all(color: colors.border.withValues(alpha: 0.5)),
+     ),
+     child: Row(
+       mainAxisSize: MainAxisSize.min,
+       children: [
+         Text(
+           number,
+           style: TextStyle(
+             fontSize: 14,
+             fontWeight: FontWeight.w600,
+             color: colors.primary,
+           ),
+         ),
+         const SizedBox(width: 6),
+         Text(
+           label,
+           style: TextStyle(
+             fontSize: 12,
+             color: colors.onSurfaceVariant,
+           ),
+         ),
+       ],
+     ),
+   );
  }
 
  Widget _buildStatCard(String number, String label) {
@@ -1291,138 +1327,161 @@ This template gives you a starting point - modify it to create your perfect AI a
  }
 
  List<Widget> _buildFilterChips() {
- return categories.map((category) {
- final isSelected = selectedCategory == category;
- return GestureDetector(
- onTap: () => setState(() => selectedCategory = category),
- child: Container(
- padding: const EdgeInsets.symmetric(
- horizontal: SpacingTokens.componentSpacing,
- vertical: SpacingTokens.xs,
- ),
- decoration: BoxDecoration(
- color: isSelected 
- ? ThemeColors(context).primary 
- : ThemeColors(context).surfaceVariant.withValues(alpha: 0.7),
- borderRadius: BorderRadius.circular(BorderRadiusTokens.pill),
- border: Border.all(
- color: isSelected 
- ? ThemeColors(context).primary 
- : ThemeColors(context).border,
- width: 1,
- ),
- ),
- child: Row(
- mainAxisSize: MainAxisSize.min,
- children: [
- if (category != 'All') ...[
- Icon(
- _getCategoryIcon(category),
- size: 12,
- color: isSelected 
- ? Colors.white 
- : ThemeColors(context).onSurfaceVariant,
- ),
- const SizedBox(width: 4),
- ],
- Text(
- category,
- style: TextStyles.caption.copyWith(
- color: isSelected 
- ? Colors.white 
- : ThemeColors(context).onSurfaceVariant,
- fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
- ),
- ),
- ],
- ),
- ),
- );
- }).toList();
+   final colors = ThemeColors(context);
+   return categories.map((category) {
+     final isSelected = selectedCategory == category;
+     return GestureDetector(
+       onTap: () => setState(() => selectedCategory = category),
+       child: AnimatedContainer(
+         duration: const Duration(milliseconds: 150),
+         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+         decoration: BoxDecoration(
+           color: isSelected ? colors.primary : colors.surface.withValues(alpha: 0.5),
+           borderRadius: BorderRadius.circular(6),
+           border: Border.all(
+             color: isSelected ? colors.primary : colors.border.withValues(alpha: 0.5),
+           ),
+         ),
+         child: Row(
+           mainAxisSize: MainAxisSize.min,
+           children: [
+             if (category != 'All') ...[
+               Icon(
+                 _getCategoryIcon(category),
+                 size: 12,
+                 color: isSelected ? Colors.white : colors.onSurfaceVariant,
+               ),
+               const SizedBox(width: 4),
+             ],
+             Text(
+               category,
+               style: TextStyle(
+                 fontSize: 12,
+                 fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                 color: isSelected ? Colors.white : colors.onSurfaceVariant,
+               ),
+             ),
+           ],
+         ),
+       ),
+     );
+   }).toList();
  }
 
  Widget _buildEmptyState() {
- return Center(
- child: Column(
- mainAxisAlignment: MainAxisAlignment.center,
- children: [
- Icon(
- Icons.search_off,
- size: 48,
- color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
- ),
- const SizedBox(height: SpacingTokens.componentSpacing),
- Text(
- 'No templates found',
- style: TextStyles.bodyLarge.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- ),
- ),
- const SizedBox(height: SpacingTokens.xs),
- Text(
- 'Try adjusting your search or filters',
- style: TextStyles.bodySmall.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- ),
- ),
- const SizedBox(height: SpacingTokens.componentSpacing),
- AsmblButton.secondary(
- text: 'Clear Filters',
- onPressed: () {
- setState(() {
- searchQuery = '';
- selectedCategory = 'All';
- });
- },
- ),
- ],
- ),
- );
+   final colors = ThemeColors(context);
+   return Center(
+     child: Column(
+       mainAxisAlignment: MainAxisAlignment.center,
+       children: [
+         Container(
+           padding: const EdgeInsets.all(16),
+           decoration: BoxDecoration(
+             color: colors.surface,
+             shape: BoxShape.circle,
+             border: Border.all(color: colors.border),
+           ),
+           child: Icon(Icons.search_off, size: 28, color: colors.onSurfaceVariant),
+         ),
+         const SizedBox(height: 16),
+         Text(
+           'No templates found',
+           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: colors.onSurface),
+         ),
+         const SizedBox(height: 4),
+         Text(
+           'Try adjusting your search or filters',
+           style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
+         ),
+         const SizedBox(height: 16),
+         _buildCompactGhostButton(colors, 'Clear Filters', () {
+           setState(() {
+             searchQuery = '';
+             selectedCategory = 'All';
+           });
+         }),
+       ],
+     ),
+   );
+ }
+
+ Widget _buildCompactGhostButton(ThemeColors colors, String label, VoidCallback onPressed) {
+   return Material(
+     color: Colors.transparent,
+     child: InkWell(
+       onTap: onPressed,
+       borderRadius: BorderRadius.circular(6),
+       child: Container(
+         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+         decoration: BoxDecoration(
+           border: Border.all(color: colors.border),
+           borderRadius: BorderRadius.circular(6),
+         ),
+         child: Text(
+           label,
+           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.onSurface),
+         ),
+       ),
+     ),
+   );
  }
 
  Widget _buildEmptyAgentsState() {
- return Center(
- child: Column(
- mainAxisAlignment: MainAxisAlignment.center,
- children: [
- Icon(
- Icons.smart_toy_outlined,
- size: 64,
- color: ThemeColors(context).onSurfaceVariant.withValues(alpha: 0.5),
- ),
- const SizedBox(height: SpacingTokens.componentSpacing),
- Text(
- 'No agents yet',
- style: TextStyles.bodyLarge.copyWith(
- color: ThemeColors(context).onSurface,
- fontWeight: FontWeight.bold,
- ),
- ),
- const SizedBox(height: SpacingTokens.xs),
- Text(
- 'Create your first AI agent to get started',
- style: TextStyles.bodyMedium.copyWith(
- color: ThemeColors(context).onSurfaceVariant,
- ),
- textAlign: TextAlign.center,
- ),
- const SizedBox(height: SpacingTokens.sectionSpacing),
- AsmblButton.primary(
- text: 'Create Agent',
- onPressed: () {
- context.go(AppRoutes.agentBuilder);
- },
- ),
- const SizedBox(height: SpacingTokens.componentSpacing),
- AsmblButton.secondary(
- text: 'Browse Templates',
- onPressed: () {
- setState(() => selectedTab = 1);
- },
- ),
- ],
- ),
- );
+   final colors = ThemeColors(context);
+   return Center(
+     child: Column(
+       mainAxisAlignment: MainAxisAlignment.center,
+       children: [
+         Container(
+           padding: const EdgeInsets.all(16),
+           decoration: BoxDecoration(
+             color: colors.surface,
+             shape: BoxShape.circle,
+             border: Border.all(color: colors.border),
+           ),
+           child: Icon(Icons.smart_toy_outlined, size: 28, color: colors.onSurfaceVariant),
+         ),
+         const SizedBox(height: 16),
+         Text(
+           'No agents yet',
+           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: colors.onSurface),
+         ),
+         const SizedBox(height: 4),
+         Text(
+           'Create your first AI agent to get started',
+           style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
+           textAlign: TextAlign.center,
+         ),
+         const SizedBox(height: 20),
+         Row(
+           mainAxisAlignment: MainAxisAlignment.center,
+           children: [
+             _buildCompactGhostButton(colors, 'Browse Templates', () => setState(() => selectedTab = 1)),
+             const SizedBox(width: 8),
+             _buildCompactPrimaryButton(colors, 'Create Agent', () => context.go(AppRoutes.agentBuilder)),
+           ],
+         ),
+       ],
+     ),
+   );
+ }
+
+ Widget _buildCompactPrimaryButton(ThemeColors colors, String label, VoidCallback onPressed) {
+   return Material(
+     color: colors.primary,
+     borderRadius: BorderRadius.circular(6),
+     child: InkWell(
+       onTap: onPressed,
+       borderRadius: BorderRadius.circular(6),
+       child: Container(
+         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+         child: Text(
+           label,
+           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white),
+         ),
+       ),
+     ),
+   );
  }
 
  // Helper methods for agent search and filtering
@@ -1589,85 +1648,95 @@ This template gives you a starting point - modify it to create your perfect AI a
 
  Widget _buildCompactHeaderWithTabs() {
    final colors = ThemeColors(context);
-   
+
    return Container(
      decoration: BoxDecoration(
-       color: colors.surface.withValues(alpha: 0.1),
+       color: colors.surface.withValues(alpha: 0.5),
        border: Border(
          bottom: BorderSide(
-           color: colors.border.withValues(alpha: 0.2),
+           color: colors.border.withValues(alpha: 0.5),
          ),
        ),
      ),
-     child: Column(
-       children: [
-         // Main header with integrated tabs on same line
-         Padding(
-           padding: const EdgeInsets.fromLTRB(SpacingTokens.xxl, SpacingTokens.lg, SpacingTokens.xxl, SpacingTokens.sm),
-           child: Row(
-             crossAxisAlignment: CrossAxisAlignment.center,
-             children: [
-               // Icon and Title
-               Container(
-                 width: 40,
-                 height: 40,
-                 decoration: BoxDecoration(
-                   color: colors.primary.withValues(alpha: 0.1),
-                   borderRadius: BorderRadius.circular(BorderRadiusTokens.md),
-                 ),
-                 child: Icon(
-                   Icons.smart_toy,
-                   size: 20,
-                   color: colors.primary,
-                 ),
-               ),
-               const SizedBox(width: SpacingTokens.md),
-               Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 mainAxisSize: MainAxisSize.min,
-                 children: [
-                   Text(
-                     selectedTab == 0 ? 'My AI Agents' : 'Agent Library',
-                     style: TextStyles.headingMedium.copyWith(
-                       color: colors.onSurface,
-                     ),
+     child: Padding(
+       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+       child: Row(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           // Title and Description
+           Expanded(
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Text(
+                   selectedTab == 0 ? 'My AI Agents' : 'Agent Templates',
+                   style: TextStyle(
+                     fontSize: 24,
+                     fontWeight: FontWeight.w600,
+                     color: colors.onSurface,
+                     letterSpacing: -0.5,
                    ),
-                   Text(
-                     selectedTab == 0 
-                       ? 'Manage and organize your AI-powered assistants'
-                       : 'Start with a pre-built template and customize it to your needs',
-                     style: TextStyles.bodySmall.copyWith(
-                       color: colors.onSurfaceVariant,
-                     ),
-                   ),
-                 ],
-               ),
-               
-               const SizedBox(width: SpacingTokens.lg),
-               
-               // Tab buttons inline with title
-               Expanded(
-                 child: Row(
-                   children: [
-                     const Spacer(),
-                     _TabButton(
-                       text: 'My AI Team',
-                       isSelected: selectedTab == 0,
-                       onTap: () => setState(() => selectedTab = 0),
-                     ),
-                     const SizedBox(width: SpacingTokens.sm),
-                     _TabButton(
-                       text: 'Agent Templates',
-                       isSelected: selectedTab == 1,
-                       onTap: () => setState(() => selectedTab = 1),
-                     ),
-                   ],
                  ),
-               ),
-             ],
+                 const SizedBox(height: 4),
+                 Text(
+                   selectedTab == 0
+                       ? 'Manage and organize your AI-powered assistants.'
+                       : 'Start with a pre-built template and customize it to your needs.',
+                   style: TextStyle(
+                     fontSize: 14,
+                     color: colors.onSurfaceVariant,
+                     height: 1.5,
+                   ),
+                 ),
+               ],
+             ),
            ),
+
+           const SizedBox(width: 16),
+
+           // Compact tab switcher
+           Container(
+             padding: const EdgeInsets.all(4),
+             decoration: BoxDecoration(
+               color: colors.surface.withValues(alpha: 0.5),
+               borderRadius: BorderRadius.circular(8),
+               border: Border.all(color: colors.border.withValues(alpha: 0.5)),
+             ),
+             child: Row(
+               mainAxisSize: MainAxisSize.min,
+               children: [
+                 _buildCompactTab(colors, 'My AI Team', selectedTab == 0, () => setState(() => selectedTab = 0)),
+                 _buildCompactTab(colors, 'Templates', selectedTab == 1, () => setState(() => selectedTab = 1)),
+               ],
+             ),
+           ),
+         ],
+       ),
+     ),
+   );
+ }
+
+ Widget _buildCompactTab(ThemeColors colors, String label, bool isSelected, VoidCallback onTap) {
+   return GestureDetector(
+     onTap: onTap,
+     child: AnimatedContainer(
+       duration: const Duration(milliseconds: 150),
+       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+       decoration: BoxDecoration(
+         color: isSelected ? colors.surface : Colors.transparent,
+         borderRadius: BorderRadius.circular(6),
+         boxShadow: isSelected
+             ? [BoxShadow(color: colors.border.withValues(alpha: 0.3), blurRadius: 4, offset: const Offset(0, 1))]
+             : null,
+       ),
+       child: Text(
+         label,
+         style: TextStyle(
+           fontSize: 13,
+           fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+           color: isSelected ? colors.onSurface : colors.onSurfaceVariant,
          ),
-       ],
+       ),
      ),
    );
  }

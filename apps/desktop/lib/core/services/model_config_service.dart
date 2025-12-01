@@ -269,13 +269,36 @@ class ModelConfigService extends ApiConfigService {
     try {
       final installedModels = await _ollamaService.getInstalledModels();
       print('DEBUG: Ollama installed models: ${installedModels.map((m) => '${m.name} (${m.ollamaModelId})').join(', ')}');
-      
+
+      // Build set of Ollama model IDs for quick lookup
+      final installedOllamaIds = installedModels
+          .map((m) => m.ollamaModelId)
+          .toSet();
+
+      // Remove local models that are no longer in Ollama
+      final modelsToRemove = <String>[];
+      for (final entry in _localModels.entries) {
+        final model = entry.value;
+        if (model.isLocal &&
+            model.ollamaModelId != null &&
+            !installedOllamaIds.contains(model.ollamaModelId)) {
+          print('DEBUG: Removing deleted model ${model.name} (${model.ollamaModelId})');
+          modelsToRemove.add(entry.key);
+        }
+      }
+
+      // Remove deleted models
+      for (final modelId in modelsToRemove) {
+        _localModels.remove(modelId);
+      }
+
+      // Update existing models or add new ones
       for (final installedModel in installedModels) {
         // Update existing local model or add new one
         final existingModel = _localModels.values
             .where((m) => m.ollamaModelId == installedModel.ollamaModelId)
             .firstOrNull;
-            
+
         if (existingModel != null) {
           // Update status to ready
           print('DEBUG: Updating existing model ${existingModel.name} to ready');
@@ -289,7 +312,8 @@ class ModelConfigService extends ApiConfigService {
           _localModels[installedModel.id] = installedModel;
         }
       }
-      
+
+      print('DEBUG: Ollama sync completed');
       await _saveLocalModels();
     } catch (e) {
       print('Failed to sync with Ollama: $e');

@@ -380,6 +380,8 @@ class _BlockPaletteState extends ConsumerState<BlockPalette> {
         return Icons.timeline;
       case LogicBlockType.exit:
         return Icons.check_circle;
+      case LogicBlockType.humanVerification:
+        return Icons.verified_user;
     }
   }
 }

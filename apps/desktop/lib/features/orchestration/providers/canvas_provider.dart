@@ -11,6 +11,7 @@ import '../services/workflow_execution_engine.dart';
 import '../services/workflow_persistence_service.dart';
 import '../../../core/services/llm/unified_llm_service.dart';
 import '../../../core/di/service_locator.dart';
+import '../../human_verification/services/human_verification_service.dart';
 
 /// State notifier for canvas interactions and workflow management
 class CanvasNotifier extends StateNotifier<CanvasState> {
@@ -30,8 +31,9 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
   void _initializeServices() {
     try {
       final unifiedLLMService = ServiceLocator.instance.get<UnifiedLLMService>();
+      final verificationService = ServiceLocator.instance.get<HumanVerificationService>();
       _reasoningService = ReasoningLLMService(unifiedLLMService);
-      _executionEngine = WorkflowExecutionEngine(_reasoningService);
+      _executionEngine = WorkflowExecutionEngine(_reasoningService, verificationService);
       _persistenceService = ServiceLocator.instance.get<WorkflowPersistenceService>();
       
       // Listen to execution events
@@ -531,6 +533,12 @@ class CanvasNotifier extends StateNotifier<CanvasState> {
         return {
           'validationChecks': <String>[],
           'partialResults': true,
+        };
+      case LogicBlockType.humanVerification:
+        return {
+          'verificationMessage': '',
+          'verificationType': 'approval',
+          'requiresApproval': true,
         };
     }
   }

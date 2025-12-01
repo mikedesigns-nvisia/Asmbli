@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../design_system.dart';
 import '../../services/mcp_settings_service.dart';
-import '../../services/mcp_health_monitor.dart';
+// import '../../services/mcp_health_monitor.dart'; // Removed - deprecated
 import '../../../features/settings/presentation/widgets/mcp_health_status_widget.dart';
 import '../../constants/app_constants.dart';
 
@@ -62,7 +62,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildCompactLayout(BuildContext context, MCPServerConfig? serverConfig, AsyncValue<Map<String, MCPServerHealth>> healthData) {
+  Widget _buildCompactLayout(BuildContext context, MCPServerConfig? serverConfig, AsyncValue<Map<String, dynamic>> healthData) {
     return Row(
       children: [
         // Selection indicator
@@ -136,7 +136,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildFullLayout(BuildContext context, MCPServerConfig? serverConfig, AsyncValue<Map<String, MCPServerHealth>> healthData) {
+  Widget _buildFullLayout(BuildContext context, MCPServerConfig? serverConfig, AsyncValue<Map<String, dynamic>> healthData) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -272,7 +272,7 @@ class UnifiedMCPServerCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildHealthStatus(BuildContext context, AsyncValue<Map<String, MCPServerHealth>> healthData) {
+  Widget _buildHealthStatus(BuildContext context, AsyncValue<Map<String, dynamic>> healthData) {
     return healthData.when(
       data: (healthMap) => MCPHealthStatusWidget(
         serverId: serverId,

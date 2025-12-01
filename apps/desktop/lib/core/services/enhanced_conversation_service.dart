@@ -6,10 +6,10 @@ import 'package:uuid/uuid.dart';
 import 'business/base_business_service.dart';
 import 'llm/unified_llm_service.dart';
 import 'llm/llm_provider.dart';
-import 'agent_mcp_configuration_service.dart';
+import 'agent_mcp_service.dart';
 import 'dynamic_mcp_server_manager.dart';
 import 'llm_tool_call_parser.dart';
-import 'mcp_bridge_service.dart';
+// import 'mcp_bridge_service.dart'; // REMOVED: MCPBridgeService deleted
 import 'context_mcp_resource_service.dart';
 import 'agent_context_prompt_service.dart';
 import '../utils/null_safety_utils.dart';
@@ -18,20 +18,20 @@ import '../utils/null_safety_utils.dart';
 /// Provides seamless integration between agents, LLMs, and GitHub MCP registry tools
 class EnhancedConversationService extends BaseBusinessService {
   final UnifiedLLMService _llmService;
-  final AgentMCPConfigurationService _agentMCPService;
+  final AgentMCPService _agentMCPService;
   final DynamicMCPServerManager _mcpServerManager;
   final LLMToolCallParser _toolCallParser;
-  final MCPBridgeService _mcpBridge;
+  // final MCPBridgeService _mcpBridge; // REMOVED: MCPBridgeService deleted
   final ContextMCPResourceService _contextService;
   final AgentContextPromptService _promptService;
   final BusinessEventBus _eventBus;
 
   EnhancedConversationService({
     required UnifiedLLMService llmService,
-    required AgentMCPConfigurationService agentMCPService,
+    required AgentMCPService agentMCPService,
     required DynamicMCPServerManager mcpServerManager,
     required LLMToolCallParser toolCallParser,
-    required MCPBridgeService mcpBridge,
+    // required MCPBridgeService mcpBridge, // REMOVED: MCPBridgeService deleted
     required ContextMCPResourceService contextService,
     required AgentContextPromptService promptService,
     BusinessEventBus? eventBus,
@@ -39,7 +39,7 @@ class EnhancedConversationService extends BaseBusinessService {
         _agentMCPService = agentMCPService,
         _mcpServerManager = mcpServerManager,
         _toolCallParser = toolCallParser,
-        _mcpBridge = mcpBridge,
+        // _mcpBridge = mcpBridge, // REMOVED: MCPBridgeService deleted
         _contextService = contextService,
         _promptService = promptService,
         _eventBus = eventBus ?? BusinessEventBus();
@@ -345,11 +345,21 @@ Always explain what you're doing when using tools.
     return systemPrompt;
   }
 
+  // DEPRECATED: Tool execution requires MCPBridgeService which was removed
   Future<ToolExecutionResult> _executeMCPToolCall(
     String agentId,
     ParsedToolCall toolCall,
     List<String> enabledServerIds,
   ) async {
+    return ToolExecutionResult(
+      toolName: toolCall.name,
+      serverId: 'deprecated',
+      success: false,
+      result: null,
+      error: 'Tool execution temporarily unavailable - MCPBridgeService removed',
+      executionTime: DateTime.now(),
+    );
+    /*
     try {
       // Determine which server to use for this tool
       final serverId = toolCall.serverId ??
@@ -392,6 +402,7 @@ Always explain what you're doing when using tools.
         executionTime: DateTime.now(),
       );
     }
+    */
   }
 
   Future<String?> _findBestServerForTool(
